@@ -1,4 +1,4 @@
-# ENPM605 — Python Applications for Robotics
+# ENPM702 — Introductory Robot Programming
 
 Course documentation for ENPM702, Fall 2026.
 
