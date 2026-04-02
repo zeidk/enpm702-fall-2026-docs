@@ -1,4 +1,4 @@
-ENPM702 — Introduction Robot Programming
+ENPM702 — Introductory Robot Programming
 =========================================
 
 Course Description
