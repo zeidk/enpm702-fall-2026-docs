@@ -72,6 +72,7 @@ Each lecture page contains the following sections:
    :hidden:
    :maxdepth: 3
    :titlesonly:
+   :caption: C++ (Weeks 1-9)
 
    lecture1/l1_index
    lecture2/l2_index
@@ -82,6 +83,13 @@ Each lecture page contains the following sections:
    lecture7/l7_index
    lecture8/l8_index
    lecture9/l9_index
+
+.. toctree::
+   :hidden:
+   :maxdepth: 3
+   :titlesonly:
+   :caption: ROS 2 (Weeks 10-14)
+
    lecture10/l10_index
    lecture11/l11_index
    lecture12/l12_index
