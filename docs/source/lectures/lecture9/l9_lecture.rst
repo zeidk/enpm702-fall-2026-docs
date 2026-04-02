@@ -2,9 +2,16 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 9 Contents
 
-   \setcounter{figure}{0}
+   l9_lecture
+   l9_shell
+   l9_exercises
+   l9_quiz
+   l9_references
 
 
 OOP Advanced Topics

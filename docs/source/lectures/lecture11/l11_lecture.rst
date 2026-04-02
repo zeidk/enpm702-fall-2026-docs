@@ -2,9 +2,15 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 11 Contents
 
-   \setcounter{figure}{0}
+   l11_lecture
+   l11_exercises
+   l11_quiz
+   l11_references
 
 
 ROS 2 Configuration and Orchestration

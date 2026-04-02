@@ -1,12 +1,18 @@
-.. _l5_lecture:
+====================================================
+Lecture
+====================================================
 
-=============================
-Lecture 5: Functions -- Basics
-=============================
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 5 Contents
 
-.. contents:: Table of Contents
-   :depth: 3
-   :local:
+   l5_lecture
+   l5_shell
+   l5_exercises
+   l5_quiz
+   l5_references
+
 
 Part I -- The Core Mechanics
 -----------------------------

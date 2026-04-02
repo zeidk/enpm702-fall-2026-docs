@@ -2,9 +2,15 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 10 Contents
 
-   \setcounter{figure}{0}
+   l10_lecture
+   l10_exercises
+   l10_quiz
+   l10_references
 
 
 ROS 2 Foundations

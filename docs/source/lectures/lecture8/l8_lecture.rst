@@ -1,12 +1,18 @@
-.. _l8_lecture:
+====================================================
+Lecture
+====================================================
 
-============================
-Lecture 8: OOP Basics
-============================
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 8 Contents
 
-.. contents:: Table of Contents
-   :depth: 3
-   :local:
+   l8_lecture
+   l8_shell
+   l8_exercises
+   l8_quiz
+   l8_references
+
 
 Core Principles of OOP
 ============================

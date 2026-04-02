@@ -1,12 +1,18 @@
-.. _l4_lecture:
+====================================================
+Lecture
+====================================================
 
-======================
-Lecture 4: STL Containers
-======================
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 4 Contents
 
-.. contents:: Table of Contents
-   :depth: 3
-   :local:
+   l4_lecture
+   l4_shell
+   l4_exercises
+   l4_quiz
+   l4_references
+
 
 Overhead
 --------

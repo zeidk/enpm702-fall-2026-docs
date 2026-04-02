@@ -25,6 +25,7 @@ By the end of this lecture, you will be able to:
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Lecture 4 Contents
 
    l4_lecture

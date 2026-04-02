@@ -2,6 +2,15 @@
 Lecture
 ====================================================
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 1 Contents
+
+   l1_lecture
+   l1_shell
+   l1_quiz
+   l1_references
 
 
 

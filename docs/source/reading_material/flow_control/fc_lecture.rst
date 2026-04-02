@@ -2,10 +2,15 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Flow Control Contents
 
-   \setcounter{figure}{0}
-
+   fc_lecture
+   fc_exercises
+   fc_quiz
+   fc_references
 
 
 Flow Control

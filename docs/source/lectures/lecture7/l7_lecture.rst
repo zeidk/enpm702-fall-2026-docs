@@ -1,12 +1,17 @@
-.. _l7_lecture:
+====================================================
+Lecture
+====================================================
 
-====================================
-Lecture 7: Smart Pointers and Move Semantics
-====================================
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 7 Contents
 
-.. contents:: Table of Contents
-   :depth: 3
-   :local:
+   l7_lecture
+   l7_shell
+   l7_exercises
+   l7_quiz
+   l7_references
 
 
 Move Semantics

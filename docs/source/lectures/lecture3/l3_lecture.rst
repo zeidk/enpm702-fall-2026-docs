@@ -1,12 +1,18 @@
-.. _l3-lecture:
+====================================================
+Lecture
+====================================================
 
-====================================
-L3: Pointers and Memory Management
-====================================
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 3 Contents
 
-.. contents:: Table of Contents
-   :local:
-   :depth: 3
+   l3_lecture
+   l3_shell
+   l3_exercises
+   l3_quiz
+   l3_references
+
 
 Valgrind
 ========

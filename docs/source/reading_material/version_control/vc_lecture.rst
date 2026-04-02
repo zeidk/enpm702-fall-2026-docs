@@ -2,10 +2,15 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Version Control Contents
 
-   \setcounter{figure}{0}
-
+   vc_lecture
+   vc_exercises
+   vc_quiz
+   vc_references
 
 
 Learning Objectives

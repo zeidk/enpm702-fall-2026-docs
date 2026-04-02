@@ -39,49 +39,49 @@ Course Schedule
    * - Week
      - Topic
      - Deliverable
-   * - 1 (09/01)
+   * - Week 1
      - Course Introduction, Linux Shell, VSCode, CMake
      -
-   * - 2 (09/08)
+   * - Week 2
      - Introduction to C++ (Variables, Types, Constants, Namespaces)
      -
-   * - 3 (09/15)
+   * - Week 3
      - Pointers and Memory Management (Stack, Heap, References)
      - RWA1 Posted
-   * - 4 (09/22)
+   * - Week 4
      - STL Containers (Strings, Arrays, Vectors, Iterators)
      - Quiz 1
-   * - 5 (09/29)
+   * - Week 5
      - Functions -- Basics (Declarations, Parameters, Overloading, Recursion)
      - RWA1 Due, RWA2 Posted
-   * - 6 (10/06)
+   * - Week 6
      - Functions -- Advanced (Templates, Lambdas, Functors, ``std::function``)
      - Quiz 2
-   * - 7 (10/13)
+   * - Week 7
      - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
      - RWA2 Due
-   * - 8 (10/20)
+   * - Week 8
      - OOP Basics (Classes, Objects, Encapsulation, Constructors)
      - Quiz 3
-   * - 9 (10/27)
+   * - Week 9
      - OOP Advanced (Inheritance, Polymorphism, Abstraction)
      - RWA3 Posted
-   * - 10 (11/03)
+   * - Week 10
      - ROS 2 -- Foundations (Publisher, Subscriber, Custom Interfaces)
      - Quiz 4
-   * - 11 (11/10)
+   * - Week 11
      - ROS 2 -- Configuration and Orchestration (Parameters, Launch Files, Executors)
      - RWA3 Due, GP1 Posted
-   * - 12 (11/17)
+   * - Week 12
      - **THANKSGIVING BREAK**
      -
-   * - 13 (12/01)
+   * - Week 13
      - ROS 2 -- Communication Patterns (Services, Actions)
      - GP1 Due, GP2 Posted, Quiz 5
-   * - 14 (12/08)
+   * - Week 14
      - ROS 2 -- Advanced Topics (Frames, Lifecycle Nodes)
      - GP2 Due, GP3 Posted
-   * - 15 (12/15)
+   * - Week 15
      - No class
      - GP3 Due
 

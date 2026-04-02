@@ -1,12 +1,17 @@
-.. _l6_lecture:
-
 ====================================================
 Lecture
 ====================================================
 
-.. contents:: Table of Contents
-   :depth: 3
-   :local:
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 6 Contents
+
+   l6_lecture
+   l6_shell
+   l6_exercises
+   l6_quiz
+   l6_references
 
 
 ``struct``

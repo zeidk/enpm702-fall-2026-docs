@@ -2,9 +2,15 @@
 Lecture
 ====================================================
 
-.. raw:: latex
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+   :caption: Lecture 13 Contents
 
-   \setcounter{figure}{0}
+   l13_lecture
+   l13_exercises
+   l13_quiz
+   l13_references
 
 
 ROS 2 Advanced Topics
