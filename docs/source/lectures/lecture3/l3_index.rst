@@ -23,6 +23,7 @@ By the end of this lecture, students will be able to:
 7. Use Valgrind to detect memory leaks and memory errors in C++ programs.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Lecture 3 Contents
 
