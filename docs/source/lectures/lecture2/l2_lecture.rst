@@ -1575,3 +1575,187 @@ more readable and maintainable.
    Type aliases make code more readable and easier to maintain. If the
    underlying type needs to change, only the alias definition needs to be
    updated.
+
+
+Scoped Enumerations
+====================================================
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **What is** ``enum class`` **?**
+
+    An ``enum class`` (scoped enumeration), introduced in **C++11**, is a
+    **type-safe** enumeration. Unlike unscoped ``enum``, the enumerator values
+    are **scoped to the enum name** and do **not** implicitly convert to
+    integers. This prevents accidental misuse and name collisions.
+
+
+Syntax
+------
+
+.. code-block:: cpp
+
+   enum class Color {
+       red,
+       green,
+       blue
+   };
+
+   Color my_color{Color::red};
+
+Enumerator values are accessed using the **scope resolution operator**
+(``::``), e.g., ``Color::red``.
+
+
+Why ``enum class`` over ``enum``
+---------------------------------
+
+.. grid:: 1 2 2 3
+    :gutter: 3
+
+    .. grid-item-card:: Type Safety
+        :class-card: sd-border-secondary
+
+        Values do **not** implicitly convert to ``int``. You must use an
+        explicit ``static_cast`` if an integer value is needed.
+
+    .. grid-item-card:: Scoped Names
+        :class-card: sd-border-secondary
+
+        Enumerator names are scoped to the enum type, so ``Color::red``
+        and ``TrafficLight::red`` can coexist without collision.
+
+    .. grid-item-card:: Explicit Underlying Type
+        :class-card: sd-border-secondary
+
+        You can specify the underlying integer type. The default is
+        ``int``, but any integral type can be used.
+
+.. warning::
+
+   **Avoid unscoped** ``enum`` **in modern C++.**
+
+   Unscoped enumerations leak their enumerator names into the enclosing
+   scope and implicitly convert to ``int``, which can cause subtle bugs:
+
+   .. code-block:: cpp
+
+      // Problem 1: Name collisions
+      enum Color { red, green, blue };
+      enum TrafficLight { red, yellow, green };  // ERROR: 'red' and 'green' already declared
+
+      // Problem 2: Implicit conversion to int
+      enum Direction { up, down };
+      int value{up + 42};  // Compiles without warning -- likely a bug
+
+   Use ``enum class`` to avoid both issues.
+
+
+Underlying Type
+----------------
+
+The default underlying type of an ``enum class`` is ``int``. You can specify
+a different integral type after a colon:
+
+.. code-block:: cpp
+
+   enum class Status : uint8_t {
+       active,
+       inactive
+   };
+
+This is useful when memory is constrained (e.g., embedded systems) or when
+interfacing with hardware registers that expect a specific width.
+
+
+Use Cases in Robotics
+----------------------
+
+Scoped enumerations are ideal for representing a **fixed set of named
+constants**. Common robotics use cases include:
+
+.. grid:: 1 2 2 3
+    :gutter: 3
+
+    .. grid-item-card:: Robot States
+        :class-card: sd-border-secondary
+
+        ``idle``, ``moving``, ``charging``, ``error``
+
+    .. grid-item-card:: Sensor Types
+        :class-card: sd-border-secondary
+
+        ``lidar``, ``camera``, ``imu``
+
+    .. grid-item-card:: Command Types
+        :class-card: sd-border-secondary
+
+        ``forward``, ``backward``, ``left``, ``right``, ``stop``
+
+
+Code Example
+-------------
+
+.. dropdown:: Robot State Machine with ``enum class``
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+       #include <cstdint>
+
+       enum class RobotState : uint8_t {
+           idle,
+           moving,
+           charging,
+           error
+       };
+
+       int main() {
+           RobotState state{RobotState::idle};
+
+           // Switch statement with enum class
+           switch (state) {
+               case RobotState::idle:
+                   std::cout << "Robot is idle" << '\n';
+                   break;
+               case RobotState::moving:
+                   std::cout << "Robot is moving" << '\n';
+                   break;
+               case RobotState::charging:
+                   std::cout << "Robot is charging" << '\n';
+                   break;
+               case RobotState::error:
+                   std::cout << "Robot error!" << '\n';
+                   break;
+           }
+
+           return 0;
+       }
+
+.. dropdown:: Explicit Conversion to Integer
+    :class-container: sd-border-secondary
+
+    If you need the underlying integer value, use ``static_cast``:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       enum class SensorType {
+           lidar,
+           camera,
+           imu
+       };
+
+       int main() {
+           SensorType sensor{SensorType::camera};
+
+           // static_cast is required -- no implicit conversion
+           int sensor_id{static_cast<int>(sensor)};
+           std::cout << "Sensor ID: " << sensor_id << '\n';  // Output: 1
+
+           return 0;
+       }

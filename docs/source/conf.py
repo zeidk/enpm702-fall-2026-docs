@@ -47,6 +47,7 @@ exclude_patterns = []
 # PyData Sphinx Theme
 # ---------------------------------------------------------------------------
 html_theme = "pydata_sphinx_theme"
+html_last_updated_fmt = "%b %d, %Y"
 
 html_theme_options = {
     # Logo (place files in _static/images/)
@@ -74,8 +75,10 @@ html_theme_options = {
     "show_toc_level": 2,
     "show_prev_next": True,
     # Footer
-    "footer_start": ["copyright"],
-    "footer_end": ["theme-version"],
+    # "footer_start": ["copyright"],
+    "footer_start": ["copyright", "last-updated"],
+    # "footer_end": ["theme-version"],
+    "footer_end": [],
     # Syntax highlighting for light and dark modes
     "pygments_light_style": "igor",
     "pygments_dark_style": "nord",

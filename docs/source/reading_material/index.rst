@@ -19,6 +19,9 @@ are expected to watch these outside of class.
    * - :doc:`version_control/vc_index`
      - Git fundamentals, branching, merging, GitHub, pull requests,
        fork workflow
+   * - :doc:`exception_handling/eh_index`
+     - Exception handling with ``try``, ``catch``, ``throw``, standard
+       and custom exception classes, ``noexcept``, RAII
 
 
 .. toctree::
@@ -28,3 +31,4 @@ are expected to watch these outside of class.
 
    flow_control/fc_index
    version_control/vc_index
+   exception_handling/eh_index

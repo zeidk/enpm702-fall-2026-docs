@@ -933,3 +933,297 @@ Vector Memory Management
    vec.shrink_to_fit();
    std::cout << "Size: " << vec.size() << '\n';          // 10
    std::cout << "Capacity: " << vec.capacity() << '\n';  // likely 10
+
+
+Maps
+----
+
+Maps are associative containers that store key-value pairs, providing efficient lookup by key. C++ offers two main map types: ``std::map`` (ordered) and ``std::unordered_map`` (hash-based).
+
+std::map
+^^^^^^^^
+
+``std::map`` is an ordered associative container defined in the ``<map>`` header. It stores key-value pairs where keys are unique and automatically sorted. Internally, it uses a balanced binary search tree (typically a red-black tree), giving O(log n) time for insertion, deletion, and lookup.
+
+.. code-block:: cpp
+
+   #include <map>
+
+**Declaration and Initialization**
+
+.. code-block:: cpp
+
+   // Declaration
+   std::map<std::string, int> ages;
+
+   // Initialization with values
+   std::map<std::string, int> ages{{"Alice", 25}, {"Bob", 30}};
+
+**Insertion**
+
+There are several ways to insert elements into a map:
+
+.. code-block:: cpp
+
+   // Subscript operator -- creates entry if key does not exist
+   ages["Charlie"] = 35;
+
+   // insert() -- returns a pair<iterator, bool>
+   ages.insert({"Dave", 40});
+
+   // emplace() -- constructs in place
+   ages.emplace("Eve", 28);
+
+**Access**
+
+.. code-block:: cpp
+
+   // Subscript operator -- WARNING: creates a default entry if key is missing!
+   int alice_age{ages["Alice"]};  // 25
+
+   // .at() -- throws std::out_of_range if key is missing
+   int bob_age{ages.at("Bob")};  // 30
+
+.. warning::
+
+   Using ``[]`` on a map with a key that does not exist will **insert** a new element with a default-constructed value. Use ``.at()`` when you want an exception on missing keys, or check existence first.
+
+**Checking Existence**
+
+.. code-block:: cpp
+
+   // count() -- returns 0 or 1 for std::map
+   if (ages.count("Alice")) {
+       std::cout << "Alice found\n";
+   }
+
+   // find() -- returns an iterator
+   if (ages.find("Alice") != ages.end()) {
+       std::cout << "Alice found\n";
+   }
+
+   // C++20: contains()
+   if (ages.contains("Alice")) {
+       std::cout << "Alice found\n";
+   }
+
+**Iteration**
+
+Iterating over a ``std::map`` always visits keys in sorted order:
+
+.. code-block:: cpp
+
+   for (const auto& [name, age] : ages) {
+       std::cout << name << ": " << age << '\n';
+   }
+
+**Erase and Size**
+
+.. code-block:: cpp
+
+   ages.erase("Bob");                  // Remove by key
+   std::cout << ages.size() << '\n';   // Number of elements
+   std::cout << ages.empty() << '\n';  // Check if empty
+
+std::unordered_map
+^^^^^^^^^^^^^^^^^^
+
+``std::unordered_map`` is a hash-based associative container defined in the ``<unordered_map>`` header. It provides O(1) average-case lookup, insertion, and deletion, compared to O(log n) for ``std::map``. Elements are **not** stored in any particular order.
+
+.. code-block:: cpp
+
+   #include <unordered_map>
+
+``std::unordered_map`` has the same interface as ``std::map`` -- you can use ``[]``, ``.at()``, ``.insert()``, ``.emplace()``, ``.erase()``, ``.find()``, ``.count()``, and ``.contains()`` in exactly the same way.
+
+**When to Use Which**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+
+   * - Criteria
+     - ``std::map``
+     - ``std::unordered_map``
+   * - Order
+     - Sorted by key
+     - No guaranteed order
+   * - Lookup time
+     - O(log n)
+     - O(1) average
+   * - Use when
+     - You need sorted iteration
+     - You need maximum speed
+
+Use Cases in Robotics
+^^^^^^^^^^^^^^^^^^^^^
+
+Maps are widely used in robotics applications:
+
+- **Sensor registry**: Map sensor names to their latest readings (``std::map<std::string, double>``).
+- **Robot parameters**: Store configuration parameters by name (``std::map<std::string, double>``).
+- **Part inventory**: Track component counts by ID (``std::map<std::string, int>``).
+
+Example: Sensor Registry
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. dropdown:: Full Example
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      #include <map>
+      #include <string>
+      #include <iostream>
+
+      int main() {
+          std::map<std::string, double> sensor_readings{
+              {"temperature", 23.5},
+              {"humidity", 45.2},
+              {"pressure", 1013.25}
+          };
+
+          // Add a reading
+          sensor_readings["light"] = 750.0;
+
+          // Access
+          std::cout << "Temperature: " << sensor_readings.at("temperature") << '\n';
+
+          // Check existence
+          if (sensor_readings.count("humidity")) {
+              std::cout << "Humidity: " << sensor_readings["humidity"] << '\n';
+          }
+
+          // Iterate (sorted by key)
+          for (const auto& [sensor, value] : sensor_readings) {
+              std::cout << sensor << " = " << value << '\n';
+          }
+
+          // Erase
+          sensor_readings.erase("light");
+
+          return 0;
+      }
+
+
+STL Algorithms
+--------------
+
+The ``<algorithm>`` header provides a rich set of generic algorithms that operate on iterators. These algorithms work with any container that supports iterators, promoting code reuse and clarity.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Prefer algorithms over raw loops -- they are more readable, less error-prone, and often optimized by the compiler.
+
+Overview
+^^^^^^^^
+
+Instead of writing manual loops to search, sort, or transform data, use the standard algorithms. They express intent clearly and reduce the chance of off-by-one errors or other common loop bugs.
+
+.. code-block:: cpp
+
+   #include <algorithm>
+   #include <numeric>    // for std::accumulate
+
+Common Algorithms
+^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Algorithm
+     - Description
+   * - ``std::sort``
+     - Sort elements in ascending order (or with a custom comparator).
+   * - ``std::find``
+     - Find the first element equal to a value. Returns an iterator.
+   * - ``std::count``
+     - Count occurrences of a value.
+   * - ``std::accumulate``
+     - Compute a cumulative result (e.g., sum). From ``<numeric>``.
+   * - ``std::transform``
+     - Apply a function to each element and store the result.
+   * - ``std::for_each``
+     - Apply a function to each element (no output range).
+   * - ``std::min_element``
+     - Find the smallest element. Returns an iterator.
+   * - ``std::max_element``
+     - Find the largest element. Returns an iterator.
+   * - ``std::reverse``
+     - Reverse the order of elements in a range.
+
+**Basic Usage**
+
+.. code-block:: cpp
+
+   std::vector<int> vec{5, 3, 1, 4, 2};
+
+   // Sort
+   std::sort(vec.begin(), vec.end());
+
+   // Find
+   auto it = std::find(vec.begin(), vec.end(), 42);
+
+   // Count
+   int n = std::count(vec.begin(), vec.end(), 42);
+
+   // Sum (from <numeric>)
+   int sum = std::accumulate(vec.begin(), vec.end(), 0);
+
+   // Reverse
+   std::reverse(vec.begin(), vec.end());
+
+Combining Algorithms with Lambdas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Algorithms become especially powerful when combined with lambdas for custom operations and predicates.
+
+.. dropdown:: Full Example
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      #include <algorithm>
+      #include <numeric>
+      #include <vector>
+      #include <iostream>
+
+      int main() {
+          std::vector<int> readings{45, 12, 78, 34, 56, 23, 89, 67};
+
+          // Sort
+          std::sort(readings.begin(), readings.end());
+
+          // Find
+          auto it = std::find(readings.begin(), readings.end(), 34);
+          if (it != readings.end()) {
+              std::cout << "Found 34 at index "
+                        << std::distance(readings.begin(), it) << '\n';
+          }
+
+          // Sum
+          int total = std::accumulate(readings.begin(), readings.end(), 0);
+          std::cout << "Total: " << total << '\n';
+
+          // Count values above 50
+          int above_50 = std::count_if(readings.begin(), readings.end(),
+              [](int val) { return val > 50; });
+          std::cout << "Above 50: " << above_50 << '\n';
+
+          // Transform: double each value
+          std::transform(readings.begin(), readings.end(), readings.begin(),
+              [](int val) { return val * 2; });
+
+          // Min and max
+          auto [min_it, max_it] = std::minmax_element(
+              readings.begin(), readings.end());
+          std::cout << "Min: " << *min_it << ", Max: " << *max_it << '\n';
+
+          return 0;
+      }

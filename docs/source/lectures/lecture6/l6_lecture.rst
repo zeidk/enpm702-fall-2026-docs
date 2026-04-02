@@ -1771,3 +1771,157 @@ It is a template that takes the function *signature* as its parameter.
    if (empty_func) {
        empty_func(); // Safe
    }
+
+
+``std::variant`` (C++17)
+====================================================
+
+``std::variant`` is a **type-safe union** introduced in C++17. It can hold a value of one of several alternative types at any given time, but unlike a C-style ``union``, it always knows which type it currently holds and enforces safe access.
+
+.. code-block:: cpp
+
+   #include <variant>
+
+Why std::variant?
+-------------------
+
+C-style unions are **unsafe**: they do not track which member is active, and reading the wrong member is undefined behavior. ``std::variant`` eliminates this problem by tracking the active type at runtime and providing checked access.
+
+.. admonition:: Convention
+   :class: tip
+
+   Use ``std::variant`` instead of C-style unions whenever you need a variable that can hold one of several types.
+
+
+Declaration and Assignment
+----------------------------
+
+A ``std::variant`` is declared with its possible types as template arguments. You can assign any of those types to it at any time.
+
+.. code-block:: cpp
+
+   #include <variant>
+   #include <string>
+
+   std::variant<int, double, std::string> data;
+   data = 42;          // holds int
+   data = 3.14;        // now holds double
+   data = "hello";     // now holds std::string
+
+
+Accessing Values
+------------------
+
+There are several ways to retrieve the stored value:
+
+.. code-block:: cpp
+
+   std::variant<int, double, std::string> data{42};
+
+   // std::get<type> -- throws std::bad_variant_access if wrong type
+   int val = std::get<int>(data);
+
+   // std::get<index> -- access by index (0-based)
+   int val2 = std::get<0>(data);  // same as std::get<int>
+
+   // std::holds_alternative<type> -- check which type is active
+   if (std::holds_alternative<int>(data)) {
+       std::cout << "Holds an int: " << std::get<int>(data) << '\n';
+   }
+
+
+``std::visit`` for Pattern Matching
+--------------------------------------
+
+``std::visit`` applies a callable (typically a lambda) to the value currently held by the variant. This is the idiomatic way to handle all possible types.
+
+.. code-block:: cpp
+
+   std::variant<int, double, std::string> sensor_value{42};
+
+   std::visit([](auto&& val) {
+       std::cout << "Value: " << val << '\n';
+   }, sensor_value);
+
+The ``auto&&`` parameter lets the lambda accept any of the variant's types. The compiler generates a separate instantiation for each possible type.
+
+Use Cases in Robotics
+-----------------------
+
+``std::variant`` is useful in robotics for:
+
+- **Heterogeneous sensor data**: A single variable that can hold an ``int`` error code, a ``double`` measurement, or a ``std::string`` status message.
+- **Command variants**: Different command types (move, rotate, stop) stored in a single variant.
+- **Configuration values**: Parameters that can be ``int``, ``double``, or ``std::string``.
+
+Example: Sensor Data Processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. dropdown:: Full Example
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      #include <variant>
+      #include <string>
+      #include <iostream>
+
+      using SensorData = std::variant<int, double, std::string>;
+
+      void process_reading(const SensorData& data) {
+          std::visit([](const auto& val) {
+              std::cout << "Reading: " << val << '\n';
+          }, data);
+      }
+
+      int main() {
+          SensorData temperature{23.5};
+          SensorData error_code{404};
+          SensorData status{std::string{"active"}};
+
+          process_reading(temperature);
+          process_reading(error_code);
+          process_reading(status);
+
+          // Check type
+          if (std::holds_alternative<double>(temperature)) {
+              std::cout << "Temperature is a double: "
+                        << std::get<double>(temperature) << '\n';
+          }
+
+          return 0;
+      }
+
+
+``if constexpr`` (C++17)
+====================================================
+
+``if constexpr`` is a compile-time conditional introduced in C++17. Unlike a regular ``if`` statement, the condition is evaluated **at compile time**, and the branch that is not taken is **discarded entirely** -- it does not even need to compile for the given type.
+
+.. code-block:: cpp
+
+   #include <type_traits>
+
+This feature is especially powerful in templates, where different branches may only be valid for certain types.
+
+.. code-block:: cpp
+
+   template<typename T>
+   void process(T value) {
+       if constexpr (std::is_integral_v<T>) {
+           std::cout << "Integer: " << value << '\n';
+       } else if constexpr (std::is_floating_point_v<T>) {
+           std::cout << "Float: " << value << '\n';
+       } else {
+           std::cout << "Other: " << value << '\n';
+       }
+   }
+
+When ``process<int>`` is instantiated, only the first branch is compiled. The ``else`` branches are completely discarded. This differs from a regular ``if``, where all branches must be valid C++ for the instantiated type.
+
+.. admonition:: Key Point
+   :class: note
+
+   ``if constexpr`` requires ``<type_traits>`` for type-checking utilities like ``std::is_integral_v``, ``std::is_floating_point_v``, ``std::is_same_v``, etc. The discarded branches do not need to be valid for the given template parameter -- they are removed before semantic analysis.
