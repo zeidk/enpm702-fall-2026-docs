@@ -2,17 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 5 Contents
-
-   l5_lecture
-   l5_shell
-   l5_exercises
-   l5_quiz
-   l5_references
-
 
 Part I -- The Core Mechanics
 -----------------------------

@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 10 Contents
-
-   l10_lecture
-   l10_exercises
-   l10_quiz
-   l10_references
-
 
 ROS 2 Foundations
 ====================================================

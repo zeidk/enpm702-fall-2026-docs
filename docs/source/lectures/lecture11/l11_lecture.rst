@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 11 Contents
-
-   l11_lecture
-   l11_exercises
-   l11_quiz
-   l11_references
-
 
 ROS 2 Configuration and Orchestration
 ====================================================

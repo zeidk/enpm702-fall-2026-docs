@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Exception Handling Contents
-
-   eh_lecture
-   eh_exercises
-   eh_quiz
-   eh_references
-
 
 What Are Exceptions?
 ====================================================

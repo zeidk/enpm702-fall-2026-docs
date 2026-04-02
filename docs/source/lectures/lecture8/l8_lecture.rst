@@ -2,17 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 8 Contents
-
-   l8_lecture
-   l8_shell
-   l8_exercises
-   l8_quiz
-   l8_references
-
 
 Core Principles of OOP
 ============================

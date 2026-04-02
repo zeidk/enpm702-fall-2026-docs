@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 4 Contents
-
-   l4_lecture
-   l4_shell
-   l4_exercises
-   l4_quiz
-   l4_references
 
 
 Overhead

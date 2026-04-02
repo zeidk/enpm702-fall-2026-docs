@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Flow Control Contents
-
-   fc_lecture
-   fc_exercises
-   fc_quiz
-   fc_references
-
 
 Flow Control
 ====================================================

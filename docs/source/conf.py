@@ -78,7 +78,8 @@ html_theme_options = {
     # "footer_start": ["copyright"],
     "footer_start": ["copyright", "last-updated"],
     # "footer_end": ["theme-version"],
-    "footer_end": [],
+    "footer_end": ["custom-footer"],
+    # "footer_end": [],
     # Syntax highlighting for light and dark modes
     "pygments_light_style": "igor",
     "pygments_dark_style": "nord",

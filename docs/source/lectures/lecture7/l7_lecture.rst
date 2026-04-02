@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 7 Contents
-
-   l7_lecture
-   l7_shell
-   l7_exercises
-   l7_quiz
-   l7_references
 
 
 Move Semantics

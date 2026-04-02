@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Version Control Contents
-
-   vc_lecture
-   vc_exercises
-   vc_quiz
-   vc_references
-
 
 Learning Objectives
 ====================================================

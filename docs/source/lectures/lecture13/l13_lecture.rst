@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 13 Contents
-
-   l13_lecture
-   l13_exercises
-   l13_quiz
-   l13_references
-
 
 ROS 2 Advanced Topics
 ====================================================

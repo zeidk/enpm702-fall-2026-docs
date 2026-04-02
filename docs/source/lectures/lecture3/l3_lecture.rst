@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 3 Contents
-
-   l3_lecture
-   l3_shell
-   l3_exercises
-   l3_quiz
-   l3_references
 
 
 Valgrind

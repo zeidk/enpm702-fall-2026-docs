@@ -2,16 +2,6 @@
 Lecture
 ====================================================
 
-.. toctree::
-   :maxdepth: 2
-   :hidden:
-   :caption: Lecture 12 Contents
-
-   l12_lecture
-   l12_exercises
-   l12_quiz
-   l12_references
-
 
 Communication Patterns Overview
 ====================================================
