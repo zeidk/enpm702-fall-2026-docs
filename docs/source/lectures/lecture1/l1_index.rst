@@ -5,7 +5,12 @@ L1: Course Introduction
 Overview
 --------
 
-This lecture introduces the ENPM605 course, covering its structure, grading policies, and major deliverables. You will set up your development environment (Visual Studio Code, Docker, and Python), learn how Python code is executed from source to output, and get a first look at Python variables and data types.
+This lecture introduces the ENPM702 course, covering its structure,
+grading policies, and assignment progression. You will set up your
+development environment — Ubuntu, Visual Studio Code, CMake, and Git —
+and learn to customize the Linux shell with aliases and functions. The
+session ends with a hands-on walkthrough of building and running your
+first C++ program using CMake in VSCode.
 
 
 Learning Objectives
@@ -13,33 +18,35 @@ Learning Objectives
 
 By the end of this lecture, you will be able to:
 
-- Describe the course structure, grading policies, and major deliverables.
-- Set up Visual Studio Code with the Python and Dev Containers extensions.
-- Configure Docker for containerized development environments.
-- Explain the Python execution pipeline.
-- Run Python scripts using multiple methods in VS Code.
-- Verify your development environment is correctly configured.
+- Understand the course structure, objectives, and grading policies.
+- Identify the software tools used in this course (Ubuntu, VSCode, ROS 2, Git, Valgrind, Doxygen).
+- Explain what a Linux shell is and name common shell types.
+- Customize your shell environment using configuration files, aliases, and functions.
+- Install and configure Visual Studio Code for C++ development.
+- Set up a workspace with the correct folder structure.
+- Use the VSCode command palette and essential keyboard shortcuts.
+- Create a ``CMakeLists.txt`` file and build a C++ project using CMake.
 
-
-Contents
---------
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 
    l1_lecture
+   l1_shell
    l1_quiz
    l1_references
 
 Next Steps
 ----------
 
-- In the next lecture, we will begin Python Fundamentals — Part I:
+- In the next lecture, we will cover **Introduction to C++**:
 
-  - Primitive data types and operators.
-  - Conditional statements and loops.
-  - Introduction to type hints.
+  - Variables, types, and constants.
+  - Namespaces and scopes.
+  - Type conversions and deduction.
 
 - Complete your environment setup if not finished in class.
-- Read `Python Official Tutorial <https://docs.python.org/3/tutorial/>`_ — Sections 3, 4, and 5.
+- Watch the **Version Control** pre-recorded video on Canvas.
+- Watch the **Flow Control and Operations** pre-recorded video on Canvas.

@@ -1,11 +1,15 @@
 ====================================================
-L2: Python Fundamentals — Part I
+L2: Introduction to C++
 ====================================================
 
 Overview
 --------
 
-This lecture covers the building blocks of Python programming: organizing code into packages and modules, working with operators and Boolean logic, manipulating strings with indexing and slicing, and writing conditional logic with ``if``/``elif``/``else``. Along the way, you will learn Python's indentation rules, numeric type details, and string formatting with f-strings.
+This lecture introduces the fundamentals of C++ programming. You will
+learn how C++ programs are written, built, and executed, and explore
+the core building blocks of the language: variables, types, constants,
+type conversions, scopes, and namespaces. The lecture emphasizes modern
+C++ practices including uniform initialization and ``constexpr``.
 
 
 Learning Objectives
@@ -13,21 +17,24 @@ Learning Objectives
 
 By the end of this lecture, you will be able to:
 
-- Distinguish between packages and modules and use different import strategies.
-- Apply arithmetic, relational, logical, membership, and identity operators.
-- Use the Boolean type and truth-testing rules for control flow.
-- Manipulate strings using indexing, slicing, methods, and f-strings.
-- Write conditional logic with ``if``/``elif``/``else`` statements.
+- Understand C++ as a statically typed, compiled language and describe the build process (preprocessor, compiler, linker).
+- Declare, initialize, and use variables with proper naming conventions (snake_case).
+- Explain memory allocation for variables and use the ``sizeof`` operator.
+- Use integral types, floating-point types, and boolean types with appropriate modifiers.
+- Handle implicit type conversions, numeric promotions, and arithmetic conversions.
+- Implement constants using ``const`` and ``constexpr`` for compile-time optimization.
+- Manage local and global scope and avoid naming collisions with namespaces.
+- Perform basic input/output with ``std::cin`` and ``std::cout``.
+- Use type deduction with the ``auto`` keyword.
 
-
-Contents
---------
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 
    l2_lecture
+   l2_shell
    l2_exercises
    l2_quiz
    l2_references
@@ -35,13 +42,12 @@ Contents
 Next Steps
 ----------
 
-- In the next lecture, we will continue with Python Fundamentals — Part II:
+- In the next lecture, we will cover **Pointers and Memory Management**:
 
-  - Lists and list methods.
-  - Tuples and unpacking.
-  - Dictionaries and sets.
-  - Loops (``for``, ``while``).
-  - List comprehensions.
+  - Stack vs. heap memory.
+  - Pointers and references.
+  - Dynamic memory allocation with ``new`` and ``delete``.
+  - Memory debugging with Valgrind.
 
-- Review and experiment with all code snippets and exercises from today's lecture.
-- Start reading `Python Official Tutorial <https://docs.python.org/3/tutorial/>`_ — Sections 3, 4, and 5.
+- Watch the **Flow Control and Operations** pre-recorded video on Canvas if you have not already.
+- Practice the shell and C++ exercises.

@@ -1,434 +1,404 @@
 ====================================================
-Exercises
+C++ Exercises
 ====================================================
 
-This page contains four take-home exercises that reinforce the concepts
-from Lecture 7. Each exercise asks you to **write code from scratch**
-based on a specification -- no starter code is provided.
+These exercises reinforce the concepts covered in Lecture 7: Smart
+Pointers and Move Semantics. Work through them in order, as each
+exercise builds on the skills from the previous one.
 
-All files should be created inside your ``lecture7/`` workspace folder.
+.. note::
+
+   Compile all programs with warnings enabled:
+
+   .. code-block:: bash
+
+      g++ -std=c++17 -Wall -Wextra -o program program.cpp
 
 
-.. dropdown:: Exercise 1 -- Robot Hierarchy
+----
+
+
+.. dropdown:: Exercise 1 -- Unique Pointer Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Practice single and hierarchical inheritance, ``super()``, method
-    overriding, and runtime type inspection with ``isinstance()`` and
-    ``issubclass()``.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate basic ``std::unique_ptr`` usage.
 
     **Specification**
 
-    Create a file ``lecture7/robot_hierarchy.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
+    1. Create a ``std::unique_ptr<int>`` using ``std::make_unique``
+       with value ``42``.
+    2. Print the value by dereferencing the pointer.
+    3. Print the raw address using ``get()``.
+    4. Modify the managed value and print the new value.
+    5. Call ``reset()`` without arguments and verify the pointer is
+       ``nullptr``.
+    6. Call ``reset(new int(100))`` to manage a new resource and print
+       the new value.
 
-    1. **``Robot`` base class** (provided skeleton -- implement it fully):
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-       - ``__init__(self, name: str, battery: int = 100)``
-       - Instance attributes: ``_name`` (``str``), ``_battery`` (``int``)
-       - ``perform_task(self, task_name: str) -> None`` that prints
-         ``"<n> performing: <task_name>"`` and decreases ``_battery``
-         by 10. If ``_battery < 10``, print ``"<n> needs recharging!"``
-         and do not perform the task.
-       - ``recharge(self) -> None`` that sets ``_battery`` to 100 and
-         prints ``"<n> fully recharged!"``.
-       - ``__repr__(self) -> str`` that returns
-         ``"Robot(name='<n>', battery=<battery>)"``.
+        .. code-block:: cpp
 
-    2. **``MobileRobot(Robot)``**:
+           #include <cassert>
+           #include <iostream>
+           #include <memory>
 
-       - ``__init__(self, name: str, max_speed: float, terrain_type: str, battery: int = 100)``
-         that calls ``super().__init__()`` then sets ``_max_speed``
-         (``float``, m/s) and ``_terrain_type`` (``str``).
-       - ``move(self, direction: str) -> None`` that prints
-         ``"<n> moving <direction> at up to <max_speed> m/s"``.
-       - ``__repr__(self) -> str`` that returns
-         ``"MobileRobot(name='<n>', battery=<battery>, max_speed=<max_speed>)"``.
+           int main() {
+               auto u = std::make_unique<int>(42);
 
-    3. **``ManipulatorRobot(Robot)``**:
+               std::cout << "Value: " << *u << '\n';
+               std::cout << "Address: " << u.get() << '\n';
 
-       - ``__init__(self, name: str, arm_reach: float, payload_capacity: float, battery: int = 100)``
-         that calls ``super().__init__()`` then sets ``_arm_reach``
-         (``float``, m) and ``_payload_capacity`` (``float``, kg).
-       - ``move(self, direction: str) -> None`` that prints
-         ``"<n> repositioning <direction>"``.
-       - ``pick_up(self, obj: str) -> None`` that prints
-         ``"<n> picking up: <obj>"``.
-       - ``deliver(self, obj: str, zone: str) -> None`` that prints
-         ``"<n> delivering <obj> to zone <zone>"``.
-       - ``__repr__(self) -> str`` that returns
-         ``"ManipulatorRobot(name='<n>', battery=<battery>, arm_reach=<arm_reach>)"``.
+               *u = 99;
+               std::cout << "Modified value: " << *u << '\n';
 
-    4. In the ``if __name__ == "__main__"`` block:
+               u.reset();
+               assert(u == nullptr);
+               std::cout << "After reset: u is nullptr\n";
 
-    .. code-block:: python
+               u.reset(new int(100));
+               std::cout << "New value: " << *u << '\n';
 
-       if __name__ == "__main__":
-           scout = MobileRobot("Scout", max_speed=1.5, terrain_type="indoor")
-           arm   = ManipulatorRobot("Arm-1", arm_reach=0.8, payload_capacity=2.0)
-
-           scout.move("north")
-           scout.perform_task("navigate to zone B")
-
-           arm.move("left")
-           arm.pick_up("widget-42")
-           arm.deliver("widget-42", "dropoff")
-
-           print(scout)
-           print(arm)
-
-           # isinstance checks
-           print(isinstance(scout, MobileRobot))      # True
-           print(isinstance(scout, Robot))             # True
-           print(isinstance(scout, ManipulatorRobot))  # False
-
-           # issubclass checks
-           print(issubclass(MobileRobot, Robot))       # True
-           print(issubclass(ManipulatorRobot, Robot))  # True
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       Scout moving north at up to 1.5 m/s
-       Scout performing: navigate to zone B
-       Arm-1 repositioning left
-       Arm-1 picking up: widget-42
-       Arm-1 delivering widget-42 to zone dropoff
-       MobileRobot(name='Scout', battery=90, max_speed=1.5)
-       ManipulatorRobot(name='Arm-1', battery=100, arm_reach=0.8)
-       True
-       True
-       False
-       True
-       True
+               return 0;
+           }
 
 
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture7/robot_hierarchy.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-    - Every class and method must include type hints and a Google-style
-      docstring.
-
-
-.. dropdown:: Exercise 2 -- Abstract Robot Interface
+.. dropdown:: Exercise 2 -- Ownership Transfer with std::move
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Practice defining abstract base classes with the ``abc`` module,
-    enforcing interface contracts with ``@abstractmethod``, mixing
-    abstract and concrete methods, and verifying that Python raises
-    ``TypeError`` when an abstract class is instantiated directly.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate ownership transfer between ``std::unique_ptr`` instances
+    and into sink functions.
 
     **Specification**
 
-    Create a file ``lecture7/robot_abstract.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
+    1. Create a ``std::unique_ptr<std::string>`` managing ``"Hello, ENPM702!"``.
+    2. Print the value and address.
+    3. Transfer ownership to a second ``std::unique_ptr`` using ``std::move``.
+    4. Verify the original pointer is ``nullptr`` and the new one holds
+       the resource.
+    5. Create a sink function ``void consume(std::unique_ptr<std::string> ptr)``
+       that prints the string. Call it with ``std::move``.
+    6. Verify the source pointer is ``nullptr`` after the call.
 
-    1. **``Robot`` abstract base class** (inherits from ``ABC``):
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-       - ``__init__(self, name: str, battery: int = 100)`` that sets
-         ``_name`` and ``_battery``.
-       - ``@abstractmethod move(self, direction: str) -> None``
-       - Concrete ``perform_task(self, task_name: str) -> None`` that
-         prints ``"<n> performing: <task_name>"`` and decreases
-         ``_battery`` by 10. If ``_battery < 10``, print
-         ``"<n> needs recharging!"`` and do not perform the task.
-       - Concrete ``recharge(self) -> None`` that sets ``_battery`` to
-         100 and prints ``"<n> fully recharged!"``.
+        .. code-block:: cpp
 
-    2. **``MobileRobot(Robot)``**:
+           #include <cassert>
+           #include <iostream>
+           #include <memory>
+           #include <string>
 
-       - ``__init__(self, name: str, max_speed: float, terrain_type: str, battery: int = 100)``
-         that calls ``super().__init__()`` then sets ``_max_speed``
-         and ``_terrain_type``.
-       - ``move(self, direction: str) -> None`` that prints
-         ``"<n> moving <direction> at up to <max_speed> m/s"``.
+           void consume(std::unique_ptr<std::string> ptr) {
+               std::cout << "Consumed: " << *ptr << '\n';
+           }
 
-    3. **``ManipulatorRobot(Robot)``**:
+           int main() {
+               auto u1 = std::make_unique<std::string>("Hello, ENPM702!");
 
-       - ``__init__(self, name: str, arm_reach: float, payload_capacity: float, battery: int = 100)``
-         that calls ``super().__init__()`` then sets ``_arm_reach``
-         and ``_payload_capacity``.
-       - ``move(self, direction: str) -> None`` that prints
-         ``"<n> repositioning <direction>"``.
+               std::cout << "u1 value: " << *u1 << '\n';
+               std::cout << "u1 address: " << u1.get() << '\n';
 
-    4. In the ``if __name__ == "__main__"`` block:
+               auto u2{std::move(u1)};
+               assert(u1 == nullptr);
+               std::cout << "u2 value: " << *u2 << '\n';
 
-    .. code-block:: python
+               consume(std::move(u2));
+               assert(u2 == nullptr);
+               std::cout << "u2 is nullptr after consume\n";
 
-       if __name__ == "__main__":
-           # Confirm Robot cannot be instantiated directly
-           try:
-               r = Robot("Base")
-           except TypeError as e:
-               print(f"TypeError: {e}")
-
-           scout = MobileRobot("Scout", max_speed=1.5, terrain_type="indoor")
-           arm   = ManipulatorRobot("Arm-1", arm_reach=0.8, payload_capacity=2.0)
-
-           scout.move("north")
-           scout.perform_task("navigate to zone B")
-
-           arm.move("left")
-           arm.perform_task("pick widget")
-
-           arm.recharge()          # inherited concrete method
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       TypeError: Can't instantiate abstract class Robot without an implementation for abstract method 'move'
-       Scout moving north at up to 1.5 m/s
-       Scout performing: navigate to zone B
-       Arm-1 repositioning left
-       Arm-1 performing: pick widget
-       Arm-1 fully recharged!
+               return 0;
+           }
 
 
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture7/robot_abstract.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-    - Every class and method must include type hints and a Google-style
-      docstring.
-
-
-.. dropdown:: Exercise 3 -- ``__slots__`` and Memory Comparison
+.. dropdown:: Exercise 3 -- Shared Pointer and Reference Counting
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Practice using ``__slots__`` to restrict instance attributes, measure
-    the memory savings over regular instances, and extend a slotted class
-    through inheritance.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate ``std::shared_ptr`` and its reference counting mechanism.
 
     **Specification**
 
-    Create a file ``lecture7/robot_slots.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
+    1. Create a ``std::shared_ptr<int>`` using ``std::make_shared``
+       with value ``10``. Print ``use_count()``.
+    2. Create two more shared pointers by copying. Print ``use_count()``
+       after each copy.
+    3. Reset the first pointer and print ``use_count()`` on the others.
+    4. Let one pointer go out of scope (nested block) and print the
+       final ``use_count()``.
+    5. Confirm the resource is still alive.
 
-    1. **``Pose`` class** (without ``__slots__``):
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-       - ``__init__(self, x: float, y: float, heading: float)`` that sets
-         ``_x``, ``_y``, and ``_heading``.
-       - Read-only ``@property`` for each attribute: ``x``, ``y``,
-         ``heading``.
-       - ``__repr__(self) -> str`` that returns
-         ``"Pose(x=<x>, y=<y>, heading=<heading>)"``.
+        .. code-block:: cpp
 
-    2. **``PoseSlotted`` class** (identical behavior to ``Pose`` but
-       declares ``__slots__ = ("_x", "_y", "_heading")``):
+           #include <iostream>
+           #include <memory>
 
-       - Same ``__init__``, properties, and ``__repr__`` as ``Pose``.
-       - Verify that assigning a dynamic attribute (e.g.,
-         ``pose._extra = 1``) raises ``AttributeError``.
+           int main() {
+               auto s1 = std::make_shared<int>(10);
+               std::cout << "After s1: use_count = " << s1.use_count() << '\n';
 
-    3. **Memory comparison**: create 1000 instances of each class and
-       compare total memory use. For ``Pose``, total memory per instance
-       is ``sys.getsizeof(instance) + sys.getsizeof(instance.__dict__)``.
-       For ``PoseSlotted``, total memory per instance is
-       ``sys.getsizeof(instance)`` only. Print the difference.
+               auto s2{s1};
+               std::cout << "After s2 copy: use_count = " << s1.use_count() << '\n';
 
-    4. **``StampedPose(PoseSlotted)``**:
+               auto s3 = s2;
+               std::cout << "After s3 copy: use_count = " << s1.use_count() << '\n';
 
-       - Adds ``_timestamp: float`` via ``__slots__ = ("_timestamp",)``.
-         Do not redeclare ``_x``, ``_y``, or ``_heading``.
-       - ``__init__(self, x: float, y: float, heading: float, timestamp: float)``
-         that calls ``super().__init__(x, y, heading)`` then sets
-         ``_timestamp``.
-       - Read-only ``@property timestamp``.
-       - ``__repr__(self) -> str`` that returns
-         ``"StampedPose(x=<x>, y=<y>, heading=<heading>, timestamp=<timestamp>)"``.
+               s1.reset();
+               std::cout << "After s1.reset(): use_count = " << s2.use_count() << '\n';
 
-    5. In the ``if __name__ == "__main__"`` block:
+               {
+                   auto s4 = s2;
+                   std::cout << "Inside block: use_count = " << s2.use_count() << '\n';
+               }
+               std::cout << "After block: use_count = " << s2.use_count() << '\n';
 
-    .. code-block:: python
+               std::cout << "Value: " << *s2 << '\n';
 
-       if __name__ == "__main__":
-           import sys
-
-           # Verify dynamic attribute restriction
-           ps = PoseSlotted(1.0, 2.0, 0.0)
-           try:
-               ps._extra = "dynamic"
-           except AttributeError as e:
-               print(f"AttributeError: {e}")
-
-           # Memory comparison
-           poses   = [Pose(float(i), float(i), 0.0) for i in range(1000)]
-           slotted = [PoseSlotted(float(i), float(i), 0.0) for i in range(1000)]
-
-           pose_mem    = sum(sys.getsizeof(p) + sys.getsizeof(p.__dict__) for p in poses)
-           slotted_mem = sum(sys.getsizeof(p) for p in slotted)
-
-           print(f"Pose total (1000 instances):        {pose_mem} bytes")
-           print(f"PoseSlotted total (1000 instances): {slotted_mem} bytes")
-           print(f"Memory saved:                       {pose_mem - slotted_mem} bytes")
-
-           # StampedPose
-           sp = StampedPose(1.0, 2.0, 0.5, timestamp=1712345678.0)
-           print(sp)
-           print(sp.x, sp.y, sp.heading, sp.timestamp)
-
-    **Expected output (values are approximate):**
-
-    .. code-block:: text
-
-       AttributeError: 'PoseSlotted' object has no attribute '_extra'
-       Pose total (1000 instances):        280000 bytes
-       PoseSlotted total (1000 instances): 56000 bytes
-       Memory saved:                       224000 bytes
-       StampedPose(x=1.0, y=2.0, heading=0.5, timestamp=1712345678.0)
-       1.0 2.0 0.5 1712345678.0
-
-    .. note::
-
-       Exact byte counts will vary by Python version and platform. The
-       important result is that ``PoseSlotted`` uses significantly less
-       memory than ``Pose``.
+               return 0;
+           }
 
 
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture7/robot_slots.py``
-    - The program must run without errors and produce output consistent
-      with the expected format above.
-    - Every class and method must include type hints and a Google-style
-      docstring.
-
-
-.. dropdown:: Exercise 4 -- Protocols and Structural Subtyping
+.. dropdown:: Exercise 4 -- Weak Pointer Lifetime Observation
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Practice defining a ``typing.Protocol``, implementing it in
-    independent classes without inheritance, writing a polymorphic
-    function that accepts any conforming type, and using
-    ``@runtime_checkable`` for ``isinstance()`` checks.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate how ``std::weak_ptr`` observes a resource without
+    extending its lifetime.
 
     **Specification**
 
-    Create a file ``lecture7/robot_protocols.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
+    1. Declare a ``std::weak_ptr<int>`` outside a block scope.
+    2. Inside a block, create a ``std::shared_ptr<int>`` with value
+       ``100`` and assign it to the weak pointer.
+    3. Inside the block, use ``lock()`` to access the resource and
+       check ``expired()``.
+    4. After the block, check ``expired()`` again.
+    5. Attempt to ``lock()`` and handle the case where the resource
+       no longer exists.
 
-    1. **``Executable`` protocol** (``@runtime_checkable``):
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-       - ``execute(self, robot_name: str) -> bool``
+        .. code-block:: cpp
 
-    2. **``PickTask``** (no shared base class with ``DeliverTask``):
+           #include <iostream>
+           #include <memory>
 
-       - ``execute(self, robot_name: str) -> bool`` that prints
-         ``"<robot_name> picks an object"`` and returns ``True``.
+           int main() {
+               std::weak_ptr<int> weak_observer;
 
-    3. **``DeliverTask``** (no shared base class with ``PickTask``):
+               {
+                   auto shared_resource = std::make_shared<int>(100);
+                   weak_observer = shared_resource;
 
-       - ``execute(self, robot_name: str) -> bool`` that prints
-         ``"<robot_name> delivers to destination"`` and returns ``True``.
+                   if (auto sp = weak_observer.lock()) {
+                       std::cout << "Inside block - Value: " << *sp << '\n';
+                   }
 
-    4. **``SleepTask``**: a class with no ``execute()`` method (add
-       ``sleep(self, duration: float) -> None`` instead). Used to confirm
-       that it does not satisfy ``Executable``.
+                   std::cout << "Inside block - Expired? "
+                             << std::boolalpha << weak_observer.expired() << '\n';
+               }
 
-    5. **``dispatch(task: Executable, robot_name: str) -> bool``**:
-       a module-level function that calls ``task.execute(robot_name)``
-       and returns its result.
+               std::cout << "After block - Expired? "
+                         << std::boolalpha << weak_observer.expired() << '\n';
 
-    6. In the ``if __name__ == "__main__"`` block:
+               if (auto sp = weak_observer.lock()) {
+                   std::cout << "Value: " << *sp << '\n';
+               } else {
+                   std::cout << "Resource no longer exists\n";
+               }
 
-    .. code-block:: python
-
-       if __name__ == "__main__":
-           pick    = PickTask()
-           deliver = DeliverTask()
-           sleep   = SleepTask()
-
-           dispatch(pick,    "Scout")
-           dispatch(deliver, "Arm-1")
-
-           # isinstance checks via @runtime_checkable
-           print(isinstance(pick,    Executable))   # True
-           print(isinstance(deliver, Executable))   # True
-           print(isinstance(sleep,   Executable))   # False
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       Scout picks an object
-       Arm-1 delivers to destination
-       True
-       True
-       False
+               return 0;
+           }
 
 
-    .. raw:: html
+.. dropdown:: Exercise 5 -- Factory Function Returning unique_ptr
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
 
-       <hr>
+    **Goal**
+
+    Use the factory function pattern to create objects with
+    ``std::unique_ptr``.
+
+    **Specification**
+
+    1. Define a struct ``Sensor`` with ``std::string name`` and
+       ``double reading``.
+    2. Write a factory function ``create_sensor`` that returns a
+       ``std::unique_ptr<Sensor>``.
+    3. Call the factory and print the sensor's fields.
+    4. Transfer ownership to a second pointer and verify the original
+       is ``nullptr``.
+    5. Write a reseat function ``void recalibrate(std::unique_ptr<Sensor>& ptr)``
+       that resets the sensor to a new one.
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        .. code-block:: cpp
+
+           #include <cassert>
+           #include <iostream>
+           #include <memory>
+           #include <string>
+
+           struct Sensor {
+               std::string name;
+               double reading;
+           };
+
+           std::unique_ptr<Sensor> create_sensor(const std::string& name, double reading) {
+               auto sensor = std::make_unique<Sensor>();
+               sensor->name = name;
+               sensor->reading = reading;
+               return sensor;
+           }
+
+           void recalibrate(std::unique_ptr<Sensor>& sensor_ptr) {
+               sensor_ptr.reset(new Sensor{"Recalibrated-" + sensor_ptr->name, 0.0});
+           }
+
+           int main() {
+               auto sensor1 = create_sensor("Lidar-Front", 15.7);
+               std::cout << "Name: " << sensor1->name << '\n';
+               std::cout << "Reading: " << sensor1->reading << '\n';
+
+               auto sensor2{std::move(sensor1)};
+               assert(sensor1 == nullptr);
+               std::cout << "After move - sensor2 name: " << sensor2->name << '\n';
+
+               recalibrate(sensor2);
+               std::cout << "After recalibrate - name: " << sensor2->name << '\n';
+
+               return 0;
+           }
 
 
-    **Deliverables**
+.. dropdown:: Exercise 6 -- Resource Manager with Smart Pointers (Challenge)
+    :icon: gear
+    :class-container: sd-border-warning
+    :class-title: sd-font-weight-bold
 
-    - ``lecture7/robot_protocols.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-    - Every class and method must include type hints and a Google-style
-      docstring.
+    **Goal**
+
+    Design a resource manager demonstrating all three smart pointer
+    types working together.
+
+    **Specification**
+
+    1. Define a ``Resource`` class with a ``std::string id`` member.
+       Print messages in constructor and destructor.
+    2. Write a ``ResourceManager`` class with:
+
+       - ``std::vector<std::shared_ptr<Resource>>`` registry
+       - ``add_resource(const std::string& id)``
+       - ``get_resource(int index)`` returning ``std::shared_ptr``
+       - ``get_observer(int index)`` returning ``std::weak_ptr``
+       - ``remove_resource(int index)``
+
+    3. In ``main()``:
+
+       a. Create a manager and add three resources.
+       b. Get a ``shared_ptr`` to the second resource, print ``use_count()``.
+       c. Get a ``weak_ptr`` observer to the same resource.
+       d. Remove it from the manager.
+       e. Check if the resource is still alive via the shared pointer.
+       f. Reset the shared pointer and check ``expired()`` on the weak pointer.
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        .. code-block:: cpp
+
+           #include <iostream>
+           #include <memory>
+           #include <string>
+           #include <vector>
+
+           class Resource {
+           public:
+               std::string id;
+
+               Resource(const std::string& resource_id) : id{resource_id} {
+                   std::cout << "Resource created: " << id << '\n';
+               }
+
+               ~Resource() {
+                   std::cout << "Resource destroyed: " << id << '\n';
+               }
+           };
+
+           class ResourceManager {
+           private:
+               std::vector<std::shared_ptr<Resource>> registry_;
+
+           public:
+               void add_resource(const std::string& id) {
+                   registry_.push_back(std::make_shared<Resource>(id));
+               }
+
+               std::shared_ptr<Resource> get_resource(int index) {
+                   return registry_.at(index);
+               }
+
+               std::weak_ptr<Resource> get_observer(int index) {
+                   return registry_.at(index);
+               }
+
+               void remove_resource(int index) {
+                   registry_.erase(registry_.begin() + index);
+               }
+
+               int size() const {
+                   return static_cast<int>(registry_.size());
+               }
+           };
+
+           int main() {
+               ResourceManager manager;
+
+               manager.add_resource("sensor-lidar");
+               manager.add_resource("sensor-camera");
+               manager.add_resource("sensor-imu");
+
+               auto shared_cam = manager.get_resource(1);
+               std::cout << "shared_cam use_count: " << shared_cam.use_count() << '\n';
+
+               std::weak_ptr<Resource> observer = manager.get_observer(1);
+
+               manager.remove_resource(1);
+               std::cout << "After remove - use_count: " << shared_cam.use_count() << '\n';
+
+               if (auto sp = observer.lock()) {
+                   std::cout << "Observer says alive: " << sp->id << '\n';
+               }
+
+               shared_cam.reset();
+               std::cout << "Observer expired? "
+                         << std::boolalpha << observer.expired() << '\n';
+
+               std::cout << "Manager size: " << manager.size() << '\n';
+
+               return 0;
+           }

@@ -1,396 +1,455 @@
 ====================================================
-Exercises
+C++ Exercises
 ====================================================
 
-This page contains four take-home exercises that reinforce the concepts
-from Lecture 6. Each exercise asks you to **write code from scratch**
-based on a specification -- no starter code is provided.
+These exercises reinforce the concepts covered in Lecture 6: Functions --
+Advanced. Work through them in order, as each exercise builds on the
+skills from the previous one.
 
-All files should be created inside your ``lecture6/`` workspace folder.
+.. note::
 
+   Compile all programs with warnings enabled:
 
-.. dropdown:: Exercise 1 -- Building a Robot Class
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
+   .. code-block:: bash
 
-    **Goal**
+      g++ -std=c++17 -Wall -Wextra -o program program.cpp
 
-    Demonstrate your understanding of class definitions, the ``__init__``
-    constructor, the ``self`` parameter, instance attributes, and class
-    attributes.
 
+----
 
-    .. raw:: html
 
-       <hr>
+.. dropdown:: Exercise 1 -- Struct Usage
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
 
+   **Goal**
 
-    **Specification**
+   Demonstrate ``struct`` with aggregate initialization and structured bindings.
 
-    Create a file ``lecture6/robot_basics.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
+   **Specification**
 
-    1. **``Robot`` class** with:
+   1. Define a ``struct Sensor`` with fields: ``std::string name``, ``double reading``, and ``bool is_active`` (with a default value of ``true``).
+   2. Create three ``Sensor`` instances using aggregate initialization.
+   3. Write a function ``print_sensor`` that takes a ``const Sensor&`` and prints all fields.
+   4. Use structured bindings (``auto [name, reading, active] = ...``) to decompose one sensor and print its fields individually.
+   5. Use a reference structured binding (``auto& [...]``) to modify a sensor's reading and verify the change.
 
-       - ``__init__(self, name: str, battery: int = 100)``
-       - Instance attributes: ``name``, ``battery``, ``tasks_completed``
-         (default ``0``)
-       - A class attribute ``total_robots`` that tracks how many Robot
-         instances have been created. Increment it in ``__init__``.
+   .. dropdown:: Solution
+      :class-container: sd-border-success
 
-    2. **``perform_task(self, task_name: str) -> None``** method that:
+      .. code-block:: cpp
 
-       - If ``battery >= 10``: prints ``"<name> performing: <task_name>"``,
-         decreases battery by 10, and increments ``tasks_completed``.
-       - Otherwise: prints ``"<name> needs recharging!"``.
+         #include <iostream>
+         #include <string>
 
-    3. **``recharge(self) -> None``** method that sets battery back to 100
-       and prints ``"<name> fully recharged!"``.
+         struct Sensor {
+             std::string name;
+             double reading;
+             bool is_active{true};
+         };
 
-    4. In the ``if __name__ == "__main__"`` block:
+         void print_sensor(const Sensor& s) {
+             std::cout << "Name: " << s.name
+                       << ", Reading: " << s.reading
+                       << ", Active: " << (s.is_active ? "yes" : "no") << '\n';
+         }
 
-       - Create two Robot instances.
-       - Have each robot perform several tasks.
-       - Print each robot's ``tasks_completed`` and ``battery`` after the
-         tasks.
-       - Print ``Robot.total_robots``.
+         int main() {
+             // Aggregate initialization
+             Sensor s1{"Lidar", 42.5, true};
+             Sensor s2{"Camera", 30.0};       // is_active defaults to true
+             Sensor s3{"IMU", 9.81, false};
 
-    .. code-block:: python
+             print_sensor(s1);
+             print_sensor(s2);
+             print_sensor(s3);
 
-       if __name__ == '__main__':
-           # Create two Robot instances
-           robot1 = Robot("Atlas")
-           robot2 = Robot("Spot", 50)
+             // Structured bindings (by value)
+             auto [name, reading, active] = s1;
+             std::cout << "Decomposed: " << name << " " << reading << " " << active << '\n';
 
-           # Have them perform several tasks
-           robot1.perform_task("welding")
-           robot1.perform_task("painting")
-           robot1.perform_task("inspection")
+             // Structured bindings (by reference)
+             auto& [name_ref, reading_ref, active_ref] = s2;
+             reading_ref = 55.0;
+             std::cout << "Modified s2 reading: " << s2.reading << '\n'; // 55.0
 
-           robot2.perform_task("delivery")
-           robot2.perform_task("sorting")
-           robot2.perform_task("scanning")
-           robot2.perform_task("lifting")
-           robot2.perform_task("packing")
-           robot2.perform_task("cleaning")  # battery hits 0 after this
+             return 0;
+         }
 
-           # This one should trigger the recharge warning
-           robot2.perform_task("assembly")
 
-           # Recharge and continue
-           robot2.recharge()
-           robot2.perform_task("assembly")
+.. dropdown:: Exercise 2 -- Function Templates
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
 
-           # Print final state
-           print(f"\n{robot1.name}: tasks={robot1.tasks_completed}, battery={robot1.battery}")
-           print(f"{robot2.name}: tasks={robot2.tasks_completed}, battery={robot2.battery}")
-           print(f"Total robots created: {Robot.total_robots}")
+   **Goal**
 
-    **Expected output:**
+   Write a set of function templates that perform common operations.
 
-    .. code-block:: text
+   **Specification**
 
-       Atlas performing: welding
-       Atlas performing: painting
-       Atlas performing: inspection
-       Spot performing: delivery
-       Spot performing: sorting
-       Spot performing: scanning
-       Spot performing: lifting
-       Spot performing: packing
-       Spot performing: cleaning
-       Spot needs recharging!
-       Spot fully recharged!
-       Spot performing: assembly
+   1. Write a function template ``clamp(T value, T low, T high)`` that returns ``value`` constrained to the range ``[low, high]``.
+   2. Write a function template ``swap_values(T& a, T& b)`` that swaps two values using a temporary.
+   3. Write a function template with two type parameters ``auto convert_and_add(T a, U b)`` that adds two values of possibly different types.
+   4. Test all three templates with ``int``, ``double``, and (for ``clamp`` and ``swap_values``) ``char``.
 
-       Atlas: tasks=3, battery=70
-       Spot: tasks=6, battery=90
-       Total robots created: 2
+   .. dropdown:: Solution
+      :class-container: sd-border-success
 
+      .. code-block:: cpp
 
-    .. raw:: html
+         #include <iostream>
+         #include <string>
 
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture6/robot_basics.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-
-
-.. dropdown:: Exercise 2 -- Dunder Methods for a Robot Class
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Practice implementing dunder methods for string representations,
-    comparison operators, arithmetic operators, and the ``__len__``
-    protocol.
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Specification**
-
-    Create a file ``lecture6/robot_dunders.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
-
-    1. **``Robot`` class** with:
-
-       - ``__init__(self, name: str, battery: int = 100)``
-       - Instance attributes: ``name``, ``battery``, ``tasks_completed``
-         (default ``0``)
-
-    2. **String representations:**
-
-       - ``__str__`` returns ``"<name> [<battery>%]"``
-       - ``__repr__`` returns ``"Robot('<name>', <battery>)"``
-
-    3. **Comparison operators:**
-
-       - ``__eq__`` so two robots are equal if their battery levels are
-         equal (regardless of name). Return ``NotImplemented`` for
-         non-Robot types.
-       - ``__gt__`` so robots can be compared by battery level. Return
-         ``NotImplemented`` for non-Robot types.
-
-    4. **Arithmetic operator:**
-
-       - ``__add__`` so adding two Robots returns a new Robot with name
-         ``"merged"`` and the sum of their batteries **capped at 100**.
-
-    5. **Length protocol:**
-
-       - ``__len__`` returns ``tasks_completed``.
-
-    6. In the ``if __name__ == "__main__"`` block, test all dunder
-       methods:
-
-    .. code-block:: python
-
-       if __name__ == "__main__":
-           scout = Robot("Scout", 60)
-           hauler = Robot("Hauler", 60)
-
-           # __str__: human-readable output
-           print(scout)  # Scout [60%]
-
-           # __repr__: developer output, looks like valid Python
-           print(repr(scout))  # Robot('Scout', 60)
-
-           # __eq__: compare by battery level
-           print(scout == hauler)  # True  (both have battery 60)
-           print(scout == Robot("X", 90))  # False (different battery)
-
-           # __add__: merge two robots, battery capped at 100
-           print(scout + hauler)  # merged [100%]  (60 + 60 = 120, capped to 100)
-           print(scout + Robot("X", 20))  # merged [80%]   (60 + 20 = 80, no cap needed)
-
-           # __gt__: compare by battery level
-           print(scout > Robot("X", 40))  # True  (60 > 40)
-           print(scout > hauler)  # False (60 > 60 is False)
-
-           # __len__: number of tasks completed
-           scout.tasks_completed = 3
-           print(len(scout))  # 3
-           print(len(hauler))  # 0  (default, no tasks performed yet)
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       Scout [60%]
-       Robot('Scout', 60)
-       True
-       False
-       merged [100%]
-       merged [80%]
-       True
-       False
-       3
-       0
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture6/robot_dunders.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-
-
-.. dropdown:: Exercise 3 -- Encapsulated Sensor
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Practice encapsulation with non-public attributes, ``@property``
-    decorators, read-only properties, and setter validation.
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Specification**
-
-    Create a file ``lecture6/sensor_encapsulated.py`` that implements the
-    following. Each class and method must include type hints and a
-    Google-style docstring.
-
-    1. **``Sensor`` class** with:
-
-       - ``__init__(self, sensor_type: str, range_m: float = 10.0)``
-       - Non-public attributes: ``_sensor_type``, ``_range_m``
-
-    2. **Read-only property** ``sensor_type`` that cannot be changed after
-       creation. The setter should raise ``AttributeError``.
-
-    3. **Property** ``range_m`` with a setter that:
-
-       - Raises ``ValueError`` if ``range_m`` is set to a negative number.
-       - Raises ``TypeError`` if ``range_m`` is not ``int`` or ``float``.
-
-    4. **Methods:**
-
-       - ``calibrate(offset: float) -> None`` adjusts ``_range_m`` by the
-         given offset.
-       - ``read() -> float`` returns ``_range_m`` with simulated noise
-         (e.g., multiply by a random factor between 0.95 and 1.05).
-
-    5. **``__str__``** returns ``"Sensor(<type>): range=<range_m>m"``.
-
-    6. In the ``if __name__ == "__main__"`` block:
-
-    .. code-block:: python
-
-       if __name__ == "__main__":
-           lidar = Sensor("lidar", 50.0)
-           print(lidar)            # Sensor(lidar): range=50.0m
-           lidar.calibrate(2.5)
-           print(lidar)            # Sensor(lidar): range=52.5m
-           lidar.calibrate(-5.0)
-           print(lidar)            # Sensor(lidar): range=47.5m
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       Sensor(lidar): range=50.0m
-       Sensor(lidar): range=52.5m
-       Sensor(lidar): range=47.5m
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture6/sensor_encapsulated.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-
-
-.. dropdown:: Exercise 4 -- Robot with Sensor Suite
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Combine classes, dunder methods, and encapsulation into a system where
-    a ``Robot`` manages a collection of ``Sensor`` objects. This exercise
-    ties together all concepts from the lecture.
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Specification**
-
-    Create a file ``lecture6/robot_with_sensors.py`` that implements the
-    following. Every class and method must have type hints and a
-    Google-style docstring.
-
-    1. **``Sensor`` class** with:
-
-       - Non-public attributes: ``_sensor_type``, ``_range_m``,
-         ``_accuracy``
-       - Properties for ``range_m`` (validated: must be positive) and
-         ``sensor_type`` (read-only)
-       - ``__str__`` and ``__repr__``
-       - ``__gt__`` comparing by ``range_m``
-       - ``__add__`` that returns a new Sensor with type ``"fused"``,
-         summed ranges, and averaged accuracies
-
-    2. **``Robot`` class** with:
-
-       - Non-public attributes: ``_name``, ``_battery``, ``_sensors``
-         (list)
-       - Properties for ``battery`` (validated 0--100) and ``name``
-         (read-only)
-       - ``add_sensor(sensor: Sensor) -> None`` method
-       - ``__contains__`` to check if a sensor type is in the robot
-       - ``__iter__`` to iterate over the robot's sensors
-       - ``__len__`` to get number of sensors
-
-    3. In the ``if __name__ == "__main__"`` block:
-
-       - Create a Robot, add multiple sensors.
-       - Iterate over sensors and print each one.
-       - Check membership (e.g., ``"lidar" in robot``).
-       - Fuse two sensors with ``+`` and print the result.
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       === Robot Sensors ===
-       Scout has 3 sensors:
-         Sensor(lidar): range=50.0m
-         Sensor(camera): range=30.0m
-         Sensor(ultrasonic): range=10.0m
-
-       === Membership ===
-       Has lidar: True
-       Has radar: False
-
-       === Sensor Fusion ===
-       Fused: Sensor(fused): range=80.0m
-
-
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture6/robot_with_sensors.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-    - All calculations must be computed dynamically (no hard-coded
-      results).
-    - Every class and method must include type hints and a Google-style
-      docstring.
+         template<typename T>
+         T clamp(T value, T low, T high) {
+             if (value < low) return low;
+             if (value > high) return high;
+             return value;
+         }
+
+         template<typename T>
+         void swap_values(T& a, T& b) {
+             T temp{a};
+             a = b;
+             b = temp;
+         }
+
+         template<typename T, typename U>
+         auto convert_and_add(T a, U b) {
+             return a + b;
+         }
+
+         int main() {
+             // clamp
+             std::cout << clamp(15, 0, 10) << '\n';       // 10
+             std::cout << clamp(3.14, 0.0, 2.0) << '\n';  // 2.0
+             std::cout << clamp('z', 'a', 'm') << '\n';   // m
+
+             // swap_values
+             int x{10}, y{20};
+             swap_values(x, y);
+             std::cout << "x=" << x << " y=" << y << '\n'; // x=20 y=10
+
+             double a{1.1}, b{2.2};
+             swap_values(a, b);
+             std::cout << "a=" << a << " b=" << b << '\n'; // a=2.2 b=1.1
+
+             // convert_and_add
+             std::cout << convert_and_add(3, 4.5) << '\n';    // 7.5
+             std::cout << convert_and_add(2.5, 3) << '\n';    // 5.5
+
+             return 0;
+         }
+
+
+.. dropdown:: Exercise 3 -- Template Specialization
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   **Goal**
+
+   Write a function template ``to_string_pretty(T value)`` that converts a value to a formatted string, with specializations for ``bool`` and ``double``.
+
+   **Specification**
+
+   1. Write the **generic** version that uses ``std::to_string``.
+   2. Write a **full specialization** for ``bool`` that returns ``"true"`` or ``"false"`` (instead of ``"1"`` or ``"0"``).
+   3. Write a **full specialization** for ``double`` that formats the number to exactly 2 decimal places using ``std::ostringstream`` with ``std::fixed`` and ``std::setprecision(2)``.
+   4. Test with ``int``, ``bool``, and ``double`` values.
+
+   .. dropdown:: Solution
+      :class-container: sd-border-success
+
+      .. code-block:: cpp
+
+         #include <iostream>
+         #include <string>
+         #include <sstream>
+         #include <iomanip>
+
+         // Generic version
+         template<typename T>
+         std::string to_string_pretty(T value) {
+             return std::to_string(value);
+         }
+
+         // Specialization for bool
+         template<>
+         std::string to_string_pretty<bool>(bool value) {
+             return value ? "true" : "false";
+         }
+
+         // Specialization for double
+         template<>
+         std::string to_string_pretty<double>(double value) {
+             std::ostringstream oss;
+             oss << std::fixed << std::setprecision(2) << value;
+             return oss.str();
+         }
+
+         int main() {
+             std::cout << to_string_pretty(42) << '\n';        // "42"
+             std::cout << to_string_pretty(true) << '\n';      // "true"
+             std::cout << to_string_pretty(false) << '\n';     // "false"
+             std::cout << to_string_pretty(3.14159) << '\n';   // "3.14"
+
+             return 0;
+         }
+
+
+.. dropdown:: Exercise 4 -- Lambda Expressions
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   **Goal**
+
+   Use lambda expressions with STL algorithms.
+
+   **Specification**
+
+   1. Create a ``std::vector<int>`` with values ``{5, -3, 8, -1, 7, 2, -4, 6}``.
+   2. Use ``std::sort`` with a lambda to sort the vector by **absolute value** (ascending).
+   3. Use ``std::count_if`` with a lambda to count negative numbers.
+   4. Use ``std::transform`` with a lambda to create a new vector where each element is squared.
+   5. Use ``std::for_each`` with a lambda that captures a running total by reference to compute the sum.
+   6. Use a lambda with the ``mutable`` keyword that captures a counter by value and increments it on each call. Call it 3 times and verify the original variable is unchanged.
+
+   .. dropdown:: Solution
+      :class-container: sd-border-success
+
+      .. code-block:: cpp
+
+         #include <iostream>
+         #include <vector>
+         #include <algorithm>
+         #include <numeric>
+         #include <cmath>
+
+         int main() {
+             std::vector<int> values{5, -3, 8, -1, 7, 2, -4, 6};
+
+             // 1. Sort by absolute value
+             std::sort(values.begin(), values.end(), [](int a, int b) {
+                 return std::abs(a) < std::abs(b);
+             });
+             std::cout << "Sorted by abs: ";
+             for (int v : values) std::cout << v << " ";
+             std::cout << '\n';
+
+             // Reset for remaining exercises
+             values = {5, -3, 8, -1, 7, 2, -4, 6};
+
+             // 2. Count negatives
+             int neg_count{static_cast<int>(std::count_if(values.begin(), values.end(),
+                 [](int x) { return x < 0; }))};
+             std::cout << "Negative count: " << neg_count << '\n';
+
+             // 3. Transform: square each element
+             std::vector<int> squared(values.size());
+             std::transform(values.begin(), values.end(), squared.begin(),
+                 [](int x) { return x * x; });
+             std::cout << "Squared: ";
+             for (int v : squared) std::cout << v << " ";
+             std::cout << '\n';
+
+             // 4. Sum using for_each with capture by reference
+             int total{0};
+             std::for_each(values.begin(), values.end(), [&total](int x) {
+                 total += x;
+             });
+             std::cout << "Sum: " << total << '\n';
+
+             // 5. Mutable lambda
+             int counter{0};
+             auto incrementer = [counter]() mutable {
+                 counter++;
+                 return counter;
+             };
+             std::cout << incrementer() << '\n'; // 1
+             std::cout << incrementer() << '\n'; // 2
+             std::cout << incrementer() << '\n'; // 3
+             std::cout << "Original counter: " << counter << '\n'; // 0
+
+             return 0;
+         }
+
+
+.. dropdown:: Exercise 5 -- std::function Callbacks
+   :icon: gear
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   **Goal**
+
+   Demonstrate ``std::function`` as a flexible callback mechanism.
+
+   **Specification**
+
+   1. Write a function ``apply_operation(const std::vector<int>& data, std::function<int(int)> op)`` that applies an operation to each element and returns a new vector.
+   2. Define a free function ``negate_value`` that negates an integer.
+   3. Define a functor ``ScaleBy`` that multiplies by a configurable factor.
+   4. Call ``apply_operation`` three times using: a lambda (double each value), the free function, and the functor.
+   5. Demonstrate checking an empty ``std::function`` before calling it.
+
+   .. dropdown:: Solution
+      :class-container: sd-border-success
+
+      .. code-block:: cpp
+
+         #include <iostream>
+         #include <vector>
+         #include <functional>
+
+         // Apply an operation to each element
+         std::vector<int> apply_operation(const std::vector<int>& data,
+                                          std::function<int(int)> op) {
+             std::vector<int> result;
+             result.reserve(data.size());
+             for (int val : data) {
+                 result.push_back(op(val));
+             }
+             return result;
+         }
+
+         // Free function
+         int negate_value(int x) { return -x; }
+
+         // Functor
+         struct ScaleBy {
+             int factor;
+             ScaleBy(int f) : factor(f) {}
+             int operator()(int x) const { return x * factor; }
+         };
+
+         void print_vector(const std::vector<int>& v) {
+             for (int val : v) std::cout << val << " ";
+             std::cout << '\n';
+         }
+
+         int main() {
+             std::vector<int> data{1, 2, 3, 4, 5};
+
+             // 1. Lambda
+             auto doubled = apply_operation(data, [](int x) { return x * 2; });
+             std::cout << "Doubled: ";
+             print_vector(doubled);
+
+             // 2. Free function
+             auto negated = apply_operation(data, negate_value);
+             std::cout << "Negated: ";
+             print_vector(negated);
+
+             // 3. Functor
+             ScaleBy times_10(10);
+             auto scaled = apply_operation(data, times_10);
+             std::cout << "Scaled x10: ";
+             print_vector(scaled);
+
+             // 4. Empty std::function check
+             std::function<int(int)> empty_op;
+             if (empty_op) {
+                 std::cout << empty_op(5) << '\n';
+             } else {
+                 std::cout << "Operation is empty -- skipping call.\n";
+             }
+
+             return 0;
+         }
+
+
+.. dropdown:: Challenge -- Generic Sorting with Templates and Lambdas
+   :icon: gear
+   :class-container: sd-border-warning
+   :class-title: sd-font-weight-bold
+
+   **Goal**
+
+   Write a generic sorting utility that combines templates and lambdas.
+
+   **Specification**
+
+   1. Write a function template ``sort_by(std::vector<T>& data, Comparator comp)`` where ``Comparator`` is also a template parameter. It should implement selection sort (do not use ``std::sort``).
+   2. Define a ``struct Student`` with fields: ``std::string name``, ``double gpa``, ``int credits``.
+   3. Create a vector of 5 students.
+   4. Sort by GPA (descending) using a lambda comparator.
+   5. Sort by name (alphabetical) using a lambda comparator.
+   6. Sort by credits (ascending) using a lambda comparator.
+   7. Print the sorted results after each sort.
+
+   .. dropdown:: Solution
+      :class-container: sd-border-success
+
+      .. code-block:: cpp
+
+         #include <iostream>
+         #include <vector>
+         #include <string>
+
+         struct Student {
+             std::string name;
+             double gpa;
+             int credits;
+         };
+
+         // Generic selection sort with a comparator
+         template<typename T, typename Comparator>
+         void sort_by(std::vector<T>& data, Comparator comp) {
+             for (size_t i{0}; i < data.size(); ++i) {
+                 size_t best{i};
+                 for (size_t j{i + 1}; j < data.size(); ++j) {
+                     if (comp(data[j], data[best])) {
+                         best = j;
+                     }
+                 }
+                 if (best != i) {
+                     T temp{data[i]};
+                     data[i] = data[best];
+                     data[best] = temp;
+                 }
+             }
+         }
+
+         void print_students(const std::vector<Student>& students) {
+             for (const auto& s : students) {
+                 std::cout << "  " << s.name
+                           << " | GPA: " << s.gpa
+                           << " | Credits: " << s.credits << '\n';
+             }
+         }
+
+         int main() {
+             std::vector<Student> students{
+                 {"Alice", 3.8, 45},
+                 {"Bob", 3.5, 60},
+                 {"Charlie", 3.9, 30},
+                 {"Diana", 3.2, 75},
+                 {"Eve", 3.7, 50}
+             };
+
+             // Sort by GPA (descending)
+             sort_by(students, [](const Student& a, const Student& b) {
+                 return a.gpa > b.gpa;
+             });
+             std::cout << "Sorted by GPA (desc):\n";
+             print_students(students);
+
+             // Sort by name (alphabetical)
+             sort_by(students, [](const Student& a, const Student& b) {
+                 return a.name < b.name;
+             });
+             std::cout << "\nSorted by name (asc):\n";
+             print_students(students);
+
+             // Sort by credits (ascending)
+             sort_by(students, [](const Student& a, const Student& b) {
+                 return a.credits < b.credits;
+             });
+             std::cout << "\nSorted by credits (asc):\n";
+             print_students(students);
+
+             return 0;
+         }

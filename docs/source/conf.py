@@ -65,6 +65,7 @@ html_theme_options = {
         },
     ],
     "back_to_top_button": True,
+    "header_links_before_dropdown": 8,
     # Light/dark mode toggle
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     # Navigation
@@ -99,4 +100,5 @@ master_doc = "index"
 
 html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
+        "my.css",
 ]

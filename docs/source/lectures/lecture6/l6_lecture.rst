@@ -1,1399 +1,1768 @@
+.. _l6_lecture:
+
 ====================================================
 Lecture
 ====================================================
 
+.. contents:: Table of Contents
+   :depth: 3
+   :local:
 
 
-Introduction to OOP
+``struct``
 ====================================================
 
-Core principles of object-oriented programming.
+In C, a ``struct`` is a **Plain Old Data** (POD) container. It is a simple, passive way to group related variables together. It has no methods, no privacy, and no complex behaviors.
+
+When C++ was born, it took the C-style ``struct`` and gave it superpowers. In C++, a ``struct`` is, for all intents and purposes, a ``class``. The C heritage, however, still strongly influences how we use it.
+
+In C++, ``struct`` and ``class`` are nearly identical. The **only** difference is the default access level: by default, members are **public** in ``struct`` and **private** in ``class``.
+
+.. admonition:: Convention
+   :class: tip
+
+   Use ``struct`` for simple data containers (POD types). Use ``class`` when you need encapsulation and private data.
 
 
+``struct`` vs ``class``
+------------------------
 
-.. dropdown:: What Is OOP?
-   :open:
+.. grid:: 2
+   :gutter: 3
 
-   **Object-Oriented Programming** is a paradigm that models software as a collection of **objects** that interact with one another. Each object bundles data (attributes) and behavior (methods) together.
+   .. grid-item-card:: struct (public by default)
+      :class-card: sd-border-primary
 
-   Python is a **multi-paradigm** language: it supports procedural, functional, and object-oriented styles. OOP features appear throughout the standard library and most major frameworks, so familiarity with OOP is essential for effective Python development.
+      .. code-block:: cpp
 
-   **Core Principles**
+         struct Robot {
+             // PUBLIC by default
+             std::string name;
+             double speed;
 
-   - **Encapsulation** -- Bundles related data and methods into a single object. In Python, access control is by convention (e.g., leading underscores) rather than enforced by the language.
-   - **Abstraction** -- Exposes only essential features through a well-defined interface (e.g., abstract base classes) while hiding the underlying implementation.
-   - **Inheritance** -- Enables new classes to reuse and extend the functionality of existing ones.
-   - **Polymorphism** -- Allows different objects to be used interchangeably when they share a common interface. Python achieves this naturally through duck typing.
+             // Constructor
+             Robot(std::string n, double s)
+                 : name(n), speed(s) {}
 
-   .. note::
+             // Method
+             void move(double distance) {
+                 std::cout << name << " moving "
+                     << distance << "m at "
+                     << speed << " m/s\n";
+             }
+         };
 
-      Python is a **multi-paradigm** language. You can mix procedural, object-oriented, and functional styles in the same program.
+         // Usage
+         Robot r{"R2D2", 1.5};
+         r.move(10.0);  // works
+         std::cout << r.name;  // works
+
+   .. grid-item-card:: class (private by default)
+      :class-card: sd-border-secondary
+
+      .. code-block:: cpp
+
+         class Robot {
+             // PRIVATE by default
+             std::string name;
+             double speed;
+
+         public:  // Must explicitly say public!
+             // Constructor
+             Robot(std::string n, double s)
+                 : name(n), speed(s) {}
+
+             // Method
+             void move(double distance) {
+                 std::cout << name << " moving "
+                           << distance << "m at "
+                           << speed << " m/s\n";
+             }
+         };
+
+         // Usage
+         Robot r{"R2D2", 1.5};
+         r.move(10.0);  // works
+         // std::cout << r.name;  // ERROR: private!
 
 
-.. dropdown:: Benefits and Trade-offs
-   :open:
+Aggregate Initialization
+--------------------------
 
-   **Advantages**
+The most "struct-like" feature is aggregate initialization. An "aggregate" is, broadly, a type (like a ``struct`` or array) with no user-defined constructors, no private or protected non-static data members, and no virtual functions.
 
-   - **Modularity** -- Decomposes complex problems into manageable, self-contained components.
-   - **Reusability** -- Promotes code reuse through inheritance and composition.
-   - **Flexibility** -- Enables dynamic behavior via duck typing and interchangeable implementations.
-   - **Maintainability** -- Facilitates localized changes and clearer code organization.
+.. code-block:: cpp
 
-   **Trade-offs**
+   struct Point {
+       double x;
+       double y;
+       std::string label{"default"}; // C++11 default member initializer
+   };
 
-   - **Learning Curve** -- Requires understanding abstract concepts and design patterns.
-   - **Design Overhead** -- Demands more upfront planning and structure.
-   - **Verbosity** -- Object-oriented programs can be more verbose than procedural or functional alternatives.
+   int main() {
+       // Aggregate Initialization
+       Point p1 = {10.0, 20.0, "center"}; // Initializes x, y, label
+       Point p2 = {10.0, 20.0};           // Initializes x, y. label uses its default.
 
-   .. warning::
+       std::cout << p1.label << '\n'; // "center"
+       std::cout << p2.label << '\n'; // "default"
+   }
 
-      OOP is not a one-size-fits-all solution. Not all problems map naturally to objects and classes. Modern Python emphasizes **composition over inheritance**: prefer combining simple objects rather than building deep class hierarchies.
+
+Structured Bindings
+---------------------
+
+Structured bindings allow you to decompose a ``struct``'s members into distinct local variables. It binds to the non-static data members of the ``struct`` in the order they are declared.
+
+.. code-block:: cpp
+
+   Point get_start_point() { return {1.0, 2.0}; }
+
+   int main() {
+       Point p = get_start_point();
+       auto [x, y, label] = p; // Magic!
+
+       // Variables x, y, and label are created and populated
+       std::cout << "X: " << x << ", Y: " << y << ", Label: " << label << '\n';
+   }
+
+You can also bind by reference to modify the original ``struct``.
+
+.. code-block:: cpp
+
+   Point p = {10.0, 20.0};
+   auto& [x_ref, y_ref, label_ref] = p;
+
+   x_ref = 100.0; // This modifies p.x
+
+   std::cout << p.x << '\n'; // Prints 100.0
 
 
-Design Phase
+Templates
 ====================================================
 
-Translating a real-world problem into a workable structure before writing any code.
+A template is a **blueprint** (generic programming) the compiler uses to generate concrete functions or types. You write with type parameters (e.g., ``T``); the compiler *instantiates* actual code for the types you use.
 
+.. admonition:: Generic Programming Essentials
+   :class: note
 
+   1. **Separate algorithms from types**: write logic once.
+   2. **Parameterize over types**: use placeholders (e.g., ``T``).
+   3. **Enforce static correctness**: errors at compile time.
+   4. **Zero-overhead**: optimal code for each instantiation.
 
-.. dropdown:: Design Workflow
-   :open:
 
-   **From Problem to Code**
+Without Templates vs With Templates
+--------------------------------------
 
-   The design phase bridges the gap between a real-world problem and working code. The workflow is iterative: you will revisit earlier steps as you discover new information.
+**Without templates**, you must duplicate the same logic for each type:
 
-   1. **Requirement Analysis** -- Understand *what* the system must do.
-   2. **Business Rules** -- Capture the constraints and invariants the system must enforce.
-   3. **Noun/Verb Analysis** -- Extract candidate classes, attributes, and methods from the requirements.
-   4. **Modeling** -- Visualize structure (class diagrams) and behavior (sequence and activity diagrams).
-   5. **Implementation** -- Translate the design into code.
+.. code-block:: cpp
 
-   .. note::
+   int add(int a, int b) {
+       return a + b;
+   }
 
-      This workflow is iterative. Your first pass will not be perfect. Revisit and refine as you learn more about the domain.
+   double add(double a, double b) {
+       return a + b;
+   }
 
+   std::string add(const std::string& a, const std::string& b) {
+       return a + b;
+   }
 
-.. dropdown:: Requirement Analysis
-   :open:
+Same logic written three times. Any bug fix or improvement must be duplicated, violating **DRY**.
 
-   **Step 1: Understanding What the System Must Do**
+**With templates**, you write the logic once:
 
-   **Requirement analysis** identifies **what** the system must do (functional requirements) and **how well** it must do it (non-functional requirements).
+.. code-block:: cpp
 
-   **Competition Domain**
+   template<typename T>
+   T add(T a, T b) {
+       return a + b;
+   }
 
-   A `robotics competition <https://youtu.be/DLQCaRLb3TE?si=CSCnujfqYE4dGYBQ&t=2490>`_ involves teams of robots collaborating to complete tasks in an arena. We are building a **competition management system**: the software an organizer would use to coordinate teams, assign tasks, track battery levels, and record results.
+When called, the compiler generates (instantiates) the needed concrete overloads, e.g., ``int add(int,int)``, ``double add(double,double)``, ``std::string add(const std::string&, const std::string&)``.
 
-   **Key Functional Requirements**
 
-   - Track which robots belong to which teams and their operational status.
-   - Assign, prioritize, and schedule tasks for robots.
-   - Monitor robot attributes such as battery level and sensor configuration.
-   - Model the arena layout, including obstacles and target zones.
-   - Record competition progress and results.
-
-    .. note::
-        
-        See the **Design Phase PDF** (:download:`DesignPhase_ENPM605_Spring2026.pdf <DesignPhase_ENPM605_Spring2026.pdf>`) for the complete requirement analysis, clarifying questions, and use case descriptions. This document demonstrates what a real design document looks like: it captures domain context, functional requirements, and behavioral scenarios in a structured format that serves as the blueprint for implementation.
-
-
-
-.. dropdown:: Business Rules
-   :open:
-
-   **Step 2: Constraints the System Must Enforce**
-
-   **Business rules** define what is allowed, required, and prohibited. They directly influence class design: which validations go into methods, which attributes need constraints, and which relationships must be enforced.
-
-   **Competition Domain Rules**
-
-   - A robot's battery level must be between 0 and 100.
-   - A robot cannot accept a task unless its status is "active".
-   - Each robot belongs to exactly one team; a team has at most ``max_robots`` robots.
-   - A task's priority must be one of: "low", "medium", "high", "critical".
-   - When battery drops below 10%, status changes to "needs_recharge".
-   - When a task is completed, the team's score is updated automatically.
-   - Battery drain = task duration x drain rate.
-   - Team score = sum of points for each completed task.
-
-   .. note::
-
-      See the **Design Phase PDF** for the full set of business rules organized by category (constraints, triggers, computations, authorization).
-
-
-.. dropdown:: Noun/Verb Analysis
-   :open:
-
-   **Step 3: From Natural Language to OOP**
-
-   **Noun/verb analysis** extracts candidate classes, attributes, and methods from a problem description. Nouns map to classes or attributes; verbs map to methods; adjectives map to attribute values; relationships ("has a", "is a") map to composition or inheritance.
-
-   *"A robotics* **competition** *involves* **teams** *of* **robots** *collaborating to complete* **tasks** *in an* **arena**. *Each* **robot** *is equipped with* **sensors** *to perceive its environment and must navigate, pick up objects, and deliver them to target* **zones**."
-
-   .. list-table:: Noun/verb extraction for the robotics competition domain
-      :widths: 15 25 25 25
-      :header-rows: 1
-      :class: compact-table
-
-      * - Class
-        - Attributes
-        - Methods
-        - Relationships
-      * - Robot
-        - name, battery, status
-        - move(), pick_up(), deliver(), recharge()
-        - has Sensors, belongs to Team
-      * - Sensor
-        - type, range, accuracy
-        - read(), calibrate()
-        - belongs to Robot
-      * - Task
-        - name, priority, duration
-        - assign(), complete(), cancel()
-        - assigned to Robot
-      * - Arena
-        - width, height, obstacles, zones
-        - add_obstacle(), get_zone()
-        - contains Robots
-      * - Team
-        - name, score, max_robots
-        - add_robot(), remove_robot()
-        - has Robots
-
-   .. note::
-
-      Not every noun becomes a class and not every verb becomes a method. See the **Design Phase PDF** for the filtering rationale and the full extraction walkthrough.
-
-
-.. dropdown:: Modeling
-   :open:
-
-   **Step 4: Visualizing Structure and Behavior**
-
-   `UML <https://www.uml.org/>`_ (Unified Modeling Language) provides standardized diagrams to capture different aspects of the system. We use three diagram types in this course:
-
-   - **Class Diagrams** -- Show classes, their attributes and methods, and relationships (composition, aggregation, association, inheritance).
-   - **Sequence Diagrams** -- Show how objects interact over time by exchanging method calls.
-   - **Activity Diagrams** -- Show the flow of control through a process (similar to flowcharts, but with support for concurrency and swimlanes).
-
-   **Competition Domain Relationships**
-
-   - **Composition** -- A ``Robot`` owns its ``Sensor``\(s). Destroying the robot destroys its sensors.
-   - **Aggregation** -- A ``Team`` has ``Robot``\(s). Dissolving the team does not destroy the robots.
-   - **Association** -- A ``Robot`` is assigned a ``Task``. Neither owns the other.
-   - **Inheritance** (L7) -- ``MobileRobot`` and ``ManipulatorRobot`` are types of ``Robot``.
-
-   .. note::
-
-      See the **Design Phase PDF** for UML notation details, the full class diagram, sequence diagrams, and activity diagrams for the competition domain.
-
-
-.. dropdown:: From Design to Implementation
-   :open:
-
-   **Step 5: Translating the Design into Code**
-
-   For this lecture, we implement the ``Robot`` and ``Sensor`` classes. The remaining classes (``Task``, ``Team``, ``Arena``) and their relationships will be covered in L7.
-
-   **Project Structure**
-
-   .. code-block:: text
-
-      robotics_competition/
-          robot.py      # Robot class
-          sensor.py     # Sensor class
-          task.py       # Task class (L7)
-          team.py       # Team class (L7)
-          arena.py      # Arena class (L7)
-          main.py       # Entry point
-
-   .. note::
-
-      Each class lives in its own module. This promotes modularity and makes the code easier to maintain, test, and extend. The design phase is iterative: revisit and refine as you implement.
-
-
-Implementation Phase: Classes and Objects
-====================================================
-
-Translating the design into working code.
-
-Refer to ``L6_classes_objects.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is a Class?
-   :open:
-
-   A **class** is a blueprint that defines the attributes (data) and methods (functions) that its objects will have.
-
-   .. code-block:: python
-
-      class ClassName:
-          """Docstring describing the class."""
-
-          def __init__(self, param1: type, param2: type = default):
-              self.attribute1 = param1
-              self.attribute2 = param2
-
-          def method1(self, arg: type):
-              # Use self.attribute1, self.attribute2, arg, etc.
-              ...
-
-          def method2(self):
-              # Operate on the object's attributes
-              ...
-
-   - The ``class`` keyword starts the definition, followed by the class name in **CamelCase**.
-   - By default, every class implicitly inherits from ``object``.
-   - Inside the class body we define methods. The first parameter of every method is ``self``, which refers to the object calling the method.
-
-
-.. dropdown:: What Is an Object?
-   :open:
-
-   An **object** (or **instance**) is a concrete realization of a class. Multiple objects can be created from the same blueprint, each with its own attribute values.
-
-   .. code-block:: python
-
-      # Creating objects from the class
-      obj1 = ClassName(value1, value2)
-      obj2 = ClassName(value3)          # value4 uses the default
-
-      # Calling methods on each object
-      obj1.method1(some_arg)   # self refers to obj1
-      obj2.method1(other_arg)  # self refers to obj2
-
-      # Accessing attributes
-      print(obj1.attribute1)   # value1
-      print(obj2.attribute1)   # value3
-
-   - Each object is independent: modifying ``obj1`` does not affect ``obj2``.
-   - Each object maintains its own copy of the attributes defined in ``__init__``.
-   - All objects share the same method definitions. When you call ``obj1.method1(arg)``, Python passes ``obj1`` as ``self`` automatically.
-   - Access attributes and methods using dot notation: ``obj.attribute`` or ``obj.method()``.
-
-
-.. dropdown:: From Blueprint to Instances
-   :open:
-
-   The blueprint specifies **what every robot arm will have** and **what it can do**. Each arm built from that blueprint is an independent instance with its own state.
-
-   .. code-block:: python
-
-      class RobotArm:
-          """Blueprint for a robot arm."""
-
-          def __init__(self, station: int):
-              self.station = station
-              self.joint_angle = 0.0
-              self.gripping = False
-
-          def pick_up(self):
-              self.gripping = True
-
-          def rotate(self, angle: float):
-              self.joint_angle += angle
-
-   **Creating Objects**
-
-   Each call to the class creates a new, independent object. All objects share the same structure but maintain their own state.
-
-   .. code-block:: python
-
-      # Three arms built from the same blueprint
-      arm_1 = RobotArm(station=1)
-      arm_2 = RobotArm(station=2)
-      arm_3 = RobotArm(station=3)
-
-      arm_1.pick_up()         # arm_1 is gripping, others are not
-      arm_2.rotate(45.0)      # arm_2 rotated, others unchanged
-
-      print(arm_1.gripping)      # True
-      print(arm_2.joint_angle)   # 45.0
-      print(arm_3.gripping)      # False
-
-   .. note::
-
-      ``arm_1``, ``arm_2``, and ``arm_3`` are three **objects** (instances) created from the same **class** (blueprint). Modifying one does not affect the others.
-
-
-.. dropdown:: How ``self`` Works
-   :open:
-
-   The ``self`` parameter refers to the instance of the class. When you call a method on an instance, Python automatically passes the instance as the first argument. By convention this parameter is named ``self``.
-
-   **What You Write**
-
-   .. code-block:: python
-
-      def rotate(self, angle: float):
-          self.joint_angle += angle
-
-      arm_1 = RobotArm(station=1)
-      arm_1.rotate(45.0)
-
-   **What Python Does**
-
-   .. code-block:: python
-
-      def rotate(arm_1, angle: float):
-          arm_1.joint_angle += angle
-
-      arm_1 = RobotArm(station=1)
-      RobotArm.rotate(arm_1, 45.0)
-
-   .. note::
-
-      **Key Insight**: ``arm_1.rotate(45.0)`` is syntactic sugar for ``RobotArm.rotate(arm_1, 45.0)``. Python automatically fills in ``self`` for you.
-
-
-.. dropdown:: The Constructor: ``__init__``
-   :open:
-
-   ``__init__`` is a special method (a "dunder" method) called automatically when a new instance is created. It initializes the object's attributes.
-
-   .. code-block:: python
-
-      class RobotArm:
-          def __init__(self, station: int):
-              self.station = station
-              self.joint_angle = 0.0
-              self.gripping = False
-
-      if __name__ == "__main__":
-          arm = RobotArm(station=1)
-          print(arm.station)       # 1
-          print(arm.joint_angle)   # 0.0
-          print(arm.gripping)      # False
-
-   - When ``RobotArm(station=1)`` is called, Python creates a new instance and passes it as ``self`` to ``__init__``.
-   - Inside ``__init__``, we set instance variables using ``self.attribute = value``.
-   - It is not mandatory to define ``__init__``, but it is best practice to initialize all attributes there.
-
-   .. warning::
-
-      ``__init__`` is **not** a constructor in the strict sense. It is an initializer. The actual constructor is ``__new__``, which is rarely overridden.
-
-   **Initialize All Attributes in ``__init__``**
-
-   To make your code less error-prone, initialize **all** attributes in the ``__init__`` method, even if you set them to empty values or ``None``.
-
-   .. code-block:: python
-
-      class RobotArm:
-          def __init__(self, station: int):
-              self.station = station
-              self.joint_angle = 0.0
-              self.gripping = False
-              self.log: list[str] = []     # Always initialize here
-
-          def pick_up(self, item: str):
-              self.gripping = True
-              self.last_item = item        # Bad: new attribute outside __init__
-
-   .. warning::
-
-      Creating new attributes outside ``__init__`` (like ``self.last_item`` above) is discouraged. It makes the class harder to understand and undermines encapsulation.
-
-
-.. dropdown:: Instance Attributes
-   :open:
-
-   Instance attributes belong to a specific object. Each object maintains its own copy, so modifying one object does not affect any other.
-
-   .. code-block:: python
-
-      class RobotArm:
-          def __init__(self, station: int):
-              self.station = station        # Instance attribute
-              self.joint_angle = 0.0        # Instance attribute
-              self.gripping = False         # Instance attribute
-
-      if __name__ == "__main__":
-          arm_1 = RobotArm(station=1)
-          arm_2 = RobotArm(station=2)
-
-          arm_1.joint_angle = 45.0
-
-          print(arm_1.joint_angle)  # 45.0
-          print(arm_2.joint_angle)  # 0.0  (unaffected)
-
-   - Instance attributes are created inside ``__init__`` using ``self.attribute = value``.
-   - Each object gets its own copy: ``arm_1.joint_angle`` and ``arm_2.joint_angle`` are independent.
-   - Instance attributes cannot be accessed through the class itself: ``RobotArm.station`` raises ``AttributeError``.
-
-
-.. dropdown:: Class Attributes
-   :open:
-
-   Class attributes are defined directly in the class body, outside any method. They are shared by all instances and accessed through the class name.
-
-   .. code-block:: python
-
-      class RobotArm:
-          total_arms = 0          # Class attribute (shared)
-
-          def __init__(self, station: int):
-              self.station = station      # Instance attribute (unique)
-              self.joint_angle = 0.0      # Instance attribute (unique)
-              self.gripping = False       # Instance attribute (unique)
-              RobotArm.total_arms += 1
-
-      if __name__ == "__main__":
-          arm_1 = RobotArm(station=1)
-          arm_2 = RobotArm(station=2)
-          print(RobotArm.total_arms)    # 2 (accessed via class)
-          print(arm_1.total_arms)       # 2 (accessed via instance)
-          print(arm_2.total_arms)       # 2
-
-   - Class attributes are defined outside ``__init__``, directly in the class body.
-   - All instances share the same class attribute. Modifying it via ``RobotArm.total_arms`` is visible everywhere.
-   - Always modify class attributes through the **class name** (``RobotArm.total_arms += 1``), not through ``self``. Using ``self.total_arms += 1`` creates a new instance attribute that shadows the class attribute.
-
-
-Implementation Phase: Dunder Methods
-====================================================
-
-Customizing how your objects interact with built-in Python operations.
-
-Refer to ``L6_classes_objects.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Are Dunder Methods?
-   :open:
-
-   **Dunder methods** (short for "double underscore") are special methods with names like ``__name__``. They allow your objects to interact with built-in Python operations such as ``print()``, ``len()``, ``+``, ``==``, ``in``, and more.
-
-   **Method Overriding**
-
-   When you write a dunder method in your class, you **override** the default behavior inherited from ``object``. This lets you customize how Python treats your objects.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-
-      scout = Robot("Scout")
-      print(scout)  # <__main__.Robot object at 0x7fe4dc66bbb0>
-      # Not very useful! Let's fix this by overriding __str__
-
-
-.. dropdown:: The ``__str__`` Method
-   :open:
-
-   ``__str__`` is called by ``print()`` and ``str()``. It should return a **human-readable** string intended for end users, log messages, or display output.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-
-          def __str__(self) -> str:
-              return f"{self.name} (Battery: {self.battery}%)"
-
-      scout = Robot("Scout")
-      print(scout)        # Scout (Battery: 100%)
-      print(str(scout))   # Scout (Battery: 100%)
-
-   - If ``__str__`` is not defined, Python falls back to ``__repr__``.
-   - Focus on readability: this is what the user sees.
-   - Think of ``__str__`` as the "pretty" representation.
-
-
-.. dropdown:: The ``__repr__`` Method
-   :open:
-
-   ``__repr__`` is called by ``repr()`` and used in the REPL, debugger, and when objects appear inside containers. The string it returns should look like the code you would type to create that object. That way, a developer reading a log or debugging output can immediately see how to reproduce it.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-
-          def __repr__(self) -> str:
-              return f"Robot(name='{self.name}', battery={self.battery})"
-
-      scout = Robot("Scout")
-      print(repr(scout))  # Robot(name='Scout', battery=100)
-      # You could copy that output and paste it as valid Python:
-      # scout_copy = Robot(name='Scout', battery=100)
-
-      robots = [Robot("Scout"), Robot("Hauler", 80)]
-      print(robots)       # [Robot(name='Scout', battery=100), ...]
-
-   - When you print a ``list``, Python calls ``__repr__`` on each element, not ``__str__``.
-   - A good ``__repr__`` looks like a valid constructor call: ``Robot(name='Scout', battery=100)``.
-   - If you only implement one, implement ``__repr__``. It serves as the fallback for ``__str__``.
-
-
-.. dropdown:: ``__str__`` vs. ``__repr__``
-   :open:
-
-   .. list-table:: Comparing ``__str__`` and ``__repr__``
-      :widths: 25 35 35
-      :header-rows: 1
-      :class: compact-table
-
-      * -
-        - ``__str__``
-        - ``__repr__``
-      * - Audience
-        - End users
-        - Developers
-      * - Called by
-        - ``print()``, ``str()``, f-strings
-        - ``repr()``, REPL, debugger
-      * - Inside containers
-        - Not used
-        - Used when objects are inside lists, dicts, etc.
-      * - Goal
-        - Human-readable
-        - Should look like the code you would write to create the object
-      * - Fallback
-        - Falls back to ``__repr__`` if not defined
-        - Falls back to default ``object.__repr__``
-
-   .. code-block:: python
-
-      scout = Robot("Scout", 80)
-
-      print(scout)            # Scout (Battery: 80%)             __str__
-      print(repr(scout))      # Robot(name='Scout', battery=80)  __repr__
-      print(f"Bot: {scout}")  # Bot: Scout (Battery: 80%)        __str__
-      print([scout])          # [Robot(name='Scout', battery=80)] __repr__
-
-   .. note::
-
-      **Rule of thumb**: Always implement ``__repr__``. Add ``__str__`` when you need a friendlier output for end users.
-
-
-.. dropdown:: What Is Operator Overloading?
-   :open:
-
-   Python already knows how ``+`` works for integers and strings. **Operator overloading** lets you teach Python what ``+`` (or any operator) should do when applied to *your own* classes. This is different from **method overriding**, where a parent class already provides a version of a method, but the child class provides its own version to replace it.
-
-   **Example**
-
-   Same operator, different types. The behavior depends on the operands.
-
-   .. code-block:: python
-
-      # + already works for int and str
-      print(3 + 4)         # 7
-      print("ab" + "cd")   # abcd
-
-      # We can teach + to work for Sensor objects too
-      print(lidar + camera) # Sensor(...)
-
-
-.. dropdown:: Operators and Their Dunder Methods
-   :open:
-
-   Every Python operator corresponds to a dunder method. When you use an operator with your objects, Python calls the corresponding method.
-
-   .. list-table:: Common dunder methods for operator overloading
-      :widths: 15 35 25
-      :header-rows: 1
-      :class: compact-table
-
-      * - Operator
-        - Dunder Method
-        - Example
-      * - ``+``
-        - ``__add__(self, other)``
-        - ``a + b``
-      * - ``-``
-        - ``__sub__(self, other)``
-        - ``a - b``
-      * - ``*``
-        - ``__mul__(self, other)``
-        - ``a * b``
-      * - ``==``
-        - ``__eq__(self, other)``
-        - ``a == b``
-      * - ``!=``
-        - ``__ne__(self, other)``
-        - ``a != b``
-      * - ``<``
-        - ``__lt__(self, other)``
-        - ``a < b``
-      * - ``>``
-        - ``__gt__(self, other)``
-        - ``a > b``
-      * - ``<=``
-        - ``__le__(self, other)``
-        - ``a <= b``
-      * - ``>=``
-        - ``__ge__(self, other)``
-        - ``a >= b``
-      * - ``len()``
-        - ``__len__(self)``
-        - ``len(a)``
-      * - ``in``
-        - ``__contains__(self, item)``
-        - ``x in a``
-      * - ``()``
-        - ``__call__(self, ...)``
-        - ``a(...)``
-      * - ``for...in``
-        - ``__iter__(self)``
-        - ``for x in a``
-
-
-.. dropdown:: Comparison Operators
-   :open:
-
-   .. code-block:: python
-
-      class Sensor:
-          def __init__(self, sensor_type: str, range_m: float):
-              self.sensor_type = sensor_type
-              self.range_m = range_m
-
-          def __eq__(self, other) -> bool:
-              if isinstance(other, Sensor):
-                  return self.range_m == other.range_m
-              return NotImplemented
-
-          def __gt__(self, other) -> bool:
-              if isinstance(other, Sensor):
-                  return self.range_m > other.range_m
-              return NotImplemented
-
-      lidar = Sensor("lidar", 50.0)
-      camera = Sensor("camera", 30.0)
-      print(lidar == camera)  # False
-      print(lidar > camera)   # True
-
-
-.. dropdown:: Arithmetic Operators
-   :open:
-
-   .. code-block:: python
-
-      class Sensor:
-          def __init__(self, sensor_type: str, range_m: float):
-              self.sensor_type = sensor_type
-              self.range_m = range_m
-
-          def __add__(self, other):
-              if isinstance(other, Sensor):
-                  return Sensor("fused", self.range_m + other.range_m)
-              elif isinstance(other, (int, float)):
-                  return Sensor(self.sensor_type, self.range_m + other)
-              return NotImplemented
-
-          def __repr__(self) -> str:
-              return f"Sensor('{self.sensor_type}', {self.range_m})"
-
-      lidar = Sensor("lidar", 50.0)
-      camera = Sensor("camera", 30.0)
-      print(lidar + camera)   # Sensor('fused', 80.0)
-      print(lidar + 10.0)     # Sensor('lidar', 60.0)
-
-   .. note::
-
-      Return ``NotImplemented`` (not ``raise NotImplementedError``) when the operand type is unsupported. This tells Python to try the reflected operation on the other operand.
-
-
-.. dropdown:: Making Objects Iterable, Searchable, and Callable
-   :open:
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-              self.log: list[str] = []
-
-          def __iter__(self):
-              return iter(self.log)
-
-          def __contains__(self, task_name: str):
-              return task_name in self.log
-
-          def __call__(self, task_name: str):
-              self.log.append(task_name)
-              print(f"{self.name} assigned: {task_name}")
-
-      scout = Robot("Scout")
-      scout("pick widget")              # Scout assigned: pick widget
-      scout("navigate to zone B")       # Scout assigned: navigate to zone B
-      for entry in scout:               # Uses __iter__
-          print(entry)                  # pick widget, then navigate to zone B
-      print("pick widget" in scout)     # True (uses __contains__)
-
-
-Implementation Phase: Abstraction and Encapsulation
-====================================================
-
-Controlling access to an object's internal state.
-
-Refer to ``L6_classes_objects.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is Abstraction?
-   :open:
-
-   **Abstraction** refers to hiding the complex implementation details of an object and showing only the essential features. The user interacts with an interface without needing to know how operations are implemented internally.
-
-   **Real-World Analogy**
-
-   Think of a robot's ``move()`` method: you call ``scout.move("north")`` without needing to know about motor controllers, PID loops, wheel encoders, or path planning algorithms. The robot hides its internal complexity behind a simple interface.
-
-   **Python Example**
-
-   Python built-in functions like ``len()`` are abstractions. You know ``len()`` returns the number of items in a sequence, but you do not need to know how it is implemented internally. The developers can change the internal implementation without affecting your code.
-
-   .. note::
-
-      **Separation of Concerns**: Abstraction separates *what* an object does from *how* it does it. This makes code easier to maintain and extend.
-
-
-.. dropdown:: How Do We Achieve Abstraction?
-   :open:
-
-   Abstraction in Python is achieved at multiple levels. In this lecture we focus on the first two. The third level uses inheritance, which we cover in L7.
-
-   .. code-block:: python
-
-      class Robot:
-          """A robot that performs tasks.
-
-          The caller only needs to know that recharge() restores
-          the battery. How it works internally is hidden.
-          """
-
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-
-          def recharge(self):
-              """Restore battery to full."""
-              # Internal details hidden:
-              # - validate current state
-              # - reset drain counter
-              # - log the recharge event
-              self.battery = 100
-
-      if __name__ == "__main__":
-          scout = Robot("Scout")
-          scout.recharge()        # Simple interface
-          print(scout.battery)    # 100
-
-   **Level 1: Documentation**
-
-   - A docstring describes *what* a class or method does without exposing *how*.
-   - The end-user reads the docstring, not the source code.
-
-   **Level 2: Public Interface**
-
-   - Public methods (e.g., ``recharge()``) define what the object can do.
-   - Internal logic (validation, logging, state management) is hidden inside the method body.
-   - The end-user only sees a simple interface.
-
-   **Level 3: Abstract Classes (L7)**
-
-   - Python's ``abc`` module lets you define abstract methods that subclasses **must** implement.
-   - This enforces a contract: every subclass guarantees the same interface.
-   - We will cover this in Lecture 7.
-
-
-.. dropdown:: What Is Encapsulation?
-   :open:
-
-   **Encapsulation** is the bundling of data (attributes) with the methods that operate on that data. The goal is to allow an object to manage its own state and prevent external code from modifying it in invalid ways.
-
-   **The Problem Without Encapsulation**
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self.name = name
-              self.battery = battery
-
-          def perform_task(self, task_name: str):
-              self.battery -= 10
-
-      if __name__ == "__main__":
-          scout = Robot("Scout")
-          scout.battery = "full"     # No validation!
-          scout.perform_task("pick") # TypeError: unsupported operand type(s)
-
-   .. warning::
-
-      Without encapsulation, external code can set ``battery`` to a string, causing methods to break. Encapsulation prevents this by controlling how attributes are accessed and modified.
-
-
-.. dropdown:: How to Achieve Encapsulation
-   :open:
-
-   - Prefix all attributes with a leading underscore to signal they are non-public.
-   - Provide controlled access through getter and setter decorators (``@property``).
-
-
-.. dropdown:: Public vs. Non-Public Members
-   :open:
-
-   Python uses naming conventions (not access modifiers like Java or C++) to signal whether attributes are intended to be public or non-public.
-
-   - ``name`` -- **Public**. Freely accessible from outside the class.
-   - ``_name`` -- **Non-public by convention**. Signals "do not access directly". Python does not enforce this, but violating the convention is considered bad practice.
-   - ``__name`` -- **Name mangling**. Python renames it to ``_ClassName__name`` to avoid accidental access. Rarely needed.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name        # Non-public by convention
-              self._battery = battery  # Non-public by convention
-
-      scout = Robot("Scout")
-      scout._battery = "full"  # Still possible, but violates the convention
-
-   .. note::
-
-      The underscore prefix is a **social contract**: it tells other developers "this attribute is internal; use the provided interface instead."
-
-
-.. dropdown:: Traditional Getters and Setters
-   :open:
-
-   In languages like Java, you write explicit getter and setter methods. Python supports this, but it is not the preferred approach.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
-
-          def get_battery(self) -> int:
-              return self._battery
-
-          def set_battery(self, battery: int):
-              if isinstance(battery, int) and 0 <= battery <= 100:
-                  self._battery = battery
-              else:
-                  raise ValueError("Battery must be an integer between 0 and 100")
-
-      scout = Robot("Scout")
-      scout.set_battery(80)            # Works
-      # scout.set_battery("full")     # ValueError
-      print(scout.get_battery())       # 80
-
-   .. note::
-
-      This works, but it is not Pythonic. The ``@property`` decorator provides a cleaner solution.
-
-
-.. dropdown:: The ``@property`` Decorator
-   :open:
-
-   **The Pythonic Way**
-
-   The ``@property`` decorator transforms a method into a read-only attribute. Combined with a corresponding setter, it allows you to add validation and control over how an attribute is accessed and modified, all without changing the external interface.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name       # non-public attribute
-              self._battery = battery  # non-public attribute
-
-   - Attributes prefixed with ``_`` signal that they should not be accessed directly.
-   - External code interacts with these attributes through properties instead.
-
-
-.. dropdown:: Defining a Getter
-   :open:
-
-   Applying ``@property`` to a method turns it into a getter. When external code accesses ``robot.battery``, Python automatically calls this method and returns its result.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
-
-          @property
-          def battery(self) -> int:
-              """The battery level of the robot."""
-              return self._battery
-
-   - The method name (``battery``) becomes the attribute name used by external code.
-   - Accessing ``robot.battery`` calls this method behind the scenes.
-   - Without a setter, the attribute is read-only.
-
-
-.. dropdown:: Defining a Setter with Validation
-   :open:
-
-   The ``@battery.setter`` decorator defines what happens when external code assigns a value to ``robot.battery``. This is where you enforce constraints on incoming data.
-
-   .. code-block:: python
-
-      @battery.setter
-      def battery(self, value: int):
-          if not isinstance(value, int) or not (0 <= value <= 100):
-              raise ValueError(
-                  "Battery must be an integer between 0 and 100"
-              )
-          self._battery = value
-
-   - The decorator name must match the property: ``@battery.setter``.
-   - Invalid values raise an exception before the attribute is modified.
-   - The non-public attribute ``_battery`` is only updated if validation passes.
-
-
-.. dropdown:: Using Properties
-   :open:
-
-   From the caller's perspective, properties look and feel exactly like regular attributes. The validation logic is completely hidden behind the assignment syntax.
-
-   .. code-block:: python
-
-      if __name__ == '__main__':
-          scout = Robot("Scout")
-          print(scout.battery)      # 100  (calls the getter)
-          scout.battery = 80         # OK   (calls the setter with validation)
-          print(scout.battery)       # 80   (calls the getter)
-          # scout.battery = "full"  # ValueError!
-
-   - ``scout.battery`` on the right side of an expression triggers the getter.
-   - ``scout.battery = 80`` on the left side triggers the setter.
-   - Assigning an invalid value such as ``"full"`` raises a ``ValueError``.
-   - The caller never needs to know that validation is happening.
-
-
-.. dropdown:: Read-Only Properties
-   :open:
-
-   If you define only the getter (no setter), the property becomes read-only.
-
-   .. code-block:: python
-
-      class Robot:
-          def __init__(self, name: str):
-              self._name = name
-
-          @property
-          def name(self) -> str:
-              return self._name
-
-          @name.setter
-          def name(self, value):
-              raise AttributeError("Cannot rename a robot after creation")
-
-      scout = Robot("Scout")
-      print(scout.name)      # Scout
-      # scout.name = "Bob"   # AttributeError: Cannot rename a robot after creation
-
-
-.. dropdown:: Encapsulation Summary
-   :open:
-
-   - Prefix non-public attributes with an underscore (``_name``).
-   - Use ``@property`` for controlled access instead of explicit getters/setters.
-   - While the ``property()`` built-in function works, the decorator syntax is preferred.
-
-
-Putting It All Together
-====================================================
-
-This section combines the concepts from the entire lecture into a comprehensive exercise.
-
-
-Summary
+Syntax
 --------
 
-.. grid:: 1 2 2 2
-    :gutter: 3
+.. code-block:: cpp
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+   template<typename T>
+   ReturnType function_name(T parameter) {
+       // function body
+   }
 
-        - **OOP Fundamentals** -- Objects bundle data and behavior; Python is multi-paradigm
-        - **Design Phase** -- Identify objects, define classes, establish relationships, model behavior
-        - **Classes and Objects** -- Classes are blueprints; objects are instances with their own state
-        - **``self`` and ``__init__``** -- ``self`` refers to the instance; ``__init__`` initializes attributes
+Or equivalently:
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+.. code-block:: cpp
 
-        - **Attributes** -- Instance attributes are per-object; class attributes are shared
-        - **Dunder Methods** -- Customize ``print()``, operators, ``in``, ``for``, and callable behavior
-        - **Abstraction** -- Hide implementation details behind a clean interface
-        - **Encapsulation** -- Use ``_prefix`` convention and ``@property`` to protect state
+   template<class T>
+   ReturnType function_name(T parameter) {
+       // function body
+   }
 
-.. list-table:: Concepts at a Glance
-   :widths: 25 30 30
+- ``typename`` and ``class`` are interchangeable in parameter lists (historical difference only).
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Prefer ``typename`` for clarity in modern code.
+
+
+Benefits
+----------
+
+1. **Maintainability**: fix once, apply everywhere.
+2. **Consistency**: identical logic for all types.
+3. **Flexibility**: support new types without new code.
+4. **Less code**: fewer duplicates in sources.
+
+
+Template vs Function Overloading
+-----------------------------------
+
+.. list-table::
    :header-rows: 1
-   :class: compact-table
+   :widths: 40 20 20
 
-   * - Concept
-     - Mechanism
-     - Use Case
-   * - Class definition
-     - ``class MyClass:``
-     - Blueprint for objects
-   * - Constructor
-     - ``__init__(self, ...)``
-     - Initialize attributes
-   * - String representation
-     - ``__str__``, ``__repr__``
-     - Human/debug output
-   * - Operators
-     - ``__add__``, ``__eq__``, etc.
-     - Custom arithmetic/comparison
-   * - Encapsulation
-     - ``_attr`` + ``@property``
-     - Controlled attribute access
-
-.. note::
-
-   **Reminder**: Review and experiment with all provided code before next class.
+   * - Scenario
+     - Use Overloading
+     - Use Templates
+   * - Same logic for all types
+     - No
+     - Yes
+   * - Different logic per type
+     - Yes
+     - No
+   * - Type-specific optimizations
+     - Yes
+     - Yes (specialize later)
+   * - Simple, clear intent
+     - Yes
+     - Depends on complexity
+   * - Avoiding code duplication
+     - No
+     - Yes
 
 
-Preview: What's Next in L7
----------------------------
+Instantiation
+---------------
 
-.. grid:: 1 2 2 2
-    :gutter: 3
+A template is stored as a blueprint; the compiler *instantiates* concrete functions only when used.
 
-    .. grid-item-card:: L7: Object-Oriented Programming II
-        :class-card: sd-border-primary
+.. code-block:: cpp
 
-        - Class methods and static methods
-        - Relationships: association, aggregation, composition
-        - Inheritance (``MobileRobot``, ``ManipulatorRobot``) and ``super()``
-        - Polymorphism and duck typing
-        - Abstract base classes (``Task`` interface)
-        - Data classes
+   template<typename T>
+   T multiply(T a, T b) {
+       return a * b;
+   }
 
-.. note::
-
-   Today's lecture gives you the OOP fundamentals that are essential for understanding relationships, inheritance, and polymorphism in the next lecture.
+   int main() {
+       int result1{multiply(3, 4)};          // instantiates multiply<int>
+       double result2{multiply(2.5, 4.0)};   // instantiates multiply<double>
+       int result3{multiply(5, 6)};          // reuses multiply<int> (no new code)
+   }
 
 
-Appendix: Exception Handling
+Definition
+------------
+
+Always define template functions and classes in header files (``.hpp``), **not** in separate ``.cpp`` files.
+
+**Why?** Templates are **not compiled** until they are **instantiated**.
+
+1. **Compilation happens when used**: The compiler generates actual code only when you call the template with specific types.
+2. **Compiler needs full definition**: To instantiate, the compiler must see the complete template definition, not just a declaration.
+3. **Separate compilation breaks**: If the definition is in a ``.cpp`` file, other translation units cannot see it and cannot instantiate.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Wrong: Separate Files
+      :class-card: sd-border-danger
+
+      .. code-block:: cpp
+
+         // week6.hpp
+         template<typename T>
+         T add(T a, T b);  // Declaration only
+
+         // week6.cpp
+         template<typename T>
+         T add(T a, T b) {  // Definition
+             return a + b;
+         }
+
+         // main.cpp
+         #include "week6.hpp"
+         int main() {
+             add(3, 4);  // Linker error!
+                         // undefined reference ...
+         }
+
+   .. grid-item-card:: Correct: In Header
+      :class-card: sd-border-success
+
+      .. code-block:: cpp
+
+         // week6.hpp
+         template<typename T>
+         // Definition in header
+         T add(T a, T b) {
+             return a + b;
+         }
+
+         // main.cpp
+         #include "week6.hpp"
+         int main() {
+             add(3, 4);  // Works!
+             // Compiler sees definition,
+             // instantiates add<int>
+         }
+
+.. admonition:: Remember
+   :class: note
+
+   Template code is like a blueprint -- the compiler needs to see the entire blueprint to build the actual function for each type you use.
+
+
+Template Documentation
+------------------------
+
+Essential Doxygen tags for templates:
+
+- ``@tparam T`` for each template parameter
+- ``@param``, ``@return`` as usual
+- ``@brief``, ``@details`` for summaries
+- ``@note``, ``@warning`` for constraints
+- ``@ingroup``, ``@file``, ``@namespace`` for organization
+
+.. code-block:: cpp
+
+   /// @file math_utils.hpp
+   /// @brief Small numeric utilities.
+
+   #pragma once
+
+   /**
+    * @brief Returns the greater of two values.
+    *
+    * @tparam T A totally ordered type (requires operator>).
+    * @param a First value.
+    * @param b Second value.
+    * @return The larger of @p a and @p b.
+    * @note Use explicit template arguments if deduction is ambiguous.
+    * @code
+    * auto m{max_value<int>(3, 4)};
+    * @endcode
+    */
+   template<typename T>
+   T max_value(T a, T b)
+   {
+       return (a > b) ? a : b;
+   }
+
+
+Multiple Template Parameters
+-------------------------------
+
+A template can have multiple independent type parameters.
+
+.. code-block:: cpp
+
+   template<typename T, typename U>
+   auto add_different(T a, U b) {
+       return a + b;  // deduce from operator+
+   }
+
+   int main() {
+       int r1{add_different(3, 4)};        // int
+       double r2{add_different(3, 4.5)};   // double
+       double r3{add_different(3.5, 4)};   // double
+   }
+
+Using ``auto`` as the return type lets the compiler automatically deduce the result type from the ``return`` statement.
+
+
+Explicit Template Arguments
+------------------------------
+
+If deduction fails or you want a different type than deduction would choose, specify template arguments explicitly.
+
+.. code-block:: cpp
+
+   function_name<type1, type2, ...>(arguments);
+
+- Each type in ``<...>`` binds to a template parameter.
+- When you specify them, the compiler skips deduction for those parameters.
+
+.. code-block:: cpp
+
+   template<typename T>
+   void print_twice(T value) {
+       std::cout << value << " " << value << '\n';
+   }
+
+   int main() {
+       print_twice(10);        // T deduced as int
+       print_twice<int>(10);   // explicitly T = int (same result)
+   }
+
+**Partial explicit specification:**
+
+.. code-block:: cpp
+
+   template<typename T, typename U>
+   void display_pair(T a, U b) {
+       std::cout << a << ", " << b << '\n';
+   }
+
+   int main() {
+       display_pair<int>(5, 3.14); // T fixed to int, U deduced as double
+   }
+
+
+Template Type Deduction
+-------------------------
+
+The compiler deduces template parameters from the function arguments you pass.
+
+.. code-block:: cpp
+
+   template<typename T>
+   T add(T a, T b) {
+       return a + b;
+   }
+
+   int main() {
+       int result{add(3, 5)};  // deduces T = int
+   }
+
+- Arguments ``3`` and ``5`` are ``int`` => ``T`` is ``int``.
+- Compiler instantiates ``int add(int, int)``.
+
+**Deduction with References**
+
+.. code-block:: cpp
+
+   template<typename T>
+   void modify(T& value) {
+       value *= 2;
+   }
+
+   int main() {
+       int x{10};
+       modify(x);  // T deduced as int; x becomes 20
+   }
+
+The reference is part of the template parameter list (``T&``); the deduced ``T`` is ``int``, not ``int&``.
+
+**Deduction with** ``const``
+
+.. code-block:: cpp
+
+   template<typename T>
+   void print(const T& value) {
+       std::cout << value << '\n';
+   }
+
+   int main() {
+       int x{42};
+       print(x);   // T deduced as int
+
+       const int y{99};
+       print(y);   // T deduced as int (const is applied by the parameter type)
+   }
+
+**Override the Deduced Type**
+
+.. code-block:: cpp
+
+   template<typename T>
+   void process(T value) {
+       std::cout << typeid(T).name() << '\n';
+   }
+
+   int main() {
+       short s{42};
+       process(s);        // T is short
+       process<int>(s);   // force T = int (converts before call)
+   }
+
+
+Deduction Failures
+--------------------
+
+**When Deduction Fails**
+
+.. code-block:: cpp
+
+   template<typename T>
+   T create_value() { return T{}; }
+
+   int main() {
+       // create_value();           // ERROR: cannot deduce T
+       auto v{create_value<int>()}; // OK
+   }
+
+**Ambiguity**
+
+.. code-block:: cpp
+
+   template<typename T>
+   T get_value(T a, T b) {
+       return a;
+   }
+
+   int main() {
+       int result{get_value(3, 4.5)}; // ERROR: T = int or T = double?
+   }
+
+During deduction, one consistent ``T`` must satisfy all parameters. Here it cannot.
+
+**Impossibility**
+
+.. code-block:: cpp
+
+   template<typename T>
+   T create_value() {
+       return T{};
+   }
+
+   int main() {
+       auto result{create_value()};  // ERROR: cannot deduce T
+       // Even: int r{create_value()}; // still ERROR
+   }
+
+Deduction uses only function *parameters*. Return types and assignment targets are *not* used for deduction.
+
+**Type Mismatch**
+
+.. code-block:: cpp
+
+   template<typename T>
+   void process(T* ptr) { /* expects a pointer */ }
+
+   int main() {
+       int x{42};
+       process(x);  // ERROR: x is not a pointer
+   }
+
+
+Template Specialization
+--------------------------
+
+Templates are generic by default, but some types need different behavior. Specialization customizes a template for specific types.
+
+**Full Specialization**
+
+A full specialization provides a complete, alternative definition for a specific type or type combination.
+
+.. code-block:: cpp
+
+   template<>
+   ReturnType function_name<SpecificType>(parameter_list) {
+       // specialized implementation
+   }
+
+**Special Handling for Strings**
+
+.. code-block:: cpp
+
+   template<typename T> // generic
+   T get_max(T a, T b) {
+       return (a > b) ? a : b;
+   }
+
+   template<> // full specialization for std::string
+   std::string get_max<std::string>(std::string a, std::string b) {
+       std::cout << "Using string specialization!\n";
+       return (a.length() > b.length()) ? a : b;
+   }
+
+   int main() {
+       int max_int{get_max(3, 5)};                               // generic
+       std::string max_str{get_max<std::string>("hi", "hello")}; // specialized
+   }
+
+**Optimized Version for** ``bool``
+
+.. code-block:: cpp
+
+   template<typename T>
+   void process(T value) {
+       std::cout << "Processing generic value: " << value << '\n';
+   }
+
+   template<> // full specialization
+   void process<bool>(bool value) {
+       std::cout << "Processing bool: " << (value ? "true" : "false") << '\n';
+   }
+
+   int main() {
+       process(42);    // generic
+       process(true);  // specialized
+   }
+
+**When to specialize?**
+
+- **Performance**: a type admits a faster implementation.
+- **Semantics**: a type needs different behavior.
+- **Integration**: adapt external/library types.
+
+
+Function Operators, Specifiers, and Attributes
 ====================================================
 
-This appendix introduces exception handling, a prerequisite for understanding how classes validate their own data. The ``raise`` statement and ``try``/``except`` blocks are used throughout the OOP implementation to enforce business rules and keep objects in a valid state.
+Beyond the function signature, C++ provides several mechanisms to convey extra information about a function's *behavior*, *usage*, and *constraints*.
 
+- **Operators** perform actions or evaluations (e.g., ``+``, ``!``). They produce a result or effect at compile time or runtime.
+- **Specifiers** modify how the compiler interprets a declaration. They affect linkage, optimization, or exception guarantees.
+- **Attributes** provide metadata or hints to the compiler. They do not alter semantics but influence diagnostics and intent.
 
 
-.. dropdown:: What Happens When Things Go Wrong?
-   :open:
+``decltype`` Operator
+-----------------------
 
-   Programs encounter errors at runtime: invalid input, missing files, impossible calculations. Without a mechanism to handle these errors, the program crashes immediately.
+The ``decltype`` operator inspects the *type* of an expression at compile time **without evaluating it**. It allows developers to deduce types automatically based on expressions, ensuring type consistency in templates and generic code.
 
-   .. code-block:: python
+**Basic Usage**
 
-      def compute_speed(distance: float, time: float) -> float:
-          return distance / time
+.. code-block:: cpp
 
-      speed = compute_speed(100.0, 0.0)  # ZeroDivisionError!
-      print(f"Speed: {speed}")  # This line never runs
+   double average(double a, double b) {
+       return (a + b) / 2.0;
+   }
 
-   Python uses **exceptions** to signal that something went wrong. An unhandled exception terminates the program and prints a traceback.
+   int main() {
+       int x{42};
+       decltype(x) y{10}; // y has same type as x (int)
+       decltype(average(1.0, 2.0)) result{0.0}; // deduces double
+   }
 
+``decltype(expr)`` inspects the type of ``expr`` at compile time and returns it as a type. Unlike ``auto``, it does **not evaluate** the expression (only analyzes its declared type).
 
-.. dropdown:: Common Built-in Exceptions
-   :open:
+**Reference and Const Deduction**
 
-   .. list-table:: Common built-in exceptions in Python
-      :widths: 25 55
-      :header-rows: 1
-      :class: compact-table
+.. code-block:: cpp
 
-      * - Exception
-        - Raised When
-      * - ``ZeroDivisionError``
-        - Dividing by zero
-      * - ``TypeError``
-        - Wrong type for an operation
-      * - ``ValueError``
-        - Right type but invalid value
-      * - ``IndexError``
-        - List index out of range
-      * - ``KeyError``
-        - Dictionary key not found
-      * - ``FileNotFoundError``
-        - File does not exist
-      * - ``AttributeError``
-        - Accessing a nonexistent attribute
-      * - ``NotImplementedError``
-        - Method not yet implemented
+   int n{10};
+   int& ref{n};
+   const int c{5};
 
-   .. note::
+   decltype(n)   a{0};   // int
+   decltype(ref) b{n};   // int&   (reference preserved)
+   decltype(c)   d{7};   // const int (const preserved)
+   decltype((n)) e{n};   // int&   (parentheses -> lvalue expression)
 
-      All exceptions inherit from ``BaseException``. The ones we typically catch inherit from ``Exception``.
+Parentheses are important! ``decltype(expr)`` preserves ``const`` and reference qualifiers depending on the expression form. If ``expr`` is an lvalue, ``decltype(expr)`` yields a ``T&`` type.
 
+**Understanding Value Categories**
 
-.. dropdown:: The ``try``/``except`` Block
-   :open:
+Expressions in C++ are classified into three **value categories**:
 
-   A ``try``/``except`` block lets you catch an exception and respond to it instead of letting the program crash.
+- **lvalue** ("locator value"): Has an identifiable memory address. Can appear on the left side of ``=``. Examples: variables, array elements, dereferenced pointers, string literals.
+- **prvalue** ("pure rvalue"): Temporary or computed value with no persistent address. It **cannot appear on the left-hand side of** ``=``. Examples: literals (e.g., ``42``, ``3.14``), results of expressions like ``x + y``.
+- **xvalue** ("expiring value"): Represents a resource that can be reused or moved from. Example: ``std::move(x)``.
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      def compute_speed(distance: float, time: float) -> float:
-          return distance / time
+   int x{42};
+   int* ptr{&x};   // OK: x is an lvalue
+   // int* p{&42}; // ERROR: 42 is a prvalue (no address)
 
-      try:
-          speed = compute_speed(100.0, 0.0)
-          print(f"Speed: {speed}")
-      except ZeroDivisionError:
-          print("Error: time cannot be zero")
+   int y{x + 5};   // (x + 5) is a prvalue (temporary)
 
-   - Code inside ``try`` runs normally until an exception occurs.
-   - If the exception matches the type in ``except``, that block runs instead of crashing.
-   - If no exception occurs, the ``except`` block is skipped entirely.
+**decltype and Expression Categories**
 
+The type produced by ``decltype(expr)`` depends on whether ``expr`` is an **identifier**, an **lvalue expression**, or a **prvalue**.
 
-.. dropdown:: Accessing the Exception Object
-   :open:
+.. code-block:: cpp
 
-   You can capture the exception object using ``as`` to inspect its message or pass it along.
+   int x{10};
 
-   .. code-block:: python
+   // decltype with identifiers (no parentheses)
+   decltype(x)     a{0};    // int       (x's declared type)
 
-      values = [10, 20, 30]
+   // decltype with expressions (parentheses or operations)
+   decltype((x))   b{x};    // int&      (x is an lvalue expression)
+   decltype(x + 0) c{0};    // int       (x + 0 is a prvalue)
+   decltype(*(&x)) d{x};    // int&      (*(&x) is an lvalue)
 
-      try:
-          print(values[5])
-      except IndexError as e:
-          print(f"Caught an error: {e}")
+.. admonition:: Rule of Thumb
+   :class: tip
 
-   - The variable ``e`` holds the exception instance.
-   - Printing ``e`` displays the error message.
-   - This is useful for logging errors or displaying user-friendly messages.
+   - ``decltype(id)`` -> declared type
+   - ``decltype(lvalue-expr)`` -> ``T&``
+   - ``decltype(prvalue-expr)`` -> ``T``
 
+**Practical Examples**
 
-.. dropdown:: Handling Multiple Exception Types
-   :open:
+.. code-block:: cpp
 
-   You can handle different exceptions separately, or group them in a single ``except`` clause.
+   int arr[5]{1, 2, 3, 4, 5};
+   const int c{100};
 
-   **Separate Handlers**
+   decltype(arr[0])     v1{arr[1]};   // int&       (arr[0] is lvalue)
+   decltype(arr[0] + 1) v2{0};        // int        (arithmetic -> prvalue)
+   decltype(c)          v3{50};       // const int  (const preserved)
+   decltype((c))        v4{c};        // const int& (lvalue expression)
 
-   .. code-block:: python
+   int get_value() { return 42; }
+   decltype(get_value()) v5{0};  // int (function call -> prvalue)
 
-      try:
-          result = int("abc") / 0
-      except ValueError:
-          print("Invalid value")
-      except ZeroDivisionError:
-          print("Cannot divide by 0")
+In template or generic code, ``decltype`` allows perfect type deduction -- preserving references, constness, and distinguishing between lvalues and prvalues.
 
-   **Grouped Handler**
+**Difference Between** ``auto`` **and** ``decltype``
 
-   .. code-block:: python
+.. list-table::
+   :header-rows: 1
+   :widths: 25 35 35
 
-      try:
-          result = int("abc") / 0
-      except (ValueError, ZeroDivisionError) as e:
-          print(f"Error: {e}")
+   * - Feature
+     - ``auto``
+     - ``decltype``
+   * - Evaluates expression
+     - Yes (value-based deduction)
+     - No (type-only inspection)
+   * - Preserves references
+     - Drops them
+     - Preserves them
+   * - Preserves const qualifiers
+     - Removes them
+     - Keeps them
+   * - Common usage
+     - Variable initialization
+     - Type extraction and template return types
 
-   .. warning::
+``decltype`` provides exact compile-time type information. ``auto`` deduces from evaluated expressions, sometimes dropping qualifiers.
 
-      Avoid catching bare ``except:`` or ``except Exception:`` unless you have a good reason. Overly broad handlers can hide bugs by silently swallowing unexpected errors.
+**Using decltype with Variables**
 
+.. code-block:: cpp
 
-.. dropdown:: The ``else`` Clause
-   :open:
+   int x{10};
+   int y{20};
 
-   The ``else`` clause runs only when the ``try`` block completes without raising an exception. It separates the code that might fail from the code that should only run on success.
+   // Declare a variable with the same type as an expression
+   decltype(x + y) sum{x + y};  // sum is int
 
-   .. code-block:: python
+   // With function calls
+   double calculate(double a, double b) { return a * b; }
+   decltype(calculate(2.0, 3.0)) result{calculate(2.5, 4.0)}; // double
 
-      def parse_battery(value: str) -> int:
-          try:
-              level = int(value)
-          except ValueError:
-              print(f"Cannot parse '{value}' as an integer")
-              return -1
-          else:
-              print(f"Successfully parsed battery level: {level}")
-              return level
+**Common Pitfalls**
 
-      parse_battery("85")     # Successfully parsed battery level: 85
-      parse_battery("full")   # Cannot parse 'full' as an integer
+.. code-block:: cpp
 
-   - Code in ``else`` only executes if ``try`` raised no exception.
-   - This keeps the ``try`` block minimal: only wrap the code that might fail.
-   - Without ``else``, you would place the success logic inside ``try``, which risks accidentally catching exceptions from that logic too.
+   // Parentheses change meaning
+   int x{5};
+   decltype(x) a{0};   // int        (declared type)
+   decltype((x)) b{x}; // int&       (lvalue expression)
 
+   // decltype of a temporary
+   decltype(x + 1) c{42}; // int (prvalue expression)
 
-.. dropdown:: The ``finally`` Clause
-   :open:
+Be mindful of parentheses and expression category. ``decltype((x))`` yields a reference type since ``(x)`` is an lvalue, while ``decltype(x)`` gives the declared type directly.
 
-   The ``finally`` clause runs unconditionally, whether an exception occurred or not. It is used for cleanup actions that must always execute.
+.. admonition:: Best Practices for ``decltype``
+   :class: tip
 
-   .. code-block:: python
+   - Use ``decltype`` to replicate another variable's type or an expression's result.
+   - Combine with ``auto`` in templates for precise return-type deduction.
+   - Avoid unnecessary usage when the type is obvious -- clarity comes first.
+   - Remember: ``decltype`` never evaluates expressions; it only inspects their static type.
 
-      def read_config(filename: str):
-          file = None
-          try:
-              file = open(filename)
-              data = file.read()
-              print(f"Loaded {len(data)} characters")
-          except FileNotFoundError:
-              print(f"'{filename}' not found")
-          finally:
-              if file is not None:
-                  file.close()
-              print("Cleanup complete")
 
-      read_config("robot.cfg")
-      # 'robot.cfg' not found
-      # Cleanup complete
+Trailing Return Type
+----------------------
 
-   - ``finally`` executes after ``try``, ``except``, and ``else``, regardless of the outcome.
-   - Common use cases: closing files, releasing network connections, resetting hardware.
-   - The ``finally`` block runs even if a ``return`` statement is reached inside ``try`` or ``except``.
+Introduced in C++11, the **trailing return type** syntax allows the return type to appear *after* the parameter list.
 
+.. code-block:: cpp
 
-.. dropdown:: The Full ``try`` Statement
-   :open:
+   auto add(int a, int b) -> int {
+       return a + b;
+   }
 
-   All four clauses can be combined. The execution order is always: ``try``, then ``except`` or ``else``, then ``finally``.
+This syntax is an alternative way to declare return types. It is particularly useful when the function's return type depends on its parameter types, which the compiler only knows after parsing the parameter list.
 
-   .. code-block:: python
+**Purpose and Motivation**
 
-      def read_sensor(value: str) -> float:
-          try:
-              reading = float(value)
-          except ValueError:
-              print(f"Invalid: {value}")
-              reading = 0.0
-          else:
-              print(f"Valid: {reading}")
-          finally:
-              print("Read attempt complete")
-          return reading
+Traditional function declarations place the return type before the function name:
 
-      read_sensor("42.5")
-      # Valid: 42.5
-      # Read attempt complete
+.. code-block:: cpp
 
-      read_sensor("bad")
-      # Invalid: bad
-      # Read attempt complete
+   int add(int a, int b);
 
-   .. note::
+However, this becomes problematic in *templates* or complex C++ constructs where the return type depends on the parameter types.
 
-      **Rule of thumb**: Use ``else`` to keep the ``try`` block minimal. Use ``finally`` for cleanup that must happen regardless of success or failure. Neither clause is required, but both improve code clarity when used appropriately.
+.. code-block:: cpp
 
+   template <typename T, typename U>
+   ??? multiply(const T& a, const U& b) {  // What type goes here?
+       return a * b;
+   }
 
-.. dropdown:: The ``raise`` Statement
-   :open:
+The compiler needs to know ``T`` and ``U`` before deducing the return type, but in traditional syntax, the return type comes *first*!
 
-   The ``raise`` statement lets you **signal an error explicitly** when your code detects an invalid condition. This is how you enforce rules and constraints in your own functions and classes.
+**Solution**: use ``auto`` or trailing return type ``-> decltype()``.
 
-   .. code-block:: python
+**Perfect Return Type Deduction**
 
-      def set_battery(level: int):
-          if not isinstance(level, int):
-              raise TypeError("Battery level must be an integer")
-          if not (0 <= level <= 100):
-              raise ValueError("Battery level must be between 0 and 100")
-          print(f"Battery set to {level}%")
+.. code-block:: cpp
 
-      set_battery(80)       # Battery set to 80%
-      set_battery("full")   # TypeError: Battery level must be an integer
-      set_battery(150)      # ValueError: Battery level must be between 0 and 100
+   template <typename T, typename U>
+   auto multiply(const T& a, const U& b) -> decltype(a * b) {
+       return a * b;
+   }
 
-   - ``raise ExceptionType("message")`` creates an exception object and immediately stops normal execution.
-   - Choose the exception type that best describes the problem: ``TypeError`` for wrong types, ``ValueError`` for invalid values.
-   - The caller can catch these exceptions with ``try``/``except``.
+   int main() {
+       std::cout << multiply(2, 3.5) << '\n';     // 7.0 (double)
+       std::cout << multiply(2.5, 3) << '\n';     // 7.5 (double)
+       std::cout << multiply(2, 3) << '\n';       // 6 (int)
+   }
 
+The trailing return type ``-> decltype(a * b)`` ensures the return type exactly matches the result of the expression, regardless of operand types.
 
-.. dropdown:: Why ``raise`` Matters for OOP
-   :open:
+**Generic Arithmetic Operations**
 
-   Later in this lecture, we write classes that validate their own data. The ``raise`` statement is the mechanism that makes this possible.
+.. code-block:: cpp
 
-   .. code-block:: python
+   template <typename T>
+   auto square(const T& value) -> decltype(value * value) {
+       return value * value;
+   }
 
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              if not isinstance(battery, int) or not (0 <= battery <= 100):
-                  raise ValueError("Battery must be an integer between 0 and 100")
-              self._name = name
-              self._battery = battery
+   template <typename T, typename U>
+   auto add(const T& a, const U& b) -> decltype(a + b) {
+       return a + b;
+   }
 
-      robot = Robot("Scout", 80)   # OK
-      robot = Robot("Scout", 200)  # ValueError!
+``decltype`` ensures template functions adapt to any operand type -- from built-ins to user-defined types -- by deducing the expression's true return type.
 
-   .. note::
+**Why This Matters**
 
-      **Key Idea**: Classes use ``raise`` to reject invalid data at the point of entry. This keeps objects in a valid state and prevents bugs from propagating through the rest of the program.
+- **Type Safety**: Return type automatically matches the actual operation result.
+- **Flexibility**: Works with custom types that overload operators.
+- **Precision**: Preserves const, references, and value categories.
+- **Future-Proof**: Code adapts automatically when types change.
 
+**C++14 Simplification**
 
-.. dropdown:: ``return NotImplemented`` vs. ``raise NotImplementedError``
-   :open:
+In C++14 and later, **simple cases** can use plain ``auto``:
 
-   These look similar but serve completely different purposes.
+.. code-block:: cpp
 
-   **``return NotImplemented``**
+   // C++11: Explicit trailing return type
+   template <typename T, typename U>
+   auto add(T a, U b) -> decltype(a + b) {
+       return a + b;
+   }
 
-   - ``NotImplemented`` is a **value**, not an exception. You ``return`` it, never ``raise`` it.
-   - Used inside dunder methods (``__eq__``, ``__gt__``, ``__add__``, etc.).
-   - When Python receives ``NotImplemented``, it tries the reflected method on the other operand (e.g., ``other.__eq__(self)``).
+   // C++14: Automatic deduction (simpler)
+   template <typename T, typename U>
+   auto add(T a, U b) {
+       return a + b;  // compiler figures it out
+   }
 
-   .. code-block:: python
+**When Are They Different?**
 
-      class Sensor:
-          def __init__(self, sensor_type: str, range_m: float):
-              self.sensor_type = sensor_type
-              self.range_m = range_m
+*Case 1: Returning References*
 
-          def __eq__(self, other):
-              if isinstance(other, Sensor):
-                  return self.range_m == other.range_m
-              return NotImplemented
+.. code-block:: cpp
 
-      if __name__ == "__main__":
-          lidar = Sensor("lidar", 50.0)
-          camera = Sensor("camera", 50.0)
-          ultrasonic = Sensor("ultrasonic", 30.0)
-          print(lidar == camera)      # True
-          print(lidar == ultrasonic)  # False
-          print(lidar == "lidar")     # False
+   // Plain auto
+   template <typename T>
+   auto get_auto(T& ref) {
+       return ref;  // Returns int (COPY!)
+   }
 
-   **``raise NotImplementedError``**
+   // With decltype
+   template <typename T>
+   auto get_decltype(T& ref) -> decltype(ref) {
+       return ref;  // Returns int& (REFERENCE)
+   }
 
-   - ``NotImplementedError`` is an **exception**. You ``raise`` it, never ``return`` it.
-   - Used in methods that are meant to be overridden by subclasses (covered in L7).
-   - Calling the method without overriding it crashes immediately with a clear error message.
+   int main() {
+       int x{42};
+       get_auto(x) = 99;      // ERROR: can't assign to temporary
+       get_decltype(x) = 99;  // OK: x becomes 99
+   }
 
-   .. code-block:: python
+*Case 2: Returning const-ref*
 
-      class Robot:
-          def __init__(self, name: str):
-              self.name = name
+.. code-block:: cpp
 
-          def move(self, direction: str):
-              raise NotImplementedError("Subclasses must implement move()")
+   const int global_value{3};
+   const int& get_const_ref() { return global_value; }
 
-      if __name__ == "__main__":
-          robot = Robot("Base")
-          robot.move("north")
-          # NotImplementedError: Subclasses must implement move()
+   int main() {
+       auto result1 = get_const_ref();         // int (copy; const & dropped)
+       decltype(get_const_ref()) result2 = get_const_ref(); // const int&
+       decltype(auto) result3 = get_const_ref();            // const int&
+   }
 
-   .. warning::
+**Takeaway**: ``auto`` copies and drops top-level ``const``/``&``. ``decltype(expr)`` and ``decltype(auto)`` reproduce the exact type of ``expr``.
 
-      A common mistake is writing ``raise NotImplemented`` (without "Error"). This technically works but raises a confusing ``TypeError`` instead. Always use ``raise NotImplementedError``.
+.. admonition:: Best Practices
+   :class: tip
+
+   1. Use ``auto`` return type for simple template functions (C++14+).
+   2. Use ``-> decltype(expr)`` when you need precise control over return type qualifiers, explicit documentation of the return type, or compatibility with C++11.
+   3. Test template functions with various types, including user-defined types.
+
+
+``constexpr`` Specifier
+-------------------------
+
+The ``constexpr`` specifier marks an expression or function as **potentially evaluable at compile time**. When called with constant arguments, the compiler computes the result **during compilation**. When called with runtime values, it executes like a normal function.
+
+**Compile-Time Function Evaluation**
+
+.. code-block:: cpp
+
+   constexpr int square(int x) {
+       return x * x;
+   }
+
+   int main() {
+       constexpr int n{square(5)}; // evaluated at compile time
+       int m{7};
+       int result = square(m);      // evaluated at runtime
+   }
+
+``constexpr`` ensures a function **can** be evaluated at compile time, but does not require it to be. If all arguments are constant expressions, the compiler computes the result during compilation. If any argument is not constant, evaluation occurs at runtime.
+
+**What Happens When Evaluated at Compile Time?**
+
+When a ``constexpr`` function is evaluated at compile time:
+
+- The compiler replaces the call with its computed result, as if it were a literal constant.
+- No machine instructions are generated for that call.
+- The value becomes part of the program's static data segment.
+
+.. code-block:: cpp
+
+   constexpr int cube(int n) { return n * n * n; }
+
+   constexpr int volume{cube(4)}; // compiler computes 64 here
+   int array[volume];              // valid: array size known at compile time
+
+**Compile-time evaluation benefits:**
+
+- Eliminates runtime computation -- improves performance.
+- Enables use of results in contexts that require compile-time constants (e.g., array sizes, template arguments, ``switch`` cases).
+- Detects logic errors early -- during compilation.
+
+**Requirements for constexpr Functions**
+
+A ``constexpr`` function must:
+
+- Have a definition visible to the compiler (typically in a header file).
+- Contain a single ``return`` statement before C++14 (relaxed in later standards).
+- Operate only on arguments and expressions that can be constant at compile time.
+- Avoid inherently runtime operations (I/O, dynamic memory, exceptions, etc.).
+
+From C++14 onward, ``constexpr`` functions may include variables, loops, and conditionals, as long as their evaluation is deterministic and can be resolved by the compiler.
+
+.. admonition:: Best Practices for ``constexpr``
+   :class: tip
+
+   - Use ``constexpr`` for lightweight, deterministic, side-effect-free computations.
+   - Prefer ``constexpr`` when a result can safely be computed once at compile time.
+   - Combine with ``constexpr`` variables or ``std::array`` bounds for extra safety.
+   - Remember: ``constexpr`` shifts computation from runtime to compile time, improving both *performance* and *reliability*.
+
+
+``inline`` Specifier
+-----------------------
+
+An ``inline`` function requests that the compiler perform an optimization known as **inlining**. **Inlining** is the process of replacing the function call with the actual body of the function at the spot where it was called (the "call site").
+
+**The Problem with Functions**
+
+Every function call involves several hidden steps. Together, these steps contribute to what is known as **function call overhead**.
+
+- **Save the Context**: The program records its current state by pushing the return address onto the stack.
+- **Push the Arguments**: All function parameters and local variables are placed onto the stack.
+- **Transfer Control**: The instruction pointer moves to a new memory location.
+- **Execute the Function**: The processor carries out the operations.
+- **Store the Return Value**: The result is placed in a designated CPU register.
+- **Restore the Stack**: The function's stack frame is removed.
+- **Return Control**: The program retrieves the saved return address and resumes.
+
+.. code-block:: cpp
+
+   int add(int a, int b) {
+       return a + b;
+   }
+
+   // Called in a loop...
+   int total{0};
+   for (int i{0}; i < 1000000; ++i) {
+       total = add(total, i); // A million function calls!
+   }
+
+In this case, the overhead of calling the function millions of times may exceed the cost of performing the addition itself.
+
+.. code-block:: cpp
+
+   inline int add(int a, int b) { // inline
+       return a + b;
+   }
+
+   // Called in a loop...
+   int total{0};
+   for (int i{0}; i < 1000000; ++i) {
+       total = total + i; // Compiler may use the function body directly
+   }
+
+The output is identical, but the compiler may replace the function call with the function's body, eliminating the call overhead entirely.
+
+**The inline Keyword Is Only a Hint**
+
+``inline`` is a suggestion, not a command. The compiler is free to ignore the request. The compiler typically avoids inlining when a function is:
+
+- **Large**: Expanding a long function would bloat the code.
+- **Recursive**: Fully inlining a self-calling function is not feasible.
+- **Loop-heavy**: Functions containing loops are usually poor inlining candidates.
+- **Virtual**: Because ``virtual`` calls are resolved at runtime, the compiler generally cannot inline them.
+
+Modern compilers may choose to ``inline`` a function even if you never mark it with the ``inline`` keyword.
+
+**The One Definition Rule (ODR)**
+
+If modern compilers can decide on their own when to inline, why does C++ still have the ``inline`` keyword? Because of the **One Definition Rule (ODR)**, not for performance, but for *linkage and consistency across translation units*.
+
+C++ enforces the **One Definition Rule (ODR)**, which states:
+
+   *A function may be declared multiple times (for example, in several header files), but it must be defined exactly once in the entire program.*
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Without ``inline`` -- ODR Violation
+      :class-card: sd-border-danger
+
+      .. code-block:: cpp
+
+         // utils.hpp
+         #pragma once
+
+         // A non-inline function DEFINITION
+         int add(int a, int b) {
+             return a + b;
+         }
+
+      .. code-block:: cpp
+
+         // main.cpp
+         #include "utils.hpp"
+         #include <iostream>
+
+         int main() {
+             std::cout << add(5, 10) << '\n';
+         }
+
+      .. code-block:: cpp
+
+         // other.cpp
+         #include "utils.hpp"
+
+      Compiling produces a linker error: *multiple definition of 'add(int, int)'*.
+
+   .. grid-item-card:: With ``inline`` -- Legal
+      :class-card: sd-border-success
+
+      .. code-block:: cpp
+
+         // utils.hpp
+         #pragma once
+
+         // This is now perfectly legal!
+         inline int add(int a, int b) {
+             return a + b;
+         }
+
+      Using the ``inline`` specifier relaxes the ODR. It informs the linker that identical definitions across translation units refer to the same function (keep one and discard the duplicates).
+
+.. admonition:: Best Practices for ``inline``
+   :class: tip
+
+   - The definitions of ``inline`` functions must be placed in header files (``.hpp``).
+   - When a method (class member function) is **defined inside** a class body, it is implicitly ``inline``, so defining it in a header file is perfectly valid.
+   - If you define a function **outside** the class and mark it as ``inline``, that single definition must be visible to every translation unit. Place the definition in the header file, not in the source file.
+
+
+``noexcept`` Specifier/Operator
+---------------------------------
+
+The ``noexcept`` specifier is a **compile-time promise** that a function will not throw an exception. The compiler can make aggressive optimizations based on this guarantee.
+
+.. code-block:: cpp
+
+   void safe_operation() noexcept {
+       // This function guarantees it won't throw
+   }
+
+   void risky_operation() {
+       // This function might throw
+   }
+
+If an exception is thrown from a ``noexcept`` function, ``std::terminate()`` is called.
+
+**Exceptions vs Errors**
+
+- **Exceptions** represent *recoverable, unexpected conditions* detected at runtime. They signal that something went wrong, but the program can often handle it and continue safely.
+- **Errors** represent *unrecoverable situations* where program execution cannot proceed safely. They often indicate logic faults, contract violations, or conditions outside the program's control.
+
+**Why noexcept?**
+
+Exceptions introduce runtime overhead and complicate optimization.
+
+- When the compiler cannot guarantee that a function will not throw, it must generate extra code to handle stack unwinding and clean-up.
+- Marking a function ``noexcept`` lets the compiler skip this extra code and optimize more aggressively.
+- It also conveys intent to other developers: "this function is safe and predictable."
+
+Use ``noexcept`` for small, low-level, or performance-critical functions that are not expected to throw.
+
+**The noexcept Operator**
+
+``noexcept`` is also an **operator** that checks whether an expression is ``noexcept`` at compile time.
+
+.. code-block:: cpp
+
+   void might_throw();
+   void never_throw() noexcept;
+
+   bool check1{noexcept(never_throw())};   // true
+   bool check2{noexcept(might_throw())};   // false
+   bool check3{noexcept(1 + 2)};           // true
+
+The ``noexcept(...)`` operator:
+
+- Returns ``true`` if the expression inside is guaranteed not to throw.
+- Returns ``false`` if the expression might throw.
+- Evaluation happens at **compile-time**.
+
+**Dynamic noexcept Conditions**
+
+The ``noexcept`` specifier can take a Boolean expression evaluated at compile time.
+
+.. code-block:: cpp
+
+   void never_throw() noexcept;
+
+   void demo() noexcept(noexcept(never_throw())) {
+               // |     // |- Inner noexcept(...):  OPERATOR
+               // |     // '- "Is never_throw() noexcept?"
+               // |
+               // |- Outer noexcept(...):  SPECIFICATION
+               // '- "Make demo() noexcept IF the condition is true"
+   }
+
+- **Inner**: Evaluates to a boolean at compile time.
+- **Outer**: Specifies whether ``demo()`` should be marked ``noexcept``.
+
+**Practical Example**
+
+.. code-block:: cpp
+
+   void might_throw();
+   void never_throw() noexcept;
+
+   // Will NOT be noexcept
+   void demo1() noexcept(noexcept(might_throw())) {
+       might_throw();  // Might throw
+   }
+
+   // WILL be noexcept
+   void demo2() noexcept(noexcept(never_throw())) {
+       never_throw();  // Never throws
+   }
+
+- ``demo1()`` inherits the exception risk from ``might_throw()``.
+- ``demo2()`` is safe because ``never_throw()`` is safe.
+
+**When NOT to Use noexcept**
+
+- When a function may legitimately throw and the caller should handle it.
+- When working with third-party or legacy functions not marked ``noexcept``.
+- When you are uncertain about whether the function is truly exception-safe.
+
+.. code-block:: cpp
+
+   // GOOD: Clearly might fail
+   int parse_number(const std::string& s) {
+       return std::stoi(s);  // May throw
+   }
+
+   // GOOD: Simple operation
+   void reset_counter() noexcept {
+       counter = 0;  // Can't fail
+   }
+
+.. admonition:: Best Practices for ``noexcept``
+   :class: tip
+
+   - Mark simple, guaranteed-safe operations as ``noexcept``.
+   - Don't lie: if a function might throw, don't mark it ``noexcept``.
+   - Document exception guarantees in comments or with ``noexcept``.
+   - ``noexcept`` expresses **intent** and enables compiler optimizations.
+
+
+Function Attributes
+---------------------
+
+Attributes provide the compiler with additional information about functions or variables, influencing warnings, optimizations, or behavior without changing the program's semantics.
+
+
+``[[nodiscard]]``
+^^^^^^^^^^^^^^^^^^^
+
+The ``[[nodiscard]]`` attribute warns if a function's return value is ignored. It encourages safer, more intentional code by catching overlooked results.
+
+.. code-block:: cpp
+
+   [[nodiscard]] int compute_total(int x, int y) {
+       return x + y;
+   }
+
+   int main() {
+       compute_total(2, 3); // Warning: result of 'compute_total' is discarded
+   }
+
+Use ``[[nodiscard]]`` for functions whose result is important and should not be silently ignored.
+
+**Custom Message**
+
+You can provide a message to clarify why ignoring the return value is risky.
+
+.. code-block:: cpp
+
+   [[nodiscard("You should check for success before continuing")]]
+   bool process_data(int id);
+
+   int main() {
+       process_data(42); // Compiler warning with custom message
+   }
+
+.. admonition:: Best Practices for ``[[nodiscard]]``
+   :class: tip
+
+   - Apply to functions returning critical status codes, error flags, or computed values.
+   - Avoid excessive use (reserve it for meaningful results). Some functions return a value for convenience, but their main purpose is to perform an action.
+   - Can also be applied to classes, marking all constructors' return values as significant.
+
+
+``[[maybe_unused]]``
+^^^^^^^^^^^^^^^^^^^^^^
+
+The ``[[maybe_unused]]`` attribute tells the compiler that a variable, parameter, function, or type **might be intentionally unused**. It prevents warnings such as *"unused variable"* or *"unused parameter"*.
+
+.. code-block:: cpp
+
+   // Compile with: -Wall -Wextra -Werror
+   [[maybe_unused]] void debug_print(const std::string& msg) {
+       std::cerr << msg << '\n';
+   }
+
+   int main() {
+       [[maybe_unused]] int temp_value{42};   // No warning even with -Wextra -Werror
+
+       bool debug_mode = false;
+       if (debug_mode)
+           debug_print("Diagnostics enabled.");
+   }
+
+Without ``[[maybe_unused]]``, the compiler may emit an error under ``-Wextra -Werror``, which treats all warnings as errors. This attribute explicitly documents that the unused state is intentional.
+
+**Common Use Cases**
+
+- **Template Parameters**: Some template parameters may not be used in every specialization.
+
+  .. code-block:: cpp
+
+     template <typename T, typename U>
+     void process(const T& a, [[maybe_unused]] const U& b) {
+         std::cout << a << '\n'; // OK: 'b' may not be used
+     }
+
+- **Platform or Context Variants**: Functions may include parameters required on some systems but not others.
+
+  .. code-block:: cpp
+
+     void initialize([[maybe_unused]] int device_id) {
+         std::cout << "Initialization complete.\n";
+         // Some environments do not need 'device_id'
+     }
+
+- **Debug or Logging Helpers**: Useful when diagnostic code can be toggled on/off without changing function signatures.
+
+  .. code-block:: cpp
+
+     void log_info([[maybe_unused]] const std::string& message) {
+         // Logging disabled in production builds
+     }
+
+**When to Use vs When to Avoid**
+
+Use ``[[maybe_unused]]`` when a variable, parameter, or function exists for clarity, documentation, or future expansion, and might not be referenced in every configuration.
+
+Avoid using it to silence warnings created by actual mistakes.
+
+.. code-block:: cpp
+
+   // Misuse: hides a bug under -Wextra -Werror
+   int compute_sum(int a, int b) {
+       [[maybe_unused]] int result = a + b; // Suppresses warning
+       return 0; // Bug: forgot to return result
+   }
+
+.. admonition:: Best Practices for ``[[maybe_unused]]``
+   :class: tip
+
+   - Use when a symbol may legitimately remain unused in certain builds or code paths.
+   - Combine with compiler flags such as ``-Wall -Wextra -Werror`` to maintain strict code hygiene.
+   - Document why it is unused -- e.g., performance testing, logging, or template flexibility.
+   - Do **not** use as a blanket fix for warnings; prefer removing unnecessary variables.
+
+
+``[[deprecated]]``
+^^^^^^^^^^^^^^^^^^^^^
+
+The ``[[deprecated]]`` attribute marks a function, variable, or type as obsolete. It triggers a compiler warning when used, signaling that newer alternatives exist.
+
+.. code-block:: cpp
+
+   [[deprecated("Use compute_area() instead")]]
+   double calc_area(double r) {
+       return 3.14159 * r * r;
+   }
+
+   double compute_area(double r) { return 3.14159 * r * r; }
+
+   int main() {
+       double a = calc_area(2.0); // Warning: 'calc_area' is deprecated
+   }
+
+.. admonition:: Best Practices for ``[[deprecated]]``
+   :class: tip
+
+   - Use when phasing out old APIs, functions, or constants.
+   - Always include a message pointing to the preferred alternative.
+   - Avoid removing deprecated code abruptly; deprecation helps maintain backward compatibility.
+
+**Summary**: Attributes like ``[[nodiscard]]``, ``[[maybe_unused]]``, and ``[[deprecated]]`` improve code safety, clarity, and maintainability. They do not change program semantics -- they help the compiler help you.
+
+
+Callables
+====================================================
+
+The term **callable** is a broad concept that refers to anything that can be invoked using the function-call syntax. If you can write ``f(arg1, arg2)``, then ``f`` is a callable.
+
+There are six main "things" in C++ that satisfy this definition:
+
+1. Functions (and Function Pointers)
+2. Functors (Function Objects)
+3. Lambdas
+4. Member Functions (and Pointers to Member Functions)
+5. Bound Functions (from ``std::bind``)
+6. Standard Tools: ``std::function`` and ``std::invoke``
+
+
+Function Pointers
+-------------------
+
+A function pointer is a variable that stores the address of a function, allowing you to call that function indirectly through the pointer. It behaves similarly to pointers to data, except that it points to code rather than data.
+
+**Syntax**
+
+Given a function ``int add(int a, int b);``, a pointer to this function would be declared as: ``int (*ptr)(int, int);``
+
+Where:
+
+- ``int``: the return type of the function that ``ptr`` can point to.
+- ``(*ptr)``: the pointer variable itself. The parentheses are mandatory. They bind ``*`` to the name ``ptr``, signifying "``ptr`` is a pointer."
+- ``(int, int)``: the parameter list of the function that ``ptr`` can point to.
+
+.. admonition:: Important
+   :class: warning
+
+   If you write ``int *ptr(int, int)`` instead of ``int (*ptr)(int, int)``, you are declaring a function named ``ptr`` that takes two ``int``\s and returns an ``int*`` (a pointer to an integer). The parentheses make all the difference.
+
+**Declaring and Initializing**
+
+You initialize a function pointer by assigning it the name of a **compatible function**. The ``&`` (address-of) operator is optional, as the name of a function automatically *decays* to a pointer to that function.
+
+.. code-block:: cpp
+
+   // 1. A compatible function we want to point to
+   int multiply(int a, int b) { return a * b; }
+   // Another compatible function
+   int add(int a, int b) { return a + b; }
+
+   int main() {
+       // 2. Declare a function pointer
+       int (*func_ptr)(int, int);
+       // 3. Initialize it (the & is optional)
+       func_ptr = &multiply; // or func_ptr = multiply;
+       // It's a variable, so it can be changed
+       func_ptr = add;
+   }
+
+**Calling Through a Function Pointer**
+
+Once you have a pointer, you can use it to call the function it points to. C and C++ provide two syntaxes:
+
+- **Explicit Dereference (C-style):** ``(*func_ptr)(arg1, arg2)``
+- **Implicit Dereference (C++ style):** ``func_ptr(arg1, arg2)``
+
+We can call a function through a pointer because a function pointer is a **callable**.
+
+.. code-block:: cpp
+
+   int multiply(int a, int b) { return a * b; }
+
+   int main() {
+       int (*func_ptr)(int, int){&multiply};
+
+       // Call using explicit dereference
+       int result1{(*func_ptr)(5, 10)}; // result1 is 50
+       std::cout << "Result 1: " << result1 << '\n';
+
+       // Change what it points to
+       func_ptr = &add; // or func_ptr = add;
+
+       // Call using implicit dereference
+       int result2{func_ptr(5, 10)}; // result2 is 15
+       std::cout << "Result 2: " << result2 << '\n';
+   }
+
+**Use Cases**
+
+Function pointers allow you to pass behavior as an argument.
+
+- **State Machines**: An array of function pointers where each function implements the logic for a different state.
+- **Plugin Systems**: A main application loads a dynamic library, finds a function by name, stores its address in a function pointer, and calls it.
+- **Callbacks**: A function you pass to another function, which the receiving function "calls back" at an appropriate time.
+
+.. code-block:: cpp
+
+   // This function takes a callback: void (*operation)(int)
+   void process_list(int* arr, int size, void (*operation)(int)) {
+       for (int i{0}; i < size; ++i) {
+           operation(arr[i]); // "Calling back" the operation
+       }
+   }
+
+   void print_number(int n) { std::cout << "Value: " << n << '\n'; }
+   void double_number(int n) { std::cout << "Double: " << n * 2 << '\n'; }
+
+   int main() {
+       constexpr size_t array_size{3};
+       int my_list[array_size] = {1, 2, 3};
+       std::cout << "--- Printing ---\n";
+       process_list(my_list, array_size, print_number);
+
+       std::cout << "--- Doubling ---\n";
+       process_list(my_list, array_size, double_number);
+   }
+
+In C++, the name of a function **automatically decays** to a *function pointer* when passed as an argument -- just like an array name decays to a pointer to its first element.
+
+**Dangers and Limitations**
+
+- **Type mismatch risk** -- if the pointer's signature does not exactly match the function's, undefined behavior occurs.
+- **No state retention** -- function pointers cannot capture variables or maintain context like lambdas or functors.
+- **Null or invalid pointer calls** -- calling through an uninitialized or dangling pointer leads to crashes.
+- **Poor readability and maintenance** -- the syntax is verbose and less intuitive for large systems.
+- **Overload ambiguity** -- overloaded functions require explicit casting to resolve which overload to use.
+- **No exception safety or lifetime management** -- no automatic handling of destroyed or unloaded code.
+- **Incompatible with member functions** -- require special syntax and cannot be used directly with objects.
+- **Obsolete for many tasks** -- modern alternatives like ``std::function``, lambdas, and ``std::invoke`` provide safer and more flexible mechanisms.
+
+
+Functors
+----------
+
+A functor (or function object) is an object of a ``class`` or ``struct`` that overloads the function call operator (``operator()``). This allows you to create an object that can be called as if it were a regular function (callable), but with a key advantage: a functor can hold state.
+
+**Why Not Just Use a Function?**
+
+A regular C++ function does not typically maintain state between calls (unless you use ``static`` variables, which has different implications).
+
+- A function takes inputs and produces an output. It is stateless.
+- A functor is an object. It can have member variables (state) that persist across calls.
+
+**A Simple Stateful Counter**
+
+A "function" that counts how many times it has been called.
+
+.. code-block:: cpp
+
+   struct Counter {
+       int count = 0; // 1. The State
+       // 2. The Overloaded Call Operator
+       // This is what makes it a functor.
+       void operator()() {
+           ++count;
+           std::cout << "Called " << count << " times.\n";
+       }
+   };
+
+   int main() {
+       Counter my_counter; // Create an instance of our functor
+
+       // Call the object as if it's a function
+       my_counter(); // Output: Called 1 times.
+       my_counter(); // Output: Called 2 times.
+
+       // We can still access its state directly
+       std::cout << "Final count: " << my_counter.count << '\n'; // Output: 2
+   }
+
+**STL Algorithms**
+
+The most powerful and common use for functors is with C++ STL algorithms like ``std::transform``, ``std::for_each``, or ``std::count_if``. These algorithms often need a "predicate" or "operation" (a function to apply to each element in a container). A functor allows you to pass in an operation that is configurable.
+
+
+Lambdas
+---------
+
+A lambda function (or lambda) is an anonymous, inline function defined right at the location where it is used.
+
+- **Anonymous**: It does not have a name in the traditional sense.
+- **Inline**: You define its body directly within another expression, such as a function call.
+
+Think of it as a quick, throwaway function. You need a simple operation (like comparing two numbers or adding 1 to a value) for a single purpose, like sorting a vector. Instead of defining a whole separate function, you just write the operation right there.
+
+.. admonition:: Under the Hood
+   :class: note
+
+   The compiler translates a lambda into a unique, unnamed functor (a ``struct`` or ``class`` with an overloaded ``operator()``). So, lambdas are mostly syntactic sugar for creating function objects, but they are incredibly convenient.
+
+**Syntax**
+
+.. code-block:: cpp
+
+   [captures](parameters) mutable exception_spec -> return_type { body }
+
+Don't be intimidated! We usually only use ``captures``, ``parameters``, and ``body``.
+
+.. code-block:: cpp
+
+   int main() {
+       std::vector<int> numbers = {5, 2, 8, 3, 1};
+
+       // Use a lambda for custom sorting
+       std::sort(numbers.begin(), numbers.end(), [](int a, int b) {
+           return a > b; // Sort in descending order
+       });
+
+       for (int n : numbers) {
+           std::cout << n << " ";
+       }
+       // Output: 8 5 3 2 1
+       std::cout << '\n';
+   }
+
+**Use Cases**
+
+- **Algorithms**: As a comparator for ``std::sort``, ``std::stable_sort``, ``std::max_element``, etc.
+- **Functional Programming**: With algorithms like ``std::transform`` (map), ``std::copy_if`` (filter), or ``std::accumulate`` (reduce).
+- **Callbacks**: In asynchronous programming or GUI development, where you need to provide a function to be "called back" later.
+
+**The Capture Clause [...]**
+
+This is the most important part of a lambda. It defines how the lambda accesses variables from its surrounding scope.
+
+- **No capture** ``[]``: The lambda cannot see or use any variables from the outside.
+- **Capture by Value** ``[=]``: The lambda gets a copy of all outside variables it uses. These copies are ``const`` inside the lambda by default.
+- **Capture by Reference** ``[&]``: The lambda gets a reference to all outside variables it uses. This is fast but can be dangerous.
+- **Specific Capture (Value)** ``[x, y]``: Only captures ``x`` and ``y`` by value.
+- **Specific Capture (Reference)** ``[&x, &y]``: Only captures ``x`` and ``y`` by reference.
+- **Mixed Capture** ``[x, &y]``: Captures ``x`` by value and ``y`` by reference. You can mix ``[=]`` and ``[&]`` defaults with specific captures (e.g., ``[=, &y]`` captures ``y`` by reference and all other variables by value).
+
+.. code-block:: cpp
+
+   int x{10};
+   int y{20};
+
+   // Captures x by value (a copy) and y by reference (the original)
+   auto my_lambda = [x, &y]() {
+       // std::cout << "x = " << x << '\n'; // x is 10
+       // x = 15; // ERROR! x is const (captured by value)
+       y = 30; // OK! y is a reference
+   };
+
+   my_lambda();
+   // std::cout << y << '\n'; // Output: 30
+
+**The Parameter List**
+
+The parameter list defines what arguments the lambda expects. It behaves exactly like a regular function's parameter list.
+
+.. code-block:: cpp
+
+   // No parameters
+   [] { std::cout << "Hello!\n"; };
+
+   // Single parameter
+   [](int x) { std::cout << x << '\n'; };
+
+   // Multiple parameters
+   [](int a, int b) { return a + b; };
+
+If your lambda takes no parameters, you may omit the parentheses ``()``.
+
+**The Body**
+
+The body defines the code executed when the lambda is invoked. It can contain a single expression or multiple statements enclosed in braces.
+
+.. code-block:: cpp
+
+   // Single-expression body
+   [](int a, int b) { return a + b; };
+
+   // Multi-statement body
+   [](int x) {
+       std::cout << "Value: " << x << '\n';
+       return x * x;
+   };
+
+In C++11/C++14/C++17, lambdas must use ``return`` to produce a value explicitly.
+
+**Return Type Deduction**
+
+The compiler automatically deduces the lambda's return type from the return statements in its body (just like an ``auto`` function).
+
+.. code-block:: cpp
+
+   [](int x) { return x * 2.0; } // Return type is deduced as double
+
+If the body is complex or you need to be explicit (e.g., returning an ``int`` from a ``double`` calculation), you can use the trailing return type syntax:
+
+.. code-block:: cpp
+
+   [](double d) -> int {
+       if (d > 10.0) {
+           return static_cast<int>(d);
+       }
+       return 0; // Multiple return statements might confuse the compiler
+   };
+
+**The mutable Keyword**
+
+By default, variables captured by value are ``const``. You cannot modify your copy of them. The ``mutable`` keyword removes this restriction, allowing you to modify the copied data (which exists only inside the lambda).
+
+.. code-block:: cpp
+
+   int counter{0};
+
+   auto my_counter = [counter]() mutable {
+       counter++; // Modifies the lambda's internal copy
+       return counter;
+   };
+
+   std::cout << my_counter() << '\n'; // Output: 1
+   std::cout << my_counter() << '\n'; // Output: 2
+   std::cout << counter << '\n';     // Output: 0 (original is unchanged)
+
+The capture ``[counter]`` means capture by value. The lambda gets its own internal copy of ``counter``. Think of it as:
+
+.. code-block:: cpp
+
+   struct __Lambda {
+       int counter;  // copy of outer counter
+       int operator()() mutable {
+           counter++;
+           return counter;
+       }
+   };
+
+**Functional Programming Patterns**
+
+Lambdas are the key to using ``<algorithm>`` functions in a functional style.
+
+- **Map** (``std::transform``): Applies an operation to every element in a range and stores the result.
+- **Filter** (``std::copy_if`` or ``std::remove_copy_if``): Copies elements that match a predicate.
+
+
+``std::function`` and Type Erasure
+-------------------------------------
+
+We have a problem: all callables have **different, unique types**.
+
+- A function pointer is ``int(*)(int)``.
+- A functor is ``MyFunctor``.
+- A lambda has an **unnamable type** generated by the compiler.
+
+How can we store these different things in a single variable or pass them to a function that accepts *any* of them?
+
+**The Solution: std::function**
+
+``std::function`` (header ``<functional>``) is a general-purpose, polymorphic function wrapper. It can store, copy, and invoke **any** callable object (function pointer, lambda, functor) as long as it has a compatible function signature.
+
+This is a powerful concept called **Type Erasure**. ``std::function`` "erases" the specific type of the callable and stores it behind a common interface.
+
+**Syntax**
+
+It is a template that takes the function *signature* as its parameter.
+
+.. code-block:: cpp
+
+   // A std::function that can hold any callable
+   // that takes an int and a double, and returns a std::string
+   std::function<std::string(int, double)> my_callable;
+
+**Storing Different Callables**
+
+.. code-block:: cpp
+
+   // 1. A free function
+   int double_value(int a) { return a * 2; }
+   // 2. A functor
+   struct Multiplier {
+       int factor;
+       Multiplier(int f) : factor(f) {}
+       int operator()(int x) const { return x * factor; }
+   };
+
+   int main() {
+       // A std::function that needs an "int(int)" signature
+       std::function<int(int)> operation;
+       // 1. Store a lambda
+       operation = [](int x) { return x + 10; };
+       std::cout << operation(5) << '\n'; // Output: 15
+       // 2. Store a functor
+       Multiplier times_5(5);
+       operation = times_5;
+       std::cout << operation(5) << '\n'; // Output: 25
+       // 3. Store a (compatible) free function
+       operation = double_value;  // assign the function itself
+       std::cout << operation(5) << '\n'; // Output: 10
+   }
+
+**Gotchas and Performance**
+
+``std::function`` is powerful, but not "free."
+
+- **Performance Cost**: Type erasure has overhead. A ``std::function`` call can be slower than a direct lambda or function pointer call because it may involve virtual dispatch.
+- **Heap Allocation**: If the callable is "small" (like a simple lambda with no captures), it may be stored inside the ``std::function`` object itself (Small Object Optimization). If the callable is "large," ``std::function`` may allocate memory on the heap.
+- **Empty State**: A default-constructed ``std::function`` is "empty." Calling it will throw a ``std::bad_function_call`` exception.
+
+.. code-block:: cpp
+
+   std::function<void()> empty_func;
+
+   // empty_func(); // CRASH: throws std::bad_function_call
+
+   // Always check before calling if it might be empty
+   if (empty_func) {
+       empty_func(); // Safe
+   }

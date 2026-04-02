@@ -2,237 +2,137 @@ References
 ==========
 
 
-.. dropdown:: 🏛️ Lecture 1
+.. dropdown:: Lecture 1
     :class-container: sd-border-secondary
     :open:
 
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM605 — L1: Course Introduction**
+        **ENPM702 -- L1: Course Introduction**
 
-        Covers course structure, development environment setup, the Python execution pipeline, and introduction to Python variables.
+        Covers the course structure and grading policies, Linux shell
+        types and configuration (Bash, Zsh, Fish), aliases and shell
+        functions, Visual Studio Code installation and configuration,
+        workspace structure, the ``.vscode`` folder, the command palette,
+        and CMake build system setup.
 
 
-.. dropdown:: 🐍 Python Resources
+.. dropdown:: Linux Shells
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
         :gutter: 2
 
-        .. grid-item-card:: 📘 Python Official Tutorial
-            :link: https://docs.python.org/3/tutorial/
+        .. grid-item-card:: Bash
+            :link: https://www.gnu.org/software/bash/
             :class-card: sd-border-secondary
 
-            **Getting Started**
+            **GNU Bash**
 
-            Sections 3, 4, and 5 cover informal introduction, control flow, and data structures.
+            The default shell for most Linux distributions, known for its
+            scripting capabilities.
 
-            +++
-
-            - Variables & Types
-            - Control Flow
-            - Data Structures
-
-        .. grid-item-card:: 📏 PEP 8 Style Guide
-            :link: https://peps.python.org/pep-0008/
+        .. grid-item-card:: Zsh
+            :link: https://www.zsh.org/
             :class-card: sd-border-secondary
 
-            **Coding Conventions**
+            **Z Shell**
 
-            Python's official style guide for writing clean, readable code.
+            Similar to Bash, with additional features like better
+            autocompletion and customization options.
 
-            +++
-
-            - Naming Conventions
-            - Whitespace & Indentation
-            - Import Ordering
-
-        .. grid-item-card:: 🔍 Python Language Reference
-            :link: https://docs.python.org/3/reference/
+        .. grid-item-card:: Fish
+            :link: https://fishshell.com/
             :class-card: sd-border-secondary
 
-            **Internals**
+            **Friendly Interactive Shell**
 
-            Detailed reference for Python syntax, data model, and execution model.
+            User-friendly and highly customizable, with a focus on
+            simplicity.
 
-            +++
-
-            - Data Model
-            - Execution Model
-            - Expressions & Statements
-
-        .. grid-item-card:: 📦 Python Standard Library
-            :link: https://docs.python.org/3/library/
+        .. grid-item-card:: Ksh
+            :link: http://www.kornshell.com/
             :class-card: sd-border-secondary
 
-            **Built-in Modules**
+            **Korn Shell**
 
-            Reference for all standard library modules used in this course.
-
-            +++
-
-            - ``sys``, ``os``, ``ast``
-            - ``dis``, ``tokenize``
-            - ``keyword``
+            A shell with advanced scripting features, sometimes used in
+            enterprise environments.
 
 
-.. dropdown:: 🛠️ Development Tools
+.. dropdown:: Tools
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
         :gutter: 2
 
-        .. grid-item-card:: 💻 Visual Studio Code
-            :link: https://code.visualstudio.com/docs
+        .. grid-item-card:: Visual Studio Code
+            :link: https://code.visualstudio.com
             :class-card: sd-border-secondary
 
-            **IDE Documentation**
+            **VSCode**
 
-            Getting started, extensions, and debugging guides.
+            Free, lightweight code editor with a rich extension ecosystem.
+            Used in this course for C++ development.
 
             +++
 
-            - Python Extension
-            - Dev Containers
-            - Debugging
+            - `Download <https://code.visualstudio.com/download>`_
+            - `Keyboard Shortcuts (Linux) <https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf>`_
 
-        .. grid-item-card:: 🐳 Docker Desktop
-            :link: https://docs.docker.com/desktop/
+        .. grid-item-card:: CMake
+            :link: https://cmake.org/cmake/help/latest/index.html
             :class-card: sd-border-secondary
 
-            **Container Platform**
+            **CMake Documentation**
 
-            Installation, setup, and container management.
+            Open-source, cross-platform build system used to build, test,
+            and package C++ software.
 
             +++
 
-            - Installation Guides
-            - Container Basics
-            - Dev Environments
+            - `CMake Quick Start in VSCode <https://code.visualstudio.com/docs/cpp/cmake-quickstart>`_
 
-        .. grid-item-card:: ⚡ Ruff
-            :link: https://docs.astral.sh/ruff/
+        .. grid-item-card:: Valgrind
+            :link: https://valgrind.org/
             :class-card: sd-border-secondary
 
-            **Python Linter & Formatter**
+            **Valgrind**
 
-            Fast, all-in-one tool for Python code quality.
+            Memory debugging, memory leak detection, and profiling tool
+            for C++ programs.
 
-            +++
-
-            - Configuration
-            - Rule Reference
-            - VS Code Integration
-
-        .. grid-item-card:: 🐍 Python Extension for VS Code
-            :link: https://marketplace.visualstudio.com/items?itemName=ms-python.python
+        .. grid-item-card:: Doxygen
+            :link: https://www.doxygen.nl/
             :class-card: sd-border-secondary
 
-            **Language Support**
+            **Doxygen**
 
-            IntelliSense, debugging, linting, and formatting.
-
-            +++
-
-            - Interpreter Selection
-            - REPL & Debugging
-            - Testing
+            Documentation generator for C++ source code. Generates
+            documentation from annotated source files.
 
 
-.. dropdown:: 🤖 ROS 2 & Simulation Resources
+.. dropdown:: Recommended Reading
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
         :gutter: 2
 
-        .. grid-item-card:: 📘 ROS 2 Jazzy
+        .. grid-item-card:: Ubuntu
+            :link: https://ubuntu.com/download/desktop
+            :class-card: sd-border-secondary
+
+            **Ubuntu Desktop**
+
+            Download Ubuntu Desktop 24.04 LTS (Noble Numbat) or 22.04 LTS
+            (Jammy Jellyfish).
+
+        .. grid-item-card:: ROS 2
             :link: https://docs.ros.org/en/jazzy/
             :class-card: sd-border-secondary
 
-            **Official Documentation**
+            **ROS 2 Jazzy Documentation**
 
-            ROS 2 Jazzy Jalisco documentation and tutorials.
-
-            +++
-
-            - Installation
-            - Tutorials
-            - API Reference
-
-        .. grid-item-card:: 🌍 Gazebo Harmonic
-            :link: https://gazebosim.org/docs/harmonic/getstarted/
-            :class-card: sd-border-secondary
-
-            **Simulation Environment**
-
-            Getting started with Gazebo Harmonic for robot simulation.
-
-            +++
-
-            - Installation
-            - World Building
-            - Sensor Plugins
-
-        .. grid-item-card:: 🧭 Nav2
-            :link: https://docs.nav2.org/
-            :class-card: sd-border-secondary
-
-            **Navigation Stack**
-
-            The ROS 2 navigation framework used in the final project.
-
-            +++
-
-            - Architecture
-            - Configuration
-            - Behavior Trees
-
-        .. grid-item-card:: 🌳 py_trees
-            :link: https://py-trees.readthedocs.io/
-            :class-card: sd-border-secondary
-
-            **Behavior Trees for Python**
-
-            Library for building application-level behavior trees.
-
-            +++
-
-            - Getting Started
-            - Composites & Decorators
-            - Blackboards
-
-
-.. dropdown:: 📚 Python Books
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Mark Lutz
-            :class-card: sd-border-secondary
-
-            **Learning Python (5th Edition)**
-
-            Comprehensive introduction to the Python language.
-
-        .. grid-item-card:: Luciano Ramalho
-            :class-card: sd-border-secondary
-
-            **Fluent Python (2nd Edition)**
-
-            Effective use of Python features for experienced programmers.
-
-        .. grid-item-card:: Brett Slatkin
-            :class-card: sd-border-secondary
-
-            **Effective Python (2nd Edition)**
-
-            90 specific ways to write better Python.
-
-        .. grid-item-card:: Martin Fowler *et al.*
-            :class-card: sd-border-secondary
-
-            **Refactoring: Improving the Design of Existing Code**
-
-            The origin of the term "code smells" referenced in the linting section.
+            Official documentation for ROS 2 Jazzy Jalisco (used with
+            Ubuntu 24.04).

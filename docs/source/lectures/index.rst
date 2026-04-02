@@ -5,50 +5,71 @@ Lectures
 Overview
 --------
 
-The lectures in ENPM605 follow a progressive structure, starting with Python fundamentals and building toward real-world robotics applications using ROS 2. Each lecture introduces new concepts through explanation, live demonstrations, and in-class exercises. Lecture materials, including slides and demo scripts, are available on Canvas and GitHub.
+The lectures in ENPM702 follow a progressive structure, starting with
+development environment setup and C++ fundamentals, then building toward
+object-oriented programming, smart pointers, and ROS 2 robotics
+development. Each lecture introduces new concepts through explanation,
+live demonstrations, and hands-on exercises. Lecture materials are
+available on Canvas.
+
+
+Lecture Organization
+--------------------
+
+Each lecture page contains the following sections:
+
+.. grid:: 1 2 2 3
+    :gutter: 3
+
+    .. grid-item-card:: Lecture
+        :class-card: sd-border-info
+
+        The main lecture content, adapted from the in-class slides.
+        Covers definitions, explanations, code examples, and
+        demonstrations for the topic.
+
+    .. grid-item-card:: Shell Exercises
+        :class-card: sd-border-info
+
+        Hands-on Linux shell (Bash) exercises that build progressively
+        across lectures. These prepare students for the terminal-based
+        workflows required in ROS 2 development.
+
+    .. grid-item-card:: C++ Exercises
+        :class-card: sd-border-info
+
+        C++ programming exercises for the lecture topic. Students
+        practice the concepts covered in the lecture by writing and
+        running code. Solutions can be submitted on Canvas for
+        participation credit.
+
+    .. grid-item-card:: Quiz
+        :class-card: sd-border-info
+
+        Multiple choice, true/false, and short-answer questions that
+        test understanding of the lecture material. Answers are
+        hidden behind dropdowns for self-assessment.
+
+    .. grid-item-card:: References
+        :class-card: sd-border-info
+
+        Links to official documentation, tutorials, and recommended
+        reading related to the lecture topic.
+
+.. note::
+
+   Lecture 1 does not include C++ exercises. Shell exercises begin in
+   Lecture 1 and increase in complexity with each subsequent lecture.
 
 .. tip::
 
-   Review the demo scripts after each lecture and re-run them on your own machine. Experimenting with the code is the fastest way to internalize the concepts.
+   Review the exercises after each lecture and practice on your own
+   machine. Experimenting with code is the fastest way to internalize
+   the concepts.
 
-
-Schedule
---------
-
-.. list-table::
-   :widths: 10 45 45
-   :header-rows: 1
-   :class: compact-table
-
-   * - Lecture
-     - Topic
-     - Key Concepts
-   * - L1
-     - Course Introduction
-     - Development environment setup, Python execution pipeline, variables, data types, mutability
-   * - L2
-     - Python Fundamentals, Part I
-     - Packages and imports, operators, boolean logic, strings, indexing and slicing, control flow
-   * - L3
-     - Python Fundamentals, Part II
-     - Lists, tuples, dictionaries, sets, loops, list comprehensions, copying
-   * - L4
-     - Introduction to Functions
-     - Function definition, arguments (positional, default, keyword, ``*args``, ``**kwargs``), scopes (LEGB), pass-by-assignment, type hints, recursion
-   * - L5
-     - Advanced Functions
-     - Programming paradigms, first-class functions, lambda expressions, closures, decorators, ``functools.wraps``, ``functools.partial``
-   * - L6
-     - Object-Oriented Programming, Part I
-     - OOP design phase, classes and objects, dunder methods, operator overloading, abstraction, encapsulation, ``@property``
-   * - L7
-     - Object-Oriented Programming, Part II
-     - Class and static methods, association, aggregation, composition, inheritance, ``super()``, polymorphism, duck typing, abstract base classes, ``@dataclass``, ``__slots__``, ``typing.Protocol``
-
-Contents
---------
 
 .. toctree::
+   :hidden:
    :maxdepth: 3
    :titlesonly:
 
@@ -60,3 +81,8 @@ Contents
    lecture6/l6_index
    lecture7/l7_index
    lecture8/l8_index
+   lecture9/l9_index
+   lecture10/l10_index
+   lecture11/l11_index
+   lecture12/l12_index
+   lecture13/l13_index

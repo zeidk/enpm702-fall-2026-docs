@@ -1,2200 +1,1527 @@
-====================================================
-Lecture
-====================================================
+.. _l7_lecture:
 
+====================================
+Lecture 7: Smart Pointers and Move Semantics
+====================================
 
-Class Methods and Static Methods
-====================================================
+.. contents:: Table of Contents
+   :depth: 3
+   :local:
 
-Alternative method types that operate on the class rather than a specific instance.
 
-Refer to ``L7_class_static_methods.py`` to follow along with the examples below.
+Move Semantics
+==============
 
+Introduced in C++11, **move semantics** revolutionized resource management by
+distinguishing between **objects that must retain ownership** and **temporary
+objects whose resources can be safely transferred**. This capability enables
+highly efficient handling of dynamically allocated memory and other system
+resources while preserving the safety and predictability of automatic resource
+management.
 
-.. dropdown:: The Three Method Types
+Why Move Semantics?
+-------------------
 
-   Python classes support three kinds of methods. The right choice depends on whether the
-   method needs access to instance state, class state, or neither.
+Consider the following code that copies a large vector:
 
-   .. list-table:: Comparison of Python method types
-      :widths: 20 25 25 30
-      :header-rows: 1
-      :class: compact-table
+.. code-block:: cpp
 
-      * - Type
-        - Decorator
-        - First Param
-        - Access
-      * - Instance method
-        - (none)
-        - ``self``
-        - Instance + class state
-      * - Class method
-        - ``@classmethod``
-        - ``cls``
-        - Class state only
-      * - Static method
-        - ``@staticmethod``
-        - (none)
-        - No implicit access
+   int main() {
+       std::vector<std::vector<int>> matrix;
 
-   The following example shows all three types in a single class:
+       // Create a large vector representing a row of sensor data
+       std::vector<int> row(1'000'000);
+       for (int i{0}; i < 1'000'000; i++) {
+           row[i] = i;
+       }
 
-   .. code-block:: python
+       // Copy this row to our matrix
+       matrix.push_back(row);  // This COPIES all 1 million integers!
+   }
 
-      class Robot:
-          total_robots = 0
+**Problem:** When we call ``push_back(row)``, it copies all 1 million integers.
+But what if we are done with ``row`` and won't use it again? Why waste time and
+memory copying when we could just *move* the data?
 
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
-              Robot.total_robots += 1
+Here is what we really want:
 
-          def status(self):
-              return f"{self._name}: {self._battery}%"
+.. code-block:: cpp
+   :emphasize-lines: 10
 
-          @classmethod
-          def get_fleet_size(cls):
-              return f"Fleet size: {cls.total_robots}"
+   int main() {
+       std::vector<std::vector<int>> matrix;
 
-          @staticmethod
-          def is_valid_battery(level: int) -> bool:
-              return isinstance(level, int) and 0 <= level <= 100
+       // Create a large vector representing a row of sensor data
+       std::vector<int> row(1'000'000);
+       for (int i{0}; i < 1'000'000; i++) {
+           row[i] = i;
+       }
 
-      scout = Robot("Scout")
-      print(scout.status())              # Scout: 100%
-      print(Robot.get_fleet_size())      # Fleet size: 1
-      print(Robot.is_valid_battery(50))  # True
+       // Move this row to our matrix
+       matrix.push_back(std::move(row));  // Move row into matrix
+   }
 
-   - ``status()`` is an **instance method**. It receives ``self`` and accesses
-     per-instance state (``_name``, ``_battery``).
-   - ``get_fleet_size()`` is a **class method**. It receives ``cls`` and accesses
-     class-level state (``total_robots``), which is shared across all instances.
-   - ``is_valid_battery()`` is a **static method**. It receives neither ``self`` nor
-     ``cls`` and performs a pure validation with no access to any state.
+**Result:** No copying! The internal buffer is transferred from ``row`` to
+``matrix[0]`` (``row`` becomes empty). *This is what move semantics enables.*
 
 
-.. dropdown:: Instance Methods
+Understanding Value Categories
+------------------------------
 
-   **Instance methods** are the default. Python passes the calling instance as ``self``
-   automatically.
+To understand move semantics, we first need to understand how C++ categorizes
+expressions. C++ classifies every expression along two independent axes:
 
-   .. code-block:: python
+1. **Has identity?** (Does it occupy a specific memory location?)
+2. **Can we move from it?** (Is it safe to steal its resources?)
 
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
+This gives us three primary categories:
 
-          def status(self) -> str:
-              return f"{self._name}: {self._battery}%"
+.. list-table::
+   :widths: 20 15 15 50
+   :header-rows: 1
 
-      scout = Robot("Scout")
-      print(scout.status())   # Scout: 100%
+   * - Category
+     - Has Identity?
+     - Can Move From?
+     - Common Name
+   * - **lvalue**
+     - Yes
+     - No
+     - Named objects
+   * - **prvalue**
+     - No
+     - Yes
+     - Temporaries
+   * - **xvalue**
+     - Yes
+     - Yes
+     - Expiring values
 
 
-.. dropdown:: Class Methods and Factory Methods
+lvalues: Named Objects with Identity
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Class methods** receive the class itself as ``cls`` instead of an instance. They
-   are the standard way to write **factory methods** -- alternative constructors that
-   build instances with a predefined configuration.
+An **lvalue** refers to an object that has a persistent identity. It occupies a
+specific location in memory and persists beyond a single expression.
 
-   **Use Cases**
+.. code-block:: cpp
 
-   - **Alternative constructors**: create instances from different input formats
-     (``from_dict``, ``from_json``, ``from_config``).
-   - **Factory methods**: return pre-configured instances with meaningful names
-     (``create_scout``, ``create_heavy_lifter``).
-   - **Accessing or modifying class attributes**: read or update shared state that
-     applies across all instances (fleet counters, registries).
-   - **Subclass-aware construction**: when called on a subclass, ``cls`` refers to
-     the subclass, so the factory returns the correct type automatically.
+   int main() {
+       int x{5};                    // x is an lvalue
+       int* ptr{&x};                // Can take address -- proof it has identity
+       std::vector<int> vec{1,2,3}; // vec is an lvalue
 
-   .. code-block:: python
+       int arr[10];
+       arr[3] = 42;                 // arr[3] is an lvalue -- names a location
+   }
 
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
+**Key Properties:**
 
-          @classmethod
-          def create_scout(cls) -> "Robot":
-              return cls("Scout", 100)
-
-          @classmethod
-          def create_scout_team(
-              cls, count: int = 3
-          ) -> list["Robot"]:
-              return [cls(f"Scout-{i+1}", 100)
-                      for i in range(count)]
+- Has a name (usually)
+- Persists across multiple statements
+- You can take its address with ``&``
+- Cannot move from it without explicit permission
 
-      scout = Robot.create_scout()
-      team  = Robot.create_scout_team(4)
 
-   .. note::
+prvalues: Pure Temporary Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      Calling ``cls(...)`` instead of ``Robot(...)`` ensures the factory works
-      correctly in subclasses. ``create_scout()`` encapsulates the construction
-      logic so callers do not need to know the default values.
-      ``create_scout_team()`` shows that factory methods can return collections
-      of instances, not just a single object.
+A **prvalue** is a temporary value without identity.
 
+.. code-block:: cpp
 
-.. dropdown:: Static Methods
+   int main() {
+       int x{10 + 20};  // "10 + 20" is a prvalue
+       int y{x + 5};    // "x + 5" is a prvalue
 
-   **Static methods** receive no implicit first argument. They behave like plain
-   functions that live inside the class namespace for organizational clarity.
+       42;       // Literal -- prvalue
+       3.14159;  // Literal -- prvalue
+       true;     // Literal -- prvalue
 
-   **Use Cases**
+       std::vector<int>{1, 2, 3};  // Temporary object -- prvalue
+       x + y;
+   }
 
-   - **Validation helpers**: check whether a value is valid before creating an
-     instance (``is_valid_name``, ``is_valid_battery_level``).
-   - **Unit conversion**: convert between units without needing instance or class
-     state (``meters_to_feet``, ``degrees_to_radians``).
-   - **Pure computations**: perform a calculation logically related to the class but
-     independent of any instance (``compute_distance``, ``normalize_angle``).
-   - **Formatting utilities**: produce a string representation of a value in a
-     domain-specific format (``battery_to_bar``, ``status_to_label``).
+**Key Properties:**
 
-   .. code-block:: python
+- No identity (doesn't occupy addressable memory yet)
+- Temporary (about to disappear)
+- Cannot take its address
+- Can move from it -- it's going away anyway!
 
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
 
-          @staticmethod
-          def is_valid_name(name: str) -> bool:
-              return isinstance(name, str) and len(name) > 0
+xvalues: Expiring Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-          @staticmethod
-          def battery_to_bar(level: int) -> str:
-              bars = level // 10
-              return "[" + "#" * bars + "." * (10 - bars) + "]"
+An **xvalue** (expiring value) represents an object that has identity but whose
+resources can be moved because we have explicitly marked it as "expiring".
 
-      print(Robot.is_valid_name("Scout"))   # True
-      print(Robot.battery_to_bar(70))       # [#######...]
+.. code-block:: cpp
 
-   .. note::
+   int main() {
+       std::vector<int> vec{1, 2, 3};  // vec is an lvalue
+       std::move(vec);                 // std::move(vec) is an xvalue
+   }
 
-      ``is_valid_name()`` validates input before constructing a ``Robot``. It does
-      not need any instance to do its job. ``battery_to_bar()`` converts a number
-      to a visual string -- a pure computation with no side effects. Both can be
-      called on the class directly (``Robot.is_valid_name(...)``) or on an instance,
-      though calling on the class is the clearer style.
+**Key Properties:**
 
+- Has identity
+- Can move from it (unlike lvalues)
+- Represents objects whose lifetime is ending ("expiring")
+- Created primarily by ``std::move``
 
-Object Relationships
-====================================================
+**Why do we need xvalues?** xvalues let us move from named objects when we
+explicitly say it's okay.
 
-Modeling how objects interact and depend on one another.
 
-Refer to ``L7_relationships.py`` to follow along with the examples below.
+Value Category Hierarchy
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The complete value category hierarchy:
 
-.. dropdown:: Types of Object Relationships
+.. code-block:: text
 
-   Before writing code, the design phase identifies **how objects relate to each other**.
-   There are three fundamental relationships in OOP, each with different strength
-   and lifetime implications.
+                  expression
+                 /          \
+           glvalue          rvalue
+          (has identity)    (can move from)
+          /       \         /       \
+       lvalue    xvalue   xvalue   prvalue
 
-   .. list-table:: Object relationship comparison
-      :widths: 20 20 20 20 20
-      :header-rows: 1
-      :class: compact-table
+- expression = glvalue |  rvalue
+- glvalue = lvalue | xvalue
+- rvalue = prvalue | xvalue
+- xvalue = glvalue & rvalue
+- expression = lvalue | xvalue | prvalue
 
-      * - Relationship
-        - Keyword
-        - UML Symbol
-        - Lifetime
-        - Example
-      * - Association
-        - "uses-a"
-        - Arrow
-        - Independent
-        - Robot uses Task
-      * - Aggregation
-        - "has-a"
-        - Hollow diamond
-        - Part outlives whole
-        - Team has Robots
-      * - Composition
-        - "has-a"
-        - Filled diamond
-        - Part destroyed with whole
-        - Robot owns Sensors
 
-   The UML class diagram below shows all three relationships for the competition domain.
+rvalue References
+-----------------
 
+An **rvalue reference** is a reference that can bind to rvalues (prvalues or xvalues).
 
+**Binding to an rvalue:** When an rvalue reference binds to a prvalue, the
+temporary is *materialized* (given storage), and its lifetime is extended:
 
-   .. only:: html
+.. code-block:: cpp
 
-      .. figure:: /_static/images/L7/l7_relationships_light.png
-         :alt: UML class diagram showing association, aggregation, and composition
-         :width: 60%
-         :align: center
-         :class: only-light
+   // not realistic example: demonstration purpose only
+   int&& rref{10 + 20};    // The result of 10+20 is stored in memory
+                            // and lives as long as rref exists
+   rref = 100;             // We can even modify it!
+   std::cout << rref << '\n';  // Output: 100
 
-         **UML class diagram**: association (Robot-Task), aggregation (Team-Robot), and composition (Robot-Sensor).
+Think of it as "giving a name" to a temporary object.
 
-      .. figure:: /_static/images/L7/l7_relationships_dark.png
-         :alt: UML class diagram showing association, aggregation, and composition
-         :width: 60%
-         :align: center
-         :class: only-dark
+.. admonition:: Question
+   :class: hint
 
-   .. only:: latex
+   Is ``rref`` an lvalue, prvalue, or xvalue?
 
-      .. figure:: /_static/images/L7/l7_relationships_light.png
-         :alt: UML class diagram showing association, aggregation, and composition
-         :width: 60%
-         :align: center
+.. dropdown:: Answer
+   :class-container: sd-border-success
 
-         **UML class diagram**: association (Robot-Task), aggregation (Team-Robot), and composition (Robot-Sensor).
+   ``rref`` is an **lvalue**. Even though its type is ``int&&`` (rvalue reference),
+   the expression ``rref`` itself is an lvalue because it has a name and
+   you can take its address.
 
+**rvalue reference variables are lvalues!**
 
-.. dropdown:: Association (uses-a)
+.. code-block:: cpp
 
-   .. epigraph::
+   int main() {
+       int&& rref{10 + 20};
+       // rref is an lvalue even though its type is int&&
+       static_assert(std::is_lvalue_reference_v<decltype((rref))>);
+       std::cout << "rref is an lvalue reference: "
+                 << std::boolalpha
+                 << std::is_lvalue_reference_v<decltype((rref))> << '\n';
+   }
 
-      **Association** is a relationship between two objects that establishes a
-      connection for a certain period. One object can cause another to perform an
-      action on its behalf.
+.. admonition:: Key Distinction
+   :class: note
 
-      - **Unidirectional**: Only one class knows about the other.
-      - **Bidirectional**: Both classes are aware of each other.
+   - ``rref``'s **type** --> ``int&&`` (rvalue reference)
+   - ``rref``'s **value category** --> lvalue (has a name and can take its address)
+   - The expression ``10 + 20`` --> prvalue (temporary)
 
-   **Physical world examples**
+   The binding is legal because rvalue references can bind to rvalues.
 
-   - A **Driver** uses a **Car** -- the driver exists independently of any particular car.
-   - A **Doctor** treats a **Patient** -- neither owns the other.
-   - A **Student** enrolls in a **Course** -- both exist before and after the enrollment.
 
-   **Robotics Competition examples**
+std::move and xvalues
+---------------------
 
-   - A **Robot** is assigned a **Task** -- the task exists before and after the robot executes it.
-   - A **Robot** uses a **Sensor** -- the sensor can be shared or reassigned across robots.
-   - A **Referee** monitors a **Team** -- neither object owns the other.
+``std::move`` does not move anything by itself. It simply performs a
+``static_cast<T&&>`` to turn an lvalue into an xvalue (type is ``T&&``).
 
-   **Class Diagram**
+**Purpose:** It tells the compiler that the object is *safe to treat as expiring*
+and can therefore be *moved from* rather than copied.
 
-   .. only:: html
+.. code-block:: cpp
 
-      .. figure:: /_static/images/L7/l7_association_light.png
-         :alt: Unidirectional association from Robot to Task
-         :width: 30%
-         :align: center
-         :class: only-light
+   std::string s1{"hello"};
+   std::string s2 = std::move(s1);  // Cast lvalue -> xvalue
+                                    // Move constructor for s2 is called
 
-         **Unidirectional association** from ``Robot`` to ``Task``.
+**After the move:**
 
-      .. figure:: /_static/images/L7/l7_association_dark.png
-         :alt: Unidirectional association from Robot to Task
-         :width: 30%
-         :align: center
-         :class: only-dark
+- ``s2`` takes ownership of ``s1``'s resources.
+- ``s1`` remains valid but empty (its state is unspecified).
+- No new object is created -- only a different way of treating ``s1``.
 
-   .. only:: latex
 
-      .. figure:: /_static/images/L7/l7_association_light.png
-         :alt: Unidirectional association from Robot to Task
-         :width: 30%
-         :align: center
+std::move in Detail
+^^^^^^^^^^^^^^^^^^^^
 
-         **Unidirectional association** from ``Robot`` to ``Task``.
+.. code-block:: cpp
+   :emphasize-lines: 4
 
-   **Reading the Diagram**
+   template <typename T>
+   constexpr typename std::remove_reference<T>::type&&
+   move(T&& arg) noexcept {
+       return static_cast<typename std::remove_reference<T>::type&&>(arg);
+   }
 
-   - This is a **unidirectional association**: ``Robot`` holds a reference to ``Task``
-     via ``_currentTask``. ``Task`` has no reference back to ``Robot``.
-   - ``assignTask()`` sets ``_currentTask``; ``performTask()`` uses it. Both methods
-     take a ``Task`` parameter but the persistent reference is stored in
-     ``_currentTask``.
-   - The cardinality ``0..1`` on the ``Robot`` side means a ``Task`` is assigned to at
-     most one ``Robot``, or to none at all.
-   - The cardinality ``0..*`` on the ``Task`` side means a ``Robot`` can have zero or
-     more tasks over its lifetime.
-   - Both ends use ``0``, making the relationship fully **optional** on both sides. A
-     ``Task`` can exist without a ``Robot``, and a ``Robot`` can exist with no task
-     currently assigned.
+**Key Points:**
 
-   **Code Example**
+- Performs a ``static_cast<T&&>`` -- no data is moved.
+- Converts an lvalue into an xvalue.
+- Used to enable **move constructors** or **move assignment operators**.
+- The result has **type** ``T&&`` and **value category** xvalue.
 
-   .. code-block:: python
+.. admonition:: Note
+   :class: note
 
-      class Task:
-          def __init__(self, name: str, priority: int):
-              self._name = name
-              self._priority = priority
+   All standard STL containers (such as ``std::vector``, ``std::string``,
+   ``std::map``, and others) implement efficient move constructors that
+   transfer ownership of their internal resources -- like dynamically
+   allocated memory -- rather than copying them.
 
-      class Robot:
-          def __init__(self, name: str):
-              self._name = name
-              self._current_task: Task | None = None
+The following example shows a simplified move constructor for a vector class:
 
-          def assign_task(self, task: Task) -> None:
-              self._current_task = task
+.. code-block:: cpp
+   :emphasize-lines: 10-19
 
-      pick  = Task("pick widget", priority=1)
-      scout = Robot("Scout")
-      scout.assign_task(pick)
+   template<typename T>
+   class vector {
+   private:
+       T* data_;           // Pointer to the heap-allocated array
+       size_t size_;       // Number of elements
+       size_t capacity_;   // Allocated capacity
 
-   **What is Happening?**
+   public:
+       // Move constructor
+       vector(vector&& other) noexcept
+           : data_{other.data_},
+             size_{other.size_},
+             capacity_{other.capacity_}
+       {
+           // Leave 'other' in a valid empty state
+           other.data_ = nullptr;
+           other.size_ = 0;
+           other.capacity_ = 0;
+       }
 
-   - ``Robot`` holds a reference to a ``Task`` object created **outside** and passed in.
-   - ``Task`` has no reference back to ``Robot``. This is unidirectional.
-   - ``_current_task: Task | None`` signals that the relationship is optional. A
-     ``Robot`` can exist with no task assigned.
-   - If ``pick`` is deleted, ``scout`` still exists. If ``scout`` is deleted, ``pick``
-     still exists.
+       // For comparison, here's the copy constructor
+       vector(const vector& other)
+           : data_{new T[other.capacity_]},
+             size_{other.size_},
+             capacity_{other.capacity_}
+       {
+           // Deep copy: copy all elements
+           for (size_t i{0}; i < size_; ++i) {
+               data_[i] = other.data_[i];
+           }
+       }
+   };
 
-   .. note::
+When the move constructor is used:
 
-      The associated object is **passed in** as a parameter, not created inside the
-      class. In Python, calling ``del pick`` does not destroy the ``Task`` object as
-      long as ``scout._current_task`` still references it. The garbage collector only
-      destroys an object when its reference count reaches zero.
+.. code-block:: cpp
 
+   int main(){
+       std::vector<int> v1{1,2,3};
+       std::vector<int> v2{std::move(v1)};
+   }
 
-.. dropdown:: Aggregation (has-a, independent lifetime)
+The move constructor is called, which transfers ``v1``'s internal pointers to
+``v2`` and leaves ``v1`` in a valid empty state -- no element-by-element copy
+occurs.
 
-   .. epigraph::
 
-      **Aggregation** is a "has-a" relationship where the part can exist independently
-      of the whole. The part is created outside the container and passed in. Deleting
-      the container does not destroy the part.
+Move Semantics Summary
+-----------------------
 
-      - **Whole**: The containing object (e.g., ``Team``).
-      - **Part**: The contained object that can outlive the whole (e.g., ``Robot``).
+The purpose of ``std::move`` is not to create a new object, but to change
+**how the compiler treats the existing one.**
 
-   **Physical world examples**
+- Normally, a named object (lvalue) can only be copied.
+- Using ``std::move`` changes its value category to xvalue (type ``T&&``),
+  allowing *move constructors* or *move assignment operators* to be called.
+- This avoids unnecessary deep copies of resources such as memory buffers,
+  file handles, and sockets.
 
-   - A **Library** has **Books** -- the books exist before and after the library closes.
-   - A **Playlist** has **Songs** -- deleting the playlist does not delete the songs.
-   - A **Department** has **Employees** -- employees exist independently of the department.
+.. code-block:: cpp
 
-   **Robotics Competition examples**
+   std::vector<int> v1{1, 2, 3};
+   std::vector<int> v2{v1};            // Copy (expensive)
+   std::vector<int> v3{std::move(v1)}; // Move (cheap!)
 
-   - A **Team** has **Robots** -- dissolving the team does not destroy the robots.
-   - A **Arena** has **Zones** -- zones can be reassigned to a different arena.
-   - A **TaskQueue** has **Tasks** -- tasks exist before being added to the queue.
+*"We don't move data with std::move; we give permission to move"*
 
-   **Class Diagram**
 
-   .. only:: html
+Lifetime and Expiration Summary
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      .. figure:: /_static/images/L7/l7_aggregation_light.png
-         :alt: Aggregation from Team to Robot with hollow diamond
-         :width: 30%
-         :align: center
-         :class: only-light
+.. list-table::
+   :widths: 25 18 18 39
+   :header-rows: 1
 
-         **Aggregation** from ``Team`` to ``Robot`` (hollow diamond on ``Team`` side).
+   * - Expression
+     - Value Category
+     - Type
+     - Lifetime Behavior
+   * - ``10 + 20``
+     - prvalue
+     - ``int``
+     - Temporary (no identity)
+   * - ``int&& r = 10 + 20;``
+     - binds prvalue to rvalue ref
+     - ``int&&``
+     - Materialized, lifetime extended
+   * - ``s1``
+     - lvalue
+     - ``std::string``
+     - Persistent, has identity
+   * - ``std::move(s1)``
+     - xvalue
+     - ``std::string&&``
+     - Same object, now expiring
 
-      .. figure:: /_static/images/L7/l7_aggregation_dark.png
-         :alt: Aggregation from Team to Robot with hollow diamond
-         :width: 30%
-         :align: center
-         :class: only-dark
+Binding a prvalue **extends lifetime**; using ``std::move`` **marks it as
+expiring**.
 
-   .. only:: latex
 
-      .. figure:: /_static/images/L7/l7_aggregation_light.png
-         :alt: Aggregation from Team to Robot with hollow diamond
-         :width: 30%
-         :align: center
+Smart Pointers
+==============
 
-         **Aggregation** from ``Team`` to ``Robot`` (hollow diamond on ``Team`` side).
+A smart pointer (from ``<memory>``) is a class that wraps a raw pointer (also
+called **stored pointer**) to manage the lifetime of the resource being pointed
+to.
 
-   **Reading the Diagram**
+Smart pointers are designed to manage dynamic memory allocation on the heap,
+ensuring that resources are properly released when they are no longer needed.
+They store a normal pointer to the allocated memory and automatically call the
+appropriate cleanup function (typically ``delete``) when the object is destroyed
+or goes out of scope.
 
-   - The **hollow diamond** is on the ``Team`` side, indicating ``Team`` is the whole
-     and ``Robot`` is the part.
-   - The cardinality ``1..*`` on the ``Robot`` side means a team must have at least
-     one robot.
-   - The cardinality ``0..1`` on the ``Team`` side means a robot belongs to no team
-     (e.g., out of commission) or exactly one team.
-   - The relationship is **bidirectional**: ``Robot`` holds a ``_team`` reference
-     back to its ``Team`` to enforce the ``0..1`` constraint.
-   - Dissolving the ``Team`` has no effect on the ``Robot`` objects. They continue
-     to exist.
+Types of Smart Pointers
+-----------------------
 
-   **Code Example**
+C++ provides three distinct smart pointer types, each designed to abstract raw
+pointer management while clearly expressing ownership semantics and programmer
+intent.
 
-   .. code-block:: python
+- ``std::unique_ptr`` -- **Exclusive ownership**: single object controls the resource lifetime.
+- ``std::shared_ptr`` -- **Shared ownership**: multiple objects collectively manage the resource.
+- ``std::weak_ptr`` -- **Non-owning observer**: monitors resource state without affecting lifetime, prevents circular dependencies.
 
-      class Robot:
-          def __init__(self, name: str, battery: int = 100):
-              self._name = name
-              self._battery = battery
-              self._team: "Team | None" = None
 
-          @property
-          def name(self) -> str:
-              return self._name
+Unique Pointers
+===============
 
-      class Team:
-          def __init__(self, team_name: str):
-              self._team_name = team_name
-              self._robots: list[Robot] = []
+A ``std::unique_ptr`` (from ``<memory>``) implements **exclusive ownership**
+semantics for dynamically allocated resources. This exclusivity guarantees that
+exactly one ``std::unique_ptr`` instance controls any given memory location at
+any time.
 
-          def add_robot(self, robot: Robot) -> None:
-              if robot._team is not None:
-                  raise ValueError(f"{robot.name} already in a team")
-              self._robots.append(robot)
-              robot._team = self
+- **Automatic Resource Management** -- The ``std::unique_ptr`` owns its resource
+  and automatically invokes ``delete`` when the pointer is destroyed, reassigned,
+  or goes out of scope, ensuring deterministic cleanup.
+- **Move-Only Semantics** -- ``std::unique_ptr`` is *non-copyable* but *movable*,
+  enforcing single ownership through the type system and preventing accidental
+  resource sharing.
 
-          def remove_robot(self, robot: Robot) -> None:
-              self._robots.remove(robot)
-              robot._team = None
 
-      scout = Robot("Scout")
-      alpha = Team("Alpha")
-      alpha.add_robot(scout)
-      del alpha
-      print(scout.name)   # Scout -- still exists
+Initialization
+--------------
 
-   **What is Happening?**
+.. code-block:: cpp
 
-   - ``Robot`` objects are created **outside** ``Team`` and passed in via ``add_robot()``.
-   - ``Team`` holds a collection of robots but does not own them.
-   - ``Robot`` holds a ``_team`` back-reference to enforce the ``0..1`` constraint.
-     If a robot already belongs to a team, ``add_robot()`` raises a ``ValueError``.
-   - Deleting ``alpha`` does not delete ``scout``. It continues to exist independently.
+   std::unique_ptr<T> identifier = std::make_unique<T>(args...);
+   auto identifier = std::make_unique<T>(args...);
 
-   .. note::
+- ``T`` -- Type of the managed object allocated on the heap.
+- ``identifier`` -- Variable name for the unique pointer instance.
+- ``args...`` -- Constructor arguments passed to the managed object.
 
-      Parts are created **outside** the container and passed in. Enforcing ``0..1``
-      membership requires a back-reference in ``Robot``, making this a bidirectional
-      aggregation. The hollow diamond in UML signals that the part can outlive the
-      whole.
+.. admonition:: C++ Core Guideline
+   :class: tip
 
+   `R.23: Use make_unique() to make unique_ptrs <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-make_unique>`_
 
-.. dropdown:: Composition (has-a, dependent lifetime)
 
-   .. epigraph::
+Discouraged Approaches
+^^^^^^^^^^^^^^^^^^^^^^^
 
-      **Composition** is a strong "has-a" relationship where the part cannot exist
-      independently of the whole. The part is created **inside** the whole's
-      ``__init__`` and is owned exclusively by it. Destroying the whole destroys
-      the parts.
+.. code-block:: cpp
 
-      - **Whole**: The containing object that owns its parts (e.g., ``Robot``).
-      - **Part**: The contained object whose lifetime is tied to the whole (e.g., ``Sensor``).
+   std::unique_ptr<T> identifier(new T(args...));
+   std::unique_ptr<T> identifier = std::unique_ptr<T>(new T(args...));
+   auto identifier = std::unique_ptr<T>(new T(args...));
+   std::unique_ptr<T> identifier(raw_ptr);
 
-   **Physical world examples**
+**Why discouraged?**
 
-   - A **House** has **Rooms** -- rooms cannot exist without the house they belong to.
-   - A **Car** has an **Engine** -- the engine is built as part of the car.
-   - A **Human** has a **Heart** -- the heart cannot exist independently.
+- Using ``new`` directly inside larger expressions can leak if another
+  subexpression throws after ``new`` succeeds but before the ``unique_ptr`` is
+  constructed.
+- ``std::unique_ptr<T>(raw_ptr)`` "adopts" a raw pointer. If that raw pointer
+  is also owned/freed elsewhere, you risk double ``delete`` or use-after-free.
+- Repeating ``T`` and spelling ``new`` adds noise and invites mistakes.
 
-   **Robotics Competition examples**
 
-   - A **Robot** owns its **Sensors** -- sensors are created with the robot and destroyed with it.
-   - A **Robot** owns its **BatteryUnit** -- the battery is an integral part of the robot.
-   - A **Arena** owns its **Obstacles** -- obstacles are created as part of the arena layout.
+Example
+^^^^^^^^
 
-   **Class Diagram**
+.. code-block:: cpp
 
-   .. only:: html
+   std::unique_ptr<int> u = std::make_unique<int>(10);
 
-      .. figure:: /_static/images/L7/l7_composition_light.png
-         :alt: Composition from Robot to Sensor with filled diamond
-         :width: 30%
-         :align: center
-         :class: only-light
+.. figure:: /_static/images/l7/unique_ptr_structure.png
+   :alt: Structure of a std::unique_ptr
+   :align: center
+   :width: 60%
 
-         **Composition** from ``Robot`` to ``Sensor`` (filled diamond on ``Robot`` side).
+   Internal structure of a ``std::unique_ptr``.
 
-      .. figure:: /_static/images/L7/l7_composition_dark.png
-         :alt: Composition from Robot to Sensor with filled diamond
-         :width: 30%
-         :align: center
-         :class: only-dark
+- ``_M_ptr``: Raw pointer to the managed object.
+- ``_M_deleter``: Callable used to destroy the object.
 
-   .. only:: latex
 
-      .. figure:: /_static/images/L7/l7_composition_light.png
-         :alt: Composition from Robot to Sensor with filled diamond
-         :width: 30%
-         :align: center
+Exclusive Ownership
+-------------------
 
-         **Composition** from ``Robot`` to ``Sensor`` (filled diamond on ``Robot`` side).
+A ``std::unique_ptr`` *exclusively* manages the lifetime of a resource.
 
-   **Reading the Diagram**
+.. code-block:: cpp
 
-   - The **filled diamond** is on the ``Robot`` side, indicating ``Robot`` is the whole
-     and ``Sensor`` is the part.
-   - The cardinality ``1..*`` on the ``Sensor`` side means a ``Robot`` must have at
-     least one sensor.
-   - The cardinality ``1`` on the ``Robot`` side means each ``Sensor`` belongs to
-     exactly one ``Robot`` -- it cannot be shared or reassigned.
-   - There is no back-reference from ``Sensor`` to ``Robot``. This is
-     **unidirectional**: the robot knows its sensors; the sensors do not know their
-     robot.
+   std::unique_ptr<int> u = std::make_unique<int>(10);
+   std::unique_ptr<int> v{u}; // Error: copy constructor is deleted
 
-   **Code Example**
+.. code-block:: cpp
+   :linenos:
 
-   .. code-block:: python
+   int main(){
+       {
+           // Create managed resource on heap
+           auto u = std::make_unique<int>(10);
+           std::cout << *u << '\n';  // Output: 10 (dereference to access value)
+           *u = 20;                  // modify the managed resource
+           std::cout << *u << '\n';  // Output: 20
+           //std::cout << u << '\n';   // Error: no operator<< for unique_ptr
+       } // u destructor automatically calls delete on managed resource
+   }
 
-      class Sensor:
-          def __init__(self, sensor_type: str, range_m: float):
-              self._sensor_type = sensor_type
-              self._range_m = range_m
+Line 8 will fail to compile because ``std::unique_ptr`` does not provide an
+``operator<<`` overload. The smart pointer wrapper cannot be directly streamed.
+A solution for accessing the raw pointer is demonstrated in the ``get()``
+section below.
 
-          def read(self) -> float:
-              return self._range_m
 
-          def __repr__(self) -> str:
-              return f"Sensor('{self._sensor_type}', {self._range_m})"
+Methods
+-------
 
-      class Robot:
-          def __init__(self, name: str):
-              self._name = name
-              # Sensors are created here -- they belong to this robot only
-              self._sensors: list[Sensor] = [
-                  Sensor("lidar", 50.0),
-                  Sensor("camera", 30.0),
-              ]
+``std::unique_ptr`` provides a comprehensive set of
+`member functions <https://en.cppreference.com/w/cpp/memory/unique_ptr>`_ for
+resource management and inspection. Many of these methods share consistent
+interfaces with ``std::shared_ptr`` and ``std::weak_ptr``, facilitating code
+maintainability across different smart pointer types.
 
-      scout = Robot("Scout")
-      for s in scout._sensors:
-          print(s)
-      # Sensor('lidar', 50.0)
-      # Sensor('camera', 30.0)
 
-      del scout   # Sensors are destroyed with the robot
+get()
+^^^^^^
 
-   **What is Happening?**
+The ``get()`` method returns a raw pointer to the managed resource without
+transferring ownership or modifying the ``std::unique_ptr`` state.
 
-   - ``Sensor`` objects are created **inside** ``Robot.__init__``. They have no
-     existence outside the robot that owns them.
-   - ``Robot`` holds the only references to its sensors. When the robot is destroyed,
-     the reference count for each sensor drops to zero and the garbage collector
-     reclaims them.
-   - There is no way to pass a sensor from one robot to another -- the relationship
-     is exclusive by design.
-   - This is the strongest form of "has-a": the part's lifetime is entirely controlled
-     by the whole.
+- The raw pointer returned by ``get()`` is a **copy** of the managed pointer
+  and must be used only for **non-owning observation**.
 
-   .. note::
+  - **Null checking**: verify whether the ``std::unique_ptr`` currently manages a valid resource.
+  - **Address inspection**: retrieve the address of the managed object for diagnostic or logging purposes.
+  - **Read-only access**: dereference the pointer to inspect the object without assuming ownership or modifying lifetime.
 
-      The key question that distinguishes composition from aggregation is:
-      *"Can the part exist without the whole?"* If yes, use aggregation (hollow
-      diamond). If no, use composition (filled diamond). The key signal in code:
-      the part is created **inside** ``__init__``, not passed in as a parameter.
+.. warning::
 
+   Never call ``delete`` on the returned raw pointer. The ``std::unique_ptr``
+   retains ownership and will automatically ``delete`` the resource upon
+   destruction, resulting in **double-delete undefined behavior**.
 
-Inheritance
-====================================================
+.. code-block:: cpp
 
-Defining new classes that extend existing ones.
+   // Create managed resource on heap
+   auto u = std::make_unique<int>(10);
+   if (u) { // check if u!=nullptr
+       std::cout << "Value at " << u.get() << " is " << *u << '\n';
+   }
 
-Refer to ``L7_inheritance.py`` to follow along with the examples below.
+or
 
+.. code-block:: cpp
 
-.. dropdown:: What Is Inheritance?
+   // Create managed resource on heap
+   auto u = std::make_unique<int>(10);
+   int* raw_ptr{u.get()}; // get a copy of the raw pointer for observation
+   if (raw_ptr) { // check if raw_ptr!=nullptr
+       std::cout << "Value at " << raw_ptr << " is " << *raw_ptr << '\n';
+   }
 
-   .. epigraph::
 
-      **Inheritance** is an "is-a" relationship. A **child class** (subclass) inherits
-      all attributes and methods of its **parent class** (superclass) and can extend
-      or override them. The child class is placed in parentheses after the class name.
+release()
+^^^^^^^^^^
 
-      - **Parent class** (superclass): the class being inherited from.
-      - **Child class** (subclass): the class that inherits and may extend the parent.
+The ``release()`` method transfers ownership of the managed resource from the
+``std::unique_ptr`` to the caller without destroying the resource.
 
-   **Physical world examples**
+- The ``std::unique_ptr`` relinquishes ownership of the managed resource.
+- Returns a raw pointer to the previously managed resource.
+- The ``std::unique_ptr`` is reset to ``nullptr`` and no longer manages any resource.
 
-   - A **Car** is a **Vehicle** -- it inherits wheels, engine, and movement from the
-     vehicle concept but adds car-specific features.
-   - A **GoldenRetriever** is a **Dog** is an **Animal** -- a multi-level chain.
-   - A **SavingsAccount** is a **BankAccount** -- it inherits deposit/withdraw behavior
-     and adds interest calculation.
+.. warning::
 
-   **Robotics Competition examples**
+   After calling ``release()``, *manual memory management becomes your
+   responsibility*. The returned raw pointer must be explicitly deleted using
+   ``delete`` when no longer needed, or **memory leaks** will occur.
 
-   - A **MobileRobot** is a **Robot** -- it inherits battery, name, and task logic,
-     and adds navigation speed.
-   - A **ManipulatorRobot** is a **Robot** -- it inherits the same base and adds arm
-     reach and gripping behavior.
-   - A **ScoutRobot** is a **MobileRobot** -- a multi-level specialization.
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 1, 2, 8
 
-   **Code Example**
+   auto u = std::make_unique<int>(10);
+   auto ptr = u.release(); // transfer ownership to ptr
 
-   .. code-block:: python
+   std::cout << *ptr << '\n'; // Output: 10
+   assert(u.get() == nullptr); // u no longer owns the resource
+   assert(u == nullptr); // implicit bool conversion check
 
-      class Parent:
-          def greet(self) -> None:
-              print("Hello from Parent")
+   delete ptr; // Mandatory: prevent memory leak
 
-      class Child(Parent):     # Child inherits from Parent
-          def greet(self) -> None:
-              print("Hello from Child")
+.. figure:: /_static/images/l7/unique_ptr_release.png
+   :alt: unique_ptr release operation
+   :align: center
+   :width: 80%
 
-   **What is Happening?**
+   Result of calling ``release()`` on a ``std::unique_ptr``.
 
-   - The child class is placed in parentheses after the class name.
-   - ``Child`` inherits everything from ``Parent``.
-   - ``Child.greet()`` overrides ``Parent.greet()``.
+**Memory Leak Example:**
 
-   The UML class diagram below shows the full robot hierarchy for the competition domain.
+The following code introduces a *memory leak*:
 
-   .. only:: html
+.. code-block:: cpp
 
-      .. figure:: /_static/images/L7/l7_inheritance_light.png
-         :alt: UML class diagram showing Robot, MobileRobot, and ManipulatorRobot hierarchy
-         :width: 70%
-         :align: center
-         :class: only-light
+   auto u = std::make_unique<int>(10);
+   u.release();  // Raw pointer returned but never stored or deleted!
 
-         **Inheritance hierarchy**: ``MobileRobot`` and ``ManipulatorRobot`` are specializations of ``Robot``.
+**When to Use release()?**
 
-      .. figure:: /_static/images/L7/l7_inheritance_dark.png
-         :alt: UML class diagram showing Robot, MobileRobot, and ManipulatorRobot hierarchy
-         :width: 70%
-         :align: center
-         :class: only-dark
+Use ``release()`` when transferring ownership from a ``std::unique_ptr`` to
+legacy code, C-style APIs, or systems that require raw pointer management.
 
-   .. only:: latex
+.. code-block:: cpp
 
-      .. figure:: /_static/images/L7/l7_inheritance_light.png
-         :alt: UML class diagram showing Robot, MobileRobot, and ManipulatorRobot hierarchy
-         :width: 70%
-         :align: center
+   void legacy_function(int* ptr) {
+       if (ptr) {
+           std::cout << "Processing: " << *ptr << '\n';
+           delete ptr; // Legacy code handles cleanup
+       }
+   }
 
-         **Inheritance hierarchy**: ``MobileRobot`` and ``ManipulatorRobot`` are specializations of ``Robot``.
+   int main() {
+       auto u = std::make_unique<int>(42);
+       // Transfer ownership to raw pointer for legacy interface
+       int* ptr{u.release()};
+       // Verify ownership transfer
+       assert(u == nullptr); // u no longer owns resource
+       // Pass to legacy system that expects raw pointer ownership
+       legacy_function(ptr); // ptr now responsible for deletion
+   }
 
+Transferring ownership to another ``std::unique_ptr`` (move semantics is
+preferred):
 
-.. dropdown:: Generalization vs. Specialization
+.. code-block:: cpp
 
-   There are two complementary ways to arrive at an inheritance hierarchy.
+   auto u1 = std::make_unique<int>(10);
+   int* ptr{u1.release()};
+   std::unique_ptr<int> u2(ptr); // u2 assumes ownership
+   assert(u1 == nullptr);
 
-   .. tab-set::
+- ``u2`` takes ownership of the resource pointed to by ``ptr``.
+- ``ptr`` continues pointing to the resource but no longer manages its lifetime.
+- If ``u2`` is destroyed or reset, the resource is deleted and ``ptr`` becomes
+  a dangling pointer.
 
-      .. tab-item:: Generalization
+.. admonition:: Best Practice
+   :class: tip
 
-         .. epigraph::
+   Use *move semantics* instead of ``release()`` for ownership transfer between
+   smart pointers.
 
-            **Generalization** is the process of identifying common attributes and
-            behaviors across multiple classes and moving them into a shared base class.
-            It is a bottom-up design activity.
 
-         Start with ``Cat``, ``Dog``, and ``Bird`` defined independently. Each carries
-         its own ``_name``, ``_age``, ``_weight``, and methods such as ``eat()`` and
-         ``sleep()``.
+reset()
+^^^^^^^^
 
-         .. only:: html
+The ``reset()`` method provides controlled resource replacement with automatic
+cleanup of the previously managed resource.
 
-            .. figure:: /_static/images/L7/inheritance1_light.png
-               :alt: Cat, Dog, and Bird classes with common attributes
-               :width: 80%
-               :align: center
-               :class: only-light
+- Cleans up the currently managed resource (if any) by calling ``delete``.
+- Optionally assumes ownership of a new dynamically allocated resource.
+- Sets the ``std::unique_ptr`` to ``nullptr`` if no new resource is provided.
 
-               **Step 1**: ``Cat``, ``Dog``, and ``Bird`` as independent classes sharing common attributes.
+Calling ``reset()`` without arguments cleans up (calls ``delete``) the currently
+managed resource and resets the ``std::unique_ptr`` to ``nullptr``.
 
-            .. figure:: /_static/images/L7/inheritance1_dark.png
-               :alt: Cat, Dog, and Bird classes with common attributes
-               :width: 80%
-               :align: center
-               :class: only-dark
+.. code-block:: cpp
+   :linenos:
 
-         .. only:: latex
+   auto u = std::make_unique<int>(10);
+   u.reset(); // cleans up managed resource, set to nullptr
+   assert(u.get() == nullptr); // verification: u is now null
 
-            .. figure:: /_static/images/L7/inheritance1_light.png
-               :alt: Cat, Dog, and Bird classes with common attributes
-               :width: 80%
-               :align: center
+.. figure:: /_static/images/l7/fig_uniqueptr_reset.png
+   :alt: unique_ptr reset without argument
+   :align: center
+   :width: 60%
 
-               **Step 1**: ``Cat``, ``Dog``, and ``Bird`` as independent classes sharing common attributes.
+   Result of calling ``reset()`` without arguments.
 
-         The shared attributes and methods are highlighted: ``_name``, ``_age``,
-         ``_weight``, ``eat()``, ``sleep()``, ``make_sound()``, and ``move()`` appear
-         in all three classes.
+When ``reset()`` receives a pointer argument, it first cleans up the currently
+managed resource (calls ``delete``), then assumes ownership of the new resource
+in a single atomic operation.
 
-         .. only:: html
+.. code-block:: cpp
+   :linenos:
 
-            .. figure:: /_static/images/L7/inheritance2_light.png
-               :alt: Common attributes highlighted across Cat, Dog, and Bird
-               :width: 80%
-               :align: center
-               :class: only-light
+   auto u = std::make_unique<int>(10);
+   u.reset(new int(20)); // clean up old resource, manage new one
 
-               **Step 2**: Common attributes and methods highlighted across all three classes.
+.. figure:: /_static/images/l7/fig_uniqueptr_reset2.png
+   :alt: unique_ptr reset with argument
+   :align: center
+   :width: 60%
 
-            .. figure:: /_static/images/L7/inheritance2_dark.png
-               :alt: Common attributes highlighted across Cat, Dog, and Bird
-               :width: 80%
-               :align: center
-               :class: only-dark
+   Result of calling ``reset()`` with a new pointer.
 
-         .. only:: latex
 
-            .. figure:: /_static/images/L7/inheritance2_light.png
-               :alt: Common attributes highlighted across Cat, Dog, and Bird
-               :width: 80%
-               :align: center
+swap()
+^^^^^^^
 
-               **Step 2**: Common attributes and methods highlighted across all three classes.
+The ``swap()`` method exchanges ownership of managed resources between two
+``std::unique_ptr`` instances. Each pointer assumes control of the resource
+previously managed by the other.
 
-         Extract the shared members into a new ``Animal`` base class. Each subclass
-         retains only what is unique to it.
+Swapping ``std::unique_ptr`` instances is an **O(1)** constant-time operation
+that only exchanges *internal pointer values* (no resource copying, moving, or
+reallocation occurs).
 
-         .. only:: html
+.. code-block:: cpp
+   :linenos:
 
-            .. figure:: /_static/images/L7/inheritance3_light.png
-               :alt: Animal base class with Cat, Dog, and Bird as subclasses
-               :width: 70%
-               :align: center
-               :class: only-light
+   auto u = std::make_unique<int>(10);
+   auto v = std::make_unique<int>(20);
+   u.swap(v);
 
-               **Step 3**: Common attributes generalized into the ``Animal`` base class (bottom-up approach).
+.. figure:: /_static/images/l7/fig_uniqueptr_swap.png
+   :alt: unique_ptr swap operation
+   :align: center
+   :width: 80%
 
-            .. figure:: /_static/images/L7/inheritance3_dark.png
-               :alt: Animal base class with Cat, Dog, and Bird as subclasses
-               :width: 70%
-               :align: center
-               :class: only-dark
+   Result of swapping two ``std::unique_ptr`` instances.
 
-         .. only:: latex
 
-            .. figure:: /_static/images/L7/inheritance3_light.png
-               :alt: Animal base class with Cat, Dog, and Bird as subclasses
-               :width: 70%
-               :align: center
+Move Semantics with unique_ptr
+-------------------------------
 
-               **Step 3**: Common attributes generalized into the ``Animal`` base class (bottom-up approach).
+The compiler automatically applies move semantics in many contexts. For explicit
+control, use ``std::move()`` to force move operations when the compiler cannot
+deduce the intent.
 
-         **UML Class Diagram**
+.. admonition:: C++ Standard
+   :class: note
 
-         .. only:: html
+   **S 23.11.1** -- After move-transferring ownership from ``source_ptr`` to
+   ``dest_ptr``, the source pointer is guaranteed to be in a valid but
+   unspecified state (typically ``nullptr``).
 
-            .. figure:: /_static/images/L7/inheritance4_light.png
-               :alt: UML class diagram for the Animal hierarchy
-               :width: 20%
-               :align: center
-               :class: only-light
+**Passing by value without std::move (Error):**
 
-               **UML representation** of the ``Animal`` hierarchy.
+.. code-block:: cpp
+   :linenos:
 
-            .. figure:: /_static/images/L7/inheritance4_dark.png
-               :alt: UML class diagram for the Animal hierarchy
-               :width: 20%
-               :align: center
-               :class: only-dark
+   void display(std::unique_ptr<int> v){
+       // Implicit: std::unique_ptr<int> v{u};
+       std::cout << *v << '\n';
+   }
 
-         .. only:: latex
+   int main(){
+       auto u = std::make_unique<int>(10);
+       display(u);  // Error: cannot copy unique_ptr
+   }
 
-            .. figure:: /_static/images/L7/inheritance4_light.png
-               :alt: UML class diagram for the Animal hierarchy
-               :width: 20%
-               :align: center
+**Transferring Ownership: The Correct Way:**
 
-               **UML representation** of the ``Animal`` hierarchy.
+.. code-block:: cpp
+   :linenos:
 
-         **Reading the Diagram**
+   void display(std::unique_ptr<int> v){
+       // Implicit: std::unique_ptr<int> v{std::move(u)};
+       std::cout << *v << '\n'; // 10
+   } // v is destroyed here, resource is deleted
 
-         - The **hollow-headed arrow** points from the child to the parent and means "inherits from."
-         - The **parent** lists the attributes and methods shared by all subclasses.
-         - The **child** lists only the attributes and methods it *adds* or *overrides*.
-         - Everything in the parent is implicitly available in the child -- it does not need to be repeated.
-         - The relationship reads: "``Dog`` is an ``Animal``."
+   int main(){
+       auto u = std::make_unique<int>(10);
+       display(std::move(u)); // Transfer ownership to function
+       // u is now nullptr -- ownership transferred
+   }
 
-         **Python Translation**
+.. figure:: /_static/images/l7/fig_uniqueptr_move.png
+   :alt: unique_ptr move to function
+   :align: center
+   :width: 80%
 
-         .. code-block:: python
+   Ownership transfer via ``std::move`` to a function parameter.
 
-            class Animal:
-                def __init__(self, name: str, age: int, weight: float) -> None:
-                    self._name = name
-                    self._age = age
-                    self._weight = weight
+**Move constructor example:**
 
-                def eat(self) -> None: ...
-                def sleep(self) -> None: ...
-                def make_sound(self) -> None: ...
-                def move(self) -> None: ...
+.. code-block:: cpp
+   :linenos:
 
-            class Dog(Animal):
-                def __init__(self, name: str, age: int, weight: float, breed: str) -> None:
-                    super().__init__(name, age, weight)
-                    self._breed = breed
+   // Create managed resource on heap
+   auto u = std::make_unique<int>(10);
+   std::cout << "u: " << u.get() << '\n';  // @1
 
-                @property
-                def breed(self) -> str:
-                    return self._breed
+   // Transfer ownership using move constructor
+   auto v{std::move(u)}; // u transfers ownership to v
+   std::cout << "v: " << v.get() << '\n'; // @1 (same address)
+   assert(u == nullptr);  // u is now empty
 
-                def fetch(self) -> None: ...
+   // u can be reused for new resource management
+   u.reset(new int{20});
+   std::cout << u.get() << '\n';  // @2 (different address)
 
-         **What Is Happening?**
+.. figure:: /_static/images/l7/fig_uniqueptr_move2.png
+   :alt: unique_ptr move between variables
+   :align: center
+   :width: 80%
 
-         - ``class Dog(Animal)`` expresses the inheritance relationship: ``Dog`` is an ``Animal``.
-         - ``Animal`` defines the attributes and methods shared by all subclasses.
-         - ``Dog`` declares only ``_breed`` and ``fetch()``. Everything else is inherited.
-         - ``super().__init__()`` delegates ``_name``, ``_age``, and ``_weight`` initialization
-           to ``Animal``.
+   Ownership transfer between ``std::unique_ptr`` instances.
 
-      .. tab-item:: Specialization
 
-         .. epigraph::
+Pass to Functions: Sink
+------------------------
 
-            **Specialization** is the reverse: starting from a general base class and
-            creating derived classes that extend or override its behavior for a specific
-            context. It is a top-down design activity.
+A **sink function** accepts ownership of a resource, typically through move
+semantics. The function becomes responsible for the resource's lifetime and
+cleanup.
 
-         **What Is Wrong With This Design?**
+.. code-block:: cpp
 
-         Consider an ``Animal`` class that tries to accommodate every possible animal
-         type in a single class:
+   void process_widget(std::unique_ptr<Widget> widget_ptr);
+   // Caller transfers ownership: process_widget(std::move(my_widget));
 
-         .. only:: html
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-            .. figure:: /_static/images/L7/inheritance5_light.png
-               :alt: Bloated Animal class with None-valued attributes
-               :width: 35%
-               :align: center
-               :class: only-light
+   `R.32: Take a unique_ptr<widget> parameter to express that a function assumes ownership of a widget <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r32-take-a-unique_ptrwidget-parameter-to-express-that-a-function-assumes-ownership-of-a-widget>`_
 
-               **Design smell**: a bloated ``Animal`` class carrying ``None`` values for attributes that only apply to some subclasses.
 
-            .. figure:: /_static/images/L7/inheritance5_dark.png
-               :alt: Bloated Animal class with None-valued attributes
-               :width: 35%
-               :align: center
-               :class: only-dark
+Pass to Functions: Reseat
+--------------------------
 
-         .. only:: latex
+A **reseat function** modifies a smart pointer to manage a different resource.
+The function may destroy the current resource and assign a new one, or simply
+replace the managed object.
 
-            .. figure:: /_static/images/L7/inheritance5_light.png
-               :alt: Bloated Animal class with None-valued attributes
-               :width: 35%
-               :align: center
+.. code-block:: cpp
 
-               **Design smell**: a bloated ``Animal`` class carrying ``None`` values for attributes that only apply to some subclasses.
+   void configure_widget(std::unique_ptr<Widget>& widget_ptr);
+   // Function may call: widget_ptr.reset(new EnhancedWidget());
 
-         - Does every animal have a ``wingspan``?
-         - Does every animal have a ``breed``?
-         - What do you set ``wingspan`` to for a ``Cat``?
-         - ``None`` values for inapplicable attributes are a **design smell**.
-         - Adding a new animal type forces changes to a class that should not need to change.
-         - The class becomes harder to maintain with every new animal type added.
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-         .. note::
+   `R.33: Take a unique_ptr<widget>& parameter to express that a function reseats the widget <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r33-take-a-unique_ptrwidget-parameter-to-express-that-a-function-reseats-the-widget>`_
 
-            **Specialization is the solution**: keep shared attributes in ``Animal`` and
-            push type-specific attributes down into dedicated subclasses. Each subclass
-            extends the base with only what makes sense for that type.
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 1, 2, 3, 6, 9
 
-         **After Specialization**
+   void reseat_unique(std::unique_ptr<int>& v) { // Pass by reference to modify original
+       v.reset(new int(20)); // Destroy current resource, create new one
+   }
 
-         .. only:: html
+   int main(){
+       auto u = std::make_unique<int>(10); // Create managed resource
+       std::cout << "*u: " << *u << '\n';        // 10
+       std::cout << "u: " << u.get() << '\n';    // @1
+       reseat_unique(u); // u will be modified to point to new resource
+       std::cout << "*u: " << *u << '\n';        // 20
+       std::cout << "u: " << u.get() << '\n';    // @2
+   }
 
-            .. figure:: /_static/images/L7/inheritance3_light.png
-               :alt: Animal base class with Cat, Dog, and Bird specialized subclasses
-               :width: 70%
-               :align: center
-               :class: only-light
+.. figure:: /_static/images/l7/fig_uniqueptr_reseat.png
+   :alt: unique_ptr reseat operation
+   :align: center
+   :width: 80%
 
-               ``Animal`` specialized into ``Cat``, ``Dog``, and ``Bird``, each extending the parent with only the attributes unique to that type (top-down approach).
+   Reseat operation: modifying a ``std::unique_ptr`` through a reference parameter.
 
-            .. figure:: /_static/images/L7/inheritance3_dark.png
-               :alt: Animal base class with Cat, Dog, and Bird specialized subclasses
-               :width: 70%
-               :align: center
-               :class: only-dark
 
-         .. only:: latex
+Return from Functions
+----------------------
 
-            .. figure:: /_static/images/L7/inheritance3_light.png
-               :alt: Animal base class with Cat, Dog, and Bird specialized subclasses
-               :width: 70%
-               :align: center
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-               ``Animal`` specialized into ``Cat``, ``Dog``, and ``Bird``, each extending the parent with only the attributes unique to that type (top-down approach).
+   `F.26: Use a unique_ptr<T> to transfer ownership where a pointer is needed <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f26-use-a-unique_ptrt-to-transfer-ownership-where-a-pointer-is-needed>`_
 
-         **What Changed?**
+.. code-block:: cpp
 
-         - ``name``, ``age``, ``weight``, ``eat()``, ``sleep()``, ``make_sound()``, and ``move()``
-           live in ``Animal`` -- every animal has them.
-         - ``breed`` moves into ``Dog`` -- only dogs have a breed.
-         - ``wingspan`` and ``can_fly`` move into ``Bird`` -- only birds have wings.
-         - ``indoor_only`` moves into ``Cat`` -- only cats have this attribute.
-         - No subclass carries a ``None`` value for an attribute that does not apply to it.
+   std::unique_ptr<int> create_resource() {
+       auto v = std::make_unique<int>(10);
+       std::cout << *v << '\n';     // 10
+       std::cout << &v << '\n';     // @1 (address of local variable)
+       return v; // Ownership transferred to caller
+   }
+   int main(){
+       auto u{create_resource()};
+       std::cout << *u << '\n';       // 10
+       std::cout << &u << '\n';       // @1 (same address due to optimization)
+   }
 
-         .. note::
+.. admonition:: Question
+   :class: hint
 
-            Each subclass extends ``Animal`` with only what makes it unique. Adding a
-            ``Fish`` class tomorrow requires no changes to ``Dog``, ``Cat``, or ``Bird``.
+   Which compiler optimization technique is being used here?
 
+.. dropdown:: Answer
+   :class-container: sd-border-success
 
-.. dropdown:: Types of Inheritance
+   **Return Value Optimization (RVO)** -- The compiler constructs the return
+   value directly in the caller's memory, eliminating the need for a move
+   or copy.
 
-   Python supports four inheritance patterns:
 
-   .. list-table:: Types of inheritance in Python
-      :widths: 25 45 30
-      :header-rows: 1
-      :class: compact-table
+Shared Pointers
+===============
 
-      * - Type
-        - Description
-        - Example
-      * - Single
-        - One child inherits from one parent
-        - ``Cat(Animal)``
-      * - Multi-level
-        - A child inherits from a child
-        - ``Kitten(Cat(Animal))``
-      * - Multiple
-        - One child inherits from several parents
-        - ``Liger(Lion, Tiger)``
-      * - Hierarchical
-        - Several children share one parent
-        - ``Cat``, ``Dog``, and ``Bird`` all inherit ``Animal``
+A ``std::shared_ptr`` (from ``<memory>``) implements shared ownership semantics,
+allowing multiple smart pointers to collectively manage a single resource through
+a **reference-counted control block**.
 
-   - **Single inheritance**: one child extends one parent. Simple, predictable, and
-     easy to follow. The recommended starting point.
-   - **Hierarchical inheritance**: multiple children share one parent. Promotes code
-     reuse and a consistent interface across subclasses.
-   - **Multi-level inheritance**: a chain of inheritance across multiple levels.
-     Useful for progressive specialization but deep chains are difficult to read and
-     debug. Prefer shallow hierarchies.
-   - **Multiple inheritance**: one child inherits from several parents. Powerful but
-     introduces complexity around MRO and the diamond problem. Use with caution and
-     prefer composition when possible.
+- Resource acquisition occurs during ``std::shared_ptr`` construction.
+- Multiple ``std::shared_ptr`` instances can share ownership by copying from an
+  existing instance.
+- The resource remains valid while *at least one ``std::shared_ptr`` maintains
+  ownership*.
+- Automatic resource deallocation occurs when the reference count reaches zero:
 
+  - The last ``std::shared_ptr`` is reassigned to manage a different resource.
+  - The last ``std::shared_ptr`` is destroyed (scope exit).
+  - The last ``std::shared_ptr`` is explicitly reset via ``reset()``.
 
-.. dropdown:: Attribute Initialization with ``super()``
+.. figure:: /_static/images/l7/fig_uniqueptr_demo.png
+   :alt: Shared pointer lifecycle demo
+   :align: center
+   :width: 70%
 
-   When a child class defines ``__init__``, it must call ``super().__init__()`` to
-   ensure parent attributes are initialized. Always call it **first**.
+   Shared pointer lifecycle: multiple pointers managing the same resource.
 
-   .. code-block:: python
 
-      class Robot:
-          """Base class for all competition robots."""
+Initialization
+--------------
 
-          def __init__(self, name: str, battery: int = 100) -> None:
-              self._name = name
-              self._battery = battery
+.. code-block:: cpp
 
-          def perform_task(self, task_name: str) -> None:
-              if self._battery >= 10:
-                  print(f"{self._name} performing: {task_name}")
-                  self._battery -= 10
-              else:
-                  print(f"{self._name} needs recharging!")
+   // Preferred: Exception-safe, efficient single allocation
+   std::shared_ptr<T> identifier = std::make_shared<T>(args...);
+   auto identifier = std::make_shared<T>(args...);
 
-          def __repr__(self) -> str:
-              return f"Robot(name='{self._name}', battery={self._battery})"
+.. code-block:: cpp
 
-      class MobileRobot(Robot):
-          """A robot that can navigate -- extends Robot with speed."""
+   // Discouraged: Two allocations, potential exception issues
+   std::shared_ptr<T> identifier(new T(args...));
+   std::shared_ptr<T> identifier = std::shared_ptr<T>(new T(args...));
+   auto identifier = std::shared_ptr<T>(new T(args...));
 
-          def __init__(self, name: str, speed: float, battery: int = 100) -> None:
-              super().__init__(name, battery)   # Initialize parent attributes first
-              self._speed = speed               # Then add child-specific attributes
+- ``T`` -- Type of the managed object allocated on the heap.
+- ``identifier`` -- Variable name for the shared pointer instance.
+- ``args...`` -- Constructor arguments passed to the managed object.
 
-          def __repr__(self) -> str:
-              return (f"MobileRobot(name='{self._name}', "
-                      f"battery={self._battery}, speed={self._speed})")
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-      class ManipulatorRobot(Robot):
-          """A robot with a manipulator arm -- extends Robot with reach."""
+   `R.22: Use make_shared() to make shared_ptrs <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r22-use-make_shared-to-make-shared_ptrs>`_
 
-          def __init__(self, name: str, reach_m: float, battery: int = 100) -> None:
-              super().__init__(name, battery)
-              self._reach_m = reach_m
+**Multiple shared_ptr managing the same resource:**
 
-          def grip(self, object_name: str) -> None:
-              print(f"{self._name} gripping: {object_name}")
+.. code-block:: cpp
+   :linenos:
 
-          def __repr__(self) -> str:
-              return (f"ManipulatorRobot(name='{self._name}', "
-                      f"battery={self._battery}, reach_m={self._reach_m})")
+   auto s1 = std::make_shared<int>(10);
+   auto s2{s1};
+   auto s3 = s2;
 
-      scout = MobileRobot("Scout", speed=1.5)
-      arm   = ManipulatorRobot("Arm-1", reach_m=0.8)
+.. figure:: /_static/images/l7/fig_uniqueptr_demo2.png
+   :alt: Multiple shared_ptr instances
+   :align: center
+   :width: 80%
 
-      scout.perform_task("navigate to zone B")  # inherited from Robot
-      arm.perform_task("pick widget")           # inherited from Robot
-      arm.grip("widget-42")                     # ManipulatorRobot only
+   Three ``std::shared_ptr`` instances sharing ownership of the same resource.
 
-      print(scout)  # MobileRobot(name='Scout', battery=90, speed=1.5)
-      print(arm)    # ManipulatorRobot(name='Arm-1', battery=90, reach_m=0.8)
 
-   .. warning::
+Structure
+---------
 
-      If you omit ``super().__init__()``, the parent's ``__init__`` is never called
-      and parent attributes such as ``_name`` and ``_battery`` will not exist. Any
-      method that accesses them will raise ``AttributeError``.
+A ``std::shared_ptr`` maintains two essential pointers to implement shared
+ownership semantics.
 
+- **Resource Pointer** (``_M_ptr``) -- Points directly to the managed object
+  on the heap.
+- **Control Block Pointer** (``_M_refcount``) -- Points to the control block
+  containing reference counts (strong and weak) and metadata. *The control block
+  is also created on the heap.*
 
-.. dropdown:: Method Resolution Order (MRO)
+.. code-block:: cpp
 
-   When Python looks up a method or attribute, it follows the **Method Resolution
-   Order** (MRO): a deterministic chain from the class itself up through its
-   ancestors, computed by the C3 linearization algorithm.
+   auto s = std::make_shared<int>(10);
+   //   +-- _M_ptr           -> pointer to managed object (10)
+   //   +-- _M_refcount      -> shared reference count (to control block)
+   //   +-- [Control block]  -> allocated separately on the heap
+   //          +-- strong count (shared ownership)
+   //          +-- weak count (weak_ptr references)
+   //          +-- deleter (function to destroy the object)
+   //          +-- allocator info
+   //          +-- possibly type-erased holder for custom deleters
 
-   .. only:: html
+.. figure:: /_static/images/l7/shared_ptr_structure.png
+   :alt: Structure of a std::shared_ptr
+   :align: center
+   :width: 50%
 
-      .. figure:: /_static/images/L7/l7_mro_light.png
-         :alt: Diagram showing MRO chain for MobileRobot
-         :width: 65%
-         :align: center
-         :class: only-light
+   Internal structure of a ``std::shared_ptr`` showing the resource pointer and
+   control block pointer.
 
-         **MRO for** ``MobileRobot``: Python searches left to right along the chain.
 
-      .. figure:: /_static/images/L7/l7_mro_dark.png
-         :alt: Diagram showing MRO chain for MobileRobot
-         :width: 65%
-         :align: center
-         :class: only-dark
+Control Block
+^^^^^^^^^^^^^^
 
-   .. only:: latex
+A control block is a heap-allocated data structure that manages shared ownership
+metadata for ``std::shared_ptr`` and ``std::weak_ptr``, enabling reference
+counting and coordinated resource cleanup.
 
-      .. figure:: /_static/images/L7/l7_mro_light.png
-         :alt: Diagram showing MRO chain for MobileRobot
-         :width: 65%
-         :align: center
+- Created when the first ``std::shared_ptr`` is constructed; *subsequent copies
+  share the same control block instance*.
+- Contains reference counts (strong and weak), custom deleters, and allocator
+  information to ensure thread-safe resource management.
+- Introduces memory overhead compared to ``std::unique_ptr`` or raw pointers,
+  but enables safe shared ownership semantics.
 
-         **MRO for** ``MobileRobot``: Python searches left to right along the chain.
 
-   .. code-block:: python
+Strong Count (``s_count``)
+"""""""""""""""""""""""""""
 
-      print(MobileRobot.__mro__)
-      # (<class 'MobileRobot'>, <class 'Robot'>, <class 'object'>)
+.. figure:: /_static/images/l7/control_block_s_count.png
+   :alt: Strong count in control block
+   :align: center
+   :width: 30%
 
-   **How Python resolves a method call:**
+   Strong count component of the control block.
 
-   1. Look in ``MobileRobot`` first.
-   2. If not found, look in ``Robot``.
-   3. If not found, look in ``object``.
-   4. If not found anywhere, raise ``AttributeError``.
+Tracks the number of ``std::shared_ptr`` instances sharing ownership of the
+resource.
 
-   ``super()`` returns a proxy that routes calls to the **next class in the MRO**,
-   not necessarily the direct parent. This is what makes ``super()`` work correctly
-   in multiple inheritance scenarios.
+- Incremented when a ``std::shared_ptr`` is **copied**.
+- Unchanged when a ``std::shared_ptr`` is **moved**, since ownership is
+  transferred, not duplicated.
+- Decremented when a ``std::shared_ptr`` is destroyed, reset, or reassigned.
+- *The managed resource is automatically destroyed when the strong count reaches
+  zero.*
 
-   .. note::
 
-      ``super()`` does not return the parent class. It returns a proxy object that
-      knows your position in the MRO and delegates attribute lookups to the next
-      class in the chain.
+Weak Count (``w_count``)
+""""""""""""""""""""""""""
 
+.. figure:: /_static/images/l7/control_block_w_count.png
+   :alt: Weak count in control block
+   :align: center
+   :width: 30%
 
-.. dropdown:: ``isinstance()`` and ``issubclass()``
+   Weak count component of the control block.
 
-   Two built-in functions let you inspect the class hierarchy at runtime.
+Tracks the number of ``std::weak_ptr`` instances observing the resource without
+owning it.
 
-   .. code-block:: python
+- Incremented/decremented as ``std::weak_ptr`` instances are created or
+  destroyed.
+- Does not influence resource lifetime: only the lifetime of the control block.
+- *The control block is destroyed only when both the strong and weak counts
+  reach zero.*
 
-      scout = MobileRobot("Scout", speed=1.5)
-      arm   = ManipulatorRobot("Arm-1", reach_m=0.8)
 
-      # isinstance: is this object an instance of the given class (or a subclass)?
-      print(isinstance(scout, MobileRobot))      # True
-      print(isinstance(scout, Robot))             # True -- Scout is-a Robot
-      print(isinstance(scout, ManipulatorRobot))  # False
+Managed Pointer
+""""""""""""""""
 
-      # issubclass: is the first class a subclass of the second?
-      print(issubclass(MobileRobot, Robot))       # True
-      print(issubclass(Robot, MobileRobot))       # False -- parent is not a subclass of child
+.. figure:: /_static/images/l7/control_block_ptr.png
+   :alt: Managed pointer in control block
+   :align: center
+   :width: 30%
 
-   .. note::
+   Managed pointer component of the control block.
 
-      Prefer ``isinstance()`` over ``type(obj) == SomeClass``.
-      ``isinstance()`` correctly handles the full inheritance chain, while
-      ``type()`` only matches the exact class.
+A managed pointer to the managed resource. This managed pointer is mainly used
+by the ``lock()`` method of ``std::weak_ptr``.
 
 
-Polymorphism
-====================================================
+Deleter and Allocator
+""""""""""""""""""""""
 
-The same interface, different behavior depending on the object.
+.. figure:: /_static/images/l7/control_block_deleter_allocator.png
+   :alt: Deleter and allocator in control block
+   :align: center
+   :width: 30%
 
-Refer to ``L7_polymorphism.py`` to follow along with the examples below.
+   Deleter and allocator components of the control block.
 
+**Deleter**: A callable object (function, functor, or lambda) stored inside the
+control block. It defines how the managed object is destroyed when the last
+``std::shared_ptr`` owner goes away.
 
-.. dropdown:: What Is Polymorphism?
+**Allocator**: Controls how memory is obtained and released for the object and
+sometimes for the control block itself.
 
-   .. epigraph::
 
-      **Polymorphism** (from Greek: *poly* = many, *morphe* = form) means that
-      different objects respond to the same method call in their own way. The caller
-      does not need to know the concrete type of the object -- only that it supports
-      the required interface.
+.. warning::
 
-      - **Method overriding**: a subclass provides its own implementation of an
-        inherited method.
-      - **Duck typing**: an object is compatible if it has the required methods,
-        regardless of its class hierarchy.
+   Every control block starts with **one weak reference**: this is the control
+   block's *self-reference*.
 
-   **Physical world examples**
+   - It ensures the control block remains valid even after the managed object is
+     destroyed, allowing existing ``std::weak_ptr`` instances to safely call
+     ``expired()`` or ``lock()``.
+   - This self-reference is released automatically when the **last**
+     ``std::shared_ptr`` is destroyed and no ``std::weak_ptr`` instances remain,
+     causing both the strong and weak counts to reach zero: at which point the
+     control block itself is deallocated.
 
-   - A **remote control** sends the same "play" signal to a TV, a DVD player, and a
-     streaming device -- each responds differently.
-   - An **on/off switch** works on a lamp, a fan, and a heater -- the same interface,
-     different behavior.
 
-   **Robotics Competition examples**
+Control Block Demo
+"""""""""""""""""""
 
-   - ``perform_task("pick widget")`` on a ``MobileRobot`` triggers navigation; on a
-     ``ManipulatorRobot`` it triggers arm extension -- same call, different behavior.
-   - ``make_sound()`` on a ``Cat`` prints "Meow"; on a ``Dog`` prints "Woof" -- duck
-     typing requires no shared base class.
+Let's analyze how the control block evolves with the following code:
 
-   .. list-table:: Duck typing vs. class-based polymorphism
-      :widths: 50 50
-      :header-rows: 1
-      :class: compact-table
+.. code-block:: cpp
+   :linenos:
 
-      * - Duck Typing
-        - Class-based Polymorphism
-      * - No shared base class required
-        - Relies on a common base class or interface
-      * - Compatible if the method exists
-        - Compatible if the class hierarchy matches
-      * - Checked at runtime
-        - Can be checked statically
-      * - More flexible, less explicit
-        - More explicit, better tooling support
+   int main(){
+       auto s1 = std::make_shared<int>(10);
+       auto s2{s1};
+       s1.reset();
+       s2.reset();
+   }
 
+**Step 1: Line 2** -- ``auto s1 = std::make_shared<int>(10);``
 
-.. dropdown:: Duck Typing
+.. figure:: /_static/images/l7/demo1_shared_ptr_1.png
+   :alt: Shared pointer demo step 1
+   :align: center
+   :width: 50%
 
-   .. epigraph::
+- Managed object: ``int(10)``
+- Control block: allocated by ``make_shared``
+- ``s_count``: 1 -- ``s1`` owns the object.
+- ``w_count``: 1 -- the *implicit* reference keeping the control block alive.
 
-      **Duck typing** is the mechanism Python uses to achieve polymorphism. An object
-      is compatible with an interface if it has the required methods, regardless of
-      its type or class hierarchy.
+**Step 2: Line 3** -- ``auto s2{s1};``
 
-   A single function processes a mixed list of ``Cat`` and ``Dog`` objects. Each class
-   defines ``make_sound()`` independently. Since neither inherits it from ``Animal``,
-   this is pure duck typing: Python checks at runtime whether the object has
-   ``make_sound()``, and calls it if it does.
+.. figure:: /_static/images/l7/demo1_shared_ptr_2.png
+   :alt: Shared pointer demo step 2
+   :align: center
+   :width: 50%
 
-   .. code-block:: python
+- Copies ``s1`` --> another ``std::shared_ptr`` pointing to the same control block.
+- ``s_count``: 2 -- ``s1`` and ``s2`` share ownership.
+- ``w_count``: 1 -- unchanged (still only the control block's self-reference).
 
-      class Animal:
-          def __init__(self, name: str):
-              self._name = name
+**Step 3: Line 4** -- ``s1.reset();``
 
-      class Cat(Animal):
-          def make_sound(self) -> None:
-              print(f"{self._name} says: Meow")
+.. figure:: /_static/images/l7/demo1_shared_ptr_3.png
+   :alt: Shared pointer demo step 3
+   :align: center
+   :width: 50%
 
-      class Dog(Animal):
-          def make_sound(self) -> None:
-              print(f"{self._name} says: Woof")
+- Releases one shared owner.
+- ``s_count``: 1 -- only ``s2`` remains.
+- ``w_count``: 1 -- unchanged.
 
-      def chorus(animals: list[Animal]) -> None:
-          for animal in animals:
-              animal.make_sound()   # polymorphic call
+**Step 4: Line 5** -- ``s2.reset();`` (part a)
 
-      chorus([Cat("Kitty"), Dog("Rex")])
-      # Kitty says: Meow
-      # Rex says: Woof
+.. figure:: /_static/images/l7/demo1_shared_ptr_4a.png
+   :alt: Shared pointer demo step 4a
+   :align: center
+   :width: 50%
 
-   **What is Happening?**
+- Releases the last shared owner.
+- ``s_count``: 0 -- no more shared owners.
+- ``w_count``: 1 -- still held by the control block's own internal ref.
+- At this moment: the managed ``int(10)`` is cleaned up, because ``s_count`` == 0.
 
-   - ``Animal`` does not define ``make_sound()``. ``Cat`` and ``Dog`` each add it
-     independently.
-   - ``chorus()`` does not check the type of each object. It simply calls
-     ``make_sound()``.
-   - Any object with ``make_sound()`` works here. This is duck typing.
-   - Getting different outputs from the same call on a mixed list is polymorphism in
-     action.
+**Step 4: Line 5** -- ``s2.reset();`` (part b)
 
-   .. warning::
+.. figure:: /_static/images/l7/demo1_shared_ptr_4b.png
+   :alt: Shared pointer demo step 4b
+   :align: center
+   :width: 50%
 
-      Nothing stops a developer from forgetting to implement ``make_sound()`` in a
-      new subclass. Abstract base classes solve this, as we will see shortly.
+- At the end of the same line (``s2.reset()``), the control block detects that
+  the **last** ``std::shared_ptr`` is destroyed (``s_count`` = 0):
 
-   **Class Diagram**
+  - The control block releases its internal weak reference, making ``w_count``
+    = 0 and **destroys itself immediately**.
 
-   .. only:: html
 
-      .. figure:: /_static/images/L7/polymorphism_duck_typing_diagram_light.png
-         :alt: Class diagram showing Cat, Dog, and Bird each independently defining make_sound()
-         :width: 80%
-         :align: center
-         :class: only-light
+Shared Pointer Methods
+-----------------------
 
-         Each subclass independently defines ``make_sound()``.
+**Accessors:**
 
-      .. figure:: /_static/images/L7/polymorphism_duck_typing_diagram_dark.png
-         :alt: Class diagram showing Cat, Dog, and Bird each independently defining make_sound()
-         :width: 80%
-         :align: center
-         :class: only-dark
+- ``get()`` -- raw pointer (non-owning).
+- ``operator*()``, ``operator->()`` -- dereference access.
+- ``explicit operator bool()`` -- ``true`` if not empty.
 
-   .. only:: latex
+**Observers:**
 
-      .. figure:: /_static/images/L7/polymorphism_duck_typing_diagram_light.png
-         :alt: Class diagram showing Cat, Dog, and Bird each independently defining make_sound()
-         :width: 80%
-         :align: center
+- ``use_count()`` -- returns the current number of ``std::shared_ptr`` instances
+  sharing ownership of the same resource. Intended primarily for debugging or
+  instrumentation. Avoid using it in program logic -- the count can change at
+  any time in multithreaded contexts.
+- ``unique()`` -- convenience function that checks whether the calling
+  ``std::shared_ptr`` is the only owner of the managed object.
+  ``s.unique()`` is equivalent to ``s.use_count() == 1``.
 
-         Each subclass independently defines ``make_sound()``.
+**Modifiers:**
 
-   **Reading the Diagram**
+- ``reset()`` / ``reset(ptr)`` -- release current; optionally take new pointer
+  (decrements previous control block).
+- ``swap(other)`` -- exchange managed object and control block.
 
-   - ``Animal`` does not declare ``make_sound()``. It only defines shared attributes
-     and ``eat()`` and ``sleep()``.
-   - ``Cat``, ``Dog``, and ``Bird`` each add ``make_sound()`` independently, with no
-     contract from the parent.
-   - This is duck typing: the method exists on each subclass by convention, not
-     enforcement.
-   - ``eat()`` and ``sleep()`` are defined in ``Animal`` and inherited as-is by all
-     subclasses.
-   - Method overriding with enforcement will be introduced with abstract base classes
-     in the next section.
 
+Pass to Functions: Sink (shared_ptr)
+-------------------------------------
 
-.. dropdown:: Polymorphism via Method Overriding
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-   When child classes override a parent method, calling the same method on different
-   subclass instances produces different behavior.
+   `R.34: Take a shared_ptr<widget> parameter to express shared ownership <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r34-take-a-shared_ptrwidget-parameter-to-express-shared-ownership>`_
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      class Robot:
-          def __init__(self, name: str) -> None:
-              self._name = name
+   void process_widget(std::shared_ptr<Widget> widget_ptr);
+   // Call: process_widget(my_shared_widget); // Copy shares ownership
 
-          def perform_task(self, task_name: str) -> None:
-              print(f"{self._name} performing: {task_name}")
+.. code-block:: cpp
 
-      class MobileRobot(Robot):
-          def __init__(self, name: str, speed: float) -> None:
-              super().__init__(name)
-              self._speed = speed
+   void sink_shared(std::shared_ptr<int> ptr) { // Copy constructor increments ref count
+       std::cout << ptr.use_count() << '\n';     // 2 (original + copy)
+   }
 
-          def perform_task(self, task_name: str) -> None:
-              print(f"{self._name} navigating at {self._speed} m/s")
-              super().perform_task(task_name)
+   int main() {
+       auto original = std::make_shared<int>(10);
+       std::cout << original.use_count() << '\n';   // 1
+       sink_shared(original); // Pass by value creates copy
+       std::cout << original.use_count() << '\n';   // 1 (copy destroyed after function)
+   }
 
-      class ManipulatorRobot(Robot):
-          def __init__(self, name: str, reach_m: float) -> None:
-              super().__init__(name)
-              self._reach_m = reach_m
 
-          def perform_task(self, task_name: str) -> None:
-              print(f"{self._name} extending arm to {self._reach_m} m")
-              super().perform_task(task_name)
+Pass to Functions: Reseat (shared_ptr)
+---------------------------------------
 
-      robots: list[Robot] = [
-          MobileRobot("Scout", speed=1.5),
-          ManipulatorRobot("Arm-1", reach_m=0.8),
-          Robot("Base"),
-      ]
+.. admonition:: C++ Core Guideline
+   :class: tip
 
-      for robot in robots:
-          robot.perform_task("pick widget")
+   `R.35: Take a shared_ptr<widget>& parameter to express that a function might reseat the shared pointer <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r35-take-a-shared_ptrwidget-parameter-to-express-that-a-function-might-reseat-the-shared-pointer>`_
 
-      # Scout navigating at 1.5 m/s
-      # Scout performing: pick widget
-      # Arm-1 extending arm to 0.8 m
-      # Arm-1 performing: pick widget
-      # Base performing: pick widget
+.. code-block:: cpp
 
-   The same call ``robot.perform_task("pick widget")`` produces different output
-   depending on which subclass ``robot`` refers to at runtime.
+   void configure_widget(std::shared_ptr<Widget>& widget_ptr);
+   // Function may call: widget_ptr.reset(std::make_shared<EnhancedWidget>());
 
+.. code-block:: cpp
 
-.. dropdown:: Built-in Polymorphism
+   void reseat_shared(std::shared_ptr<int>& ptr) { // Pass by reference -- no copy
+       std::cout << ptr.use_count() << '\n';     // 1 (same instance, no increment)
+       // Could modify ptr here: ptr.reset(std::make_shared<int>(20));
+   }
 
-   Python's built-in functions achieve polymorphism through dunder methods. The same
-   function call works on many types because each type implements the corresponding
-   dunder method.
+   int main() {
+       auto original = std::make_shared<int>(10);
+       std::cout << original.use_count() << '\n';   // 1
+       reseat_shared(original); // Pass by reference
+       std::cout << original.use_count() << '\n';   // 1 (no copy made)
+   }
 
-   .. code-block:: python
 
-      # len() calls __len__ on whatever object it receives
-      print(len("hello"))          # 5    (str.__len__)
-      print(len([1, 2, 3]))        # 3    (list.__len__)
-      print(len({"a": 1}))         # 1    (dict.__len__)
+Return from Functions (shared_ptr)
+------------------------------------
 
-      # str() calls __str__ on whatever object it receives
-      print(str(42))               # '42'
-      print(str(3.14))             # '3.14'
-      print(str(True))             # 'True'
+Return Value Optimization (RVO) eliminates unnecessary copies when returning
+``std::shared_ptr`` by value, resulting in efficient ownership transfer.
 
-      # + calls __add__ on whatever object it receives
-      print(1 + 2)                 # 3
-      print("hello" + " world")    # hello world
-      print([1, 2] + [3, 4])       # [1, 2, 3, 4]
+.. code-block:: cpp
 
-   Every time you call ``len()``, ``str()``, or ``+``, you are relying on
-   polymorphism. Python's built-in functions work with any object that implements
-   the corresponding dunder method.
+   std::shared_ptr<int> create_shared_resource() {
+       auto local_ptr = std::make_shared<int>(10);
+       std::cout << &local_ptr << '\n';   // @1 (local variable address)
+       return local_ptr; // RVO: no copy, direct construction in caller's context
+   }
 
+   int main() {
+       auto result{create_shared_resource()};
+       std::cout << &result << '\n'; // @1 (same address due to RVO)
+   }
 
-.. dropdown:: Operator Overriding
 
-   **Operator overriding** is a form of polymorphism. Every class inherits default
-   dunder methods from ``object`` (such as ``__eq__``, ``__add__``, ``__lt__``).
-   Providing your own implementation **overrides** the inherited version, giving the
-   operator a meaning specific to your class.
+Weak Pointers
+=============
 
-   .. code-block:: python
+A ``std::weak_ptr`` (from ``<memory>``) provides non-owning observation of
+resources managed by ``std::shared_ptr``, enabling safe access without affecting
+resource lifetime.
 
-      class Animal:
-          def __init__(self, name: str, age: int, weight: float):
-              self._name = name
-              self._age = age
-              self._weight = weight
+.. admonition:: Primary Purpose
+   :class: note
 
-          def __repr__(self) -> str:
-              return (f"Animal(name={self._name!r}, age={self._age}, "
-                      f"weight={self._weight} kg)")
+   The primary purpose of ``std::weak_ptr`` is to break circular dependencies
+   and provide safe resource monitoring without extending object lifetimes.
 
-          def __eq__(self, other: object) -> bool:
-              if not isinstance(other, Animal):
-                  return NotImplemented
-              return self._name == other._name and self._age == other._age
+Key use cases for ``std::weak_ptr``:
 
-          def __add__(self, other: "Animal") -> float:
-              return self._weight + other._weight   # combined weight
+- Breaking circular references that would cause memory leaks with
+  ``std::shared_ptr`` (essential for parent-child relationships and observer
+  patterns).
+- Safe checking of resource validity using ``expired()`` before access.
+- Temporary promotion to ``std::shared_ptr`` via ``lock()`` when needed.
 
-      kitty = Animal("Kitty", age=3, weight=4.2)
-      rex   = Animal("Rex",   age=5, weight=30.0)
+Like ``std::shared_ptr``, a ``std::weak_ptr`` contains both a resource pointer
+and a control block pointer.
 
-      print(kitty == rex)   # False
-      print(kitty + rex)    # 34.2  (combined weight)
 
+Initialization
+--------------
 
-Abstract Base Classes
-====================================================
+A ``std::weak_ptr`` is initialized from an existing ``std::shared_ptr`` or
+copied from another ``std::weak_ptr``. This operation increases the *weak count*
+in the control block but does not affect the *strong (ownership) count*.
 
-Defining interfaces that subclasses are required to implement.
+.. code-block:: cpp
 
-Refer to ``L7_abstract_classes.py`` to follow along with the examples below.
+   auto s = std::make_shared<int>(10);
 
+   // Create a weak_ptr from a shared_ptr
+   std::weak_ptr<int> w1{s};
 
-.. dropdown:: What Is an Abstract Class?
+   // Create another weak_ptr from an existing weak_ptr
+   std::weak_ptr<int> w2{w1};
 
-   .. epigraph::
 
-      An **abstract class** (circled A in UML, class name in italics) is a class
-      that cannot be instantiated directly. It is designed to be subclassed and
-      defines a set of methods that **must** be implemented by any concrete subclass
-      (circled C in UML). This enforces a consistent interface across all subclasses.
+Structure
+---------
 
-      - **Abstract method**: declared but not implemented; subclasses must override it.
-      - **Concrete method**: fully implemented; subclasses inherit it as-is.
+.. code-block:: cpp
 
-   **Physical world examples**
+   auto s = std::make_shared<int>(10);
+   std::weak_ptr<int> w{s};
+   //   +-- _M_refcount       -> points to the same control block as s
+   //   +-- [Control block]   -> shared with all related shared_ptr / weak_ptr
+   //          +-- strong count (number of shared_ptr owners)
+   //          +-- weak count   (number of weak_ptr observers + 1 internal self-ref)
+   //          +-- managed object pointer (to int(10))
+   //          +-- deleter and allocator info
+   //          +-- destroyed when both counts reach zero
 
-   - A **Shape** is abstract: it declares ``area()`` and ``perimeter()`` but cannot
-     define them without knowing the actual shape. ``Circle`` and ``Rectangle`` are
-     concrete.
-   - A **Vehicle** is abstract: it declares ``move()`` but the implementation differs
-     between a ``Car``, a ``Boat``, and a ``Plane``.
+.. figure:: /_static/images/l7/weak_ptr_structure.png
+   :alt: Structure of a std::weak_ptr
+   :align: center
+   :width: 80%
 
-   **Robotics Competition examples**
+   Structure of a ``std::weak_ptr`` showing the shared control block.
 
-   - ``Robot`` is abstract: it declares ``move()`` but the implementation differs
-     between a ``MobileRobot`` and a ``ManipulatorRobot``.
-   - Attempting to instantiate ``Robot`` directly raises ``TypeError`` at
-     instantiation time, catching the omission as early as possible.
+``std::weak_ptr`` cannot be directly dereferenced or provide raw pointer access.
+It is purely an observer that requires promotion to ``std::shared_ptr`` for
+resource access.
 
-   The UML diagram below shows the notation for abstract and concrete classes.
+.. code-block:: cpp
 
-   .. only:: html
+   auto s = std::make_shared<int>(10);
+   // Create weak_ptr from shared_ptr
+   std::weak_ptr<int> w{s};
 
-      .. figure:: /_static/images/L7/l7_abstract_light.png
-         :alt: UML notation for abstract and concrete classes
-         :width: 35%
-         :align: center
-         :class: only-light
+   std::cout << *w << '\n';        // Error: No operator*
+   std::cout << w.get() << '\n';   // Error: No get() method
 
-         **UML notation**: ``Animal`` is an abstract base class. Abstract class name appears in italics with a circled A; concrete subclasses carry a circled C. Abstract methods are also italicized.
 
-      .. figure:: /_static/images/L7/l7_abstract_dark.png
-         :alt: UML notation for abstract and concrete classes
-         :width: 35%
-         :align: center
-         :class: only-dark
+Methods
+-------
 
-   .. only:: latex
+- ``use_count()`` -- returns the number of ``std::shared_ptr`` instances currently
+  owning the resource.
+- ``reset()`` -- releases the weak reference, leaving the ``std::weak_ptr`` in
+  an empty (non-observing) state.
+- ``swap()`` -- exchanges control block references with another ``std::weak_ptr``
+  (no ownership or object lifetime change).
+- ``lock()`` -- safely tries to promote the weak reference to a
+  ``std::shared_ptr``. Returns a valid ``std::shared_ptr`` if the object is
+  still alive, or a **null** ``std::shared_ptr`` if it has expired.
+- ``expired()`` -- returns ``true`` if the managed object has been destroyed;
+  ``false`` otherwise.
 
-      .. figure:: /_static/images/L7/l7_abstract_light.png
-         :alt: UML notation for abstract and concrete classes
-         :width: 35%
-         :align: center
+**Reference count tracing example:**
 
-         **UML notation**: ``Animal`` is an abstract base class. Abstract class name appears in italics with a circled A; concrete subclasses carry a circled C. Abstract methods are also italicized.
+.. code-block:: cpp
+   :linenos:
 
+   auto sp = std::make_shared<int>(42); // s_count=1, w_count=1 (implicit)
+   std::weak_ptr<int> w1{sp};          // s_count=1, w_count=2
+   std::weak_ptr<int> w2{sp};          // s_count=1, w_count=3
 
-.. dropdown:: The ``abc`` Module and ``@abstractmethod``
+   sp.reset();     // s_count -> 0, object destroyed
+                   // implicit w_count dropped -> w_count becomes 2 (w1, w2)
 
-   Import ``ABC`` and ``abstractmethod`` from ``abc``. Inheriting from ``ABC``
-   marks the class as abstract, but on its own it does **not** prevent
-   instantiation and does not enforce any interface. ``TypeError`` is only raised
-   when at least one ``@abstractmethod`` is declared and a subclass fails to
-   implement it.
+   std::cout << "expired? w1=" << w1.expired()
+             << ", w2=" << w2.expired() << '\n'; // both true
 
-   .. code-block:: python
+   w1.reset();     // w_count -> 1
+   w2.reset();     // w_count -> 0, control block destroyed here
 
-      from abc import ABC, abstractmethod
+.. list-table::
+   :widths: 8 20 12 12 48
+   :header-rows: 1
 
-      class Animal(ABC):
-          def __init__(self, name: str):
-              self._name = name
+   * - Line
+     - Statement
+     - ``s_count``
+     - ``w_count``
+     - Notes
+   * - 1
+     - ``make_shared``
+     - 1
+     - 1
+     - implicit ``w_count`` = 1
+   * - 2
+     - ``w1{sp}``
+     - 1
+     - 2
+     - +1 user weak
+   * - 3
+     - ``w2{sp}``
+     - 1
+     - 3
+     - +1 user weak
+   * - 5
+     - ``sp.reset()``
+     - 0
+     - 2
+     - resource (``42``) destroyed; implicit weak dropped
+   * - 11
+     - ``w1.reset()``
+     - 0
+     - 1
+     - one user weak dropped, one user weak remains
+   * - 12
+     - ``w2.reset()``
+     - 0
+     - 0
+     - control block destroyed here
 
-          @abstractmethod
-          def make_sound(self) -> None: ...
 
-          @abstractmethod
-          def move(self) -> None: ...
+lock()
+^^^^^^^
 
-      class Cat(Animal):
-          def make_sound(self) -> None:
-              print(f"{self._name} says: Meow")
+The ``lock()`` method safely promotes a weak reference to a ``std::shared_ptr``.
 
-          def move(self) -> None:
-              print(f"{self._name} walks gracefully")
+**Pseudocode:**
 
-      # OK: all abstract methods implemented
-      kitty = Cat("Kitty")
-      kitty.make_sound()   # Kitty says: Meow
+1. If the control block exists and the strong count > 0:
 
-   .. note::
+   - Atomically increment the strong count.
+   - Retrieve the managed pointer from the control block.
+   - Construct a new ``std::shared_ptr`` with that pointer and the same control block.
 
-      ``@abstractmethod`` declares that a method **must** be overridden in every
-      concrete subclass. A subclass that omits any abstract method cannot be
-      instantiated -- Python raises ``TypeError`` at instantiation time, not at
-      the point where the missing method would be called. An abstract method can
-      have a body (callable via ``super().make_sound()``), but an empty body is
-      the norm. ``ABC`` alone does **not** prevent instantiation; it is
-      ``@abstractmethod`` that enforces the contract. ``ABC`` sets ``ABCMeta``
-      as the metaclass; ``class Animal(metaclass=ABCMeta)`` is equivalent but
-      ``class Animal(ABC)`` is the preferred style.
+2. Otherwise:
 
+   - Return an empty ``std::shared_ptr``.
 
-.. dropdown:: Implementing an Abstract Class
+.. code-block:: cpp
+   :linenos:
 
-   A **concrete class** inherits from the abstract base and implements all abstract
-   methods. If any abstract method is missing, Python raises ``TypeError`` at
-   instantiation time -- not at the point where the missing method is called.
+   int main() {
+       std::weak_ptr<int> weak;
 
-   **UML Diagram**
+       {
+           auto shared = std::make_shared<int>(42);
+           weak = shared;  // weak observes shared
+       }  // shared destroyed here -> object deleted
 
-   .. only:: html
+       if (auto sp = weak.lock()) {
+           std::cout << "Value: " << *sp << '\n';
+       } else {
+           std::cout << "Object no longer exists.\n";
+       }
+   }
 
-      .. figure:: /_static/images/L7/abstract_concrete_class_diagram_light.png
-         :alt: Abstract Animal with concrete Cat, Dog, and Bird subclasses
-         :width: 60%
-         :align: center
-         :class: only-light
 
-         Abstract ``Animal`` with concrete subclasses ``Cat``, ``Dog``, and ``Bird``.
+expired()
+^^^^^^^^^^
 
-      .. figure:: /_static/images/L7/abstract_concrete_class_diagram_dark.png
-         :alt: Abstract Animal with concrete Cat, Dog, and Bird subclasses
-         :width: 60%
-         :align: center
-         :class: only-dark
+The ``expired()`` method checks whether the managed object has been destroyed.
 
-   .. only:: latex
+**Pseudocode:**
 
-      .. figure:: /_static/images/L7/abstract_concrete_class_diagram_light.png
-         :alt: Abstract Animal with concrete Cat, Dog, and Bird subclasses
-         :width: 60%
-         :align: center
+1. If the control block is null, return ``true``.
+2. If the strong count in the control block == 0, return ``true``.
+3. Otherwise, return ``false``.
 
-         Abstract ``Animal`` with concrete subclasses ``Cat``, ``Dog``, and ``Bird``.
+.. code-block:: cpp
+   :linenos:
 
-   **Reading the Diagram**
+   // Declare empty weak pointer
+   std::weak_ptr<int> weak_observer;
+   {
+       auto shared_resource = std::make_shared<int>(10);
+       weak_observer = shared_resource;  // weak_observer now observes the resource
+       if (weak_observer.expired())
+           std::cout << "Resource has been destroyed\n";
+       else
+           std::cout << "Resource is still valid\n";
+   }  // shared_resource destroyed, resource deallocated
 
-   - ``Animal`` carries a circled A and its name appears in italics, indicating it
-     is abstract and cannot be instantiated.
-   - ``make_sound()`` and ``move()`` appear in italics inside ``Animal``, indicating
-     they are abstract and must be overridden.
-   - ``Cat``, ``Dog``, and ``Bird`` carry a circled C, indicating they are concrete
-     and can be instantiated.
-   - Each subclass provides its own implementation of ``make_sound()`` and ``move()``.
-   - ``eat()`` and ``sleep()`` are concrete in ``Animal`` and inherited as-is by all
-     subclasses.
+   if (weak_observer.expired())
+       std::cout << "Resource has been destroyed\n";
+   else
+       std::cout << "Resource is still valid\n";
 
-   **Concrete and Abstract Methods Together**
 
-   An abstract class can mix abstract and concrete methods. Concrete methods provide
-   shared behavior inherited by all subclasses. Abstract methods enforce the interface
-   each subclass must implement.
+Summary
+=======
 
-   .. code-block:: python
+.. admonition:: Best Practice
+   :class: tip
 
-      from abc import ABC, abstractmethod
+   Prefer smart pointers over raw pointers for all dynamic memory management to
+   ensure automatic resource cleanup and exception safety.
 
-      class Animal(ABC):
-          def __init__(self, name: str, age: int):
-              self._name = name
-              self._age = age
-
-          @abstractmethod
-          def make_sound(self) -> None: ...
-
-          @abstractmethod
-          def move(self) -> None: ...
-
-          # concrete: shared by all
-          def eat(self) -> None:
-              print(f"{self._name} is eating")
-
-          # concrete: shared by all
-          def __repr__(self) -> str:
-              return (f"{type(self).__name__}"
-                      f"(name={self._name!r}, age={self._age})")
-
-      class Cat(Animal):
-          def make_sound(self) -> None:
-              print(f"{self._name} says: Meow")
-
-          def move(self) -> None:
-              print(f"{self._name} walks gracefully")
-
-      if __name__ == '__main__':
-          kitty = Cat("Kitty", age=3)
-          kitty.eat()         # inherited from Animal
-          kitty.make_sound()  # overridden in Cat
-          kitty.move()        # overridden in Cat
-          print(kitty)        # Cat(name='Kitty', age=3)
-
-   **ABCs, Polymorphism, and Method Overriding**
-
-   In the duck typing section, ``Cat`` and ``Dog`` defined ``make_sound()``
-   independently with no contract from ``Animal``. Nothing prevented a developer
-   from forgetting to implement it in a new subclass. ABCs solve this.
-
-   .. code-block:: python
-
-      from abc import ABC, abstractmethod
-
-      class Animal(ABC):
-          def __init__(self, name: str):
-              self._name = name
-
-          @abstractmethod
-          def make_sound(self) -> None: ...  # contract: every subclass must override this
-
-      class Cat(Animal):
-          def make_sound(self) -> None:      # overriding the abstract method
-              print(f"{self._name} says: Meow")
-
-      class Dog(Animal):
-          def make_sound(self) -> None:      # overriding the abstract method
-              print(f"{self._name} says: Woof")
-
-   **What Happens When You Forget**
-
-   If a subclass does not implement all abstract methods, Python raises ``TypeError``
-   at instantiation time, not at the point where the missing method is called.
-
-   .. code-block:: python
-
-      class Dog(Animal):
-          def move(self) -> None:
-              print(f"{self._name} runs")
-          # make_sound() is NOT implemented -- forgot!
-
-      kitty = Cat("Kitty")   # OK
-      rex   = Dog("Rex")     # TypeError: Can't instantiate abstract class Dog
-                             # without an implementation for abstract method 'make_sound'
-
-   .. note::
-
-      ABCs, method overriding, and polymorphism work together. The ABC defines
-      **what** must exist. The subclass defines **how** it behaves. The polymorphic
-      function uses the interface without knowing the concrete type.
-
-
-Data Classes (FYI)
-====================================================
-
-Reducing boilerplate for data-centric classes.
-
-Refer to ``L7_dataclasses.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is a Data Class?
-
-   .. epigraph::
-
-      A **data class** is a regular Python class decorated with ``@dataclass``. Python
-      automatically generates ``__init__``, ``__repr__``, and ``__eq__`` from the
-      class's type-annotated fields, eliminating repetitive boilerplate.
-
-      - The decorator inspects the class body for type-annotated fields.
-      - Generated methods are equivalent to what you would write by hand.
-      - Additional dunder methods (``__hash__``, ``__lt__``, etc.) can be enabled
-        through decorator arguments.
-
-   **Physical world examples**
-
-   - A ``Point(x: float, y: float)`` -- two fields, needs ``__init__`` and ``__repr__``
-     but no behavior.
-   - A ``Color(r: int, g: int, b: int)`` -- pure data, equality comparison useful.
-   - A ``Config(debug: bool, max_retries: int, timeout: float)`` -- settings bundle.
-
-   **Robotics Competition examples**
-
-   - A ``Pose(x: float, y: float, heading: float)`` -- robot position, no behavior.
-   - A ``SensorReading(sensor_id: str, value: float, timestamp: float)`` -- logged
-     data point.
-   - A ``TaskResult(task_name: str, success: bool, duration_s: float)`` -- result record.
-
-   **Code Example**
-
-   .. code-block:: python
-
-      from dataclasses import dataclass
-
-      @dataclass
-      class Animal:
-          name: str
-          age: int
-          weight: float
-
-      kitty = Animal("Kitty", 3, 4.2)
-      print(kitty)            # Animal(name='Kitty', age=3, weight=4.2)
-      print(kitty.name)       # Kitty
-
-   The ``@dataclass`` decorator is equivalent to writing:
-
-   .. code-block:: python
-
-      class Animal:
-          def __init__(self, name: str, age: int, weight: float) -> None:
-              self.name = name
-              self.age = age
-              self.weight = weight
-
-          def __repr__(self) -> str:
-              return f"Animal(name={self.name!r}, age={self.age!r}, weight={self.weight!r})"
-
-          def __eq__(self, other: object) -> bool:
-              if isinstance(other, Animal):
-                  return (self.name, self.age, self.weight) == (other.name, other.age, other.weight)
-              return NotImplemented
-
-   **What is Happening?**
-
-   - ``@dataclass`` reads the type-annotated class-body fields in declaration order
-     and builds ``__init__`` with matching parameters.
-   - ``__repr__`` is generated to list all fields by name, making instances easy to
-     inspect in the REPL and in logs.
-   - ``__eq__`` compares instances field-by-field, which is the natural equality
-     semantics for data-centric classes.
-
-   .. note::
-
-      **When to use ``@dataclass``:** Use it for classes whose primary purpose is
-      storing data with little or no behavior. For classes with significant logic,
-      encapsulation requirements, or complex initialization, a regular class is
-      usually clearer.
-
-
-.. dropdown:: ``field()`` and Default Factories
-
-   Use ``field()`` from the ``dataclasses`` module when a field needs a mutable
-   default, should be excluded from ``__repr__``, or requires special initialization.
-
-   .. code-block:: python
-
-      from dataclasses import dataclass, field
-
-      @dataclass
-      class Animal:
-          name: str
-          age: int
-          weight: float
-          nicknames: list[str] = field(
-              default_factory=list
-          )
-          _id: int = field(
-              default=0,
-              repr=False,
-              compare=False
-          )
-
-      kitty = Animal("Kitty", 3, 4.2)
-      kitty.nicknames.append("Kit")
-      print(kitty)
-      # Animal(name='Kitty', age=3,
-      #        weight=4.2, nicknames=['Kit'])
-
-      rex = Animal("Rex", 5, 30.0)
-      print(rex.nicknames)   # []  (independent list)
-
-   **Why ``field()``?**
-
-   - Mutable defaults like ``list`` or ``dict`` cannot be written as
-     ``nicknames: list = []``. Python would share the same list across all instances.
-   - ``field(default_factory=list)`` creates a fresh list for each new instance.
-
-   **Useful ``field()`` parameters:**
-
-   - ``default``: a fixed default value (for immutable types).
-   - ``default_factory``: a callable that produces the default (for mutable types).
-   - ``repr=False``: exclude the field from ``__repr__``.
-   - ``compare=False``: exclude the field from ``__eq__`` comparisons.
-   - ``init=False``: exclude the field from ``__init__`` entirely.
-
-   .. warning::
-
-      Never use a mutable object (``list``, ``dict``, ``set``) directly as a default
-      value in a ``@dataclass``. Use ``field(default_factory=...)`` instead.
-
-
-.. dropdown:: ``__post_init__``: Validation and Derived Attributes
-
-   ``__post_init__`` is called automatically by the generated ``__init__`` after all
-   fields have been assigned. It is the correct place to validate field values or
-   compute derived attributes.
-
-   **Validation**
-
-   .. code-block:: python
-
-      from dataclasses import dataclass
-
-      @dataclass
-      class Animal:
-          name: str
-          age: int
-          weight: float
-
-          def __post_init__(self):
-              if self.age < 0:
-                  raise ValueError(
-                      f"age cannot be negative: {self.age}"
-                  )
-              if self.weight <= 0:
-                  raise ValueError(
-                      f"weight must be positive: {self.weight}"
-                  )
-
-      kitty = Animal("Kitty", age=3, weight=4.2)  # OK
-      bad   = Animal("Bad",   age=-1, weight=4.2)  # ValueError
-
-   Without ``__post_init__``, nothing stops a caller from creating
-   ``Animal("Kitty", age=-1, weight=-5.0)``. Validation here catches the error
-   at construction time.
-
-   **Derived Attributes**
-
-   A derived attribute is computed from other fields rather than passed by the
-   caller. Declare it with ``field(init=False)`` to exclude it from ``__init__``,
-   then assign it inside ``__post_init__``.
-
-   .. code-block:: python
-
-      from dataclasses import dataclass, field
-
-      @dataclass
-      class Animal:
-          name: str
-          age: int
-          life_stage: str = field(init=False)
-
-          def __post_init__(self):
-              if self.age < 1:
-                  self.life_stage = "infant"
-              elif self.age < 7:
-                  self.life_stage = "adult"
-              else:
-                  self.life_stage = "senior"
-
-      kitty = Animal("Kitty", age=3)
-      print(kitty)
-      # Animal(name='Kitty', age=3, life_stage='adult')
-
-   ``life_stage`` is never passed by the caller. It is computed automatically from
-   ``age`` every time an ``Animal`` is created.
-
-
-.. dropdown:: Frozen Data Classes
-
-   Setting ``frozen=True`` makes the data class **immutable** after creation. Python
-   generates ``__hash__``, making instances usable as dictionary keys or set members.
-
-   .. code-block:: python
-
-      from dataclasses import dataclass
-
-      @dataclass(frozen=True)
-      class Animal:
-          name: str
-          age: int
-          weight: float
-
-      kitty = Animal("Kitty", 3, 4.2)
-      print(kitty)
-      # Animal(name='Kitty', age=3, weight=4.2)
-
-      kitty.age = 4
-      # FrozenInstanceError: cannot assign to field 'age'
-
-      # Frozen instances are hashable
-      animal_set = {kitty, Animal("Rex", 5, 30.0)}
-      lookup = {kitty: "indoor cat"}
-      print(lookup[kitty])   # indoor cat
-
-   **What does** ``frozen=True`` **do?**
-
-   - Prevents any field from being modified after creation.
-   - Any attempt to assign to a field raises ``FrozenInstanceError``.
-   - Automatically generates ``__hash__``, making the instance usable as a
-     dictionary key or set member.
-
-   **When to use frozen data classes:**
-
-   - Records that should never change after creation (sensor readings, event logs,
-     configuration snapshots).
-   - Objects used as dictionary keys or stored in sets.
-   - Anywhere immutability is a design requirement.
-
-   .. note::
-
-      A regular ``@dataclass`` sets ``__hash__`` to ``None`` by default (making it
-      unhashable) because mutable objects should not be hashed. ``frozen=True``
-      restores hashability safely.
-
-   .. list-table:: Data class vs. regular class decision guide
-      :widths: 30 35 35
-      :header-rows: 1
-      :class: compact-table
-
-      * - Situation
-        - Use ``@dataclass``
-        - Use regular class
-      * - Primary purpose
-        - Storing data fields
-        - Complex behavior and logic
-      * - Attribute access
-        - Direct field access
-        - Validated via ``@property``
-      * - Immutability
-        - ``frozen=True``
-        - ``@property`` with no setter
-      * - Inheritance
-        - Simple hierarchies
-        - Deep or complex hierarchies
-      * - Encapsulation
-        - Not a priority
-        - Central design concern
-
-   **Animal Domain Example**
-
-   - Use ``@dataclass`` for ``AnimalRecord`` (name, species, date of birth, weight
-     at intake): pure data, no behavior.
-   - Use a regular class for ``Animal`` with ``@property`` for ``weight``
-     (validated, cannot be negative) and methods like ``make_sound()`` and
-     ``move()``.
-   - A frozen data class suits an ``ObservationLog`` entry: timestamp, observer
-     name, species, notes -- write once, never modify.
-
-
-``__slots__`` (FYI)
-====================================================
-
-Restricting attributes and reducing memory overhead.
-
-Refer to ``L7_slots.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is ``__slots__``?
-
-   .. epigraph::
-
-      ``__slots__`` is a class-level declaration that replaces the per-instance
-      ``__dict__`` with a fixed, compact array of named attribute slots. The result
-      is lower memory use and faster attribute access at the cost of no longer
-      allowing dynamic attribute assignment.
-
-      - Without ``__slots__``: each instance carries a ``__dict__`` (~232 bytes).
-      - With ``__slots__``: attributes are stored in a fixed array (~48 bytes).
-
-   **Physical world examples**
-
-   - A **form with fixed fields** vs. a **blank notepad** -- a form only allows the
-     declared fields; a notepad lets you write anything anywhere.
-   - A **database row** with a fixed schema vs. a Python ``dict``.
-
-   **Robotics Competition examples**
-
-   - A ``Pose`` object created millions of times in a trajectory planner -- the
-     memory savings from ``__slots__`` are significant at that scale.
-   - A ``SensorReading`` logged thousands of times per second -- compact storage
-     reduces GC pressure.
-
-   **Code Example**
-
-   .. code-block:: python
-
-      class Pose:
-          """Regular class -- has __dict__."""
-
-          def __init__(self, x: float, y: float, heading: float) -> None:
-              self._x = x
-              self._y = y
-              self._heading = heading
-
-      class PoseSlotted:
-          """Slotted class -- no __dict__."""
-
-          __slots__ = ("_x", "_y", "_heading")
-
-          def __init__(self, x: float, y: float, heading: float) -> None:
-              self._x = x
-              self._y = y
-              self._heading = heading
-
-   .. code-block:: python
-
-      import sys
-
-      p  = Pose(1.0, 2.0, 0.5)
-      ps = PoseSlotted(1.0, 2.0, 0.5)
-
-      print(sys.getsizeof(p)  + sys.getsizeof(p.__dict__))   # ~280 bytes
-      print(sys.getsizeof(ps))                                # ~56 bytes
-
-   **What is Happening?**
-
-   - ``Pose`` stores attributes in ``__dict__``, which is a full Python dictionary
-     with hash table overhead.
-   - ``PoseSlotted`` stores attributes directly in a fixed C-level array -- no hash
-     table, no per-instance overhead beyond the slot values themselves.
-   - Both classes behave identically for attribute reads and writes; the difference
-     is invisible to callers.
-
-   .. note::
-
-      The exact byte counts vary by Python version and platform. The important
-      result is that the slotted version uses significantly less memory.
-
-
-.. dropdown:: Restrictions and Limitations
-
-   - **No dynamic attributes.** Attempting to assign an attribute not listed in
-     ``__slots__`` raises ``AttributeError``.
-
-   .. code-block:: python
-
-      ps = PoseSlotted(1.0, 2.0, 0.5)
-      ps._extra = "dynamic"   # AttributeError: 'PoseSlotted' object has no attribute '_extra'
-
-   - **Some serialization tools may break.** Libraries that rely on ``__dict__``
-     (e.g., ``pickle`` in certain modes, some ORMs) may not work with slotted classes
-     without extra configuration.
-   - **Use sparingly.** ``__slots__`` is an optimization. Reach for it only when
-     profiling shows that ``__dict__`` memory is a genuine bottleneck -- typically
-     when creating tens of thousands of instances.
-
-
-.. dropdown:: ``__slots__`` with Inheritance
-
-   Each class in a hierarchy should declare only the **new** slots it introduces.
-   Python merges ``__slots__`` from all classes in the chain automatically.
-
-   .. code-block:: python
-
-      class PoseSlotted:
-          __slots__ = ("_x", "_y", "_heading")
-
-          def __init__(self, x: float, y: float, heading: float) -> None:
-              self._x = x
-              self._y = y
-              self._heading = heading
-
-      class StampedPose(PoseSlotted):
-          __slots__ = ("_timestamp",)   # Only declare the NEW attribute
-
-          def __init__(self, x: float, y: float, heading: float, timestamp: float) -> None:
-              super().__init__(x, y, heading)
-              self._timestamp = timestamp
-
-      sp = StampedPose(1.0, 2.0, 0.5, timestamp=1712345678.0)
-      print(sp._x, sp._y, sp._heading, sp._timestamp)
-      # 1.0 2.0 0.5 1712345678.0
-
-   .. warning::
-
-      Do not redeclare a parent's slot in the child. Doing so wastes memory and can
-      cause subtle bugs because Python creates two slots for the same name.
-
-
-Protocols (FYI)
-====================================================
-
-Structural subtyping without inheritance.
-
-Refer to ``L7_protocols.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is a Protocol?
-
-   .. epigraph::
-
-      A ``typing.Protocol`` defines an interface through **structural subtyping**: a
-      class satisfies the Protocol simply by having the required methods and
-      attributes, without needing to inherit from it. This is sometimes called
-      "static duck typing" -- the flexibility of duck typing with the explicitness
-      of type annotations.
-
-      - **Nominal typing** (ABCs): compatibility declared explicitly via inheritance.
-      - **Structural typing** (Protocols): compatibility determined by structure alone.
-
-   **Physical world examples**
-
-   - A **USB port** accepts any device that fits the connector and speaks the
-     protocol -- no registration required.
-   - A **power outlet** accepts any plug of the right shape -- the appliance does
-     not need to be certified by the outlet manufacturer.
-
-   **Robotics Competition examples**
-
-   - An ``Executable`` Protocol requires ``execute(robot_name) -> bool``. Both
-     ``PickTask`` and ``DeliverTask`` satisfy it without inheriting from anything.
-   - A ``Loggable`` Protocol requires ``log_status() -> str``. Any class that has
-     that method qualifies -- no shared base class needed.
-
-   .. list-table:: ABCs (nominal typing) vs. Protocols (structural typing)
-      :widths: 35 32 33
-      :header-rows: 1
-      :class: compact-table
-
-      * - Aspect
-        - ABC (Nominal)
-        - Protocol (Structural)
-      * - Declaration
-        - Must inherit from the ABC
-        - No inheritance required
-      * - Enforcement
-        - At instantiation time
-        - At type-check time (``mypy``)
-      * - Runtime check
-        - ``isinstance()`` always works
-        - Needs ``@runtime_checkable``
-      * - Flexibility
-        - Tight coupling
-        - Loose coupling
-      * - Best for
-        - Shared base behavior
-        - Independent implementations
-
-   .. note::
-
-      ``typing.Protocol`` was introduced in Python 3.8 (PEP 544). It is the
-      preferred way to express interfaces in modern Python when you do not want to
-      require explicit inheritance.
-
-
-.. dropdown:: Defining a Protocol
-
-   Inherit from ``typing.Protocol``. Add ``@runtime_checkable`` if you need to use
-   ``isinstance()`` checks at runtime.
-
-   .. code-block:: python
-
-      from typing import Protocol, runtime_checkable
-
-      @runtime_checkable
-      class Executable(Protocol):
-          """Any object that can be dispatched to a robot."""
-
-          def execute(self, robot_name: str) -> bool:
-              ...
-
-
-.. dropdown:: Implementing a Protocol (Without Inheritance)
-
-   Neither ``PickTask`` nor ``DeliverTask`` inherits from ``Executable``. They satisfy
-   the protocol simply by having the required method.
-
-   .. code-block:: python
-
-      class PickTask:
-          """Satisfies Executable without inheriting from it."""
-
-          def execute(self, robot_name: str) -> bool:
-              print(f"{robot_name} picks an object")
-              return True
-
-      class DeliverTask:
-          """Also satisfies Executable -- no shared base with PickTask."""
-
-          def execute(self, robot_name: str) -> bool:
-              print(f"{robot_name} delivers to destination")
-              return True
-
-      class SleepTask:
-          """Does not satisfy Executable -- wrong method name."""
-
-          def sleep(self, duration: float) -> None:
-              print(f"sleeping for {duration}s")
-
-      def dispatch(task: Executable, robot_name: str) -> bool:
-          """Accept any Executable -- structural typing in action."""
-          return task.execute(robot_name)
-
-      pick    = PickTask()
-      deliver = DeliverTask()
-
-      dispatch(pick,    "Scout")
-      dispatch(deliver, "Arm-1")
-
-   **Output:**
-
-   .. code-block:: text
-
-      Scout picks an object
-      Arm-1 delivers to destination
-
-
-.. dropdown:: ``@runtime_checkable`` and ``isinstance()``
-
-   With ``@runtime_checkable``, ``isinstance()`` checks whether an object has the
-   required methods. It does **not** verify method signatures.
-
-   .. code-block:: python
-
-      pick    = PickTask()
-      deliver = DeliverTask()
-      sleep   = SleepTask()
-
-      print(isinstance(pick,    Executable))   # True
-      print(isinstance(deliver, Executable))   # True
-      print(isinstance(sleep,   Executable))   # False
-
-   .. warning::
-
-      ``@runtime_checkable`` only checks for the **presence** of methods, not their
-      signatures. For full type safety, use a static type checker such as ``mypy``
-      or ``pyright`` in addition to runtime checks.
-
-
-.. dropdown:: ABCs vs. Protocols -- Decision Guide
-
-   .. list-table::
-      :widths: 50 50
-      :header-rows: 1
-      :class: compact-table
-
-      * - Choose an ABC when...
-        - Choose a Protocol when...
-      * - Subclasses share concrete behavior (inherited methods with a body)
-        - Unrelated classes satisfy the same interface
-      * - You want enforcement at instantiation time (``TypeError``)
-        - You prefer loose coupling across module or library boundaries
-      * - You control all implementing classes
-        - You do not control the implementing classes
-      * - Nominal typing fits your design
-        - Structural typing ("duck typing with annotations") fits better
+   - Use ``std::unique_ptr`` as the default choice for single ownership. Only
+     use ``std::shared_ptr`` when multiple owners are genuinely required.
+   - Use ``std::weak_ptr`` to break circular dependencies and provide safe
+     observation of shared resources without affecting their lifetime.

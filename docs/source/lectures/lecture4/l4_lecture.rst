@@ -1,976 +1,929 @@
-====================================================
-Lecture
-====================================================
+.. _l4_lecture:
 
+======================
+Lecture 4: STL Containers
+======================
 
+.. contents:: Table of Contents
+   :depth: 3
+   :local:
 
-Introduction to Functions
-====================================================
-
-Reusable blocks of code that perform a specific task.
-
-Create a file called ``functions_basics_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is a Function?
-   :open:
-
-   In Python, a **function** is a named block of organized, reusable code that is designed to perform a single, related action.
-
-   **Why Use Functions?**
-
-   - **Modularity** -- Break down complex processes into smaller, manageable pieces. This modular approach makes it easier to understand, develop, and test your code.
-   - **Code Reuse** -- Once a function is written, it can be used multiple times throughout your program, reducing the chances of errors and inconsistencies.
-   - **Easier Maintenance** -- Making a change in one function can affect the entire program if that function is used throughout. This centralized approach makes it easier to update and maintain your programs.
-   - **Foundation for Advanced Concepts** -- Functions form the basis for understanding closures, decorators, and concurrency.
-
-
-.. dropdown:: Basic Structure
-   :open:
-
-   **Anatomy of a Function**
-
-   - **Function Definition** -- Begins with the ``def`` keyword, followed by the function name, parentheses ``()`` containing any parameters, and a colon ``:``.
-   - **Parameters (Optional)** -- Variables listed inside the parentheses that act as placeholders for the values you pass into the function.
-   - **Docstring (Recommended)** -- A documentation string immediately following the function definition.
-   - **Function Body** -- The indented block of code that executes when the function is called.
-   - **Return Statement (Optional)** -- Sends a value back to the caller using ``return``. If omitted, the function returns ``None``.
-
-   .. note::
-
-      **Syntax**:
-
-      .. code-block:: python
-
-         def function_name(param1, param2):
-             """Documentation string."""
-             # function body
-             return something
-
-   **Example**
-
-   .. code-block:: python
-
-      def greet(name):
-          """
-          Print a greeting message to the user.
-
-          Args:
-              name (str): The name of the user.
-          """
-          print(f"Hello, {name}!")
-
-      greet("Alice")  # Hello, Alice!
-
-   .. tip::
-
-      To access the docstring of any function, use ``print(greet.__doc__)`` or the built-in ``help(greet)``.
-
-
-.. dropdown:: Best Practices and Conventions
-   :open:
-
-   - **Use** ``snake_case`` **for function names** -- All lowercase with underscores separating words. Class names use ``PascalCase``, but functions and variables always use ``snake_case``.
-
-     .. code-block:: python
-
-        def compute_distance(x1, y1, x2, y2):  # Good
-        def ComputeDistance(x1, y1, x2, y2):   # Bad (PascalCase is for classes)
-
-   - **Start with a verb** -- Function names should describe an action: ``get_``, ``compute_``, ``is_``, ``has_``, ``create_``, ``update_``, ``validate_``. Use ``is_``/``has_`` for functions returning booleans.
-
-     .. code-block:: python
-
-        def compute_area(length, width):  # Good (verb + noun)
-        def area(length, width):          # Acceptable but less descriptive
-        def is_valid(sensor_id):          # Good (boolean return)
-
-   - **Always include a docstring** -- Every function should have a docstring explaining what it does, its parameters, and its return value.
-   - **Do one thing well** -- A function should perform a single, well-defined task. If a function does too many things, split it into smaller functions.
-   - **Keep functions short** -- If a function exceeds 20-30 lines, consider refactoring.
-   - **Add type hints** -- Annotate parameters and return types for clarity.
-
-   **References**: `PEP 8: Function and Variable Names <https://peps.python.org/pep-0008/#function-and-variable-names>`_ | `PEP 257: Docstring Conventions <https://peps.python.org/pep-0257/>`_ | `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#316-naming>`_
-
-
-.. dropdown:: Google-Style Docstrings
-   :open:
-
-   When writing docstrings, use a consistent convention. The **Google style** is widely used in Python projects.
-
-   .. code-block:: python
-
-      def compute_distance(x1, y1, x2, y2):
-          """Compute the Euclidean distance between two 2D points.
-
-          Args:
-              x1 (float): X-coordinate of the first point.
-              y1 (float): Y-coordinate of the first point.
-              x2 (float): X-coordinate of the second point.
-              y2 (float): Y-coordinate of the second point.
-
-          Returns:
-              float: The Euclidean distance between the two points.
-          """
-          return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-
-      print(compute_distance(0, 0, 3, 4))  # 5.0
-
-   .. warning::
-
-      For brevity, some examples in these slides omit docstrings. This is **not** good practice. Always include a docstring when you define a function, whether for assignments, projects, or professional code.
-
-
-Function Calls
-====================================================
-
-Invoking functions, returning values, and understanding redefinitions.
-
-Create a file called ``function_calls_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: Calling a Function
-   :open:
-
-   To call a function, use the function's name followed by parentheses containing the arguments that match the function's parameters.
-
-   .. code-block:: python
-
-      # function definition
-      def add(a, b):
-          return a + b
-
-      # function call
-      result = add(1, 2)
-      print(f"{result=}")  # result=3
-
-   **Steps Involved in a Function Call**
-
-   1. **Name Resolution** -- Python looks up the function name to find its definition.
-   2. **Argument Matching** -- Arguments are matched with parameters in order.
-   3. **New Scope Creation** -- A new local scope is created for the function.
-   4. **Body Execution** -- The code inside the function runs.
-   5. **Return Value** -- The result (or ``None``) is sent back to the caller.
-   6. **Cleanup** -- The local scope is discarded.
-
-
-.. dropdown:: Multiple Return Values
-   :open:
-
-   A function can return multiple values as a tuple, which can be unpacked by the caller.
-
-   .. code-block:: python
-
-      def rectangle_info(length, width):
-          area = length * width
-          perimeter = 2 * (length + width)
-          return area, perimeter  # Returns a tuple
-
-      # Tuple unpacking
-      area, perimeter = rectangle_info(5, 3)
-      print(f"{area=}, {perimeter=}")  # area=15, perimeter=16
-
-   .. note::
-
-      ``return area, perimeter`` is equivalent to ``return (area, perimeter)``. Python implicitly creates a tuple.
-
-
-.. dropdown:: Function Redefinitions
-   :open:
-
-   In Python, function names are just variables bound to function objects. Redefining a function replaces the old binding.
-
-   .. code-block:: python
-
-      def greet():
-          print("Hello!")
-
-      greet()  # Hello!
-
-      # Redefining the function
-      def greet():
-          print("Hi there!")
-
-      greet()  # Hi there!  (the original version is gone)
-
-   .. warning::
-
-      Python does **not** warn you when you redefine a function. The new definition silently replaces the previous one. Be careful with naming!
-
-
-Function Arguments
-====================================================
-
-Understanding how data flows into functions.
-
-Create a file called ``function_arguments_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: Positional Arguments
-   :open:
-
-   **Positional arguments** are arguments that must be passed in the correct order when calling a function. The order must match the order in which the parameters were defined.
-
-   .. code-block:: python
-
-      def display_info(name, age):
-          print(f"{name=}, {age=}")
-
-      # Correct usage
-      display_info("Alice", 30)  # name='Alice', age=30
-
-      # Incorrect usage - values get swapped
-      display_info(30, "Alice")  # name=30, age='Alice'
-
-
-.. dropdown:: Default Arguments
-   :open:
-
-   **Default arguments** allow you to specify values that parameters take if no argument is provided during the function call.
-
-   .. code-block:: python
-
-      def display_info(name, age=35):
-          print(f"{name=}, {age=}")
-
-      display_info("Bob")        # name='Bob', age=35
-      display_info("Alice", 30)  # name='Alice', age=30
-
-   **Ordering Rule**
-
-   Parameters with default values **must come after** those without default values.
-
-   .. code-block:: python
-
-      # Correct
-      def func(a, b, c=10, d=20):
-          pass
-
-      # SyntaxError: non-default argument follows default argument
-      # def func(a, b=10, c, d=20):
-      #     pass
-
-
-.. dropdown:: Danger: Mutable Default Values
-   :open:
-
-   Default values are evaluated **once** when the function is defined, not each time it is called. Using a mutable object (like a list) as a default value can lead to surprising behavior.
-
-   .. code-block:: python
-
-      # BAD: Mutable default value
-      def add_item_bad(item, items=[]):
-          items.append(item)
-          return items
-
-      print(add_item_bad("apple"))   # ['apple']
-      print(add_item_bad("banana"))  # ['apple', 'banana'] -- Surprise!
-
-   .. code-block:: python
-
-      # GOOD: Use None and create a new list each time
-      def add_item_good(item, items=None):
-          if items is None:
-              items = []
-          items.append(item)
-          return items
-
-      print(add_item_good("apple"))   # ['apple']
-      print(add_item_good("banana"))  # ['banana']
-
-
-.. dropdown:: Keyword Arguments
-   :open:
-
-   **Keyword arguments** allow you to pass arguments by explicitly naming the parameter, regardless of their position in the function call.
-
-   .. code-block:: python
-
-      def create_robot(name, robot_type, speed):
-          print(f"{name}: {robot_type}, max speed={speed} m/s")
-
-      # Using keyword arguments (order does not matter)
-      create_robot(speed=0.26, name="TurtleBot3", robot_type="mobile")
-
-   **Mixing Positional and Keyword Arguments**
-
-   .. code-block:: python
-
-      # Positional args must come before keyword args
-      create_robot("TurtleBot3", speed=0.26, robot_type="mobile")
-
-      # SyntaxError: positional argument follows keyword argument
-      # create_robot(name="TurtleBot3", "mobile", speed=0.26)
-
-   .. warning::
-
-      Once you use a keyword argument in a function call, all subsequent arguments must also be keyword arguments.
-
-
-.. dropdown:: Variable-Length Positional Arguments (``*args``)
-   :open:
-
-   ``*args`` (``args`` is a convention) allows a function to accept any number of positional arguments. Inside the function, ``args`` is a tuple.
-
-   .. note::
-
-      **Syntax**: ``def function_name(*args):``
-
-   .. code-block:: python
-
-      def compute_sum(*args):
-          print(f"args = {args}")   # args is a tuple
-          print(f"type = {type(args)}")
-          return sum(args)
-
-      print(compute_sum(1, 2, 3))        # 6
-      print(compute_sum(10, 20, 30, 40)) # 100
-
-
-.. dropdown:: Variable-Length Keyword Arguments (``**kwargs``)
-   :open:
-
-   ``**kwargs`` (``kwargs`` is a convention) allows a function to accept any number of keyword arguments. Inside the function, ``kwargs`` is a dictionary.
-
-   .. note::
-
-      **Syntax**: ``def function_name(**kwargs):``
-
-   .. code-block:: python
-
-      def print_robot_config(**kwargs):
-          """Print all keyword arguments as key-value pairs."""
-          for key, value in kwargs.items():
-              print(f"  {key}: {value}")
-
-      print_robot_config(name="UR5", joints=6, payload=5.0)
-      # name: UR5
-      # joints: 6
-      # payload: 5.0
-
-
-.. dropdown:: Combining ``*args`` and ``**kwargs``
-   :open:
-
-   .. code-block:: python
-
-      def log_message(level, *args, **kwargs):
-          print(f"[{level}] args={args}, kwargs={kwargs}")
-
-      log_message("INFO", 1, 2, 3, user="Alice", action="login")
-      # [INFO] args=(1, 2, 3), kwargs={'user': 'Alice', 'action': 'login'}
-
-   **Parameter Ordering Rules**
-
-   When defining a function, parameters must appear in this order:
-
-   1. Standard positional parameters
-   2. ``*args`` (variable-length positional)
-   3. Keyword-only parameters (after ``*args``)
-   4. ``**kwargs`` (variable-length keyword)
-
-   .. code-block:: python
-
-      def example(a, b, *args, option=True, **kwargs):
-          print(f"{a=}, {b=}, {args=}, {option=}, {kwargs=}")
-
-      example(1, 2, 3, 4, option=False, x=10)
-      # a=1, b=2, args=(3, 4), option=False, kwargs={'x': 10}
-
-
-.. dropdown:: Argument Packing
-   :open:
-
-   **Argument packing** is the process of collecting multiple arguments into a single parameter. This is what ``*args`` and ``**kwargs`` do: they *pack* multiple values into a tuple or dictionary.
-
-   .. code-block:: python
-
-      # *args packs positional arguments into a tuple
-      def show_args(*args):
-          print(f"Packed into tuple: {args}")
-
-      show_args(1, 2, 3)  # Packed into tuple: (1, 2, 3)
-
-      # **kwargs packs keyword arguments into a dict
-      def show_kwargs(**kwargs):
-          print(f"Packed into dict: {kwargs}")
-
-      show_kwargs(x=10, y=20)  # Packed into dict: {'x': 10, 'y': 20}
-
-
-.. dropdown:: Argument Unpacking
-   :open:
-
-   **Argument unpacking** is the reverse: spreading elements of a sequence or mapping into individual arguments during a function call.
-
-   .. code-block:: python
-
-      def add(a, b, c):
-          return a + b + c
-
-      # Unpack a list/tuple with *
-      values = [1, 2, 3]
-      print(add(*values))  # print(add(1,2,3)) -> 6
-
-      # Unpack a dictionary with **
-      params = {"a": 10, "b": 20, "c": 30}
-      print(add(**params))  # print(add(a=10, b=20, c=30)) -> 60
-
-   .. note::
-
-      ``*`` unpacks sequences into positional arguments. ``**`` unpacks dictionaries into keyword arguments. The dictionary keys must match the parameter names.
-
-
-Scopes
-====================================================
-
-Where variables live and how Python resolves names.
-
-Create a file called ``scopes_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The LEGB Rule
-   :open:
-
-   A **scope** is the region of a program where a variable is accessible. Python resolves names using the **LEGB rule**, searching in this order:
-
-   - **L -- Local**: Names defined inside the current function.
-   - **E -- Enclosing**: Names in the scope of any enclosing (outer) functions.
-   - **G -- Global**: Names defined at the top level of the module.
-   - **B -- Built-in**: Names pre-defined in Python (``len``, ``print``, ``True``, etc.).
-
-   .. code-block:: python
-
-      x = "global"          # Global scope
-
-      def outer():
-          x = "enclosing"   # Enclosing scope
-          def inner():
-              x = "local"   # Local scope
-              print(x)       # "local" (L found first)
-          inner()
-
-      outer()
-
-
-.. dropdown:: Local Scope (L)
-   :open:
-
-   The local scope includes names defined inside the current function, including its parameters.
-
-   .. code-block:: python
-
-      def local_test(local_param):
-          local_var = "I am local var"
-          print(local_param)  # Accessible
-          print(local_var)    # Accessible
-
-      local_test("I am local param")
-      # print(local_var)    # NameError: name 'local_var' is not defined
-      # print(local_param)  # NameError: name 'local_param' is not defined
-
-   .. note::
-
-      Variables created inside a function exist only while the function is executing. They are discarded when the function returns.
-
-
-.. dropdown:: Enclosing Scope (E)
-   :open:
-
-   The enclosing scope applies to nested functions. The inner function can access variables from the outer function.
-
-   .. code-block:: python
-
-      def outer_func():
-          enclosing_var = "I am enclosing"
-
-          def inner_func():
-              local_var = "I am local"
-              print(enclosing_var)  # Accessible as an enclosing variable
-              print(local_var)      # Accessible as a local variable
-
-          inner_func()
-
-      outer_func()
-
-
-.. dropdown:: Nested Functions
-   :open:
-
-   A **nested function** (or inner function) is a function defined inside another function. The inner function has access to variables in the enclosing (outer) function's scope.
-
-   **Why Use Nested Functions?**
-
-   - **Encapsulation** -- Hide helper logic that is only relevant inside the outer function. The inner function is invisible to the rest of the program.
-   - **Closures** -- The inner function can "remember" variables from the enclosing scope even after the outer function has returned (covered in L5).
-   - **Decorators** -- Built on nested functions that wrap and extend other functions (covered in L5).
-
-
-.. dropdown:: The ``nonlocal`` Keyword
-   :open:
-
-   To **modify** an enclosing variable from the inner function, use ``nonlocal``. Without it, assigning creates a new local variable.
-
-   .. code-block:: python
-      :linenos:
-
-      def outer_func():
-          count = 0
-          def inner_func():
-              nonlocal count
-              count += 1
-          inner_func()
-          print(count)  # 1
-
-      outer_func()
-
-   .. tip::
-
-      **Question:** What happens if you comment out line 4?
-
-
-.. dropdown:: Global Scope (G)
-   :open:
-
-   The global scope includes names defined at the top level of a Python file.
-
-   .. code-block:: python
-
-      global_var = "I am global"
-
-      def my_func():
-          print(global_var)  # Accessible (reading is fine)
-
-      my_func()
-
-   **The** ``global`` **Keyword**
-
-   To **rebind** a global variable inside a function, use the ``global`` keyword.
-
-   .. code-block:: python
-
-      global_var = "I am global"
-
-      def my_func():
-          global global_var
-          global_var = "Modified inside function"
-
-      my_func()
-      print(global_var)  # "Modified inside function"
-
-   .. warning::
-
-      Overusing ``global`` makes code harder to debug and test. Prefer passing values as arguments and returning results instead.
-
-
-.. dropdown:: Mutable Globals: No ``global`` Needed for In-Place Modifications
-   :open:
-
-   You do **not** need the ``global`` keyword to modify a mutable global object in place, because you are not rebinding the name.
-
-   .. code-block:: python
-
-      fruits = ["apple", "banana", "cherry"]
-
-      def add_to_list(item):
-          fruits.append(item)  # In-place mutation, no rebinding
-
-      add_to_list("orange")
-      print(fruits)  # ['apple', 'banana', 'cherry', 'orange']
-
-   .. note::
-
-      **Why?** ``fruits.append(item)`` modifies the existing list object. The name ``fruits`` still points to the same object. The ``global`` keyword is only needed when you want to *reassign* the name itself (e.g., ``fruits = [...]``).
-
-
-.. dropdown:: Built-in Scope (B)
-   :open:
-
-   The built-in scope includes names pre-defined in Python:
-
-   - **Functions**: ``len``, ``print``, ``id``, ``range``, ``type``, etc.
-   - **Types**: ``int``, ``str``, ``list``, ``dict``, etc.
-   - **Constants**: ``True``, ``False``, ``None``
-   - **Exception classes**: ``ValueError``, ``TypeError``, etc.
-
-   .. code-block:: python
-
-      # List all built-in names
-      print(dir(__builtins__))
-
-   .. warning::
-
-      Avoid shadowing built-in names! For example, never name a variable ``list``, ``dict``, ``type``, or ``id``. This hides the built-in and can cause confusing errors.
-
-   .. code-block:: python
-
-      list = [1, 2, 3]          # Shadows the built-in list()
-      print(list)                # [1, 2, 3] -- works fine here
-
-      nums = list(range(5))      # TypeError: 'list' object is not callable
-      # Python thinks 'list' is [1, 2, 3], not the built-in list()
-
-
-Pass-by-Assignment
-====================================================
-
-How Python passes arguments to functions.
-
-Create a file called ``pass_by_assignment_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: How Python Passes Arguments
-   :open:
-
-   Python's argument-passing mechanism is called **pass-by-assignment** (sometimes called "pass-by-object-reference"). It is neither purely pass-by-value nor pass-by-reference.
-
-   - **Function arguments are passed by object reference** -- When you pass an argument, Python passes a reference to the object, not a copy.
-   - **Immutable objects** (int, str, tuple) -- Changes inside the function create a new object; the original remains unchanged.
-   - **Mutable objects** (list, dict, set) -- In-place modifications inside the function affect the original object.
-   - **Reassignment creates a new binding** -- If you reassign a parameter to a new object inside a function, this does not affect the original variable outside.
-
-
-.. dropdown:: Immutable vs Mutable Examples
-   :open:
-
-   .. tab-set::
-
-       .. tab-item:: Immutable
-
-           .. code-block:: python
-
-              def update_number(x):
-                  x = 10  # Creates a new local binding
-
-              num = 5
-              update_number(num)
-              print(num)  # 5 (unchanged)
-
-       .. tab-item:: Mutable
-
-           .. code-block:: python
-
-              def update_list(a_list):
-                  a_list.append(4)  # Modifies the original object in place
-
-              my_list = [1, 2, 3]
-              update_list(my_list)
-              print(my_list)  # [1, 2, 3, 4] (modified!)
-
-   .. note::
-
-      ``a_list.append(4)`` mutates the existing list. But ``a_list = [10, 20]`` would rebind the local name ``a_list`` to a new list, leaving the original unchanged.
-
-
-.. dropdown:: Predict the Outputs
-   :open:
-
-   .. code-block:: python
-
-      def edit_inputs(fruits, animals, age):
-          fruits.append('cherry')
-          fruits[0] = 'mango'
-          fruits = ['quince', 'pear']
-          animals = ['elephant']
-          age += 1
-
-      fruits = ["apple", "banana"]
-      animals = ["bear", "tiger"]
-      age = 40
-
-      print(fruits, animals, age)
-      edit_inputs(fruits, animals, age)
-      print(fruits, animals, age)
-
-   .. dropdown:: Reveal Answer
-       :class-container: sd-border-success
-
-       .. code-block:: text
-
-          ['apple', 'banana'] ['bear', 'tiger'] 40
-          ['mango', 'banana', 'cherry'] ['bear', 'tiger'] 40
-
-       - ``fruits.append('cherry')`` and ``fruits[0] = 'mango'`` mutate the original list.
-       - ``fruits = ['quince', 'pear']`` rebinds the local name, so the original is not affected by this line.
-       - ``animals = ['elephant']`` rebinds the local name; the original list is unchanged.
-       - ``age += 1`` creates a new int locally; the original ``age`` is unchanged.
-
-
-Type Hints
-====================================================
-
-Annotating functions with expected types for clarity and tooling.
-
-Create a file called ``type_hints_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: Introduction to Type Hints
-   :open:
-
-   **Type hints** (also called type annotations) allow you to specify the expected types of function parameters and return values. They are **not enforced** at runtime but improve readability and enable static analysis tools like ``mypy``.
-
-   .. note::
-
-      **Syntax**: ``def func(param: type) -> return_type:``
-
-   .. code-block:: python
-
-      def add(a: int, b: int) -> int:
-          return a + b
-
-      def greet(name: str) -> None:
-          print(f"Hello, {name}!")
-
-      # Type hints are NOT enforced at runtime
-      result = add("hello", " world")  # Works! Returns "hello world"
-
-
-.. dropdown:: Why Use Type Hints?
-   :open:
-
-   - **Documentation** -- Makes function signatures self-documenting.
-   - **IDE Support** -- Enables better autocompletion and error detection.
-   - **Static Analysis** -- Tools like ``mypy`` can catch type errors before runtime.
-   - **Team Communication** -- Makes the expected interface clear to other developers.
-
-
-.. dropdown:: ``Optional`` -- A Value That Might Be ``None``
-   :open:
-
-   ``Optional[X]`` means the value is either of type ``X`` or ``None``. This is common for functions that may fail to find a result.
-
-   .. code-block:: python
-
-      from typing import Optional
-
-      def find_index(items: list[str], target: str) -> Optional[int]:
-          """Return the index of target in items, or None."""
-          for i, item in enumerate(items):
-              if item == target:
-                  return i
-          return None
-
-      sensors = ["lidar", "camera", "imu"]
-      result = find_index(sensors, "camera")
-      print(result)  # 1
-
-      result = find_index(sensors, "radar")
-      print(result)  # None
-
-   .. note::
-
-      ``Optional[int]`` is equivalent to ``Union[int, None]``. It signals to the caller that the return value must be checked before use.
-
-
-.. dropdown:: ``Union`` -- One of Several Types
-   :open:
-
-   ``Union[X, Y]`` means the value can be of type ``X`` or type ``Y``. This is useful when a function accepts or returns more than one type.
-
-   .. code-block:: python
-
-      from typing import Union
-
-      def normalize(data: Union[str, list]) -> list[str]:
-          """Convert input to a list of strings."""
-          if isinstance(data, str):
-              return [data]
-          return [str(item) for item in data]
-
-      print(normalize("hello"))       # ['hello']
-      print(normalize([1, 2, 3]))     # ['1', '2', '3']
-
-   .. note::
-
-      Use ``Union`` when a function genuinely needs to handle multiple types. If you find yourself using ``Union`` with many types, consider whether the function is doing too much.
-
-
-.. dropdown:: Python 3.10+ Simplified Syntax
-   :open:
-
-   Starting with Python 3.10, you can use the ``|`` operator instead of importing ``Optional`` and ``Union`` from the ``typing`` module.
-
-   .. code-block:: python
-
-      # Before Python 3.10
-      from typing import Optional, Union
-
-      def find_item(name: str) -> Optional[int]:
-          ...
-
-      def process(data: Union[str, list]) -> str:
-          ...
-
-   .. code-block:: python
-
-      # Python 3.10+ (no import needed)
-      def find_item(name: str) -> int | None:
-          ...
-
-      def process(data: str | list) -> str:
-          ...
-
-   .. tip::
-
-      Use the ``|`` syntax if your project targets Python 3.10 or later. It is more readable and requires no imports.
-
-
-.. dropdown:: Collection Type Hints
-   :open:
-
-   .. code-block:: python
-
-      # Python 3.9+ - use built-in types directly
-      def process_readings(readings: list[float]) -> float:
-          return sum(readings) / len(readings)
-
-      def get_config() -> dict[str, int]:
-          return {"timeout": 30, "retries": 3}
-
-      def get_coordinates() -> tuple[float, float]:
-          return (3.14, 2.72)
-
-      # Variable-length tuple (all same type)
-      def get_ids() -> tuple[int, ...]:
-          return (1, 2, 3, 4, 5)
-
-      # Combining with functions
-      def transform(items: list[str],
-                    func: callable) -> list[str]:
-          return [func(item) for item in items]
-
-
-Recursive Functions
-====================================================
-
-Functions that call themselves to solve problems.
-
-Create a file called ``recursion_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is Recursion?
-   :open:
-
-   A **recursive function** is a function that calls itself within its own definition. Every recursive function needs:
-
-   - A **base case** -- the condition that stops the recursion.
-   - A **recursive case** -- the function calling itself with a simpler input.
-
-   **Example: Factorial**
-
-   .. code-block:: python
-
-      def factorial(n: int) -> int:
-          """Compute n! recursively."""
-          if n == 0:           # Base case
-              return 1
-          else:                # Recursive case
-              return n * factorial(n - 1)
-
-      print(factorial(5))  # 120  (5 * 4 * 3 * 2 * 1)
-
-   .. warning::
-
-      Without a proper base case, recursion leads to infinite calls and a ``RecursionError``. Python's default recursion limit is 1000 calls.
-
-
-.. dropdown:: Tracing the Call Stack
-   :open:
-
-   Each recursive call creates a new frame on the call stack:
-
-   .. list-table::
-      :widths: 40 40
-      :header-rows: 1
-      :class: compact-table
-
-      * - Call
-        - Returns
-      * - ``factorial(5)``
-        - ``5 * factorial(4)``
-      * - ``factorial(4)``
-        - ``4 * factorial(3)``
-      * - ``factorial(3)``
-        - ``3 * factorial(2)``
-      * - ``factorial(2)``
-        - ``2 * factorial(1)``
-      * - ``factorial(1)``
-        - ``1 * factorial(0)``
-      * - ``factorial(0)``
-        - ``1`` (base case)
-
-   The results then propagate back up: ``1 -> 1 -> 2 -> 6 -> 24 -> 120``
-
-   .. note::
-
-      Each call to ``factorial`` has its own local variable ``n``. This is possible because each call gets its own scope on the call stack.
-
-
-Summary
+Overhead
 --------
 
-.. grid:: 1 2 2 2
-    :gutter: 3
+In computing, **overhead** refers to the additional resources -- time, memory, bandwidth, or processing -- required beyond the minimum necessary to accomplish a task. For example, calling a function has overhead (saving registers, pushing the return address onto the stack), even though those steps are not part of the function's core logic. When we discuss containers, we will frequently consider the overhead of various operations such as insertion, deletion, and access.
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+The Standard Library
+--------------------
 
-        - **Function Basics** -- ``def``, parameters, docstrings, ``return``, multiple return values
-        - **Arguments** -- Positional, default, keyword, ``*args``, ``**kwargs``
-        - **Packing/Unpacking** -- ``*`` for sequences, ``**`` for dicts
+The C++ Standard Library is a collection of classes and functions that are part of the C++ ISO Standard. It provides common utilities including:
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+- Input/output streams (``<iostream>``, ``<fstream>``)
+- String manipulation (``<string>``)
+- Containers (``<vector>``, ``<array>``, ``<map>``, etc.)
+- Algorithms (``<algorithm>``)
+- Utilities (``<memory>``, ``<functional>``, ``<chrono>``)
 
-        - **Scopes** -- LEGB rule, ``global``, ``nonlocal``
-        - **Pass-by-Assignment** -- Mutable vs immutable behavior in function calls
-        - **Type Hints** -- Annotations for parameters and return types
-        - **Recursion** -- Base case, recursive case, call stack
+.. figure:: /_static/images/l4/standard_library.png
+   :alt: C++ Standard Library
+   :align: center
+   :width: 80%
 
-.. list-table:: Argument Types at a Glance
-   :widths: 25 30 30
-   :header-rows: 1
-   :class: compact-table
+   Overview of the C++ Standard Library.
 
-   * - Argument Type
-     - Syntax
-     - Key Rule
-   * - Positional
-     - ``func(a, b)``
-     - Order matters
-   * - Default
-     - ``func(a, b=10)``
-     - Must follow non-defaults
-   * - Keyword
-     - ``func(b=10, a=5)``
-     - Order does not matter
-   * - ``*args``
-     - ``func(*args)``
-     - Packed into a tuple
-   * - ``**kwargs``
-     - ``func(**kwargs)``
-     - Packed into a dict
+The **Standard Template Library (STL)** is a subset of the Standard Library that provides generic containers, iterators, and algorithms. It is built on the concept of templates, which allow code to work with any data type.
+
+STL Containers
+--------------
+
+An STL container is a class template that manages a collection of elements. Containers handle memory allocation and deallocation automatically, provide standard interfaces for accessing and modifying elements, and are designed for efficiency and safety.
+
+Categories of Containers
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+STL containers are organized into four categories:
+
+1. **Sequence Containers** -- Store elements in a linear order. The position of each element depends on when and where it was inserted, not on its value. Examples: ``std::vector``, ``std::array``, ``std::deque``, ``std::list``, ``std::forward_list``.
+
+2. **Associative Containers** -- Store elements in a sorted order based on keys. They provide fast key-based retrieval, typically in O(log n) time. Examples: ``std::set``, ``std::map``, ``std::multiset``, ``std::multimap``.
+
+3. **Unordered Associative Containers** -- Store elements using hash tables, providing O(1) average-case access time. Elements are not stored in any particular order. Examples: ``std::unordered_set``, ``std::unordered_map``, ``std::unordered_multiset``, ``std::unordered_multimap``.
+
+4. **Container Adapters** -- Wrappers around other containers that provide a restricted interface. They limit which operations are available to enforce specific data structure semantics. Examples: ``std::stack``, ``std::queue``, ``std::priority_queue``.
+
+Why Use STL Containers?
+^^^^^^^^^^^^^^^^^^^^^^^
+
+- **Fast and efficient**: Implementations are highly optimized.
+- **Common interfaces**: All containers share similar method names (``size()``, ``empty()``, ``begin()``, ``end()``).
+- **Well-documented**: Extensive documentation and community support.
+- **Memory management**: Containers handle allocation and deallocation automatically.
+- **Type safety**: Templates provide compile-time type checking.
+
+Strings
+-------
+
+Strings are sequences of characters. In C++, there are two primary ways to work with strings: C-style strings (C-strings) and ``std::string``.
+
+C-style Strings (C-Strings)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A C-string is a character array terminated by the null character ``'\0'``. The null terminator marks the end of the string and is essential for C-string functions to know where the string ends.
+
+.. code-block:: cpp
+
+   // Array form -- compiler adds '\0' automatically
+   char my_string[] = "hello";
+   // my_string contains: {'h', 'e', 'l', 'l', 'o', '\0'}
+   // Size of array: 6 bytes (5 characters + 1 null terminator)
+
+   // Pointer form -- points to a string literal in read-only memory
+   const char* my_literal = "world";
+
+.. figure:: /_static/images/l4/c-string-memory.pdf
+   :alt: C-string memory layout
+   :align: center
+   :width: 70%
+
+   Memory layout of a C-string showing the null terminator.
+
+C-strings are **relatively unsafe** because:
+
+- No bounds checking on access.
+- Buffer overflows are easy to introduce.
+- Manual memory management is required for dynamic C-strings.
+- String length must be computed by scanning for ``'\0'``.
+
+For these reasons, ``std::string`` is strongly recommended for modern C++ development.
+
+std::string
+^^^^^^^^^^^
+
+``std::string`` is a modern, safe, and feature-rich string class defined in the ``<string>`` header. It manages its own memory and provides a rich set of operations.
+
+.. code-block:: cpp
+
+   #include <string>
+
+Initialization
+~~~~~~~~~~~~~~
+
+``std::string`` supports multiple forms of initialization:
+
+.. code-block:: cpp
+
+   // 1. From a C-string literal
+   std::string s1{"hello"};
+
+   // 2. Copy construction
+   std::string s2{s1};
+
+   // 3. Substring (from position 1, length 3)
+   std::string s3{s1, 1, 3};  // "ell"
+
+   // 4. Repeated character (5 copies of 'x')
+   std::string s4(5, 'x');  // "xxxxx"
+
+   // 5. From a C-string pointer
+   const char* cstr = "world";
+   std::string s5{cstr};
+
+   // 6. From iterators
+   std::string s6{s1.begin(), s1.begin() + 3};  // "hel"
+
+   // 7. Default (empty string)
+   std::string s7{};  // ""
+
+String Literals
+~~~~~~~~~~~~~~~
+
+By default, a string literal like ``"hello"`` is a ``const char*`` (C-string), not a ``std::string``. To create a ``std::string`` literal directly, use the ``s`` suffix:
+
+.. code-block:: cpp
+
+   using namespace std::string_literals;
+
+   auto c_str = "hello";    // const char*
+   auto cpp_str = "hello"s; // std::string
+
+Length
+~~~~~~
+
+``std::string`` provides two equivalent methods for getting the number of characters:
+
+.. code-block:: cpp
+
+   std::string greeting{"hello"};
+   std::cout << greeting.length() << '\n';  // 5
+   std::cout << greeting.size() << '\n';    // 5 (identical to length())
+
+Both return a value of type ``size_t`` (an alias for ``std::size_t``), which is an unsigned integer type. On a 64-bit system, ``size_t`` is typically ``unsigned long long`` (8 bytes). It is used throughout the STL to represent sizes and indices.
+
+.. warning::
+
+   Because ``size_t`` is unsigned, subtracting from it can cause wraparound if the result would be negative. Be careful when doing arithmetic with ``size_t`` values.
+
+Components of std::string
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A ``std::string`` object on the stack contains three components:
+
+1. A **pointer** to the character data (which may be on the heap or inline).
+2. The **size** -- the number of characters currently stored.
+3. The **capacity** -- the total number of characters that can be stored before reallocation is needed.
+
+.. figure:: /_static/images/l4/string1.pdf
+   :alt: std::string components
+   :align: center
+   :width: 70%
+
+   Internal components of a ``std::string`` object.
+
+On a typical 64-bit system, ``sizeof(std::string)`` is **32 bytes**, regardless of the string's content. This is the size of the string object on the stack, not the size of the character data it manages.
+
+.. code-block:: cpp
+
+   std::string short_str{"hi"};
+   std::string long_str{"this is a much longer string"};
+   std::cout << sizeof(short_str) << '\n';  // 32
+   std::cout << sizeof(long_str) << '\n';   // 32
+
+.. figure:: /_static/images/l4/string2.pdf
+   :alt: std::string memory layout
+   :align: center
+   :width: 70%
+
+   Memory layout showing stack and heap components of ``std::string``.
+
+union
+~~~~~
+
+Before discussing Small String Optimization, it is helpful to understand the ``union`` keyword. A ``union`` allows multiple members to occupy the **same memory location**. The size of a union is the size of its largest member. Only one member can hold a value at any given time.
+
+.. code-block:: cpp
+
+   union Data {
+       int integer;
+       float decimal;
+       char character;
+   };
+
+   Data d;
+   d.integer = 42;
+   std::cout << d.integer << '\n';  // 42
+   // Writing to another member overwrites the previous value
+   d.decimal = 3.14f;
+   // d.integer is now undefined -- reading it is undefined behavior
+
+   std::cout << sizeof(Data) << '\n';  // 4 (size of float or int, the largest member)
+
+Small String Optimization (SSO)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Many ``std::string`` implementations use **Small String Optimization (SSO)**. For short strings (typically fewer than 15-22 characters, depending on the implementation), the character data is stored **inline** within the string object itself, rather than allocating memory on the heap.
+
+This is typically achieved using a ``union``: the space that would normally hold the pointer-to-heap-data and capacity is reused to store the characters directly when the string is short enough.
+
+.. code-block:: cpp
+
+   std::string short_str{"hi"};
+   std::cout << "Size: " << short_str.size() << '\n';        // 2
+   std::cout << "Capacity: " << short_str.capacity() << '\n'; // 15 (typical SSO buffer)
+
+   std::string long_str{"this string is definitely longer than SSO"};
+   std::cout << "Size: " << long_str.size() << '\n';        // 41
+   std::cout << "Capacity: " << long_str.capacity() << '\n'; // >= 41 (heap allocated)
+
+SSO avoids the overhead of heap allocation for short strings, which are extremely common in practice.
+
+Capacity Growth
+~~~~~~~~~~~~~~~
+
+When a string's size exceeds its capacity, the string must allocate a new, larger block of memory, copy the existing characters, and deallocate the old block. Typically, the capacity **doubles** each time this happens.
+
+.. code-block:: cpp
+
+   std::string s{};
+   std::cout << "Size: " << s.size() << ", Capacity: " << s.capacity() << '\n';
+
+   for (int i{0}; i < 50; ++i) {
+       s += 'x';
+       std::cout << "Size: " << s.size()
+                 << ", Capacity: " << s.capacity() << '\n';
+   }
+   // Output shows capacity growing: 15, 30, 60, 120, ...
+
+Access and Modification
+~~~~~~~~~~~~~~~~~~~~~~~
+
+``std::string`` provides several ways to access individual characters:
+
+.. code-block:: cpp
+
+   std::string quote{"To be or not to be"};
+
+   // .front() and .back()
+   std::cout << quote.front() << '\n';  // 'T'
+   std::cout << quote.back() << '\n';   // 'e'
+
+   // Subscript operator [] -- NO bounds checking
+   std::cout << quote[0] << '\n';   // 'T'
+   std::cout << quote[3] << '\n';   // 'b'
+   // quote[100] -- undefined behavior! No exception thrown.
+
+   // .at() -- WITH bounds checking
+   std::cout << quote.at(0) << '\n';  // 'T'
+   // quote.at(100) -- throws std::out_of_range exception
+
+.. warning::
+
+   The subscript operator ``[]`` does **not** perform bounds checking. Accessing an out-of-bounds index results in **undefined behavior** (UB). Always use ``.at()`` when you need safety, or validate indices manually before using ``[]``.
+
+Range-based for Loop
+~~~~~~~~~~~~~~~~~~~~
+
+The range-based for loop provides a convenient way to iterate over every character in a string:
+
+.. code-block:: cpp
+
+   std::string quote{"To be or not to be"};
+
+   // By value -- copies each character
+   for (char c : quote) {
+       std::cout << c << ' ';
+   }
+   std::cout << '\n';
+
+   // By const reference -- avoids copy (preferred for read-only)
+   for (const char& c : quote) {
+       std::cout << c << ' ';
+   }
+   std::cout << '\n';
+
+   // By reference -- allows modification
+   for (char& c : quote) {
+       c = std::toupper(c);
+   }
+   std::cout << quote << '\n';  // "TO BE OR NOT TO BE"
+
+When iterating **by value**, each element is **copied** into the loop variable. For ``char`` this is inexpensive, but for larger types you should use references.
+
+Iterators
+~~~~~~~~~
+
+An **iterator** is an object that points to an element in a container. Iterators provide a uniform way to traverse containers, regardless of the container type.
+
+.. code-block:: cpp
+
+   std::string quote{"To be or not to be"};
+
+   // begin() returns an iterator to the first element
+   // end() returns an iterator to one past the last element
+   for (auto it = quote.begin(); it != quote.end(); ++it) {
+       std::cout << *it << ' ';
+   }
+   std::cout << '\n';
+
+.. figure:: /_static/images/l4/iterator.pdf
+   :alt: Iterator concept
+   :align: center
+   :width: 70%
+
+   Iterators ``begin()`` and ``end()`` for a container.
+
+Key points about iterators:
+
+- ``begin()`` points to the first element.
+- ``end()`` points to **one past** the last element (not the last element itself).
+- ``*it`` dereferences the iterator to access the element.
+- ``++it`` advances the iterator to the next element.
+- ``auto`` is commonly used to let the compiler deduce the iterator type.
+
+Inputs
+~~~~~~
+
+Reading strings from standard input has some nuances:
+
+.. code-block:: cpp
+
+   std::string name{};
+
+   // std::cin >> stops at whitespace
+   std::cout << "Enter your full name: ";
+   std::cin >> name;
+   // If the user types "John Doe", name will be "John"
+
+   // std::getline reads the entire line
+   std::cout << "Enter your full name: ";
+   std::getline(std::cin >> std::ws, name);
+   // If the user types "John Doe", name will be "John Doe"
+
+``std::cin >> std::ws`` discards any leading whitespace (including leftover newline characters from previous input operations) before reading the line.
+
+Concatenation
+~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::string first{"Hello"};
+   std::string second{" World"};
+
+   // += operator
+   first += second;
+   std::cout << first << '\n';  // "Hello World"
+
+   // + operator (creates a new string)
+   std::string result = first + "!";
+   std::cout << result << '\n';  // "Hello World!"
+
+   // .append()
+   std::string greeting{"Hi"};
+   greeting.append(" there");
+   std::cout << greeting << '\n';  // "Hi there"
+
+   // .push_back() -- single character only
+   greeting.push_back('!');
+   std::cout << greeting << '\n';  // "Hi there!"
+
+Insert
+~~~~~~
+
+.. code-block:: cpp
+
+   std::string str{"Hello World"};
+
+   // Insert a string at a position
+   str.insert(5, ",");
+   std::cout << str << '\n';  // "Hello, World"
+
+   // Insert a substring
+   std::string source{"ABCDEF"};
+   str.insert(7, source, 0, 3);  // Insert "ABC" at position 7
+   std::cout << str << '\n';  // "Hello, ABCWorld"
+
+   // Insert using iterators
+   str.insert(str.begin(), '!');
+   std::cout << str << '\n';  // "!Hello, ABCWorld"
+
+Remove
+~~~~~~
+
+.. code-block:: cpp
+
+   std::string str{"Hello, World!"};
+
+   // erase(pos, count) -- remove characters starting at pos
+   str.erase(5, 2);  // Remove ", "
+   std::cout << str << '\n';  // "HelloWorld!"
+
+   // erase with iterators -- remove a range
+   str.erase(str.begin(), str.begin() + 5);
+   std::cout << str << '\n';  // "World!"
+
+   // clear() -- remove all characters
+   str.clear();
+   std::cout << "Empty: " << str.empty() << '\n';  // 1 (true)
+
+   // pop_back() -- remove last character
+   std::string text{"abc"};
+   text.pop_back();
+   std::cout << text << '\n';  // "ab"
+
+Memory Management
+~~~~~~~~~~~~~~~~~
+
+Understanding how ``std::string`` manages memory is important for writing efficient code.
+
+.. code-block:: cpp
+
+   std::string s{"Hello"};
+   std::cout << "Size: " << s.size() << '\n';          // 5
+   std::cout << "Capacity: " << s.capacity() << '\n';  // 15 (SSO)
+
+   // .reserve(n) -- request capacity for at least n characters
+   // Does NOT change the size or content
+   s.reserve(100);
+   std::cout << "Size: " << s.size() << '\n';          // 5 (unchanged)
+   std::cout << "Capacity: " << s.capacity() << '\n';  // >= 100
+
+   // .resize(n) -- change the size to n
+   // If n > size, new characters are value-initialized ('\0')
+   // If n < size, characters are removed from the end
+   s.resize(10);
+   std::cout << "Size: " << s.size() << '\n';          // 10
+   std::cout << "Content: '" << s << "'\n";             // "Hello\0\0\0\0\0"
+
+   // .shrink_to_fit() -- request reduction of capacity to fit size
+   // This is a non-binding request; the implementation may ignore it
+   s.shrink_to_fit();
+   std::cout << "Capacity: " << s.capacity() << '\n';  // likely 10
+
+**Memory fragmentation** occurs when memory is allocated and deallocated in a pattern that leaves small, unusable gaps between allocated blocks. Frequent string resizing can contribute to fragmentation. Using ``reserve()`` to pre-allocate memory when you know the approximate final size can help reduce fragmentation.
+
+.. figure:: /_static/images/l4/string-memory-0.jpg
+   :alt: String memory step 0
+   :align: center
+   :width: 70%
+
+   String memory: initial state.
+
+.. figure:: /_static/images/l4/string-memory-1.jpg
+   :alt: String memory step 1
+   :align: center
+   :width: 70%
+
+   String memory: after appending characters.
+
+.. figure:: /_static/images/l4/string-memory-2.jpg
+   :alt: String memory step 2
+   :align: center
+   :width: 70%
+
+   String memory: capacity exceeded, reallocation occurs.
+
+.. figure:: /_static/images/l4/string-memory-3.jpg
+   :alt: String memory step 3
+   :align: center
+   :width: 70%
+
+   String memory: old block freed, data copied to new block.
+
+.. figure:: /_static/images/l4/string-memory-4.jpg
+   :alt: String memory step 4
+   :align: center
+   :width: 70%
+
+   String memory: continued growth.
+
+.. figure:: /_static/images/l4/string-memory-5.jpg
+   :alt: String memory step 5
+   :align: center
+   :width: 70%
+
+   String memory: after ``shrink_to_fit()``.
+
+Arrays
+------
+
+Arrays store a fixed number of elements of the same type in contiguous memory. C++ provides both C-style arrays and the modern ``std::array`` wrapper.
+
+Declaration
+^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // C-style array
+   int numbers[5];  // Uninitialized -- contains garbage values
+
+   // std::array (from <array>)
+   #include <array>
+   std::array<int, 5> numbers;  // Uninitialized in some contexts
+
+Initialization
+^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // C-style array initialization
+   int a[5] = {1, 2, 3, 4, 5};     // Fully initialized
+   int b[5] = {1, 2};               // Partial: {1, 2, 0, 0, 0}
+   int c[5] = {};                    // Zero initialized: {0, 0, 0, 0, 0}
+   int d[] = {1, 2, 3};             // Size deduced: 3
+
+   // std::array initialization
+   std::array<int, 5> e{1, 2, 3, 4, 5};   // Fully initialized
+   std::array<int, 5> f{1, 2};             // Partial: {1, 2, 0, 0, 0}
+   std::array<int, 5> g{};                  // Zero initialized
+
+   // .fill() -- set all elements to the same value
+   std::array<int, 5> h{};
+   h.fill(42);  // {42, 42, 42, 42, 42}
+
+.. figure:: /_static/images/l4/arrays.png
+   :alt: Array memory layout
+   :align: center
+   :width: 70%
+
+   Contiguous memory layout of an array.
+
+C-style Arrays and Pointers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In most contexts, a C-style array name **decays** to a pointer to its first element. This means you can use pointer arithmetic to access elements.
+
+.. code-block:: cpp
+
+   int arr[5] = {10, 20, 30, 40, 50};
+
+   // Array name decays to pointer
+   int* ptr = arr;         // ptr points to arr[0]
+   std::cout << *ptr << '\n';       // 10
+   std::cout << *(ptr + 1) << '\n'; // 20
+   std::cout << *(ptr + 2) << '\n'; // 30
+
+   // ptr[i] is equivalent to *(ptr + i)
+   std::cout << ptr[3] << '\n';     // 40
+
+.. figure:: /_static/images/l4/array0.pdf
+   :alt: Array and pointer relationship
+   :align: center
+   :width: 70%
+
+   An array name decays to a pointer to its first element.
+
+Array Length
+^^^^^^^^^^^^
+
+The size of both C-style arrays and ``std::array`` must be a **compile-time constant**. You cannot use a runtime variable as the array size.
+
+.. code-block:: cpp
+
+   constexpr size_t size{5};
+   int arr[size];                  // OK -- constexpr
+   std::array<int, size> arr2{};   // OK -- constexpr
+
+   size_t runtime_size{5};
+   // int bad_arr[runtime_size];   // Error with -pedantic-errors
+   // Variable-length arrays (VLAs) are NOT standard C++
 
 .. note::
 
-   **Reminder**: Review and experiment with all provided code before next class.
+   Compile with the ``-pedantic-errors`` flag to catch non-standard extensions like VLAs. This ensures your code is portable and standards-compliant.
 
+Access and Modification
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-Preview: What's Next in L5
----------------------------
+.. code-block:: cpp
 
-.. grid:: 1 2 2 2
-    :gutter: 3
+   std::array<int, 5> arr{10, 20, 30, 40, 50};
 
-    .. grid-item-card:: L5: Advanced Functions
-        :class-card: sd-border-primary
+   // Subscript operator [] -- no bounds checking
+   std::cout << arr[0] << '\n';  // 10
 
-        - Programming paradigms (procedural, functional, OOP)
-        - First-class functions and lambdas
-        - Closures and callables
-        - Decorators
-        - Partial functions
+   // .at() -- with bounds checking (throws std::out_of_range)
+   std::cout << arr.at(2) << '\n';  // 30
 
-.. note::
+   // .front() and .back()
+   std::cout << arr.front() << '\n';  // 10
+   std::cout << arr.back() << '\n';   // 50
 
-   Today's lecture gives you the function fundamentals that are essential for understanding the advanced function concepts in L5 and object-oriented programming later in the course.
+   // .size()
+   std::cout << arr.size() << '\n';   // 5
+
+   // .empty()
+   std::cout << arr.empty() << '\n';  // 0 (false)
+
+   // .fill()
+   arr.fill(0);  // {0, 0, 0, 0, 0}
+
+   // Range-based for loop
+   std::array<int, 4> scores{95, 87, 92, 78};
+   for (const auto& score : scores) {
+       std::cout << score << ' ';
+   }
+   std::cout << '\n';  // 95 87 92 78
+
+.. figure:: /_static/images/l4/array1.pdf
+   :alt: Array access operations
+   :align: center
+   :width: 70%
+
+   Accessing array elements with ``[]`` and ``.at()``.
+
+Multidimensional Arrays
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A 2D array is an array of arrays, often used to represent matrices. A 3D array is an array of 2D arrays.
+
+.. code-block:: cpp
+
+   // C-style 2D array (3 rows, 4 columns)
+   int matrix[3][4] = {
+       {1, 2, 3, 4},
+       {5, 6, 7, 8},
+       {9, 10, 11, 12}
+   };
+
+   // Access: matrix[row][col]
+   std::cout << matrix[1][2] << '\n';  // 7
+
+   // std::array 2D array
+   std::array<std::array<int, 4>, 3> grid{{
+       {1, 2, 3, 4},
+       {5, 6, 7, 8},
+       {9, 10, 11, 12}
+   }};
+
+   // Access: grid[row][col] or grid.at(row).at(col)
+   std::cout << grid[1][2] << '\n';          // 7
+   std::cout << grid.at(1).at(2) << '\n';    // 7
+
+   // C-style 3D array
+   int cube[2][3][4] = {
+       {
+           {1, 2, 3, 4},
+           {5, 6, 7, 8},
+           {9, 10, 11, 12}
+       },
+       {
+           {13, 14, 15, 16},
+           {17, 18, 19, 20},
+           {21, 22, 23, 24}
+       }
+   };
+
+   // std::array 3D array
+   std::array<std::array<std::array<int, 4>, 3>, 2> cube3d{};
+
+.. figure:: /_static/images/l4/array2.pdf
+   :alt: 2D array layout
+   :align: center
+   :width: 70%
+
+   Memory layout of a 2D array.
+
+.. figure:: /_static/images/l4/array3.pdf
+   :alt: 2D std::array layout
+   :align: center
+   :width: 70%
+
+   Using ``std::array`` for multidimensional arrays.
+
+.. figure:: /_static/images/l4/array4.pdf
+   :alt: 3D array
+   :align: center
+   :width: 70%
+
+   A 3D array represented as an array of 2D arrays.
+
+Vectors
+-------
+
+``std::vector`` is a dynamic array that can grow and shrink at runtime. It is the most commonly used container in C++ and is defined in the ``<vector>`` header.
+
+.. code-block:: cpp
+
+   #include <vector>
+
+Memory Management
+^^^^^^^^^^^^^^^^^
+
+A ``std::vector`` object resides on the **stack** and internally maintains a pointer to a dynamically allocated array on the **heap**. The vector manages three internal pointers:
+
+1. **start** -- pointer to the first element of the allocated array.
+2. **finish** -- pointer to one past the last element currently in use.
+3. **end_of_storage** -- pointer to one past the last element of the allocated capacity.
+
+.. figure:: /_static/images/l4/vector-memory1.pdf
+   :alt: Vector memory layout
+   :align: center
+   :width: 70%
+
+   Internal memory layout of a ``std::vector``.
+
+- **Size**: the number of elements currently stored (``finish - start``).
+- **Capacity**: the total number of elements the vector can hold before reallocation (``end_of_storage - start``).
+
+.. figure:: /_static/images/l4/vector-memory2.pdf
+   :alt: Vector size vs capacity
+   :align: center
+   :width: 70%
+
+   Relationship between vector size and capacity.
+
+The ``sizeof()`` a vector object is the same regardless of how many elements it contains, because ``sizeof()`` measures only the stack object (the three pointers), not the heap data.
+
+.. code-block:: cpp
+
+   std::vector<int> v1{};
+   std::vector<int> v2{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+   std::cout << sizeof(v1) << '\n';  // 24 (typical: 3 pointers x 8 bytes)
+   std::cout << sizeof(v2) << '\n';  // 24 (same!)
+
+Initialization
+^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // Explicit values
+   std::vector<int> v1{1, 2, 3, 4, 5};
+
+   // N elements, all zero-initialized
+   std::vector<int> v2(5);  // {0, 0, 0, 0, 0}
+
+   // N elements, all with a specific value
+   std::vector<int> v3(5, 42);  // {42, 42, 42, 42, 42}
+
+   // Copy construction
+   std::vector<int> v4{v1};
+
+   // Using auto
+   auto v5 = std::vector<int>{10, 20, 30};
+
+Access and Modification
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<int> vec{10, 20, 30, 40, 50};
+
+   // .front() and .back()
+   std::cout << vec.front() << '\n';  // 10
+   std::cout << vec.back() << '\n';   // 50
+
+   // Subscript operator [] -- no bounds checking
+   std::cout << vec[2] << '\n';  // 30
+
+   // .at() -- with bounds checking
+   std::cout << vec.at(2) << '\n';  // 30
+
+   // Range-based for loop
+   for (const auto& val : vec) {
+       std::cout << val << ' ';
+   }
+   std::cout << '\n';
+
+   // .assign() -- replace all contents
+   vec.assign(3, 99);  // {99, 99, 99}
+
+Insertion
+^^^^^^^^^
+
+push_back()
+~~~~~~~~~~~
+
+``push_back()`` adds an element to the end of the vector. If the vector's size equals its capacity, a reallocation occurs: a new, larger block of memory is allocated, existing elements are copied/moved, and the old block is deallocated.
+
+.. code-block:: cpp
+
+   std::vector<int> vec{1, 2, 3};
+   vec.push_back(4);
+   // vec is now {1, 2, 3, 4}
+
+emplace_back()
+~~~~~~~~~~~~~~
+
+``emplace_back()`` constructs an element **in place** at the end of the vector, avoiding the creation of a temporary object. This can be more efficient than ``push_back()`` for complex types.
+
+.. code-block:: cpp
+
+   #include <utility>  // for std::pair
+
+   std::vector<std::pair<int, std::string>> records{};
+
+   // push_back: creates a temporary pair, then copies/moves it
+   records.push_back({1, "Alice"});
+
+   // emplace_back: constructs the pair directly in the vector's memory
+   records.emplace_back(2, "Bob");
+
+insert()
+~~~~~~~~
+
+``insert()`` adds elements at a specified position.
+
+.. code-block:: cpp
+
+   std::vector<int> vec{1, 2, 3, 4, 5};
+
+   // Insert a single element at position
+   auto it = vec.begin() + 2;
+   vec.insert(it, 99);
+   // vec: {1, 2, 99, 3, 4, 5}
+
+   // Insert multiple copies
+   vec.insert(vec.begin(), 3, 0);
+   // vec: {0, 0, 0, 1, 2, 99, 3, 4, 5}
+
+   // Insert elements from another container
+   std::vector<int> other{10, 20};
+   vec.insert(vec.end(), other.begin(), other.end());
+   // vec: {0, 0, 0, 1, 2, 99, 3, 4, 5, 10, 20}
+
+emplace()
+~~~~~~~~~
+
+``emplace()`` constructs an element **in place** at a specified position, similar to how ``emplace_back()`` works at the end.
+
+.. code-block:: cpp
+
+   std::vector<std::pair<int, std::string>> records{};
+   records.emplace(records.begin(), 1, "Alice");
+
+Deletion
+^^^^^^^^
+
+pop_back()
+~~~~~~~~~~
+
+``pop_back()`` removes the last element. It does **not** return the removed element.
+
+.. code-block:: cpp
+
+   std::vector<int> vec{1, 2, 3, 4, 5};
+   vec.pop_back();
+   // vec: {1, 2, 3, 4}
+   // To get the last element before removing, use .back() first
+   int last = vec.back();
+   vec.pop_back();
+
+erase()
+~~~~~~~
+
+``erase()`` removes elements by position or range and returns an iterator to the element following the last removed element.
+
+.. code-block:: cpp
+
+   std::vector<int> vec{10, 20, 30, 40, 50};
+
+   // Erase single element
+   auto it = vec.erase(vec.begin() + 1);
+   // vec: {10, 30, 40, 50}, it points to 30
+
+   // Erase a range
+   vec.erase(vec.begin(), vec.begin() + 2);
+   // vec: {40, 50}
+
+clear()
+~~~~~~~
+
+``clear()`` removes all elements. The size becomes 0, but the **capacity remains unchanged**.
+
+.. code-block:: cpp
+
+   std::vector<int> vec{1, 2, 3, 4, 5};
+   std::cout << "Before clear - Size: " << vec.size()
+             << ", Capacity: " << vec.capacity() << '\n';
+   // Size: 5, Capacity: 5
+
+   vec.clear();
+   std::cout << "After clear - Size: " << vec.size()
+             << ", Capacity: " << vec.capacity() << '\n';
+   // Size: 0, Capacity: 5 (unchanged!)
+
+Vector Memory Management
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<int> vec{};
+
+   // .reserve(n) -- pre-allocate capacity for n elements
+   // Does NOT change size or add elements
+   vec.reserve(100);
+   std::cout << "Size: " << vec.size() << '\n';          // 0
+   std::cout << "Capacity: " << vec.capacity() << '\n';  // >= 100
+
+   // .resize(n) -- change the number of elements
+   // If n > size, new elements are value-initialized (0 for int)
+   // If n < size, elements are removed from the end
+   vec.resize(10);
+   std::cout << "Size: " << vec.size() << '\n';          // 10
+   std::cout << "Capacity: " << vec.capacity() << '\n';  // >= 100
+
+   // .shrink_to_fit() -- request to reduce capacity to match size
+   // Non-binding: the implementation may ignore this request
+   vec.shrink_to_fit();
+   std::cout << "Size: " << vec.size() << '\n';          // 10
+   std::cout << "Capacity: " << vec.capacity() << '\n';  // likely 10

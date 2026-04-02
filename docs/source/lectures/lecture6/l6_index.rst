@@ -1,38 +1,33 @@
-====================================================
-L6: Object-Oriented Programming — Part I
-====================================================
+.. _l6_index:
+
+==============================
+L6: Functions -- Advanced
+==============================
 
 Overview
 --------
 
-This lecture introduces object-oriented programming (OOP) in Python, covering both the design and implementation of classes. You will learn how to analyze a problem domain using requirement analysis, business rules, and noun/verb analysis, then translate that design into working Python code. The implementation phase covers class and object creation, the ``self`` parameter, the ``__init__`` constructor, instance and class attributes, dunder methods for operator overloading and string representations, and encapsulation using ``@property`` decorators. All examples use a Robotics Competition Management System as the running domain.
-
+This lecture builds on the function fundamentals from Lecture 5 and introduces advanced features of C++ functions. We begin with ``struct`` as a lightweight data container and aggregate initialization, then move into templates for writing generic, reusable code. The lecture covers function operators (``decltype``), specifiers (``constexpr``, ``inline``, ``noexcept``), and attributes (``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``). Finally, we explore callables -- function pointers, functors, lambdas, and ``std::function`` -- which enable flexible, composable designs central to modern C++ programming.
 
 Learning Objectives
 -------------------
 
 By the end of this lecture, you will be able to:
 
-- Explain the core principles of object-oriented programming (OOP).
-- Gather requirements and identify business rules from a domain description.
-- Apply noun/verb analysis to extract candidate classes, attributes, and methods.
-- Apply a design process to identify objects, define classes, and model behavior.
-- Define classes with attributes and methods using proper Python syntax.
-- Understand the role of ``self`` and the ``__init__`` constructor.
-- Distinguish between instance attributes and class attributes.
-- Override dunder methods: ``__str__``, ``__repr__``, ``__eq__``, and operator methods.
-- Understand abstraction and encapsulation as OOP principles.
-- Use ``@property`` to create getters and setters the Pythonic way.
-
-
-Contents
---------
+1. **Use struct**: aggregate initialization, structured bindings.
+2. **Write generic code**: function templates, type deduction, specialization.
+3. **Apply type inspection**: ``decltype`` operator.
+4. **Use modern function syntax**: trailing return types with templates.
+5. **Apply function specifiers**: ``constexpr``, ``inline``, ``noexcept``.
+6. **Apply function attributes**: ``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``.
+7. **Master callables**: function pointers, functors, lambdas, ``std::function``.
 
 .. toctree::
    :maxdepth: 2
-   :titlesonly:
+   :caption: Lecture 6 Contents
 
    l6_lecture
+   l6_shell
    l6_exercises
    l6_quiz
    l6_references
@@ -40,15 +35,4 @@ Contents
 Next Steps
 ----------
 
-- In the next lecture, we will cover Object-Oriented Programming II:
-
-  - Class methods and static methods
-  - Relationships: association, aggregation, composition
-  - Inheritance (``MobileRobot``, ``ManipulatorRobot``) and ``super()``
-  - Polymorphism and duck typing
-  - Abstract base classes (``Task`` interface)
-  - Data classes
-
-- Review and experiment with all code snippets and exercises from today's lecture.
-- Practice writing classes with properties and dunder methods.
-- Read `Real Python: Inheritance and Composition <https://realpython.com/inheritance-composition-python/>`_.
+In **Lecture 7: Smart Pointers**, we will explore modern C++ memory management with ``std::unique_ptr``, ``std::shared_ptr``, and ``std::weak_ptr``. Smart pointers automate resource cleanup through RAII, eliminating common bugs such as memory leaks, double frees, and dangling pointers that arise from manual ``new``/``delete`` usage.

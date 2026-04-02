@@ -1,35 +1,59 @@
-ENPM702 — Introductory Robot Programming
-============================================
+ENPM702 — Introduction Robot Programming
+=========================================
 
 Course Description
 ------------------
-ENPM702 is an applied course on modern C++ for robotics. Through a blend of
-theory and hands-on projects, you will build a strong foundation in C++ and
-learn how to design robust, efficient software for real robotic systems.
-Early weeks focus on the language core (syntax, data types, control flow,
-functions) and the Standard Template Library (STL) for practical algorithms and
-containers. You will then progress to modern memory management (smart pointers
-and RAII), function design (overloading, references, lambdas), and clean build
-hygiene. In the latter part of the course, you apply these skills to larger,
-scalable software patterns common in robotics and get an introduction to ROS 2
-to prepare for advanced robotics coursework and projects.
+ENPM702 introduces students to modern C++ programming in the context of
+robotics and software engineering.  The course covers core language
+features — variables, types, pointers, references, functions, templates,
+and object-oriented programming — along with essential development tools
+such as Linux, Git, VSCode, CMake, and Valgrind.
 
-Learning Outcomes (high level)
-------------------------------
-- Write clear, safe, and efficient C++ using RAII and smart pointers.
-- Use STL containers/algorithms and iterators to implement practical solutions.
-- Design modular functions and interfaces (overloading, pass-by-reference,
-  const-correctness, lambdas).
-- Apply modern C++ techniques to robotics problems (kinematics, control,
-  trajectory data structures).
-- Build maintainable codebases and prepare for ROS-based development.
+Students progress from fundamental C++ constructs to advanced topics
+including smart pointers, move semantics, STL containers, lambda
+expressions, and polymorphism.  Emphasis is placed on writing safe,
+efficient, and well-documented code using modern C++ best practices
+(C++17 and beyond).
+
+Key topics covered include:
+
+- Linux shell, VSCode, and CMake build system
+- Variables, types, constants, and namespaces
+- Flow control: conditionals, loops, and operators
+- Pointers, references, and dynamic memory management
+- STL containers: strings, arrays, vectors, and iterators
+- Functions: declarations, overloading, recursion, and default parameters
+- Templates, lambdas, functors, and ``std::function``
+- Smart pointers (``unique_ptr``, ``shared_ptr``, ``weak_ptr``) and move semantics
+- Object-oriented programming: classes, encapsulation, inheritance, and polymorphism
+- Version control with Git and GitHub
+
+Prerequisites
+-------------
+Basic programming experience.  No prior C++ experience required.
+
+Learning Outcomes
+-----------------
+After successfully completing this course, you will be able to:
+
+- Set up and use a C++ development environment (Linux, VSCode, CMake, Git).
+- Write correct C++ programs using variables, types, constants, and namespaces.
+- Use pointers, references, and dynamic memory allocation safely.
+- Apply STL containers and iterators to manage collections of data.
+- Design and implement functions using modern C++ features (templates, lambdas).
+- Manage object lifetimes with smart pointers and move semantics.
+- Design object-oriented systems using classes, inheritance, and polymorphism.
+- Write clean, well-documented, and memory-safe C++ code.
 
 .. toctree::
+   :hidden:
    :maxdepth: 3
    :titlesonly:
 
-
-   changelog/changelog
+   syllabus/syllabus
+   setup/setup
    lectures/index
    assignments/index
    glossary/glossary
+   reading_material/index
+   changelog/changelog

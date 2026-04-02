@@ -1,292 +1,411 @@
 ====================================================
-Exercises
+C++ Exercises
 ====================================================
 
-This page contains three take-home exercises that reinforce the concepts
-from Lecture 4. Each exercise asks you to **write code from scratch**
-based on a specification -- no starter code is provided.
+These exercises reinforce the concepts covered in Lecture 4: STL
+Containers. Work through them in order, as each exercise builds on
+the skills from the previous one.
 
-All files should be created inside your ``lecture4/`` workspace folder.
+.. note::
+
+   Compile all programs with warnings enabled:
+
+   .. code-block:: bash
+
+      g++ -std=c++17 -Wall -Wextra -o program program.cpp
 
 
-.. dropdown:: Exercise 1 -- Function Basics and Arguments
+----
+
+
+.. dropdown:: Exercise 1 -- String Operations
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Demonstrate your understanding of function definitions, multiple return
-    values, default arguments, keyword arguments, ``*args``, and ``**kwargs``
-    by implementing a set of utility functions for robot configuration.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate key ``std::string`` operations and observe Small String
+    Optimization (SSO).
 
     **Specification**
 
-    Create a file ``lecture4/robot_config.py`` that implements the following
-    functions. Each function must include type hints and a Google-style
-    docstring.
+    1. Create a short string (fewer than 15 characters) and a long string
+       (more than 30 characters).
+    2. Print the ``size()`` and ``capacity()`` of each string. Observe the
+       difference caused by SSO.
+    3. Use ``.insert()`` to insert ``"C++ "`` at the beginning of a string.
+    4. Use ``.erase()`` to remove the first 4 characters from a string.
+    5. Use ``.append()`` to add ``" is great!"`` to the end.
+    6. Use ``.at()`` to access a character. Then try accessing an out-of-bounds
+       index and observe the exception.
 
-    1. **``compute_distance``** -- Takes two tuples representing 2D
-       coordinates ``(x1, y1)`` and ``(x2, y2)``. Returns the Euclidean
-       distance rounded to 2 decimal places. Use the formula:
-       ``sqrt((x2 - x1)**2 + (y2 - y1)**2)``. Import ``sqrt`` from the
-       ``math`` module.
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-    2. **``configure_motor``** -- Takes a required ``name`` (str) and optional
-       keyword arguments: ``speed`` (float, default ``1.0``), ``direction``
-       (str, default ``"forward"``), and ``enabled`` (bool, default ``True``).
-       Returns a dictionary with keys ``"name"``, ``"speed"``, ``"direction"``,
-       and ``"enabled"``.
+        .. code-block:: cpp
 
-    3. **``compute_statistics``** -- Takes ``*args`` (any number of floats).
-       Returns a tuple of ``(count, total, average)`` rounded to 2 decimal
-       places. If no arguments are given, return ``(0, 0.0, 0.0)``.
+           #include <iostream>
+           #include <string>
 
-    4. **``build_command``** -- Takes a required ``action`` (str) and
-       ``**kwargs`` for additional parameters. Returns a formatted string:
-       ``"ACTION: <action> | PARAMS: key1=val1, key2=val2, ..."``. If no
-       kwargs are given, the params section should say ``"none"``.
+           int main() {
+               // Short string (likely uses SSO)
+               std::string short_str{"Hello"};
+               std::cout << "Short string: '" << short_str << "'\n";
+               std::cout << "  Size: " << short_str.size() << '\n';
+               std::cout << "  Capacity: " << short_str.capacity() << '\n';
 
-    5. **``swap_coordinates``** -- Takes two tuples ``(x1, y1)`` and
-       ``(x2, y2)`` and returns them swapped as a tuple of tuples:
-       ``((x2, y2), (x1, y1))``. Demonstrate tuple unpacking when calling.
+               // Long string (likely uses heap allocation)
+               std::string long_str{"This is a much longer string for testing"};
+               std::cout << "Long string: '" << long_str << "'\n";
+               std::cout << "  Size: " << long_str.size() << '\n';
+               std::cout << "  Capacity: " << long_str.capacity() << '\n';
 
-    In the ``if __name__ == "__main__"`` block, call each function with
-    example arguments and print the results with labels.
+               // Insert
+               std::string language{"rocks"};
+               language.insert(0, "C++ ");
+               std::cout << "After insert: " << language << '\n';
 
-    **Expected output:**
+               // Erase
+               std::string text{"Hello World"};
+               text.erase(0, 6);
+               std::cout << "After erase: " << text << '\n';
 
-    .. code-block:: text
+               // Append
+               text.append(" is great!");
+               std::cout << "After append: " << text << '\n';
 
-       === Distance ===
-       Distance from (0, 0) to (3, 4): 5.0
+               // Safe access with .at()
+               std::cout << "Character at index 0: " << text.at(0) << '\n';
 
-       === Motor Configuration ===
-       Default: {'name': 'left_wheel', 'speed': 1.0, 'direction': 'forward', 'enabled': True}
-       Custom: {'name': 'right_wheel', 'speed': 2.5, 'direction': 'reverse', 'enabled': False}
-
-       === Statistics ===
-       Stats for (10.5, 20.3, 30.7, 40.1): (4, 101.6, 25.4)
-       Stats for (): (0, 0.0, 0.0)
-
-       === Command Builder ===
-       build_command('move', x=10, y=20): ACTION: move | PARAMS: x=10, y=20
-       build_command('stop'): ACTION: stop | PARAMS: none
-
-       === Swap ===
-       Before: a=(1, 2), b=(3, 4)
-       After:  a=(3, 4), b=(1, 2)
+               return 0;
+           }
 
 
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture4/robot_config.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-
-
-.. dropdown:: Exercise 2 -- Scope and Pass-by-Assignment
+.. dropdown:: Exercise 2 -- Array Manipulation
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Explore variable scoping (LEGB rule), the ``global`` and ``nonlocal``
-    keywords, and pass-by-assignment behavior with mutable and immutable
-    objects.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Demonstrate both C-style arrays and ``std::array``.
 
     **Specification**
 
-    Create a file ``lecture4/scope_explorer.py`` that demonstrates each
-    concept below. Each task must print clearly labeled output showing
-    variable values before and after function calls.
+    1. Declare a C-style array of 5 integers and initialize it with values.
+    2. Declare a ``std::array<int, 5>`` and initialize it with different values.
+    3. Use ``.fill()`` to set all elements of the ``std::array`` to a single value.
+    4. Access elements using ``[]`` and ``.at()``.
+    5. Use a range-based for loop to print all elements.
+    6. Print ``.size()`` and ``.empty()`` for the ``std::array``.
 
-    1. **Local vs. Global** -- Define a global variable ``mode = "manual"``.
-       Write a function ``set_mode_local()`` that creates a local variable
-       ``mode = "auto"`` and prints it. After calling the function, print the
-       global ``mode`` to show it is unchanged.
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-    2. **The ``global`` keyword** -- Write a function ``set_mode_global()``
-       that uses the ``global`` keyword to modify the module-level ``mode``
-       variable to ``"autonomous"``. Print ``mode`` before and after the call.
+        .. code-block:: cpp
 
-    3. **Enclosing scope with ``nonlocal``** -- Write a function
-       ``make_counter()`` that defines a local variable ``count = 0`` and a
-       nested function ``increment()`` that uses ``nonlocal`` to increase
-       ``count`` by 1 and returns it. Call ``increment()`` three times from
-       inside ``make_counter()`` and print the result each time.
+           #include <array>
+           #include <iostream>
 
-    4. **Pass-by-assignment with immutable** -- Write a function
-       ``try_modify_int(x: int) -> None`` that adds 10 to ``x`` and prints
-       the result inside the function. Call it with ``value = 5`` and print
-       ``value`` after the call to show it is unchanged.
+           int main() {
+               // C-style array
+               int c_arr[5]{10, 20, 30, 40, 50};
+               std::cout << "C-style array: ";
+               for (int i{0}; i < 5; ++i) {
+                   std::cout << c_arr[i] << ' ';
+               }
+               std::cout << '\n';
 
-    5. **Pass-by-assignment with mutable** -- Write a function
-       ``add_sensor(robot: dict, sensor: str) -> None`` that appends
-       ``sensor`` to ``robot["sensors"]``. Call it and print the robot
-       dictionary before and after to show the in-place modification.
+               // std::array
+               std::array<int, 5> std_arr{100, 200, 300, 400, 500};
+               std::cout << "std::array: ";
+               for (const auto& val : std_arr) {
+                   std::cout << val << ' ';
+               }
+               std::cout << '\n';
 
-    6. **Reassignment vs. mutation** -- Write a function
-       ``reassign_list(data: list) -> None`` that reassigns ``data`` to a
-       new list ``[99, 99, 99]`` and prints it inside the function. Call it
-       with ``original = [1, 2, 3]`` and print ``original`` after the call
-       to show the original is unchanged.
+               // Fill
+               std_arr.fill(42);
+               std::cout << "After fill(42): ";
+               for (const auto& val : std_arr) {
+                   std::cout << val << ' ';
+               }
+               std::cout << '\n';
 
-    **Expected output:**
+               // Access
+               std_arr = {5, 10, 15, 20, 25};
+               std::cout << "Element [2]: " << std_arr[2] << '\n';
+               std::cout << "Element .at(2): " << std_arr.at(2) << '\n';
+               std::cout << "Size: " << std_arr.size() << '\n';
+               std::cout << "Empty: " << std_arr.empty() << '\n';
 
-    .. code-block:: text
-
-       === Task 1: Local vs Global ===
-       Inside set_mode_local(): auto
-       Global mode after call: manual
-
-       === Task 2: global keyword ===
-       Before: manual
-       After set_mode_global(): autonomous
-
-       === Task 3: nonlocal with make_counter ===
-       Increment 1: 1
-       Increment 2: 2
-       Increment 3: 3
-
-       === Task 4: Immutable (int) ===
-       Inside function: 15
-       Outside after call: 5
-
-       === Task 5: Mutable (dict) ===
-       Before: {'name': 'TurtleBot', 'sensors': ['lidar']}
-       After add_sensor: {'name': 'TurtleBot', 'sensors': ['lidar', 'camera']}
-
-       === Task 6: Reassignment vs Mutation ===
-       Inside function: [99, 99, 99]
-       Outside after call: [1, 2, 3]
+               return 0;
+           }
 
 
-    .. raw:: html
-
-       <hr>
-
-
-    **Deliverables**
-
-    - ``lecture4/scope_explorer.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-
-
-.. dropdown:: Exercise 3 -- Robot Toolkit
+.. dropdown:: Exercise 3 -- 2D Array
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Combine all concepts from Lecture 4 -- function definition, arguments,
-    scope, pass-by-assignment, type hints, docstrings, and recursion -- to
-    build a toolkit of reusable functions for a robot navigation system.
-
-
-    .. raw:: html
-
-       <hr>
-
+    Create a 3x3 matrix using ``std::array``, fill it with values, and
+    print it row by row.
 
     **Specification**
 
-    Create a file ``lecture4/robot_toolkit.py`` that implements the following
-    functions. Every function must have type hints and a Google-style
-    docstring.
+    1. Declare a 2D ``std::array`` of size 3x3.
+    2. Fill the matrix with values 1 through 9
+       (``row * 3 + col + 1``).
+    3. Print the matrix in a grid format.
+    4. Calculate and print the sum of each row.
 
-    1. **``create_waypoint``** -- Takes ``name`` (str), ``x`` (float),
-       ``y`` (float), and an optional ``priority`` (int, default ``0``).
-       Returns a dictionary with keys ``"name"``, ``"x"``, ``"y"``, and
-       ``"priority"``.
+    .. dropdown:: Solution
+        :class-container: sd-border-success
 
-    2. **``compute_path_length``** -- Takes a list of waypoints (dicts from
-       ``create_waypoint``). Computes the total Euclidean distance along the
-       path (from waypoint 0 to 1, 1 to 2, etc.). Returns the total
-       distance rounded to 2 decimal places. If the list has fewer than 2
-       waypoints, return ``0.0``.
+        .. code-block:: cpp
 
-    3. **``sort_by_priority``** -- Takes a list of waypoints and returns a
-       **new** list sorted by priority in descending order (highest first).
-       The original list must not be modified. Use a loop (do NOT use the
-       built-in ``sorted()`` or ``list.sort()``). Implement a simple
-       selection sort.
+           #include <array>
+           #include <iostream>
 
-    4. **``format_waypoint``** -- Takes a waypoint dictionary and returns a
-       formatted string: ``"[P<priority>] <name> @ (<x>, <y>)"``.
-       Example: ``"[P2] charger @ (5.0, 3.0)"``.
+           int main() {
+               std::array<std::array<int, 3>, 3> matrix{};
 
-    5. **``print_path``** -- Takes a list of waypoints and an optional
-       ``label`` (str, default ``"Path"``). Prints the label, then each
-       waypoint using ``format_waypoint()``, then the total path length
-       using ``compute_path_length()``.
+               // Fill with values 1-9
+               int value{1};
+               for (size_t row{0}; row < 3; ++row) {
+                   for (size_t col{0}; col < 3; ++col) {
+                       matrix.at(row).at(col) = value;
+                       ++value;
+                   }
+               }
 
-    6. **``recursive_distance_sum``** -- Takes a list of float distances and
-       returns their sum using recursion (no loops, no ``sum()``). Base case:
-       empty list returns ``0.0``.
+               // Print the matrix
+               std::cout << "Matrix:\n";
+               for (const auto& row : matrix) {
+                   for (const auto& elem : row) {
+                       std::cout << elem << '\t';
+                   }
+                   std::cout << '\n';
+               }
 
-    In the ``if __name__ == "__main__"`` block:
+               // Sum of each row
+               for (size_t row{0}; row < 3; ++row) {
+                   int row_sum{0};
+                   for (const auto& elem : matrix.at(row)) {
+                       row_sum += elem;
+                   }
+                   std::cout << "Sum of row " << row << ": " << row_sum << '\n';
+               }
 
-    - Create at least 4 waypoints with different priorities.
-    - Store them in a list and print the path using ``print_path()``.
-    - Sort by priority and print the sorted path.
-    - Demonstrate ``recursive_distance_sum()`` with a list of segment
-      distances.
-
-    **Expected output:**
-
-    .. code-block:: text
-
-       === Original Path ===
-       Path:
-         1. [P1] start @ (0.0, 0.0)
-         2. [P3] obstacle @ (3.0, 4.0)
-         3. [P0] waypoint_A @ (6.0, 4.0)
-         4. [P2] charger @ (6.0, 8.0)
-       Total distance: 12.0
-
-       === Sorted by Priority ===
-       Priority Path:
-         1. [P3] obstacle @ (3.0, 4.0)
-         2. [P2] charger @ (6.0, 8.0)
-         3. [P1] start @ (0.0, 0.0)
-         4. [P0] waypoint_A @ (6.0, 4.0)
-       Total distance: 18.63
-
-       === Recursive Distance Sum ===
-       Distances: [5.0, 3.0, 4.0]
-       Recursive sum: 12.0
+               return 0;
+           }
 
 
-    .. raw:: html
+.. dropdown:: Exercise 4 -- Vector Basics
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
 
-       <hr>
+    **Goal**
+
+    Demonstrate basic ``std::vector`` operations.
+
+    **Specification**
+
+    1. Create a vector of integers with initial values ``{10, 20, 30}``.
+    2. Use ``push_back()`` to add 40 and 50. Print size and capacity
+       after each ``push_back()``.
+    3. Use ``pop_back()`` to remove the last element.
+    4. Use ``front()``, ``back()``, ``[]``, and ``.at()`` to access elements.
+    5. Use a range-based for loop to print all elements.
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        .. code-block:: cpp
+
+           #include <iostream>
+           #include <vector>
+
+           int main() {
+               std::vector<int> vec{10, 20, 30};
+               std::cout << "Initial - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.push_back(40);
+               std::cout << "After push_back(40) - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.push_back(50);
+               std::cout << "After push_back(50) - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.pop_back();
+               std::cout << "After pop_back() - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               std::cout << "Front: " << vec.front() << '\n';
+               std::cout << "Back: " << vec.back() << '\n';
+               std::cout << "vec[1]: " << vec[1] << '\n';
+               std::cout << "vec.at(2): " << vec.at(2) << '\n';
+
+               std::cout << "All elements: ";
+               for (const auto& val : vec) {
+                   std::cout << val << ' ';
+               }
+               std::cout << '\n';
+
+               return 0;
+           }
 
 
-    **Deliverables**
+.. dropdown:: Exercise 5 -- Vector Memory
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
 
-    - ``lecture4/robot_toolkit.py``
-    - The program must run without errors and produce output matching the
-      expected format above.
-    - All calculations must be computed dynamically (no hard-coded results).
-    - Every function must include type hints and a Google-style docstring.
+    **Goal**
+
+    Demonstrate how vector capacity grows dynamically and how to manage
+    memory with ``reserve()``, ``resize()``, and ``shrink_to_fit()``.
+
+    **Specification**
+
+    1. Start with an empty vector.
+    2. In a loop, ``push_back()`` integers from 0 to 31. Print size and
+       capacity each time the capacity changes.
+    3. After the loop, use ``reserve(100)`` and print size and capacity.
+    4. Use ``shrink_to_fit()`` and print size and capacity.
+    5. Use ``resize(10)`` then ``shrink_to_fit()`` again.
+    6. Observe the pattern of capacity growth (typically doubles).
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        .. code-block:: cpp
+
+           #include <iostream>
+           #include <vector>
+
+           int main() {
+               std::vector<int> vec{};
+
+               std::cout << "=== Capacity Growth ===\n";
+               std::cout << "Initial - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               for (int i{0}; i < 32; ++i) {
+                   size_t old_capacity{vec.capacity()};
+                   vec.push_back(i);
+                   if (vec.capacity() != old_capacity) {
+                       std::cout << "Size: " << vec.size()
+                                 << ", Capacity changed: " << old_capacity
+                                 << " -> " << vec.capacity() << '\n';
+                   }
+               }
+
+               std::cout << "\nFinal - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.reserve(100);
+               std::cout << "\nAfter reserve(100) - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.shrink_to_fit();
+               std::cout << "After shrink_to_fit() - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.resize(10);
+               std::cout << "After resize(10) - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               vec.shrink_to_fit();
+               std::cout << "After shrink_to_fit() - Size: " << vec.size()
+                         << ", Capacity: " << vec.capacity() << '\n';
+
+               return 0;
+           }
+
+
+.. dropdown:: Exercise 6 -- Simple Gradebook (Challenge)
+    :icon: gear
+    :class-container: sd-border-warning
+    :class-title: sd-font-weight-bold
+
+    **Goal**
+
+    Implement a simple gradebook using vectors and strings with iterator
+    traversal.
+
+    **Specification**
+
+    1. Store student names in a ``std::vector<std::string>``.
+    2. Store each student's grades in a ``std::vector<std::vector<int>>``.
+    3. Add at least 3 students with 4 grades each.
+    4. Calculate and display the average grade for each student.
+    5. Use iterators (not index-based loops) to traverse the containers.
+    6. Find and display the student with the highest average.
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        .. code-block:: cpp
+
+           #include <iostream>
+           #include <string>
+           #include <vector>
+
+           int main() {
+               std::vector<std::string> names{"Alice", "Bob", "Charlie"};
+
+               std::vector<std::vector<int>> grades{
+                   {92, 85, 88, 95},
+                   {78, 82, 90, 73},
+                   {95, 98, 92, 97}
+               };
+
+               std::cout << "=== Gradebook ===\n";
+               std::vector<double> averages{};
+
+               auto name_it = names.begin();
+               auto grade_it = grades.begin();
+
+               while (name_it != names.end()) {
+                   int sum{0};
+                   for (auto it = grade_it->begin(); it != grade_it->end(); ++it) {
+                       sum += *it;
+                   }
+                   double avg{static_cast<double>(sum) / static_cast<double>(grade_it->size())};
+                   averages.push_back(avg);
+
+                   std::cout << *name_it << ": ";
+                   for (auto it = grade_it->begin(); it != grade_it->end(); ++it) {
+                       std::cout << *it << ' ';
+                   }
+                   std::cout << "-> Average: " << avg << '\n';
+
+                   ++name_it;
+                   ++grade_it;
+               }
+
+               double highest_avg{0.0};
+               std::string top_student{};
+               auto avg_it = averages.begin();
+               auto n_it = names.begin();
+               while (avg_it != averages.end()) {
+                   if (*avg_it > highest_avg) {
+                       highest_avg = *avg_it;
+                       top_student = *n_it;
+                   }
+                   ++avg_it;
+                   ++n_it;
+               }
+
+               std::cout << "\nTop student: " << top_student
+                         << " with average " << highest_avg << '\n';
+
+               return 0;
+           }

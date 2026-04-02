@@ -1,317 +1,53 @@
-References
-==========
+.. _l8_references:
 
+===================
+Lecture 8 References
+===================
 
-.. dropdown:: Lecture 8
-    :class-container: sd-border-secondary
-    :open:
+.. dropdown:: Lecture 8 Summary
+   :class-container: sd-border-success
 
-    .. card::
-        :class-card: sd-border-secondary
+   This lecture covered the fundamentals of Object-Oriented Programming in C++:
 
-        **ENPM605 -- L8: Introduction to ROS 2**
+   - **Core Principles of OOP**: Encapsulation, abstraction, inheritance, and polymorphism. We discussed the advantages (modularity, reusability, flexibility, maintainability) and disadvantages (learning curve, design overhead, code size, performance overhead) of OOP.
 
-        Covers the ROS 2 distributed architecture, DDS middleware and
-        QoS policies, the publish/subscribe model (nodes, topics,
-        messages, rules, patterns), workspace setup and ``colcon``
-        builds, Python package creation (``package.xml``, ``setup.py``,
-        ``ament_python``), writing minimal and OOP-based nodes with
-        ``rclpy``, spinning and the executor model, timers and
-        callbacks, publishers (``create_publisher``, ``Int64``,
-        ``QoSProfile``), subscribers (``create_subscription``, named
-        callbacks), and three pub/sub communication timing scenarios
-        (no subscriber, fast subscriber, slow subscriber).
+   - **Classes and Objects**: A class is a blueprint that bundles attributes (data) and methods (behavior). An object is a concrete instance of a class with its own state. Each object has its own copy of attributes, but all objects share the same method code.
 
+   - **Design Phase**: Requirement analysis (functional, non-functional, technical constraints, success criteria) and the modeling phase (static structure with UML class diagrams, dynamic behavior with sequence diagrams). We surveyed UML modeling tools.
 
-.. dropdown:: ROS 2 Official Documentation
-    :class-container: sd-border-secondary
+   - **Implementation Phase**: Project structure best practices (separate ``include/`` and ``src/`` directories). Modern C++ features: ``std::string_view`` for lightweight, non-owning string references, and ``std::optional`` for type-safe representation of values that may not exist.
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
+   - **Encapsulation**: Access specifiers (``public``, ``private``, ``protected``). All attributes must be ``private`` or ``protected``.
 
-        .. grid-item-card:: ROS 2 Jazzy Documentation
-            :link: https://docs.ros.org/en/jazzy/
-            :class-card: sd-border-secondary
+   - **Accessors/Mutators**: Getters with ``const``, ``[[nodiscard]]``, and ``noexcept``. Setters with validation and without ``const``.
 
-            **docs.ros.org**
+   - **Constructors**: Default constructors, parameterized constructors, and member initializer lists. Construction order: base class, member attributes (in declaration order), constructor body. Member initializer lists are required for ``const`` and reference members.
 
-            The official ROS 2 Jazzy documentation hub. Starting point
-            for all ROS 2 concepts, tutorials, and API references.
+   - **const Objects**: Can only call ``const`` methods. Non-``const`` objects can call both ``const`` and non-``const`` methods.
 
-            +++
+   - **The this Pointer**: Implicit pointer to the current object in non-``static`` methods. Used for disambiguation, method chaining (``return *this``), and returning the current object.
 
-            - Concepts overview
-            - Tutorials (beginner to advanced)
-            - API reference
+   - **static Members**: ``static`` attributes belong to the class (one shared copy). ``static`` methods have no ``this`` pointer and cannot access non-``static`` members. Useful for counters, shared resources, and utility functions.
 
-        .. grid-item-card:: ROS 2 Beginner Tutorials
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries.html
-            :class-card: sd-border-secondary
+.. dropdown:: cppreference Links
+   :class-container: sd-border-success
 
-            **Beginner: Client Libraries**
-
-            Step-by-step tutorials for writing nodes, publishers,
-            subscribers, services, and actions in Python.
-
-            +++
-
-            - Creating a workspace
-            - Writing a simple publisher/subscriber
-            - Writing a simple service/client
-
-        .. grid-item-card:: rclpy API Reference
-            :link: https://docs.ros.org/en/jazzy/p/rclpy/
-            :class-card: sd-border-secondary
-
-            **rclpy**
-
-            Full Python API reference for the ``rclpy`` client library.
-
-            +++
-
-            - ``Node`` class
-            - ``create_publisher``, ``create_subscription``
-            - ``create_timer``, ``spin``, ``shutdown``
-
-        .. grid-item-card:: ROS 2 QoS Settings
-            :link: https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
-            :class-card: sd-border-secondary
-
-            **QoS Concepts**
-
-            Detailed explanation of all QoS policies, compatibility
-            rules, and predefined profiles.
-
-            +++
-
-            - Reliability, durability, history, deadline
-            - Compatibility matrix
-            - Predefined profiles
-
-        .. grid-item-card:: ROS 2 Logging
-            :link: https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Logging.html
-            :class-card: sd-border-secondary
-
-            **About Logging**
-
-            How the ROS 2 logging system works, severity levels, and
-            configuration options.
-
-            +++
-
-            - Log levels: DEBUG, INFO, WARN, ERROR, FATAL
-            - ``/rosout`` topic
-            - Log file output
-
-        .. grid-item-card:: colcon Documentation
-            :link: https://colcon.readthedocs.io/
-            :class-card: sd-border-secondary
-
-            **colcon**
-
-            Official documentation for the colcon build tool.
-
-            +++
-
-            - ``colcon build`` flags
-            - ``--symlink-install``
-            - Package discovery
-
-
-.. dropdown:: DDS and Middleware
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: OMG DDS Portal
-            :link: https://www.omg.org/omg-dds-portal/
-            :class-card: sd-border-secondary
-
-            **Object Management Group**
-
-            Official DDS standard, specification downloads, and
-            community resources.
-
-            +++
-
-            - DDS specification
-            - RTPS wire protocol
-            - Vendor landscape
-
-        .. grid-item-card:: DDS Foundation
-            :link: https://www.dds-foundation.org/
-            :class-card: sd-border-secondary
-
-            **DDS Foundation**
-
-            Use cases, QoS reference, webinar series, and historical
-            overview of DDS adoption.
-
-            +++
-
-            - QoS policy reference
-            - Application domain case studies
-            - Interoperability
-
-        .. grid-item-card:: eProsima Fast DDS
-            :link: https://fast-dds.docs.eprosima.com/
-            :class-card: sd-border-secondary
-
-            **Fast DDS Documentation**
-
-            Documentation for the default ROS 2 DDS implementation
-            (eProsima Fast DDS).
-
-            +++
-
-            - Configuration
-            - QoS profiles
-            - Discovery settings
-
-        .. grid-item-card:: ROS 2 DDS Vendor Guide
-            :link: https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Different-Middleware-Vendors.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy: Middleware Vendors**
-
-            Comparison of supported RMW implementations for Jazzy:
-            Fast DDS, Cyclone DDS, Connext DDS, GurumDDS.
-
-            +++
-
-            - Switching RMW at runtime
-            - Vendor feature comparison
-            - Installation instructions
-
-
-.. dropdown:: External Tutorials
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Articulated Robotics: ROS 2 Tutorials
-            :link: https://articulatedrobotics.xyz/category/ros2-tutorials/
-            :class-card: sd-border-secondary
-
-            **Articulated Robotics**
-
-            Practical video and written tutorials for ROS 2 from
-            workspace setup through navigation.
-
-            +++
-
-            - Workspace setup
-            - Publisher/subscriber patterns
-            - Launch files
-
-        .. grid-item-card:: The Construct: ROS 2 Basics
-            :link: https://www.theconstructsim.com/ros2-for-beginners/
-            :class-card: sd-border-secondary
-
-            **The Construct**
-
-            Browser-based ROS 2 environment with guided courses for
-            beginners through advanced users.
-
-            +++
-
-            - Interactive exercises
-            - No local install required
-            - Structured curriculum
-
-        .. grid-item-card:: Real Python: Python Classes (OOP)
-            :link: https://realpython.com/python3-object-oriented-programming/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Review of Python OOP concepts underlying OOP node design:
-            classes, inheritance, ``__init__``, ``super()``.
-
-            +++
-
-            - Class definition and instantiation
-            - Inheritance and ``super()``
-            - Instance and class attributes
-
-
-.. dropdown:: Style and Best Practices
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: ROS 2 Python Style Guide
-            :link: https://docs.ros.org/en/jazzy/Contributing/Code-Style-Language-Versions.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Coding Standards**
-
-            Official style guidelines for Python and C++ ROS 2 code.
-
-            +++
-
-            - Naming conventions
-            - Node class structure
-            - Docstring style
-
-        .. grid-item-card:: PEP 8 -- Python Style Guide
-            :link: https://peps.python.org/pep-0008/
-            :class-card: sd-border-secondary
-
-            **Coding Conventions**
-
-            Python style guide applied throughout ROS 2 Python code.
-
-            +++
-
-            - ``snake_case`` for topic names and variables
-            - Class naming: ``CamelCase``
-            - Import ordering
-
+   - `Classes -- cppreference.com <https://en.cppreference.com/w/cpp/language/classes>`_
+   - `Constructors and member initializer lists -- cppreference.com <https://en.cppreference.com/w/cpp/language/constructor>`_
+   - `Access specifiers -- cppreference.com <https://en.cppreference.com/w/cpp/language/access>`_
+   - `static members -- cppreference.com <https://en.cppreference.com/w/cpp/language/static>`_
+   - `this pointer -- cppreference.com <https://en.cppreference.com/w/cpp/language/this>`_
+   - `const member functions -- cppreference.com <https://en.cppreference.com/w/cpp/language/member_functions>`_
+   - `std::string_view -- cppreference.com <https://en.cppreference.com/w/cpp/string/basic_string_view>`_
+   - `std::optional -- cppreference.com <https://en.cppreference.com/w/cpp/utility/optional>`_
+   - `[[nodiscard]] attribute -- cppreference.com <https://en.cppreference.com/w/cpp/language/attributes/nodiscard>`_
 
 .. dropdown:: Recommended Reading
-    :class-container: sd-border-secondary
+   :class-container: sd-border-success
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Anis Koubaa (Ed.)
-            :class-card: sd-border-secondary
-
-            **Robot Operating System (ROS): The Complete Reference
-            (Vol. 1-7)**
-
-            A multi-volume series covering ROS and ROS 2 from
-            fundamentals through advanced applications. Relevant
-            chapters cover distributed architectures, DDS, and
-            communication patterns.
-
-        .. grid-item-card:: Open Robotics
-            :class-card: sd-border-secondary
-
-            **Programming Robots with ROS 2**
-
-            Hands-on guide to writing ROS 2 applications in Python and
-            C++, covering nodes, topics, services, actions, parameters,
-            and launch files.
-
-        .. grid-item-card:: Silberschatz, Galvin, and Gagne
-            :class-card: sd-border-secondary
-
-            **Operating System Concepts (10th Edition)**
-
-            Chapter 3 (Processes) and Chapter 4 (Threads) provide the
-            OS-level background for understanding ROS 2 process
-            isolation, the main thread, and the executor spin loop.
-
-        .. grid-item-card:: Object Management Group
-            :class-card: sd-border-secondary
-
-            **DDS Specification v1.4**
-
-            The formal OMG specification for the Data Distribution
-            Service. Appendix A contains the complete QoS policy
-            reference with compatibility rules and default values.
+   - *A Tour of C++* by Bjarne Stroustrup -- Chapters 5--6 (Classes and Essential Operations)
+   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 7 (Classes)
+   - *Effective Modern C++* by Scott Meyers -- Items 3, 7, 10 (uniform initialization, member init lists, ``noexcept``)
+   - `LearnCpp.com: Introduction to classes <https://www.learncpp.com/cpp-tutorial/introduction-to-object-oriented-programming/>`_
+   - `LearnCpp.com: Constructors <https://www.learncpp.com/cpp-tutorial/constructors/>`_
+   - `LearnCpp.com: Access specifiers <https://www.learncpp.com/cpp-tutorial/access-specifiers-and-access-functions/>`_

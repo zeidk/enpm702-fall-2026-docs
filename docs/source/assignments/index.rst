@@ -2,30 +2,87 @@
 Assignments
 ====================================================
 
-Overview
---------
-
-Assignments in ENPM605 are programming exercises designed to reinforce the concepts covered in lectures. They come in two forms: **individual assignments**, where you work alone to demonstrate your understanding of core Python concepts, and **team projects**, where you collaborate with your peers to build larger robotics applications. Each assignment builds a complete Python application that applies core language features to a robotics-related problem. You will practice writing clean, modular, well-documented code while following professional software engineering standards.
-
-Guidelines
-----------
-
-- **Individual assignments** must be completed independently. Collaboration and AI tools are not permitted.
-- **Team projects** are completed in assigned groups. AI tools are permitted with proper documentation of their use.
-- Follow the project structure specified in each assignment. Submissions that do not match the required structure will receive deductions.
-- All code must include **type hints**, **Google-style docstrings**, and **inline comments** for non-obvious logic.
-- Ensure **Ruff** is enabled in VS Code and that no linting errors or warnings appear in your Python files before submitting.
-- Review the **Pre-Submission Checklist** included in each assignment before uploading to Canvas.
-- Late submissions are penalized at 10% per calendar day, up to 3 days. Submissions beyond 3 days receive a zero.
-- Team projects include **peer reviews**. Your final grade on team deliverables is based on 60% assignment grade and 40% peer review scores.
+This course includes three individual **Real-World Applications (RWAs)**
+focused on core C++ and three team-based **Group Projects (GPs)** focused
+on ROS 2 development. Both RWAs and GPs are **cumulative** --- each
+deliverable builds on the previous one.
 
 
-Contents
---------
+Real-World Applications (RWAs)
+------------------------------
+
+The RWAs progressively build a C++ application using robotics-themed
+use cases. Each RWA refactors and extends the previous one,
+demonstrating why each new C++ feature improves the codebase.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 40 15 15 15
+   :class: compact-table
+
+   * - Assignment
+     - Focus
+     - Posted
+     - Due
+     - Duration
+   * - :doc:`RWA1 <rwa1>`
+     - C++ Fundamentals (Variables, Types, Pointers)
+     - Week 3
+     - Week 5
+     - 2 weeks
+   * - :doc:`RWA2 <rwa2>`
+     - STL Containers and Functions
+     - Week 5
+     - Week 7
+     - 2 weeks
+   * - :doc:`RWA3 <rwa3>`
+     - Smart Pointers and OOP
+     - Week 9
+     - Week 11
+     - 2 weeks
+
+
+Group Projects (GPs)
+---------------------
+
+The GPs progressively build a ROS 2 application with a mobile robot
+in Gazebo. Each GP extends the previous deliverable.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 40 15 15 15
+   :class: compact-table
+
+   * - Project
+     - Focus
+     - Posted
+     - Due
+     - Duration
+   * - :doc:`GP1 <gp1>`
+     - ROS 2 Pub/Sub with Gazebo
+     - Week 11
+     - Week 13
+     - 2 weeks
+   * - :doc:`GP2 <gp2>`
+     - Services, Actions, and Robot Inheritance
+     - Week 13
+     - Week 14
+     - 1 week
+   * - :doc:`GP3 <gp3>`
+     - Coordinate Frames and Lifecycle Nodes
+     - Week 14
+     - Week 15
+     - 1 week
+
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :titlesonly:
 
    rwa1
    rwa2
+   rwa3
+   gp1
+   gp2
+   gp3

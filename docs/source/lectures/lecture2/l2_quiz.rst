@@ -2,9 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 2: Python Fundamentals -- Part I,
-including packages and modules, indentation, Boolean types, operators, numeric
-types, strings, and control flow.
+This quiz covers the key concepts from Lecture 2: Introduction to C++.
 
 .. note::
 
@@ -13,7 +11,6 @@ types, strings, and control flow.
    - Answer all questions to the best of your ability.
    - Multiple choice questions have exactly one correct answer.
    - True/False questions require you to determine if the statement is correct.
-   - Essay questions require short written responses (2-4 sentences).
    - Click the dropdown after each question to reveal the answer.
 
 
@@ -26,580 +23,289 @@ Multiple Choice
 .. admonition:: Question 1
    :class: hint
 
-   What is the difference between a **module** and a **package** in Python?
+   What are the three stages of the C++ build process, in order?
 
-   A. A module is a folder; a package is a single ``.py`` file.
-
-   B. A module is a single ``.py`` file; a package is a folder containing ``.py`` files with an ``__init__.py``.
-
-   C. A module contains only functions; a package contains only classes.
-
-   D. There is no difference; the terms are interchangeable.
+   A. Compiler, preprocessor, linker
+   B. Preprocessor, compiler, linker
+   C. Linker, compiler, preprocessor
+   D. Preprocessor, linker, compiler
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- A module is a single ``.py`` file; a package is a folder containing ``.py`` files with an ``__init__.py``.
+   **B** -- Preprocessor, compiler, linker
 
-   A module is any single Python file that can be imported. A package is a directory containing one or more modules plus an ``__init__.py`` file (which can be empty) that marks it as a package.
+   *Explanation:* The preprocessor handles directives like ``#include`` and ``#define``, producing a translation unit. The compiler translates each translation unit into an object file. The linker combines object files and libraries into the final executable.
 
+
+----
 
 .. admonition:: Question 2
    :class: hint
 
-   Which import approach is **recommended** for clarity and avoiding namespace pollution?
+   Which of the following is the correct way to use uniform (brace) initialization in C++?
 
-   A. ``import shape.square``
-
-   B. ``from shape.square import *``
-
-   C. ``from shape.square import compute_area, compute_perimeter``
-
-   D. ``import shape.square as s``
+   A. ``int speed = 10;``
+   B. ``int speed(10);``
+   C. ``int speed{10};``
+   D. ``int speed[10];``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``from shape.square import compute_area, compute_perimeter``
+   **C** -- ``int speed{10};``
 
-   This approach explicitly imports only the names you need, making it clear where each function comes from and avoiding namespace pollution. Wildcards (``*``) can silently overwrite existing names.
+   *Explanation:* Uniform initialization uses curly braces ``{}``. This is the preferred initialization style in modern C++ because it prevents narrowing conversions. Option A is copy initialization, B is direct initialization, and D declares an array.
 
+
+----
 
 .. admonition:: Question 3
    :class: hint
 
    What is the output of the following code?
 
-   .. code-block:: python
+   .. code-block:: cpp
 
-      print(17 // 5)
-      print(17 % 5)
+      int value{5};
+      {
+          int value{10};
+          std::cout << value;
+      }
+      std::cout << value;
 
-   A. ``3`` and ``2``
-
-   B. ``3.4`` and ``2``
-
-   C. ``3`` and ``0.4``
-
-   D. ``4`` and ``2``
+   A. ``55``
+   B. ``1010``
+   C. ``105``
+   D. ``510``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **A** -- ``3`` and ``2``
+   **C** -- ``105``
 
-   ``17 // 5`` is floor division, which returns ``3`` (the quotient rounded down). ``17 % 5`` is the modulus operator, which returns ``2`` (the remainder).
+   *Explanation:* The inner block declares a new variable ``value`` that shadows the outer one. Inside the block, ``value`` is 10. Once the block ends, the inner ``value`` goes out of scope, and the outer ``value`` (which is 5) is printed.
 
+
+----
 
 .. admonition:: Question 4
    :class: hint
 
-   Which of the following values is considered **truthy** in Python?
+   What does the ``sizeof`` operator return?
 
-   A. ``0``
-
-   B. ``""`` (empty string)
-
-   C. ``[]`` (empty list)
-
-   D. ``" "`` (string with a single space)
+   A. The value stored in a variable.
+   B. The number of bits used by a type.
+   C. The number of bytes used by a type or variable.
+   D. The memory address of a variable.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **D** -- ``" "`` (string with a single space)
+   **C** -- The number of bytes used by a type or variable.
 
-   A string containing a space is non-empty and therefore truthy. Empty containers (``[]``, ``""``) and zero values (``0``) are falsy.
+   *Explanation:* The ``sizeof`` operator returns the size in bytes of a type or variable. For example, ``sizeof(int)`` typically returns 4 on most modern systems, meaning ``int`` uses 4 bytes (32 bits) of memory.
 
+
+----
 
 .. admonition:: Question 5
    :class: hint
 
-   What is the output of the following code?
+   Which of the following demonstrates a narrowing conversion that uniform initialization would catch?
 
-   .. code-block:: python
-
-      print(0 or "default")
-      print("hello" and "world")
-
-   A. ``0`` and ``"hello"``
-
-   B. ``"default"`` and ``"world"``
-
-   C. ``False`` and ``True``
-
-   D. ``"default"`` and ``"hello"``
+   A. ``int x{5};``
+   B. ``double d{3.14};``
+   C. ``int x{3.14};``
+   D. ``float f{3.14f};``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``"default"`` and ``"world"``
+   **C** -- ``int x{3.14};``
 
-   The ``or`` operator returns the first truthy value (``"default"`` since ``0`` is falsy). The ``and`` operator returns the last value if all are truthy (``"world"``), or the first falsy value otherwise.
+   *Explanation:* Assigning a ``double`` literal (3.14) to an ``int`` using brace initialization is a narrowing conversion. The compiler will issue an error because data would be lost (the fractional part). This is one of the key benefits of uniform initialization -- it prevents accidental data loss.
 
+
+----
 
 .. admonition:: Question 6
    :class: hint
 
-   What is the correct way to check if a variable ``x`` is ``None``?
+   What is the difference between ``const`` and ``constexpr``?
 
-   A. ``if x == None:``
-
-   B. ``if x is None:``
-
-   C. ``if x = None:``
-
-   D. ``if x.is_none():``
+   A. ``const`` is evaluated at compile time; ``constexpr`` is evaluated at runtime.
+   B. ``constexpr`` guarantees compile-time evaluation; ``const`` only means the value cannot be modified after initialization.
+   C. They are identical in behavior.
+   D. ``constexpr`` can only be used with integers.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``if x is None:``
+   **B** -- ``constexpr`` guarantees compile-time evaluation; ``const`` only means the value cannot be modified after initialization.
 
-   The ``is`` operator checks identity (same object in memory). For ``None``, this is the correct approach since there is only one ``None`` object in Python. Using ``==`` would work but is not idiomatic.
+   *Explanation:* A ``const`` variable can be initialized with a runtime value (e.g., user input). A ``constexpr`` variable must be initialized with a value that can be computed at compile time. This allows the compiler to optimize by substituting the value directly.
 
+
+----
 
 .. admonition:: Question 7
    :class: hint
 
-   Given the string ``greeting = "hello"``, what does ``greeting[-2]`` return?
+   What naming convention does the C++ Core Guidelines recommend for variables?
 
-   A. ``"h"``
-
-   B. ``"o"``
-
-   C. ``"l"``
-
-   D. ``"e"``
+   A. camelCase (e.g., ``myVariable``)
+   B. PascalCase (e.g., ``MyVariable``)
+   C. snake_case (e.g., ``my_variable``)
+   D. Hungarian notation (e.g., ``iMyVariable``)
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``"l"``
+   **C** -- snake_case (e.g., ``my_variable``)
 
-   Negative indices count from the end. ``greeting[-1]`` is ``"o"``, so ``greeting[-2]`` is the second-to-last character, ``"l"``.
+   *Explanation:* The C++ Core Guidelines recommend snake_case for variable and function names. This convention uses lowercase letters with underscores separating words, improving readability.
 
+
+----
 
 .. admonition:: Question 8
    :class: hint
 
-   What is the output of ``"hello"[1:4]``?
+   Given the following code, what is the type of ``result``?
 
-   A. ``"hel"``
+   .. code-block:: cpp
 
-   B. ``"ell"``
+      int a{5};
+      double b{2.5};
+      auto result = a + b;
 
-   C. ``"ello"``
-
-   D. ``"hell"``
+   A. ``int``
+   B. ``float``
+   C. ``double``
+   D. ``long``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``"ell"``
+   **C** -- ``double``
 
-   Slicing ``[1:4]`` extracts characters at indices 1, 2, and 3 (stop index is exclusive). From ``"hello"``, these are ``"e"``, ``"l"``, ``"l"``.
+   *Explanation:* When an ``int`` and a ``double`` are used in an arithmetic expression, the ``int`` is implicitly converted to ``double`` through arithmetic conversion (the type with the higher rank wins). The ``auto`` keyword deduces the type of the result, which is ``double``.
 
+
+----
 
 .. admonition:: Question 9
    :class: hint
 
-   Which of the following correctly reverses the string ``"Python"`` using slicing?
+   What happens when you access an uninitialized local variable in C++?
 
-   A. ``"Python"[::1]``
-
-   B. ``"Python"[::-1]``
-
-   C. ``"Python"[-1::]``
-
-   D. ``"Python"[0:-1:-1]``
+   A. It is automatically initialized to zero.
+   B. The compiler always generates an error.
+   C. It results in undefined behavior.
+   D. It is initialized to ``nullptr``.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``"Python"[::-1]``
+   **C** -- It results in undefined behavior.
 
-   A stride of ``-1`` reverses the string. The result is ``"nohtyP"``.
+   *Explanation:* Reading an uninitialized local variable in C++ is undefined behavior. The variable holds whatever garbage value was previously at that memory location. The compiler may or may not warn about this. Always initialize your variables.
 
+
+----
 
 .. admonition:: Question 10
    :class: hint
 
-   What is the output of the following code?
+   Which statement about namespaces is correct?
 
-   .. code-block:: python
-
-      x = 5
-      print(1 < x < 10)
-
-   A. ``True``
-
-   B. ``False``
-
-   C. ``SyntaxError``
-
-   D. ``5``
+   A. ``using namespace std;`` is recommended in header files.
+   B. Namespaces prevent naming collisions by grouping identifiers under a unique name.
+   C. You cannot nest namespaces inside other namespaces.
+   D. The ``::`` operator is called the dot operator.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **A** -- ``True``
+   **B** -- Namespaces prevent naming collisions by grouping identifiers under a unique name.
 
-   Python supports chained comparisons. ``1 < x < 10`` is equivalent to ``1 < x and x < 10``. Since ``x = 5``, both conditions are true.
+   *Explanation:* Namespaces are used to organize code and prevent naming collisions. Using ``using namespace std;`` in header files is considered bad practice because it pollutes the global namespace for all files that include that header. Namespaces can be nested, and ``::`` is called the scope resolution operator.
 
+
+----
+
+True/False
+==========
 
 .. admonition:: Question 11
    :class: hint
 
-   Why should you avoid comparing floats with ``==``?
-
-   A. Python does not support float comparisons.
-
-   B. Floats are stored with limited precision, causing rounding errors.
-
-   C. The ``==`` operator only works with integers.
-
-   D. Comparing floats raises a ``TypeError``.
+   **True or False:** The ``#include`` directive is processed by the compiler during the compilation stage.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Floats are stored with limited precision, causing rounding errors.
+   **False**
 
-   Floating-point numbers use IEEE 754 representation, which cannot exactly represent all decimal values. For example, ``0.1 + 0.2 == 0.3`` returns ``False``. Use ``math.isclose()`` instead.
+   *Explanation:* The ``#include`` directive is processed by the **preprocessor**, not the compiler. The preprocessor runs before compilation and handles all directives that begin with ``#``, such as ``#include``, ``#define``, and ``#ifdef``.
 
+
+----
 
 .. admonition:: Question 12
    :class: hint
 
-   What does the ``__name__`` variable contain when a Python script is run directly?
-
-   A. The filename of the script.
-
-   B. ``"__main__"``
-
-   C. ``None``
-
-   D. The module's import path.
+   **True or False:** A ``constexpr`` variable can be initialized with a value obtained from ``std::cin``.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``"__main__"``
+   **False**
 
-   When a script is run directly, Python sets its ``__name__`` variable to ``"__main__"``. When imported as a module, ``__name__`` is set to the module's name.
+   *Explanation:* A ``constexpr`` variable must be initialized with a value that can be computed at compile time. Since ``std::cin`` reads input at runtime, it cannot be used to initialize a ``constexpr`` variable. A ``const`` variable, however, can be initialized with runtime values.
 
+
+----
 
 .. admonition:: Question 13
    :class: hint
 
-   Which string formatting method is **recommended** for Python 3.6+?
-
-   A. ``"Name: %s" % name``
-
-   B. ``"Name: {}".format(name)``
-
-   C. ``f"Name: {name}"``
-
-   D. ``"Name: " + name``
+   **True or False:** In C++, ``bool`` values ``true`` and ``false`` are stored as integers ``1`` and ``0`` respectively.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``f"Name: {name}"``
+   **True**
 
-   F-strings (formatted string literals) are the recommended approach for Python 3.6+. They are faster, more readable, and support inline expressions.
+   *Explanation:* In C++, ``true`` is implicitly convertible to the integer ``1`` and ``false`` to ``0``. When a ``bool`` is used in an arithmetic context, this integral promotion occurs automatically. Similarly, any non-zero integer converts to ``true`` and zero converts to ``false``.
 
+
+----
 
 .. admonition:: Question 14
    :class: hint
 
-   What is the output of the following code?
-
-   .. code-block:: python
-
-      a = [1, 2, 3]
-      b = [1, 2, 3]
-      print(a == b)
-      print(a is b)
-
-   A. ``True`` and ``True``
-
-   B. ``True`` and ``False``
-
-   C. ``False`` and ``True``
-
-   D. ``False`` and ``False``
+   **True or False:** A variable declared inside a ``for`` loop body can be accessed after the loop ends.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``True`` and ``False``
+   **False**
 
-   ``a == b`` compares values (both lists contain the same elements, so ``True``). ``a is b`` compares identity (they are different objects in memory, so ``False``).
+   *Explanation:* Variables declared inside a ``for`` loop body (or any block enclosed in ``{}``) have local scope limited to that block. Once the block ends, the variable goes out of scope and is destroyed. Attempting to access it outside the block would result in a compilation error.
 
+
+----
 
 .. admonition:: Question 15
    :class: hint
 
-   What is the output of the following code?
-
-   .. code-block:: python
-
-      score = 75
-      if score >= 90:
-          grade = "A"
-      elif score >= 80:
-          grade = "B"
-      elif score >= 70:
-          grade = "C"
-      else:
-          grade = "F"
-      print(grade)
-
-   A. ``"A"``
-
-   B. ``"B"``
-
-   C. ``"C"``
-
-   D. ``"F"``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **C** -- ``"C"``
-
-   The conditions are evaluated in order. ``75 >= 90`` is ``False``, ``75 >= 80`` is ``False``, but ``75 >= 70`` is ``True``, so ``grade`` is assigned ``"C"``.
-
-
-----
-
-
-True or False
-=============
-
-.. admonition:: Question 16
-   :class: hint
-
-   **True or False:** Python uses braces ``{}`` to define code blocks, similar to C++ and Java.
+   **True or False:** Using ``static_cast<int>(3.7)`` will result in the value ``4`` due to rounding.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **False**
 
-   Python uses indentation (whitespace) to define code blocks, not braces. This is a fundamental difference from C-style languages.
-
-
-.. admonition:: Question 17
-   :class: hint
-
-   **True or False:** The expression ``not []`` evaluates to ``True`` because an empty list is falsy.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   An empty list ``[]`` is falsy in Python. The ``not`` operator inverts the Boolean value, so ``not []`` evaluates to ``True``.
-
-
-.. admonition:: Question 18
-   :class: hint
-
-   **True or False:** In Python, strings are mutable, meaning you can change individual characters after creation.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   Strings in Python are immutable. You cannot change individual characters; instead, you must create a new string. Attempting ``s[0] = "X"`` raises a ``TypeError``.
-
-
-.. admonition:: Question 19
-   :class: hint
-
-   **True or False:** The ``in`` operator can be used to check if a substring exists within a string.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   The ``in`` operator works with strings to check for substrings. For example, ``"ell" in "hello"`` returns ``True``.
-
-
-.. admonition:: Question 20
-   :class: hint
-
-   **True or False:** Python integers have unlimited precision, meaning they can grow arbitrarily large.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   Unlike many languages where integers have fixed sizes (32-bit or 64-bit), Python integers can grow to arbitrary size, limited only by available memory.
-
-
-.. admonition:: Question 21
-   :class: hint
-
-   **True or False:** The expression ``10 // -3`` evaluates to ``-3`` because floor division rounds toward negative infinity.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   ``10 // -3`` evaluates to ``-4``, not ``-3``. Floor division rounds toward negative infinity, so ``-3.33...`` rounds down to ``-4``.
-
-
-.. admonition:: Question 22
-   :class: hint
-
-   **True or False:** Wildcard imports (``from module import *``) are recommended because they save typing.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   Wildcard imports should be avoided because they pollute the namespace and can silently overwrite existing names, making code harder to understand and debug.
-
-
-.. admonition:: Question 23
-   :class: hint
-
-   **True or False:** The conditional expression ``status = "adult" if age >= 18 else "minor"`` is valid Python syntax.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   This is Python's conditional (ternary) expression syntax. It assigns ``"adult"`` if the condition is true, otherwise ``"minor"``.
-
-
-.. admonition:: Question 24
-   :class: hint
-
-   **True or False:** Adding a path to ``sys.path`` makes packages discoverable for all future Python sessions.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   ``sys.path.insert()`` only affects the current Python session. The path resets when you start a new Python interpreter. For persistent changes, use ``PYTHONPATH``, ``.pth`` files, or ``pip install -e``.
-
-
-.. admonition:: Question 25
-   :class: hint
-
-   **True or False:** The ``bool`` type in Python is a subclass of ``int``, where ``True`` equals ``1`` and ``False`` equals ``0``.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   ``bool`` is indeed a subclass of ``int``. You can verify this with ``isinstance(True, int)`` which returns ``True``. Arithmetic with Booleans is valid: ``True + True == 2``.
-
-
-----
-
-
-Essay Questions
-===============
-
-.. admonition:: Question 26
-   :class: hint
-
-   **Explain why wildcard imports (** ``from module import *`` **) should be avoided.** Describe the problem of namespace pollution and provide an example of how it can cause bugs.
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - Wildcard imports (``from module import *``) bring all public names from a module into the current namespace.
-   - This causes namespace pollution where names from different modules can silently overwrite each other.
-   - Example: If both ``shape.square`` and ``shape.circle`` define ``compute_area()``, the second import overwrites the first without warning.
-   - Best practice is to use explicit named imports so it's clear where each function originated.
-
-
-.. admonition:: Question 27
-   :class: hint
-
-   **Describe how Python's short-circuit evaluation works with** ``and`` **and** ``or`` **operators.** Explain what values these operators return when used with non-Boolean operands and provide an example use case.
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - ``and`` returns the first falsy value, or the last value if all are truthy.
-   - ``or`` returns the first truthy value, or the last value if all are falsy.
-   - These operators return the actual operand, not necessarily ``True`` or ``False``.
-   - Common pattern: ``name = user_input or "Anonymous"`` provides a default value when ``user_input`` is empty or falsy.
-
-
-.. admonition:: Question 28
-   :class: hint
-
-   **Explain the difference between** ``==`` **and** ``is`` **operators.** When should you use each one, and why is ``is`` recommended for ``None`` checks?
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - ``==`` compares values (whether two objects have the same content).
-   - ``is`` compares identity (whether two references point to the same object in memory).
-   - Use ``is`` for ``None`` checks because there is exactly one ``None`` object in Python, making identity comparison both correct and idiomatic.
-   - Never rely on ``is`` for integers or strings due to interning optimizations that vary by implementation.
-
-
-.. admonition:: Question 29
-   :class: hint
-
-   **Describe three methods for making Python packages discoverable** (i.e., available for import from anywhere). For each method, explain when it would be most appropriate to use.
-
-   *(3-5 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - ``sys.path.insert()``: Adds path for the current script only; good for quick fixes and sibling packages.
-   - ``PYTHONPATH`` environment variable: Affects the terminal session; good for development and testing.
-   - ``.pth`` files in site-packages: System-wide and permanent; good for shared libraries across projects.
-   - ``pip install -e .`` (editable install): Most robust and professional approach; works from anywhere and changes take effect immediately without reinstalling.
-
-
-.. admonition:: Question 30
-   :class: hint
-
-   **Explain string slicing syntax** ``[start:stop:stride]`` **and demonstrate how to extract a substring and reverse a string.** Use the string ``"Python"`` in your examples.
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - Syntax: ``[start:stop:stride]`` where start is inclusive, stop is exclusive, and stride is the step size.
-   - Extracting substring: ``"Python"[0:2]`` returns ``"Py"``; ``"Python"[2:]`` returns ``"thon"``.
-   - Reversing: ``"Python"[::-1]`` returns ``"nohtyP"`` because a stride of ``-1`` steps backward through the string.
-   - Defaults: start defaults to 0, stop defaults to end, stride defaults to 1.
+   *Explanation:* ``static_cast<int>(3.7)`` truncates the decimal part, resulting in ``3``, not ``4``. The cast does not round -- it simply discards the fractional portion. This is the same behavior as a C-style cast ``(int)3.7`` but is preferred because it is explicit and searchable.

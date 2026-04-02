@@ -1,1023 +1,1646 @@
-====================================================
-Lecture
-====================================================
+.. _l5_lecture:
 
+=============================
+Lecture 5: Functions -- Basics
+=============================
 
+.. contents:: Table of Contents
+   :depth: 3
+   :local:
 
-Programming Paradigms
-====================================================
+Part I -- The Core Mechanics
+-----------------------------
 
-Different ways to organize and think about code.
+Introduction to Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Refer to ``paradigms_demo.py`` to follow along with the examples below.
+A function is a named group of statements that can be executed as a unit. Functions are one of the most important concepts in C++ and form the foundation of modular programming.
 
+.. seealso::
 
-.. dropdown:: What Is a Programming Paradigm?
-   :open:
+   `C++ Core Guidelines: F (Functions) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-functions>`_
 
-   A **programming paradigm** is a fundamental style or approach to organizing and structuring code. It defines how you think about problems and express solutions.
+Code Reusability
+""""""""""""""""
 
-   **Three Major Paradigms**
+Functions eliminate the need to copy and paste code blocks (**DRY = Don't Repeat Yourself**). Create a function once and call it multiple times throughout your program.
 
-   - **Procedural** -- You tell the computer *how* to do something step by step. Code is organized around statements that change program state.
-   - **Object-Oriented (OOP)** -- You organize code around objects that bundle data (attributes) and behavior (methods). Emphasis on encapsulation, inheritance, and polymorphism.
-   - **Functional** -- You express computation as the evaluation of mathematical functions. Emphasis on immutability, pure functions, and avoiding side effects.
+.. code-block:: cpp
 
-   .. note::
+   constexpr unsigned int calculate_area(unsigned int length, unsigned int width) {
+       return length * width;
+   }
 
-      Python is a **multi-paradigm** language. You can mix procedural, object-oriented, and functional styles in the same program.
+   int main() {
+       // Use it anywhere:
+       unsigned int room1_area{calculate_area(10, 12)};
+       unsigned int room2_area{calculate_area(8, 15)};
 
+       std::cout << "Room 1 Area: " << room1_area << '\n';
+       std::cout << "Room 2 Area: " << room2_area << '\n';
+   }
 
-.. dropdown:: Comparing Approaches
-   :open:
+The DRY Principle: Don't Repeat Yourself
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   **Same Problem, Three Paradigms**
+The DRY principle states that every piece of logic should have a single, unambiguous representation within a system. In short: **avoid duplicating code**.
 
-   Task: Given a list of numbers, compute the sum of all even numbers.
+.. grid:: 2
 
-   .. code-block:: python
+   .. grid-item-card:: WET Code (Write Everything Twice)
 
-      # Imperative
-      nums = [1, 2, 3, 4, 5, 6]
-      total = 0
-      for n in nums:
-          if n % 2 == 0:
-              total += n
-      print(total)  # 12
+      .. code-block:: cpp
 
-   .. code-block:: python
+         // --- In your shopping cart ---
+         double price{100.0};
+         double discount{price * 0.10}; // 10% discount
+         double final_price1{price - discount};
 
-      # Functional
-      nums = [1, 2, 3, 4, 5, 6]
-      total = sum(filter(
-          lambda x: x % 2 == 0,
-          nums
-      ))
-      print(total)  # 12
+         // --- In the checkout page ---
+         double order_total{100.0};
+         double final_discount{order_total * 0.10};
+         double final_price2{order_total - final_discount};
 
-   .. code-block:: python
+      The discount logic is repeated. If you need to change the discount to 15%, you have to find and update it in **every location**, which is error-prone.
 
-      # Object-Oriented
-      class NumberProcessor:
-          def __init__(self, numbers: list[int]):
-              self._numbers = numbers
+   .. grid-item-card:: DRY Code (Using a Function)
 
-          def sum_even(self) -> int:
-              return sum(n for n in self._numbers if n % 2 == 0)
+      .. code-block:: cpp
 
-      processor = NumberProcessor([1, 2, 3, 4, 5, 6])
-      print(processor.sum_even())  # 12
+         double calculate_final_price(double price) {
+             double discount{price * 0.10};
+             return price - discount;
+         }
 
+         // --- In your shopping cart ---
+         double final_price1{calculate_final_price(100.0)};
 
-.. dropdown:: Key Principles of Functional Programming
-   :open:
+         // --- In the checkout page ---
+         double final_price2{calculate_final_price(100.0)};
 
-   Functional programming is built on a small set of principles that promote predictable, testable, and composable code.
+      The logic exists in **one place**. To change the discount, you only need to edit the function, guaranteeing consistency everywhere it's used.
 
-   - **Pure Functions** -- A function whose output depends only on its inputs and produces no side effects (no modifying external state, no I/O). Given the same inputs, a pure function always returns the same output.
+Modularity and Organization
+"""""""""""""""""""""""""""""
 
-     - Think of a mathematical function like f(x) = x^2 + 1: for any input x, the output is always the same, and computing f(3) = 10 does not change anything else in the world.
+Functions help organize code logically, making it easier to understand and maintain large projects.
 
-   - **Immutability** -- Data is not modified after creation. Instead of changing an object, you create a new one.
+.. code-block:: cpp
 
-     - For example, rather than sorting a list in place with ``my_list.sort()``, a functional approach uses ``sorted(my_list)`` to produce a new sorted list while leaving the original unchanged.
+   // Each function has a specific purpose
+   void get_user_input();
+   void process_data();
+   void display_results();
 
-   - **First-Class Functions** -- Functions can be assigned to variables, passed as arguments, and returned from other functions.
-   - **Higher-Order Functions** -- Functions that take other functions as arguments or return functions as results.
-   - **Avoiding Side Effects** -- Minimize or isolate operations that change state outside the function's scope.
+   int main() {
+       get_user_input();
+       process_data();
+       display_results();
+   }
 
-   **Example: Pure vs. Impure**
+.. seealso::
 
-   .. code-block:: python
+   - `F.2: A function should perform a single logical operation <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f2-a-function-should-perform-a-single-logical-operation>`_
+   - `F.3: Keep functions short and simple <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f3-keep-functions-short-and-simple>`_
 
-      # Pure function (no side effects, depends only on inputs)
-      def add(a: int, b: int) -> int:
-          return a + b
+Easier Debugging and Testing
+""""""""""""""""""""""""""""""
 
+When code is organized in functions, you can test and debug individual components separately, making bug fixing much more efficient.
 
-      # Impure function (side effect: modifies external state)
-      results = []
+.. code-block:: cpp
 
-      def add_and_store(a: int, b: int) -> int:
-          result = a + b
-          results.append(result)  # Side effect!
-          return result
+   // Test individual functions
+   bool is_valid_email(std::string email) {
+       // Validation logic here
+       return email.find("@") != std::string::npos;
+   }
 
+   // Easy to test:
+   is_valid_email("test@email.com");
 
-Callables
-====================================================
+Abstraction of Complex Operations
+"""""""""""""""""""""""""""""""""""
 
-Objects that behave like functions.
+Functions allow you to use complex operations without worrying about implementation details.
 
-Refer to ``callables_demo.py`` to follow along with the examples below.
+.. code-block:: cpp
 
+   // Complex math hidden behind simple function
+   double calculate_interest(double principal, double rate, int years) {
+       // Complex formula abstracted away
+       return principal * pow(1 + rate, years);
+   }
 
-.. dropdown:: What Is a Callable?
-   :open:
 
-   A **callable** is any object that can be called using parentheses ``()``. In Python, several types of objects are callable:
+The Function Lifecycle
+^^^^^^^^^^^^^^^^^^^^^^
 
-   - **Functions** defined with ``def``
-   - **Lambda** expressions
-   - **Classes** (calling a class creates an instance)
-   - **Instances** of classes that define the ``__call__`` method
-   - **Built-in functions** like ``len``, ``print``, ``range``
+Function Declaration
+""""""""""""""""""""
 
-   .. code-block:: python
+A function declaration (or prototype) consists of the **return type** + **identifier** + **parameters** (types and names). The body of the function is not part of the declaration.
 
-      def do_nothing():
-          pass
+.. code-block:: cpp
 
-      print(callable(do_nothing))  # True
-      print(callable(lambda x: x))  # True
-      print(callable(int))  # True (classes are callable)
-      print(callable(42))  # False (integers are not callable)
-      print(callable("hello"))  # False
+   type identifier(<parameters>); // e.g., int add_numbers(int a, int b);
 
+- ``type`` -- What kind of value the function is expected to return to the calling function (the caller) or main program. When a function does not return anything, its type should be ``void``.
+- ``identifier`` -- The name given to a function.
 
-First-Class Functions
-====================================================
+  .. note::
 
-Functions as objects you can assign, pass, and return.
+     - We use the same naming convention as for variables (``snake_case``).
+     - A function does an action, therefore, the identifier should include a verb.
 
-Refer to ``first_class_demo.py`` to follow along with the examples below.
+- ``<parameters>`` -- If the function takes parameters, the parameters are listed in the parentheses. Each parameter has the form ``type identifier``. If the function does not use any parameter, the parentheses are left empty.
 
+.. seealso::
 
-.. dropdown:: What Does "First-Class" Mean?
-   :open:
+   - `NL.25: Don't use void as an argument type <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-void>`_
+   - `F.1: "Package" meaningful operations as carefully named functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f1-package-meaningful-operations-as-carefully-named-functions>`_
 
-   In Python, functions are **first-class objects**. This means functions can be treated just like any other object (integers, strings, lists). Specifically, functions can be:
+**The "Promise"**
 
-   - **Assigned to variables** -- Store a function reference in a variable name.
-   - **Passed as arguments** -- Hand a function to another function as a parameter.
-   - **Returned from functions** -- Have a function produce another function as output.
-   - **Stored in data structures** -- Put functions in lists, dictionaries, or other containers.
+- The function declaration provides a *promise* that the function will be implemented (defined) elsewhere in the code, either later in the same source file or in a different source file.
+- *A function declaration allows you to use (call) that function before its actual definition in the code*. This is particularly useful in scenarios where multiple functions call each other.
+- During compilation, the *linker* will look for the actual definition of the function.
 
-   .. code-block:: python
+Function Definition
+""""""""""""""""""""
 
-      def compute_square(x):
-          return x**2
+A function definition (often referred to as a function **implementation**) consists of the **declaration** + **body**.
 
-      # Assigning a function to a variable
-      f = compute_square  # No parentheses! f is now the function object
-      print(f(5))  # 25
-      print(type(f))  # <class 'function'>
+.. code-block:: cpp
 
-   .. warning::
+   type identifier(<parameters>) {
+       // body of the function
+   }
 
-      ``f = compute_square`` assigns the function object. ``f = compute_square()`` calls the function and assigns the return value. These are very different!
+.. code-block:: cpp
 
-   .. tip::
+   // declaration
+   int add_numbers(int a, int b);
 
-      When debugging callbacks or higher-order functions, print the function object itself (not its return value) to verify you are passing the right function. For example, ``print(do_nothing)`` shows ``<function do_nothing at 0x...>``, while ``print(do_nothing())`` calls the function and prints its return value.
+   // definition
+   int add_numbers(int a, int b) {
+       return a + b;
+   }
 
+   int main() {
+       std::cout << add_numbers(3, 5) << '\n';
+   }
 
-.. dropdown:: Passing Functions as Arguments
-   :open:
+Header Files and Source Files
+""""""""""""""""""""""""""""""
 
-   **Callbacks and Higher-Order Functions**
+Think of your code like a book:
 
-   A **higher-order function** is a function that takes another function as an argument or returns one. The function passed in is sometimes called a **callback**.
+- **Header File (.hpp)**: The **Table of Contents**. It tells you *what* functions are available (declarations) but not how they work. It is a public-facing menu or interface.
+- **Source File (.cpp)**: The **Chapters**. It contains the actual story and details (definitions) of how each function works. This is the private implementation.
 
-   .. code-block:: python
+Separating code this way gives us three huge wins:
 
-      def apply_operation(func, a, b):
-          """Apply the given function to a and b."""
-          return func(a, b)
+1. Faster Compilation
+2. Code Reusability
+3. Better Organization
 
-      def add(x, y):
-          return x + y
+Benefit 1: Faster Compilation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      def multiply(x, y):
-          return x * y
+You only recompile what actually changes.
 
-      print(apply_operation(add, 3, 4))  # 7
-      print(apply_operation(multiply, 3, 4))  # 12
+.. grid:: 2
 
-   .. note::
+   .. grid-item-card:: Without Headers
 
-      **Robotics Application**: Callbacks are commonly used in ROS 2 subscriber nodes, where you pass a function that is invoked each time a new message arrives on a topic.
+      .. code-block:: cpp
 
+         // big_file.cpp - 10,000 lines
+         void funcA() { /* ... */ }
+         void funcB() { /* ... */ }
+         int main()  { /* ... */ }
 
-.. dropdown:: Returning Functions
-   :open:
+      Change one line in ``funcA()`` -- the **entire 10,000-line file** must be recompiled.
 
-   **Factory Functions**
+   .. grid-item-card:: With Headers
 
-   A function can create and return a new function. This is the foundation for closures and decorators, which we will cover later in this lecture.
+      .. code-block:: cpp
 
-   .. code-block:: python
+         // funcs.hpp
+         void funcA();
+         void funcB();
 
-      def make_multiplier(factor):
-          """Return a function that multiplies its input by factor."""
-          def multiply_value(x):
-              return x * factor
-          return multiply_value  # Return the inner function object
+         // main.cpp
+         #include "funcs.hpp"
+         int main() { /* ... */ }
 
-      double = make_multiplier(2)
-      triple = make_multiplier(3)
+         // funcs.cpp
+         #include "funcs.hpp"
+         void funcA() { /* ... */ }
 
-      print(double(5))  # 10
-      print(triple(5))  # 15
-      print(type(double))  # <class 'function'>
+      Change ``funcA()`` -- only ``funcs.cpp`` recompiles. Fast!
 
-   .. note::
+Benefit 2: Code Reusability
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      **Key Insight**: Each call to ``make_multiplier`` creates a new ``multiply_value`` function with its own ``factor`` value. The inner function "remembers" the value of ``factor`` even after ``make_multiplier`` has returned. This is a closure.
+Declare once, use everywhere. Headers are the single source of truth.
 
+.. grid:: 2
 
-.. dropdown:: Functions in Data Structures
-   :open:
+   .. grid-item-card:: Without Headers
 
-   **Storing Functions in Collections**
+      .. code-block:: cpp
 
-   Since functions are objects, they can be stored in lists, dictionaries, and other data structures. This pattern is useful for dispatch tables and plugin systems.
+         // file1.cpp
+         int add(int a, int b); // Declaration
+         // ...
+         // file2.cpp
+         int add(int a, int b); // Repeated!
+         // ...
+         // file3.cpp
+         int add(int a, int b); // Repeated again!
 
-   .. code-block:: python
+      Changing the function signature requires finding and updating it in **every single file**.
 
-      def add(a, b):
-          return a + b
+   .. grid-item-card:: With Headers
 
-      def multiply(a, b):
-          return a * b
+      .. code-block:: cpp
 
-      # Dispatch table: map operation names to functions
-      operations = {
-          "add": add,
-          "multiply": multiply,
+         // math.hpp
+         #pragma once
+         int add(int a, int b); // Declared ONCE
+
+         // file1.cpp
+         #include "math.hpp"
+
+         // file2.cpp
+         #include "math.hpp"
+
+      Change the declaration in **one place**, and every file that uses it gets the update automatically.
+
+Benefit 3: Better Organization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Headers group related functionality into logical modules.
+
+.. grid:: 2
+
+   .. grid-item-card:: Without Headers
+
+      .. code-block:: cpp
+
+         // mess.cpp - 5000 lines
+         // --- Customer Logic ---
+         struct Customer { /*...*/ };
+         void save_customer() { /*...*/ }
+         // --- Pricing Logic ---
+         struct Product { /*...*/ };
+         void calculate_price() { /*...*/ }
+         // --- Utility Logic ---
+         void send_email() { /*...*/ }
+
+      Finding code is difficult, different logic is tangled together, and it is impossible for a team to work on the code without conflicts.
+
+   .. grid-item-card:: With Headers
+
+      .. code-block:: cpp
+
+         // customer.hpp
+         struct Customer;
+         void save_customer();
+
+         // pricing.hpp
+         struct Product;
+         void calculate_price();
+
+         // main.cpp
+         #include "customer.hpp"
+         #include "pricing.hpp"
+
+      The project is clean and self-documenting. Need to work on pricing? Open ``pricing.hpp`` and ``pricing.cpp``. Simple, modular, and scalable.
+
+Include Guards
+~~~~~~~~~~~~~~~
+
+What if a file includes your header twice by accident? You will get "redefinition" errors. We solve this with **include guards**.
+
+.. grid:: 2
+
+   .. grid-item-card:: Old Way
+
+      .. code-block:: cpp
+
+         #ifndef MY_HEADER_HPP
+         #define MY_HEADER_HPP
+
+         // All your declarations go here...
+         int add(int a, int b);
+
+         #endif // MY_HEADER_HPP
+
+   .. grid-item-card:: Modern Way
+
+      .. code-block:: cpp
+
+         #pragma once
+
+         // All your declarations go here...
+         int add(int a, int b);
+
+      This is simpler, less error-prone, and supported by *most* modern compilers.
+
+.. seealso::
+
+   `Include Guards: #pragma once vs Header Guards <https://thamara.dev/posts/pragma-once-vs-header-guards/>`_
+
+.. admonition:: To-Do
+   :class: tip
+
+   1. Move all function declarations to ``week5.hpp``
+   2. Add include guards in ``week5.hpp``
+   3. Move all function definitions to ``week5.cpp``
+   4. Include ``week5.hpp`` at the top of your ``week5.cpp`` file
+   5. Include ``week5.hpp`` at the top of your ``main.cpp`` file
+   6. Update ``CMakeLists.txt`` to generate the executable from ``main.cpp`` and ``week5.cpp``
+   7. Update ``CMakeLists.txt`` to tell the build system where to find your headers using ``target_include_directories(<target> <INTERFACE|PUBLIC|PRIVATE> [items...])``
+   8. Build and run your program to confirm that it still works correctly
+
+.. admonition:: Best Practice
+   :class: important
+
+   ``main.cpp`` should contain only one function: The ``main`` function!
+
+.. warning::
+
+   - ``.cpp`` files are compiled but not included.
+   - ``.hpp`` files are included but not compiled.
+
+
+Function Call
+""""""""""""""
+
+When a function is called, the execution of the program jumps to the function definition, runs the code inside the function, and then returns back to the point from where the function was called, continuing from the next statement.
+
+**Why Defining Functions Is Not Enough**
+
+The compiler reads your code from top to bottom. This can lead to two common problems if you are not careful.
+
+.. grid:: 2
+
+   .. grid-item-card:: Problem 1: Order of Definition
+      :class-card: sd-border-danger
+
+      .. code-block:: cpp
+
+         void print_hello() {
+             print_world(); // ERROR!
+             // Compiler has not seen
+             // print_world() yet.
+         }
+         void print_world() { /* ... */ }
+
+         int main() { print_hello(); }
+
+   .. grid-item-card:: Problem 2: Cyclic Dependency
+      :class-card: sd-border-danger
+
+      .. code-block:: cpp
+
+         void prompt_user() {
+             // ...
+             print_number(num); // ERROR!
+         }
+         void print_number(int n) {
+             if (n <= 0)
+                 prompt_user(); // ERROR!
+         }
+         int main() { prompt_user(); }
+
+**The Solution: Function Declarations**
+
+Function declarations solve both of these problems.
+
+.. grid:: 2
+
+   .. grid-item-card:: Solution 1: Order Fixed
+      :class-card: sd-border-success
+
+      .. code-block:: cpp
+
+         // "Promise" to the compiler
+         void print_world();
+
+         void print_hello() {
+             print_world(); // OK!
+         }
+         void print_world() { /* ... */ }
+
+         int main() { print_hello(); }
+
+   .. grid-item-card:: Solution 2: Cycle Broken
+      :class-card: sd-border-success
+
+      .. code-block:: cpp
+
+         // Make promises for both
+         void print_number(int n);
+         void prompt_user();
+
+         void prompt_user() {
+             print_number(0); // OK!
+         }
+         void print_number(int n) {
+             prompt_user(); // OK!
+         }
+         int main() { prompt_user(); }
+
+**Tracing the Flow of Control**
+
+With declarations in place, the program executes by jumping between functions and always returning to where it was called.
+
+.. code-block:: cpp
+
+   // Declarations
+   void print_world();
+   void print_hello();
+
+   void print_world() {
+       std::cout << "world\n";
+   }
+
+   void print_hello() {
+       std::cout << "hello, ";
+       print_world();
+   }
+
+   int main() {
+       print_hello();
+       std::cout << "exit main\n";
+   }
+
+1. Execution starts in ``main()``.
+2. ``main()`` calls ``print_hello()``.
+3. Control jumps to ``print_hello()``.
+4. ``hello,`` is printed.
+5. ``print_hello()`` calls ``print_world()``.
+6. Control jumps to ``print_world()``, prints ``world``, and returns.
+7. Control returns to ``main()``, prints ``exit main``, and the program ends.
+
+.. admonition:: Best Practice
+   :class: important
+
+   **The Golden Rule of Function Ordering**: Always provide function declarations (prototypes) for all non-trivial functions, typically in header (``.hpp``) files. This completely solves ordering and cyclic dependency issues. It allows you to organize your code based on logic, not compiler limitations.
+
+The ``return`` Keyword
+""""""""""""""""""""""
+
+**Returning from void Functions**
+
+In a ``void`` function, ``return;`` is used to **exit the function early**. No value can be returned. It is optional at the end of a ``void`` function, as it will return automatically when it reaches the closing brace.
+
+.. code-block:: cpp
+
+   void print_number(int number) {
+       if (number < 0) {
+           std::cout << "Error: Negative numbers not allowed.\n";
+           return; // Exit the function immediately
+       }
+       std::cout << "The number is: " << number << "\n";
+   }
+
+   int main() {
+       print_number(10);  // Prints "The number is: 10"
+       print_number(-5);  // Prints error and returns
+   }
+
+**Returning Values from Functions**
+
+For non-``void`` functions, the ``return`` statement sends a value back to the function's caller. The type of the value you return **must match** or be convertible to the function's declared return type.
+
+.. code-block:: cpp
+
+   int calculate_sum(int a, int b) {
+       int result{a + b};
+       return result; // Send the value of 'result' back
+   }
+
+   int main() {
+       // The returned value is used
+       // to initialize the 'sum' variable.
+       int sum{calculate_sum(5, 3)};
+       std::cout << sum << '\n'; // 8
+   }
+
+How it works:
+
+1. ``main()`` calls ``calculate_sum(5, 3)``.
+2. ``calculate_sum`` runs and computes ``result`` (8).
+3. ``return result;`` makes a copy of ``result``'s value.
+4. Control jumps back to ``main()``.
+5. The returned copy of the value (8) is used to initialize ``sum``.
+
+.. warning::
+
+   **The Golden Rule of Returning Values**: Every possible execution path in a non-``void`` function **must** end with a ``return`` statement.
+
+   .. code-block:: cpp
+
+      // DANGEROUS: What if number is 0?
+      int get_sign(int number) {
+          if (number > 0) {
+              return 1;
+          } else if (number < 0) {
+              return -1;
+          }
+          // No return here! If number is 0, this causes UNDEFINED BEHAVIOR.
       }
 
-      op_name = "multiply"
-      result = operations[op_name](6, 7)
-      print(f"{op_name}(6, 7) = {result}")  # multiply(6, 7) = 42
+**Implicit Return Type Conversion**
 
+If you return a value of a different type, the compiler will try to **implicitly convert** it. This can sometimes lead to a loss of data.
 
-.. dropdown:: Built-in Higher-Order Functions: ``map``
-   :open:
+.. code-block:: cpp
 
-   **``map``: Apply a Function to Every Element**
+   int truncate_double() {
+       double value{99.99};
+       return value; // The double 99.99 is converted to the int 99
+   }
 
-   ``map(func, iterable)`` applies ``func`` to each element and returns a lazy iterator. Wrap the result in ``list()`` to see all values.
+   int main() {
+       int truncated{truncate_double()};
+       std::cout << truncated << '\n'; // Prints 99
+   }
 
-   .. code-block:: python
+.. admonition:: Best Practice
+   :class: important
 
-      def compute_square(x):
-          return x**2
+   Be explicit to avoid surprises. Prefer ``return static_cast<int>(value);`` to show you intended the conversion.
 
-      nums = [1, 2, 3, 4, 5]
-      squared = list(map(compute_square, nums))
-      print(squared)  # [1, 4, 9, 16, 25]
+**Returning Multiple Values (Modern C++)**
 
-      # Also works with built-in functions
-      words = ["hello", "world"]
-      upper_words = list(map(str.upper, words))
-      print(upper_words)  # ['HELLO', 'WORLD']
+You cannot use ``return`` twice, but you can return a single object that contains multiple values, like a ``std::pair``, a ``std::tuple``, or a ``struct``. Since C++17, **structured bindings** make this incredibly clean and easy to use.
 
-   .. note::
+.. seealso::
 
-      ``map`` returns a lazy iterator, not a list. Wrap it in ``list()`` to materialize the results. We will see a more concise way to write the function argument when we cover **lambda functions** later in this lecture.
+   `F.21: To return multiple "out" values, prefer returning a struct <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f21-to-return-multiple-out-values-prefer-returning-a-struct>`_
 
+Using ``std::pair``:
 
-.. dropdown:: Built-in Higher-Order Functions: ``filter``
-   :open:
+.. code-block:: cpp
 
-   **``filter``: Keep Elements That Satisfy a Condition**
+   #include <utility> // For std::pair
 
-   ``filter(func, iterable)`` keeps only the elements for which ``func`` returns ``True``.
+   // This function returns both a bool and a string
+   std::pair<bool, std::string> get_user_data() {
+       // ... logic to get data ...
+       bool success{true};
+       std::string name{"Zayd"};
+       return {success, name};
+   }
 
-   .. code-block:: python
+   int main() {
+       // The returned pair is automatically unpacked
+       // into two new variables: 'success' and 'user_name'.
+       auto [success, user_name] = get_user_data();
 
-      def check_even(x):
-          return x % 2 == 0
+       if (success) {
+           std::cout << "Welcome, " << user_name << "!\n";
+       }
+   }
 
-      nums = [1, 2, 3, 4, 5, 6]
-      evens = list(filter(check_even, nums))
-      print(evens)  # [2, 4, 6]
+Using ``std::tuple``:
 
-      def check_positive(x):
-          return x > 0
+.. code-block:: cpp
 
-      readings = [12.5, -3.1, 8.0, -0.5, 15.2]
-      valid = list(filter(check_positive, readings))
-      print(valid)  # [12.5, 8.0, 15.2]
+   #include <iostream>
+   #include <string>
+   #include <tuple> // Required for std::tuple
 
-   .. note::
+   // This function returns three values: status code, success flag, and content.
+   std::tuple<int, bool, std::string> parse_http_response() {
+       // ... imagine parsing a network response ...
+       int status_code{200};
+       bool is_success{true};
+       std::string response_body{"{\"user\":\"Zayd\"}"};
 
-      Like ``map``, ``filter`` also returns a lazy iterator. If ``func`` is ``None``, ``filter`` removes all falsy values (``0``, ``""``, ``None``, etc.).
+       return {status_code, is_success, response_body};
+   }
 
+   int main() {
+       // Structured bindings work perfectly with std::tuple,
+       // unpacking the elements in the order they are defined.
+       auto [code, success, body] = parse_http_response();
 
-.. dropdown:: Built-in Higher-Order Functions: ``sorted`` with ``key``
-   :open:
+       if (success) {
+           std::cout << "Response OK (Code " << code << "): " << body << '\n';
+       }
+   }
 
-   **``sorted``: Sort by a Custom Criterion**
+Using a ``struct``:
 
-   The ``key`` parameter of ``sorted`` accepts a function that extracts a comparison value from each element.
+.. code-block:: cpp
 
-   .. code-block:: python
+   #include <iostream>
+   #include <string>
 
-      # Sort strings by length
-      words = ["banana", "apple", "cherry", "date"]
-      by_length = sorted(words, key=len)
-      print(by_length)  # ['date', 'apple', 'banana', 'cherry']
+   // Define a struct to hold the related data
+   struct UserQueryResult {
+       bool found;
+       std::string user_name;
+   };
 
-      # Sort tuples by second element using a named function
-      def extract_score(pair):
-          return pair[1]
+   // The function now returns our custom struct
+   UserQueryResult find_user() {
+       // ... logic to find a user in a database ...
+       return {true, "Zayd"}; // C++ aggregate initialization
+   }
 
-      students = [("Alice", 88), ("Bob", 95), ("Charlie", 72)]
-      by_score = sorted(students, key=extract_score)
-      print(by_score)  # [('Charlie', 72), ('Alice', 88), ('Bob', 95)]
+   int main() {
+       // Structured bindings work seamlessly with structs.
+       // The members are unpacked in the order they are defined.
+       auto [user_found, name] = find_user();
 
-      # Reverse order
-      by_score_desc = sorted(students, key=extract_score, reverse=True)
-      print(by_score_desc)  # [('Bob', 95), ('Alice', 88), ('Charlie', 72)]
+       if (user_found) {
+           std::cout << "User found: " << name << "!\n";
+       }
+   }
 
+**Return Type Deduction with auto**
 
-.. dropdown:: List Comprehensions vs. ``map``/``filter``
-   :open:
+Since C++14, you can use the ``auto`` keyword as a function's return type. This instructs the compiler to automatically deduce the return type from the expression in the ``return`` statement.
 
-   List comprehensions are often more readable than ``map`` and ``filter``, especially for simple transformations.
+.. code-block:: cpp
 
-   .. code-block:: python
+   // The compiler looks at `a + b` and sees that int + double = double.
+   // It deduces that the return type of this function must be `double`.
+   auto add(int a, double b) {
+       return a + b;
+   }
 
-      nums = [1, 2, 3, 4, 5]
+   int main() {
+       // 'result' will correctly be of type 'double'.
+       auto result{add(5, 3.14)};
+   }
 
-      # Using map + filter
-      result_1 = list(map(lambda x: x ** 2, filter(lambda x: x % 2 == 0, nums)))
-      print(result_1)  # [4, 16]
+.. admonition:: Best Practice
+   :class: important
 
-      # Using list comprehension (preferred)
-      result_2 = [x ** 2 for x in nums if x % 2 == 0]
-      print(result_2)  # [4, 16]
+   Prefer explicit return types for clarity. While powerful, ``auto`` can make code harder to read because the function's signature no longer states what it returns. Use it sparingly, mainly in generic programming (templates) where the return type can be complex.
 
-   .. note::
 
-      **Guideline**: Prefer list comprehensions when the transformation is simple and the ``lambda`` would be short. Use ``map``/``filter`` when you already have a named function to pass.
+The Function Interface
+^^^^^^^^^^^^^^^^^^^^^^
 
+A function's interface is its public-facing contract, defining how data flows into it (through parameters) and out of it (through return values).
 
-Lambda Functions
-====================================================
+Parameters vs. Arguments
+""""""""""""""""""""""""""
 
-Small, anonymous, single-expression functions.
+**Parameter**: A placeholder in the function's definition. It defines what **type** of data the function expects.
 
-Refer to ``lambda_demo.py`` to follow along with the examples below.
+.. code-block:: cpp
 
+   void make_coffee(std::string cup_size, bool is_hot);
 
-.. dropdown:: Definition and Syntax
-   :open:
+**Argument**: The actual value or variable you provide when you **call** the function.
 
-   **What Is a Lambda?**
+.. code-block:: cpp
 
-   A **lambda** is a small anonymous function defined with the ``lambda`` keyword. It can take any number of parameters but contains only a **single expression** (no statements, no multi-line logic).
+   int main() {
+       make_coffee("large", true);
+   }
 
-   .. note::
+Passing Arguments
+""""""""""""""""""
 
-      **Syntax**: ``lambda parameters: expression``
+When you pass data to a function, does it receive the **original item** or a **copy**? This is a crucial question in C++. The method you choose affects performance and whether the original data can be modified.
 
-   .. code-block:: python
+- Pass-by-value (a safe copy)
+- Pass-by-reference (the modifiable original)
+- Pass-by-const-reference (a safe, efficient view)
+- Pass-by-pointer (an optional, modifiable original)
 
-      # Regular function
-      def add(a, b):
-          return a + b
+Pass-by-Value: Give a Copy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      # Equivalent lambda
-      add_lambda = lambda a, b: a + b
+This is the default method. The function receives a **brand new copy** of the argument.
 
-      print(add(3, 4))  # 7
-      print(add_lambda(3, 4))  # 7
+.. warning::
 
-   .. warning::
+   Changes made to the copy inside the function do not affect the original.
 
-      Assigning a lambda to a variable (like ``add_lambda = lambda ...``) is discouraged by PEP 8. If you need a named function, use ``def``. Lambdas are intended for short, inline use.
+.. code-block:: cpp
 
+   void add_ten(int x) {
+       // int x{a};
+       x += 10; // Modifies the copy
+   }
 
-.. dropdown:: Common Use Cases: Inline Sorting Keys
-   :open:
+   int main() {
+       int a{5};
+       add_ten(a); // A copy of 'a' is sent
+       std::cout << a << '\n'; // 'a' is still 5
+   }
 
-   Lambdas are most commonly used as short, throwaway functions for arguments like ``key`` in ``sorted``.
+.. figure:: /_static/images/l5/pass-by-value2.jpg
+   :alt: Pass-by-value diagram
+   :align: center
+   :width: 50%
 
-   .. code-block:: python
+   Pass-by-value: the function works on a copy of the original.
 
-      # Sort a list of tuples by the second element
-      pairs = [(1, "banana"), (3, "apple"), (2, "cherry")]
-      sorted_pairs = sorted(pairs, key=lambda pair: pair[1])
-      print(sorted_pairs)
-      # [(3, 'apple'), (1, 'banana'), (2, 'cherry')]
+.. admonition:: Best Practice
+   :class: important
 
-      # Sort robots by speed (descending)
-      robots = [
-          {"name": "TurtleBot", "speed": 0.26},
-          {"name": "Spot", "speed": 1.6},
-          {"name": "Atlas", "speed": 2.5},
-      ]
-      fastest_first = sorted(robots, key=lambda r: r["speed"], reverse=True)
-      for r in fastest_first:
-          print(f"  {r['name']}: {r['speed']} m/s")
+   **Use for:** Small data that is cheap to copy (like ``int``, ``double``, ``bool``).
 
+Pass-by-Reference: Give the Original
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. dropdown:: Common Use Cases: ``map`` and ``filter``
-   :open:
+The function receives a direct link (an alias) to the original argument. No copy is made.
 
-   .. code-block:: python
+.. warning::
 
-      # Convert sensor readings from Celsius to Fahrenheit
-      celsius = [0.0, 20.0, 37.5, 100.0]
-      fahrenheit = list(map(lambda c: c * 9 / 5 + 32, celsius))
-      print(fahrenheit)  # [32.0, 68.0, 99.5, 212.0]
+   Changes made to the parameter inside the function WILL affect the original.
 
-      # Filter out negative sensor readings
-      readings = [12.5, -3.1, 8.0, -0.5, 15.2]
-      valid = list(filter(lambda x: x >= 0, readings))
-      print(valid)  # [12.5, 8.0, 15.2]
+.. code-block:: cpp
 
-   **Lambda with Default Arguments**
+   void add_ten(int& x) {
+       // int &x{a}
+       x += 10; // Modifies the original 'a'
+   }
 
-   .. code-block:: python
+   int main() {
+       int a{5};
+       add_ten(a); // 'a' itself is shared
+       std::cout << a << '\n';  // 'a' is now 15
+   }
 
-      # Lambda with a default parameter
-      compute_power = lambda base, exp=2: base**exp
-      print(compute_power(3))  # 9
-      print(compute_power(3, 3))  # 27
+.. figure:: /_static/images/l5/pass-by-reference2.jpg
+   :alt: Pass-by-reference diagram
+   :align: center
+   :width: 50%
 
+   Pass-by-reference: the function operates on the original variable.
 
-.. dropdown:: Limitations
-   :open:
+.. admonition:: Best Practice
+   :class: important
 
-   **What Lambdas Cannot Do**
+   **Use when:** You **want to modify** the original argument.
 
-   Lambdas are restricted to a single expression. They cannot contain:
+Pass-by-const-Reference: Read-Only Access
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   - **Statements** -- No ``if``/``else`` blocks (but conditional *expressions* are allowed), no ``for``/``while`` loops, no ``try``/``except``.
-   - **Assignments** -- No ``x = ...`` inside a lambda.
-   - **Multiple expressions** -- Only one expression is evaluated and returned.
-   - **Docstrings** -- Lambdas cannot have documentation strings.
-   - **Type hints** -- Lambda parameters cannot be annotated.
+This method shares the original data (efficient, no copy) but makes it read-only (``const``), so the function is forbidden from changing it (safe).
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      # Conditional expression in a lambda (valid)
-      classify = lambda x: "positive" if x > 0 else "non-positive"
-      print(classify(5))  # "positive"
-      print(classify(-3))  # "non-positive"
+   void print_vector(const std::vector<int>& v) {
+       // We get the efficiency of pass-by-reference without the risk.
+       for (const int& item : v) {
+           std::cout << item << " ";
+       }
+       // v.push_back(100); // COMPILER ERROR: v is const!
+   }
 
-      # Multi-line logic is NOT possible in a lambda
-      # Use a regular function instead
+   int main() {
+       std::vector<int> num_vect{1, 2, 3};
+       print_vector(num_vect); // No expensive copy is made.
+   }
 
-   .. note::
+.. admonition:: Best Practice
+   :class: important
 
-      **Rule of Thumb**: If a lambda is hard to read on one line, use a ``def`` function instead.
+   **This should be your default choice** for passing large, read-only objects like vectors or strings.
 
+Pass-by-Pointer: Give an Address
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Closures
-====================================================
+The function receives the memory address of the original argument. This allows modification (like a reference) but with a key difference: a pointer can be ``nullptr``.
 
-Functions that remember their enclosing scope.
+.. code-block:: cpp
 
-Refer to ``closures_demo.py`` to follow along with the examples below.
+   void add_ten(int* p) {
+       if (p != nullptr) {
+           *p += 10; // Modifies original 'a'
+       }
+   }
 
+   int main() {
+       int a{5};
+       add_ten(&a); // Pass the address of 'a'
+       // 'a' is now 15
+       std::cout << a << '\n';
+   }
 
-.. dropdown:: What Is a Closure?
-   :open:
+.. figure:: /_static/images/l5/pass-by-pointer2.jpg
+   :alt: Pass-by-pointer diagram
+   :align: center
+   :width: 50%
 
-   A **closure** is a function that retains access to variables from its enclosing scope, even after the enclosing function has finished executing. Three conditions must be met:
+   Pass-by-pointer: the function receives a memory address.
 
-   - There must be a **nested function** (a function defined inside another function).
-   - The nested function must **reference a variable** from the enclosing function's scope (a "free variable").
-   - The enclosing function must **return** the nested function.
+.. admonition:: Best Practice
+   :class: important
 
-   .. code-block:: python
+   **Use when:** You want to modify the argument, AND the argument could be optional (``nullptr``). In modern C++, prefer references when possible.
 
-      def make_greeter(greeting):
-          """Return a function that greets with the given greeting."""
-          def greet(name):
-              return f"{greeting}, {name}!"
-          return greet
+How to Choose a Passing Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      hello = make_greeter("Hello")
-      howdy = make_greeter("Howdy")
+.. figure:: /_static/images/l5/functionchart.pdf
+   :alt: Flowchart for choosing a passing method
+   :align: center
+   :width: 80%
 
-      print(hello("Alice"))  # Hello, Alice!
-      print(howdy("Bob"))  # Howdy, Bob!
+   Decision flowchart for choosing a parameter-passing method.
 
+.. seealso::
 
-.. dropdown:: Practical Example: Logger Factory
-   :open:
+   - `F.15: Prefer simple and conventional ways of passing information <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f15-prefer-simple-and-conventional-ways-of-passing-information>`_
+   - `F.16: For "in" parameters, pass cheaply-copied types by value and others by reference to const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f16-for-in-parameters-pass-cheaply-copied-types-by-value-and-others-by-reference-to-const>`_
+   - `F.17: For "in-out" parameters, pass by reference to non-const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f17-for-in-out-parameters-pass-by-reference-to-non-const>`_
 
-   **Configurable Logger**
+Returning Data from Functions
+""""""""""""""""""""""""""""""
 
-   Closures are useful for creating pre-configured utility functions.
+When a function gives a result, is the caller receiving a **brand-new object** or a **link to an existing one**? The return method impacts efficiency and can introduce critical bugs if used incorrectly.
 
-   .. code-block:: python
+- Return-by-Value (a new copy)
+- Return-by-Reference (a link to an existing object)
+- Return-by-Pointer (an address of an existing object)
 
-      def make_logger(prefix: str):
-          """Return a logging function with a fixed prefix."""
-          def log(message: str) -> None:
-              print(f"[{prefix}] {message}")
-          return log
+Return-by-Value
+~~~~~~~~~~~~~~~~
 
-      info = make_logger("INFO")
-      error = make_logger("ERROR")
-      debug = make_logger("DEBUG")
+This is the most common way to return data. The function produces a result, and a **temporary copy** of that result is given back to the caller.
 
-      info("System started")  # [INFO] System started
-      error("Sensor timeout")  # [ERROR] Sensor timeout
-      debug("x = 42")  # [DEBUG] x = 42
+.. code-block:: cpp
 
+   int add_numbers(int a, int b) {
+       return a + b;
+   }
 
-.. dropdown:: Stateful Closures
-   :open:
+   int main() {
+       auto result{add_numbers(3, 4)};
+   }
 
-   Closures can maintain mutable state across calls without using global variables or classes. Use ``nonlocal`` to modify the captured variable.
+- The ``return`` statement's job is to get the value back to the caller (``main``). For an ``int``, the compiled code places the value 7 into a specific CPU register that, by convention, is designated for function return values (e.g., the **EAX** or **RAX** register on x86 processors).
+- The function's memory (its stack frame) is cleaned up, and control returns to ``main``.
+- The ``main`` function knows to look in that specific CPU register for the return value. It reads the value 7 from the register and uses it to initialize the new variable ``result``.
 
-   .. code-block:: python
+**But isn't copying slow?**
 
-      def make_counter(start=0):
-          """Return a counter function that increments on each call."""
-          count = start
+.. code-block:: cpp
 
-          def increment():
-              nonlocal count
-              count += 1
-              return count
-          return increment
+   std::vector<int> create_large_vector() {
+       std::vector<int> local_vec = { /* ... 1 million integers ... */ };
+       return local_vec; // Oh no, are we copying 1 million ints?
+   }
 
-      counter_a = make_counter()
-      print(counter_a())  # 1
-      print(counter_a())  # 2
-      print(counter_a())  # 3
+   int main() {
+       std::vector<int> my_vec{create_large_vector()};
+   }
 
-      counter_b = make_counter(10)
-      print(counter_b())  # 11
+In the past, this was a performance concern. But not anymore thanks to **copy elision**.
 
-   .. note::
+Copy Elision
+~~~~~~~~~~~~~~
 
-      Each call to ``make_counter`` creates an independent closure with its own ``count`` variable. The two counters do not share state.
+Copy elision is a compiler optimization that eliminates unnecessary copying or moving of objects. Instead of creating a temporary object and then transferring it to its final destination, the compiler constructs the object **directly where it is needed**.
 
+.. grid:: 2
 
-.. dropdown:: How Closures Capture State
-   :open:
+   .. grid-item-card:: Without Copy Elision
 
-   Understanding the mechanism behind closures helps explain why they work even after the enclosing function returns.
+      1. Function creates a temporary object.
+      2. The temporary is copied or moved.
+      3. The temporary is destroyed.
 
-   **Step 1: Python Inserts a Cell Object**
+   .. grid-item-card:: With Copy Elision
 
-   During ``make_counter(start=0)``, Python sees that the inner function ``increment()`` references ``count`` from the enclosing scope. Instead of letting ``count`` point directly to the integer ``0``, Python inserts a **cell object** between them. This indirection exists so that both the enclosing scope and the inner function can share the same variable.
+      1. Function constructs the object directly at the destination.
+      2. Done.
 
-   **Step 2: ``make_counter`` Returns the Inner Function**
+**The Compiler's Strategy for Return Values**
 
-   When ``make_counter`` executes ``return increment``, Python attaches the cell object to the function's ``__closure__`` tuple. Now two references point to the same cell: the local variable ``count`` (from the still-active scope) and ``counter_a.__closure__``.
+A modern C++ compiler follows a hierarchy of strategies when a function returns an object, always choosing the most efficient option available:
 
-   **Step 3: Scope Is Discarded, Cell Survives**
+1. **Copy Elision (RVO/NRVO):** The best-case scenario. The compiler avoids creating a temporary object altogether. This is a true "zero-cost abstraction".
+2. **Implicit Move:** If elision is not possible, the compiler attempts to **move** the local object. This is highly efficient for objects that manage resources (e.g., ``std::vector``, ``std::unique_ptr``).
+3. **Copy Construction:** The fallback option. If the object cannot be moved, it will be **copied**. This can be expensive for large objects.
+4. **Compilation Error:** If an object is neither movable nor copyable, and copy elision cannot be performed, the code will fail to compile.
 
-   After ``make_counter`` returns, its local scope and the ``count`` variable are discarded. However, the cell object is **not** garbage collected because ``counter_a.__closure__`` still references it, and the ``int(0)`` stays alive because the cell's ``cell_contents`` still references it.
+**Return Value Optimization (RVO)**
 
-   **Step 4: Each Call Mutates the Cell**
+RVO is a form of copy elision that applies when a function returns a temporary, unnamed object (a **prvalue**). The compiler constructs this object directly in the memory of the variable that will receive it.
 
-   Each call to ``counter_a()`` follows the same steps: read ``cell_contents``, compute the increment, write the new value back, and return. The ``nonlocal count`` declaration tells Python to modify the cell's contents in place rather than creating a new local variable.
+Since C++17, RVO for temporary return values is **guaranteed** by the language standard. You can rely on it.
 
+.. code-block:: cpp
 
-Decorators
-====================================================
+   std::string create_greeting() {
+       // This temporary is a prvalue.
+       // RVO is guaranteed here.
+       return std::string("Hello");
+   }
 
-Wrapping functions to extend their behavior without modification.
+   int main() {
+       // No temporary is created; "Hello"
+       // is constructed directly inside `msg`.
+       std::string msg{create_greeting()};
+   }
 
-Refer to ``decorators_demo.py`` to follow along with the examples below.
+- **How it works:** The compiler passes a hidden pointer to ``create_greeting``, telling it where ``msg``'s memory is. The ``std::string`` is then constructed at that location.
+- **Key Benefit:** This process is so effective that it works even for objects that are non-copyable and non-movable.
 
+.. admonition:: Definition
+   :class: note
 
-.. dropdown:: What Is a Decorator?
-   :open:
+   A **prvalue**, or "pure rvalue", is a type of expression in C++ that represents a **temporary**, **unnamed object** or a value that is not associated with a specific memory location. Think of it as a transient value that exists only for the duration of a single expression.
 
-   A **decorator** is a function that takes another function as input, adds some functionality, and returns a new function. Decorators allow you to extend or modify the behavior of functions without changing their source code.
+   - **Literals**: ``42``, ``true``, ``"hello"``
+   - The result of a function call that returns by value.
+   - The result of an arithmetic operation: ``x + y``
 
-   **The Manual Way (Without ``@`` Syntax)**
+**Named Return Value Optimization (NRVO)**
 
-   .. code-block:: python
+NRVO is a variation of RVO that applies when a function returns a **named local variable**. If certain conditions are met, the compiler can still elide the copy by constructing this named object in the caller's destination.
 
-      def trace_calls(func):
-          def wrapper():
-              print("Before the function call")
-              func()
-              print("After the function call")
-          return wrapper
+Unlike RVO, NRVO is **not guaranteed** by the C++ standard. It is a common but optional optimization that depends on the compiler and the function's complexity.
 
-      def say_hello():
-          print("Hello!")
+.. code-block:: cpp
 
-      # Manually applying the decorator
-      say_hello = trace_calls(say_hello)
-      say_hello()
-      # Before the function call
-      # Hello!
-      # After the function call
+   std::vector<int> generate_data() {
+       std::vector<int> local_data;
+       local_data.reserve(100);
+       // ... operations on local_data ...
+       for (int i{0}; i < 100; ++i) {
+           local_data.push_back(i);
+       }
+       // Returning a named object.
+       return local_data;
+   }
 
+   int main() {
+       // NRVO may construct local_data
+       // directly inside `my_data`.
+       auto my_data{generate_data()};
+   }
 
-.. dropdown:: The ``@`` Syntax
-   :open:
+- **With NRVO:** The ``local_data`` vector is constructed directly in ``my_data``'s memory.
+- **Without NRVO:** ``local_data`` is constructed, and then its contents are **moved** into ``my_data`` upon return.
 
-   **Syntactic Sugar**
+**When Can NRVO Fail?**
 
-   The ``@decorator`` syntax is shorthand for applying a decorator. It is placed directly above the function definition.
+.. grid:: 2
 
-   .. code-block:: python
+   .. grid-item-card:: Multiple Potential Return Objects
 
-      def trace_calls(func):
-          def wrapper():
-              print("Before the function call")
-              func()
-              print("After the function call")
-          return wrapper
+      .. code-block:: cpp
 
-      @trace_calls
-      def say_hello():
-          print("Hello!")
+         std::string get_path(bool is_windows) {
+             std::string win_path{"C:\\"};
+             std::string nix_path{"/"};
 
-      # This is equivalent to: say_hello = trace_calls(say_hello)
-      say_hello()
-      # Before the function call
-      # Hello!
-      # After the function call
+             // Compiler can't know which
+             // object to construct at the
+             // destination. NRVO fails.
+             // (A move will be used instead.)
+             return is_windows ? win_path : nix_path;
+         }
 
+   .. grid-item-card:: Assignment vs. Initialization
 
-.. dropdown:: Handling Arguments
-   :open:
+      .. code-block:: cpp
 
-   Our ``trace_calls`` from the previous section defines ``wrapper()`` with no parameters. What happens if we try to decorate a function that takes arguments?
+         std::string create_greeting() {
+             return "hello";
+         }
 
-   .. code-block:: python
+         int main() {
+             std::string msg; // Constructed here
 
-      @trace_calls
-      def greet(name):
-          print(f"Hello, {name}!")
+             // Elision is impossible: msg
+             // already exists. A move-assignment
+             // will be used instead.
+             msg = create_greeting();
+         }
 
-      greet("Alice")
-      # TypeError: wrapper() takes 0 positional arguments but 1 was given
+.. admonition:: Best Practice
+   :class: important
 
-   .. warning::
+   To enable copy elision, prefer initializing objects directly from function calls: ``auto result{my_func()};``
 
-      After decoration, ``greet`` is replaced by ``wrapper``. When we call ``greet("Alice")``, Python actually calls ``wrapper("Alice")``, but ``wrapper`` accepts no arguments. We need a more flexible approach.
+Return-by-Reference
+~~~~~~~~~~~~~~~~~~~~
 
-   **Decorating Functions with Arguments**
+Return-by-reference allows a function to return a direct link to an **existing object**. This is useful for allowing chained function calls or modifying objects.
 
-   To make a decorator work with *any* function, the wrapper should accept ``*args`` and ``**kwargs``.
+.. code-block:: cpp
 
-   .. code-block:: python
+   // This function returns a reference to an element in the vector
+   int& get_element(std::vector<int>& vec, size_t index) {
+       return vec.at(index);
+   }
 
-      def trace_calls(func):
-          def wrapper(*args, **kwargs):
-              print(f"Before calling {func.__name__}")
-              result = func(*args, **kwargs)
-              print(f"After calling {func.__name__}")
-              return result
-          return wrapper
+   int main() {
+       std::vector<int> my_vec = {10, 20, 30};
+       // get_element returns a reference to my_vec[1], not a copy of 20.
+       get_element(my_vec, 1) = 99; // We are modifying the original vector directly!
+       // my_vec is now {10, 99, 30}
+   }
 
-      @trace_calls
-      def greet(name):
-          print(f"Hello, {name}!")
+.. danger::
 
-      @trace_calls
-      def say_hello():
-          print("Hello!")
+   **CRITICAL DANGER: Dangling References**
 
-      greet("Alice")
-      say_hello()
+   NEVER return a reference to a local variable.
 
+   .. code-block:: cpp
 
-.. dropdown:: Preserving Metadata
-   :open:
+      int& get_value() {
+          int local_value{10};
+          return local_value; // DANGEROUS!
+      } // 'local_value' is destroyed here.
 
-   **The Problem: Metadata Is Lost**
+      int main() {
+          int& ref{get_value()};
+          // 'ref' is now a "dangling reference". It refers to memory
+          // that has been freed.
+          std::cout << ref << '\n'; // UNDEFINED BEHAVIOR.
+      }
 
-   When you wrap a function with a decorator, the wrapper replaces the original function. This means the original function's name, docstring, and other metadata are lost.
+.. seealso::
 
-   .. code-block:: python
+   `F.43: Never (directly or indirectly) return a pointer or a reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
 
-      import time
+Return-by-Pointer
+~~~~~~~~~~~~~~~~~~~
 
-      def measure_time(func):
-          """Measure and print the execution time of a function."""
-          def wrapper(*args, **kwargs):
-              start = time.perf_counter()
-              result = func(*args, **kwargs)
-              elapsed = time.perf_counter() - start
-              print(f"{func.__name__} took {elapsed:.4f}s")
-              return result
-          return wrapper
+Return-by-pointer allows a function to return the memory address of an **existing object**. A key feature is the ability to return ``nullptr`` to indicate failure or that nothing was found.
 
-      @measure_time
-      def compute_sum(n: int) -> int:
-          """Compute sum of range(n)."""
-          return sum(range(n))
+.. code-block:: cpp
 
-      print(compute_sum.__name__)  # 'wrapper'  (not 'compute_sum'!)
-      print(compute_sum.__doc__)   # None       (docstring is lost!)
+   // This function returns a pointer to the first element found, or nullptr.
+   int* find_value(std::vector<int>& vec, int value) {
+       for (int& element : vec) {
+           if (element == value) {
+               return &element; // Return the address of the element
+           }
+       }
+       return nullptr; // Return nullptr if nothing was found
+   }
 
-   **The Fix: ``functools.wraps``**
+   int main() {
+       std::vector<int> my_vec = {10, 20, 30};
+       int* ptr{find_value(my_vec, 20)};
 
-   ``functools.wraps`` is itself a decorator that you apply to your wrapper function. It copies the original function's ``__name__``, ``__doc__``, ``__module__``, and other attributes onto the wrapper so that introspection tools see the original function's identity.
+       // ALWAYS check a returned pointer before using it!
+       if (ptr != nullptr) {
+           *ptr = 99; // Modify the original vector via the pointer
+       }
+       // my_vec is now {10, 99, 30}
+   }
 
-   .. code-block:: python
+.. danger::
 
-      from functools import wraps
-      import time
+   **CRITICAL DANGER: Dangling Pointers**
 
-      def measure_time(func):
-          @wraps(func)  # Copies metadata from func to wrapper
-          def wrapper(*args, **kwargs):
-              start = time.perf_counter()
-              result = func(*args, **kwargs)
-              elapsed = time.perf_counter() - start
-              print(f"{func.__name__} took {elapsed:.4f}s")
-              return result
-          return wrapper
+   NEVER return a pointer to a local variable.
 
-      @measure_time
-      def compute_sum(n: int) -> int:
-          """Compute sum of range(n)."""
-          return sum(range(n))
+   .. code-block:: cpp
 
-      print(compute_sum.__name__)  # 'compute_sum'
-      print(compute_sum.__doc__)   # 'Compute sum of range(n).'
+      int* get_value() {
+          int local_value{10};
+          return &local_value; // DANGEROUS!
+      } // 'local_value' is destroyed here.
 
-   .. warning::
+      int main() {
+          int* ptr{get_value()};
+          // 'ptr' is now a "dangling pointer". It points to memory
+          // that has been freed.
+          std::cout << *ptr << '\n'; // UNDEFINED BEHAVIOR.
+      }
 
-      Always use ``@functools.wraps(func)`` in your wrapper functions. Without it, debugging tools, documentation generators, and introspection code will show the wrong function name and docstring.
+.. seealso::
 
+   - `F.43: Never (directly or indirectly) return a pointer or a reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
+   - `F.60: Prefer T* over T& when "no argument" is a valid option <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f60-prefer-t-over-t-when-no-argument-is-a-valid-option>`_
 
-.. dropdown:: Stacking Decorators
-   :open:
 
-   **Applying Multiple Decorators**
+Part II -- Enhancing Functions
+-------------------------------
 
-   Multiple decorators can be applied to a single function. They are applied from **bottom to top** (innermost first).
+.. seealso::
 
-   .. code-block:: python
+   `F.56: Avoid unnecessary condition nesting <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f56-avoid-unnecessary-condition-nesting>`_
 
-      def apply_bold(func):
-          @wraps(func)
-          def wrapper(*args, **kwargs):
-              return f"<b>{func(*args, **kwargs)}</b>"
-          return wrapper
+Static Variables in Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-      def apply_italic(func):
-          @wraps(func)
-          def wrapper(*args, **kwargs):
-              return f"<i>{func(*args, **kwargs)}</i>"
-          return wrapper
+A ``static`` local variable is initialized **only once** and keeps its value between function calls. Think of it like a sticky note on the function's desk that it can read and update each time it is called.
 
-      # @apply_bold @apply_italic def greet <=> greet = apply_bold(apply_italic(greet))
-      @apply_bold      # executed second
-      @apply_italic    # executed first
-      def greet(name):
-          return f"Hello, {name}"
+.. grid:: 2
 
-      print(greet("Alice"))  # <b><i>Hello, Alice</i></b>
+   .. grid-item-card:: Without ``static``
 
+      .. code-block:: cpp
 
-.. dropdown:: Decorators with Arguments
-   :open:
+         void counter() {
+             int count{0}; // Re-created every time
+             count++;
+             // Always prints 1
+             std::cout << count << '\n';
+         }
 
-   **Parameterized Decorators**
+         int main() {
+             counter(); // count is 1
+             counter(); // count is 1
+         }
 
-   Sometimes you want to pass arguments to a decorator itself. This requires an extra layer of nesting: a decorator factory that returns the actual decorator.
+   .. grid-item-card:: With ``static``
 
-   .. code-block:: python
+      .. code-block:: cpp
 
-      def repeat(n: int):
-          """Decorator factory: repeat the function call n times."""
-          def decorator(func):
-              @wraps(func)
-              def wrapper(*args, **kwargs):
-                  result = None
-                  for _ in range(n):
-                      result = func(*args, **kwargs)
-                  return result
-              return wrapper
-          return decorator
+         void static_counter() {
+             static int count{0}; // Created ONCE
+             count++;
+             // Prints 1, then 2
+             std::cout << count << '\n';
+         }
 
-      @repeat(3)
-      def say_hello():
-          print("Hello!")
+         int main() {
+             static_counter(); // count becomes 1
+             static_counter(); // count becomes 2
+         }
 
-      say_hello()
-      # Hello!
-      # Hello!
-      # Hello!
+Key Properties of Static Variables
+""""""""""""""""""""""""""""""""""""
 
-   **Understanding the Three Layers**
+- **Single Initialization**: A ``static`` variable is initialized only the **first time** the code flows over its declaration. On all subsequent calls, the declaration is skipped.
+- **Lifetime**: It exists for the **entire lifetime** of the program. It is created on the first call and destroyed only when the program terminates.
+- **Scope**: It is still a **local variable**. Its visibility (scope) is limited to the function in which it is defined. You cannot access it from outside the function.
+- **Storage**: It is stored in a separate memory area (the static or global data segment), not on the call stack like regular local variables.
+- **Use Cases**: Perfect for things like function call counters, caching results of expensive calculations, or ensuring a resource is initialized only once.
 
-   - ``repeat(n)`` -- The decorator factory. Called with the argument ``n`` and returns the actual decorator.
-   - ``decorator(func)`` -- The actual decorator. Takes the function to be decorated and returns the wrapper.
-   - ``wrapper(*args, **kwargs)`` -- The wrapper function. Replaces the original function and adds the repeated-call behavior.
+Function Overloading
+^^^^^^^^^^^^^^^^^^^^^
 
-   .. code-block:: python
-
-      # @repeat(3) is processed in two steps:
-      # Step 1: repeat(3) is called, returning 'decorator'
-      # Step 2: decorator(say_hello) is called, returning 'wrapper'
-      # So: say_hello = repeat(3)(say_hello)
-
-   .. note::
-
-      **Pattern**: Whenever you need a decorator that accepts arguments, use three nested functions: ``factory(args) -> decorator(func) -> wrapper(*args, **kwargs)``.
-
-
-Partial Functions
-====================================================
-
-Pre-filling function arguments for convenience and reuse.
-
-Refer to ``partial_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: What Is ``functools.partial``?
-   :open:
-
-   ``functools.partial`` creates a new function with some arguments of the original function **pre-filled** ("frozen"). The new function takes fewer arguments.
-
-   .. note::
-
-      **Syntax**: ``partial(func, *args, **kwargs)``
-
-   .. code-block:: python
-
-      from functools import partial
-
-      def compute_power(base, exponent):
-          return base ** exponent
-
-      # Create specialized functions by freezing one argument
-      square = partial(compute_power, exponent=2)
-      cube = partial(compute_power, exponent=3)
-
-      print(square(5))  # 25
-      print(cube(5))    # 125
-
-   .. note::
-
-      **Key Insight**: ``partial`` does not call the function. It returns a new callable with some arguments already set. You supply the remaining arguments when you call the partial.
-
-
-.. dropdown:: Inspecting Partial Objects
-   :open:
-
-   .. code-block:: python
-
-      def compute_power(base, exponent):
-          return base ** exponent
-
-      # Freezing a keyword argument
-      square = partial(compute_power, exponent=2)
-      print(square.func)      # <function compute_power at 0x...>
-      print(square.args)      # ()
-      print(square.keywords)  # {'exponent': 2}
-      print(square(10))       # 100
-
-      # Freezing a positional argument (fills left to right)
-      power_of_ten = partial(compute_power, 10)
-      print(power_of_ten.func)      # <function compute_power at 0x...>
-      print(power_of_ten.args)      # (10,)
-      print(power_of_ten.keywords)  # {}
-      print(power_of_ten(3))        # 1000  (10 ** 3)
-
-   Partial objects expose three useful attributes:
-
-   - ``.func`` -- The original function.
-   - ``.args`` -- Positional arguments that were frozen (filled left to right).
-   - ``.keywords`` -- Keyword arguments that were frozen.
-
-
-.. dropdown:: Practical Example: Unit Conversion
-   :open:
-
-   **Robotics Application: Unit Conversion**
-
-   .. code-block:: python
-
-      def convert_distance(value, from_unit, to_unit):
-          """Convert between distance units."""
-          # Lookup table: how many meters one unit equals
-          to_meters = {"m": 1.0, "cm": 0.01, "ft": 0.3048, "in": 0.0254}
-          # Step 1: Convert the input value to meters (common denominator)
-          meters = value * to_meters[from_unit]
-          # Step 2: Convert from meters to the target unit
-          return meters / to_meters[to_unit]
-
-      # Create specialized converters by freezing from_unit and to_unit
-      ft_to_m = partial(convert_distance, from_unit="ft", to_unit="m")
-      cm_to_in = partial(convert_distance, from_unit="cm", to_unit="in")
-
-      # Only 'value' remains as an argument
-      print(f"{ft_to_m(10):.2f} m")    # 3.05 m
-      print(f"{cm_to_in(100):.2f} in")  # 39.37 in
-
-
-.. dropdown:: Partial vs. Lambda vs. Closure
-   :open:
-
-   **Three Ways to Pre-Fill Arguments**
-
-   .. code-block:: python
-
-      def compute_power(base, exponent):
-          return base ** exponent
-
-      # Using partial
-      square_partial = partial(compute_power, exponent=2)
-
-      # Using lambda
-      square_lambda = lambda base: compute_power(base, exponent=2)
-
-      # Using closure
-      def make_power_func(exp):
-          def compute_value(base):
-              return compute_power(base, exp)
-          return compute_value
-      square_closure = make_power_func(2)
-
-      # All produce the same result
-      print(square_partial(5), square_lambda(5), square_closure(5))
-      # 25 25 25
-
-   .. note::
-
-      **When to use which?** ``partial`` is best for simple argument freezing and works well with introspection tools. Lambda is good for very short inline use. Closures offer the most flexibility for complex logic.
-
-
-Putting It All Together
-====================================================
-
-This section combines the concepts from the entire lecture into a comprehensive exercise.
-
-
-Summary
---------
-
-.. grid:: 1 2 2 2
-    :gutter: 3
-
-    .. grid-item-card::
-        :class-card: sd-border-primary
-
-        - **Paradigms** -- Imperative, OOP, and functional styles; Python is multi-paradigm
-        - **First-Class Functions** -- Assign, pass, return, and store functions like any object
-        - **Lambdas** -- Anonymous single-expression functions for inline use
-        - **Closures** -- Functions that capture and retain enclosing scope variables
-
-    .. grid-item-card::
-        :class-card: sd-border-primary
-
-        - **Callables** -- The ``__call__`` method makes instances callable
-        - **Decorators** -- Wrap functions to add behavior; use ``@wraps`` to preserve metadata
-        - **Stacking/Parameterized** -- Multiple decorators; three-layer pattern for arguments
-        - **Partials** -- ``functools.partial`` freezes arguments for reuse
-
-.. list-table:: Concepts at a Glance
-   :widths: 25 30 30
-   :header-rows: 1
-   :class: compact-table
-
-   * - Concept
-     - Mechanism
-     - Use Case
-   * - First-class function
-     - ``f = do_nothing``
-     - Callbacks, dispatch tables
-   * - Lambda
-     - ``lambda x: x + 1``
-     - Short inline sort keys
-   * - Closure
-     - Nested function + free variable
-     - Stateful factories
-   * - Callable class
-     - ``__call__`` method
-     - Complex stateful behavior
-   * - Decorator
-     - ``@decorator`` syntax
-     - Logging, timing, validation
-   * - Partial
-     - ``functools.partial``
-     - Argument freezing
+Function overloading lets you define multiple functions with the **same name**, as long as they have **different parameter lists**.
 
 .. note::
 
-   **Reminder**: Review and experiment with all provided code before next class.
+   The compiler chooses the correct function at compile-time based on the **arguments** you provide.
+
+.. code-block:: cpp
+
+   // Three different functions, all named 'print'
+   void print(const std::string& text) { /* ... */ } // Signature: print(string)
+   void print(int number)               { /* ... */ } // Signature: print(int)
+   void print(double value, int precision) { /* ... */ } // Signature: print(double, int)
+
+   int main() {
+       print("hello");     // Calls the string version
+       print(42);          // Calls the int version
+       print(3.14159, 2);  // Calls the double, int version
+   }
+
+What Makes a Function Unique?
+"""""""""""""""""""""""""""""""
+
+A function's signature is defined by its **name** and its sequence of **parameter types**. The parameter names and the return type are **NOT** part of the signature for overloading purposes.
+
+.. grid:: 2
+
+   .. grid-item-card:: VALID Overloads
+
+      .. code-block:: cpp
+
+         // Different number of parameters
+         void func(int a);
+         void func(int a, int b);
+
+         // Different types of parameters
+         void func(double a);
+
+         // Different order of parameters
+         void func(int a, double b);
+         void func(double a, int b);
+
+   .. grid-item-card:: INVALID Overload
+
+      .. code-block:: cpp
+
+         // The compiler can't distinguish
+         // these based on return type alone.
+
+         int get_value() {
+             return 42;
+         }
+
+         double get_value() { // ERROR!
+             return 3.14;
+         }
+
+Overload Resolution
+""""""""""""""""""""
+
+When you call an overloaded function, the compiler follows a strict hierarchy to find the best match. This process is called **overload resolution**.
+
+1. **Exact Match**: The compiler first looks for a function where the argument types match the parameter types perfectly. (e.g., calling with an ``int`` finds a function expecting an ``int``).
+2. **Match with Promotion**: If no exact match is found, the compiler tries to achieve a match by **promoting** the arguments. These are safe, non-narrowing conversions.
+
+   - ``bool`` -> ``int``
+   - ``char`` -> ``int``
+   - ``float`` -> ``double``
+
+3. **Match with Standard Conversion**: If promotion does not work, the compiler tries other built-in conversions, even if they might lose information (narrowing).
+
+   - ``int`` -> ``float``
+   - ``double`` -> ``int``
+
+4. **Ambiguous or No Match**: If the compiler finds multiple equally good matches (ambiguous) or no match at all, it will issue a compilation error.
+
+**Exercise: Predict the result.**
+
+.. code-block:: cpp
+
+   int add(int a, int b) { return a + b; }
+   int add(int a, float b) { return a + b; }
+   int add(int a, double b) { return a + b; }
+
+   int main() {
+       std::cout << add(2, 3) << '\n';         // ???
+       std::cout << add(2.5, 3) << '\n';       // ???
+       std::cout << add('h', false) << '\n';   // ???
+       std::cout << add("hello", 3) << '\n';   // ???
+   }
 
 
-Preview: What's Next in L6
+Default Parameters
+^^^^^^^^^^^^^^^^^^^
+
+Default parameters allow you to provide a **fallback** value for one or more **trailing parameters**, making arguments optional during a function call.
+
+.. code-block:: cpp
+
+   // 'width' and 'height' are given default values.
+   void create_window(const std::string& title, int width = 800, int height = 600) {
+       // ... function body ...
+   }
+
+   int main() {
+       // All arguments provided.
+       create_window("My App", 1920, 1080);
+       // 'height' is omitted, uses default of 600.
+       create_window("Another App", 1280);
+       // 'width' and 'height' are omitted, use defaults.
+       create_window("Default App");
+   }
+
+.. admonition:: Best Practice
+   :class: important
+
+   Default values should **only be specified in the function declaration** (usually in the ``.hpp`` file), not the definition.
+
+**Exercise: Predict the result for each line.**
+
+.. code-block:: cpp
+
+   // Function with default parameters
+   void print_config(int id, bool logging = false, const std::string& mode = "auto") {
+       std::cout << "ID: " << id << ", Logging: " << std::boolalpha
+                 << logging << ", Mode: " << mode << '\n';
+   }
+
+   int main() {
+       print_config(1, true, "manual"); // ???
+       print_config(2, true);           // ???
+       print_config(3);                 // ???
+       print_config();                  // ???
+   }
+
+Default Parameters vs. Overloading
+""""""""""""""""""""""""""""""""""""
+
+Often, you can achieve the same result with either overloading or default parameters. Which should you choose?
+
+.. grid:: 2
+
+   .. grid-item-card:: Overloading
+
+      .. code-block:: cpp
+
+         // Two separate functions
+         void print(std::string s);
+         void print(std::string s, int indent);
+
+   .. grid-item-card:: Default Parameter
+
+      .. code-block:: cpp
+
+         // One flexible function
+         void print(std::string s, int indent = 0);
+
+.. seealso::
+
+   `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#Rf-default-args>`_
+
+Where to Specify Default Values
+"""""""""""""""""""""""""""""""""
+
+The compiler needs a single, authoritative source for a function's default arguments. This source should always be the function's public-facing "contract".
+
+.. admonition:: Best Practice
+   :class: important
+
+   Default parameters belong in the function declaration, not the definition.
+
+.. grid:: 2
+
+   .. grid-item-card:: Correct
+      :class-card: sd-border-success
+
+      .. code-block:: cpp
+
+         // --- In your header file (.hpp) ---
+         // Default value is specified here
+         void print(std::string s, int indent = 0);
+
+         // --- In your source file (.cpp) ---
+         // The definition does NOT repeat the default
+         void print(std::string s, int indent) {
+             // ... function implementation ...
+         }
+
+   .. grid-item-card:: Incorrect
+      :class-card: sd-border-danger
+
+      .. code-block:: cpp
+
+         // --- In your header file (.hpp) ---
+         void print(std::string s, int indent = 0);
+
+         // --- In your source file (.cpp) ---
+         // ERROR: Redefinition of default argument
+         void print(std::string s, int indent = 0) {
+             // ...
+         }
+
+
+Part III -- Under the Hood
 ---------------------------
 
-.. grid:: 1 2 2 2
-    :gutter: 3
+The Call Stack
+^^^^^^^^^^^^^^
 
-    .. grid-item-card:: L6: Object-Oriented Programming I
-        :class-card: sd-border-primary
+The call stack organizes all active function calls. Think of it as a stack of books: the last book you put on is the first one you take off (**LIFO: Last-In, First-Out**).
 
-        - Classes and objects
-        - Attributes and methods
-        - Constructors and ``__init__``
-        - Encapsulation and properties
-        - Dunder methods
+.. figure:: /_static/images/l5/books.pdf
+   :alt: Stack of books
+   :align: center
+   :width: 15%
+
+   The call stack works like a stack of books: Last-In, First-Out.
+
+The call stack is the **entire structure**, while a stack frame is just a **single book** in that stack. Each book represents one active function call.
+
+When a function is called, its stack frame is **pushed** onto the top of the call stack. When the function returns, its stack frame is **popped off**.
+
+Visualizing the Call Stack
+"""""""""""""""""""""""""""
+
+As functions call each other, the stack grows. As they return, it shrinks.
+
+.. code-block:: cpp
+
+   void C() { /*...*/ }
+
+   void B() {
+       C();
+   }
+
+   void A() {
+       B();
+   }
+
+   int main() {
+       A();
+   }
+
+.. figure:: /_static/images/l5/callstacks.pdf
+   :alt: Call stack visualization
+   :align: center
+   :width: 70%
+
+   Visualization of the call stack as functions are called and returned.
+
+**Exercise: Trace the call stack activities for the following program (manual and debugger).**
+
+.. code-block:: cpp
+
+   void f(int& x, int y, int z) {
+       x += y + z;
+   }
+
+   int g(int a, int b) {
+       int result{};
+       result = a + b;
+       f(result, a, b);
+       return result;
+   }
+
+   int main() {
+       int x{10};
+       int y{20};
+       int z{};
+       z = g(x, y);
+       std::cout << z << '\n';
+   }
+
+Recursive Functions
+^^^^^^^^^^^^^^^^^^^^
+
+A recursive function is a function that **calls itself**. Understanding the call stack is the key to seeing how this works without getting lost.
+
+Each recursive call gets its **own unique stack frame** with its own set of local variables.
+
+.. warning::
+
+   Every recursive function needs a **base case**: a condition that stops the recursion and prevents an infinite loop (which would cause a **stack overflow**).
+
+**Example: Factorial**
+
+Calculating factorial (:math:`n! = n \times (n-1) \times \dots \times 1`) is a classic example of recursion.
+
+.. code-block:: cpp
+
+   long long factorial(int n) {
+       // Base Case: Stops the recursion
+       if (n <= 1) {
+           return 1;
+       }
+       // Recursive Step
+       return n * factorial(n - 1);
+   }
+
+   int main() {
+       long long result{factorial(4)};
+       // result is 24
+   }
+
+How ``factorial(4)`` is resolved:
+
+- ``factorial(4)`` calls ``factorial(3)``
+
+  - ``factorial(3)`` calls ``factorial(2)``
+
+    - ``factorial(2)`` calls ``factorial(1)``
+
+      - ``factorial(1)`` hits the **base case** and returns ``1``.
+
+    - ``factorial(2)`` gets ``1`` and returns ``2 * 1 = 2``.
+
+  - ``factorial(3)`` gets ``2`` and returns ``3 * 2 = 6``.
+
+- ``factorial(4)`` gets ``6`` and returns ``4 * 6 = 24``.
+
+When to Use (and Avoid) Recursion
+""""""""""""""""""""""""""""""""""
+
+Recursion can be elegant, but often comes with tradeoffs.
+
+.. grid:: 2
+
+   .. grid-item-card:: Niche Use Cases
+
+      - **Naturally Recursive Problems**: When the problem definition itself is recursive.
+
+        - Tree or graph traversals (e.g., searching a folder structure).
+        - Mathematical functions (e.g., factorial, Fibonacci sequences).
+        - Divide and conquer algorithms (e.g., quicksort, mergesort).
+
+      - **Readability**: Sometimes, a recursive solution is much clearer and more concise than an iterative one.
+
+   .. grid-item-card:: General Avoidance
+      :class-card: sd-border-warning
+
+      - **Performance Overhead**: Each function call involves pushing a new stack frame, which takes time and memory. Iterative solutions are often faster.
+      - **Stack Overflow Risk**: Deep recursion consumes a lot of stack space. If the base case is not reached quickly enough, you can run out of stack memory, crashing your program.
+      - **Debugging Complexity**: Tracing the flow of a recursive function can be harder than debugging a simple loop.
+
+Pitfalls and Best Practices
+"""""""""""""""""""""""""""""
+
+When using recursion, be mindful of these common issues:
+
+.. warning::
+
+   - **Missing/Incorrect Base Case**: The most common error. Without a proper base case, the recursion never stops, leading to a stack overflow.
+   - **Infinite Recursion**: If the recursive step does not move closer to the base case, you also get a stack overflow.
+   - **Redundant Calculations**: Naive recursive solutions can re-calculate the same subproblems repeatedly (e.g., a simple Fibonacci implementation). This can be solved with **memoization** (caching results).
+   - **Large Inputs**: Even with a correct base case, very large inputs can still cause a stack overflow due to too many nested calls.
+
+.. admonition:: Best Practice
+   :class: important
+
+   **Always ask yourself:** Can this be done easily and more efficiently with a loop? If yes, prefer iteration. If the recursive solution is significantly clearer for a complex problem, use it cautiously.
+
+
+Part IV -- Conventions and Best Practices
+------------------------------------------
+
+Documentation with Doxygen
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Good code is not just functional, it is also understandable. Documentation explains **what** your function does and **how** to use it, without needing to read the implementation.
+
+In this course, we will use **Doxygen**, a standard tool that generates professional documentation directly from special comments in your code.
+
+Where to Write Documentation
+""""""""""""""""""""""""""""""
+
+Documentation belongs on the **function declaration** (in the ``.hpp`` file), not the definition.
+
+**Why?** The header file is the public **interface** or "contract" of your code. Developers should only need to know what a function does and how to use it (``.hpp``), not how it is implemented (``.cpp``).
+
+.. warning::
+
+   Do not document both the declaration and the definition. This leads to duplicated effort and creates a high risk of the two becoming inconsistent over time.
+
+How to Document with Doxygen
+""""""""""""""""""""""""""""""
+
+Doxygen comments start with ``/**`` and use special commands starting with ``@`` or ``\``.
+
+.. code-block:: cpp
+
+   /**
+    * @brief Calculates the area of a rectangle.
+    * @param length The length of the rectangle. Must be a positive value.
+    * @param width The width of the rectangle. Must be a positive value.
+    * @return The calculated area of the rectangle.
+    */
+   int calculate_area(int length, int width);
+
+- ``@brief``: A short, one-line summary of what the function does.
+- ``@param <name>``: Describes a specific parameter.
+- ``@return``: Describes what the function returns.
+
+.. seealso::
+
+   `Doxygen Overview <https://www.doxygen.nl/manual/index.html>`_
 
 .. note::
 
-   Today's lecture gives you the advanced function concepts that are essential for understanding object-oriented programming, decorators in frameworks, and functional patterns used throughout Python.
+   Feel free to use AI as a tool for Doxygen documentation; however, you must always review, edit, and verify the generated comments for accuracy.
+
+The main() Function
+^^^^^^^^^^^^^^^^^^^^
+
+Every C++ executable program has one special function that acts as its entry point: ``main()``. When you run your program, ``main()`` is the first function that gets called.
+
+- It must have a return type of ``int``. By convention, ``return 0;`` signals that the program executed successfully.
+- It can optionally take arguments from the command line, allowing you to pass information to your program when you launch it.
+
+.. seealso::
+
+   `F.46: int is the return type for main() <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f46-int-is-the-return-type-for-main>`_
+
+Command-Line Arguments: argc and argv
+"""""""""""""""""""""""""""""""""""""""
+
+The ``main`` function can receive information from the command line through two parameters.
+
+- ``int argc`` (**arg**\ ument **c**\ ount): An integer that stores the number of command-line arguments provided. It is **always at least 1**, because the name of the program itself is counted as the first argument.
+- ``char* argv[]`` (**arg**\ ument **v**\ ector): An array of C-style strings. Each string is one of the arguments.
+
+  - ``argv[0]`` is always the name of the executable.
+  - ``argv[1]`` is the first actual argument.
+
+.. code-block:: cpp
+
+   int main(int argc, char* argv[]) {
+       std::cout << "Number of arguments provided: " << argc << '\n';
+
+       for (int i{0}; i < argc; ++i) {
+           std::cout << "Argument " << i << ": " << argv[i] << '\n';
+       }
+   }
+
+.. code-block:: bash
+
+   ./week5_cpp --mode fast --file data.txt
+
+**Output:**
+
+.. code-block:: text
+
+   Number of arguments provided: 5
+   Argument 0: ./week5_cpp
+   Argument 1: --mode
+   Argument 2: fast
+   Argument 3: --file
+   Argument 4: data.txt

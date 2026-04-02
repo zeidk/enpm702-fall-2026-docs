@@ -1,1908 +1,1075 @@
-====================================================
-Lecture
-====================================================
-
-.. raw:: latex
-
-   \setcounter{figure}{0}
-
- 
-Prerequisites
-====================================================
- 
-One-time workspace and environment setup required before running any
-code in this lecture.
- 
- 
-.. dropdown:: One-Time Setup
- 
-   Clone the course workspace and configure your shell so ROS 2 can
-   find all packages automatically.
- 
-   **Clone the course workspace**
- 
-   .. code-block:: console
- 
-      git clone https://github.com/zeidk/enpm605-spring-2026-ros.git ~/enpm605_ws
- 
-   **Add the setup script to your shell rc file**
- 
-   .. code-block:: console
- 
-      # Bash users
-      echo "source ~/enpm605_ws/enpm605.sh" >> ~/.bashrc
- 
-      # Zsh users
-      echo "source ~/enpm605_ws/enpm605.sh" >> ~/.zshrc
- 
-   **Reload your shell**
- 
-   .. code-block:: console
- 
-      source ~/.bashrc   # bash users
-      source ~/.zshrc    # zsh users
- 
-   **Run the setup function once per terminal**
- 
-   .. code-block:: console
- 
-      enpm605
- 
-   .. note::
- 
-      The ``enpm605`` function must be run once in every new terminal
-      before using ``ros2`` commands. It sources the ROS 2 base
-      installation and the course workspace in the correct order.
- 
- 
-.. dropdown:: VSCode Extension
- 
-   Install the `Robot Developer Extensions for ROS 2
-   <https://marketplace.visualstudio.com/items?itemName=Ranch-Hand-Robotics.rde-ros-2>`_
-   extension for syntax highlighting, launch file support, and
-   integrated ROS 2 tooling inside VS Code:
- 
-   .. code-block:: console
- 
-      code --install-extension ranch-hand-robotics.rde-ros-2
-
-What Is ROS?
-====================================================
-
-An open-source middleware framework for building, deploying, and
-connecting robotic software components.
-
-
-.. dropdown:: Overview
-
-   The **Robot Operating System (ROS)** is an open-source middleware
-   framework for developing, building, and deploying robotic
-   applications. Prototypes originated from Stanford AI research and
-   were officially released by Willow Garage in 2007. ROS 2 was
-   redesigned from the ground up in 2017 and is currently maintained
-   by `Open Robotics <https://www.openrobotics.org/>`_.
-
-   .. only:: html
-
-      .. figure:: /_static/images/L8/ros_equation_light.png
-         :alt: ROS equation diagram
-         :width: 100%
-         :align: center
-         :class: only-light
-
-         ROS equation diagram
-
-      .. figure:: /_static/images/L8/ros_equation_dark.png
-         :alt: ROS equation diagram
-         :width: 100%
-         :align: center
-         :class: only-dark
-
-   .. only:: latex
-
-      .. figure:: /_static/images/L8/ros_equation_light.png
-         :alt: ROS equation diagram
-         :width: 100%
-         :align: center
-
-         ROS equation diagram
-
-   **Resources**
-
-   - `ros.org <https://ros.org/>`_
-   - `ROS 2 Jazzy Documentation <https://docs.ros.org/en/jazzy/>`_
-
-
-.. dropdown:: Where Is ROS Used?
-
-   ROS is deployed across a wide spectrum of robotic applications.
-
-   **Transportation**
-
-   - Autonomous vehicles (`CARLA <https://carla.org/>`_,
-     `Autoware <https://www.autoware.org/>`_)
-   - Delivery drones (`Amazon Prime Air
-     <https://www.amazon.com/Amazon-Prime-Air/b?ie=UTF8&node=8037720011>`_,
-     `UPS Flight Forward <https://www.ups.com/us/en/services/shipping-services/flight-forward-drones.page>`_)
-   - Maritime autonomous systems
-     (`Kongsberg Maritime <https://www.kongsberg.com/maritime/>`_)
-   - Railway automation
-     (`Siemens Mobility <https://new.siemens.com/global/en/products/mobility.html>`_)
-
-   **Manufacturing**
-
-   - Industrial robotic arms
-     (`KUKA <https://www.kuka.com/>`_,
-     `ABB Robotics <https://www.abb.com/robotics>`_)
-   - Quality inspection
-     (`Cognex <https://www.cognex.com/>`_,
-     `Keyence <https://www.keyence.com/>`_)
-   - Collaborative robots
-     (`Universal Robots <https://www.universal-robots.com/>`_,
-     `Rethink Robotics <https://www.rethinkrobotics.com/>`_)
-   - Warehouse automation
-     (`Amazon Robotics <https://www.amazonrobotics.com/>`_,
-     `Berkshire Grey <https://www.berkshiregrey.com/>`_)
-
-   **Specialized Domains**
-
-   - Medical robots
-     (`Intuitive Surgical <https://www.intuitive.com/>`_,
-     `Stryker Mako <https://www.stryker.com/us/en/portfolios/orthopaedics/joint-replacement/robotic-arm-assisted-surgery.html>`_)
-   - Space exploration
-     (`NASA JPL <https://www.jpl.nasa.gov/robotics/>`_,
-     `NASA Astrobee <https://github.com/nasa/astrobee>`_)
-   - Agricultural automation
-     (`Blue River Technology <https://www.bluerivert.com/>`_,
-     `John Deere <https://www.johndeere.com/en/technology-products/precision-ag-technology/>`_)
-   - Search and rescue
-     (`Boston Dynamics Spot <https://www.bostondynamics.com/spot>`_,
-     `ANYbotics <https://www.anybotics.com/>`_)
-   - Research and education
-     (`TurtleBot <https://www.turtlebot.com/>`_,
-     `Husarion <https://husarion.com/>`_)
-
-   **Emerging Areas**
-
-   - Home service robots
-     (`iRobot <https://www.irobot.com/>`_,
-     `Savioke <https://savioke.com/>`_)
-   - Entertainment
-     (`Anki <https://www.anki.com/>`_,
-     `SoftBank Pepper <https://www.softbankrobotics.com/emea/en/pepper>`_)
-   - Security
-     (`Knightscope <https://www.knightscope.com/>`_,
-     `Cobalt Robotics <https://www.cobaltrobotics.com/>`_)
-   - Environmental monitoring
-     (`Ocean Infinity <https://www.oceaninfinity.com/>`_,
-     `Clearpath Robotics <https://www.clearpath.ai/>`_)
-
-   **Resource:** `ROS Robotics Companies
-   <https://github.com/vmayoral/ros-robotics-companies>`_
+.. _l8_lecture:
 
+============================
+Lecture 8: OOP Basics
+============================
 
-.. dropdown:: ROS 1 Limitations and ROS 2 Improvements
+.. contents:: Table of Contents
+   :depth: 3
+   :local:
 
-   .. list-table:: ROS 1 vs. ROS 2
-      :widths: 50 50
-      :header-rows: 1
-      :class: compact-table
+Core Principles of OOP
+============================
 
-      * - ROS 1 Limitations
-        - ROS 2 Improvements
-      * - Limited support for real-time computing
-        - Improved real-time capabilities
-      * - Weak networked communication robustness
-        - Better network management via DDS middleware
-      * - Insufficient security features
-        - Enhanced security: encryption and authentication
-      * - Scalability issues as node count grows
-        - Cross-platform support (Linux, macOS, Windows)
-      * - (none)
-        - Quality of Service (QoS) per topic
+Object-Oriented Programming organizes software around objects -- digital models of real-world things that hold data and perform actions. This approach helps make code more understandable, reusable, and easier to manage.
 
+OOP is built around a set of fundamental principles that shape how code is structured, organized, and maintained. These concepts help developers build modular, scalable, and maintainable systems.
 
-ROS 2 Architecture
-====================================================
+- **Encapsulation**: Groups data and the methods that operate on it into objects, shielding internal details from external access.
+- **Abstraction**: Simplifies complexity by exposing only essential features while hiding the underlying implementation.
+- **Inheritance**: Enables new classes to reuse and extend the functionality of existing ones, fostering code reuse and hierarchy.
+- **Polymorphism**: Allows different objects to be treated uniformly through a common interface, supporting flexible and extensible code.
 
-ROS 2 runs many specialized, independent processes, each doing
-exactly one thing.
+Advantages and Disadvantages
+-----------------------------
 
+.. grid:: 2
 
-.. dropdown:: Processes
+   .. grid-item-card:: Advantages
+      :class-card: sd-border-success
 
-   .. admonition:: Definition: Process
+      - **Modularity** -- Decomposes complex problems into manageable, self-contained components.
+      - **Reusability** -- Promotes code reuse through inheritance and shared behaviors.
+      - **Flexibility** -- Enables dynamic behavior via polymorphism and interchangeable interfaces.
+      - **Maintainability** -- Facilitates localized changes and clearer code organization.
 
-      A **process** is a **program in execution**: a passive program on
-      disk becomes an active process the moment the OS loads it into
-      memory and begins executing it. Each process is assigned its own
-      isolated resources by the operating system:
+   .. grid-item-card:: Disadvantages
+      :class-card: sd-border-warning
 
-      - **Memory space**: code segment, heap, and call stack -- private
-        and inaccessible to other processes.
-      - **Process ID (PID)**: a unique integer identifier assigned by
-        the OS.
-      - **CPU time**: the OS scheduler allocates time slices across all
-        running processes.
-      - **File descriptors**: open files, sockets, and device handles
-        owned by that process.
+      - **Learning Curve** -- Requires mastery of abstract concepts and design patterns.
+      - **Design Overhead** -- Often demands more upfront planning and structure.
+      - **Code Size** -- Object-oriented programs can be more verbose than procedural ones.
+      - **Performance Overhead** -- May incur runtime costs (e.g., due to dynamic dispatch).
 
-   .. note::
+.. warning::
 
-      Processes communicate only through explicit OS-provided mechanisms
-      (pipes, sockets, shared memory). One process cannot directly read
-      or write another process's memory. This isolation is what enables
-      fault containment.
+   OOP is not a one-size-fits-all solution. Not all problems map naturally to objects and classes.
 
 
-.. dropdown:: Monolithic vs. Distributed Design
+Classes and Objects
+============================
 
-   **Core Questions**
+Classes
+--------
 
-   - What goes wrong when all robot software lives in one program?
-   - How does a distributed design fix it?
+A class is a blueprint or template for creating objects.
 
-   **Traditional: Monolithic**
+.. figure:: /_static/images/l8/vehicle_blueprint.png
+   :alt: Vehicle blueprint
+   :align: center
+   :width: 30%
 
-   - One large program handles everything.
-   - Tight coupling: change one thing, risk breaking everything.
-   - Single point of failure.
-   - Difficult for teams to work in parallel.
+   A class is a blueprint for creating objects.
 
-   .. admonition:: Key implication
+A class bundles two main things: **attributes** and **methods**.
 
-      Change sensor? Recompile and rerun everything. Add a feature?
-      Risk breaking existing code.
+- **Attributes (Member Data):** These are the properties or characteristics of the object (data). They represent its state.
 
-   .. only:: html
+  - Blueprint (Class): ``Vehicle``
+  - Attributes: ``color_``, ``model_``, ``is_running_``
 
-      .. figure:: /_static/images/L8/monolithic_light.png
-         :alt: Monolithic design diagram
-         :width: 60%
-         :align: center
-         :class: only-light
+- **Methods (Member Functions):** These are the functions or actions that an object can perform (behavior).
 
-         Monolithic Design
+  - Blueprint (Class): ``Vehicle``
+  - Methods: ``start_engine()``, ``stop_engine()``, ``drive()``
 
-      .. figure:: /_static/images/L8/monolithic_dark.png
-         :alt: Monolithic design diagram
-         :width: 60%
-         :align: center
-         :class: only-dark
+Defining a Class
+^^^^^^^^^^^^^^^^^
 
-   .. only:: latex
+.. code-block:: cpp
 
-      .. figure:: /_static/images/L8/monolithic_light.png
-         :alt: Monolithic design diagram
-         :width: 60%
-         :align: center
+   // vehicle.hpp
+   #include <string>
 
-         Monolithic Design
+   class Vehicle {
+   private:
+       /* Attributes */
+       std::string color_;
+       std::string model_;
+       bool is_running_{false};
 
-   **ROS 2: Distributed**
+   public:
+       /* Constructor */
+       Vehicle(const std::string& color, const std::string& model)
+           : color_{color}, model_{model} {}
+       /* Methods */
+       void stop_engine();
+       void start_engine();
+       void drive();
+       /* Accessors/Mutators */
+       bool get_is_running() const { return is_running_; }
+       std::string get_model() const { return model_; }
+   }; // class Vehicle
 
-   - Each component is a **separate process** (node).
-   - Nodes communicate via message passing over named topics.
-   - Fault isolation: one crash does not kill the system.
-   - Teams develop nodes in parallel.
+Key conventions:
 
-   .. admonition:: Key implication
+- Classes are defined in header files.
+- File names use snake_case naming convention.
+- Use the ``class`` keyword to define a class.
+- Class names use PascalCase naming convention.
+- Class definition ends with a semicolon (``;``).
+- Add an end-of-class comment.
+- Access specifiers control member visibility.
+- Attributes are ``private`` with a trailing underscore (ROS naming convention).
+- Attributes can be initialized in the class (e.g., ``bool is_running_{false}``).
+- Each class should have at least one explicit constructor.
+- Methods are declared in the class and implemented in source files (``.cpp``).
+- Accessors and mutators can be implemented directly in the class.
 
-      Modular, scalable, robust, and collaborative: the four pillars of
-      distributed robot software.
 
-   .. only:: html
+Objects
+--------
 
-      .. figure:: /_static/images/L8/distributed_light.png
-         :alt: Distributed design diagram
-         :width: 80%
-         :align: center
-         :class: only-light
+An object is a concrete instance of a class. You cannot drive a blueprint, but you can drive a physical vehicle that was built from the blueprint.
 
-         Distributed Design
+.. figure:: /_static/images/l8/vehicle_objects.png
+   :alt: Vehicle objects
+   :align: center
+   :width: 30%
 
-      .. figure:: /_static/images/L8/distributed_dark.png
-         :alt: Distributed design diagram
-         :width: 80%
-         :align: center
-         :class: only-dark
+   Objects are instances of a class.
 
-   .. only:: latex
+State and Behavior
+^^^^^^^^^^^^^^^^^^^
 
-      .. figure:: /_static/images/L8/distributed_light.png
-         :alt: Distributed design diagram
-         :width: 80%
-         :align: center
+.. grid:: 2
 
-         Distributed Design
+   .. grid-item-card:: State (Attributes)
+      :class-card: sd-border-info
 
+      This is the object's unique data. While the class defines which attributes an object should have, the object itself holds the specific values.
 
-.. dropdown:: Core Components
+      - ``blue_car.color_ = "blue"``
+      - ``blue_car.model_ = "Wraith"``
+      - ``blue_car.is_running_ = false``
 
-   **Communication Primitives**
+   .. grid-item-card:: Behavior (Methods)
+      :class-card: sd-border-info
 
-   - **Nodes**: individual processes performing specific tasks.
-   - **Topics**: named channels for asynchronous data streaming.
-   - **Services**: synchronous request-response communication.
-   - **Actions**: long-running interruptible tasks with feedback.
+      These are the actions the object can perform. When you call a method, you are doing it on that specific object, and it may change that object's state.
 
-   **When to Use Each**
+      - ``blue_car.start_engine()``
+      - ``blue_car.stop_engine()``
+      - ``blue_car.drive()``
 
-   - **Topics**: continuous data streams (sensors, robot state).
-   - **Services**: one-shot requests (get pose, save map).
-   - **Actions**: long tasks with progress feedback (navigate to goal).
+.. admonition:: Key Insight
+   :class: tip
 
-   **Task Example: Pick Up a Part**
+   Each object is unique: if ``blue_car1`` is destroyed, ``blue_car2`` remains unaffected. Each object has its own set of attributes.
 
-   .. only:: html
+.. figure:: /_static/images/l8/objects_attributes.png
+   :alt: Objects have their own attributes
+   :align: center
+   :width: 50%
 
-      .. figure:: /_static/images/L8/topic_action_server_light.png
-         :alt: Topic, action, and service interaction diagram
-         :width: 80%
-         :align: center
-         :class: only-light
+   Each object has its own copy of the attributes.
 
-         Topic, Action, and Service.
+.. admonition:: Shared Methods
+   :class: tip
 
-      .. figure:: /_static/images/L8/topic_action_server_dark.png
-         :alt: Topic, action, and service interaction diagram
-         :width: 80%
-         :align: center
-         :class: only-dark
+   All objects share the same methods. For example, the same ``start_engine()`` is used by all vehicles.
 
-   .. only:: latex
+.. figure:: /_static/images/l8/objects_methods.png
+   :alt: Objects share methods
+   :align: center
+   :width: 60%
 
-      .. figure:: /_static/images/L8/topic_action_server_light.png
-         :alt: Topic, action, and service interaction diagram
-         :width: 80%
-         :align: center
+   All objects of a class share the same method code.
 
-         Topic, Action, and Service.
 
-   - ``camera_driver`` (process 1): continuously streams the detected
-     pose of a part on the conveyor belt by publishing to a topic
-     (e.g., ``/part_pose``).
-   - ``manager`` (process 2): subscribes to ``/part_pose``, computes
-     the target pick-up pose, then sends a **goal** to the robot arm
-     via an **action** (long-running: move arm to pose, with feedback
-     on progress), then calls a **service** once the arm is in position
-     (short, synchronous: trigger the gripper to pick up the part).
-   - ``robot_driver`` (process 3): receives the action goal, moves the
-     arm to the target pose, and exposes the pick-up service.
+Instantiation
+--------------
 
+Instantiation is the process of creating a new, specific object (an "instance") from a class (the "blueprint").
 
-.. dropdown:: Data Distribution Service (DDS)
+.. figure:: /_static/images/l8/instantiation.png
+   :alt: Instantiation process
+   :align: center
+   :width: 60%
 
-   DDS is an open, data-centric publish-subscribe middleware standard
-   managed by the **Object Management Group (OMG)**. Specification work
-   began in 2001; version 1.0 was published in 2004. The underlying
-   wire protocol is **RTPS** (Real-Time Publish-Subscribe), which
-   enables interoperability across vendor implementations.
+   Instantiation creates objects from a class.
 
-   **Application Domains**
+.. code-block:: cpp
 
-   - **Defense**: radar, combat management, UAV telemetry.
-   - **Air traffic control**: real-time flight-data distribution.
-   - **Autonomous vehicles**: high-rate sensor fusion pipelines.
-   - **Industrial automation**: SCADA and factory control systems.
-   - **Financial trading**: low-latency market-data feeds.
-   - **IoT/Industrial Internet**: large-scale sensor networks.
+   #include <memory>
+   #include <iostream>
+   #include "vehicle.hpp"
 
-   **Key Properties**
+   int main() {
+       // Stack allocation
+       Vehicle stack_car{"gray", "civic"};
+       stack_car.start_engine();
+       std::cout << stack_car.get_model() << " is "
+                 << (stack_car.is_running() ? "running" : "stopped") << '\n';
 
-   - **Decentralized**: no broker or master node required.
-   - **Automatic discovery**: participants announce themselves via
-     multicast; no manual configuration.
-   - **Transport-independent**: runs over UDP, TCP, or shared memory.
-   - **Language-independent**: C, C++, Java, Python, Ada.
-   - **Fine-grained QoS**: 22 configurable policies per topic.
+       // Dynamic allocation with smart pointers
+       auto heap_car = std::make_unique<Vehicle>("gray", "civic");
+       heap_car->start_engine();
+       std::cout << heap_car->get_model() << " is "
+                 << (heap_car->is_running() ? "running" : "stopped") << '\n';
+   }
 
-   **Resources**
 
-   - `OMG DDS Portal <https://www.omg.org/omg-dds-portal/>`_
-   - `DDS Foundation <https://www.dds-foundation.org/>`_
-   - `eProsima Fast DDS documentation
-     <https://fast-dds.docs.eprosima.com/>`_
-   - `Eclipse Cyclone DDS documentation <https://cyclonedds.io/docs/>`_
-   - `RTI Connext DDS documentation
-     <https://community.rti.com/documentation>`_
-   - `ROS 2 Jazzy: DDS vendor guide
-     <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Different-Middleware-Vendors.html>`_
+Design Phase
+============================
 
+The design phase in OOP is crucial as it establishes the blueprint for the application. It involves transforming the requirements into a workable structure that serves as a foundation for further software development.
 
-.. dropdown:: QoS Overview
+- The **Requirement Analysis** clearly describes what the system is supposed to achieve.
+- The **Modeling Phase** represents and visualizes the system's structure and behavior through diagrams.
 
-   DDS exposes **per-topic QoS policies** that control how data is
-   delivered. The four most relevant policies in ROS 2:
+Requirement Analysis
+---------------------
 
-   - **Reliability**: ``RELIABLE`` (guaranteed delivery with
-     retransmission) vs. ``BEST_EFFORT`` (lossy, lower latency).
-   - **Durability**: ``TRANSIENT_LOCAL`` (late-joiners receive last
-     cached value) vs. ``VOLATILE`` (no caching).
-   - **History**: ``KEEP_LAST`` (buffer last *N* messages) vs.
-     ``KEEP_ALL`` (unbounded retention).
-   - **Deadline**: maximum allowed gap between consecutive messages.
+The requirement analysis defines *what* the system must do before designing *how* it will work.
 
-   **Supported Vendors (Jazzy)**
+1. **Functional Requirements** -- Define what the system must do and which specific capabilities it must provide.
+2. **Non-Functional Requirements** -- Specify how well the system must perform in terms of quality attributes like performance, reliability, and safety.
+3. **Technical Constraints** -- Establish design limitations and architectural principles that restrict implementation choices.
+4. **Success Criteria** -- Set measurable outcomes that determine whether the project has achieved its goals.
 
-   - **Fast DDS** (eProsima) -- default; Apache 2.0 license.
-   - **Cyclone DDS** (Eclipse) -- lightweight, real-time focus;
-     Eclipse license.
-   - **Connext DDS** (RTI) -- commercial; safety-certified variants
-     available.
-   - **GurumDDS** (GurumNetworks) -- commercial.
 
-   **Inspect and Switch at Runtime**
+Modeling Phase
+---------------
 
-   .. code-block:: console
+The modeling phase defines *how* the system will be structured and designed to meet the requirements.
 
-      # Check active RMW implementation
-      ros2 doctor --report | grep rmw
+1. **Static Structure**
 
-      # Switch vendor (current shell only)
-      export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+   - **Class Design** -- Define the system's static structure by identifying classes, their attributes, methods, and the relationships among them (such as association, aggregation, composition, and inheritance).
 
+2. **Dynamic Behavior**
 
-Publish/Subscribe Model
-====================================================
+   - **Sequence Diagrams** -- Illustrate how objects collaborate and exchange messages over time to achieve specific functionalities.
 
-Nodes communicate without knowing each other exist; only the topic
-name and message type must match.
+Modeling Languages -- UML
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+`UML (Unified Modeling Language) <https://www.uml.org/>`_ was designed specifically for software system design and documentation, particularly in object-oriented programming.
 
-.. dropdown:: Nodes, Topics, and Messages
+- **Focus**: It emphasizes classes, objects, methods, inheritance, and associations.
+- **Common Diagrams:**
 
-   .. admonition:: Definition: Node
+  - Class diagrams
+  - Sequence diagrams
+  - Use case diagrams
+  - Activity diagrams
+  - State machine diagrams
 
-      A **Node** is a small program written in Python or C++ that
-      executes a relatively simple task. Nodes can send data
-      (publisher) and receive data (subscriber).
+- **Use Case:** Ideal for designing and communicating software architecture, domain models, and system interactions.
 
-   .. admonition:: Definition: Topic
+Modeling Tools
+^^^^^^^^^^^^^^^
 
-      A **Topic** is a named bus over which nodes exchange messages
-      with a fixed name (e.g., ``/scan``) and a fixed message type.
+.. list-table::
+   :widths: 20 20 60
+   :header-rows: 1
 
-   .. admonition:: Definition: Message
+   * - **Tool**
+     - **Type**
+     - **Description**
+   * - PlantUML
+     - Free/Open Source
+     - Text-based UML modeling tool supporting class, sequence, and state diagrams.
+   * - Mermaid
+     - Free/Open Source
+     - Lightweight diagramming syntax integrated into Markdown and documentation tools (e.g., GitHub, Obsidian, MkDocs).
+   * - Diagrams.net (Draw.io)
+     - Free/Open Source
+     - Browser and desktop-based visual diagram editor for UML, ERD, and system design.
+   * - Modelio
+     - Free/Open Source
+     - Comprehensive modeling environment supporting UML, BPMN, and SysML. Provides code generation and reverse engineering.
+   * - Software Ideas Modeler
+     - Free (Non-commercial)
+     - Feature-rich UML tool with templates, validation, and code generation. Free for educational and personal use.
+   * - StarUML
+     - Paid (Free Trial)
+     - Professional UML and SysML modeling platform supporting class, sequence, and component diagrams.
+   * - Visual Paradigm
+     - Freemium/Paid
+     - Full-featured modeling suite with UML, BPMN, and SysML support.
+   * - Lucidchart
+     - Freemium/Paid
+     - Web-based collaborative diagramming tool with UML templates.
+   * - MagicDraw
+     - Paid (Enterprise)
+     - Advanced modeling tool used in industry for UML and SysML. Supports simulation, code generation, and model validation.
 
-      A **Message** is a packet of data: a simple data structure with
-      typed fields. Publishers send messages; subscribers receive them.
 
+Implementation Phase
+============================
 
-.. dropdown:: Rules and Patterns
+The Implementation Phase follows the Design Phase and focuses on translating the system design into executable code. During this stage, the diagrams created earlier serve as blueprints for constructing the actual software components that realize the intended functionality.
 
-   **Rules**
+Project Structure
+-------------------
 
-   - **Rule 1**: publisher and subscriber must use the exact same topic
-     name.
-   - **Rule 2**: publisher and subscriber must agree on the message
-     type.
-   - **Rule 3**: publishers send regardless of whether any subscriber
-     is listening.
-   - **Rule 4**: subscribers can exist with no active publisher.
+We propose the following project structure: a ``src`` folder for implementation files, an ``include`` folder for header files, and a ``CMakeLists.txt`` file for building the project. This structure follows C++ best practices by separating interface declarations (header files) from their implementations (source files).
 
-   **Patterns**
+.. code-block:: text
 
-   - **One-to-many**: ``camera_node`` publishes ``/image_raw``;
-     multiple nodes subscribe.
+   week8/
+   +-- src/
+   |   +-- main.cpp
+   |   +-- vehicle.cpp
+   |   +-- driver.cpp
+   |   +-- engine.cpp
+   +-- include/
+   |   +-- vehicle.hpp
+   |   +-- driver.hpp
+   |   +-- engine.hpp
+   +-- CMakeLists.txt
 
-     .. only:: html
+In this lecture, we will focus exclusively on the ``Vehicle`` class and its implementation; the other classes (``Driver``, ``Engine``, ``Car``, ``Truck``, ``Train``, and ``Route``) and their relationships will be covered in the next class.
 
-        .. figure:: /_static/images/L8/one_to_many_light.png
-           :alt: One-to-many pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-light
+.. figure:: /_static/images/l8/vehicle_class.png
+   :alt: Vehicle class UML
+   :align: center
+   :width: 30%
 
-           ``camera_node`` publishes ``/image_raw``; multiple nodes subscribe.
+   UML class diagram for the Vehicle class.
 
-        .. figure:: /_static/images/L8/one_to_many_dark.png
-           :alt: One-to-many pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-dark
 
-     .. only:: latex
+Modern C++ Approaches
+----------------------
 
-        .. figure:: /_static/images/L8/one_to_many_light.png
-           :alt: One-to-many pub/sub pattern
-           :width: 90%
-           :align: center
+Object-Oriented Programming is an ideal context for exploring modern C++ features and best practices. In this lecture, we will integrate contemporary idioms directly into our class design:
 
-           ``camera_node`` publishes ``/image_raw``; multiple nodes subscribe.
+- ``[[nodiscard]]`` (covered previously)
+- ``noexcept`` (covered previously)
+- Move semantics (covered previously)
+- Smart pointers (covered previously)
+- ``std::string_view`` -- this lecture
+- ``std::optional`` -- this lecture
 
-   - **Many-to-one**: multiple sensor nodes publish to
-     ``/diagnostics``.
+std::string_view
+^^^^^^^^^^^^^^^^^^
 
-     .. only:: html
+A ``std::string_view`` (header ``<string_view>``) is a lightweight, non-owning view into a string. It is essentially a pointer and size that lets you work with string data without copying or owning it.
 
-        .. figure:: /_static/images/L8/many_to_one_light.png
-           :alt: Many-to-one pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-light
+.. admonition:: What is inside a std::string_view?
+   :class: note
 
-           Multiple sensor nodes publish to ``/diagnostics``.
+   A ``std::string_view`` contains just:
 
-        .. figure:: /_static/images/L8/many_to_one_dark.png
-           :alt: Many-to-one pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-dark
+   - A pointer to the beginning of the data.
+   - A size indicating how much data to view.
 
-     .. only:: latex
+**Key Characteristics:**
 
-        .. figure:: /_static/images/L8/many_to_one_light.png
-           :alt: Many-to-one pub/sub pattern
-           :width: 90%
-           :align: center
+- **Non-owning**: Does not manage memory.
+- **Lightweight**: Usually 16 bytes (pointer + size).
+- **Read-only**: Provides ``const`` access.
+- **Efficient**: No copying or allocation.
+- **View**: Since it is a view into existing data, the underlying string must remain valid for as long as the ``std::string_view`` is being used.
 
-           Multiple sensor nodes publish to ``/diagnostics``.
+**Problem with Traditional Approaches:**
 
-   - **Multi-topic**: a robot driver publishes to ``/lidar``,
-     ``/cmd_vel``, ``/status``.
+.. code-block:: cpp
 
-     .. only:: html
+   // Using const std::string& - less flexible
+   void process_name(const std::string& name) { /* ... */ }
 
-        .. figure:: /_static/images/L8/multi_topic_light.png
-           :alt: Multi-topic pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-light
+   int main() {
+       std::string john{"John Smith"};
+       const char* jane{"Jane Doe"};
 
-           A robot driver publishes to ``/lidar``, ``/cmd_vel``, ``/status``.
+       process_name(john);          // OK
+       process_name(jane);          // Creates temporary std::string -> expensive!
+       process_name("Bob Johnson"); // Creates temporary std::string -> expensive!
 
-        .. figure:: /_static/images/L8/multi_topic_dark.png
-           :alt: Multi-topic pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-dark
+       // Want substring? Need to create new string:
+       process_name(john.substr(0, 4)); // Allocates memory for "John"
+   }
 
-     .. only:: latex
+**Solution with std::string_view:**
 
-        .. figure:: /_static/images/L8/multi_topic_light.png
-           :alt: Multi-topic pub/sub pattern
-           :width: 90%
-           :align: center
+.. code-block:: cpp
 
-           A robot driver publishes to ``/lidar``, ``/cmd_vel``, ``/status``.
+   void process_name(std::string_view name) { /* ... */ }
 
-   - **Bidirectional**: a planning node subscribes to ``/map`` and
-     publishes to ``/path``.
+   int main() {
+       std::string john{"John Smith"};
+       const char* jane{"Jane Doe"};
 
-     .. only:: html
+       process_name(john);          // OK - no conversion
+       process_name(jane);          // OK - no conversion
+       process_name("Bob Johnson"); // OK - no conversion
 
-        .. figure:: /_static/images/L8/bidirectional_light.png
-           :alt: Bidirectional pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-light
+       // Substrings are free:
+       process_name(john.substr(0, 4)); // No allocation
+                                        // Just adjusts pointer and size
+   }
 
-           A planning node subscribes to ``/map`` and publishes to ``/path``.
+**Dangling View Warning:**
 
-        .. figure:: /_static/images/L8/bidirectional_dark.png
-           :alt: Bidirectional pub/sub pattern
-           :width: 90%
-           :align: center
-           :class: only-dark
+.. warning::
 
-     .. only:: latex
+   .. code-block:: cpp
 
-        .. figure:: /_static/images/L8/bidirectional_light.png
-           :alt: Bidirectional pub/sub pattern
-           :width: 90%
-           :align: center
+      std::string_view dangerous_function() {
+          std::string temp{"temporary"};
+          return temp;  // DANGER: returning view to destroyed object
+      }
 
-           A planning node subscribes to ``/map`` and publishes to ``/path``.
+   .. code-block:: cpp
 
+      std::string_view safe_function() {
+          static auto permanent{"permanent"};
+          return permanent;  // OK: string literal has static storage
+      }
 
-.. dropdown:: Introspection Tools
+**When to Use Each:**
 
-   Use these commands to inspect a live ROS 2 system:
+.. grid:: 2
 
-   - ``ros2 node list``: all running nodes.
-   - ``ros2 node info <node>``: publishers, subscribers, and services
-     of a node.
-   - ``ros2 topic list``: all active topics. Add ``-t`` for message
-     types.
-   - ``ros2 topic info <topic> -v``: publisher and subscriber counts
-     with QoS.
-   - ``ros2 topic echo <topic>``: print messages as they are published.
-   - ``ros2 topic hz <topic>``: publishing frequency.
-   - ``ros2 interface show <msg_type>``: fields and types of a message.
-   - ``rqt_graph``: visual computation graph of nodes and topics.
+   .. grid-item-card:: Use std::string_view when:
+      :class-card: sd-border-success
 
+      - Function only reads the string data.
+      - You want to accept any string-like input.
+      - Performance is critical.
+      - Working with substrings frequently.
 
-.. dropdown:: Running Nodes
+   .. grid-item-card:: Use const std::string& when:
+      :class-card: sd-border-warning
 
-   **Two ways to start nodes**
+      - You specifically need ``std::string`` features not in ``string_view``.
+      - The function is part of an older API that expects ``std::string``.
+      - You need to store the reference long-term (be careful with ``string_view`` lifetime).
 
-   - ``ros2 run`` starts a single node from the command line.
-   - ``ros2 launch`` starts multiple nodes from a single command.
+.. admonition:: Summary
+   :class: tip
 
-   **ros2 run**
+   ``std::string_view`` is generally the better choice for read-only string parameters because it is more flexible, faster, and provides a cleaner interface while maintaining the same safety as ``const std::string&`` for temporary string objects.
 
-   ``ros2 run <package> <executable>`` finds the executable registered
-   in ``<package>`` and launches it as a new OS process in the current
-   terminal.
 
-   .. code-block:: console
+std::optional
+^^^^^^^^^^^^^^
 
-      # Terminal 1
-      ros2 run demo_nodes_py talker
+``std::optional`` (header ``<optional>``) represents a value that may or may not exist (``std::nullopt``). It provides a type-safe way to handle operations that might fail, eliminating the need for "magic values" or error-prone null pointer patterns.
 
-      # Terminal 2
-      ros2 run demo_nodes_cpp listener
+**Exercise:** Write the function ``int find_index(const std::vector<int>& vec, int target)`` that searches for the first occurrence of a target value in a vector and returns its index if found.
 
-   ``ros2 run`` starts exactly **one** node per invocation and blocks
-   the terminal until you press **Ctrl-C**. You need one terminal per
-   node.
+.. code-block:: cpp
 
-   *Terminal 1 -- talker output:*
+   int main() {
+       std::vector<int> numbers{10, 20, 30, 40, 30};
+       auto result{find_index(numbers, 30)};
+       std::cout << "Index: " << result << '\n'; // 2
+   }
 
-   .. code-block:: text
+**Checking Value:**
 
-      [INFO] [1741200001.123456789] [talker]: Publishing: 'Hello World: 1'
-      [INFO] [1741200002.123456789] [talker]: Publishing: 'Hello World: 2'
-      [INFO] [1741200003.123456789] [talker]: Publishing: 'Hello World: 3'
+There are different ways to check whether an ``std::optional`` contains a value.
 
-   Each log line contains: severity level (``[INFO]``), timestamp in
-   seconds since epoch, node name (``[talker]``), and the user-defined
-   message. The talker publishes one ``std_msgs/msg/String`` message
-   per second on the topic ``/chatter`` by default.
+.. code-block:: cpp
 
-   *Terminal 2 -- listener output:*
+   int main() {
+       std::optional<int> index{find_index(numbers, 30)};
+       // auto index{find_index(numbers, 30)};
 
-   .. code-block:: text
+       if (index) {/*do something*/}
+       if (index.has_value()) {/*do something*/}
+       if (index != std::nullopt) {/*do something*/}
+   }
 
-      [INFO] [1741200001.145678901] [listener]: I heard: [Hello World: 1]
-      [INFO] [1741200002.145678901] [listener]: I heard: [Hello World: 2]
-      [INFO] [1741200003.145678901] [listener]: I heard: [Hello World: 3]
+.. admonition:: std::nullopt
+   :class: note
 
-   The timestamp is slightly **later** than the talker's -- this is
-   the network and middleware delivery latency. Always check that the
-   counter in the listener matches the talker. A gap indicates dropped
-   messages, a QoS mismatch, or a network issue.
+   ``std::nullopt`` is a constant used with ``std::optional`` to represent an empty or uninitialized optional value.
 
-   **ros2 launch**
+**Accessing Value:**
 
-   ``ros2 launch <package> <launch_file>`` starts an entire set of
-   nodes defined in a launch file as a single command, replacing the
-   need for multiple terminals.
+1. **Dereference the Result:**
 
-   .. code-block:: console
+   .. code-block:: cpp
 
-      ros2 launch demo_nodes_py talker_listener.launch.py
-
-   All node output appears in the same terminal, prefixed by node
-   name. A single **Ctrl-C** stops the entire system.
-
-   *Expected output:*
-
-   .. code-block:: text
-
-      [INFO] [talker-1]: Publishing: 'Hello World: 1'
-      [INFO] [listener-1]: I heard: [Hello World: 1]
-      [INFO] [talker-1]: Publishing: 'Hello World: 2'
-      [INFO] [listener-1]: I heard: [Hello World: 2]
-
-   The ``-1`` suffix is appended by the launch system to give each
-   process a unique identifier in the log output.
-
-   .. list-table:: ros2 run vs. ros2 launch
-      :widths: 30 35 35
-      :header-rows: 1
-      :class: compact-table
-
-      * - Criterion
-        - ros2 run
-        - ros2 launch
-      * - Nodes started
-        - One
-        - Many
-      * - Terminals needed
-        - One per node
-        - One for everything
-      * - Output
-        - Single node only
-        - All nodes, prefixed by name
-      * - Typical use
-        - Development, debugging
-        - Integration, demos
-      * - Stop all nodes
-        - Ctrl-C in each terminal
-        - Single Ctrl-C
+      std::cout << "Found at index: " << *index << '\n';
 
    .. note::
 
-      Use ``ros2 run`` when you want to focus on a single node. Use
-      ``ros2 launch`` when you need the full system running together.
+      ``std::optional<int>`` is not a pointer. The ``*`` operator is overloaded to provide pointer-like syntax, making ``std::optional`` intuitive if you are familiar with pointers.
 
+2. **value():**
 
-ROS 2 Setup
-====================================================
+   .. code-block:: cpp
 
-Creating and building a workspace and Python package.
+      std::cout << "Found at index: " << index.value() << '\n';
 
+3. **value_or():** Retrieve the value inside an ``std::optional`` or provide a default if it is empty.
 
-.. dropdown:: Workspace
+   .. code-block:: cpp
 
-   A **ROS 2 workspace** is a directory containing all packages,
-   dependencies, and build artifacts for a project.
+      std::optional<int> x{10};
+      std::optional<int> y{std::nullopt};
 
-   **Directory Structure**
+      std::cout << "x: " << x.value_or(-1) << '\n'; // 10
+      std::cout << "y: " << y.value_or(-1) << '\n'; // -1
 
-   - ``src/``: source code for all your packages.
-   - ``build/``: intermediate build artifacts.
-   - ``install/``: final install tree sourced at runtime.
-   - ``log/``: build and test logs.
+.. warning::
 
-   **Make enpm605_ws a ROS Workspace**
+   Always check that the ``std::optional`` contains a value before accessing it (unless you use ``value_or()``).
 
-   .. code-block:: console
+   .. code-block:: cpp
 
-      mkdir ~/enpm605_ws/src
-      cd ~/enpm605_ws
-      colcon build
-      source install/setup.bash
+      std::optional<int> x{std::nullopt};
+      // Unsafe: throws std::bad_optional_access
+      std::cout << "x: " << x.value() << '\n';
+      // Safe: check before accessing
+      if (x) {
+          std::cout << "x: " << x.value() << '\n';
+      }
 
-   - ``mkdir ~/enpm605_ws/src``: creates the ``src`` directory.
-   - ``colcon build``: scans ``src`` for packages and builds them,
-     producing ``build``, ``log``, and ``install``.
-   - ``source install/setup.bash``: adds the workspace to the current
-     shell's environment so ``ros2 run`` and ``ros2 launch`` can find
-     your packages.
+**When to Use std::optional:**
 
-   .. warning::
+- Functions that might fail (parsing, division by zero).
+- Search operations (may not find target).
+- Configuration values (may be unset).
+- Database queries (may return no results).
 
-      Always run ``colcon build`` from the **workspace root**
-      (``enpm605_ws``), never from inside ``src`` or a package
-      directory.
+**Benefits:**
 
-   .. note::
+- **Type-safe**: Compiler forces handling of "no value" case.
+- **Expressive**: Code clearly shows when something might be missing.
+- **No magic values**: Eliminates sentinel value confusion.
+- **Exception safety**: ``value_or()`` provides safe defaults.
 
-      **Workspace Overlays**
 
-      - Always source the base ROS 2 installation first, then your
-        workspace. Later sources override earlier ones.
-      - Never source two different ROS 2 distributions in the same
-        session.
+Encapsulation
+--------------
 
+Encapsulation (or data hiding) is one of the core principles of OOP. The main purpose of encapsulation is to provide security to the data by restricting its access to the public (the end users).
 
-.. dropdown:: colcon
+- In C++, encapsulation is performed via the access specifier ``private``.
+- As a developer, you *must encapsulate* all attributes to protect them.
+- If you want the user to access and/or modify some attributes, then provide *accessors (getters)* and *mutators (setters)*.
+- The C++ Standard Library encapsulates all their attributes. This is why you cannot access them directly.
 
-   **colcon** (collective construction) is the official build tool for
-   ROS 2, replacing the ROS 1 build tools.
+.. warning::
 
-   **Key Features**
+   All class attributes must be encapsulated using ``private`` or ``protected`` access specifiers. Failure to encapsulate attributes = **automatic 0** on the assignment. This is non-negotiable.
 
-   - **Language agnostic**: builds C++, Python, and other package
-     types.
-   - **Parallel execution**: builds multiple packages simultaneously.
-   - **Isolated builds**: each package built in its own space.
-   - **Cross-platform**: works on Linux, Windows, and macOS.
+   If unsure about access specifiers, ask during office hours before submission.
 
-   **Installation and Verification**
+Access Specifiers
+^^^^^^^^^^^^^^^^^^
 
-   .. code-block:: console
+Access specifiers determine the accessibility of the members (attributes and methods) of a ``class``. They play a crucial role in *encapsulation*. There are three primary access specifiers in C++.
 
-      sudo apt install python3-colcon-common-extensions
-      colcon version-check
+- ``public`` -- Members declared under the ``public`` specifier can be accessed from outside the class and by derived classes.
+- ``private`` -- Members declared as ``private`` are restricted to the class in which they are declared. They cannot be accessed from outside the class or by derived classes.
+- ``protected`` -- ``protected`` members are somewhere between ``public`` and ``private``. They cannot be accessed from outside the class, but they can be accessed by derived classes. We see this in detail in the *inheritance* section.
 
-   **Building**
+.. warning::
 
-   - ``colcon build``: build all packages in the workspace.
-   - ``colcon build --symlink-install``: symlink Python and config
-     files; edits take effect without rebuilding.
-   - ``colcon build --packages-select <pkg>``: build only one package.
-   - ``colcon build --packages-up-to <pkg>``: build a package and all
-     its dependencies.
+   If you do not provide any access specifier, C++ will make all your members ``private``.
 
-   **Inspecting**
 
-   - ``colcon list``: list all packages found in ``src``.
-   - ``colcon graph``: display the package dependency graph.
+Accessors/Mutators
+--------------------
 
-   .. note::
+Accessors (getters) and mutators (setters) are ``public`` methods that provide controlled access to ``private`` and ``protected`` attributes, enabling encapsulation by allowing you to validate data, enforce invariants, and modify internal implementation without breaking client code.
 
-      ``--symlink-install`` creates symbolic links instead of copying
-      files into ``install``. After editing a Python script you do
-      **not** need to rebuild; changes take effect immediately on the
-      next ``ros2 run``.
+Accessors (Getters)
+^^^^^^^^^^^^^^^^^^^^
 
+An accessor (or getter) is a ``public`` method that provides controlled, read-only access to ``private`` and ``protected`` attributes while maintaining encapsulation.
 
-.. dropdown:: Creating a Python Package
+**Key Points:**
 
-   .. code-block:: console
+- **Return type:** Matches the attribute being accessed (by value for small types like ``int``, ``bool``, ``char``; by ``const`` reference for large types like ``std::string``, containers, custom objects).
+- **Parameters:** Accessors typically have no parameters.
+- **Read-only access:** Return by value or by ``const`` reference. *Never* return by non-``const`` reference, as this would allow external code to modify the ``private`` attribute, breaking encapsulation.
+- **const correctness:** Must be declared ``const`` to guarantee no modification of object state and to allow calling on ``const`` objects.
+- **[[nodiscard]]** (C++17): Should be used to prevent accidentally ignoring the return value, which is almost always a programming error.
+- **noexcept:** Consider adding when the accessor cannot throw exceptions (e.g., returning primitives or ``const`` references).
+- **inline:** Accessors defined inside the class definition are automatically inline, eliminating function call overhead for these trivial operations.
 
-      cd ~/enpm605_ws/src
-      ros2 pkg create first_pkg --build-type ament_python --dependencies rclpy
-      cd ..
-      colcon build --symlink-install
-      source install/setup.bash
-      ros2 pkg list | grep first_pkg
+**Return by Value (Primitives):**
 
-   This generates a ready-to-build package with the correct
-   ``ament_python`` structure. ``package.xml`` is pre-filled with a
-   ``<depend>rclpy</depend>`` entry and ``setup.py`` has the
-   ``entry_points`` section ready for you to register node executables.
+.. code-block:: cpp
 
-   **Package Layout**
+   [[nodiscard]] bool is_running() const noexcept {
+       return is_running_;
+   }
 
-   .. code-block:: text
+- Efficient for small types
+- No risk of external modification
+- ``noexcept`` safe (no allocation)
 
-      first_pkg/
-      ├── first_pkg/
-      │   └── __init__.py
-      ├── resource/
-      ├── test/
-      ├── package.xml
-      ├── setup.py
-      └── setup.cfg
+**Return by const Reference (Large Types):**
 
-   - ``first_pkg/``: importable Python modules go here. Every new
-     ``.py`` node file lives in this folder.
-   - ``resource/``: marker file required by the ROS 2 package index.
-     Do not delete it.
-   - ``test/``: unit test files.
-   - ``package.xml``: the package manifest -- name, version, license,
-     maintainer, and dependencies.
-   - ``setup.py``: registers node executables so ``ros2 run`` can find
-     them.
-   - ``setup.cfg``: required by the ament build system to locate
-     executables inside ``install``.
+.. code-block:: cpp
 
+   [[nodiscard]] const std::string& get_color() const noexcept {
+       return color_;
+   }
 
-.. dropdown:: package.xml
+- Avoids expensive copying
+- ``const`` prevents modification
+- ``noexcept`` safe (no copy)
 
-   ``package.xml`` is the package's **birth certificate** (also called
-   the **manifest**). It defines metadata, dependencies, and build
-   information that ROS 2 tooling reads at build time, install time,
-   and runtime.
+**const-Correctness with Accessors:**
 
-   - **Dependency resolution**: ``ament`` reads it to determine the
-     correct build order across all packages in the workspace.
-   - **Automated installation**: ``rosdep`` reads it to download and
-     install any missing system dependencies.
-   - **Package index**: metadata published to
-     `index.ros.org <https://index.ros.org>`_ for distribution.
+When a method is declared ``const``, it creates a compile-time contract guaranteeing the method will not modify the object's state. This prevents accidental modification of member variables and enables the method to be called on ``const`` objects.
 
-   **Fields to edit immediately after creating a package**
+.. code-block:: cpp
 
-   - ``<description>``: one-sentence description of what the package
-     does.
-   - ``<maintainer>``: your name and email address.
-   - ``<license>``: legal terms (Apache-2.0, MIT, BSD-3-Clause, etc.)
-   - ``<version>``: semantic version, e.g. ``1.0.0``.
+   // With const (Correct)
+   [[nodiscard]] bool is_running() const noexcept {
+       is_running_ = true; // Compilation error: cannot modify in const method
+       return is_running_;
+   }
 
-   **Dependency tags**
+.. code-block:: cpp
 
-   - ``<depend>pkg</depend>``: needed at both build and runtime
-     (covers most cases).
-   - ``<build_depend>pkg</build_depend>``: needed only at build time.
-   - ``<exec_depend>pkg</exec_depend>``: needed only at runtime.
+   // Without const (Problematic)
+   [[nodiscard]] bool is_running() noexcept {
+       is_running_ = true; // Compiles but violates accessor semantics
+       return is_running_;  // Accessor should not modify state!
+   }
 
-   **Install all missing dependencies in one command**
+**Key Insight:** The ``const`` keyword enforces the read-only contract at compile time, catching bugs early and documenting intent. Without it, accessors can accidentally become mutators.
 
-   .. code-block:: console
 
-      cd ~/enpm605_ws
-      rosdep install --from-paths ./src --ignore-packages-from-source -y
+Mutators (Setters)
+^^^^^^^^^^^^^^^^^^^
 
-   .. note::
+A mutator (or setter) is a ``public`` method that provides controlled modification of ``private`` and ``protected`` attributes while maintaining encapsulation and enforcing invariants.
 
-      You can inspect any package's manifest with
-      ``ros2 pkg xml <package_name>``.
+**Key Points:**
 
+- **Return type:** Typically ``void``, though sometimes returns a reference to the object (``*this``) to enable method chaining.
+- **Parameters:** Takes one parameter matching the attribute type (by value for small types like ``int``, ``bool``; by ``const`` reference for large types like ``std::string``, containers).
+- **Validation:** Should validate input to maintain class invariants (e.g., prevent negative values, check ranges, ensure non-empty strings).
+- **const correctness:** Must *NOT* be declared ``const`` because mutators modify object state.
+- **noexcept:** Use only if the setter cannot throw exceptions. Be cautious with types that may throw during assignment (e.g., ``std::string``).
+- **Encapsulation benefit:** Allows internal representation changes without breaking client code, and enforces business rules at a single point.
 
-.. dropdown:: setup.py
+**Simple Mutator (No Validation):**
 
-   ``setup.py`` is the **build script** for a Python ROS 2 package. It
-   tells ``colcon`` how to install your nodes, launch files, and
-   resource files into the workspace install tree.
+.. code-block:: cpp
 
-   - **Entry points**: registers executables so ``ros2 run`` can find
-     your nodes by name.
-   - **Data files**: declares launch files, config files, and other
-     resources to be copied into ``install``.
-   - **Package metadata**: name and version must match ``package.xml``
-     exactly.
+   void set_color(const std::string& color) noexcept {
+       color_ = color;
+   }
 
-   .. warning::
+- Pass by ``const`` reference for large types
+- Simple assignment, no validation needed
+- ``noexcept`` if assignment cannot throw
 
-      ``setup.py`` and ``package.xml`` must always agree on **package
-      name** and **version** -- a mismatch causes a build error.
+**Mutator with Validation:**
 
-   **Fields to edit after creating a package**
+.. code-block:: cpp
 
-   - ``name``: must match the package name in ``package.xml``.
-   - ``version``: semantic version, e.g. ``'1.0.0'``.
-   - ``maintainer_email``: your email address.
-   - ``description``: one-sentence description of the package.
-   - ``license``: legal terms (Apache-2.0, MIT, BSD-3-Clause, etc.)
+   void set_max_speed(int speed) {
+       if (speed < 0) {
+           throw std::invalid_argument("Max speed cannot be negative");
+       }
+       max_speed_ = speed;
+   }
 
-   **Registering nodes as entry points**
+- Enforces class invariants
+- Prevents invalid states
+- Cannot be ``noexcept`` (may throw)
 
-   Each entry point maps a **command name** to a **Python function**:
-   ``'talker = my_pkg.talker:main'``. The command name is what you
-   pass to ``ros2 run <pkg> <n>``. Multiple nodes are registered as
-   additional entries in the ``console_scripts`` list.
+**Why Mutators Cannot Be const:**
 
-   **Declaring data files**
+Mutators modify object state, so they must *not* be declared ``const``. The ``const`` keyword would create a contract that the method does not modify the object, which directly contradicts the purpose of a mutator.
 
-   - ``('share/<pkg>/launch', glob('launch/*.launch.py'))``: installs
-     all launch files into the share directory.
-   - ``('share/<pkg>/config', glob('config/*.yaml'))``: installs
-     config files alongside the package.
+.. code-block:: cpp
 
-   .. note::
+   // Without const (Correct)
+   void set_is_running(bool running) noexcept {
+       is_running_ = running;  // OK: can modify member variable
+   }
 
-      After adding a new entry point or data file declaration, you
-      must run ``colcon build`` again -- these are not picked up by
-      ``--symlink-install``.
+.. code-block:: cpp
 
+   // With const (Wrong!)
+   void set_is_running(bool running) const noexcept {
+       is_running_ = running;  // Compilation error: cannot modify in const method
+   }
 
-Writing Nodes
-====================================================
+**Key Insight:** Mutators inherently change object state. Marking them ``const`` creates a logical contradiction and will cause compilation errors when trying to modify member variables.
 
-A node without spinning exits immediately. A node without callbacks
-has nothing to respond to.
 
+Constructors
+--------------
 
-.. dropdown:: Interfaces
+A constructor is a special member function that initializes an object when it is created.
 
-   A ROS 2 **interface** is a typed data contract shared between
-   nodes. Interfaces are defined in ``.msg``, ``.srv``, and
-   ``.action`` files and compiled into language-specific code at build
-   time.
+**Key characteristics:**
 
-   **Three kinds of interfaces**
+- Same name as the class
+- No return type (not even ``void``)
+- Automatically called when an object is instantiated
+- Used to set up the initial state of an object (initialize its attributes)
+- Can be overloaded
 
-   - **Messages** (``.msg``): one-way data sent over a topic.
-   - **Services** (``.srv``): request/response pairs -- one node
-     calls, another replies.
-   - **Actions** (``.action``): long-running tasks with goal,
-     feedback, and result.
+Default Constructor
+^^^^^^^^^^^^^^^^^^^^
 
-   Publishers and subscribers use **messages**. Services and actions
-   are covered in a later lecture.
+A default constructor is a constructor that takes no arguments. It is automatically called when an object is created without initialization parameters.
 
-   **Standard Message Packages**
+.. warning::
 
-   Standard message packages ship **precompiled** with ROS 2. After
-   sourcing ROS 2 you can import them directly:
+   If you do not define *any* constructor, the compiler generates a default constructor that:
 
-   - ``std_msgs``: primitive types -- ``Bool``, ``String``,
-     ``Int8/16/32/64``, ``UInt8/16/32/64``, ``Float32``, ``Float64``,
-     ``Header``.
-   - ``geometry_msgs``: spatial data -- ``Point``, ``Pose``,
-     ``Twist``, ``Transform``, ``Vector3``.
-   - ``sensor_msgs``: sensor data -- ``Image``, ``LaserScan``,
-     ``PointCloud2``, ``Imu``, ``NavSatFix``.
-   - ``nav_msgs``: navigation -- ``Odometry``, ``Path``,
-     ``OccupancyGrid``.
+   - Leaves built-in types (``int``, ``double``, etc.) uninitialized with garbage values
+   - Calls the default constructor for user-defined type members
+   - Uses in-class initializers if provided
 
-   .. note::
+.. code-block:: cpp
 
-      These packages are installed under ``/opt/ros/jazzy/`` via
-      ``sudo apt install ros-jazzy-std-msgs`` etc. You never build
-      them yourself unless you define custom message types.
+   class Vehicle {
+   private:
+       std::string color_;            // std::string's default constructor (empty string)
+       std::string model_;            // std::string's default constructor (empty string)
+       bool is_running_{false};       // Initialized to false
+       int max_speed_;                // Uninitialized (garbage value)
+   };
 
-   **From Text Files to Language Code**
+   int main() {
+       Vehicle car; // Default constructor from compiler is called
+   }
 
-   Each message is defined in a plain-text ``.msg`` file that declares
-   field names and types -- one per line.
+**User-Defined Default Constructor:**
 
-   .. code-block:: text
+.. code-block:: cpp
 
-      # geometry_msgs/msg/Point.msg
-      float64 x
-      float64 y
-      float64 z
+   class Vehicle {
+   private:
+       std::string color_;
+       std::string model_;
+       bool is_running_{false};
+       int max_speed_;
+   public:
+       // User-defined default constructor
+       Vehicle() {
+           color_ = "White";
+           model_ = "Unknown";
+           max_speed_ = 0;
+       }
+   };
 
-   The precompiled Python import:
+   int main() {
+       Vehicle car; // User-defined default constructor is called
+   }
 
-   .. code-block:: python
 
-      from geometry_msgs.msg import Point
+Parameterized Constructors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   The ``.msg`` definition is **language-agnostic** -- the same file
-   generates Python, C++, and other bindings.
-   ``ros2 interface show geometry_msgs/msg/Point`` prints the original
-   ``.msg`` source.
+A parameterized constructor takes one or more parameters, allowing you to initialize an object's attributes with specific values at the time of creation.
 
-   **Primitive Types vs. std_msgs**
+.. code-block:: cpp
 
-   In a ``.msg`` file, ``float64``, ``int32``, ``bool``, and so on
-   are **IDL primitive types** -- the raw building blocks of the
-   interface definition language, not ROS message types.
+   class Vehicle {
+   /*other code*/
+   public:
+       Vehicle(const std::string& color, const std::string& model, int max_speed)
+       {
+           color_ = color;
+           model_ = model;
+           max_speed_ = max_speed;
+       }
+       Vehicle(int max_speed) { max_speed_ = max_speed; }
+   };
 
-   - ``float64 x`` in a ``.msg`` file means the field ``x`` holds a
-     plain 64-bit floating point number -- it maps to ``float`` in
-     Python and ``double`` in C++.
-   - ``std_msgs/Float64`` is a **wrapper message**: a full ROS 2
-     message whose only field is ``float64 data``. It exists so you
-     can publish a single number on a topic.
-   - Use primitive types (``float64``, ``int32``, etc.) inside your
-     own ``.msg`` field definitions.
-   - Use ``std_msgs`` wrappers only when publishing a bare scalar on a
-     topic and no richer message type exists.
+.. code-block:: cpp
 
-   **Introspecting Interfaces**
+   int main() {
+       Vehicle car(131);
+       auto wraith = std::make_unique<Vehicle>("white", "Wraith", 131);
+       Vehicle bus; // Error: no default constructor available
+   }
 
-   .. code-block:: console
 
-      ros2 interface list -m                         # all message types
-      ros2 interface show geometry_msgs/msg/Pose     # fields of a message
-      ros2 interface package geometry_msgs           # all interfaces in a package
+Member Initialization List
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Creating and Populating a Message Object**
+A constructor's **member initializer list** allows you to initialize an object's attributes directly when the object is created, before the constructor body executes.
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      from geometry_msgs.msg import Pose, Point, Quaternion
+   class Vehicle {
+   /*other code*/
+   public:
+       Vehicle(const std::string& color, const std::string& model, int max_speed)
+           : color_{color}, model_{model}, max_speed_{max_speed} {
+           /*body*/
+       }
+   };
 
-      def main(args=None):
-          pose = Pose()
+**C++ Object Construction Order:**
 
-          pose.position = Point()
-          pose.position.x = 1.0
-          pose.position.y = 2.5
-          pose.position.z = 0.0
+When an object is created, C++ follows a strict initialization sequence:
 
-          pose.orientation = Quaternion()
-          pose.orientation.x = 0.0
-          pose.orientation.y = 0.0
-          pose.orientation.z = 0.0
-          pose.orientation.w = 1.0  # identity rotation
+1. **Base class constructors** -- If the class inherits from a base class, the base class constructor(s) execute first (in declaration order for multiple inheritance).
+2. **Member attribute constructors** -- All member objects are constructed in the order they are *declared* in the class definition, regardless of the order in the member initializer list.
+3. **Constructor body** -- Finally, the statements in the constructor body execute.
 
-          print(pose)
+**Assignment in Body vs. Member Initializer List:**
 
-   ``Pose`` is a **composite message**: it contains two nested message
-   fields. Nested types must be imported and instantiated separately.
-   ``orientation.w = 1.0`` is the identity quaternion (no rotation).
+.. code-block:: cpp
 
+   class A {
+   public:
+       A() {
+           std::cout << "A constructor\n";
+           name_ = "Default"; // Assignment (two-step process)
+       }
+   private:
+       std::string name_; // Constructed first with default constructor
+   };
 
-.. dropdown:: Minimal Node
+Before ``A`` can exist, the ``std::string name_`` attribute must be initialized. The ``std::string`` default constructor is called (creating an empty string), then ``A``'s constructor body runs and ``"Default"`` is assigned to ``name_``. This results in two operations instead of one.
 
-   Write a minimal procedural node that logs a message and exits.
+.. admonition:: Best Practice
+   :class: tip
 
-   **File:** ``first_pkg/minimal_node.py``
+   Use a member initializer list for direct initialization: ``A() : name_{"Default"}``
 
-   .. code-block:: python
+**Constant and Reference Members:**
 
-      import rclpy
+.. code-block:: cpp
 
-      def main(args=None):
-          rclpy.init(args=args)
-          node = rclpy.create_node("minimal_node")
-          node.get_logger().info("Hello from ROS 2")
-          rclpy.shutdown()
+   class A {
+   public:
+       A(int x, int& y) {
+           c_ = x;  // Wrong: const members cannot be assigned
+           r_ = y;  // Wrong: references cannot be rebound
+       }
+   private:
+       const int c_;
+       int& r_;
+   };
 
-      if __name__ == "__main__":
-          main()
+.. warning::
 
-   - ``rclpy.init()``: initializes ROS 2 runtime. Must be called
-     first.
-   - ``rclpy.create_node()``: shorthand for a simple node without
-     subclassing.
-   - ``node.get_logger().info()``: logs an info-level message with
-     timestamp. In ROS 2, never use ``print()`` -- the logger routes
-     messages to the terminal, log files, and
-     ``ros2 topic echo /rosout`` simultaneously. See `ROS 2 Logging
-     <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Logging.html>`_.
-   - ``rclpy.shutdown()``: cleanly destroys all nodes and releases
-     resources.
+   - ``const`` members must be initialized before the constructor body executes.
+   - References must be initialized when created (they cannot be left unbound).
 
-   **Register in setup.py**
+.. admonition:: Best Practice
+   :class: tip
 
-   .. code-block:: python
+   Use a member initializer list to initialize both the constant and reference members.
 
-      entry_points={
-          'console_scripts': [
-              'minimal_node = first_pkg.minimal_node:main',
-          ],
-      },
+**Declaration Order Matters:**
 
-   **Build and Run**
+Members are always initialized *in the order they are declared*, not in the order they appear in the initializer list.
 
-   .. code-block:: console
+.. code-block:: cpp
 
-      cd ~/enpm605_ws
-      colcon build --packages-select first_pkg --symlink-install
-      source install/setup.bash
-      ros2 run first_pkg minimal_node
+   class Rectangle {
+   private:
+       double area_;   // 1. initialized first
+       double width_;  // 2. initialized second
+       double height_; // 3. initialized third
+   public:
+       Rectangle(double w, double h)
+           : width_{w}, height_{h}, area_{width_ * height_} {
+           // area_ is computed using uninitialized width_ and height_
+       }
+   };
 
-   Expected output:
+.. warning::
 
-   .. code-block:: text
+   Even though ``width_{w}`` and ``height_{h}`` appear before ``area_{width_ * height_}`` in the initializer list, ``area_`` is initialized first (with garbage ``width_`` and ``height_``) because of declaration order.
 
-      [INFO] [<timestamp>] [minimal_node]: Hello from ROS 2
+**Summary:**
 
-   .. note::
+- **Direct Initialization** -- Member initializer lists initialize attributes directly, avoiding the two-step process of default construction followed by assignment. This is more efficient, especially for complex types like ``std::string`` or ``std::vector``.
+- **Required for Const and References** -- Attributes declared as ``const`` or references must be initialized using the initializer list, as they cannot be assigned after construction.
 
-      ``minimal_node`` exits immediately after ``rclpy.shutdown()`` --
-      it does not spin. Run ``ros2 node list`` right after launching it
-      and you will see nothing, because the process has already
-      terminated. This is expected behavior for a procedural node with
-      no spin loop.
 
+const Objects
+^^^^^^^^^^^^^^
 
-.. dropdown:: OOP Node Design
+A ``const`` object is an instance of a class whose state cannot be modified after it is created.
 
-   Real-world ROS 2 code almost always uses class-based nodes.
-   Publishers, subscribers, timers, and state are cleanly encapsulated
-   in one class. Inheriting from ``Node`` gives the full ROS 2 API via
-   ``self``.
+.. warning::
 
-   **File layout**
+   When you declare an object as ``const``, all its non-``const`` methods become inaccessible: only methods marked as ``const`` can be called.
 
-   - ``first_pkg/advanced_node.py``: the node class only -- no
-     ``main()``
-   - ``scripts/run_advanced_node.py``: the entry point -- instantiates
-     the node.
+   This enforces read-only access to the object's internal data and ensures ``const``-correctness.
 
-   ``first_pkg/advanced_node.py``:
+.. code-block:: cpp
 
-   .. code-block:: python
+   int main() {
+       const Vehicle camry("White", "Camry", 113);
+       camry.print_status(); // Error: print_status() is not const
+   }
 
-      import rclpy
-      from rclpy.node import Node
+.. note::
 
-      class AdvancedNode(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self.get_logger().info(
-                  f"Hello from {self.get_name()}")
+   Non-``const`` objects can access both ``const`` and non-``const`` methods.
 
-   The class inherits from ``Node`` and calls
-   ``super().__init__(node_name)`` to register with the ROS 2 runtime.
-   No ``main()`` function -- the class only defines behavior.
-   ``self.get_name()`` returns the node name passed at instantiation
-   time.
 
-   ``scripts/run_advanced_node.py``:
+The this Pointer
+============================
 
-   .. code-block:: python
+In every *non-static method*, the compiler **implicitly** passes a hidden pointer named ``this`` that points to the current object -- the instance on which the function was called.
 
-      import rclpy
-      from first_pkg.advanced_node import AdvancedNode
+In other words:
 
-      def main(args=None):
-          rclpy.init(args=args)
-          node = AdvancedNode("advanced_node")
-          rclpy.shutdown()
+.. code-block:: cpp
 
-      if __name__ == "__main__":
-          main()
+   object.method();
 
-   Register in ``setup.py``:
+is equivalent to:
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      'advanced_node = scripts.run_advanced_node:main',
+   ClassName::method(&object);
 
+So inside the method, ``this`` is a pointer to the object that invoked the function.
 
-.. dropdown:: Spinning
+**Example:**
 
-   **Spinning** keeps a node alive and responsive.
-   ``rclpy.spin(node)`` blocks until the node is shut down.
+.. code-block:: cpp
 
-   Without spinning, the node exits immediately and no callbacks ever
-   run.
+   class Point {
+   private:
+       double x_;
+       double y_;
 
-   **Threads**
+   public:
+       Point(double x, double y) : x_{x}, y_{y} { /*body*/ }
 
-   .. admonition:: Definition: Thread
+       void move(double dx, double dy) {
+           this->x_ += dx; // same as x_ += dx;
+           this->y_ += dy; // same as y_ += dy;
+       }
 
-      A **thread** is the smallest unit of execution inside a process.
-      A process can have multiple threads running concurrently, sharing
-      the same memory.
+       void print() const {
+           std::cout << "(" << this->x_ << ", " << this->y_ << ")\n";
+       }
+   };
 
-   .. only:: html
+.. note::
 
-      .. figure:: /_static/images/L8/browser_light.png
-         :alt: Browser process with multiple threads
-         :width: 75%
-         :align: center
-         :class: only-light
+   - Here, ``this`` has the type ``Point* const``
+   - It refers to the current object (``p`` if you call ``p.move(2, 3)``)
 
-         Example: A browser process with multiple threads.
+**Type of the this Pointer:**
 
-      .. figure:: /_static/images/L8/browser_dark.png
-         :alt: Browser process with multiple threads
-         :width: 75%
-         :align: center
-         :class: only-dark
+.. list-table::
+   :widths: 25 25 25 25
+   :header-rows: 1
 
-   .. only:: latex
+   * - **Context**
+     - **Type of this**
+     - **Can modify object?**
+     - **Can reassign this?**
+   * - Non-``const`` method
+     - ``A* const``
+     - Yes
+     - No
+   * - ``const`` method
+     - ``const A* const``
+     - No
+     - No
 
-      .. figure:: /_static/images/L8/browser_light.png
-         :alt: Browser process with multiple threads
-         :width: 75%
-         :align: center
+.. admonition:: Summary
+   :class: tip
 
-         Example: A browser process with multiple threads.
+   The ``this`` pointer itself is always ``const`` (you cannot change what it points to), but whether you can modify the object depends on if the method is ``const``.
 
-   **The Main Thread**
+**When and Why We Use this:**
 
-   Every Python program starts with one thread (the **main thread**).
-   When you call ``rclpy.spin(node)``, that main thread is handed over
-   to the ROS 2 executor, which runs it in a loop checking for work to
-   do.
+.. list-table::
+   :widths: 20 40 40
+   :header-rows: 1
 
-   - ``rclpy.spin()`` **blocks** the main thread -- no code after it
-     runs until the node is shut down (e.g., Ctrl-C).
-   - The ROS executor uses this thread to fire callbacks, service
-     handlers, and timer functions one at a time.
+   * - **Purpose**
+     - **Description**
+     - **Example**
+   * - Disambiguation
+     - When a parameter name shadows a member variable
+     - ``this->x = x;``
+   * - Chaining Calls
+     - Returning ``*this`` allows method chaining
+     - ``return *this;``
+   * - Returning the Current Object
+     - Often used in operators like assignment
+     - ``return *this;``
+   * - Obtaining Address
+     - Sometimes used to get the current object's pointer
+     - ``return this;``
 
-   .. only:: html
+**Method Chaining Example:**
 
-      .. figure:: /_static/images/L8/spin_light.png
-         :alt: Main thread blocked by spin loop
-         :width: 70%
-         :align: center
-         :class: only-light
+.. code-block:: cpp
 
-         Main thread blocked by spin loop, executor dispatching callbacks.
+   class Counter {
+   private:
+       int value_;
 
-      .. figure:: /_static/images/L8/spin_dark.png
-         :alt: Main thread blocked by spin loop
-         :width: 70%
-         :align: center
-         :class: only-dark
+   public:
+       Counter(int v = 0) : value_{v} {}
 
-   .. only:: latex
+       Counter& increment() {
+           ++value_;
+           return *this; // allows chaining
+       }
 
-      .. figure:: /_static/images/L8/spin_light.png
-         :alt: Main thread blocked by spin loop
-         :width: 70%
-         :align: center
+       void print() const { std::cout << "Value: " << value_ << '\n'; }
+   };
 
-         Main thread blocked by spin loop, executor dispatching callbacks.
+.. code-block:: cpp
 
-   **Why Must You Spin?**
+   int main() {
+       Counter c;
+       c.increment().increment().increment().print();
+   }
 
-   Spinning activates the ROS 2 executor. Without it, the node is
-   registered but completely passive -- nothing ever runs.
 
-   - **Incoming messages**: subscriber callbacks are only invoked
-     while spinning.
-   - **Timer callbacks**: ``create_timer()`` registers a timer, but
-     the timer only fires while the executor is running.
-   - **Service requests**: a service server only processes requests
-     while spinning.
-   - **Action servers and clients**: goal handling, feedback, and
-     result delivery all require an active executor.
-   - **Parameter updates**: parameter change callbacks are also
-     dispatched by the executor.
+static Members
+============================
 
-   ``rclpy.spin(node)`` is the **event loop** of a ROS 2 node.
-   Without it, the node is a program that starts, does nothing, and
-   exits.
+static Attributes
+------------------
 
-   **Update scripts/run_advanced_node.py to spin**
+A ``static`` attribute (or ``static`` data member) *belongs to the class itself*, not to any individual object.
 
-   .. code-block:: python
+- There is only one copy of the ``static`` attribute shared by all instances.
+- It exists even if no objects of the class are created.
+- It is often used for class-wide constants, counters, or shared resources.
 
-      import rclpy
-      from first_pkg.advanced_node import AdvancedNode
+static Methods
+---------------
 
-      def main(args=None):
-          rclpy.init(args=args)
-          node = AdvancedNode("advanced_node")
-          try:
-              rclpy.spin(node)
-          except KeyboardInterrupt:
-              node.get_logger().info("Shutting down.")
-          finally:
-              node.destroy_node()
-              rclpy.shutdown()
+A ``static`` method (or ``static`` member function) *belongs to the class itself*, not to any individual object.
 
-      if __name__ == "__main__":
-          main()
+- It cannot access non-``static`` members (data or methods) because it does not have a ``this`` pointer.
+- It can be called even if no objects of the class exist, using the class name (e.g., ``Vehicle::get_vehicle_count()``).
+- It is often used for utility functions or to access/modify ``static`` data members.
 
-   - ``rclpy.spin(node)``: blocks the main thread, processing
-     callbacks as they arrive.
-   - ``except KeyboardInterrupt``: catches Ctrl-C from the terminal
-     and logs a clean shutdown message. Without this, the traceback
-     would be printed to the terminal.
-   - ``finally``: runs **regardless** of how the ``try`` block exits.
-     This guarantees cleanup always happens.
-   - ``node.destroy_node()``: releases all ROS 2 resources held by
-     the node (publishers, subscribers, timers).
-   - ``rclpy.shutdown()``: shuts down the ROS 2 runtime. Always the
-     last call.
+**Example:**
 
-   **Spinning Alternatives**
+.. code-block:: cpp
 
-   .. code-block:: python
+   class Vehicle {
+   private:
+       inline static int vehicle_count_{0}; // C++17 and later
+       std::string model_;
 
-      # Blocks forever -- standard choice for most nodes
-      rclpy.spin(node)
+   public:
+       Vehicle(const std::string& model) : model_{model} { vehicle_count_++; }
 
-      # Processes one batch of callbacks then returns
-      rclpy.spin_once(node)
+       [[nodiscard]] static int get_vehicle_count() noexcept {
+           return vehicle_count_;
+       }
+   };
 
-      # Blocks until a Future completes -- used for async service calls
-      rclpy.spin_until_future_complete(node, future)
+.. code-block:: cpp
 
-      # Manual spin loop using spin_once
-      while rclpy.ok():
-          rclpy.spin_once(node, timeout_sec=0.1)
-          # do other work here
-
-   .. note::
-
-      Use ``rclpy.spin(node)`` for all standard nodes. Only use
-      ``spin_once()`` if you have a specific reason to interleave
-      ROS 2 processing with non-ROS work. The spin loop always lives
-      in the entry point script, not in the node class -- this keeps
-      the class reusable by any executor or script without
-      modification.
-
-
-.. dropdown:: Timers and Callbacks
-
-   A **timer** schedules a callback at a fixed interval. Callbacks
-   only run while the node is spinning.
-
-   .. code-block:: python
-
-      class AdvancedNode(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self._counter = 0
-              self._timer = self.create_timer(1.0, self._timer_callback)
-
-          def _timer_callback(self):
-              self.get_logger().info(f"Count: {self._counter}")
-              self._counter += 1
-
-   - ``self._counter = 0``: instance variable holding state across
-     callback invocations.
-   - ``self.create_timer(1.0, self._timer_callback)``: registers a
-     timer that fires every ``1.0`` second and calls
-     ``_timer_callback``.
-   - ``self._timer_callback()``: called by the ROS 2 executor on each
-     tick -- only runs while the node is spinning.
-   - ``self.get_logger().info()``: logs the current counter value with
-     a timestamp; never use ``print()`` in ROS 2 nodes.
-   - ``self._counter += 1``: state is preserved between calls because
-     ``self`` persists for the lifetime of the node.
-
-
-.. dropdown:: Publishers
-
-   A publisher sends messages regardless of whether anyone is
-   listening. The topic name and message type are the only contract.
-
-   **File:** ``first_pkg/publisher_demo.py``
-
-   **Workflow**
-
-   1. Create a publisher object: specify message type, topic name, and
-      QoS queue depth.
-   2. Create a message instance and populate its fields.
-   3. Publish inside a timer callback at a fixed rate.
-
-   **Create a Publisher Object**
-
-   .. code-block:: python
-
-      from std_msgs.msg import Int64
-      from rclpy.node import Node
-
-      class PublisherDemo(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self._publisher = self.create_publisher(
-                  Int64,      # message type
-                  "counter",  # topic name
-                  10          # QoS queue depth
-              )
-
-   - ``create_publisher()`` takes three arguments: message type, topic
-     name, and queue depth -- all three are required.
-   - The topic name string: by convention use ``snake_case``; a
-     leading ``"/"`` is added automatically by ROS 2.
-   - Queue depth ``10``: up to 10 undelivered messages are buffered;
-     older ones are dropped when the queue is full.
-   - Store the result in ``self._publisher`` so it is not garbage
-     collected when ``__init__`` returns.
-
-   **Create a Message Instance**
-
-   .. code-block:: python
-
-      from std_msgs.msg import Int64
-
-      # Option A: create once in __init__, reuse in every callback (preferred)
-      self._message = Int64()
-
-      # Option B: create a new instance on every publish
-      def _timer_callback(self):
-          msg = Int64()
-          msg.data = self._counter
-          self._publisher.publish(msg)
-
-      # Option A usage in callback:
-      def _timer_callback(self):
-          self._message.data = self._counter
-          self._publisher.publish(self._message)
-
-   Option A (preferred): create the object once in ``__init__`` and
-   reuse it -- avoids repeated memory allocation on every timer tick.
-
-   **Publish Inside a Timer Callback**
-
-   .. code-block:: python
-
-      class PublisherDemo(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self._counter = 0
-              self._message = Int64()
-              self._publisher = self.create_publisher(Int64, "counter", 10)
-              self._timer = self.create_timer(2.0, self._timer_callback)
-
-          def _timer_callback(self):
-              self._message.data = self._counter
-              self._publisher.publish(self._message)
-              self.get_logger().info(f"Publishing: {self._counter}")
-              self._counter += 1
-
-   The callback runs in the executor thread -- never block it with
-   ``time.sleep()`` or heavy computation. Always publish inside a
-   callback rather than a ``while`` loop.
-
-   **Run and Inspect**
-
-   .. code-block:: console
-
-      # Terminal 1
-      colcon build --symlink-install --packages-select first_pkg
-      source install/setup.bash
-      ros2 run first_pkg publisher_demo
-
-      # Terminal 2
-      ros2 node list
-      ros2 node info /publisher_demo
-      ros2 topic list -t
-      ros2 topic echo /counter
-      ros2 topic hz /counter
-      rqt_graph
-
-
-.. dropdown:: Quality of Service (QoS)
-
-   QoS is the set of policies that govern how messages are delivered
-   between publishers and subscribers. It is the contract between the
-   two parties on reliability, history, and durability.
-
-   .. warning::
-
-      Publisher and subscriber QoS policies must be **compatible** or
-      DDS silently refuses the connection -- no error, no data.
-
-   **The Four Core QoS Policies**
-
-   - **Reliability**: ``RELIABLE`` retransmits dropped messages and
-     guarantees delivery. ``BEST_EFFORT`` skips retransmission for
-     lower latency. Use ``RELIABLE`` for commands and critical data;
-     ``BEST_EFFORT`` for high-frequency sensor streams.
-   - **Durability**: ``TRANSIENT_LOCAL`` caches the last message so
-     late-joining subscribers receive it immediately. ``VOLATILE``
-     sends nothing to late joiners. Use ``TRANSIENT_LOCAL`` for topics
-     published once but needed by nodes that start later (e.g. robot
-     description, map).
-   - **History**: ``KEEP_LAST`` buffers the last *N* messages (depth).
-     ``KEEP_ALL`` retains every message at the cost of unbounded
-     memory.
-   - **Deadline**: maximum allowed gap between consecutive messages.
-     If no message arrives within the interval, the middleware triggers
-     a callback -- useful for detecting sensor failures.
-
-   **Default vs. Explicit QoS in Python**
-
-   .. code-block:: python
-
-      from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
-
-      # Passing an integer sets queue depth with all-default policies
-      self._publisher = self.create_publisher(Int64, "counter", 10)
-
-      # Equivalent explicit profile
-      qos = QoSProfile(
-          depth=10,
-          reliability=ReliabilityPolicy.RELIABLE,
-          durability=DurabilityPolicy.VOLATILE,
-          history=HistoryPolicy.KEEP_LAST,
-      )
-      self._publisher = self.create_publisher(Int64, "counter", qos)
-
-   **Predefined QoS Profiles**
-
-   .. code-block:: python
-
-      from rclpy.qos import qos_profile_sensor_data
-      from rclpy.qos import qos_profile_system_default
-
-      # Sensor data: BEST_EFFORT, VOLATILE, depth 5
-      self._publisher = self.create_publisher(LaserScan, "scan", qos_profile_sensor_data)
-
-      # System default: RELIABLE, VOLATILE, depth 10
-      self._publisher = self.create_publisher(Int64, "counter", qos_profile_system_default)
-
-   - ``qos_profile_sensor_data``: best effort, volatile, depth 5.
-     Designed for high-frequency sensor streams where losing an
-     occasional message is acceptable.
-   - ``qos_profile_system_default``: reliable, volatile, depth 10.
-     The implicit default when you pass an integer.
-   - ``qos_profile_services_default``: reliable, volatile. Used
-     internally by services and actions.
-
-   .. note::
-
-      Prefer predefined profiles over manual ``QoSProfile``
-      construction when your use case matches one of them.
-
-   **QoS Compatibility Rules**
-
-   A publisher and subscriber only connect if their policies are
-   `compatible
-   <https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html>`_.
-   Incompatible QoS causes a **silent failure** -- no error, no
-   warning, no data.
-
-   - **Reliability**: a ``RELIABLE`` subscriber will not connect to a
-     ``BEST_EFFORT`` publisher. The reverse works.
-   - **Durability**: a ``TRANSIENT_LOCAL`` subscriber will not connect
-     to a ``VOLATILE`` publisher. The reverse works.
-   - **Deadline**: subscriber deadline must be greater than or equal
-     to publisher deadline.
-
-   **Diagnosing QoS Mismatches**
-
-   .. code-block:: console
-
-      ros2 topic info /counter -v
-      ros2 doctor --report | grep qos
-
-   .. warning::
-
-      A subscriber that receives nothing is often a QoS mismatch, not
-      a bug in your code. Always check QoS compatibility before
-      debugging elsewhere.
-
-
-.. dropdown:: Subscribers
-
-   A subscriber is unaware of which publisher sends the messages. Its
-   sole objective is to receive and process them.
-
-   **File:** ``first_pkg/subscriber_demo.py``
-
-   **Workflow**
-
-   1. Create a subscription object: specify message type, topic name,
-      callback, and QoS queue depth.
-   2. Define a callback function to process each incoming message.
-   3. Spin the node -- the ROS 2 executor delivers messages to the
-      callback as they arrive.
-
-   **Create a Subscription Object**
-
-   .. code-block:: python
-
-      from std_msgs.msg import Int64
-      from rclpy.node import Node
-
-      class SubscriberDemo(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self._subscriber = self.create_subscription(
-                  Int64,                        # message type
-                  "counter",                    # topic name
-                  self._subscriber_callback,    # callback
-                  10                            # QoS queue depth
-              )
-              self.get_logger().info("Subscriber initialized.")
-
-   - ``create_subscription()`` takes four arguments: message type,
-     topic name, callback, and queue depth -- all four are required.
-   - Topic name and message type **must** match the publisher exactly
-     -- a mismatch causes a silent failure with no data received.
-   - The callback is passed by reference as
-     ``self._subscriber_callback``, not called -- no parentheses.
-   - Store the result in ``self._subscriber`` so it is not garbage
-     collected when ``__init__`` returns.
-
-   **Define the Callback**
-
-   .. code-block:: python
-
-      from std_msgs.msg import Int64
-
-      # Named callback (preferred)
-      def _subscriber_callback(self, msg: Int64):
-          self.get_logger().info(f"Received: {msg.data}")
-
-      # Equivalent lambda (for simple single-expression callbacks only)
-      self._subscriber = self.create_subscription(
-          Int64,
-          "counter",
-          lambda msg: self.get_logger().info(f"Received: {msg.data}"),
-          10,
-      )
-
-   - The callback receives a single argument: the incoming message
-     object. Type-hint it (``msg: Int64``) for IDE autocompletion on
-     fields.
-   - **Named callback** (preferred): easier to read, test, and extend.
-     Use whenever the body is more than one expression.
-   - **Lambda**: acceptable for trivial one-liners but becomes
-     unreadable quickly.
-   - Keep callbacks fast -- a slow callback blocks the executor and
-     causes queue buildup on the subscriber side.
-
-   **Complete Subscriber Node**
-
-   .. code-block:: python
-
-      import rclpy
-      from rclpy.node import Node
-      from std_msgs.msg import Int64
-
-      class SubscriberDemo(Node):
-          def __init__(self, node_name: str):
-              super().__init__(node_name)
-              self._subscriber = self.create_subscription(
-                  Int64, "counter",
-                  self._subscriber_callback, 10
-              )
-              self.get_logger().info("Subscriber initialized.")
-
-          def _subscriber_callback(self, msg: Int64):
-              self.get_logger().info(f"Received: {msg.data}")
-
-      def main(args=None):
-          rclpy.init(args=args)
-          node = SubscriberDemo("subscriber_demo")
-          try:
-              rclpy.spin(node)
-          except KeyboardInterrupt:
-              pass
-          finally:
-              node.destroy_node()
-              rclpy.shutdown()
-
-      if __name__ == "__main__":
-          main()
-
-   .. note::
-
-      If the callback is never invoked, check topic name, message
-      type, and QoS compatibility before assuming the code is broken.
-
-
-Communication Scenarios
-====================================================
-
-What actually happens to messages when publishers and subscribers
-run at different speeds?
-
-**Setup for all scenarios**
-
-- Publisher rate: **2 Hz** (one message every 0.5 s).
-- QoS queue depth: **3** on both publisher and subscriber.
-- Policy: ``KEEP_LAST`` -- oldest message dropped when queue is full.
-
-
-.. dropdown:: Scenario 1 -- No Subscriber
-
-   **Setup:** publisher at 2 Hz, no subscriber connected, QoS depth 3.
-
-   .. list-table:: Publisher at 2 Hz, no subscriber connected, QoS depth 3
-      :widths: 20 40 40
-      :header-rows: 1
-      :class: compact-table
-
-      * - Time
-        - Publisher action
-        - Result
-      * - t = 0.0 s
-        - Publishes msg1
-        - No matching subscriber -- discarded by DDS
-      * - t = 0.5 s
-        - Publishes msg2
-        - No matching subscriber -- discarded by DDS
-      * - t = 1.0 s
-        - Publishes msg3
-        - No matching subscriber -- discarded by DDS
-      * - t = 1.5 s
-        - Publishes msg4
-        - No matching subscriber -- discarded by DDS
-
-   - DDS does not buffer messages for a subscriber that does not
-     exist. Messages are discarded immediately.
-   - The publisher continues running normally with no performance
-     impact.
-   - Messages are lost forever unless ``TRANSIENT_LOCAL`` durability
-     is configured -- in which case the last message is cached and
-     delivered to any subscriber that joins later.
-
-   .. note::
-
-      This is the expected behavior for ``VOLATILE`` durability (the
-      default). If you need late-joining subscribers to receive the
-      last value, switch to ``TRANSIENT_LOCAL`` on both publisher and
-      subscriber.
-
-
-.. dropdown:: Scenario 2 -- Fast Subscriber
-
-   **Setup:** publisher at 2 Hz, callback duration 0.1 s, QoS depth 3
-   on both sides.
-
-   .. list-table:: Publisher at 2 Hz, callback duration 0.1 s, QoS depth 3
-      :widths: 18 20 18 22 22
-      :header-rows: 1
-      :class: compact-table
-
-      * - Time
-        - Publisher
-        - Queue
-        - Callback
-        - Notes
-      * - t = 0.0 s
-        - Publishes msg1
-        - [msg1]
-        - Starts on msg1
-        - Queue: 1
-      * - t = 0.1 s
-        - --
-        - []
-        - Completes
-        - Queue: 0, ready
-      * - t = 0.5 s
-        - Publishes msg2
-        - [msg2]
-        - Starts on msg2
-        - Queue: 1
-      * - t = 0.6 s
-        - --
-        - []
-        - Completes
-        - Queue: 0, ready
-      * - t = 1.0 s
-        - Publishes msg3
-        - [msg3]
-        - Starts on msg3
-        - Queue: 1
-      * - t = 1.1 s
-        - --
-        - []
-        - Completes
-        - Queue: 0, ready
-
-   - The queue never builds up -- it holds at most one message at a
-     time.
-   - Latency between publish and processing is minimal.
-   - The system is healthy -- no messages are dropped.
-   - This is the ideal scenario for real-time sensor processing.
-
-   .. note::
-
-      Design your callbacks to be faster than the publish rate. If the
-      callback cannot keep up, offload heavy computation to a separate
-      thread.
-
-
-.. dropdown:: Scenario 3 -- Slow Subscriber
-
-   **Setup:** publisher at 2 Hz, callback duration 1.7 s, QoS depth 3
-   on both sides.
-
-   .. list-table:: Publisher at 2 Hz, callback duration 1.7 s, QoS depth 3
-      :widths: 15 20 25 20 20
-      :header-rows: 1
-      :class: compact-table
-
-      * - Time
-        - Publisher
-        - Queue
-        - Callback
-        - Notes
-      * - t = 0.0 s
-        - Publishes msg1
-        - [msg1]
-        - Starts on msg1
-        - Queue: 1
-      * - t = 0.5 s
-        - Publishes msg2
-        - [msg2]
-        - Still on msg1
-        - Queue: 1
-      * - t = 1.0 s
-        - Publishes msg3
-        - [msg2, msg3]
-        - Still on msg1
-        - Queue: 2
-      * - t = 1.5 s
-        - Publishes msg4
-        - [msg2, msg3, msg4]
-        - Still on msg1
-        - Queue full (depth 3)
-      * - t = 1.7 s
-        - --
-        - [msg3, msg4]
-        - Starts on msg2
-        - msg2 dequeued
-      * - t = 2.0 s
-        - Publishes msg5
-        - [msg3, msg4, msg5]
-        - Still on msg2
-        - Queue full again
-      * - t = 2.5 s
-        - Publishes msg6
-        - [msg4, msg5, msg6]
-        - Still on msg2
-        - **msg3 dropped**
-      * - t = 3.4 s
-        - --
-        - [msg4, msg5, msg6]
-        - Starts on msg3
-        - msg3 dequeued
-      * - t = 3.5 s
-        - Publishes msg7
-        - [msg5, msg6, msg7]
-        - Still on msg3
-        - **msg4 dropped**
-
-   - Once the queue reaches depth 3, every new message evicts the
-     oldest one -- ``KEEP_LAST`` policy.
-   - The subscriber always processes stale data -- it is never caught
-     up with real time.
-   - Increasing queue depth delays the first drop but does not solve
-     the underlying problem.
-
-
-.. dropdown:: Summary of Scenarios
-
-   .. list-table:: Comparison of publisher-subscriber timing scenarios at 2 Hz, QoS depth 3
-      :widths: 30 25 25 20
-      :header-rows: 1
-      :class: compact-table
-
-      * - Scenario
-        - Callback time
-        - Messages lost
-        - Latency
-      * - No subscriber
-        - --
-        - All
-        - N/A
-      * - Fast subscriber
-        - 0.1 s
-        - None
-        - Minimal
-      * - Slow subscriber
-        - 1.7 s
-        - Yes (oldest)
-        - Grows over time
-
-   **Diagnostic Commands**
-
-   .. code-block:: console
-
-      ros2 topic hz /counter        # check publish rate
-      ros2 topic echo /counter      # watch messages in real time
-      ros2 topic info /counter -v   # check QoS on both sides
-
-   .. note::
-
-      If ``ros2 topic hz`` shows the expected rate but your node
-      output is slower, your callback is the bottleneck -- not the
-      publisher. Offload heavy work to a separate thread or reduce the
-      publish rate.
+   int main() {
+       std::cout << Vehicle::get_vehicle_count() << '\n'; // 0
+       Vehicle vehicle("Sedan");
+       std::cout << vehicle.get_vehicle_count() << '\n';  // 1
+   }

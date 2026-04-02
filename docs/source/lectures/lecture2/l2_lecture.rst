@@ -4,1145 +4,1564 @@ Lecture
 
 
 
-Packages and Modules
+
+C++ Overview
 ====================================================
 
-Organizing Python code into reusable units.
 
-Create a file called ``packages_demo.py`` to follow along with the examples below.
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
+    **What is C++?**
 
-.. dropdown:: What Are They?
-   :open:
+    C++ is a **statically typed**, **compiled**, **multi-paradigm** programming
+    language developed by **Bjarne Stroustrup** at Bell Labs in **1979**. It
+    supports procedural, object-oriented, and generic programming paradigms and
+    is widely used in systems programming, game development, embedded systems,
+    and robotics.
 
-   Modular programming breaks a large task into smaller, manageable subtasks called **modules**.
+.. grid:: 1 2 2 2
+    :gutter: 3
 
-   .. grid:: 1 2 2 2
-       :gutter: 3
+    .. grid-item-card:: cppreference.com
+        :class-card: sd-border-secondary
 
-       .. grid-item-card:: 📄 Module
-           :class-card: sd-border-info
+        `cppreference.com <https://en.cppreference.com/>`_
 
-           - A single ``.py`` file.
-           - Contains functions, classes, and variables.
-           - Example: ``math_utils.py``
+        Comprehensive reference for the C++ language and standard library.
+        Highly recommended for looking up language features and functions.
 
-       .. grid-item-card:: 📁 Package
-           :class-card: sd-border-info
+    .. grid-item-card:: cplusplus.com
+        :class-card: sd-border-secondary
 
-           - A folder containing ``.py`` files.
-           - Must include ``__init__.py`` (can be empty).
-           - Example: ``shape/``
+        `cplusplus.com <https://cplusplus.com/>`_
 
-   .. note::
+        Another popular reference with tutorials and a searchable library
+        reference. Good for beginners.
 
-      Since Python 3.3, ``__init__.py`` is technically optional (namespace packages), but it is **required** for regular packages and should always be included.
+.. figure:: /_static/images/l2/cpp_timeline.png
+   :align: center
 
-   .. note::
+   Timeline of C++ standards and evolution.
 
-      Python has a large collection of `standard modules <https://docs.python.org/3/py-modindex.html>`_. Standard and user-defined modules are imported the same way.
 
+Hardware Interfacing
+--------------------
 
-.. dropdown:: Making Packages Discoverable — Adding to ``sys.path``
-   :open:
+C++ is widely used in robotics because it provides **low-level hardware
+access** combined with **high-level abstractions**. The following
+mechanisms enable hardware interfacing:
 
-   Python can only import packages that are on its **module search path** (``sys.path``). If your script and package live in **sibling directories** (e.g., ``lecture2/`` and ``shape/``), Python may not find the package by default.
+.. grid:: 1 2 2 3
+    :gutter: 3
 
-   .. code-block:: python
+    .. grid-item-card:: Direct Memory Access
+        :class-card: sd-border-secondary
 
-      import sys
-      import os
+        **Pointers** allow direct manipulation of memory addresses, enabling
+        communication with hardware registers.
 
-      # Add the parent directory to sys.path
-      sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    .. grid-item-card:: Memory-Mapped I/O
+        :class-card: sd-border-secondary
 
-   - ``__file__`` — path to the current script.
-   - ``os.path.abspath()`` — resolves to a full absolute path.
-   - ``os.path.dirname()`` — goes up one directory level.
-   - ``sys.path.insert(0, ...)`` — adds the path to the front of the search list.
+        Hardware registers are mapped to memory addresses that C++ code
+        can read from and write to directly.
 
-   .. tip::
+    .. grid-item-card:: Inline Assembly
+        :class-card: sd-border-secondary
 
-      Place this at the **very top** of your script, before any other imports that depend on the path.
+        C++ supports embedding assembly language instructions within
+        source code for fine-grained hardware control.
 
+    .. grid-item-card:: System Calls / APIs
+        :class-card: sd-border-secondary
 
-.. dropdown:: Import Strategies
-   :open:
+        Operating system APIs provide standardized interfaces for
+        interacting with hardware devices.
 
-   There are four common ways to import names from a module.
+    .. grid-item-card:: Specialized Libraries
+        :class-card: sd-border-secondary
 
-   **Approach 1 — Full module path:**
+        Libraries such as ROS 2 and hardware abstraction layers
+        simplify interfacing with sensors and actuators.
 
-   .. code-block:: python
 
-      import shape.square
-      result = shape.square.compute_area(4)
+.. figure:: /_static/images/l2/development_process.png
+   :align: center
 
-   **Approach 2 — Alias:**
+   The C++ development process: Write, Build, Run.
 
-   .. code-block:: python
 
-      import shape.square as sq
-      result = sq.compute_area(4)
+Write
+------
 
-   **Approach 3 — Import specific names (recommended):**
+Hello World
+^^^^^^^^^^^
 
-   .. code-block:: python
+The classic "Hello, World!" program demonstrates the minimal structure of
+a C++ program.
 
-      from shape.square import compute_area, compute_perimeter
-      result = compute_area(4)
+.. code-block:: cpp
 
-   **Approach 4 — Wildcard (avoid):**
+   #include <iostream>
 
-   .. code-block:: python
+   int main() {
+       std::cout << "Hello, World!" << '\n';
+       return 0;
+   }
 
-      from shape.square import *  # Namespace pollution risk!
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
+    **Key Components**
 
-.. dropdown:: Why Avoid Wildcard Imports?
-   :open:
+    - ``#include <iostream>`` -- Preprocessor directive that includes the
+      Input/Output stream library.
+    - ``int main()`` -- The entry point of every C++ program. Execution
+      begins here.
+    - ``std::cout`` -- The standard character output stream, used to print
+      text to the console.
+    - ``'\n'`` -- The newline character, used to move to the next line.
+    - ``return 0;`` -- Returns 0 to the operating system, indicating
+      successful execution.
+    - **Semicolons** (``;``) -- Every statement in C++ must end with a
+      semicolon. A **statement** is an instruction that performs an action.
 
-   ``import *`` dumps **every** name from a module into your current namespace, which can silently overwrite existing variables or functions.
 
-   .. code-block:: python
+Basic I/O
+^^^^^^^^^
 
-      from shape.square import *    # brings in compute_area, compute_perimeter
-      from shape.circle import *    # also brings in compute_area, compute_perimeter
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-      result = compute_area(4)      # Which version is this? circle!
+    **Output: std::cout**
 
-   - ``compute_area`` from ``square`` is **silently overwritten** by ``circle``'s version.
-   - No error, no warning — your code just computes the wrong thing.
-   - Readers cannot tell which module a function came from.
+    ``std::cout`` uses the **insertion operator** ``<<`` to send data to the
+    standard output (console).
 
-   .. tip::
+    - ``std`` is the **standard namespace**.
+    - ``::`` is the **scope resolution operator**, which specifies that
+      ``cout`` belongs to the ``std`` namespace.
 
-      **Best practice**: Use explicit named imports so it is always clear where each name originated.
+.. dropdown:: std::cout Examples
+    :class-container: sd-border-secondary
+    :open:
 
-      .. code-block:: python
+    .. code-block:: cpp
 
-         from shape.square import compute_area as square_area
-         from shape.circle import compute_area as circle_area
+       #include <iostream>
 
+       int main() {
+           // Output text
+           std::cout << "Hello, World!" << '\n';
 
-.. dropdown:: Importing Packages from Anywhere
-   :open:
+           // Output numbers
+           std::cout << 42 << '\n';
+           std::cout << 3.14 << '\n';
 
-   So far we have seen how to import **sibling packages** using ``sys.path.insert()``. But what if the package is located **somewhere else** on the system?
+           // Chaining the insertion operator
+           std::cout << "The answer is " << 42 << " and pi is " << 3.14 << '\n';
 
-   Python provides several methods to make packages discoverable. In all cases, the path you add should be the **parent directory** of the package, not the package directory itself.
+           return 0;
+       }
 
-   .. list-table::
-      :widths: 40 30
-      :header-rows: 1
-      :class: compact-table
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-      * - Package location
-        - Path to add
-      * - ``/opt/libs/my_utils/``
-        - ``/opt/libs``
-      * - ``/home/alice/projects/common/shared_tools/``
-        - ``/home/alice/projects/common``
+    **Input: std::cin**
 
+    ``std::cin`` uses the **extraction operator** ``>>`` to read data from
+    the standard input (keyboard).
 
-.. dropdown:: Method 1 — ``PYTHONPATH`` Environment Variable
-   :open:
+.. dropdown:: std::cin Examples
+    :class-container: sd-border-secondary
+    :open:
 
-   Set the ``PYTHONPATH`` environment variable in your shell **before** running the script. Python adds every directory in ``PYTHONPATH`` to ``sys.path`` automatically at startup.
+    .. code-block:: cpp
 
-   .. code-block:: console
+       #include <iostream>
 
-      # Add one directory (append to existing PYTHONPATH)
-      export PYTHONPATH="/opt/libs:$PYTHONPATH"
-      python3 my_script.py
+       int main() {
+           int age;
+           double height;
 
-      # Add multiple directories
-      export PYTHONPATH="/opt/libs:/home/alice/projects/common:$PYTHONPATH"
-      python3 my_script.py
+           std::cout << "Enter your age: ";
+           std::cin >> age;
 
-   Now your script can import directly with no code changes:
+           std::cout << "Enter your height: ";
+           std::cin >> height;
 
-   .. code-block:: python
+           std::cout << "Age: " << age << ", Height: " << height << '\n';
 
-      import my_utils            # Found in /opt/libs/
-      import shared_tools        # Found in /home/alice/projects/common/
+           return 0;
+       }
 
-   .. warning::
 
-      ``PYTHONPATH`` is session-specific — it resets when you close the terminal. Add it to your ``~/.bashrc`` to make it permanent.
+Comments
+^^^^^^^^
 
+Comments are used to document code and are ignored by the compiler.
 
-.. dropdown:: Method 2 — ``.pth`` Files
-   :open:
+.. code-block:: cpp
 
-   Drop a ``.pth`` file into Python's ``site-packages`` directory. Each line is a path that gets added to ``sys.path`` automatically at startup.
+   // This is a single-line comment
 
-   First, find your ``site-packages`` directory:
+   /*
+    * This is a multi-line comment.
+    * It can span multiple lines.
+    */
 
-   .. code-block:: console
 
-      python3 -c "import site; print(site.getsitepackages())"
+Build
+------
 
-   Then create a ``.pth`` file in that directory:
+.. figure:: /_static/images/l2/build.png
+   :align: center
 
-   .. code-block:: text
+   The build process: Preprocessor, Compiler, Linker.
 
-      # /usr/lib/python3.12/site-packages/enpm605.pth
-      /opt/libs
-      /home/alice/projects/common
+The build process transforms human-readable source code into an executable
+program. It consists of three stages: **preprocessing**, **compilation**,
+and **linking**.
 
-   Now every Python script on the system can import from those paths:
 
-   .. code-block:: python
+Preprocessor
+^^^^^^^^^^^^
 
-      import my_utils        # Found in /opt/libs/
-      import shared_tools    # Found in /home/alice/projects/common/
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-   .. tip::
+    **What the Preprocessor Does**
 
-      This is a system-wide change. Use this for packages you want available to **all** your projects.
+    The preprocessor modifies the source code **before** compilation. It:
 
+    - Removes comments.
+    - Processes directives that start with ``#``:
 
-.. dropdown:: Method 3 — Editable Install (``pip3 install``)
-   :open:
+      - ``#include`` -- Inserts the contents of a header file.
+      - ``#define`` -- Defines macros (text substitution).
+      - ``#ifdef`` / ``#ifndef`` -- Conditional compilation.
 
-   The most robust approach. Add a ``pyproject.toml`` to your package and install it in **editable mode**.
+.. code-block:: bash
 
-   .. code-block:: toml
-      :caption: shape/pyproject.toml
+   g++ -std=c++17 -E week2.cpp
 
-      [build-system]
-      requires = ["setuptools"]
-      build-backend = "setuptools.build_meta"
+.. note::
 
-      [project]
-      name = "shape2"
-      version = "0.1.0"
-      description = "Simple shape geometry utilities for ENPM605"
-      requires-python = ">=3.10"
+   The ``-E`` flag tells the compiler to stop after preprocessing and output
+   the preprocessed source code.
 
-   Then install it:
 
-   .. code-block:: console
+Compiler
+^^^^^^^^
 
-      cd <path to shape>
-      pip3 install -e . --break-system-packages
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-   - Works from **anywhere** — no path manipulation needed.
-   - The ``-e`` flag means changes take effect **immediately** without reinstalling.
-   - This is how real Python projects manage dependencies.
+    **What the Compiler Does**
 
-   .. tip::
+    The compiler translates the preprocessed source code into **machine code**
+    (also called **object code**). Machine code consists of binary instructions
+    that the CPU can execute directly.
 
-      **Recommended**: This is the most portable and professional approach.
+.. code-block:: bash
 
+   g++ -std=c++17 -c week2.cpp
 
-.. dropdown:: Summary of Discovery Approaches
-   :open:
+.. note::
 
-   .. list-table::
-      :widths: 25 20 30
-      :header-rows: 1
-      :class: compact-table
+   The ``-c`` flag tells the compiler to compile but **not** link, producing
+   an object file (``week2.o``).
 
-      * - Method
-        - Scope
-        - Best for
-      * - ``sys.path.insert()``
-        - Single script
-        - Quick fixes, sibling packages
-      * - ``PYTHONPATH``
-        - Terminal session
-        - Development and testing
-      * - ``.pth`` files
-        - System-wide
-        - Shared libraries across projects
-      * - ``pip3 install``
-        - System-wide
-        - Reusable packages (recommended)
 
-   .. note::
+Linker
+^^^^^^
 
-      For this course, we will primarily use ``sys.path.insert()`` and ``pip3 install``
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
+    **What the Linker Does**
 
-.. dropdown:: The ``__name__`` Guard
-   :open:
+    The linker combines one or more object files and libraries into a single
+    **executable** file. It resolves references between object files (e.g.,
+    function calls defined in other files).
 
-   When a module is run directly, its ``__name__`` is set to ``"__main__"``. When imported, ``__name__`` is set to the module's name.
+.. code-block:: bash
 
-   .. code-block:: python
+   g++ week2.o -o week2_cpp
 
-      from shape.triangle import compute_area
 
-      print(compute_area(3, 2))
+Run
+----
 
-   .. note::
+.. code-block:: bash
 
-      This pattern allows a module to serve both as an importable library and as a standalone script.
+   ./week2_cpp
 
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-Indentation
+    **What Happens When You Run a Program**
+
+    1. The operating system **loads** the executable into **RAM**.
+    2. The CPU executes instructions through the **fetch-decode-execute**
+       cycle:
+
+       - **Fetch**: Retrieve the next instruction from memory.
+       - **Decode**: Interpret the instruction.
+       - **Execute**: Perform the operation.
+
+.. figure:: /_static/images/l2/execution2.pdf
+   :align: center
+
+   The fetch-decode-execute cycle.
+
+
+Bits, Bytes, and Words
 ====================================================
 
-Unlike C++ or Java which use braces ``{}``, Python uses **indentation** to define blocks of code.
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-Create a file called ``indentation_demo.py`` to follow along.
+    **Fundamental Units of Data**
+
+    - **Bit**: The smallest unit of data, representing either ``0`` or ``1``.
+    - **Byte**: A group of **8 bits**. This is the standard addressable unit
+      of memory.
+    - **Word**: A fixed-size group of bits that the CPU processes as a single
+      unit. The size depends on the architecture (e.g., 32-bit or 64-bit).
+
+.. figure:: /_static/images/l2/memory.pdf
+   :align: center
+
+   Bits, bytes, and words in memory.
+
+.. figure:: /_static/images/l2/representation.png
+   :align: center
+
+   Binary representation of data.
 
 
-.. dropdown:: Python's Block Structure
-   :open:
+Memory Segments
+---------------
 
-   .. tab-set::
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-       .. tab-item:: 🐍 Python
+    **Program Memory Layout**
 
-           .. code-block:: python
+    When a program is loaded into memory, it is organized into the following
+    segments:
 
-              def greeting(name):
-                  print("Hello", name)
-                  if name == "Alice":
-                      print("Welcome back!")
+    - **Text (Code) Segment** -- Contains the compiled machine code
+      instructions.
+    - **Data Segment** -- Stores initialized global and static variables.
+    - **BSS Segment** -- Stores uninitialized global and static variables
+      (initialized to zero).
+    - **Heap** -- Dynamic memory allocated at runtime (grows upward).
+    - **Stack** -- Stores local variables and function call information
+      (grows downward).
+    - **Arguments** -- Stores command-line arguments and environment
+      variables.
 
-       .. tab-item:: ⚙️ C++
 
-           .. code-block:: cpp
+Variables
+====================================================
 
-              void greeting(std::string name) {
-                  std::cout << "Hello " << name << '\n';
-                  if (name == "Alice") {
-                      std::cout << "Welcome back!\n";
-                  }
-              }
 
-   .. warning::
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-      Mixing tabs and spaces causes ``IndentationError``. Configure your editor to use **4 spaces** per indent level (PEP 8 standard).
+    **Definition**
+
+    A **variable** is a symbolic name associated with a **storage location**
+    in memory. It holds a value that can be read and modified during program
+    execution.
+
+.. figure:: /_static/images/l2/Lecture2-variable1.pdf
+   :align: center
+
+   A variable maps a name to a memory location.
+
+
+Characteristics
+---------------
+
+.. grid:: 1 2 2 3
+    :gutter: 3
+
+    .. grid-item-card:: Type
+        :class-card: sd-border-secondary
+
+        Determines what kind of data the variable can hold and how much
+        memory is allocated for it.
+
+    .. grid-item-card:: Name (Identifier)
+        :class-card: sd-border-secondary
+
+        The symbolic name used to refer to the variable in code.
+
+    .. grid-item-card:: Scope
+        :class-card: sd-border-secondary
+
+        The region of the program where the variable is accessible.
+
+    .. grid-item-card:: Lifetime
+        :class-card: sd-border-secondary
+
+        How long the variable exists in memory during program execution.
+
+    .. grid-item-card:: Value
+        :class-card: sd-border-secondary
+
+        The data stored in the variable's memory location.
+
+
+Naming (Identifiers)
+---------------------
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Rules for Identifiers**
+
+    - Can contain **letters**, **numbers**, and **underscores** (``_``).
+    - Must **start** with a **letter** or **underscore** (not a number).
+    - Are **case sensitive** (``myVar`` and ``myvar`` are different).
+    - Cannot use **reserved keywords** (e.g., ``int``, ``return``, ``class``).
+
+.. dropdown:: Valid and Invalid Identifiers
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       // Valid identifiers
+       int age;
+       int _count;
+       int student_name;
+       int value2;
+
+       // Invalid identifiers
+       int 2value;         // starts with a number
+       int my-variable;    // contains a hyphen
+       int int;            // reserved keyword
+       int my variable;    // contains a space
+
+.. warning::
+
+   In this course, we use **snake_case** for naming variables. This means
+   all lowercase letters with words separated by underscores.
+
+   **Use:**
+
+   - ``my_variable``
+   - ``student_count``
+   - ``max_temperature``
+   - ``is_valid``
+
+   **Avoid:**
+
+   - ``camelCase`` (e.g., ``myVariable``)
+   - ``PascalCase`` (e.g., ``MyVariable``)
+   - ``ALL_CAPS`` (e.g., ``MY_VARIABLE``) -- reserved for constants and macros.
+
+
+Variable Types
+--------------
+
+.. grid:: 1 2 2 3
+    :gutter: 3
+
+    .. grid-item-card:: Primitive Types
+        :class-card: sd-border-secondary
+
+        Built-in types provided by the language: ``int``, ``double``,
+        ``char``, ``bool``, ``float``, etc.
+
+    .. grid-item-card:: Standard Library Types
+        :class-card: sd-border-secondary
+
+        Types provided by the C++ Standard Library: ``std::string``,
+        ``std::vector``, ``std::array``, etc.
+
+    .. grid-item-card:: User-defined Types
+        :class-card: sd-border-secondary
+
+        Types created by the programmer using ``class``, ``struct``,
+        ``enum``, etc.
+
+.. note::
+
+   The **type** of a variable tells the compiler **how much memory** to
+   allocate and **what kind of value** the variable can store.
+
+
+sizeof Operator
+^^^^^^^^^^^^^^^
+
+The ``sizeof`` operator returns the size (in bytes) of a type or
+expression.
+
+.. code-block:: cpp
+
+   sizeof(type)
+   sizeof(expression)
+
+.. note::
+
+   The sizes returned by ``sizeof`` are **platform-dependent**. They may
+   differ across compilers and architectures.
+
+
+Memory Allocation
+-----------------
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **What Happens When You Write** ``int number = 20;``
+
+    1. The CPU **reserves** a block of bytes (typically 4 for ``int``).
+    2. The memory address of the first byte is **associated** with the
+       variable name ``number``.
+    3. The value ``20`` is **written** in binary to the reserved bytes.
+    4. The type ``int`` **restricts** what operations can be performed
+       on the variable.
+
+.. tip::
+
+   The **address operator** ``&`` returns the memory address of a variable:
+
+   .. code-block:: cpp
+
+      int number = 20;
+      std::cout << &number << '\n';  // prints the memory address
+
+.. figure:: /_static/images/l2/demo.pdf
+   :align: center
+
+   Memory allocation for ``int number = 20;``.
+
+.. figure:: /_static/images/l2/visualization.pdf
+   :align: center
+
+   Visualization of variable storage in memory.
+
+
+Declarations
+^^^^^^^^^^^^
+
+A **declaration** introduces a variable name and its type to the compiler,
+reserving memory for it.
+
+.. code-block:: cpp
+
+   int number;  // declaration -- reserves memory for an int
+
+.. note::
+
+   **Guideline ES.10**: Declare one name per declaration. This improves
+   readability and avoids subtle errors.
+
+   .. code-block:: cpp
+
+      // Good
+      int width;
+      int height;
+
+      // Avoid
+      int width, height;
+
+
+Assignments
+^^^^^^^^^^^
+
+An **assignment** uses the **copy assignment operator** ``=`` to store a
+value in a previously declared variable. Assigning a new value
+**overwrites** the old one.
+
+.. code-block:: cpp
+
+   int number;
+   number = 20;   // assignment
+   number = 30;   // overwriting the previous value
+
+
+Initializations
+^^^^^^^^^^^^^^^
+
+**Initialization** combines declaration and assignment in a single step.
+C++ provides three forms of initialization:
+
+.. list-table::
+   :widths: 30 40 30
+   :header-rows: 1
+   :class: compact-table
+
+   * - Form
+     - Syntax
+     - Example
+   * - Copy Initialization
+     - ``type name = value;``
+     - ``int a = 1;``
+   * - Direct Initialization
+     - ``type name(value);``
+     - ``int a(1);``
+   * - Uniform Initialization
+     - ``type name{value};``
+     - ``int a{1};``
+
+.. tip::
+
+   **Best practice**: Use **uniform initialization** (also called brace
+   initialization) whenever possible. It prevents narrowing conversions
+   and works consistently across all types.
+
+   .. code-block:: cpp
+
+      int a{1};           // uniform initialization (preferred)
+      double b{3.14};
+      char c{'A'};
+
+
+Zero Initialization
+^^^^^^^^^^^^^^^^^^^
+
+Uniform initialization with empty braces initializes a variable to its
+**zero value** (``0`` for numeric types, ``false`` for ``bool``).
+
+.. code-block:: cpp
+
+   int a{};     // a is 0
+   double b{};  // b is 0.0
+   bool c{};    // c is false
+
+.. tip::
+
+   - Use ``{0}`` when you intend to **use** the zero value directly.
+   - Use ``{}`` when the variable is **temporary** or will be assigned
+     later.
+
+
+Uninitialized Variables
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. warning::
+
+   A variable that is declared but **not initialized** contains a
+   **garbage value** -- whatever bits happen to be in the memory location.
+   Reading an uninitialized variable is **undefined behavior**.
+
+   .. code-block:: cpp
+
+      int x;                    // uninitialized -- contains garbage
+      std::cout << x << "\n";   // undefined behavior!
+
+
+Undefined Behavior
+====================================================
+
+.. card::
+    :class-card: sd-border-danger sd-shadow-sm
+
+    **Definition**
+
+    **Undefined behavior** (UB) is the result of executing code whose
+    behavior is not prescribed by the C++ standard. When UB occurs, the
+    program has **no guarantees** -- it may crash, produce incorrect results,
+    or appear to work correctly.
+
+.. dropdown:: Common Examples of Undefined Behavior
+    :class-container: sd-border-secondary
+    :open:
+
+    - **Array out-of-bounds access**: Accessing an element beyond the array's
+      valid range.
+    - **Null pointer dereference**: Accessing memory through a null pointer.
+    - **Signed integer overflow**: Exceeding the range of a signed integer.
+    - **Reading uninitialized variables**: Using a variable before assigning
+      it a value.
+
+.. tip::
+
+   Enable compiler warnings to catch potential UB at compile time. Add
+   ``-Wall -Wextra`` to your build flags.
+
+   In ``CMakeLists.txt``:
+
+   .. code-block:: cmake
+
+      add_compile_options(-Wall -Wextra)
+
+
+Integral Types
+====================================================
+
+**Integral types** represent **whole numbers** (no fractional part).
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Integral Types in C++**
+
+    - ``int`` -- Standard integer.
+    - ``char`` -- Character (also an integer type).
+    - ``short`` -- Short integer.
+    - ``long`` -- Long integer.
+    - ``long long`` -- Extended long integer.
+    - ``bool`` -- Boolean (``true`` or ``false``).
+    - Each type has ``signed`` and ``unsigned`` variants.
+
+
+Signedness Modifiers
+--------------------
+
+.. grid:: 1 2 2 2
+    :gutter: 3
+
+    .. grid-item-card:: signed
+        :class-card: sd-border-secondary
+
+        Can store both **positive** and **negative** values.
+
+        **Advantages:**
+
+        - Represents a full range of numbers including negatives.
+        - Default for most integral types.
+
+    .. grid-item-card:: unsigned
+        :class-card: sd-border-secondary
+
+        Can store only **non-negative** values (zero and positive).
+
+        **Advantages:**
+
+        - Doubles the positive range compared to signed.
+        - Useful for quantities that are never negative (e.g., sizes,
+          counts).
+
+.. note::
+
+   **Trade-off**: Choosing ``unsigned`` doubles the positive range but
+   sacrifices the ability to represent negative values.
+
+
+Size Modifiers
+--------------
+
+.. list-table::
+   :widths: 25 35 40
+   :header-rows: 1
+   :class: compact-table
+
+   * - Modifier
+     - Minimum Size
+     - Notes
+   * - ``short``
+     - >= 16 bits (2 bytes)
+     - Smaller range, saves memory.
+   * - ``long``
+     - >= 32 bits (4 bytes)
+     - Extended range.
+   * - ``long long``
+     - >= 64 bits (8 bytes)
+     - Very large range.
+
+.. note::
+
+   The C++ standard guarantees the following size relationships:
+
+   ``sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)``
+
+
+Type, Size, and Range
+---------------------
+
+.. list-table::
+   :widths: 18 10 36 36
+   :header-rows: 1
+   :class: compact-table
+
+   * - Type
+     - Size (bytes)
+     - Signed Range
+     - Unsigned Range
+   * - ``char``
+     - 1
+     - -128 to 127
+     - 0 to 255
+   * - ``short``
+     - 2
+     - -32,768 to 32,767
+     - 0 to 65,535
+   * - ``int``
+     - 4
+     - -2,147,483,648 to 2,147,483,647
+     - 0 to 4,294,967,295
+   * - ``long``
+     - 8
+     - -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+     - 0 to 18,446,744,073,709,551,615
+   * - ``long long``
+     - 8
+     - -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+     - 0 to 18,446,744,073,709,551,615
+
+
+Compiler Behavior Differences
+------------------------------
+
+.. card::
+    :class-card: sd-border-warning sd-shadow-sm
+
+    **Signed vs. Unsigned: Compiler Quirks**
+
+    - The compiler generates **different instructions** for signed and
+      unsigned operations.
+    - **Comparison quirks**: Comparing signed and unsigned values can produce
+      unexpected results. For example:
+
+      .. code-block:: cpp
+
+         // This comparison is FALSE!
+         std::cout << (-1 < 1u) << '\n';  // prints 0 (false)
+
+      The signed value ``-1`` is implicitly converted to unsigned, resulting
+      in a very large positive number.
+
+    - **Overflow treatment**: Signed overflow is **undefined behavior**;
+      unsigned overflow is well-defined (wraps around).
+
+
+Floating-point Number Types
+====================================================
+
+**Floating-point types** represent numbers with **fractional parts**.
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Floating-point Types in C++**
+
+    - ``float`` -- Single precision.
+    - ``double`` -- Double precision.
+    - ``long double`` -- Extended precision.
+    - Floating-point types are **always signed**.
+
+
+Precision
+---------
+
+.. list-table::
+   :widths: 20 15 25 20
+   :header-rows: 1
+   :class: compact-table
+
+   * - Type
+     - Size (bytes)
+     - Range
+     - Precision (digits)
+   * - ``float``
+     - 4
+     - ~1.2e-38 to ~3.4e+38
+     - ~7
+   * - ``double``
+     - 8
+     - ~2.2e-308 to ~1.8e+308
+     - ~16
+   * - ``long double``
+     - 16
+     - ~3.4e-4932 to ~1.1e+4932
+     - ~33
+
+
+Float Suffix
+^^^^^^^^^^^^
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **The** ``f`` **Suffix**
+
+    By default, a floating-point literal like ``1.05`` is of type ``double``.
+    To explicitly make it a ``float``, append the ``f`` suffix:
+
+    .. code-block:: cpp
+
+       double d = 1.05;    // 1.05 is a double literal
+       float f = 1.05f;    // 1.05f is a float literal
+
+
+std::setprecision
+^^^^^^^^^^^^^^^^^
+
+Use ``std::setprecision()`` from the ``<iomanip>`` header to control the
+number of significant digits displayed.
+
+.. code-block:: cpp
+
+   #include <iostream>
+   #include <iomanip>
+
+   int main() {
+       double pi{3.141592653589793};
+
+       std::cout << std::setprecision(3) << pi << '\n';   // 3.14
+       std::cout << std::setprecision(7) << pi << '\n';   // 3.141593
+       std::cout << std::setprecision(15) << pi << '\n';  // 3.14159265358979
+
+       return 0;
+   }
 
 
 Boolean Type
 ====================================================
 
-Truth values, truthiness, and the ``bool()`` function.
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-Create a file called ``boolean_demo.py`` to follow along with the examples below.
+    **The bool Type**
 
+    - Size: **1 byte**.
+    - Values: ``true`` or ``false``.
+    - Any **non-zero** value is treated as ``true``; ``0`` is ``false``.
 
-.. dropdown:: The ``bool`` Type
-   :open:
+.. dropdown:: Boolean Examples
+    :class-container: sd-border-secondary
+    :open:
 
-   Python provides the Boolean type ``bool`` with exactly two values: ``True`` and ``False``.
+    .. code-block:: cpp
 
-   - ``bool`` is a subclass of ``int``: ``True`` is ``1`` and ``False`` is ``0``.
-   - In a condition, any non-zero value or non-empty sequence evaluates to ``True``.
-   - The built-in ``bool()`` function converts a value to a Boolean.
+       #include <iostream>
 
-   .. grid:: 1 2 2 2
-       :gutter: 3
+       int main() {
+           bool is_valid{true};
+           bool is_empty{false};
 
-       .. grid-item-card:: ❌ Falsy Values
-           :class-card: sd-border-danger
+           std::cout << is_valid << '\n';    // prints 1
+           std::cout << is_empty << '\n';    // prints 0
 
-           .. code-block:: python
+           // Use std::boolalpha to print "true" / "false"
+           std::cout << std::boolalpha;
+           std::cout << is_valid << '\n';    // prints true
+           std::cout << is_empty << '\n';    // prints false
 
-              print(bool(0))       # False
-              print(bool(0.0))     # False
-              print(bool(""))      # False
-              print(bool([]))      # False
-              print(bool({}))      # False
-              print(bool(None))    # False
+           // Use std::noboolalpha to revert to numeric output
+           std::cout << std::noboolalpha;
+           std::cout << is_valid << '\n';    // prints 1
 
-       .. grid-item-card:: ✅ Truthy Values
-           :class-card: sd-border-success
-
-           .. code-block:: python
-
-              print(bool(1))       # True
-              print(bool(-2))      # True
-              print(bool("hi"))    # True
-              print(bool([1, 2]))  # True
-              print(bool(" "))     # True (space!)
-              print(bool(0.001))   # True
-
-   .. tip::
-
-      **Pythonic idiom**: Use truthiness directly in conditions — write ``if my_list:`` instead of ``if len(my_list) > 0:``.
+           return 0;
+       }
 
 
-Operators
+Type Conversion
 ====================================================
 
-Arithmetic, relational, logical, membership, and identity operators.
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-Create a file called ``operators_demo.py`` to follow along with the examples below.
+    **Definition**
 
+    **Type conversion** is the process of converting a value from one type
+    to another. It can be **implicit** (automatic, performed by the compiler)
+    or **explicit** (manually specified by the programmer).
 
-.. dropdown:: Arithmetic Operators
-   :open:
 
-   .. list-table::
-      :widths: 12 20 20 15
-      :header-rows: 1
-      :class: compact-table
+Implicit Type Conversion
+-------------------------
 
-      * - Operator
-        - Operation
-        - Example
-        - Result
-      * - ``+``
-        - Addition
-        - ``7 + 3``
-        - ``10``
-      * - ``-``
-        - Subtraction
-        - ``7 - 3``
-        - ``4``
-      * - ``*``
-        - Multiplication
-        - ``7 * 3``
-        - ``21``
-      * - ``/``
-        - Division (float)
-        - ``7 / 3``
-        - ``2.333...``
-      * - ``//``
-        - Floor division
-        - ``7 // 3``
-        - ``2``
-      * - ``%``
-        - Modulus (remainder)
-        - ``7 % 3``
-        - ``1``
-      * - ``**``
-        - Exponentiation
-        - ``2 ** 10``
-        - ``1024``
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
 
-   .. code-block:: python
+    **Implicit Conversion**
 
-      # Floor division always rounds toward negative infinity
-      print(10 // 3)    # 3
-      print(10 // -3)   # -4 (not -3!)
+    The compiler automatically converts types in the following contexts:
 
-      # Augmented assignment operators
-      x = 10
-      x += 5   # x = x + 5 -> 15
-      x *= 2   # x = x * 2 -> 30
+    - **Initialization**: When the initializer type differs from the
+      variable type.
+    - **Return values**: When the returned type differs from the function's
+      return type.
+    - **Binary operators**: When operands have different types.
+    - **if-statements**: Non-boolean values are converted to ``bool``.
+    - **Function arguments**: When the argument type differs from the
+      parameter type.
 
 
-.. dropdown:: Relational Operators
-   :open:
+typeid and c++filt
+^^^^^^^^^^^^^^^^^^
 
-   Relational operators compare **values** and return ``True`` or ``False``.
+.. code-block:: cpp
 
-   Let ``a = 5`` and ``b = 3``:
+   #include <iostream>
+   #include <typeinfo>
 
-   .. list-table::
-      :widths: 12 25 25
-      :header-rows: 1
-      :class: compact-table
+   int main() {
+       auto x = 3.14;
+       std::cout << typeid(x).name() << '\n';  // prints mangled type name
+       return 0;
+   }
 
-      * - Operator
-        - Description
-        - Example
-      * - ``==``
-        - Equal
-        - ``a == b`` is ``False``
-      * - ``!=``
-        - Not equal
-        - ``a != b`` is ``True``
-      * - ``>``
-        - Greater than
-        - ``a > b`` is ``True``
-      * - ``<``
-        - Less than
-        - ``a < b`` is ``False``
-      * - ``>=``
-        - Greater than or equal
-        - ``a >= 5`` is ``True``
-      * - ``<=``
-        - Less than or equal
-        - ``a <= b`` is ``False``
+.. tip::
 
-   .. code-block:: python
+   Use ``c++filt`` to demangle type names:
 
-      # Python supports chained comparisons
-      x = 5
-      print(1 < x < 10)   # True (equivalent to 1 < x and x < 10)
-      print(1 < x > 3)    # True
+   .. code-block:: bash
 
+      echo "_ZN3std4cout" | c++filt
 
-.. dropdown:: Logical Operators
-   :open:
 
-   Logical operators combine Boolean expressions.
+Standard Conversions
+---------------------
 
-   Let ``a = True`` and ``b = False``:
-
-   .. list-table::
-      :widths: 12 40 25
-      :header-rows: 1
-      :class: compact-table
-
-      * - Operator
-        - Description
-        - Example
-      * - ``and``
-        - ``True`` if both operands are ``True``
-        - ``a and b`` is ``False``
-      * - ``or``
-        - ``True`` if at least one is ``True``
-        - ``a or b`` is ``True``
-      * - ``not``
-        - Reverses the logical state
-        - ``not a`` is ``False``
-
-   .. code-block:: python
-
-      # Short-circuit evaluation
-      x = 5
-      print(x > 0 and x < 10)    # True
-      print(x > 10 or x == 5)    # True
-      print(not (x == 5))        # False
-
-
-.. dropdown:: Logical Operators with Non-Boolean Values
-   :open:
-
-   Python's ``and`` and ``or`` don't always return ``True`` or ``False`` — they return **one of the actual operands**.
-
-   - ``and`` — Returns the **first falsy** value. If all truthy, returns the **last** value.
-   - ``or`` — Returns the **first truthy** value. If all falsy, returns the **last** value.
-   - ``not`` — Always returns a ``bool``.
-
-   .. code-block:: python
-
-      # and: returns first falsy, or last value if all truthy
-      print("hello" and 0)          # 0 ("hello" is truthy, so check 0 -> falsy)
-      print("hello" and "world")    # "world" (both truthy, return last)
-
-      # or: returns first truthy, or last value if all falsy
-      print("hello" or 0)           # "hello" (truthy, stop immediately)
-      print(0 or "default")         # "default" (0 is falsy, check next)
-
-      # not: always returns a bool
-      print(not "")                  # True (empty string is falsy)
-      print(not "hello")             # False (non-empty string is truthy)
-
-   .. tip::
-
-      **Common pattern**: Use ``or`` to provide default values. Example: ``name = user_input or "Anonymous"`` assigns ``"Anonymous"`` when ``user_input`` is empty or falsy.
-
-
-.. dropdown:: Membership and Identity Operators
-   :open:
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: 🔍 Membership Operators
-           :class-card: sd-border-info
-
-           Test if an element belongs in a sequence.
-
-           .. list-table::
-              :widths: 15 40
-              :header-rows: 1
-              :class: compact-table
-
-              * - Operator
-                - Description
-              * - ``in``
-                - ``True`` if found
-              * - ``not in``
-                - ``True`` if not found
-
-           .. code-block:: python
-
-              x = "hello"
-              print("h" in x)      # True
-              print("he" in x)     # True
-              print("O" in x)      # False
-              print("z" not in x)  # True
-
-       .. grid-item-card:: 🆔 Identity Operators
-           :class-card: sd-border-info
-
-           Compare memory locations of objects.
-
-           .. list-table::
-              :widths: 15 40
-              :header-rows: 1
-              :class: compact-table
-
-              * - Operator
-                - Description
-              * - ``is``
-                - Same object (same ``id``)
-              * - ``is not``
-                - Different objects
-
-           .. code-block:: python
-
-              a = [1, 2, 3]
-              b = [1, 2, 3]
-              c = a
-
-              print(a == b)   # True (same values)
-              print(a is b)   # False (different objects)
-              print(a is c)   # True (same object)
-
-   .. important::
-
-      **Rule**: Use ``==`` for value comparison. Use ``is`` only for ``None`` checks.
-
-
-.. dropdown:: Exercise 1: Operators (5 min)
-   :open:
-
-   Predict the output of each expression **before** running the code.
-
-   .. code-block:: python
-
-      # Arithmetic
-      print(17 // 5)
-      print(17 % 5)
-      print(2 ** 0.5)
-      print(-7 // 2)
-
-      # Logical with non-boolean values
-      print(0 or "default")
-      print("hello" and "world")
-      print(not [])
-
-      # Chained comparison
-      x = 15
-      print(10 < x < 20)
-      print(10 < x > 20)
-
-
-Numeric Types
-====================================================
-
-Integers, floats, precision pitfalls, and interning.
-
-Create a file called ``numeric_types_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: Integers and Floats
-   :open:
-
-   .. list-table::
-      :widths: 12 10 30 20
-      :header-rows: 1
-      :class: compact-table
-
-      * - Name
-        - Type
-        - Description
-        - Examples
-      * - Integer
-        - ``int``
-        - Whole numbers (unlimited precision)
-        - ``1``, ``-42``, ``2000``
-      * - Float
-        - ``float``
-        - Decimal numbers (64-bit IEEE 754)
-        - ``2.5``, ``-0.001``, ``1e10``
-      * - Complex
-        - ``complex``
-        - Complex numbers
-        - ``1+2j``, ``3+8j``
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: 🔢 Integer Type
-           :class-card: sd-border-info
-
-           .. code-block:: python
-
-              # Python ints have unlimited precision
-              big = 10 ** 100
-              print(type(big))  # <class 'int'>
-
-              # Convert to int
-              print(int(3.7))          # 3 (truncates)
-              print(int("42"))         # 42
-              print(int("101011", 2))  # 43 (binary)
-
-       .. grid-item-card:: 🔢 Float Type
-           :class-card: sd-border-info
-
-           .. code-block:: python
-
-              # Float precision limits
-              print(0.1 + 0.2)         # 0.30000000000000004
-              print(0.1 + 0.2 == 0.3)  # False!
-
-              # Convert to float
-              print(float("3.5"))   # 3.5
-              print(float(3))       # 3.0
-              print(float("inf"))   # inf
-
-   .. warning::
-
-      Never compare floats with ``==``. Use ``math.isclose(a, b)`` or check ``abs(a - b) < epsilon`` instead.
-
-
-.. dropdown:: Integer and String Interning
-   :open:
-
-   CPython caches ("interns") small integers and compile-time string constants to save memory and speed up comparisons.
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: 🔢 Integer Interning
-           :class-card: sd-border-secondary
-
-           .. code-block:: python
-
-              a, b = 20, 20
-              print(a is b)   # True (cached)
-
-              a, b = -5, -5
-              print(a is b)   # True (cached)
-
-              # Large ints in the same statement
-              a, b = 200000000000, 200000000000
-              print(a is b)   # True (compile-time)
-
-       .. grid-item-card:: 🔤 String Interning
-           :class-card: sd-border-secondary
-
-           .. code-block:: python
-
-              a = "hello"
-              b = "hello"
-              c = "h" + "ello"   # Compile-time
-              d = "".join(["h","e","l","l","o"])
-
-              print(a is b)  # True
-              print(a is c)  # True (folded at compile)
-              print(a is d)  # False (runtime-built)
-
-              import sys
-              e = sys.intern(d)
-              print(a is e)  # True (manually interned)
-
-   .. warning::
-
-      Never rely on interning for correctness. Always use ``==`` for value comparison. Use ``is`` only for ``None`` checks.
-
-
-String Type
-====================================================
-
-Strings, escape sequences, formatting, methods, indexing, and slicing.
-
-Create a file called ``strings_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: String Basics
-   :open:
-
-   A Python string (``str``) is an **immutable** sequence of characters.
-
-   .. code-block:: python
-
-      # Single and double quotes are equivalent
-      greeting = "Hello, World!"
-      greeting2 = 'Hello, World!'
-
-      # Triple quotes for multi-line strings
-      description = """This is a
-      multi-line string."""
-
-      # String conversion
-      number = 123
-      number_str = str(number)
-      print(type(number_str))  # <class 'str'>
-
-   **Escape Sequences:**
-
-   .. code-block:: python
-
-      print("Line 1\nLine 2")          # Newline
-      print("Col1\tCol2\tCol3")        # Tab
-      print("She said: \"Hi!\"")       # Escaped quotes
-      print('It\'s Python!')           # Escaped apostrophe
-      print(r"C:\Users\tony\notes")    # Raw string (no escapes)
-
-
-.. dropdown:: String Interpolation
-   :open:
-
-   There are three ways to format strings in Python.
-
-   **Old-style (``%`` operator) — Legacy, avoid in new code:**
-
-   .. code-block:: python
-
-      name, age = "Alice", 25
-      print("Name: %s, Age: %d" % (name, age))
-
-   **str.format() — More flexible:**
-
-   .. code-block:: python
-
-      print("Name: {}, Age: {}".format(name, age))
-      print("Name: {name}, Age: {age}".format(name="Alice", age=25))
-
-   **f-strings (Python 3.6+) — Recommended:**
-
-   .. code-block:: python
-
-      print(f"Name: {name}, Age: {age}")
-      print(f"Next year: {age + 1}")
-      print(F"Pi: {3.14159:.2f}")      # Format specifier: 3.14. Note: uppercase F works as well
-      print(f"{'hello':>20}")           # Right-align in 20 chars
-
-   .. tip::
-
-      **Use f-strings** for all new code. They are faster, more readable, and support inline expressions.
-
-
-.. dropdown:: String Concatenation and Methods
-   :open:
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: 🔗 Concatenation
-           :class-card: sd-border-info
-
-           .. code-block:: python
-
-              # + operator
-              first = "John"
-              last = "Doe"
-              full = first + " " + last
-
-              # join() method (efficient)
-              words = ["Hello", "World"]
-              sentence = " ".join(words)
-              print(sentence)  # Hello World
-
-              # Repetition
-              print("=" * 40)
-
-       .. grid-item-card:: 🛠️ Common Methods
-           :class-card: sd-border-info
-
-           .. code-block:: python
-
-              s = "Hello, World!"
-
-              print(s.upper())       # HELLO, WORLD!
-              print(s.lower())       # hello, world!
-              print(s.capitalize())  # Hello, world!
-              print(s.swapcase())    # hELLO, wORLD!
-              print(s.strip())       # Remove whitespace
-              print(s.replace("World", "Python"))
-              print(s.split(", "))   # ['Hello', 'World!']
-              print(s.find("World")) # 7
-              print(s.count("l"))    # 3
-              print(s.startswith("Hello"))  # True
-
-   .. note::
-
-      String methods return **new strings** — they never modify the original (strings are immutable).
-
-
-.. dropdown:: Indexing
-   :open:
-
-   Strings are ordered sequences, so each character has a positional index.
-
-   .. list-table::
-      :widths: 15 10 10 10 10 10
-      :header-rows: 0
-      :class: compact-table
-
-      * - **String**
-        - ``'h'``
-        - ``'e'``
-        - ``'l'``
-        - ``'l'``
-        - ``'o'``
-      * - **+ Index**
-        - 0
-        - 1
-        - 2
-        - 3
-        - 4
-      * - **− Index**
-        - −5
-        - −4
-        - −3
-        - −2
-        - −1
-
-   .. code-block:: python
-
-      greeting = "hello"
-
-      # Positive indexing
-      print(greeting[0])    # 'h'
-      print(greeting[4])    # 'o'
-
-      # Negative indexing
-      print(greeting[-1])   # 'o'
-      print(greeting[-5])   # 'h'
-
-      # Common errors
-      # print(greeting[5])    # What is the output?
-      # greeting[0] = 'H'    # What is the output?
-
-
-.. dropdown:: Slicing
-   :open:
-
-   Slicing extracts a **substring** by specifying a range of indices using the syntax ``[start:stop:stride]``:
-
-   - ``start``: Starting index (**inclusive**), defaults to 0.
-   - ``stop``: Ending index (**exclusive**), defaults to end of string.
-   - ``stride``: Step size, defaults to 1.
-
-   .. code-block:: python
-
-      greeting = "hello"  # 'h':0:-5, 'e':+1:-4, 'l':+2:-3, 'l':+3:-2, 'o':+4:-1
-
-      # Basic slicing
-      print(greeting[0:3])   # "hel"
-      print(greeting[:3])    # "hel" (start defaults to 0)
-      print(greeting[2:])    # "llo" (stop defaults to end)
-      print(greeting[:])     # "hello" (entire string)
-
-      # Negative indices
-      print(greeting[-5:-2]) # "hel"
-      print(greeting[-3:])   # "llo"
-
-      # With stride
-      print(greeting[::2])   # "hlo" (every 2nd character)
-      print(greeting[::-1])  # "olleh" (reverse!)
-      print(greeting[4:1:-1])# "oll"
-
-
-.. dropdown:: Exercise 2: Strings (10 min)
-   :open:
-
-   **Part A**: Predict the outputs before running.
-
-   .. code-block:: python
-
-      text = "Learn Python, be happy!"
-      print(text[6:12])
-      print(text[-6:])
-      print(text[::3])
-
-   **Part B**: Using the variable ``quote = "Learn Python, be happy!"``
-
-   - Task 1: Extract ``"Python"`` using only positive indices.
-   - Task 2: Extract ``"Python"`` using only negative indices.
-   - Task 3: Reverse ``"Python"`` to get ``"nohtyP"`` using slicing.
-   - Task 4: Reverse the entire string.
-
-   **Part C**: Print only the second half of a string.
-
-   .. code-block:: python
-
-      text = "HelloWorld"
-      # second_half = ??
-      # print(second_half)  # Expected: World
-
-
-Control Flow
-====================================================
-
-Making decisions with ``if``, ``elif``, and ``else``.
-
-Create a file called ``control_flow_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The ``if`` Statement
-   :open:
-
-   Selection determines which code block executes based on conditions.
-
-   .. tab-set::
-
-       .. tab-item:: Simple ``if``
-
-           .. code-block:: python
-
-              x = 10
-              if x > 0:
-                  print("x is positive")
-              print("always runs")
-
-       .. tab-item:: ``if``-``else``
-
-           .. code-block:: python
-
-              x = -3
-              if x >= 0:
-                  print("Non-negative")
-              else:
-                  print("Negative")
-
-       .. tab-item:: ``if``-``elif``-``else``
-
-           .. code-block:: python
-
-              score = 85
-
-              if score >= 90:
-                  grade = "A"
-              elif score >= 80:
-                  grade = "B"
-              elif score >= 70:
-                  grade = "C"
-              elif score >= 60:
-                  grade = "D"
-              else:
-                  grade = "F"
-
-              print(f"Grade: {grade}")  # Grade: B
-
-
-.. dropdown:: Conditional Expressions
-   :open:
-
-   Python supports single-line conditional assignment (the ternary expression).
-
-   .. code-block:: python
-
-      age = 20
-      status = "adult" if age >= 18 else "minor"
-      print(status)  # "adult"
-
-      # Equivalent to:
-      if age >= 18:
-          status = "adult"
-      else:
-          status = "minor"
-
-
-.. dropdown:: Nested Conditions
-   :open:
-
-   .. code-block:: python
-
-      temperature = 25
-      humidity = 80
-
-      if temperature > 30:
-          if humidity > 70:
-              print("Hot and humid")
-          else:
-              print("Hot and dry")
-      elif temperature > 20:
-          print("Pleasant")  # This runs
-      else:
-          print("Cool")
-
-
-.. dropdown:: Exercise 3: Control Flow (10 min)
-   :open:
-
-   Write a program that determines if a year is a leap year.
-
-   .. code-block:: python
-
-      year = 2024
-
-      # A year is a leap year if:
-      # - Divisible by 4 AND not divisible by 100
-      # - OR divisible by 400
-      # Print "Leap year" or "Not a leap year"
-
-   .. tip::
-
-      Use ``%`` (modulus) to check divisibility. ``year % 4 == 0`` means divisible by 4.
-
-
-Putting It All Together
-====================================================
-
-
-.. dropdown:: Exercise 4: Robot Status Monitor (15 min)
-   :open:
-
-   Write a program that monitors a robot's status using concepts from today's lecture.
-
-   .. code-block:: python
-
-      # Robot parameters
-      robot_name = "Waffle_01"
-      battery = 65
-      speed = 0.8
-      status_log = "IDLE:MOVING:CHARGING:MOVING:IDLE"
-
-      # 1. Use an f-string to print: "Robot Waffle_01 | Battery: 65%"
-
-      # 2. Classify battery level using if/elif/else:
-      #    >= 80: "OK", 50-79: "LOW", 20-49: "WARNING", < 20: "CRITICAL"
-
-      # 3. Use string methods to:
-      #    a) Count how many times "MOVING" appears in status_log
-      #    b) Split status_log by ":" into a list
-      #    c) Check if the last status is "IDLE"
-
-      # 4. Use slicing to extract the first status entry from status_log
-
-      # 5. Create a formatted status message:
-      #    "Waffle_01 | Battery: LOW | Speed: 0.80 m/s | States: 5"
-
-
-Summary
---------
+The C++ standard defines **four categories** of implicit conversions:
 
 .. grid:: 1 2 2 2
     :gutter: 3
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+    .. grid-item-card:: Numeric Promotions
+        :class-card: sd-border-secondary
 
-        - **Packages & Modules** — Organize code; use ``from ... import ...`` (Approach 3)
-        - **Indentation** — Defines code blocks; use 4 spaces
-        - **Operators** — Arithmetic, relational, logical, membership, identity
-        - **Boolean Type** — Truthiness, falsy values, ``bool()``
+        Smaller types are promoted to larger types within the same family.
 
-    .. grid-item-card::
-        :class-card: sd-border-primary
+    .. grid-item-card:: Numeric Conversions
+        :class-card: sd-border-secondary
 
-        - **Numeric Types** — ``int`` (unlimited), ``float`` (IEEE 754), interning
-        - **Strings** — Immutable sequences; f-strings, methods, indexing, slicing
-        - **Control Flow** — ``if``/``elif``/``else``, ternary expressions
+        Additional conversions not covered by promotion.
 
-.. note::
+    .. grid-item-card:: Arithmetic Conversions
+        :class-card: sd-border-secondary
 
-   **Reminder**: Review and experiment with all provided code before next class.
+        Applied when binary operators have operands of different types.
+
+    .. grid-item-card:: Other Conversions
+        :class-card: sd-border-secondary
+
+        Pointer conversions, boolean conversions, etc.
 
 
-Preview: What's Next in L3
----------------------------
+Numeric Promotion
+^^^^^^^^^^^^^^^^^
 
-.. grid:: 1 2 2 2
+**Numeric promotion** converts a smaller type to a larger type within the
+**same family**, preserving the value exactly.
+
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
+   :class: compact-table
+
+   * - From
+     - To
+   * - ``float``
+     - ``double``
+   * - ``char``
+     - ``int``
+   * - ``short``
+     - ``int``
+   * - ``bool``
+     - ``int`` (``false`` -> 0, ``true`` -> 1)
+
+
+Numeric Conversion
+^^^^^^^^^^^^^^^^^^
+
+**Numeric conversions** cover additional type conversions not handled by
+promotion. These may result in **loss of data** or **precision**.
+
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
+   :class: compact-table
+
+   * - From
+     - To
+   * - ``int``
+     - ``short``
+   * - ``double``
+     - ``float``
+   * - ``double``
+     - ``int``
+   * - ``int``
+     - ``bool``
+
+.. warning::
+
+   **Narrowing conversion**: A conversion that may lose data (e.g.,
+   ``double`` to ``int``). **Uniform initialization** disallows narrowing
+   conversions and will produce a compiler error.
+
+   .. code-block:: cpp
+
+      int a{3.5};  // ERROR: narrowing conversion from double to int
+
+   Use ``static_cast`` for explicit narrowing:
+
+   .. code-block:: cpp
+
+      int a{static_cast<int>(3.5)};  // OK: explicit narrowing
+
+
+Arithmetic Conversions
+^^^^^^^^^^^^^^^^^^^^^^
+
+When a binary operator has operands of **different types**, the compiler
+converts them to a **common type** using the following priority list
+(highest to lowest):
+
+1. ``long double``
+2. ``double``
+3. ``float``
+4. ``unsigned long long``
+5. ``long long``
+6. ``unsigned long``
+7. ``long``
+8. ``unsigned int``
+9. ``int`` (lowest priority)
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Rules**
+
+    - **Rule 1**: The operand with the **lower priority** type is promoted
+      to the **higher priority** type.
+    - **Rule 2**: If neither operand's type is on the priority list, both
+      are promoted (e.g., ``short`` and ``char`` are promoted to ``int``).
+
+.. dropdown:: Arithmetic Conversion Examples
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+       #include <typeinfo>
+
+       int main() {
+           int i{5};
+           double d{2.5};
+
+           // i is promoted to double before addition
+           auto result = i + d;
+           std::cout << typeid(result).name() << '\n';  // double
+
+           short s{10};
+           char c{'A'};
+
+           // both promoted to int before addition
+           auto result2 = s + c;
+           std::cout << typeid(result2).name() << '\n';  // int
+
+           return 0;
+       }
+
+
+Constants
+====================================================
+
+C++ provides **three types** of constants:
+
+.. grid:: 1 2 2 3
     :gutter: 3
 
-    .. grid-item-card:: 📖 L3: Python Fundamentals — Part II
-        :class-card: sd-border-primary
+    .. grid-item-card:: Literal Constants
+        :class-card: sd-border-secondary
 
-        - Lists and list methods
-        - Tuples and unpacking
-        - Dictionaries
-        - Sets
-        - Loops (``for``, ``while``)
-        - List comprehensions
+        Fixed values written directly in the source code.
+
+    .. grid-item-card:: Constant Variables
+        :class-card: sd-border-secondary
+
+        Variables declared with ``const`` whose value cannot change.
+
+    .. grid-item-card:: Symbolic Constants
+        :class-card: sd-border-secondary
+
+        Macros defined with ``#define`` (preprocessor).
+
+
+Literal Constants
+-----------------
+
+**Literal constants** are fixed values that appear directly in the source
+code. They include:
+
+- **Integral literals**: ``42``, ``0xFF``, ``0b1010``
+- **Floating-point literals**: ``3.14``, ``1.0e-5``
+- **Character literals**: ``'A'``, ``'\n'``
+- **String literals**: ``"Hello, World!"``
+- **Boolean literals**: ``true``, ``false``
+
+
+Constant Variables
+------------------
+
+A **constant variable** is declared with the ``const`` keyword. Its value
+must be set at initialization and **cannot be changed** afterward.
+
+.. code-block:: cpp
+
+   const double pi{3.141598};
 
 .. note::
 
-   Today's lecture gives you the foundational tools — operators, strings, and control flow — that you will use constantly from L3 onward.
+   **West const** (``const`` before the type) is preferred in this course:
+
+   .. code-block:: cpp
+
+      const int max_size{100};    // west const (preferred)
+      int const max_size{100};    // east const (also valid)
+
+.. warning::
+
+   A ``const`` variable **must** be initialized at declaration. Attempting
+   to reassign a ``const`` variable will produce a compiler error.
+
+   .. code-block:: cpp
+
+      const int x{10};
+      x = 20;  // ERROR: cannot assign to a const variable
+
+
+Symbolic Constants
+------------------
+
+**Symbolic constants** are defined using the ``#define`` preprocessor
+directive.
+
+.. code-block:: cpp
+
+   #define PI 3.14159
+
+.. warning::
+
+   **Avoid using** ``#define`` **for constants.** Macros have no type
+   checking, no scope, and are difficult to debug. Use ``const`` or
+   ``constexpr`` instead.
+
+
+Constant Expressions
+--------------------
+
+A **constant expression** is an expression that can be evaluated entirely
+at **compile time**. The compiler replaces the expression with its computed
+result.
+
+.. code-block:: cpp
+
+   const int x{5};
+   const int y{x + 3};  // constant expression: evaluated at compile time
+
+
+constexpr
+^^^^^^^^^^
+
+The ``constexpr`` keyword **guarantees** that a variable or function is
+evaluated at **compile time**. If a runtime value is used, the compiler
+produces an error.
+
+.. code-block:: cpp
+
+   constexpr double pi{3.141592653589793};
+   constexpr int square{5 * 5};
+
+.. card::
+    :class-card: sd-border-success sd-shadow-sm
+
+    **Performance Benefits of constexpr**
+
+    - **No runtime cost**: The value is computed during compilation.
+    - **Reduced memory usage**: The compiler may replace the variable with
+      its value directly.
+    - **Better inlining**: The compiler has more optimization opportunities.
+
+.. code-block:: cpp
+
+   int x;
+   std::cin >> x;
+   constexpr int y{x};  // ERROR: x is not a compile-time constant
+
+
+Type Deduction
+====================================================
+
+The ``auto`` keyword tells the compiler to **deduce** the variable's type
+from its initializer.
+
+.. code-block:: cpp
+
+   auto a{42};       // int
+   auto b{3.14};     // double
+   auto c{'A'};      // char
+   auto d{true};     // bool
+
+.. warning::
+
+   ``auto`` requires an initializer. The following are errors:
+
+   .. code-block:: cpp
+
+      auto a;    // ERROR: no initializer
+      auto b{};  // ERROR: cannot deduce type from empty braces
+
+.. note::
+
+   ``auto`` drops the ``const`` qualifier. To preserve ``const``, use
+   ``const auto`` or ``constexpr auto``:
+
+   .. code-block:: cpp
+
+      const int x{10};
+      auto y{x};           // y is int (const dropped)
+      const auto z{x};     // z is const int
+      constexpr auto w{x}; // w is constexpr int
+
+
+Compound Statements
+====================================================
+
+A **compound statement** (or **block**) is a group of statements enclosed
+in curly braces ``{}``.
+
+.. code-block:: cpp
+
+   {
+       int x{10};
+       int y{20};
+       std::cout << x + y << '\n';
+   }
+
+.. note::
+
+   - There is **no semicolon** after the closing brace of a block.
+   - Keep nesting levels to **3 or fewer** for readability.
+
+
+Scopes
+====================================================
+
+
+Local Scope
+-----------
+
+Variables declared inside a function body or block have **local scope**.
+They are created at the point of definition and **destroyed** when the
+closing brace ``}`` is reached.
+
+.. dropdown:: Local Scope Example
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       int main() {
+           int x{10};  // x is in scope
+
+           {
+               int y{20};  // y is in scope (nested block)
+               std::cout << x << '\n';  // OK: x is accessible
+               std::cout << y << '\n';  // OK: y is accessible
+           }  // y is destroyed here
+
+           std::cout << x << '\n';  // OK: x is still in scope
+           // std::cout << y << '\n';  // ERROR: y is out of scope
+
+           return 0;
+       }
+
+
+Out of Scope
+^^^^^^^^^^^^
+
+When a variable goes **out of scope**, its memory is **deallocated**. However,
+the garbage data may remain in that memory location until it is overwritten.
+
+.. figure:: /_static/images/l2/outofscope.pdf
+   :align: center
+
+   Memory after a variable goes out of scope.
+
+
+Global Scope
+------------
+
+Variables declared **outside** any function have **global scope**. They
+are visible from the point of declaration to the **end of the file**.
+
+.. dropdown:: Global Scope Example
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       int global_var{100};  // global variable
+
+       int main() {
+           std::cout << global_var << '\n';  // OK: accessible
+           global_var = 200;
+           std::cout << global_var << '\n';  // prints 200
+           return 0;
+       }
+
+.. warning::
+
+   **Global variables are evil.** They make code harder to understand,
+   debug, and maintain because any function can modify them. If you need a
+   global constant, use ``const`` or ``constexpr``.
+
+.. figure:: /_static/images/l2/globalvars.pdf
+   :align: center
+
+   Why global variables are problematic.
+
+
+Naming Collisions and Namespaces
+====================================================
+
+
+Naming Collisions
+-----------------
+
+A **naming collision** occurs when two or more identifiers with the
+**same name** are introduced in the **same scope**, causing an ambiguity
+error.
+
+
+Namespaces
+----------
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Definition**
+
+    A **namespace** is a declarative region that provides a **scope** for
+    the identifiers inside it. Namespaces prevent naming collisions by
+    grouping related names together. The ``std`` namespace contains all
+    C++ standard library identifiers.
+
+
+Explicit Use
+^^^^^^^^^^^^
+
+Use the **scope resolution operator** ``::`` to explicitly access names
+within a namespace.
+
+.. code-block:: cpp
+
+   namespace MyNamespace {
+       int x{42};
+       void print() {
+           std::cout << "Hello from MyNamespace" << '\n';
+       }
+   }
+
+   int main() {
+       std::cout << MyNamespace::x << '\n';
+       MyNamespace::print();
+       return 0;
+   }
+
+
+using namespace
+^^^^^^^^^^^^^^^
+
+The ``using namespace`` directive makes **all** names in a namespace
+available without qualification.
+
+.. code-block:: cpp
+
+   using namespace std;
+
+   int main() {
+       cout << "No need for std::" << '\n';
+       return 0;
+   }
+
+
+using Directive (Individual Names)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``using`` directive can also import **individual** names from a
+namespace.
+
+.. code-block:: cpp
+
+   using std::cout;
+
+   int main() {
+       cout << "Only cout imported" << '\n';
+       return 0;
+   }
+
+.. warning::
+
+   **Avoid** ``using namespace`` in production code. It can cause
+   **ambiguity** when multiple namespaces define the same name.
+
+   .. code-block:: cpp
+
+      namespace MyNamespace {
+          void cout() { /* ... */ }
+      }
+
+      using namespace std;
+      using namespace MyNamespace;
+
+      int main() {
+          cout << "Hello";  // ERROR: ambiguous -- std::cout or MyNamespace::cout?
+          return 0;
+      }
+
+.. tip::
+
+   **Best practice**: Use explicit namespace qualification
+   (e.g., ``std::cout``) or import individual names with ``using``.
+
+
+Aliases
+====================================================
+
+**Type aliases** create alternative names for existing types, making code
+more readable and maintainable.
+
+.. code-block:: cpp
+
+   using Integer = int;
+   using Float = float;
+   using uint = unsigned int;
+
+.. dropdown:: Alias Usage Example
+    :class-container: sd-border-secondary
+    :open:
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       using Integer = int;
+       using Float = float;
+       using uint = unsigned int;
+
+       int main() {
+           Integer count{10};
+           Float temperature{98.6f};
+           uint size{256};
+
+           std::cout << "Count: " << count << '\n';
+           std::cout << "Temperature: " << temperature << '\n';
+           std::cout << "Size: " << size << '\n';
+
+           return 0;
+       }
+
+.. note::
+
+   Type aliases make code more readable and easier to maintain. If the
+   underlying type needs to change, only the alias definition needs to be
+   updated.

@@ -1,1021 +1,719 @@
-====================================================
-Lecture
-====================================================
+.. _l3-lecture:
 
+====================================
+L3: Pointers and Memory Management
+====================================
 
+.. contents:: Table of Contents
+   :local:
+   :depth: 3
 
-Loops
-====================================================
+Valgrind
+========
 
-Repeating actions with ``for`` and ``while`` loops.
+Valgrind is a powerful memory debugging and profiling tool for Linux. It helps detect memory-related bugs that are otherwise difficult to find.
 
-Create a file called ``loops_demo.py`` to follow along with the examples below.
+Installation
+------------
 
+.. code-block:: bash
 
-.. dropdown:: The ``range()`` Function
-   :open:
+   sudo apt install valgrind
 
-   The ``range()`` function generates an immutable sequence of integers. It is one of the most commonly used tools for looping in Python.
+Capabilities
+-------------
 
-   .. note::
+Valgrind provides several tools for different types of analysis:
 
-      **Syntax**: ``range(stop)`` or ``range(start, stop)`` or ``range(start, stop, step)``
+- **Memcheck** -- Memory leak detection and memory error detection (the default tool).
+- **Callgrind** -- Function call profiling; generates call graphs.
+- **Cachegrind** -- Cache and branch prediction profiling.
+- **Helgrind** -- Detects synchronization errors in multithreaded programs.
+- **DRD** -- Another thread error detector.
+- **Massif** -- Heap and stack usage analysis.
 
-   - ``start`` — Starting value (default: 0, inclusive)
-   - ``stop`` — Ending value (exclusive, never included!)
-   - ``step`` — Increment between values (default: 1)
+Basic Usage
+-----------
 
-   .. code-block:: python
+To run Valgrind on a compiled C++ program:
 
-      # range() returns a range object, not a list
-      r = range(5)
-      print(r)        # range(0, 5)
-      print(type(r))  # <class 'range'>
+.. code-block:: bash
 
-      # Convert to list to see all values
-      print(list(range(5)))  # [0, 1, 2, 3, 4]
+   valgrind --leak-check=full ./my_program
 
-   .. warning::
+CMake Integration
+-----------------
 
-      The ``stop`` value is **never included**. ``range(5)`` gives ``[0, 1, 2, 3, 4]``, not ``[0, 1, 2, 3, 4, 5]``!
+You can add a custom CMake target to run Valgrind automatically:
 
+.. code-block:: cmake
 
-.. dropdown:: Basic ``range()`` Usage
-   :open:
+   add_custom_target(valgrind
+       COMMAND valgrind --leak-check=full --show-leak-kinds=all
+               --track-origins=yes $<TARGET_FILE:my_program>
+       DEPENDS my_program
+       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+       COMMENT "Running Valgrind on my_program"
+   )
 
-   .. code-block:: python
+Then run it with:
 
-      # range(stop) - generates 0 to stop-1
-      print(list(range(5)))       # [0, 1, 2, 3, 4]
+.. code-block:: bash
 
-      # range(start, stop) - generates start to stop-1
-      print(list(range(2, 7)))    # [2, 3, 4, 5, 6]
+   cmake --build build --target valgrind
 
-      # range(start, stop, step) - with custom increment
-      print(list(range(0, 10, 2)))  # [0, 2, 4, 6, 8]
-      print(list(range(1, 10, 2)))  # [1, 3, 5, 7, 9]
+Memory Allocation
+=================
 
-      # Negative step - counting backwards
-      print(list(range(5, 0, -1)))  # [5, 4, 3, 2, 1]
-      print(list(range(10, 0, -2))) # [10, 8, 6, 4, 2]
+C++ programs use three types of memory allocation, each with distinct characteristics and lifetimes.
 
+Static Allocation
+-----------------
 
-.. dropdown:: ``range()`` Tricks: Indexing, Slicing, and Membership
-   :open:
+- Stored in the **data segment** (initialized) or **BSS segment** (uninitialized).
+- Used for global variables and variables declared with the ``static`` keyword.
+- Memory is allocated at program start and deallocated at program end.
 
-   .. code-block:: python
+.. code-block:: cpp
 
-      # Get the length of a range without converting to list
-      r = range(0, 1000000)
-      print(len(r))           # 1000000 (instant, no memory used!)
+   int global_count{0};  // static allocation (data segment)
 
-      # Check membership efficiently - O(1) constant time!
-      print(500000 in r)      # True (very fast!)
-      print(999999 in r)      # True
-      print(1000000 in r)     # False (stop value not included)
+   void foo() {
+       static int call_count{0};  // static allocation, persists across calls
+       call_count++;
+   }
 
-      # Indexing works on range objects
-      r = range(10, 20)
-      print(r[0])             # 10 (first element)
-      print(r[-1])            # 19 (last element)
-      print(r[5])             # 15
+Automatic Allocation
+--------------------
 
-      # Slicing returns a new range object
-      print(r[2:5])           # range(12, 15)
-      print(list(r[2:5]))     # [12, 13, 14]
+- Stored on the **stack**.
+- Used for local variables declared inside functions and blocks.
+- Memory is automatically allocated when the variable comes into scope and deallocated when it goes out of scope.
 
+.. code-block:: cpp
 
-.. dropdown:: ``range()`` Tricks: Memory Efficiency
-   :open:
+   void bar() {
+       int x{10};       // automatic allocation on the stack
+       double y{3.14};  // automatic allocation on the stack
+   }  // x and y are automatically deallocated here
 
-   ``range()`` is a **lazy iterator** — it generates values on demand, not all at once.
+Dynamic Allocation
+------------------
 
-   .. code-block:: python
+- Stored on the **heap** (also called the free store).
+- Memory is manually allocated (using ``new``) and manually deallocated (using ``delete``).
+- STL containers such as ``std::vector`` and ``std::string`` use heap allocation internally.
 
-      import sys
+.. code-block:: cpp
 
-      # A list stores all values in memory
-      big_list = list(range(1000000))
-      print(sys.getsizeof(big_list))  # ~8,000,000+ bytes (8 MB)
+   void baz() {
+       int *p{new int{42}};  // dynamic allocation on the heap
+       delete p;              // manual deallocation
+       p = nullptr;
+   }
 
-      # A range object only stores start, stop, step
-      big_range = range(1000000)
-      print(sys.getsizeof(big_range))  # 48 bytes (always!)
+Stack vs. Heap
+--------------
 
-      # Even a massive range uses the same tiny amount of memory
-      huge_range = range(1000000000000)  # One trillion!
-      print(sys.getsizeof(huge_range))   # Still just 48 bytes
-
-   .. tip::
-
-      **Best Practice**: Use ``range()`` directly in loops. Only convert to a list if you actually need to store all values.
-
-
-.. dropdown:: The ``for`` Loop
-   :open:
-
-   The ``for`` loop iterates over any iterable object (strings, ranges, and more).
-
-   .. code-block:: python
-
-      # Iterate over a string
-      message = "Hello"
-      for char in message:
-          print(char, end=" ")  # H e l l o
-
-      print()  # Newline
-
-      # Iterate over a range
-      for i in range(5):
-          print(i, end=" ")  # 0 1 2 3 4
-
-      print()
-
-      # Using range for repetition
-      for _ in range(3):  # _ indicates we don't need the value
-          print("Robot activated!")
-
-
-.. dropdown:: Combining ``range()`` with Strings
-   :open:
-
-   .. code-block:: python
-
-      message = "Python"
-
-      # Access characters by index
-      for i in range(len(message)):
-          print(f"Index {i}: {message[i]}")
-      # Index 0: P
-      # Index 1: y
-      # ...
-
-      # Print every other character
-      for i in range(0, len(message), 2):
-          print(message[i], end="")  # Pto
-
-      print()
-
-      # Print string in reverse using range
-      for i in range(len(message) - 1, -1, -1):
-          print(message[i], end="")  # nohtyP
-
-
-.. dropdown:: The ``enumerate()`` Function
-   :open:
-
-   When you need both the index and value, use ``enumerate()`` instead of ``range(len(...))``.
-
-   .. code-block:: python
-
-      message = "Robot"
-
-      # Less Pythonic way
-      for i in range(len(message)):
-          print(f"{i}: {message[i]}")
-
-      # More Pythonic way with enumerate()
-      for index, char in enumerate(message):
-          print(f"{index}: {char}")
-
-      # Start counting from 1 instead of 0
-      for index, char in enumerate(message, start=1):
-          print(f"Character {index}: {char}")
-      # Character 1: R
-      # Character 2: o
-      # ...
-
-
-.. dropdown:: The ``while`` Loop
-   :open:
-
-   The ``while`` loop repeats as long as a condition is ``True``.
-
-   .. code-block:: python
-
-      # Basic while loop - counting
-      count = 0
-      while count < 5:
-          print(count, end=" ")
-          count += 1  # Don't forget to update!
-      # Output: 0 1 2 3 4
-
-      # Building a string character by character
-      result = ""
-      i = 0
-      word = "Hello"
-      while i < len(word):
-          result += word[i].upper()
-          i += 1
-      print(result)  # HELLO
-
-   .. warning::
-
-      Always ensure the loop condition will eventually become ``False``, or you'll create an infinite loop!
-
-
-.. dropdown:: Loop Control: ``break``, ``continue``, and ``else``
-   :open:
-
-   .. tab-set::
-
-       .. tab-item:: ``break``
-
-           Exit the loop immediately.
-
-           .. code-block:: python
-
-              # Find first vowel in a string
-              word = "python"
-              for char in word:
-                  if char in "aeiou":
-                      print(f"First vowel: {char}")
-                      break
-              # Output: First vowel: o
-
-       .. tab-item:: ``continue``
-
-           Skip to the next iteration.
-
-           .. code-block:: python
-
-              # Print only consonants
-              word = "hello"
-              for char in word:
-                  if char in "aeiou":
-                      continue
-                  print(char, end=" ")
-              # Output: h l l
-
-       .. tab-item:: ``else``
-
-           Runs if the loop completes without ``break``.
-
-           .. code-block:: python
-
-              # Search for a character
-              word = "robot"
-              target = "x"
-
-              for char in word:
-                  if char == target:
-                      print(f"Found {target}!")
-                      break
-              else:
-                  print(f"{target} not found")
-              # Output: x not found
-
-   .. note::
-
-      The ``else`` clause after a loop is a unique Python feature — useful for search patterns!
-
-
-Iterables
-====================================================
-
-Objects that can be traversed element by element.
-
-
-.. dropdown:: What Are Iterables?
-   :open:
-
-   An **iterable** is an object that can be "iterated over", meaning its elements can be accessed one at a time in sequence.
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: Sequence Types
-           :class-card: sd-border-info
-
-           - Lists
-           - Strings
-           - Tuples
-
-       .. grid-item-card:: Other Iterables
-           :class-card: sd-border-info
-
-           - Dictionaries (keys, values, items)
-           - Sets and frozensets
-           - Files, range objects, generators
-
-   .. code-block:: python
-
-      # We've already seen iterating over strings and ranges
-      for char in "Hi":
-          print(char, end=" ")  # H i
-
-      for num in range(3):
-          print(num, end=" ")  # 0 1 2
-
-      # Soon we'll iterate over lists, dicts, and sets!
-
-
-.. dropdown:: In-Place vs Out-of-Place Operations
-   :open:
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: In-Place Operations
-           :class-card: sd-border-warning
-
-           - Modify the original object directly
-           - Do not create a new object
-           - Common with mutable types
-           - Usually return ``None``
-
-           .. code-block:: python
-
-              fruits = ["apple", "banana"]
-              result = fruits.append("kiwi")
-              print(result)  # None
-              print(fruits)  # ['apple', 'banana', 'kiwi']
-
-       .. grid-item-card:: Out-of-Place Operations
-           :class-card: sd-border-success
-
-           - Create and return a new object
-           - Leave the original unchanged
-           - Required for immutable types
-           - Return the new value
-
-           .. code-block:: python
-
-              text = "hello"
-              upper_text = text.upper()
-              print(text)        # hello
-              print(upper_text)  # HELLO
-
-   .. warning::
-
-      Always check whether a method modifies in-place or returns a new object. Assigning the result of an in-place operation often leads to bugs!
-
-
-Lists
-====================================================
-
-Python's versatile, ordered, mutable sequence type.
-
-Create a file called ``lists_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The List Type
-   :open:
-
-   A Python list (``list``) is an **ordered** and **mutable** sequence of objects.
-
-   .. list-table::
-      :widths: 15 15 30 15 15
-      :header-rows: 1
-      :class: compact-table
-
-      * - Name
-        - Type
-        - Example
-        - Mutable
-        - Ordered
-      * - List
-        - ``list``
-        - ``[1, 'hello', 3.5]``
-        - Yes
-        - Yes
-
-   .. code-block:: python
-
-      # Lists can contain any objects
-      numbers = [1, 2, 3, 4, 5]
-      mixed = [1, "hello", 3.14, True, None]
-      nested = [[1, 2], [3, 4], [5, 6]]
-
-      # Lists with same items in different order are different
-      a = [1, 2, 3]
-      b = [3, 2, 1]
-      print(a == b)  # False
-
-
-.. dropdown:: Creating Lists
-   :open:
-
-   There are several ways to create lists:
-
-   **Square brackets** with comma-separated values:
-
-   .. code-block:: python
-
-      fruits = ["apple", "banana", "cherry"]
-      empty = []
-
-   **``list()`` constructor** with an iterable:
-
-   .. code-block:: python
-
-      chars = list("hello")       # ['h', 'e', 'l', 'l', 'o']
-      nums = list(range(5))       # [0, 1, 2, 3, 4]
-      empty = list()              # []
-
-   **List comprehension**:
-
-   .. code-block:: python
-
-      squares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
-
-   **Repetition operator**:
-
-   .. code-block:: python
-
-      zeros = [0] * 5             # [0, 0, 0, 0, 0]
-
-
-.. dropdown:: Indexing and Slicing
-   :open:
-
-   Lists support the same indexing and slicing operations as strings.
-
-   .. code-block:: python
-
-      fruits = ["apple", "banana", "cherry", "date", "elderberry"]
-
-      # Indexing
-      print(fruits[0])      # apple
-      print(fruits[-1])     # elderberry
-
-      # Slicing
-      print(fruits[1:4])    # ['banana', 'cherry', 'date']
-      print(fruits[::2])    # ['apple', 'cherry', 'elderberry']
-
-      # Modifying elements (lists are mutable!)
-      fruits[0] = "apricot"
-      print(fruits)         # ['apricot', 'banana', 'cherry', 'date', 'elderberry']
-
-      # Modifying slices
-      fruits[1:3] = ["blueberry"]
-      print(fruits)         # ['apricot', 'blueberry', 'date', 'elderberry']
-
-
-.. dropdown:: Common List Methods
-   :open:
-
-   **Adding elements:**
-
-   .. code-block:: python
-
-      fruits = ["apple"]
-      fruits.append("banana")        # Add to end: ['apple', 'banana']
-      fruits.extend(["kiwi", "mango"])  # Add multiple: ['apple', 'banana', 'kiwi', 'mango']
-      fruits.insert(1, "cherry")     # Insert at index: ['apple', 'cherry', 'banana', ...]
-
-   **Removing elements:**
-
-   .. code-block:: python
-
-      fruits = ["apple", "banana", "apple", "cherry"]
-      fruits.remove("apple")    # Remove first occurrence: ['banana', 'apple', 'cherry']
-      last = fruits.pop()       # Remove and return last: 'cherry'
-      first = fruits.pop(0)     # Remove and return at index: 'banana'
-      fruits.clear()            # Remove all: []
-
-   **Searching and sorting:**
-
-   .. code-block:: python
-
-      nums = [3, 1, 4, 1, 5, 9, 2, 6]
-      print(nums.index(4))      # 2 (first occurrence)
-      print(nums.count(1))      # 2 (count occurrences)
-
-      nums.sort()               # In-place sort: [1, 1, 2, 3, 4, 5, 6, 9]
-      nums.sort(reverse=True)   # Descending: [9, 6, 5, 4, 3, 2, 1, 1]
-      nums.reverse()            # In-place reverse
-
-      # sorted() returns a new list (out-of-place)
-      original = [3, 1, 4]
-      new_list = sorted(original)  # [1, 3, 4], original unchanged
-
-
-.. dropdown:: List Comprehensions
-   :open:
-
-   List comprehensions provide a compact way to create lists from iterables.
-
-   .. note::
-
-      **Syntax**: ``[expression for item in iterable if condition]``
-
-   .. code-block:: python
-
-      # Basic comprehension
-      squares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
-
-      # With condition (filtering)
-      evens = [x for x in range(10) if x % 2 == 0]  # [0, 2, 4, 6, 8]
-
-      # With transformation
-      words = ["hello", "world"]
-      upper = [w.upper() for w in words]  # ['HELLO', 'WORLD']
-
-      # Conditional expression (ternary in comprehension)
-      labels = ["even" if x % 2 == 0 else "odd" for x in range(5)]
-      # ['even', 'odd', 'even', 'odd', 'even']
-
-
-.. dropdown:: Shallow vs Deep Copy
-   :open:
-
-   .. grid:: 1 2 2 2
-       :gutter: 3
-
-       .. grid-item-card:: Shallow Copy
-           :class-card: sd-border-warning
-
-           - Copies top-level elements
-           - Nested objects share references
-           - Methods: ``copy()``, ``list()``, slice ``[:]``
-
-           .. code-block:: python
-
-              from copy import copy
-
-              a = [1, [2, 3]]
-              b = copy(a)  # or a.copy() or a[:]
-              b[0] = 99
-              b[1].append(4)
-
-              print(a)  # [1, [2, 3, 4]]
-              print(b)  # [99, [2, 3, 4]]
-
-           .. only:: html
-            
-           .. raw:: html
-
-               <div style="display:flex; justify-content:center; align-items:center; gap:1rem;">
-                  <img src="../_static/images/L3/shallow_light.png"
-                     alt="Example of a shallow copy"
-                     class="only-light"
-                     style="width:100%; border-radius:8px;">
-                  <img src="../_static/images/L3/shallow_dark.png"
-                     alt="Example of a shallow copy"
-                     class="only-dark"
-                     style="width:100%; border-radius:8px;">
-               </div>
-
-       .. grid-item-card:: Deep Copy
-           :class-card: sd-border-success
-
-           - Recursively copies all nested objects
-           - Completely independent copy
-           - Method: ``deepcopy()``
-
-           .. code-block:: python
-
-              from copy import deepcopy
-
-              a = [1, [2, 3]]
-              b = deepcopy(a)
-              b[0] = 99
-              b[1].append(4)
-
-              print(a)  # [1, [2, 3]]
-              print(b)  # [99, [2, 3, 4]]
-
-           .. only:: html
-            
-           .. raw:: html
-
-               <div style="display:flex; justify-content:center; align-items:center; gap:1rem;">
-                  <img src="../_static/images/L3/deep_light.png"
-                     alt="Example of a deep copy"
-                     class="only-light"
-                     style="width:100%; border-radius:8px;">
-                  <img src="../_static/images/L3/deep_dark.png"
-                     alt="Example of a deep copy"
-                     class="only-dark"
-                     style="width:100%; border-radius:8px;">
-               </div>
-
-   .. warning::
-
-      Using ``=`` does NOT copy a list! It creates an alias (both names point to the same object).
-
-
-Tuples
-====================================================
-
-Immutable sequences for fixed collections of items.
-
-Create a file called ``tuples_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The Tuple Type
-   :open:
-
-   A Python tuple (``tuple``) is an **ordered** and **immutable** sequence of objects.
-
-   .. list-table::
-      :widths: 15 15 30 15 15
-      :header-rows: 1
-      :class: compact-table
-
-      * - Name
-        - Type
-        - Example
-        - Mutable
-        - Ordered
-      * - Tuple
-        - ``tuple``
-        - ``(1, 'hello', 3.5)``
-        - No
-        - Yes
-
-   .. code-block:: python
-
-      # Creating tuples
-      coordinates = (3.5, 7.2)
-      rgb = (255, 128, 0)
-      mixed = (1, "hello", [1, 2])  # Can contain mutable objects
-
-      # Important: commas make the tuple, not parentheses!
-      single = (42,)   # Tuple with one element
-      not_tuple = (42) # Just an integer!
-
-   .. note::
-
-      Tuples are ideal for representing fixed collections like coordinates, RGB values, or database records.
-
-
-.. dropdown:: Creating Tuples
-   :open:
-
-   **Parentheses** (optional but recommended):
-
-   .. code-block:: python
-
-      point = (3, 4)
-      empty = ()
-
-   **Comma-separated values** (tuple packing):
-
-   .. code-block:: python
-
-      point = 3, 4           # Same as (3, 4)
-      singleton = 42,        # Tuple with one element
-
-   **``tuple()`` constructor**:
-
-   .. code-block:: python
-
-      from_list = tuple([1, 2, 3])    # (1, 2, 3)
-      from_string = tuple("abc")      # ('a', 'b', 'c')
-      from_range = tuple(range(3))    # (0, 1, 2)
-
-   .. warning::
-
-      For a single-element tuple, you **must** include the trailing comma: ``(42,)`` not ``(42)``
-
-
-.. dropdown:: Tuple Unpacking
-   :open:
-
-   Tuple unpacking assigns each element to a separate variable.
-
-   .. code-block:: python
-
-      # Basic unpacking
-      coordinates = (3.5, 7.2)
-      x, y = coordinates
-      print(f"x={x}, y={y}")  # x=3.5, y=7.2
-
-      # Swap values elegantly
-      a, b = 10, 20
-      a, b = b, a  # Now a=20, b=10
-
-      # Ignore values with underscore
-      point = (1, 2, 3)
-      x, _, z = point  # Ignore the y-coordinate
-
-      # Extended unpacking with *
-      first, *rest = [1, 2, 3, 4, 5]
-      print(first)  # 1
-      print(rest)   # [2, 3, 4, 5]
-
-
-.. dropdown:: Tuples Are Immutable
-   :open:
-
-   You cannot modify tuple elements after creation.
-
-   .. code-block:: python
-
-      point = (3, 4, 5)
-
-      # These will raise TypeError:
-      # point[0] = 10
-      # del point[1]
-
-      # However, mutable objects inside tuples CAN be modified!
-      data = (1, 2, [3, 4])
-      data[2].append(5)     # OK!
-      print(data)           # (1, 2, [3, 4, 5])
-
-      # But you cannot replace the list itself
-      # data[2] = [10, 20]  # TypeError!
-
-   .. note::
-
-      **Why use tuples?** They're hashable (can be dict keys), faster than lists, and signal intent that data shouldn't change.
-
-
-Dictionaries
-====================================================
-
-Key-value mappings for fast lookups.
-
-Create a file called ``dictionaries_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The Dictionary Type
-   :open:
-
-   A Python dictionary (``dict``) is an **ordered** (since Python 3.7) and **mutable** mapping of unique keys to values.
-
-   .. list-table::
-      :widths: 15 15 30 15 15
-      :header-rows: 1
-      :class: compact-table
-
-      * - Name
-        - Type
-        - Example
-        - Mutable
-        - Ordered
-      * - Dictionary
-        - ``dict``
-        - ``{'a': 1, 'b': 2}``
-        - Yes
-        - Yes
-
-   .. code-block:: python
-
-      # Robot configuration dictionary
-      robot = {
-          "name": "TurtleBot3",
-          "type": "mobile",
-          "max_speed": 0.26,
-          "sensors": ["lidar", "camera", "imu"]
-      }
-
-      print(robot["name"])      # TurtleBot3
-      print(robot["max_speed"]) # 0.26
-
-
-.. dropdown:: Creating Dictionaries
-   :open:
-
-   **Curly braces** with key-value pairs:
-
-   .. code-block:: python
-
-      d = {"name": "Alice", "age": 30}
-      empty = {}
-
-   **``dict()`` constructor**:
-
-   .. code-block:: python
-
-      d = dict(name="Alice", age=30)              # Keyword arguments
-      d = dict([("name", "Alice"), ("age", 30)])  # List of tuples
-      d = dict({"name": "Alice"}, age=30)         # Mixed
-
-   **Dictionary comprehension**:
-
-   .. code-block:: python
-
-      squares = {x: x**2 for x in range(5)}
-      # {0: 0, 1: 1, 2: 4, 3: 9, 4: 16}
-
-   **``dict.fromkeys()``**:
-
-   .. code-block:: python
-
-      keys = ["a", "b", "c"]
-      d = dict.fromkeys(keys, 0)  # {'a': 0, 'b': 0, 'c': 0}
-
-
-.. dropdown:: Accessing and Modifying
-   :open:
-
-   .. code-block:: python
-
-      robot = {"name": "UR5", "joints": 6}
-
-      # Accessing values
-      print(robot["name"])         # UR5
-      print(robot.get("speed"))    # None (no KeyError!)
-      print(robot.get("speed", 0)) # 0 (default value)
-
-      # Adding/modifying items
-      robot["speed"] = 1.0         # Add new key
-      robot["joints"] = 7          # Modify existing
-
-      # Removing items
-      del robot["speed"]           # Remove key (KeyError if missing)
-      value = robot.pop("joints")  # Remove and return value
-      robot.clear()                # Remove all items
-
-      # Check if key exists
-      if "name" in robot:
-          print(robot["name"])
-
-
-.. dropdown:: Iterating Over Dictionaries
-   :open:
-
-   .. code-block:: python
-
-      robot = {"name": "TurtleBot", "type": "mobile", "speed": 0.26}
-
-      # Iterate over keys (default)
-      for key in robot:
-          print(key, end=" ")  # name type speed
-
-      # Iterate over values
-      for value in robot.values():
-          print(value, end=" ")  # TurtleBot mobile 0.26
-
-      # Iterate over key-value pairs
-      for key, value in robot.items():
-          print(f"{key}: {value}")
-      # name: TurtleBot
-      # type: mobile
-      # speed: 0.26
-
-   .. note::
-
-      View objects (``keys()``, ``values()``, ``items()``) are dynamic — they reflect changes to the dictionary.
-
-
-Sets
-====================================================
-
-Unordered collections of unique elements.
-
-Create a file called ``sets_demo.py`` to follow along with the examples below.
-
-
-.. dropdown:: The Set Type
-   :open:
-
-   A Python set (``set``) is an **unordered**, **mutable** collection that contains no duplicate elements.
-
-   .. list-table::
-      :widths: 15 15 30 15 15
-      :header-rows: 1
-      :class: compact-table
-
-      * - Name
-        - Type
-        - Example
-        - Mutable
-        - Ordered
-      * - Set
-        - ``set``
-        - ``{'a', 'b', 'c'}``
-        - Yes
-        - No
-
-   .. code-block:: python
-
-      # Sets automatically remove duplicates
-      numbers = {1, 2, 2, 3, 3, 3}
-      print(numbers)  # {1, 2, 3}
-
-      # Creating sets
-      fruits = {"apple", "banana", "cherry"}
-      from_list = set([1, 2, 2, 3])  # {1, 2, 3}
-      empty_set = set()  # NOT {} (that's an empty dict!)
-
-   .. warning::
-
-      Use ``set()`` to create an empty set. ``{}`` creates an empty **dictionary**!
-
-
-.. dropdown:: Mathematical Set Operations
-   :open:
-
-   .. code-block:: python
-
-      a = {1, 2, 3, 4}
-      b = {3, 4, 5, 6}
-
-      # Union: elements in either set
-      print(a | b)              # {1, 2, 3, 4, 5, 6}
-      print(a.union(b))         # Same result
-
-      # Intersection: elements in both sets
-      print(a & b)              # {3, 4}
-      print(a.intersection(b))  # Same result
-
-      # Difference: elements in a but not in b
-      print(a - b)              # {1, 2}
-      print(a.difference(b))    # Same result
-
-      # Symmetric difference: elements in either but not both
-      print(a ^ b)                      # {1, 2, 5, 6}
-      print(a.symmetric_difference(b))  # Same result
-
-
-.. dropdown:: Modifying Sets
-   :open:
-
-   **Adding elements:**
-
-   .. code-block:: python
-
-      s = {1, 2, 3}
-      s.add(4)          # {1, 2, 3, 4}
-      s.update([5, 6])  # {1, 2, 3, 4, 5, 6}
-
-   **Removing elements:**
-
-   .. code-block:: python
-
-      s = {1, 2, 3, 4, 5}
-      s.remove(3)    # {1, 2, 4, 5} - raises KeyError if missing
-      s.discard(99)  # No error if missing
-      x = s.pop()    # Remove and return arbitrary element
-      s.clear()      # Remove all: set()
-
-   .. note::
-
-      **Use cases for sets**: Removing duplicates, membership testing, and finding common/unique elements between collections.
-
-
-Summary
---------
-
-.. grid:: 1 2 2 2
-    :gutter: 3
-
-    .. grid-item-card::
-        :class-card: sd-border-primary
-
-        - **Loops** — ``for``, ``while``, ``break``/``continue``/``else``
-        - **range()** — Lazy iterator; memory efficient; indexing, slicing, membership
-        - **Iterables** — Objects that can be traversed; in-place vs out-of-place
-        - **Lists** — Ordered, mutable sequences; comprehensions; copy methods
-
-    .. grid-item-card::
-        :class-card: sd-border-primary
-
-        - **Tuples** — Ordered, immutable sequences; unpacking
-        - **Dictionaries** — Key-value mappings; view objects
-        - **Sets** — Unordered unique collections; set operations
-
-.. list-table:: Data Structure Comparison
-   :widths: 20 20 20 20
+.. list-table::
    :header-rows: 1
-   :class: compact-table
+   :widths: 20 40 40
 
-   * - Type
-     - Mutable
-     - Ordered
-     - Duplicates
-   * - ``list``
-     - Yes
-     - Yes
-     - Yes
-   * - ``tuple``
-     - No
-     - Yes
-     - Yes
-   * - ``dict``
-     - Yes
-     - Yes
-     - Keys: No
-   * - ``set``
-     - Yes
-     - No
-     - No
+   * - Feature
+     - Stack
+     - Heap
+   * - Size determined
+     - Compile time
+     - Runtime
+   * - Deallocation
+     - Automatic (scope-based)
+     - Manual (``delete``)
+   * - Speed
+     - Fast (pointer adjustment)
+     - Slower (allocation bookkeeping)
+   * - Size limit
+     - Limited (check with ``ulimit -s``)
+     - Flexible (limited by system memory)
+   * - Data lifetime
+     - Destroyed at end of scope
+     - Persists until explicitly freed
+
+.. tip::
+
+   You can check the default stack size on your system by running ``ulimit -s`` in the terminal. The value is in kilobytes.
+
+.. figure:: /_static/images/l3/pointer0.pdf
+   :align: center
+
+   Stack vs. heap memory layout.
+
+Pointers
+========
+
+A **pointer** is a variable that holds a memory address. The address can belong to a variable, a literal, or a function.
+
+Why Learn Pointers?
+-------------------
+
+Even though modern C++ favors smart pointers and references, understanding raw pointers is essential because:
+
+- **Memory savings** -- Passing pointers avoids copying large objects.
+- **Modify external data** -- Functions can modify variables outside their scope via pointers.
+- **Polymorphism** -- Base class pointers enable runtime polymorphism.
+- **Dynamic allocation** -- Pointers are required to manage heap memory.
+- **ROS 2** -- Uses smart pointers extensively (which are built on raw pointers).
+- **Third-party libraries** -- Many libraries use raw pointers in their APIs.
+
+.. figure:: /_static/images/l3/pointer1.pdf
+   :align: center
+
+   A pointer stores the address of another variable.
+
+Normal Pointers
+---------------
+
+Raw pointers can reference data on the stack or the heap. The pointer variable itself is typically on the stack, but the data it points to can be anywhere.
+
+.. figure:: /_static/images/l3/pointer2.pdf
+   :align: center
+
+   A pointer on the stack pointing to data.
+
+Declaration
+~~~~~~~~~~~
+
+A pointer is declared using the ``*`` symbol:
+
+.. code-block:: cpp
+
+   type* identifier;
+
+To read a pointer declaration, read **inside-out** (right to left):
+
+- ``int *a;`` -- "``a`` is a pointer to ``int``"
+- ``const int *b;`` -- "``b`` is a pointer to ``const int``"
+
+.. warning::
+
+   Be careful when declaring multiple variables on one line:
+
+   .. code-block:: cpp
+
+      int* c, d;  // c is a pointer to int, but d is just a regular int!
+      int *e, *f; // both e and f are pointers to int
+
+Initialization
+~~~~~~~~~~~~~~
+
+A pointer is initialized using uniform initialization:
+
+.. code-block:: cpp
+
+   type* identifier{value};
+
+Common initial values:
+
+- ``nullptr`` -- Null pointer (points to nothing).
+- ``&variable`` -- Address of an existing variable.
+- Result of ``new`` -- Address of dynamically allocated memory.
+
+.. warning::
+
+   Always initialize pointers. An uninitialized pointer contains a garbage address and dereferencing it is undefined behavior.
+
+Null Pointer
+~~~~~~~~~~~~
+
+A null pointer explicitly points to nothing:
+
+.. code-block:: cpp
+
+   int *p{nullptr};  // preferred (C++11 and later)
+   int *q{NULL};     // C-style, avoid in modern C++
+   int *r{0};        // works but not recommended
+   int *s{};         // zero-initialized, equivalent to nullptr
+
+.. important::
+
+   Always use ``nullptr`` in modern C++. It is type-safe, unlike ``NULL`` or ``0``.
+
+A null pointer is **not** the same as an uninitialized pointer. A null pointer has a well-defined value (``nullptr``), while an uninitialized pointer has an indeterminate value.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int *p{nullptr};
+
+       if (p == nullptr) {
+           std::cout << "p is null\n";
+       }
+
+       if (!p) {
+           std::cout << "p is null (boolean check)\n";
+       }
+
+       return 0;
+   }
+
+Indirection (Dereference) Operator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The dereference operator ``*`` retrieves the value stored at the address a pointer holds:
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int x{10};
+       int *p{&x};  // p holds the address of x
+
+       std::cout << "Address of x: " << &x << '\n';
+       std::cout << "Value of p (address): " << p << '\n';
+       std::cout << "Dereferenced value: " << *p << '\n';  // prints 10
+
+       *p = 20;  // modify x through the pointer
+       std::cout << "x is now: " << x << '\n';  // prints 20
+
+       return 0;
+   }
+
+You can also use the dereference operator to modify the value at the address:
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int a{5};
+       int *ptr{&a};
+
+       std::cout << "Before: a = " << a << '\n';  // 5
+       *ptr = 100;
+       std::cout << "After:  a = " << a << '\n';  // 100
+
+       return 0;
+   }
+
+.. warning::
+
+   The ``*`` symbol has multiple meanings in C++:
+
+   - **Multiplication**: ``int result{a * b};``
+   - **Pointer declaration**: ``int *p;``
+   - **Dereference**: ``int value{*p};``
+
+   Context determines which meaning applies.
+
+Size of Pointers
+~~~~~~~~~~~~~~~~
+
+All pointers have the same size regardless of the type they point to. The size depends on the system architecture (typically 8 bytes on a 64-bit system).
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       std::cout << "sizeof(int*):    " << sizeof(int*) << '\n';
+       std::cout << "sizeof(double*): " << sizeof(double*) << '\n';
+       std::cout << "sizeof(float*):  " << sizeof(float*) << '\n';
+       std::cout << "sizeof(char*):   " << sizeof(char*) << '\n';
+
+       // All print the same value (e.g., 8 on a 64-bit system)
+
+       return 0;
+   }
+
+Typed Pointers
+~~~~~~~~~~~~~~
+
+Although all pointers are the same size, the type of a pointer tells the compiler **how to interpret** the data at the address when dereferencing.
+
+The compiler enforces type matching:
+
+.. code-block:: cpp
+
+   double pi{3.14159};
+   int *p{&pi};  // ERROR: cannot convert 'double*' to 'int*'
+
+.. figure:: /_static/images/l3/pointer6.pdf
+   :align: center
+
+   Pointer type determines how memory at the address is interpreted.
+
+Const-Correctness with Pointers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are three modes of const-correctness with pointers:
+
+**1. Pointer to const data** (``const int *p``)
+
+The data pointed to cannot be modified through the pointer, but the pointer itself can be reassigned.
+
+.. code-block:: cpp
+
+   int a{10};
+   int b{20};
+   const int *p{&a};
+
+   // *p = 50;  // ERROR: cannot modify data through pointer-to-const
+   p = &b;      // OK: pointer itself can be reassigned
+
+**2. Const pointer** (``int *const p``)
+
+The pointer cannot be reassigned, but the data it points to can be modified.
+
+.. code-block:: cpp
+
+   int a{10};
+   int b{20};
+   int *const p{&a};  // must be initialized
+
+   *p = 50;       // OK: can modify data through const pointer
+   // p = &b;     // ERROR: cannot reassign a const pointer
+
+**3. Const pointer to const data** (``const int *const p``)
+
+Neither the pointer nor the data it points to can be modified.
+
+.. code-block:: cpp
+
+   int a{10};
+   int b{20};
+   const int *const p{&a};  // must be initialized
+
+   // *p = 50;   // ERROR: cannot modify data
+   // p = &b;    // ERROR: cannot reassign pointer
+
+.. tip::
+
+   Read pointer declarations **right to left** to determine const-correctness:
+
+   - ``const int *p`` -- "``p`` is a pointer to a ``const int``"
+   - ``int *const p`` -- "``p`` is a ``const`` pointer to an ``int``"
+   - ``const int *const p`` -- "``p`` is a ``const`` pointer to a ``const int``"
+
+Wild Pointers
+~~~~~~~~~~~~~
+
+A **wild pointer** is an uninitialized pointer. It contains a garbage address, and dereferencing it is **undefined behavior**.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int *p;           // wild pointer -- contains garbage address
+       // std::cout << *p;  // UNDEFINED BEHAVIOR: dereferencing a wild pointer
+
+       return 0;
+   }
+
+.. danger::
+
+   Never dereference an uninitialized pointer. Always initialize pointers to ``nullptr`` or a valid address.
+
+Dynamic Memory Allocation
+==========================
+
+Dynamic memory allocation allows you to reserve and free memory at runtime. This is essential when the amount of memory needed is not known at compile time.
+
+.. warning::
+
+   In modern C++, prefer **smart pointers** (``std::unique_ptr``, ``std::shared_ptr``) over raw ``new``/``delete``. Raw dynamic allocation is shown here for educational purposes and because understanding it is necessary for working with legacy code.
+
+The ``new`` Operator
+--------------------
+
+The ``new`` operator allocates memory on the heap and returns a pointer to it:
+
+.. code-block:: cpp
+
+   int *p{new int{15}};  // allocates an int on the heap, initializes to 15
+
+Key points about dynamically allocated objects:
+
+- They have **no identifier** (no variable name) -- they are accessed only through pointers.
+- They **never go out of scope** automatically -- they persist until explicitly deleted.
+
+.. figure:: /_static/images/l3/pointer7.pdf
+   :align: center
+
+   The ``new`` operator allocates memory on the heap and returns a pointer.
+
+The ``delete`` Operator
+-----------------------
+
+The ``delete`` operator deallocates heap memory that was allocated with ``new``:
+
+.. code-block:: cpp
+
+   int *p{new int{15}};
+   // ... use p ...
+   delete p;       // deallocates the heap memory
+   p = nullptr;    // good practice: avoid dangling pointer
+
+.. figure:: /_static/images/l3/pointer8.pdf
+   :align: center
+
+   The ``delete`` operator frees heap memory.
+
+Important details about ``delete``:
+
+- ``delete`` does **not** destroy the pointer variable itself. The pointer variable is destroyed when it goes out of scope (it lives on the stack).
+- After ``delete``, the pointer becomes a **dangling pointer** -- it still holds the old address, but the memory at that address has been freed.
+- After deleting, either point the pointer elsewhere or set it to ``nullptr``.
+- **Deleting a stack resource is undefined behavior**. Only ``delete`` what you ``new``!
+- **Deleting** ``nullptr`` **is safe** -- it does nothing (a no-op).
+
+.. code-block:: cpp
+
+   int stack_var{10};
+   int *p{&stack_var};
+   // delete p;  // UNDEFINED BEHAVIOR: stack_var is on the stack!
+
+   int *q{nullptr};
+   delete q;  // safe: does nothing
+
+Common Issues with Dynamic Memory
+-----------------------------------
+
+Dangling Pointer
+~~~~~~~~~~~~~~~~
+
+A **dangling pointer** points to memory that has already been deallocated. Dereferencing a dangling pointer is **undefined behavior**.
+
+Causes:
+
+- Deleting memory without setting the pointer to ``nullptr``.
+- A local variable going out of scope while a pointer still references it.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int *p{new int{42}};
+       delete p;
+       // p is now dangling -- it still holds the old address
+
+       // std::cout << *p;  // UNDEFINED BEHAVIOR
+
+       p = nullptr;  // fix: set to nullptr after delete
+
+       return 0;
+   }
+
+Solutions:
+
+- Set pointers to ``nullptr`` immediately after ``delete``.
+- Use **smart pointers** which follow the RAII (Resource Acquisition Is Initialization) pattern.
+
+Memory Leak
+~~~~~~~~~~~~
+
+A **memory leak** occurs when dynamically allocated memory is never freed. The memory remains allocated for the lifetime of the program, reducing available memory.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       for (int i{0}; i < 1000; ++i) {
+           int *p{new int{i}};
+           // p goes out of scope without delete -- memory leak!
+       }
+       // 1000 int-sized blocks are now leaked
+
+       return 0;
+   }
+
+.. important::
+
+   Always fix memory leaks. Over time, leaked memory accumulates and can degrade system performance or cause the program to crash.
+
+Double Delete
+~~~~~~~~~~~~~
+
+**Double delete** means freeing memory that has already been freed. This is **undefined behavior**.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int *p{new int{10}};
+       int *q{p};  // q points to the same memory as p
+
+       delete p;
+       p = nullptr;
+
+       // delete q;  // UNDEFINED BEHAVIOR: memory already freed via p
+
+       return 0;
+   }
+
+Null Dereferencing
+~~~~~~~~~~~~~~~~~~
+
+**Null dereferencing** means dereferencing a pointer that is ``nullptr``. This is **undefined behavior** (typically causes a segmentation fault).
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int *p{nullptr};
+
+       // Best practice: check before dereferencing
+       if (p) {
+           std::cout << *p << '\n';
+       } else {
+           std::cout << "Pointer is null, cannot dereference\n";
+       }
+
+       return 0;
+   }
+
+Minimizing Issues
+~~~~~~~~~~~~~~~~~
+
+Follow these best practices to minimize pointer-related bugs:
+
+1. **Use Valgrind** to detect memory leaks and invalid memory access.
+2. **Set pointers to** ``nullptr`` **after** ``delete``.
+3. **Use smart pointers** (``std::unique_ptr``, ``std::shared_ptr``) instead of raw ``new``/``delete``.
+4. **Always check** if a pointer is valid before dereferencing.
+
+References
+==========
+
+A **reference** is an alias for an existing variable. It provides another name for the same memory location.
+
+.. code-block:: cpp
+
+   type& identifier{existing_variable};
+
+References are commonly used to:
+
+- Pass arguments to functions by reference (avoiding copies).
+- Return values from functions by reference.
+- Iterate over containers in range-based ``for`` loops.
+
+.. code-block:: cpp
+
+   #include <iostream>
+
+   int main() {
+       int x{10};
+       int& ref{x};  // ref is an alias for x
+
+       std::cout << "x:   " << x << '\n';    // 10
+       std::cout << "ref: " << ref << '\n';   // 10
+
+       ref = 20;
+       std::cout << "x after modifying ref: " << x << '\n';  // 20
+
+       return 0;
+   }
+
+Characteristics of References
+------------------------------
+
+References have five key characteristics:
+
+**1. Must be initialized to an existing variable**
+
+.. code-block:: cpp
+
+   int& ref{};    // ERROR: references must be initialized
+   int& ref;      // ERROR: references must be initialized
+
+   int x{5};
+   int& ref{x};   // OK
+
+**2. Is an alias -- modifying the reference modifies the original**
+
+.. code-block:: cpp
+
+   int x{10};
+   int& ref{x};
+
+   ref = 99;
+   std::cout << x << '\n';  // 99
+
+   x = 42;
+   std::cout << ref << '\n';  // 42
+
+**3. Has no own identity -- same address as the original**
+
+.. code-block:: cpp
+
+   int x{10};
+   int& ref{x};
+
+   std::cout << &x << '\n';    // e.g., 0x7ffd1234
+   std::cout << &ref << '\n';  // same: 0x7ffd1234
+
+**4. Cannot be reseated -- bound for life**
+
+.. code-block:: cpp
+
+   int a{10};
+   int b{20};
+   int& ref{a};  // ref is bound to a
+
+   ref = b;  // this does NOT rebind ref to b
+              // it assigns b's value (20) to a
+
+   std::cout << a << '\n';  // 20 (a was modified, not ref rebound)
+
+**5. Cannot be null**
+
+.. code-block:: cpp
+
+   int& ref{nullptr};  // ERROR: cannot bind reference to nullptr
+
+Pointers vs. References
+========================
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
+
+   * - Feature
+     - Pointer
+     - Reference
+   * - What it is
+     - Variable holding a memory address
+     - Alias for an existing variable
+   * - Declaration & Init
+     - ``int *p{&x};``
+     - ``int& ref{x};``
+   * - Reassignment
+     - Can be reassigned to point elsewhere
+     - Cannot be reseated after initialization
+   * - Nullability
+     - Can be ``nullptr``
+     - Cannot be null
+   * - Usage
+     - Dynamic memory, polymorphism, optional params
+     - Function parameters, range-based loops, aliases
+   * - Memory
+     - Has its own address (occupies memory)
+     - Shares address with original variable
 
 .. note::
 
-   **Reminder**: Review and experiment with all provided code before next class.
+   Internally, compilers typically implement references using pointers. For example:
 
+   .. code-block:: cpp
 
-Preview: What's Next in L4
----------------------------
+      int x{10};
+      int& ref{x};        // conceptually equivalent to:
+      int* const ptr{&x}; // a const pointer (cannot be reseated)
 
-.. grid:: 1 2 2 2
-    :gutter: 3
-
-    .. grid-item-card:: 📖 L4: Functions — Part I
-        :class-card: sd-border-primary
-
-        - Defining and calling functions
-        - Parameters and arguments
-        - Return values
-        - Scope and namespaces
-        - Type hints
-        - Docstrings
-
-.. note::
-
-   Today's lecture gives you the data structures and iteration tools that you will use constantly when writing functions in L4 and beyond.
+   The key difference is that references provide a cleaner, safer syntax with automatic dereferencing.

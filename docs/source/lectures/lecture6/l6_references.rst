@@ -1,294 +1,123 @@
-References
-==========
+.. _l6_references:
 
+===================
+Lecture 6 References
+===================
 
-.. dropdown:: Lecture 6
-    :class-container: sd-border-secondary
-    :open:
+.. dropdown:: Lecture 6 Summary
+   :class-container: sd-border-success
 
-    .. card::
-        :class-card: sd-border-secondary
+   This lecture covered advanced function topics in C++:
 
-        **ENPM605 -- L6: Object-Oriented Programming I**
+   - **struct**: We reviewed ``struct`` as a lightweight data container with public-by-default members, aggregate initialization for direct member initialization without constructors, and structured bindings (C++17) for decomposing struct members into local variables.
 
-        Covers OOP principles (encapsulation, abstraction, inheritance, polymorphism), design phase (requirement analysis, business rules, noun/verb analysis, UML modeling), classes and objects, ``self``, ``__init__``, instance and class attributes, dunder methods (``__str__``, ``__repr__``, ``__eq__``, ``__add__``, ``__contains__``, ``__iter__``, ``__call__``), operator overloading, abstraction, encapsulation, and ``@property`` decorators.
+   - **Templates**: We explored function templates for writing generic, type-independent code. Key topics included template syntax, instantiation, definition placement (always in headers), documentation with Doxygen, multiple template parameters, explicit template arguments, type deduction rules (with references, const, and deduction failures), and full template specialization for type-specific behavior.
 
+   - **Function Operators, Specifiers, and Attributes**: We covered ``decltype`` for compile-time type inspection (preserving references and const qualifiers), trailing return types for template functions, ``constexpr`` for compile-time evaluation, ``inline`` for ODR compliance, ``noexcept`` for exception guarantees, and attributes ``[[nodiscard]]``, ``[[maybe_unused]]``, and ``[[deprecated]]`` for safer API design.
 
-.. dropdown:: Python Language References
-    :class-container: sd-border-secondary
+   - **Callables**: We studied the full spectrum of callable objects -- function pointers (syntax, declaring, calling, callbacks, limitations), functors (stateful function objects with ``operator()``), lambdas (anonymous functions with capture clauses, parameter lists, mutable keyword, and return type deduction), and ``std::function`` (type-erased wrapper for storing any callable with a compatible signature).
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
 
-        .. grid-item-card:: Python Tutorial: Classes
-            :link: https://docs.python.org/3/tutorial/classes.html
-            :class-card: sd-border-secondary
+.. dropdown:: cppreference Links
+   :class-container: sd-border-success
 
-            **Python Tutorial**
+   .. grid:: 1 1 2 2
+      :gutter: 2
 
-            Official tutorial covering classes, objects, inheritance, and Python's object model.
+      .. grid-item-card:: Function Templates
+         :link: https://en.cppreference.com/w/cpp/language/function_template
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- Function Templates**
 
-            - Class definition
-            - Instance and class attributes
-            - Method resolution
+         Complete reference for function template syntax, instantiation, argument deduction, specialization, and overload resolution.
 
-        .. grid-item-card:: Data Model: Special Methods
-            :link: https://docs.python.org/3/reference/datamodel.html#special-method-names
-            :class-card: sd-border-secondary
+         +++
 
-            **Python Data Model**
+         - Template parameter lists
+         - Template argument deduction
+         - Explicit specialization
+         - Overload resolution with templates
 
-            Comprehensive reference for all dunder methods in Python's data model.
+      .. grid-item-card:: Lambda Expressions
+         :link: https://en.cppreference.com/w/cpp/language/lambda
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- Lambda Expressions**
 
-            - ``__init__``, ``__repr__``, ``__str__``
-            - Rich comparison methods
-            - Numeric and container emulation
+         Full reference for lambda syntax, capture clauses, parameter lists, mutable lambdas, return type deduction, and generic lambdas.
 
-        .. grid-item-card:: Built-in Functions: ``property``
-            :link: https://docs.python.org/3/library/functions.html#property
-            :class-card: sd-border-secondary
+         +++
 
-            **Built-in Functions**
+         - Capture modes (value, reference, mixed)
+         - Mutable keyword
+         - Trailing return types
+         - Generic lambdas (C++14)
 
-            Documentation for the ``property()`` built-in and the ``@property`` decorator.
+      .. grid-item-card:: std::function
+         :link: https://en.cppreference.com/w/cpp/utility/functional/function
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- std::function**
 
-            - Getter, setter, deleter
-            - Descriptor protocol
-            - Attribute access control
+         Reference for the polymorphic function wrapper, including construction, assignment, invocation, and the empty state.
 
-        .. grid-item-card:: Abstract Base Classes
-            :link: https://docs.python.org/3/library/abc.html
-            :class-card: sd-border-secondary
+         +++
 
-            **Standard Library -- abc**
+         - Type erasure mechanism
+         - Storing lambdas, functors, function pointers
+         - ``std::bad_function_call``
+         - Small object optimization
 
-            The ``abc`` module for defining abstract base classes and abstract methods.
+      .. grid-item-card:: decltype Specifier
+         :link: https://en.cppreference.com/w/cpp/language/decltype
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- decltype**
 
-            - ``ABC``, ``abstractmethod``
-            - Interface enforcement
-            - Preview for L7
+         Reference for the ``decltype`` type specifier, including rules for identifiers, lvalue expressions, and prvalue expressions.
 
-        .. grid-item-card:: Errors and Exceptions
-            :link: https://docs.python.org/3/tutorial/errors.html
-            :class-card: sd-border-secondary
+         +++
 
-            **Python Tutorial**
+         - Value category rules
+         - Parenthesized expressions
+         - ``decltype(auto)``
 
-            Official tutorial on exception handling, ``try``/``except``, ``raise``, and built-in exception types.
+      .. grid-item-card:: Function Attributes
+         :link: https://en.cppreference.com/w/cpp/language/attributes
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- Attributes**
 
-            - ``try``/``except``/``else``/``finally``
-            - ``raise`` statement
-            - ``TypeError``, ``ValueError``
+         Reference for C++ standard attributes including ``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``, and others.
 
-        .. grid-item-card:: Glossary: ``__slots__``
-            :link: https://docs.python.org/3/glossary.html#term-__slots__
-            :class-card: sd-border-secondary
+         +++
 
-            **Python Glossary**
+         - ``[[nodiscard]]`` with custom messages
+         - ``[[maybe_unused]]`` for parameters and variables
+         - ``[[deprecated]]`` with migration guidance
 
-            Memory-efficient attribute storage using ``__slots__`` (advanced topic).
+      .. grid-item-card:: constexpr Specifier
+         :link: https://en.cppreference.com/w/cpp/language/constexpr
+         :class-card: sd-border-secondary
 
-            +++
+         **cppreference -- constexpr**
 
-            - Fixed attribute sets
-            - Memory optimization
-            - Trade-offs with dynamic attributes
+         Reference for ``constexpr`` variables, functions, and constructors, including requirements and relaxations across C++ standards.
 
+         +++
 
-.. dropdown:: UML and Design Resources
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: UML (Unified Modeling Language)
-            :link: https://www.uml.org/
-            :class-card: sd-border-secondary
-
-            **Official UML Site**
-
-            The standard for software modeling diagrams used in the design phase.
-
-            +++
-
-            - Class diagrams
-            - Sequence diagrams
-            - Activity diagrams
-
-        .. grid-item-card:: PlantUML
-            :link: https://plantuml.com/
-            :class-card: sd-border-secondary
-
-            **PlantUML**
-
-            Text-based tool for creating UML diagrams from simple markup.
-
-            +++
-
-            - Class diagram syntax
-            - Sequence diagram syntax
-            - Integration with IDEs
-
-        .. grid-item-card:: Mermaid
-            :link: https://mermaid.js.org/
-            :class-card: sd-border-secondary
-
-            **Mermaid**
-
-            JavaScript-based diagramming tool with Markdown integration.
-
-            +++
-
-            - Class diagrams
-            - Flowcharts
-            - GitHub/GitLab rendering
-
-
-.. dropdown:: Style and Best Practices
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: PEP 8 -- Style Guide
-            :link: https://peps.python.org/pep-0008/
-            :class-card: sd-border-secondary
-
-            **Coding Conventions**
-
-            Guidelines for class naming, attribute access, and code formatting.
-
-            +++
-
-            - Class names: CamelCase
-            - Non-public attributes: ``_leading_underscore``
-            - Method naming: ``snake_case``
-
-        .. grid-item-card:: Google Python Style Guide
-            :link: https://google.github.io/styleguide/pyguide.html
-            :class-card: sd-border-secondary
-
-            **Google Style Guide**
-
-            Style conventions used in this course for docstrings and code organization.
-
-            +++
-
-            - Google-style docstrings
-            - Class documentation
-            - Properties and type hints
-
-
-.. dropdown:: External Tutorials
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Real Python: OOP in Python 3
-            :link: https://realpython.com/python3-object-oriented-programming/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Comprehensive introduction to OOP in Python with practical examples.
-
-            +++
-
-            - Classes and objects
-            - Instance methods
-            - Inheritance basics
-
-        .. grid-item-card:: Real Python: Operator and Function Overloading
-            :link: https://realpython.com/operator-function-overloading/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Guide to overloading operators and built-in functions for custom classes.
-
-            +++
-
-            - Dunder methods
-            - Comparison operators
-            - Arithmetic operators
-
-        .. grid-item-card:: Real Python: Properties
-            :link: https://realpython.com/python-property/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            In-depth guide to the ``@property`` decorator and managed attributes.
-
-            +++
-
-            - Getters and setters
-            - Validation
-            - Computed attributes
-
-        .. grid-item-card:: Real Python: Inheritance and Composition
-            :link: https://realpython.com/inheritance-composition-python/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Guide to inheritance and composition in Python. Preview for L7.
-
-            +++
-
-            - "Is-a" vs. "has-a"
-            - Composition over inheritance
-            - Mixins
+         - Compile-time vs runtime evaluation
+         - C++14/C++17 relaxations
+         - ``constexpr`` vs ``const``
 
 
 .. dropdown:: Recommended Reading
-    :class-container: sd-border-secondary
+   :class-container: sd-border-success
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Python Official Tutorial
-            :link: https://docs.python.org/3/tutorial/
-            :class-card: sd-border-secondary
-
-            **Getting Started**
-
-            Section 9 (Classes) covers class definition, scopes, inheritance, and iterators.
-
-            +++
-
-            - Class syntax
-            - Inheritance
-            - Iterators and generators
-
-        .. grid-item-card:: Luciano Ramalho
-            :class-card: sd-border-secondary
-
-            **Fluent Python (2nd Edition)**
-
-            Chapters 11-14 cover the Python data model, special methods, operator overloading, and interfaces. Essential reading for understanding how Python objects work.
-
-        .. grid-item-card:: Mark Lutz
-            :class-card: sd-border-secondary
-
-            **Learning Python (5th Edition)**
-
-            Chapters 26-32 cover OOP fundamentals: class coding basics, inheritance, class design, and advanced class topics.
-
-        .. grid-item-card:: Brett Slatkin
-            :class-card: sd-border-secondary
-
-            **Effective Python (2nd Edition)**
-
-            Items 37-44 cover classes and inheritance, including ``@property``, descriptors, and metaclasses.
+   - *A Tour of C++* by Bjarne Stroustrup -- Chapter 7 (Templates) and Chapter 15 (Function Objects)
+   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 16 (Templates and Generic Programming) and Chapter 10 (Generic Algorithms / Lambdas)
+   - *Effective Modern C++* by Scott Meyers -- Items 1--4 (deduction), Item 31 (lambdas), Item 34 (``std::function``)
+   - `LearnCpp.com: Function Templates <https://www.learncpp.com/cpp-tutorial/function-templates/>`_
+   - `LearnCpp.com: Lambda Expressions <https://www.learncpp.com/cpp-tutorial/introduction-to-lambdas-anonymous-functions/>`_
+   - `LearnCpp.com: std::function <https://www.learncpp.com/cpp-tutorial/introduction-to-stdfunction/>`_

@@ -1,657 +1,277 @@
-====================================================
-Quiz
-====================================================
+.. _l5_quiz:
 
-This quiz covers the key concepts from Lecture 5: Advanced Functions,
-including programming paradigms, first-class functions, lambda expressions,
-closures, callables, decorators, ``functools.wraps``, stacking decorators,
-decorators with arguments, and ``functools.partial``.
-
-.. note::
-
-   **Instructions:**
-
-   - Answer all questions to the best of your ability.
-   - Multiple choice questions have exactly one correct answer.
-   - True/False questions require you to determine if the statement is correct.
-   - Essay questions require short written responses (2-4 sentences).
-   - Click the dropdown after each question to reveal the answer.
-
-
-----
-
+================
+Lecture 5 Quiz
+================
 
 Multiple Choice
-===============
+----------------
 
 .. admonition:: Question 1
    :class: hint
 
-   What is the output of the following code?
+   What is the difference between a function **declaration** and a function **definition**?
 
-   .. code-block:: python
+   A. A declaration includes the function body; a definition does not
+   B. A definition includes the function body; a declaration only specifies the return type, name, and parameters
+   C. A declaration and definition are the same thing
+   D. A definition must appear before the declaration
 
-      def make_multiplier(n):
-          return lambda x: x * n
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      double = make_multiplier(2)
-      print(double(5))
+      **B. A definition includes the function body; a declaration only specifies the return type, name, and parameters**
 
-   A. ``5``
-
-   B. ``10``
-
-   C. ``2``
-
-   D. ``TypeError``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``10``
-
-   ``make_multiplier(2)`` returns a lambda that multiplies its argument by ``2``. Calling ``double(5)`` evaluates ``5 * 2 = 10``.
-
+      A function declaration (prototype) tells the compiler the function's signature -- its return type, name, and parameter types. The definition provides the actual implementation (the body). The declaration is a "promise" that the function will be defined elsewhere.
 
 .. admonition:: Question 2
    :class: hint
 
-   Which of the following is NOT a valid use of a lambda?
+   What is the output of the following code?
 
-   A. ``sorted(items, key=lambda x: x[1])``
+   .. code-block:: cpp
 
-   B. ``lambda x, y: x + y``
+      void modify(int x) {
+          x = 100;
+      }
 
-   C. ``lambda x: if x > 0: return x``
+      int main() {
+          int val{42};
+          modify(val);
+          std::cout << val << '\n';
+      }
 
-   D. ``list(map(lambda x: x**2, [1, 2, 3]))``
+   A. 100
+   B. 42
+   C. 0
+   D. Undefined behavior
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **C** -- ``lambda x: if x > 0: return x``
+      **B. 42**
 
-   Lambdas can only contain a single expression. ``if``/``return`` statements are not allowed. Conditional *expressions* (``x if x > 0 else 0``) are allowed, but statement-based ``if`` blocks are not.
-
+      The function ``modify`` takes its parameter by value, so it receives a copy of ``val``. Changing ``x`` inside the function does not affect the original ``val`` in ``main()``.
 
 .. admonition:: Question 3
    :class: hint
 
-   What is the output of the following code?
+   Which parameter-passing method should be your **default choice** for passing a large, read-only object like ``std::vector<int>``?
 
-   .. code-block:: python
+   A. Pass-by-value
+   B. Pass-by-reference
+   C. Pass-by-const-reference
+   D. Pass-by-pointer
 
-      def outer():
-          count = 0
-          def inner():
-              nonlocal count
-              count += 1
-              return count
-          return inner
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      f = outer()
-      print(f(), f(), f())
+      **C. Pass-by-const-reference**
 
-   A. ``1 1 1``
-
-   B. ``1 2 3``
-
-   C. ``0 1 2``
-
-   D. ``NameError``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``1 2 3``
-
-   ``outer()`` creates a closure. Each call to ``f()`` increments the captured ``count`` variable via ``nonlocal``. The three calls produce ``1``, ``2``, and ``3``.
-
+      ``const&`` provides efficiency (no copy) and safety (the function cannot modify the original). This is the recommended default for large objects that the function only needs to read.
 
 .. admonition:: Question 4
    :class: hint
 
-   What does the ``@`` syntax do in the following code?
+   What determines whether two functions are valid **overloads** of each other?
 
-   .. code-block:: python
+   A. They must have different return types
+   B. They must have different parameter names
+   C. They must have different parameter lists (number, types, or order of parameters)
+   D. They must be in different source files
 
-      @my_decorator
-      def my_function():
-          pass
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   A. It calls ``my_function`` and passes the result to ``my_decorator``.
+      **C. They must have different parameter lists (number, types, or order of parameters)**
 
-   B. It is equivalent to ``my_function = my_decorator(my_function)``.
-
-   C. It creates a new class called ``my_decorator``.
-
-   D. It passes ``my_decorator`` as an argument to ``my_function``.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- It is equivalent to ``my_function = my_decorator(my_function)``.
-
-   The ``@decorator`` syntax is syntactic sugar. Python calls the decorator with the function as its argument and replaces the function with the return value.
-
+      A function's signature for overloading purposes is its name plus its parameter types. The return type and parameter names are NOT part of the signature. Two functions with the same name and same parameter types but different return types will cause a compilation error.
 
 .. admonition:: Question 5
    :class: hint
 
-   What is the purpose of ``functools.wraps``?
+   What is wrong with the following code?
 
-   A. It makes a function run faster.
+   .. code-block:: cpp
 
-   B. It copies the original function's metadata (name, docstring) onto the wrapper.
+      void greet(const std::string& name, int times = 3);
 
-   C. It prevents a function from being decorated.
+      void greet(const std::string& name, int times = 3) {
+          for (int i{0}; i < times; ++i) {
+              std::cout << "Hello, " << name << "!\n";
+          }
+      }
 
-   D. It automatically adds type hints to the wrapper function.
+   A. Default parameters cannot be used with references
+   B. The default value is specified in both the declaration and the definition
+   C. The function should return ``int``, not ``void``
+   D. There is nothing wrong with this code
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **B** -- It copies the original function's metadata (name, docstring) onto the wrapper.
+      **B. The default value is specified in both the declaration and the definition**
 
-   Without ``@wraps(func)``, the wrapper replaces the original function's ``__name__``, ``__doc__``, and other attributes. ``functools.wraps`` preserves these for introspection and debugging.
-
+      Default parameter values should only be specified in the function declaration (typically in the header file), not repeated in the definition. Specifying them in both places causes a compilation error ("redefinition of default argument").
 
 .. admonition:: Question 6
    :class: hint
 
    What is the output of the following code?
 
-   .. code-block:: python
+   .. code-block:: cpp
 
-      from functools import partial
+      void count_calls() {
+          static int count{0};
+          count++;
+          std::cout << count << " ";
+      }
 
-      def power(base, exponent):
-          return base ** exponent
+      int main() {
+          count_calls();
+          count_calls();
+          count_calls();
+      }
 
-      square = partial(power, exponent=2)
-      print(square(5))
+   A. ``1 1 1``
+   B. ``1 2 3``
+   C. ``0 1 2``
+   D. ``3 3 3``
 
-   A. ``10``
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   B. ``25``
+      **B. 1 2 3**
 
-   C. ``32``
-
-   D. ``TypeError``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``25``
-
-   ``partial(power, exponent=2)`` creates a new function with ``exponent`` fixed to ``2``. Calling ``square(5)`` computes ``5 ** 2 = 25``.
-
+      A ``static`` local variable is initialized only once (the first time the function is called) and retains its value between calls. Each call increments the same ``count`` variable.
 
 .. admonition:: Question 7
    :class: hint
 
-   When multiple decorators are stacked, in what order are they applied?
+   What is **copy elision** (specifically RVO)?
 
-   .. code-block:: python
+   A. The compiler copies the return value twice for safety
+   B. The compiler constructs the return value directly at the destination, avoiding unnecessary copies
+   C. The programmer must manually optimize return values
+   D. The function returns a pointer instead of a value
 
-      @decorator_a
-      @decorator_b
-      def func():
-          pass
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   A. ``decorator_a`` is applied first, then ``decorator_b``.
+      **B. The compiler constructs the return value directly at the destination, avoiding unnecessary copies**
 
-   B. ``decorator_b`` is applied first, then ``decorator_a``.
-
-   C. Both are applied simultaneously.
-
-   D. The order depends on the function's arguments.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``decorator_b`` is applied first, then ``decorator_a``.
-
-   Stacked decorators are applied bottom to top. This is equivalent to ``func = decorator_a(decorator_b(func))``. The innermost decorator (closest to the function) is applied first.
-
+      Copy elision, including Return Value Optimization (RVO), is a compiler optimization where the returned object is constructed directly in the memory of the variable that will receive it. Since C++17, RVO for unnamed temporaries (prvalues) is guaranteed by the standard.
 
 .. admonition:: Question 8
    :class: hint
 
-   What does ``callable(42)`` return?
+   What happens if a non-``void`` function does not have a ``return`` statement on all execution paths?
 
-   A. ``True``
+   A. The function returns 0 by default
+   B. The function returns the last computed value
+   C. It causes undefined behavior
+   D. The compiler automatically adds a return statement
 
-   B. ``False``
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   C. ``42``
+      **C. It causes undefined behavior**
 
-   D. ``TypeError``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``False``
-
-   Integers are not callable. Only objects that can be invoked with parentheses (functions, classes, objects with ``__call__``) return ``True`` from ``callable()``.
-
+      Every execution path in a non-``void`` function must end with a ``return`` statement. If control reaches the end of a non-``void`` function without encountering a ``return``, the behavior is undefined. The compiler may warn about this, but the code can still compile.
 
 .. admonition:: Question 9
    :class: hint
 
-   What is the output of the following code?
+   What does the call stack do when a function is called?
 
-   .. code-block:: python
+   A. It deletes the calling function's data
+   B. It pushes a new stack frame onto the top of the stack
+   C. It copies the entire program into memory
+   D. It creates a new thread for the function
 
-      def make_greeter(greeting):
-          def greet(name):
-              return f"{greeting}, {name}!"
-          return greet
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      hi = make_greeter("Hi")
-      hello = make_greeter("Hello")
-      print(hi("Bob"))
+      **B. It pushes a new stack frame onto the top of the stack**
 
-   A. ``"Hello, Bob!"``
-
-   B. ``"Hi, Bob!"``
-
-   C. ``"greeting, Bob!"``
-
-   D. ``NameError``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``"Hi, Bob!"``
-
-   Each call to ``make_greeter`` creates an independent closure. ``hi`` captures ``"Hi"`` and ``hello`` captures ``"Hello"``. They do not interfere with each other.
-
+      When a function is called, a new stack frame containing the function's local variables, parameters, and return address is pushed onto the call stack. When the function returns, its stack frame is popped off.
 
 .. admonition:: Question 10
    :class: hint
 
-   Which of the following correctly describes a higher-order function?
+   Which of the following is a valid reason to pass by **pointer** instead of by **reference**?
 
-   A. A function that uses recursion.
+   A. Pointers are always faster than references
+   B. The argument could be optional (the function should handle ``nullptr``)
+   C. Pointers provide read-only access
+   D. References cannot be used with built-in types
 
-   B. A function that takes another function as an argument or returns a function.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   C. A function defined inside a class.
+      **B. The argument could be optional (the function should handle nullptr)**
 
-   D. A function with more than three parameters.
+      The key advantage of pass-by-pointer over pass-by-reference is that a pointer can be ``nullptr``, which allows the function to handle the case where no argument is provided. References must always refer to a valid object.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- A function that takes another function as an argument or returns a function.
-
-   Higher-order functions operate on other functions. Examples include ``map``, ``filter``, ``sorted`` (with ``key``), and any decorator.
-
+True or False
+--------------
 
 .. admonition:: Question 11
    :class: hint
 
-   What is the output of the following code?
+   True or False: The return type of a function is part of its signature for overloading purposes.
 
-   .. code-block:: python
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      nums = [1, 2, 3, 4, 5]
-      result = list(filter(lambda x: x % 2 == 0, nums))
-      print(result)
+      **False**
 
-   A. ``[1, 3, 5]``
-
-   B. ``[2, 4]``
-
-   C. ``[1, 2, 3, 4, 5]``
-
-   D. ``[]``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``[2, 4]``
-
-   ``filter`` keeps elements for which the lambda returns ``True``. The lambda checks if a number is even (``x % 2 == 0``), so only ``2`` and ``4`` are kept.
-
+      A function's signature for overloading is defined by its name and its parameter types only. The return type is NOT considered. Two functions that differ only in return type will cause a compilation error, not a valid overload.
 
 .. admonition:: Question 12
    :class: hint
 
-   What is the output of the following code?
+   True or False: A ``static`` local variable can be accessed from outside the function in which it is defined.
 
-   .. code-block:: python
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      def repeat(n):
-          def decorator(func):
-              def wrapper(*args, **kwargs):
-                  for _ in range(n):
-                      func(*args, **kwargs)
-              return wrapper
-          return decorator
+      **False**
 
-      @repeat(2)
-      def say_hi():
-          print("Hi")
-
-      say_hi()
-
-   A. ``Hi`` (printed once)
-
-   B. ``Hi`` (printed twice)
-
-   C. ``TypeError``
-
-   D. Nothing is printed.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``Hi`` (printed twice)
-
-   ``@repeat(2)`` creates a parameterized decorator. ``repeat(2)`` returns ``decorator``, which wraps ``say_hi`` so that calling it executes the original function ``2`` times.
-
+      A ``static`` local variable has the **lifetime** of the entire program but its **scope** is limited to the function in which it is defined. It cannot be accessed from outside that function.
 
 .. admonition:: Question 13
    :class: hint
 
-   Which of the following is a requirement for a closure?
+   True or False: Every recursive function must have a base case to prevent infinite recursion.
 
-   A. The inner function must be defined with ``lambda``.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   B. The inner function must reference a variable from the enclosing function's scope.
+      **True**
 
-   C. The enclosing function must use the ``global`` keyword.
-
-   D. The inner function must accept ``*args`` and ``**kwargs``.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- The inner function must reference a variable from the enclosing function's scope.
-
-   A closure requires: a nested function, a reference to a free variable from the enclosing scope, and the enclosing function returning the nested function.
-
+      Without a base case, a recursive function will keep calling itself indefinitely, eventually consuming all available stack space and causing a stack overflow. The base case is the condition that stops the recursion.
 
 .. admonition:: Question 14
    :class: hint
 
-   What is the output of the following code?
+   True or False: In C++17, Return Value Optimization (RVO) for unnamed temporary objects is guaranteed by the standard.
 
-   .. code-block:: python
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-      def compute_square(x):
-          return x ** 2
+      **True**
 
-      f = compute_square
-      print(f(4))
-      print(type(f))
-
-   A. ``16`` then ``<class 'int'>``
-
-   B. ``16`` then ``<class 'function'>``
-
-   C. ``TypeError``
-
-   D. ``None`` then ``<class 'function'>``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B** -- ``16`` then ``<class 'function'>``
-
-   ``f = compute_square`` assigns the function object (not the return value) to ``f``. Calling ``f(4)`` returns ``16``, and ``type(f)`` is ``<class 'function'>``.
-
+      Since C++17, RVO for prvalues (unnamed temporary return values) is mandatory -- the standard guarantees that no copy or move will occur. Named Return Value Optimization (NRVO), however, is still an optional optimization.
 
 .. admonition:: Question 15
    :class: hint
 
-   What is the key difference between ``map`` and ``filter``?
+   True or False: Default parameters must be specified starting from the **rightmost** parameter and must be contiguous.
 
-   A. ``map`` transforms each element; ``filter`` selects elements based on a condition.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   B. ``map`` returns a list; ``filter`` returns a tuple.
+      **True**
 
-   C. ``map`` works with strings only; ``filter`` works with numbers only.
-
-   D. ``map`` modifies the original list; ``filter`` creates a copy.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **A** -- ``map`` transforms each element; ``filter`` selects elements based on a condition.
-
-   ``map(func, iterable)`` applies ``func`` to every element and returns the transformed values. ``filter(func, iterable)`` returns only those elements for which ``func`` returns ``True``. Both return lazy iterators.
-
-
-----
-
-
-True or False
-=============
-
-.. admonition:: Question 16
-   :class: hint
-
-   **True or False:** In Python, functions are first-class objects and can be assigned to variables, passed as arguments, and returned from other functions.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   Functions in Python are first-class objects. They can be assigned to variables, passed to other functions as arguments, returned from functions, and stored in data structures like lists and dictionaries.
-
-
-.. admonition:: Question 17
-   :class: hint
-
-   **True or False:** A lambda function can contain multiple statements separated by semicolons.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   Lambda functions are restricted to a single expression. They cannot contain statements (assignments, loops, ``try``/``except``, etc.). For multi-line logic, use a regular ``def`` function.
-
-
-.. admonition:: Question 18
-   :class: hint
-
-   **True or False:** A closure's captured variables are destroyed when the enclosing function returns.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   The captured variables survive through cell objects stored in the inner function's ``__closure__`` tuple. Even after the enclosing function returns and its local scope is discarded, the cell objects keep the captured values alive.
-
-
-.. admonition:: Question 19
-   :class: hint
-
-   **True or False:** ``functools.partial`` calls the original function immediately with the frozen arguments.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   ``functools.partial`` does not call the function. It returns a new callable with some arguments pre-filled. The function is only called when you invoke the partial object with the remaining arguments.
-
-
-.. admonition:: Question 20
-   :class: hint
-
-   **True or False:** The ``nonlocal`` keyword is required to read a variable from an enclosing scope inside a nested function.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   You can *read* variables from an enclosing scope without ``nonlocal``. The ``nonlocal`` keyword is only required when you want to *modify* (reassign) a variable in the enclosing scope.
-
-
-.. admonition:: Question 21
-   :class: hint
-
-   **True or False:** Decorators can only be applied to functions, not to classes or methods.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   Decorators can be applied to functions, methods, and classes. For example, ``@staticmethod``, ``@classmethod``, and ``@dataclass`` are all commonly used decorators applied to methods or classes.
-
-
-.. admonition:: Question 22
-   :class: hint
-
-   **True or False:** ``map`` and ``filter`` return lists in Python 3.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   In Python 3, ``map`` and ``filter`` return lazy iterators, not lists. You must wrap the result in ``list()`` to materialize all values.
-
-
-.. admonition:: Question 23
-   :class: hint
-
-   **True or False:** PEP 8 discourages assigning a lambda to a variable name.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   PEP 8 states that assigning a lambda to a variable (e.g., ``f = lambda x: x + 1``) defeats the purpose of lambdas. If you need a named function, use ``def`` instead. Lambdas are intended for short, inline use.
-
-
-.. admonition:: Question 24
-   :class: hint
-
-   **True or False:** Two closures created by the same enclosing function share the same captured state.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   Each call to the enclosing function creates a new, independent closure with its own set of captured variables. Two closures from the same factory do not share state.
-
-
-.. admonition:: Question 25
-   :class: hint
-
-   **True or False:** A parameterized decorator (decorator with arguments) requires three levels of nested functions.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   A parameterized decorator uses three layers: the decorator factory (takes the arguments), the decorator (takes the function), and the wrapper (replaces the function). The pattern is ``factory(args) -> decorator(func) -> wrapper(*args, **kwargs)``.
-
-
-----
-
-
-Essay Questions
-===============
-
-.. admonition:: Question 26
-   :class: hint
-
-   **Explain what a closure is and the three conditions required for one to exist.** Provide a brief example.
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - A closure is a function that retains access to variables from its enclosing scope even after the enclosing function has returned.
-   - Three conditions: (1) a nested function exists, (2) the nested function references a free variable from the enclosing scope, and (3) the enclosing function returns the nested function.
-   - Python uses cell objects to keep the captured variables alive after the enclosing scope is discarded.
-   - Example: a ``make_counter`` function that returns an ``increment`` function which remembers and updates a ``count`` variable.
-
-
-.. admonition:: Question 27
-   :class: hint
-
-   **Explain why ``functools.wraps`` is important when writing decorators.** What happens if you omit it?
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - When a decorator wraps a function, the wrapper function replaces the original. Without ``@wraps``, the original function's ``__name__``, ``__doc__``, ``__module__``, and other metadata are lost.
-   - ``functools.wraps`` copies these attributes from the original function onto the wrapper.
-   - This is important for debugging (stack traces show the correct name), documentation generators, and any tool that inspects function metadata.
-   - Best practice: always use ``@functools.wraps(func)`` in every decorator wrapper.
-
-
-.. admonition:: Question 28
-   :class: hint
-
-   **Compare ``functools.partial``, lambda expressions, and closures as ways to pre-fill function arguments.** When would you prefer each approach?
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - ``functools.partial`` is best for simple argument freezing; it preserves introspection via ``.func``, ``.args``, and ``.keywords`` attributes.
-   - Lambda expressions are good for short, inline transformations where the logic fits in a single expression.
-   - Closures offer the most flexibility: they can contain complex logic, maintain mutable state, and perform additional processing beyond simple argument binding.
-   - Rule of thumb: use ``partial`` for straightforward cases, lambda for one-liners, and closures when you need state or multi-step logic.
-
-
-.. admonition:: Question 29
-   :class: hint
-
-   **Explain how stacked decorators are applied.** Given ``@A`` on top of ``@B`` on top of a function ``f``, describe the order of execution.
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - Stacked decorators are applied bottom to top: ``@B`` is applied first, then ``@A``.
-   - The equivalent expression is ``f = A(B(f))``.
-   - At call time, the outermost wrapper (from ``A``) executes first, then the wrapper from ``B``, then the original function ``f``.
-   - This means the decorator closest to the function definition is applied first during decoration, but its wrapper is called last during execution.
-
-
-.. admonition:: Question 30
-   :class: hint
-
-   **Describe the difference between a pure function and an impure function.** Why do functional programming advocates prefer pure functions?
-
-   *(2-4 sentences)*
-
-.. dropdown:: Answer Guidelines
-   :class-container: sd-border-success
-
-   *Key points to include:*
-
-   - A pure function depends only on its inputs and produces no side effects (no modifying external state, no I/O). Given the same inputs, it always returns the same output.
-   - An impure function may modify global variables, mutate arguments, perform I/O, or depend on external state, making its behavior harder to predict.
-   - Pure functions are preferred because they are easier to test, debug, and reason about. They also enable safe parallelism since they do not share mutable state.
-   - In practice, most programs need some impure functions (for I/O, logging, etc.), but minimizing side effects improves code quality.
+      Default parameters must be trailing parameters. You cannot have a default parameter followed by a non-default parameter. For example, ``void func(int a = 1, int b)`` is invalid, while ``void func(int a, int b = 1)`` is valid.

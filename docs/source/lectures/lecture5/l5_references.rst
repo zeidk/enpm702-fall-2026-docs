@@ -1,273 +1,62 @@
-References
-==========
-
-
-.. dropdown:: 🏛️ Lecture 5
-    :class-container: sd-border-secondary
-    :open:
-
-    .. card::
-        :class-card: sd-border-secondary
-
-        **ENPM605 -- L5: Advanced Functions**
-
-        Covers programming paradigms (procedural, functional, object-oriented), first-class functions, lambda expressions, closures, callables, decorators (basic, stacking, parameterized), ``functools.wraps``, ``functools.partial``, and built-in higher-order functions (``map``, ``filter``, ``sorted`` with ``key``).
-
-
-.. dropdown:: 🐍 Python Language References
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: 🔧 Functional Programming HOWTO
-            :link: https://docs.python.org/3/howto/functional.html
-            :class-card: sd-border-secondary
-
-            **Python HOWTO**
-
-            Comprehensive guide to functional programming in Python, including iterators, generators, and built-in functional tools.
-
-            +++
-
-            - Pure functions
-            - ``map``, ``filter``, ``reduce``
-            - Itertools
-
-        .. grid-item-card:: 📝 Lambda Expressions
-            :link: https://docs.python.org/3/reference/expressions.html#lambda
-            :class-card: sd-border-secondary
-
-            **Python Reference**
-
-            Syntax and semantics of lambda expressions in Python.
-
-            +++
-
-            - Single expression functions
-            - Anonymous functions
-            - Inline callbacks
-
-        .. grid-item-card:: 🔍 Data Model: ``__call__``
-            :link: https://docs.python.org/3/reference/datamodel.html#object.__call__
-            :class-card: sd-border-secondary
-
-            **Python Data Model**
-
-            The ``__call__`` special method that makes instances callable.
-
-            +++
-
-            - Callable objects
-            - Instance invocation
-            - Emulating functions
-
-        .. grid-item-card:: 📦 Built-in: ``callable()``
-            :link: https://docs.python.org/3/library/functions.html#callable
-            :class-card: sd-border-secondary
-
-            **Built-in Functions**
-
-            The ``callable()`` function for checking if an object is callable.
-
-            +++
-
-            - Runtime check
-            - Functions, classes, instances
-            - ``__call__`` detection
-
-        .. grid-item-card:: 🔄 ``functools.partial``
-            :link: https://docs.python.org/3/library/functools.html#functools.partial
-            :class-card: sd-border-secondary
-
-            **Standard Library -- functools**
-
-            Creating partial function objects with frozen arguments.
-
-            +++
-
-            - Argument freezing
-            - ``.func``, ``.args``, ``.keywords``
-            - Partial objects
-
-        .. grid-item-card:: 📋 ``functools.wraps``
-            :link: https://docs.python.org/3/library/functools.html#functools.wraps
-            :class-card: sd-border-secondary
-
-            **Standard Library -- functools**
-
-            Preserving function metadata when writing decorators.
-
-            +++
-
-            - Metadata copying
-            - ``__name__``, ``__doc__``
-            - Decorator best practice
-
-        .. grid-item-card:: 📖 Glossary: Decorator
-            :link: https://docs.python.org/3/glossary.html#term-decorator
-            :class-card: sd-border-secondary
-
-            **Python Glossary**
-
-            Official definition of decorators in the Python glossary.
-
-            +++
-
-            - ``@`` syntax
-            - Function transformation
-            - Class decorators
-
-        .. grid-item-card:: 📝 PEP 318: Decorators
-            :link: https://peps.python.org/pep-0318/
-            :class-card: sd-border-secondary
-
-            **PEP 318**
-
-            The PEP that introduced decorator syntax for functions and methods.
-
-            +++
-
-            - ``@decorator`` syntax
-            - Motivation and rationale
-            - Design alternatives
-
-
-.. dropdown:: 📏 Style and Best Practices
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: 📏 PEP 8 -- Style Guide
-            :link: https://peps.python.org/pep-0008/
-            :class-card: sd-border-secondary
-
-            **Coding Conventions**
-
-            Guidelines for function naming, lambda usage, and code formatting.
-
-            +++
-
-            - Lambda assignment discouraged
-            - Function naming (``snake_case``)
-            - Decorator formatting
-
-
-.. dropdown:: 🌐 External Tutorials
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: 🎯 Real Python: Primer on Decorators
-            :link: https://realpython.com/primer-on-python-decorators/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Comprehensive tutorial on decorators, including first-class objects, closures, and practical examples.
-
-            +++
-
-            - First-class functions
-            - Simple decorators
-            - Advanced patterns
-
-        .. grid-item-card:: 🔒 Real Python: Closures
-            :link: https://realpython.com/python-closure/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            In-depth guide to closures in Python with practical examples.
-
-            +++
-
-            - Free variables
-            - ``nonlocal`` keyword
-            - Closure applications
-
-        .. grid-item-card:: 🔀 Real Python: Lambda Functions
-            :link: https://realpython.com/python-lambda/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Guide to lambda functions, their syntax, use cases, and limitations.
-
-            +++
-
-            - Lambda syntax
-            - Common patterns
-            - When to avoid lambdas
-
-        .. grid-item-card:: 🛠️ Real Python: functools
-            :link: https://realpython.com/python-functools/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Overview of the ``functools`` module including ``partial``, ``wraps``, ``lru_cache``, and more.
-
-            +++
-
-            - ``partial`` objects
-            - ``wraps`` decorator
-            - Caching with ``lru_cache``
-
-        .. grid-item-card:: 🔧 Real Python: Functional Programming
-            :link: https://realpython.com/python-functional-programming/
-            :class-card: sd-border-secondary
-
-            **Real Python**
-
-            Introduction to functional programming concepts in Python.
-
-            +++
-
-            - Pure functions
-            - Immutability
-            - ``map``, ``filter``, ``reduce``
-
-
-.. dropdown:: 📚 Recommended Reading
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: 📘 Python Official Tutorial
-            :link: https://docs.python.org/3/tutorial/
-            :class-card: sd-border-secondary
-
-            **Getting Started**
-
-            Section 4.7.5 (Lambda Expressions) and Section 4.7.6 (Documentation Strings) cover relevant topics for this lecture.
-
-            +++
-
-            - Lambda expressions
-            - Functional tools
-            - Code style
-
-        .. grid-item-card:: Luciano Ramalho
-            :class-card: sd-border-secondary
-
-            **Fluent Python (2nd Edition)**
-
-            Chapters 7-9 cover first-class functions, type hints, decorators, and closures. Excellent for understanding functions as objects.
-
-        .. grid-item-card:: Mark Lutz
-            :class-card: sd-border-secondary
-
-            **Learning Python (5th Edition)**
-
-            Chapters 19-21 cover advanced function topics including closures, decorators, and functional programming tools.
-
-        .. grid-item-card:: Brett Slatkin
-            :class-card: sd-border-secondary
-
-            **Effective Python (2nd Edition)**
-
-            Items 19-26 cover function arguments, return values, closures, and decorators with practical best practices.
+.. _l5_references:
+
+===================
+Lecture 5 References
+===================
+
+.. dropdown:: Lecture 5 Summary
+   :class-container: sd-border-success
+
+   This lecture covered the fundamentals of functions in C++, organized into four parts:
+
+   - **The Core Mechanics**: We introduced functions as named, reusable units of code, emphasizing the benefits of code reusability (DRY principle), modularity, easier debugging, and abstraction. We covered the function lifecycle -- declaration (the "promise"), definition (the implementation), and call (the execution). Header files (``.hpp``) and source files (``.cpp``) were introduced as the proper way to separate declarations from definitions, along with include guards (``#pragma once``). We also covered the ``return`` keyword, including returning from ``void`` functions, returning values, implicit return type conversion, returning multiple values (``std::pair``, ``std::tuple``, ``struct``), and return type deduction with ``auto``.
+
+   - **The Function Interface**: We examined how data flows into functions through parameters (pass-by-value, pass-by-reference, pass-by-const-reference, pass-by-pointer) and out of functions through return values (return-by-value, return-by-reference, return-by-pointer). Copy elision (RVO and NRVO) was introduced as a key optimization that eliminates unnecessary copying. The dangers of dangling references and dangling pointers were highlighted.
+
+   - **Enhancing Functions**: We covered static variables (persistent state across calls), function overloading (same name, different parameter lists), overload resolution, and default parameters. Best practices for default parameter placement (declaration only) were discussed.
+
+   - **Under the Hood and Best Practices**: The call stack and stack frames were explained using the LIFO model. Recursive functions were introduced with the factorial example, along with guidelines for when to use (and avoid) recursion. Documentation with Doxygen (``@brief``, ``@param``, ``@return``) and the ``main()`` function with command-line arguments (``argc``, ``argv``) were covered.
+
+.. dropdown:: C++ Reference Links
+   :class-container: sd-border-success
+
+   - `Functions -- cppreference.com <https://en.cppreference.com/w/cpp/language/functions>`_
+   - `Function overloading -- cppreference.com <https://en.cppreference.com/w/cpp/language/overload_resolution>`_
+   - `Default arguments -- cppreference.com <https://en.cppreference.com/w/cpp/language/default_arguments>`_
+   - `Copy elision -- cppreference.com <https://en.cppreference.com/w/cpp/language/copy_elision>`_
+   - `std::pair -- cppreference.com <https://en.cppreference.com/w/cpp/utility/pair>`_
+   - `std::tuple -- cppreference.com <https://en.cppreference.com/w/cpp/utility/tuple>`_
+   - `Structured bindings -- cppreference.com <https://en.cppreference.com/w/cpp/language/structured_binding>`_
+   - `main function -- cppreference.com <https://en.cppreference.com/w/cpp/language/main_function>`_
+
+.. dropdown:: C++ Core Guidelines
+   :class-container: sd-border-success
+
+   - `F: Functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-functions>`_
+   - `F.1: "Package" meaningful operations as carefully named functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f1-package-meaningful-operations-as-carefully-named-functions>`_
+   - `F.2: A function should perform a single logical operation <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f2-a-function-should-perform-a-single-logical-operation>`_
+   - `F.3: Keep functions short and simple <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f3-keep-functions-short-and-simple>`_
+   - `F.15: Prefer simple and conventional ways of passing information <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f15-prefer-simple-and-conventional-ways-of-passing-information>`_
+   - `F.16: For "in" parameters, pass cheaply-copied types by value and others by reference to const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f16-for-in-parameters-pass-cheaply-copied-types-by-value-and-others-by-reference-to-const>`_
+   - `F.17: For "in-out" parameters, pass by reference to non-const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f17-for-in-out-parameters-pass-by-reference-to-non-const>`_
+   - `F.21: To return multiple "out" values, prefer returning a struct <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f21-to-return-multiple-out-values-prefer-returning-a-struct>`_
+   - `F.43: Never return a pointer or reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
+   - `F.46: int is the return type for main() <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f46-int-is-the-return-type-for-main>`_
+   - `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#Rf-default-args>`_
+
+.. dropdown:: Doxygen Documentation
+   :class-container: sd-border-success
+
+   - `Doxygen Manual <https://www.doxygen.nl/manual/index.html>`_
+   - `Doxygen: Documenting the code <https://www.doxygen.nl/manual/docblocks.html>`_
+   - `Doxygen: Special commands <https://www.doxygen.nl/manual/commands.html>`_ -- reference for ``@brief``, ``@param``, ``@return``, ``@note``, ``@warning``, and other commands.
+
+.. dropdown:: Recommended Reading
+   :class-container: sd-border-success
+
+   - *A Tour of C++* by Bjarne Stroustrup -- Chapter 1 (The Basics, functions and scope)
+   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 6 (Functions)
+   - `LearnCpp.com: Introduction to functions <https://www.learncpp.com/cpp-tutorial/introduction-to-functions/>`_
+   - `LearnCpp.com: Function parameters and arguments <https://www.learncpp.com/cpp-tutorial/introduction-to-function-parameters-and-arguments/>`_
+   - `LearnCpp.com: Header files <https://www.learncpp.com/cpp-tutorial/header-files/>`_
+   - `Include Guards: #pragma once vs Header Guards <https://thamara.dev/posts/pragma-once-vs-header-guards/>`_
