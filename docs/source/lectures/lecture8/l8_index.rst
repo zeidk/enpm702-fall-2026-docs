@@ -23,6 +23,7 @@ By the end of this lecture, you will be able to:
 7. Use ``static`` data members and ``static`` member functions.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Lecture 8 Contents
 

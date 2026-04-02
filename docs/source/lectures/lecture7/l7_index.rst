@@ -32,6 +32,7 @@ By the end of this lecture, you will be able to:
 6. **Apply** idiomatic patterns for passing smart pointers to and returning them from functions.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Lecture 7 Contents
 

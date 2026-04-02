@@ -21,6 +21,7 @@ By the end of this lecture, you will be able to:
 5. **Apply** best practices for function documentation with Doxygen and handle command-line arguments in ``main()``.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Lecture 5 Contents
 

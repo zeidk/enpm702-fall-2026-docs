@@ -23,6 +23,7 @@ By the end of this lecture, you will be able to:
 7. **Master callables**: function pointers, functors, lambdas, ``std::function``.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Lecture 6 Contents
 
