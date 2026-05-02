@@ -14,19 +14,19 @@ defining custom interfaces (messages and services). By the end of this
 lecture, students will be able to build, run, and inspect ROS 2 nodes
 that communicate over topics.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Understand the ROS 2 architecture: nodes, topics, messages, and the computation graph.
-- Create ROS 2 packages using ``ros2 pkg create`` with ``ament_cmake``.
-- Build packages with ``colcon build`` and source the overlay workspace.
-- Write publisher nodes that inherit from ``rclcpp::Node`` and publish messages on topics.
-- Write subscriber nodes that inherit from ``rclcpp::Node`` and process incoming messages via callbacks.
-- Use standard message types (``std_msgs``, ``geometry_msgs``) in publisher/subscriber nodes.
-- Define custom message types (``.msg`` files) in a dedicated interface package.
-- Use ROS 2 CLI tools to inspect the system: ``ros2 topic list``, ``ros2 topic echo``, ``ros2 topic info``, ``ros2 node list``.
+   - Understand the ROS 2 architecture: nodes, topics, messages, and the computation graph.
+   - Create ROS 2 packages using ``ros2 pkg create`` with ``ament_cmake``.
+   - Build packages with ``colcon build`` and source the overlay workspace.
+   - Write publisher nodes that inherit from ``rclcpp::Node`` and publish messages on topics.
+   - Write subscriber nodes that inherit from ``rclcpp::Node`` and process incoming messages via callbacks.
+   - Use standard message types (``std_msgs``, ``geometry_msgs``) in publisher/subscriber nodes.
+   - Define custom message types (``.msg`` files) in a dedicated interface package.
+   - Use ROS 2 CLI tools to inspect the system: ``ros2 topic list``, ``ros2 topic echo``, ``ros2 topic info``, ``ros2 node list``.
 
 .. toctree::
    :hidden:

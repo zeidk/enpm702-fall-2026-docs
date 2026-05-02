@@ -9,18 +9,18 @@ Overview
 
 This lecture covers memory allocation types, raw pointers, references, and dynamic memory management. Students learn to declare, initialize, and use pointers safely, understand const-correctness, and recognize common pitfalls. Valgrind is introduced for memory debugging.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, students will be able to:
+   By the end of this lecture, students will be able to:
 
-1. Identify and explain the three types of memory allocation: static, automatic, and dynamic.
-2. Declare, initialize, and use raw pointers, including the address-of (``&``) and dereference (``*``) operators.
-3. Apply const-correctness to pointers (pointer-to-const, const-pointer, and const-pointer-to-const).
-4. Allocate and deallocate memory dynamically using ``new`` and ``delete``.
-5. Recognize common pointer pitfalls: dangling pointers, memory leaks, double delete, and null dereferencing.
-6. Distinguish between references and pointers, understanding when to use each.
-7. Use Valgrind to detect memory leaks and memory errors in C++ programs.
+   1. Identify and explain the three types of memory allocation: static, automatic, and dynamic.
+   2. Declare, initialize, and use raw pointers, including the address-of (``&``) and dereference (``*``) operators.
+   3. Apply const-correctness to pointers (pointer-to-const, const-pointer, and const-pointer-to-const).
+   4. Allocate and deallocate memory dynamically using ``new`` and ``delete``.
+   5. Recognize common pointer pitfalls: dangling pointers, memory leaks, double delete, and null dereferencing.
+   6. Distinguish between references and pointers, understanding when to use each.
+   7. Use Valgrind to detect memory leaks and memory errors in C++ programs.
 
 .. toctree::
    :hidden:

@@ -9,18 +9,18 @@ Overview
 
 This lecture builds on the function fundamentals from Lecture 5 and introduces advanced features of C++ functions. We begin with ``struct`` as a lightweight data container and aggregate initialization, then move into templates for writing generic, reusable code. The lecture covers function operators (``decltype``), specifiers (``constexpr``, ``inline``, ``noexcept``), and attributes (``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``). Finally, we explore callables -- function pointers, functors, lambdas, and ``std::function`` -- which enable flexible, composable designs central to modern C++ programming.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-1. **Use struct**: aggregate initialization, structured bindings.
-2. **Write generic code**: function templates, type deduction, specialization.
-3. **Apply type inspection**: ``decltype`` operator.
-4. **Use modern function syntax**: trailing return types with templates.
-5. **Apply function specifiers**: ``constexpr``, ``inline``, ``noexcept``.
-6. **Apply function attributes**: ``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``.
-7. **Master callables**: function pointers, functors, lambdas, ``std::function``.
+   1. **Use struct**: aggregate initialization, structured bindings.
+   2. **Write generic code**: function templates, type deduction, specialization.
+   3. **Apply type inspection**: ``decltype`` operator.
+   4. **Use modern function syntax**: trailing return types with templates.
+   5. **Apply function specifiers**: ``constexpr``, ``inline``, ``noexcept``.
+   6. **Apply function attributes**: ``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``.
+   7. **Master callables**: function pointers, functors, lambdas, ``std::function``.
 
 .. toctree::
    :hidden:

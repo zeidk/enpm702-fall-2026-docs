@@ -16,18 +16,18 @@ executors with their associated callback groups. The lecture also covers
 **YAML configuration files** for externalizing parameter values and the
 **ROS 2 CLI tools** for inspecting and modifying parameters at runtime.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Declare, get, and set parameters on ROS 2 nodes using ``rclcpp``.
-- Use parameter callbacks to respond dynamically when parameters change at runtime.
-- Write Python launch files to start multiple nodes with parameters, remappings, and arguments.
-- Use launch arguments (``DeclareLaunchArgument``, ``LaunchConfiguration``) to create reusable launch files.
-- Structure YAML configuration files and load them from launch files.
-- Distinguish between single-threaded and multi-threaded executors and choose the appropriate one.
-- Use callback groups (mutually exclusive and reentrant) to control concurrency in multi-threaded executors.
+   - Declare, get, and set parameters on ROS 2 nodes using ``rclcpp``.
+   - Use parameter callbacks to respond dynamically when parameters change at runtime.
+   - Write Python launch files to start multiple nodes with parameters, remappings, and arguments.
+   - Use launch arguments (``DeclareLaunchArgument``, ``LaunchConfiguration``) to create reusable launch files.
+   - Structure YAML configuration files and load them from launch files.
+   - Distinguish between single-threaded and multi-threaded executors and choose the appropriate one.
+   - Use callback groups (mutually exclusive and reentrant) to control concurrency in multi-threaded executors.
 
 .. toctree::
    :hidden:

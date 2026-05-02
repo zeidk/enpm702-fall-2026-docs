@@ -16,18 +16,18 @@ will define custom ``.srv`` and ``.action`` interfaces, implement
 servers and clients in C++, and learn when each pattern is the
 appropriate choice.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Distinguish the three core ROS 2 communication patterns: topics (publish-subscribe), services (request-response), and actions (goal-feedback-result).
-- Define custom service interfaces (``.srv`` files) and build them with ``ament_cmake``.
-- Implement a service server using ``create_service`` and handle requests in a callback.
-- Implement a service client using ``create_client`` and ``async_send_request``.
-- Define custom action interfaces (``.action`` files) and build them with ``ament_cmake``.
-- Implement an action server using ``rclcpp_action`` that publishes feedback and returns a result.
-- Implement an action client that sends goals, receives feedback, and processes results asynchronously.
+   - Distinguish the three core ROS 2 communication patterns: topics (publish-subscribe), services (request-response), and actions (goal-feedback-result).
+   - Define custom service interfaces (``.srv`` files) and build them with ``ament_cmake``.
+   - Implement a service server using ``create_service`` and handle requests in a callback.
+   - Implement a service client using ``create_client`` and ``async_send_request``.
+   - Define custom action interfaces (``.action`` files) and build them with ``ament_cmake``.
+   - Implement an action server using ``rclcpp_action`` that publishes feedback and returns a result.
+   - Implement an action client that sends goals, receives feedback, and processes results asynchronously.
 
 .. toctree::
    :hidden:

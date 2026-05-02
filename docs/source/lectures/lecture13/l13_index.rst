@@ -14,18 +14,18 @@ frames. Lifecycle nodes give you deterministic control over node
 startup, shutdown, and error recovery, enabling coordinated system
 bringup. Both topics are essential for **GP3**.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Understand what coordinate frames are and why they are essential in robotics.
-- Use TF2 to broadcast and listen for transforms between coordinate frames.
-- Distinguish between static and dynamic transforms and know when to use each.
-- Understand the lifecycle node state machine and its states (Unconfigured, Inactive, Active, Finalized).
-- Implement a lifecycle node by inheriting from ``rclcpp_lifecycle::LifecycleNode``.
-- Use lifecycle transition callbacks (``on_configure``, ``on_activate``, ``on_deactivate``, ``on_cleanup``, ``on_shutdown``).
-- Manage lifecycle nodes using ``ros2 lifecycle`` CLI commands and programmatic transitions.
+   - Understand what coordinate frames are and why they are essential in robotics.
+   - Use TF2 to broadcast and listen for transforms between coordinate frames.
+   - Distinguish between static and dynamic transforms and know when to use each.
+   - Understand the lifecycle node state machine and its states (Unconfigured, Inactive, Active, Finalized).
+   - Implement a lifecycle node by inheriting from ``rclcpp_lifecycle::LifecycleNode``.
+   - Use lifecycle transition callbacks (``on_configure``, ``on_activate``, ``on_deactivate``, ``on_cleanup``, ``on_shutdown``).
+   - Manage lifecycle nodes using ``ros2 lifecycle`` CLI commands and programmatic transitions.
 
 .. toctree::
    :hidden:

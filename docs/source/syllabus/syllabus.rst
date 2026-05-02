@@ -161,9 +161,23 @@ Reading Material
 ----------------
 
 The following topics are provided as pre-recorded videos on Canvas.
-Students are expected to watch these outside of class:
+Students are expected to watch these outside of class by the recommended
+deadline:
 
-- **Version Control (Git and GitHub):** Distributed version control,
-  branching, merging, pull requests, and the fork workflow.
-- **Flow Control and Operations:** Conditionals, loops, and operators.
-  Students should watch this before starting RWA1.
+.. list-table::
+   :header-rows: 1
+   :widths: 40 30 30
+   :class: compact-table
+
+   * - Topic
+     - Description
+     - When to Watch
+   * - Version Control (Git and GitHub)
+     - Distributed version control, branching, merging, pull requests, and the fork workflow.
+     - **Before the semester starts**
+   * - Flow Control and Operations
+     - Conditionals, loops, and operators.
+     - **Before Week 3** (before RWA1 is posted)
+   * - Exception Handling
+     - Exception handling with ``try``, ``catch``, ``throw``, standard and custom exception classes, and RAII.
+     - **Before Week 7** (before Smart Pointers)

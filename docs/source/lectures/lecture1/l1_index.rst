@@ -13,19 +13,19 @@ session ends with a hands-on walkthrough of building and running your
 first C++ program using CMake in VSCode.
 
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Understand the course structure, objectives, and grading policies.
-- Identify the software tools used in this course (Ubuntu, VSCode, ROS 2, Git, Valgrind, Doxygen).
-- Explain what a Linux shell is and name common shell types.
-- Customize your shell environment using configuration files, aliases, and functions.
-- Install and configure Visual Studio Code for C++ development.
-- Set up a workspace with the correct folder structure.
-- Use the VSCode command palette and essential keyboard shortcuts.
-- Create a ``CMakeLists.txt`` file and build a C++ project using CMake.
+   - Understand the course structure, objectives, and grading policies.
+   - Identify the software tools used in this course (Ubuntu, VSCode, ROS 2, Git, Valgrind, Doxygen).
+   - Explain what a Linux shell is and name common shell types.
+   - Customize your shell environment using configuration files, aliases, and functions.
+   - Install and configure Visual Studio Code for C++ development.
+   - Set up a workspace with the correct folder structure.
+   - Use the VSCode command palette and essential keyboard shortcuts.
+   - Create a ``CMakeLists.txt`` file and build a C++ project using CMake.
 
 
 .. toctree::

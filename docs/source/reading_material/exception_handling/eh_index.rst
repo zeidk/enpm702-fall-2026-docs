@@ -11,18 +11,18 @@ Canvas. Students should watch this before starting RWA2, as proper
 error handling is expected in all subsequent assignments.
 
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this material, you will be able to:
+   By the end of this material, you will be able to:
 
-- Explain the purpose of exception handling in C++.
-- Use ``try``, ``catch``, and ``throw`` to handle runtime errors.
-- Catch exceptions by type and by reference.
-- Use standard exception classes (``std::exception``, ``std::runtime_error``, ``std::out_of_range``, etc.).
-- Create custom exception classes.
-- Apply the RAII principle to ensure exception-safe resource management.
-- Understand when to use exceptions vs. return codes.
+   - Explain the purpose of exception handling in C++.
+   - Use ``try``, ``catch``, and ``throw`` to handle runtime errors.
+   - Catch exceptions by type and by reference.
+   - Use standard exception classes (``std::exception``, ``std::runtime_error``, ``std::out_of_range``, etc.).
+   - Create custom exception classes.
+   - Apply the RAII principle to ensure exception-safe resource management.
+   - Understand when to use exceptions vs. return codes.
 
 
 .. toctree::

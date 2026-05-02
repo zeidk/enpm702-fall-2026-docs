@@ -19,17 +19,17 @@ types provided by ``<memory>``: ``std::unique_ptr`` (exclusive ownership),
 initialization, internal structure, key methods, ownership transfer, and
 idiomatic patterns for passing to and returning from functions.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-1. **Understand** move semantics and the differences between *lvalue*, *rvalue*, and *xvalue*.
-2. **Understand** the different types of smart pointers and their use cases.
-3. **Use** ``std::unique_ptr`` to express exclusive ownership with move-only semantics.
-4. **Use** ``std::shared_ptr`` and its reference-counted control block for shared ownership.
-5. **Use** ``std::weak_ptr`` to observe shared resources without affecting their lifetime.
-6. **Apply** idiomatic patterns for passing smart pointers to and returning them from functions.
+   1. **Understand** move semantics and the differences between *lvalue*, *rvalue*, and *xvalue*.
+   2. **Understand** the different types of smart pointers and their use cases.
+   3. **Use** ``std::unique_ptr`` to express exclusive ownership with move-only semantics.
+   4. **Use** ``std::shared_ptr`` and its reference-counted control block for shared ownership.
+   5. **Use** ``std::weak_ptr`` to observe shared resources without affecting their lifetime.
+   6. **Apply** idiomatic patterns for passing smart pointers to and returning them from functions.
 
 .. toctree::
    :hidden:

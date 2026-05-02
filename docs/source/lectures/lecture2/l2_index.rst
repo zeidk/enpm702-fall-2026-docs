@@ -12,20 +12,20 @@ type conversions, scopes, and namespaces. The lecture emphasizes modern
 C++ practices including uniform initialization and ``constexpr``.
 
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Understand C++ as a statically typed, compiled language and describe the build process (preprocessor, compiler, linker).
-- Declare, initialize, and use variables with proper naming conventions (snake_case).
-- Explain memory allocation for variables and use the ``sizeof`` operator.
-- Use integral types, floating-point types, and boolean types with appropriate modifiers.
-- Handle implicit type conversions, numeric promotions, and arithmetic conversions.
-- Implement constants using ``const`` and ``constexpr`` for compile-time optimization.
-- Manage local and global scope and avoid naming collisions with namespaces.
-- Perform basic input/output with ``std::cin`` and ``std::cout``.
-- Use type deduction with the ``auto`` keyword.
+   - Understand C++ as a statically typed, compiled language and describe the build process (preprocessor, compiler, linker).
+   - Declare, initialize, and use variables with proper naming conventions (snake_case).
+   - Explain memory allocation for variables and use the ``sizeof`` operator.
+   - Use integral types, floating-point types, and boolean types with appropriate modifiers.
+   - Handle implicit type conversions, numeric promotions, and arithmetic conversions.
+   - Implement constants using ``const`` and ``constexpr`` for compile-time optimization.
+   - Manage local and global scope and avoid naming collisions with namespaces.
+   - Perform basic input/output with ``std::cin`` and ``std::cout``.
+   - Use type deduction with the ``auto`` keyword.
 
 
 .. toctree::

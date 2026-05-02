@@ -16,17 +16,17 @@ pure virtual methods, and how concrete classes fulfill those contracts.
 The lecture concludes with the ``final`` keyword for locking class
 hierarchies and method implementations.
 
-Learning Objectives
--------------------
+.. admonition:: Learning Objectives
+   :class: learning-objectives
 
-By the end of this lecture, you will be able to:
+   By the end of this lecture, you will be able to:
 
-- Understand class relationships: association, aggregation, composition, and inheritance.
-- Distinguish compile-time vs. runtime polymorphism and use ``virtual`` methods.
-- Apply ``override``, ``= default``, and ``final`` keywords correctly.
-- Choose between ``auto`` and explicit base types for polymorphic objects.
-- Implement ``virtual`` destructors to prevent resource leaks.
-- Create abstract classes with pure ``virtual`` methods and concrete implementations.
+   - Understand class relationships: association, aggregation, composition, and inheritance.
+   - Distinguish compile-time vs. runtime polymorphism and use ``virtual`` methods.
+   - Apply ``override``, ``= default``, and ``final`` keywords correctly.
+   - Choose between ``auto`` and explicit base types for polymorphic objects.
+   - Implement ``virtual`` destructors to prevent resource leaks.
+   - Create abstract classes with pure ``virtual`` methods and concrete implementations.
 
 .. toctree::
    :hidden:
