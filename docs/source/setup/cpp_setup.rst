@@ -38,82 +38,12 @@ Verify the installation:
 Visual Studio Code
 ------------------
 
-1. Download the ``.deb`` file from
-   `code.visualstudio.com/download <https://code.visualstudio.com/download>`_.
-
-2. Install from the terminal:
-
-   .. code-block:: bash
-
-      cd ~/Downloads
-      sudo apt install ./code_*.deb
-
-3. Launch VSCode:
-
-   .. code-block:: bash
-
-      code
-
-
-Recommended Extensions
-^^^^^^^^^^^^^^^^^^^^^^
-
-Open the command palette (``Ctrl + Shift + P``) and select
-**Extensions: Install Extension**, then install the following:
-
-.. list-table::
-   :widths: 35 65
-   :header-rows: 1
-   :class: compact-table
-
-   * - Extension
-     - Purpose
-   * - **C/C++** (Microsoft)
-     - IntelliSense, debugging, and code browsing for C/C++.
-   * - **CMake Tools** (Microsoft)
-     - CMake integration for building and debugging.
-   * - **CMake** (twxs)
-     - Syntax highlighting for ``CMakeLists.txt`` files.
-   * - **Doxygen Documentation Generator**
-     - Generate Doxygen comment blocks with ``/**``.
-   * - **Error Lens**
-     - Display errors and warnings inline in the editor.
-   * - **GitLens**
-     - Enhanced Git integration and blame annotations.
-
-.. tip::
-
-   You can place an ``extensions.json`` file in your workspace's
-   ``.vscode/`` folder to recommend extensions to all team members.
-   See :doc:`Lecture 1 </lectures/lecture1/l1_lecture>` for details.
-
-
-Workspace Structure
-^^^^^^^^^^^^^^^^^^^
-
-Create the following folder structure for your C++ lectures:
-
-.. code-block:: text
-
-   ~/enpm702_fall2026_cpp/
-       lecture1/
-           src/
-               main.cpp
-           include/
-           CMakeLists.txt
-       lecture2/
-           src/
-               main.cpp
-           include/
-           CMakeLists.txt
-       ...
-
-Open the workspace in VSCode:
-
-.. code-block:: bash
-
-   cd ~/enpm702_fall2026_cpp
-   code .
+Installing and configuring VSCode (including the recommended
+extensions, the ``.vscode`` folder, the course workspace layout, and
+the CMake build flow) is covered in its own reading material:
+:doc:`/reading_material/vscode_cmake/vcm_index`. Watch the
+pre-recorded video on Canvas and walk through the exercises before
+the first lecture.
 
 
 Doxygen

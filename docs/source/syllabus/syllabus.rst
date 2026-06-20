@@ -153,7 +153,7 @@ the previous deliverable:
 
 .. tip::
 
-   Start assignments early. RWAs and GPs are cumulative — a strong
+   Start assignments early. RWAs and GPs are cumulative, so a strong
    foundation in each deliverable makes the next one easier.
 
 

@@ -12,6 +12,10 @@ are expected to watch these outside of class.
 
    * - **Topic**
      - **Covers**
+   * - :doc:`vscode_cmake/vcm_index`
+     - VSCode installation and interface, workspace layout, the
+       ``.vscode`` folder, recommended extensions, Command Palette,
+       ``CMakeLists.txt``, hybrid per-lecture build setup
    * - :doc:`flow_control/fc_index`
      - Selection statements (``if``, ``switch``), iteration statements
        (``while``, ``do-while``, ``for``), operators (arithmetic,
@@ -29,6 +33,7 @@ are expected to watch these outside of class.
    :maxdepth: 2
    :titlesonly:
 
+   vscode_cmake/vcm_index
    flow_control/fc_index
    version_control/vc_index
    exception_handling/eh_index

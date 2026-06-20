@@ -7,7 +7,7 @@ Overview
 
 This lecture introduces the ENPM702 course, covering its structure,
 grading policies, and assignment progression. You will set up your
-development environment — Ubuntu, Visual Studio Code, CMake, and Git —
+development environment (Ubuntu, Visual Studio Code, CMake, and Git)
 and learn to customize the Linux shell with aliases and functions. The
 session ends with a hands-on walkthrough of building and running your
 first C++ program using CMake in VSCode.

@@ -3,18 +3,6 @@ Lecture
 ====================================================
 
 
-Learning Objectives
-====================================================
-
-By the end of this session, you will be able to:
-
-- Set up and configure Git for any project.
-- Create repositories and track changes effectively.
-- Use branching for feature development and hotfixes.
-- Collaborate using GitHub and pull requests.
-- Apply version control best practices to team projects.
-
-
 Version Control
 ====================================================
 
@@ -87,9 +75,9 @@ Types of Version Control Systems
 Centralized Version Control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/vc/centralized.pdf
+.. figure:: /_static/images/version_control/centralized.png
    :align: center
-   :width: 60%
+   :width: 80%
 
    Centralized version control architecture.
 
@@ -128,9 +116,9 @@ Centralized Version Control
 Distributed Version Control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/vc/distributed.pdf
+.. figure:: /_static/images/version_control/distributed.png
    :align: center
-   :width: 60%
+   :width: 80%
 
    Distributed version control architecture.
 
@@ -180,19 +168,43 @@ time.
 - Collaborate with others without overwriting each other's work.
 - Revert to previous versions if something breaks.
 
-**Setup:**
+Setting Up Git
+----------------------------------------------------
+
+You only need to do this **once per machine**.
+
+**Install Git:**
 
 .. code-block:: bash
 
-   # Installation
    sudo apt update && sudo apt install git
 
-   # Configure Git
+**Configure your identity** (used in every commit):
+
+.. code-block:: bash
+
    git config --global user.name "Your Full Name"
    git config --global user.email "your.email@university.edu"
 
-   # Check
+**Set your default editor:**
+
+.. code-block:: bash
+
+   git config --global core.editor "code --wait"
+
+Other common choices: ``nano`` for a simple terminal editor, or
+``vim`` if you already know it.
+
+**Verify the settings:**
+
+.. code-block:: bash
+
    git config --list
+
+.. note::
+
+   Use your real name and your university email so that commits are
+   unambiguously attributed to you in team projects.
 
 
 Why Git Dominates
@@ -248,6 +260,224 @@ Common Git Commands
 .. note::
 
    Multiple Git cheat sheets are available on Canvas.
+
+
+Git vs. GitHub
+----------------------------------------------------
+
+Git and GitHub are often confused, but they are **not** the same
+thing.
+
+.. grid:: 2
+
+   .. grid-item-card:: Git
+      :class-card: sd-border-info
+
+      - A **tool** that runs on your computer.
+      - Tracks changes to files.
+      - Works **entirely offline**.
+      - Free and open source.
+      - Created by **Linus Torvalds** in 2005.
+      - Example commands: ``git init``, ``git commit``, ``git branch``.
+
+   .. grid-item-card:: GitHub
+      :class-card: sd-border-info
+
+      - A **website/service** that hosts Git repositories.
+      - Adds collaboration features: pull requests, issues, project
+        boards, CI/CD pipelines, wikis.
+      - Requires an account and a network connection.
+      - Founded in 2008, acquired by **Microsoft** in 2018.
+      - Example actions: create a pull request, review code,
+        open an issue.
+
+You can use Git without ever using GitHub. You **cannot** use GitHub
+without Git -- GitHub is built on top of Git.
+
+
+How Git and GitHub Work Together
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In a typical workflow, Git tracks changes locally on your machine
+while GitHub stores a remote copy of the repository that your
+teammates can also reach.
+
+.. figure:: /_static/images/version_control/how-git-and-github-work-together.png
+   :alt: Laptop running local Git connected to a GitHub cloud repository
+   :align: center
+   :width: 70%
+
+   Local Git tracks changes on your machine; GitHub stores a remote
+   copy. ``git push`` uploads commits; ``git clone``, ``git fetch``,
+   and ``git pull`` bring commits down.
+
+- **Push from local to GitHub:** ``git push`` uploads new commits
+  from your local branch to the matching branch on GitHub.
+- **Pull from GitHub to local:** ``git pull`` (or ``git fetch`` +
+  ``git merge``) downloads new commits and merges them into your
+  current branch.
+- **Clone from GitHub to local:** ``git clone <url>`` copies the
+  entire repository (history, branches, tags) to your machine.
+
+.. note::
+
+   When you create a pull request or review code in a browser, you
+   are using **GitHub**. When you stage, commit, branch, or merge
+   from the command line, you are using **Git**.
+
+
+Comparison Table
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 25 35 40
+   :header-rows: 1
+   :class: compact-table
+
+   * - Question
+     - Git
+     - GitHub
+   * - What is it?
+     - Software / tool
+     - Website / service
+   * - Where does it run?
+     - Your computer
+     - The cloud
+   * - Internet required?
+     - **No**
+     - Yes
+   * - Account required?
+     - **No**
+     - Yes
+   * - Cost?
+     - Free (open source)
+     - Free tier + paid plans
+   * - Created by
+     - Linus Torvalds (2005)
+     - Preston-Werner et al. (2008)
+   * - Example actions
+     - ``git commit``, ``git branch``
+     - Create PR, review code
+
+
+Other Git Hosting Services
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+GitHub is the most popular host, but it is far from the only one.
+Every service below is built on top of Git, so the commands
+(``git clone``, ``git push``, ``git pull``, ...) are identical --
+only the remote URL changes.
+
+.. list-table::
+   :widths: 25 75
+   :header-rows: 1
+   :class: compact-table
+
+   * - Service
+     - Notes
+   * - `GitLab <https://about.gitlab.com/>`_
+     - Popular alternative; strong CI/CD features; can be self-hosted.
+   * - `Bitbucket <https://bitbucket.org/>`_
+     - Owned by Atlassian; integrates with Jira and Trello.
+   * - `Gitea <https://about.gitea.com/>`_
+     - Lightweight, self-hosted option.
+   * - `Azure DevOps <https://azure.microsoft.com/en-us/products/devops>`_
+     - Microsoft's enterprise offering.
+   * - `SourceForge <https://sourceforge.net/>`_
+     - One of the oldest; still used for open source.
+
+
+The Mental Model: Three Areas of Git
+----------------------------------------------------
+
+Understanding Git means understanding the **three areas** where your
+files live. Each step is intentional -- you choose what goes into
+each commit.
+
+.. figure:: /_static/images/version_control/three-areas-of-git.png
+   :alt: Working Directory to Staging Area to Repository
+   :align: center
+   :width: 80%
+
+   The three areas of Git: ``git add`` moves changes from the working
+   directory into the staging area, and ``git commit`` records the
+   staged snapshot into the repository.
+
+.. grid:: 3
+
+   .. grid-item-card:: Working Directory
+      :class-card: sd-border-info
+
+      - Your actual files on disk.
+      - What you see in the file explorer.
+      - Where you edit code.
+
+   .. grid-item-card:: Staging Area
+      :class-card: sd-border-info
+
+      - A "draft box" of changes you want to record next.
+      - Like writing an email before you send it.
+      - Filled by ``git add``; emptied by ``git commit``.
+
+   .. grid-item-card:: Repository
+      :class-card: sd-border-info
+
+      - Permanent history.
+      - Hidden ``.git/`` folder at the project root.
+      - ``git commit`` is the act of sending a staged snapshot into
+        the repository.
+
+
+Understanding Branches
+----------------------------------------------------
+
+A **branch** is simply a lightweight, movable pointer to a commit.
+Creating a branch does **not** copy any files -- think of it as a
+bookmark that says "I'm working here." That is why creating and
+switching branches in Git is nearly instantaneous, even on huge
+projects.
+
+Key concepts:
+
+- **HEAD** -- a special pointer that tells Git which branch you are
+  currently on.
+- **main** (or **master**) -- the default branch; typically holds
+  the stable/production code.
+- **Branch pointer** -- moves forward automatically with each new
+  commit on that branch.
+
+.. grid:: 2
+
+   .. grid-item-card:: Why Use Branches?
+      :class-card: sd-border-info
+
+      - **Isolate features** -- develop without breaking stable code.
+      - **Experiment safely** -- if it does not pan out, delete the
+        branch.
+      - **Parallel development** -- multiple teammates work at the
+        same time.
+      - **Hotfixes** -- fix urgent production bugs while feature
+        work continues elsewhere.
+
+   .. grid-item-card:: Standard Branch Naming
+      :class-card: sd-border-info
+
+      Use a short prefix that describes intent:
+
+      - ``feature/<description>`` -- new features
+      - ``hotfix/<description>`` -- urgent production fixes
+      - ``bugfix/<description>`` -- non-urgent bug fixes
+
+      Examples:
+
+      - ``feature/user-authentication``
+      - ``hotfix/fix-timeout-value``
+      - ``bugfix/correct-spelling-error``
+
+.. tip::
+
+   Use lowercase, hyphens instead of spaces, and be descriptive.
+   Your future self -- and your teammates -- will thank you.
 
 
 Example: A Day in the Life of a Robotics Engineer
@@ -426,6 +656,15 @@ Setting Up the Project
    You can pass other options to ``git log``. Run ``git log --help`` to
    get more information.
 
+   .. figure:: /_static/images/version_control/git-graph-initial-commit.png
+      :alt: Git graph after the initial commit
+      :align: center
+      :width: 70%
+
+      After the initial commit, both ``main`` and ``HEAD`` point to
+      the same commit ``A``. ``HEAD`` tells Git which branch you are
+      currently on.
+
    .. note::
 
       Open the folder ``robot-config`` in VS Code and use the Git Graph
@@ -488,6 +727,15 @@ Adding GPS Navigation
       * feature/gps-navigation
         main
 
+   .. figure:: /_static/images/version_control/git-graph-feature-branch.png
+      :alt: Git graph after creating the feature branch
+      :align: center
+      :width: 70%
+
+      Both branches point to the **same commit** ``A``. No files were
+      copied -- Git just created a new pointer and moved ``HEAD`` to
+      ``feature/gps-navigation``.
+
 3. **Modify robot_config.yaml for GPS Feature.**
 
    - Implement GPS feature in ``robot_config.yaml``.
@@ -512,6 +760,15 @@ Adding GPS Navigation
 
       # Check commit history or use Git Graph
       git log --oneline --all --graph
+
+   .. figure:: /_static/images/version_control/git-graph-branches-diverged.png
+      :alt: Git graph showing branches diverged after the feature commit
+      :align: center
+      :width: 70%
+
+      The branches have **diverged**. ``main`` still points at ``A``;
+      ``feature/gps-navigation`` advanced to ``B``. The feature
+      branch has changes that ``main`` does not.
 
 
 Bug Alert -- Emergency Fix Needed
@@ -554,6 +811,15 @@ Bug Alert -- Emergency Fix Needed
    Or, more concisely:
    ``git checkout -b hotfix/fix-navigation-rate main``
 
+   .. figure:: /_static/images/version_control/git-graph-hotfix-branch.png
+      :alt: Git graph showing the hotfix branch created from main
+      :align: center
+      :width: 70%
+
+      The feature work on ``B`` is safe and untouched. The hotfix
+      branch starts from ``main`` (``A``), not from the feature
+      branch.
+
 3. **Increase navigation update_rate to 10Hz.** Change the
    ``update_rate`` in ``robot_config.yaml`` from 5Hz to 10Hz.
 
@@ -569,6 +835,14 @@ Bug Alert -- Emergency Fix Needed
       - Critical performance fix to improve robot responsiveness.
       - Increases the navigation update rate from 5Hz to 10Hz."
 
+   .. figure:: /_static/images/version_control/git-graph-hotfix-commit.png
+      :alt: Git graph after committing the hotfix
+      :align: center
+      :width: 70%
+
+      The hotfix branch now has its own commit ``C``. ``main`` still
+      sits at ``A``; the feature branch is unchanged at ``B``.
+
 6. **Merge hotfix back to main.**
 
    .. code-block:: bash
@@ -580,8 +854,24 @@ Bug Alert -- Emergency Fix Needed
    b. Apply all the changes made on the
       ``hotfix/fix-navigation-rate`` branch into this ``main`` branch.
 
+   .. figure:: /_static/images/version_control/git-graph-after-merge-hotfix.png
+      :alt: Git graph after merging the hotfix into main
+      :align: center
+      :width: 70%
+
+      Both ``main`` and ``hotfix/fix-navigation-rate`` now point at
+      ``C``. ``main`` has fast-forwarded onto the hotfix commit.
+
 7. **Clean up the hotfix branch:**
    ``git branch -d hotfix/fix-navigation-rate``
+
+   .. figure:: /_static/images/version_control/git-graph-delete-hotfix.png
+      :alt: Git graph after deleting the hotfix branch
+      :align: center
+      :width: 70%
+
+      The hotfix branch label is gone; commit ``C`` is still in
+      history under ``main``. The feature branch is untouched.
 
 8. **Check current state:**
    ``git log --oneline --all --graph``
@@ -666,6 +956,15 @@ Handling Merge Conflicts
 
 8. **Verify the merge history:** ``git log --oneline --graph``
 
+   .. figure:: /_static/images/version_control/git-graph-after-merge-conflict.png
+      :alt: Git graph after resolving the merge conflict
+      :align: center
+      :width: 70%
+
+      The new commit ``D`` is a **merge commit** with two parents
+      (``B`` and ``C``). It brings the hotfix into the feature
+      branch; the feature branch is now up-to-date with ``main``.
+
 
 Completing the Feature
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -705,6 +1004,15 @@ Completing the Feature
       git merge feature/gps-navigation
 
 7. Clean up feature branch: ``git branch -d feature/gps-navigation``
+
+.. figure:: /_static/images/version_control/git-graph-final.png
+   :alt: Final git graph after the feature is merged into main
+   :align: center
+   :width: 80%
+
+   The feature branch label is gone, but its commits ``B``, ``D``,
+   and ``E`` are still in history. ``main`` now points at the final
+   merge commit ``F``. Nothing is lost.
 
 
 End of Day Review
@@ -756,22 +1064,50 @@ Setup
    - Sign up with your university email.
    - Verify your email address.
 
-2. **Set up authentication.**
+2. **Set up SSH authentication.**
 
-   .. code-block:: bash
+   - Generate a new SSH key:
 
-      # Generate SSH key
-      ssh-keygen -t ed25519 -C "your.email@university.edu"
-      # Add to GitHub: Settings -> SSH and GPG keys -> New SSH key
-      cat ~/.ssh/id_ed25519.pub
+     .. code-block:: bash
+
+        ssh-keygen -t ed25519 -C "your.email@university.edu"
+
+   - Copy the public key to your clipboard:
+
+     .. tab-set::
+
+        .. tab-item:: Linux
+
+           .. code-block:: bash
+
+              sudo apt install xclip
+              xclip -sel clip < ~/.ssh/id_ed25519.pub
+
+        .. tab-item:: macOS
+
+           .. code-block:: bash
+
+              pbcopy < ~/.ssh/id_ed25519.pub
+
+        .. tab-item:: Windows (Git Bash)
+
+           .. code-block:: bash
+
+              clip < ~/.ssh/id_ed25519.pub
+
+   - Add the key to GitHub:
+
+     1. Go to **GitHub** -> **Settings** -> **SSH and GPG keys** ->
+        **New SSH key**.
+     2. Paste the key (``Ctrl + V``) and click **Add SSH key**.
 
    .. note::
 
-      - The ``-t`` flag specifies the type of cryptographic algorithm.
-        ``ed25519`` is a modern, fast, and highly secure elliptic-curve
-        algorithm recommended for new SSH keys.
-      - The ``-C`` flag adds a label (comment) to your public key file
-        to help identify the key later.
+      - The ``-t`` flag selects the cryptographic algorithm.
+        ``ed25519`` is a modern, fast, and highly secure
+        elliptic-curve algorithm recommended for new SSH keys.
+      - The ``-C`` flag adds a label to help you identify the key
+        later. GitHub matches the **key itself**, not the comment.
 
 
 Public vs. Private Repositories
@@ -799,59 +1135,86 @@ Public vs. Private Repositories
 Connect Local Repo to Remote
 ----------------------------------------------------
 
-**Scenario 1** -- You already have a local repository.
+.. tab-set::
 
-1. Create an empty repository on GitHub: ``robot-config``
+   .. tab-item:: Scenario 1 -- Local repo first
+      :sync: scenario1
 
-   - **IMPORTANT**: When creating on GitHub, **do not check**:
+      You already have a local repository and want to push it to
+      GitHub.
 
-     - "Add a README file"
-     - "Add .gitignore"
-     - "Choose a license"
+      1. Create an empty repository on GitHub: ``robot-config``
 
-2. Connect local repository to GitHub:
+         - **IMPORTANT**: When creating on GitHub, **do not check**:
 
-   - Add GitHub as remote origin:
+           - "Add a README file"
+           - "Add .gitignore"
+           - "Choose a license"
 
-     .. code-block:: bash
+      2. Connect local repository to GitHub:
 
-        git remote add origin git@github.com:yourusername/robot-config.git
+         - Add GitHub as remote origin:
 
-   - Verify the remote was added: ``git remote -v``
+           .. code-block:: bash
 
-3. Push your local ``main`` branch to GitHub:
-   ``git push -u origin main``
+              git remote add origin git@github.com:yourusername/robot-config.git
 
-   - This command pushes your local ``main`` branch to the remote
-     repository named ``origin``, and establishes a tracking
-     relationship so that in the future you can simply use
-     ``git push``.
+         - Verify the remote was added: ``git remote -v``
 
-**Scenario 2** -- Start with GitHub repository first.
+      3. Push your local ``main`` branch to GitHub:
+         ``git push -u origin main``
 
-1. Create a repository on GitHub: ``new-project``
+         - This command pushes your local ``main`` branch to the
+           remote repository named ``origin``, and establishes a
+           tracking relationship so that in the future you can simply
+           use ``git push``.
 
-   - When creating on GitHub, check the following since you are
-     starting fresh:
+      .. figure:: /_static/images/version_control/scenario-1-sequence.png
+         :alt: Sequence diagram of Scenario 1 (local repo first)
+         :align: center
+         :width: 70%
 
-     - "Add a README file"
-     - "Add .gitignore" (optional)
-     - "Choose a license" (optional)
+         Scenario 1: create the empty GitHub repo, add it as a remote
+         from your local repo, then push your existing history.
 
-2. Clone to your local machine:
+   .. tab-item:: Scenario 2 -- GitHub repo first
+      :sync: scenario2
 
-   .. code-block:: bash
+      You start by creating the repository on GitHub and then bring
+      it down to your local machine.
 
-      git clone https://github.com/yourusername/new-project.git
+      1. Create a repository on GitHub: ``new-project``
 
-      # Move into the directory
-      cd new-project
+         - When creating on GitHub, check the following since you
+           are starting fresh:
 
-      # Start working
-      echo "# My New Project" >> README.md
-      git add README.md
-      git commit -m "Update README"
-      git push origin main
+           - "Add a README file"
+           - "Add .gitignore" (optional)
+           - "Choose a license" (optional)
+
+      2. Clone to your local machine:
+
+         .. code-block:: bash
+
+            git clone https://github.com/yourusername/new-project.git
+
+            # Move into the directory
+            cd new-project
+
+            # Start working
+            echo "# My New Project" >> README.md
+            git add README.md
+            git commit -m "Update README"
+            git push origin main
+
+      .. figure:: /_static/images/version_control/scenario-2-sequence.png
+         :alt: Sequence diagram of Scenario 2 (GitHub repo first)
+         :align: center
+         :width: 70%
+
+         Scenario 2: create the GitHub repo, clone it locally, work,
+         then push. No ``git remote add`` or ``git push -u`` needed
+         -- ``git clone`` sets both up automatically.
 
 
 Collaboration Workflows
@@ -887,7 +1250,7 @@ project permissions.
 Branch Workflow
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/vc/branch-workflow.png
+.. figure:: /_static/images/version_control/branch-workflow.png
    :align: center
    :width: 40%
 
@@ -933,7 +1296,7 @@ Branch Workflow
 Fork Workflow
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/vc/fork-workflow.png
+.. figure:: /_static/images/version_control/fork-workflow.png
    :align: center
    :width: 40%
 
@@ -960,6 +1323,15 @@ Fork Workflow
       # origin    git@github.com:yourusername/enpm702-summer-2025.git (your fork)
       # upstream  https://github.com/zeidk/enpm702-summer-2025.git (original)
 
+.. figure:: /_static/images/version_control/fork-demo-setup.png
+   :alt: Fork demo -- setup phase (fork, clone, add upstream)
+   :align: center
+   :width: 70%
+
+   Setup phase: fork the original repository on GitHub, clone your
+   fork to your machine, then add the original repository as the
+   ``upstream`` remote.
+
 4. Create feature branch:
    ``git checkout -b feature/new-algorithm``
 
@@ -975,6 +1347,15 @@ Fork Workflow
 
 7. Create Pull Request from your fork to original repository.
 
+.. figure:: /_static/images/version_control/fork-demo-contribute.png
+   :alt: Fork demo -- branch, commit, push, open PR
+   :align: center
+   :width: 70%
+
+   Contribution phase: create a feature branch, commit your changes,
+   push the branch to your fork, then open a pull request from your
+   fork to the original repository.
+
 
 Keeping Your Fork Updated
 """"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -987,6 +1368,15 @@ Keeping Your Fork Updated
 4. Push updates to your fork: ``git push origin main``
 5. Now create new feature branches from updated main:
    e.g., ``git checkout -b feature/next-feature``
+
+.. figure:: /_static/images/version_control/fork-demo-merged.png
+   :alt: Fork demo -- after the maintainer merges the PR
+   :align: center
+   :width: 70%
+
+   After the maintainer merges your pull request into the original
+   repository, sync your local ``main`` (``git pull upstream main``)
+   and push to your fork to keep everything aligned.
 
 **Repository Structure:**
 
@@ -1046,6 +1436,81 @@ Best Practices
 - Set up proper branch protection rules.
 - Establish team conventions for branch naming.
 - Configure automated testing for pull requests.
+
+
+Quick Reference
+----------------------------------------------------
+
+A compact card with the commands you will use most often. See
+:doc:`vc_references` for links to the official Git documentation.
+
+.. grid:: 2
+
+   .. grid-item-card:: Inspecting State
+
+      .. code-block:: bash
+
+         git status              # Working/staging state
+         git log --oneline       # Compact history
+         git diff                # Unstaged changes
+         git diff --staged       # Staged changes
+
+   .. grid-item-card:: Staging & Committing
+
+      .. code-block:: bash
+
+         git add <file>          # Stage specific file
+         git add -u              # Stage tracked modifications
+         git add -p              # Interactively stage hunks
+         git commit              # Commit (opens editor)
+         git commit -v           # Commit with diff in editor
+
+   .. grid-item-card:: Branching
+
+      .. code-block:: bash
+
+         git branch              # List branches
+         git switch <br>         # Switch branch
+         git switch -c <br>      # Create + switch
+         git merge <br>          # Merge branch
+         git branch -d <br>      # Delete branch
+
+   .. grid-item-card:: Remotes
+
+      .. code-block:: bash
+
+         git clone <url>         # Download repo
+         git remote -v           # List remotes
+         git push origin <br>    # Upload branch
+         git pull origin <br>    # Download + merge
+
+
+Recommended Alternatives
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some older commands have safer, clearer replacements. In practice,
+prefer the recommended forms to build better habits.
+
+.. list-table::
+   :widths: 35 35 30
+   :header-rows: 1
+   :class: compact-table
+
+   * - Not recommended
+     - Recommended
+     - Why
+   * - ``git add .``
+     - ``git add <files>`` (or ``git add -u``)
+     - Avoids staging unwanted files.
+   * - ``git commit -m "msg"``
+     - ``git commit``
+     - Encourages detailed messages.
+   * - ``git checkout -b <br>``
+     - ``git switch -c <br>``
+     - Dedicated command; less error-prone.
+   * - ``git checkout <br>``
+     - ``git switch <br>``
+     - Clearer intent.
 
 
 Pull Requests

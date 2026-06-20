@@ -1,12 +1,12 @@
-ENPM702 — Introductory Robot Programming
-=========================================
+ENPM702: Introductory Robot Programming
+=======================================
 
 Course Description
 ------------------
 ENPM702 introduces students to modern C++ programming in the context of
 robotics and software engineering.  The course covers core language
-features — variables, types, pointers, references, functions, templates,
-and object-oriented programming — along with essential development tools
+features (variables, types, pointers, references, functions, templates,
+and object-oriented programming) along with essential development tools
 such as Linux, Git, VSCode, CMake, and Valgrind.
 
 Students progress from fundamental C++ constructs to advanced topics

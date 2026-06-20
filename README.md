@@ -1,4 +1,4 @@
-# ENPM702 — Introductory Robot Programming
+# ENPM702: Introductory Robot Programming
 
 Course documentation for ENPM702, Fall 2026.
 

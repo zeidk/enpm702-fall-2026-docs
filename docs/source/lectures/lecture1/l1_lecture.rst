@@ -417,8 +417,8 @@ output buffer.
    Flushing forces the program to write all buffered output to the
    console immediately, which is significantly slower than simply
    writing a newline character. In most situations, flushing is
-   unnecessary — the buffer is automatically flushed when it is full,
-   when the program ends, or when ``std::cin`` is used.
+   unnecessary, because the buffer is automatically flushed when it is
+   full, when the program ends, or when ``std::cin`` is used.
 
    Using ``std::endl`` in loops or high-frequency output can cause
    noticeable performance degradation. Use ``'\n'`` by default.
