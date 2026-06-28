@@ -2,7 +2,7 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 6: Functions --
+These exercises reinforce the concepts covered in Lecture 6: Functions,
 Advanced. Work through them in order, as each exercise builds on the
 skills from the previous one.
 
@@ -18,7 +18,7 @@ skills from the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- Struct Usage
+.. dropdown:: Exercise 1: Struct Usage
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -78,7 +78,7 @@ skills from the previous one.
          }
 
 
-.. dropdown:: Exercise 2 -- Function Templates
+.. dropdown:: Exercise 2: Function Templates
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -144,7 +144,7 @@ skills from the previous one.
          }
 
 
-.. dropdown:: Exercise 3 -- Template Specialization
+.. dropdown:: Exercise 3: Template Specialization
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -200,7 +200,7 @@ skills from the previous one.
          }
 
 
-.. dropdown:: Exercise 4 -- Lambda Expressions
+.. dropdown:: Exercise 4: Lambda Expressions
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -278,7 +278,7 @@ skills from the previous one.
          }
 
 
-.. dropdown:: Exercise 5 -- std::function Callbacks
+.. dropdown:: Exercise 5 std::function Callbacks
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -361,7 +361,7 @@ skills from the previous one.
          }
 
 
-.. dropdown:: Challenge -- Generic Sorting with Templates and Lambdas
+.. dropdown:: Challenge: Generic Sorting with Templates and Lambdas
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold

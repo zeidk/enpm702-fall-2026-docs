@@ -3,7 +3,7 @@ C++ Exercises
 ====================================================
 
 
-.. dropdown:: Exercise 1 -- Basic Try-Catch
+.. dropdown:: Exercise 1: Basic Try-Catch
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -41,7 +41,7 @@ C++ Exercises
          }
 
 
-.. dropdown:: Exercise 2 -- Throwing Exceptions
+.. dropdown:: Exercise 2: Throwing Exceptions
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -92,7 +92,7 @@ C++ Exercises
          }
 
 
-.. dropdown:: Exercise 3 -- Multiple Catch Blocks
+.. dropdown:: Exercise 3: Multiple Catch Blocks
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -151,18 +151,18 @@ C++ Exercises
          }
 
 
-.. dropdown:: Exercise 4 -- Custom Exception Class
+.. dropdown:: Exercise 4: Custom Exception Class
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    Create a small exception hierarchy for a robot system:
 
-   1. ``RobotError`` -- base class inheriting from ``std::runtime_error``.
+   1. ``RobotError``, base class inheriting from ``std::runtime_error``.
       Stores a ``robot_id`` (``std::string``).
-   2. ``MotorError`` -- derived from ``RobotError``. Stores which motor
+   2. ``MotorError``, derived from ``RobotError``. Stores which motor
       failed (``std::string motor_name``).
-   3. ``SensorError`` -- derived from ``RobotError``. Stores which
+   3. ``SensorError``, derived from ``RobotError``. Stores which
       sensor failed (``std::string sensor_name``).
 
    Write a function ``run_diagnostics(int test_case)`` that throws
@@ -248,7 +248,7 @@ C++ Exercises
          }
 
 
-.. dropdown:: Exercise 5 -- Exception-Safe Resource Management
+.. dropdown:: Exercise 5: Exception-Safe Resource Management
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -256,10 +256,10 @@ C++ Exercises
    Write two functions that allocate an ``int`` array and then throw an
    exception:
 
-   1. ``unsafe_allocation()`` -- Uses ``new`` to allocate an array,
+   1. ``unsafe_allocation()``, Uses ``new`` to allocate an array,
       throws an exception **before** calling ``delete[]``. This leaks
       memory.
-   2. ``safe_allocation()`` -- Uses ``std::unique_ptr`` to manage the
+   2. ``safe_allocation()``, Uses ``std::unique_ptr`` to manage the
       array. Even when an exception is thrown, the memory is
       automatically released.
 
@@ -320,7 +320,7 @@ C++ Exercises
          }
 
 
-.. dropdown:: Exercise 6 -- Exception-Safe Config Parser (Challenge)
+.. dropdown:: Exercise 6: Exception-Safe Config Parser (Challenge)
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold
@@ -334,10 +334,10 @@ C++ Exercises
    1. Create three custom exception classes derived from
       ``std::runtime_error``:
 
-      - ``FileError`` -- thrown when the file cannot be opened.
-      - ``ParseError`` -- thrown when a line has invalid format (no ``=``
+      - ``FileError``, thrown when the file cannot be opened.
+      - ``ParseError``, thrown when a line has invalid format (no ``=``
         sign). Store the line number.
-      - ``MissingKeyError`` -- thrown when a required key is not found
+      - ``MissingKeyError``, thrown when a required key is not found
         in the config. Store the key name.
 
    2. Write a function ``parse_config(const std::string& filename)``

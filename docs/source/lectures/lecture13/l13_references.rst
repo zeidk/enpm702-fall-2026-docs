@@ -9,22 +9,16 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L13: ROS 2 Advanced Topics**
+        **ENPM702 L13: Coordinate Frames and Transforms**
 
-        Covers coordinate frame management with TF2 and managed lifecycle
-        nodes in ROS 2. TF2 topics include the frame tree concept, static
-        and dynamic transform broadcasting, transform listening with
-        ``lookupTransform()``, the ``TransformStamped`` message, and
-        debugging tools (``view_frames``, ``tf2_echo``, RViz2). Lifecycle
-        node topics include the state machine (Unconfigured, Inactive,
-        Active, Finalized), transition callbacks (``on_configure``,
-        ``on_activate``, ``on_deactivate``, ``on_cleanup``,
-        ``on_shutdown``), ``CallbackReturn`` values, ``LifecyclePublisher``
-        behavior, and managing lifecycle nodes via CLI and programmatic
-        interfaces.
+        Covers coordinate frame management with TF2: the frame tree
+        concept, static and dynamic transform broadcasting, transform
+        listening with ``lookupTransform()``, the ``TransformStamped``
+        message, and debugging tools (``view_frames``, ``tf2_echo``,
+        RViz2).
 
-        **This is the final lecture.** Complete the C++ exercises on TF2
-        and lifecycle nodes, and take the quiz before starting GP3.
+        These topics support **GP3**. Complete the C++ exercises on TF2
+        and take the quiz before starting GP3.
 
 
 .. dropdown:: ROS 2 TF2 Documentation
@@ -37,7 +31,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Tf2/Tf2-Main.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- TF2 Tutorials**
+            **ROS 2 Jazzy: TF2 Tutorials**
 
             Official ROS 2 tutorials for the TF2 library, covering
             static and dynamic broadcasters, transform listeners,
@@ -87,11 +81,11 @@ References
             - ``Quaternion``
             - ``Pose`` and ``PoseStamped``
 
-        .. grid-item-card:: REP 105 -- Coordinate Frames
+        .. grid-item-card:: REP 105: Coordinate Frames
             :link: https://www.ros.org/reps/rep-0105.html
             :class-card: sd-border-secondary
 
-            **REP 105 -- Coordinate Frames for Mobile Platforms**
+            **REP 105: Coordinate Frames for Mobile Platforms**
 
             The ROS Enhancement Proposal that defines standard coordinate
             frame conventions for mobile robots, including ``map``,
@@ -102,77 +96,3 @@ References
             - Standard frame names
             - Frame relationships
             - Conventions for mobile robots
-
-
-.. dropdown:: ROS 2 Lifecycle Node Documentation
-    :class-container: sd-border-secondary
-
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Managed Nodes Tutorial
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Managing-Nodes-Lifecycle.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy -- Managing Nodes with Lifecycle**
-
-            Official tutorial on lifecycle (managed) nodes, covering the
-            state machine, transition callbacks, and CLI management.
-
-            +++
-
-            - Lifecycle state machine overview
-            - Implementing transition callbacks
-            - CLI commands for lifecycle management
-            - Coordinated system bringup
-
-        .. grid-item-card:: rclcpp_lifecycle API
-            :link: https://docs.ros.org/en/jazzy/p/rclcpp_lifecycle/
-            :class-card: sd-border-secondary
-
-            **rclcpp_lifecycle API Reference**
-
-            API documentation for the ``rclcpp_lifecycle`` package
-            including ``LifecycleNode``, ``LifecyclePublisher``, and
-            transition callback types.
-
-            +++
-
-            - ``rclcpp_lifecycle::LifecycleNode``
-            - ``rclcpp_lifecycle::LifecyclePublisher``
-            - ``CallbackReturn`` enum
-            - State and transition types
-
-        .. grid-item-card:: lifecycle_msgs
-            :link: https://docs.ros.org/en/jazzy/p/lifecycle_msgs/
-            :class-card: sd-border-secondary
-
-            **lifecycle_msgs Message/Service Reference**
-
-            Documentation for lifecycle message and service types
-            including ``State``, ``Transition``, ``ChangeState``, and
-            ``GetState``.
-
-            +++
-
-            - ``lifecycle_msgs::msg::State``
-            - ``lifecycle_msgs::msg::Transition``
-            - ``lifecycle_msgs::srv::ChangeState``
-            - ``lifecycle_msgs::srv::GetState``
-
-        .. grid-item-card:: Lifecycle Node Design Document
-            :link: https://design.ros2.org/articles/node_lifecycle.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Design -- Managed Nodes**
-
-            The original design document for the ROS 2 lifecycle node
-            concept, explaining the motivation, state machine design,
-            and intended usage patterns.
-
-            +++
-
-            - Design rationale
-            - State machine specification
-            - Transition callbacks
-            - Error handling model

@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L10: ROS 2 Foundations**
+        **ENPM702 L10: ROS 2 Foundations**
 
         Covers the fundamentals of ROS 2: architecture (nodes, topics,
         messages, computation graph), workspace and package creation with
@@ -34,7 +34,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Tutorials**
+            **ROS 2 Jazzy: Tutorials**
 
             Official ROS 2 tutorials covering installation, workspace
             setup, package creation, nodes, topics, services, actions,
@@ -50,7 +50,7 @@ References
             :link: https://docs.ros.org/en/jazzy/p/rclcpp/
             :class-card: sd-border-secondary
 
-            **rclcpp -- ROS 2 C++ Client Library**
+            **rclcpp: ROS 2 C++ Client Library**
 
             API reference for the ``rclcpp`` library, including
             ``Node``, ``Publisher``, ``Subscription``, ``Timer``,
@@ -67,7 +67,7 @@ References
             :link: https://docs.ros.org/en/jazzy/p/std_msgs/
             :class-card: sd-border-secondary
 
-            **std_msgs -- Standard Messages**
+            **std_msgs: Standard Messages**
 
             Reference for standard ROS 2 message types including
             ``String``, ``Int32``, ``Float64``, ``Bool``, ``Header``,
@@ -109,7 +109,7 @@ References
             :link: https://colcon.readthedocs.io/en/released/user/quick-start.html
             :class-card: sd-border-secondary
 
-            **colcon -- Quick Start**
+            **colcon: Quick Start**
 
             Guide to using ``colcon`` for building ROS 2 workspaces,
             including ``colcon build``, ``--packages-select``,
@@ -127,7 +127,7 @@ References
             :link: https://docs.ros.org/en/jazzy/How-To-Guides/Ament-CMake-Documentation.html
             :class-card: sd-border-secondary
 
-            **ament_cmake -- Build System**
+            **ament_cmake: Build System**
 
             Reference for the ``ament_cmake`` build system used in
             ROS 2 C++ packages, covering ``CMakeLists.txt`` structure,

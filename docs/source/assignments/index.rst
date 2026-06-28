@@ -2,9 +2,17 @@
 Assignments
 ====================================================
 
+.. warning::
+
+   The RWAs and GPs described on this page are **tentative and subject to
+   change**. Requirements, point values, and due dates may be revised as
+   the semester progresses. The content of this page is provided for
+   planning only; always check **ELMS-Canvas** for the authoritative,
+   up-to-date version of each assignment.
+
 This course includes three individual **Real-World Applications (RWAs)**
 focused on core C++ and three team-based **Group Projects (GPs)** focused
-on ROS 2 development. Both RWAs and GPs are **cumulative** --- each
+on ROS 2 development. Both RWAs and GPs are **cumulative**, each
 deliverable builds on the previous one.
 
 
@@ -27,18 +35,18 @@ demonstrating why each new C++ feature improves the codebase.
      - Duration
    * - :doc:`RWA1 <rwa1>`
      - C++ Fundamentals (Variables, Types, Pointers)
-     - Week 3
-     - Week 5
+     - Sep 15
+     - Sep 29
      - 2 weeks
    * - :doc:`RWA2 <rwa2>`
      - STL Containers and Functions
-     - Week 5
-     - Week 7
+     - Sep 29
+     - Oct 13
      - 2 weeks
    * - :doc:`RWA3 <rwa3>`
      - Smart Pointers and OOP
-     - Week 9
-     - Week 11
+     - Oct 27
+     - Nov 10
      - 2 weeks
 
 
@@ -60,19 +68,19 @@ in Gazebo. Each GP extends the previous deliverable.
      - Duration
    * - :doc:`GP1 <gp1>`
      - ROS 2 Pub/Sub with Gazebo
-     - Week 11
-     - Week 13
-     - 2 weeks
+     - Nov 10
+     - Nov 17
+     - 1 week
    * - :doc:`GP2 <gp2>`
      - Services, Actions, and Robot Inheritance
-     - Week 13
-     - Week 14
-     - 1 week
+     - Nov 17
+     - Dec 1
+     - 2 weeks
    * - :doc:`GP3 <gp3>`
-     - Coordinate Frames and Lifecycle Nodes
-     - Week 14
-     - Week 15
-     - 1 week
+     - Autonomy, Frames, Lifecycle, and a Decision Layer
+     - Dec 1
+     - Dec 11
+     - ~1.5 weeks
 
 
 .. toctree::

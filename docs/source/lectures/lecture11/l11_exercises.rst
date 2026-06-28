@@ -20,7 +20,7 @@ ROS 2 workspace to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1 -- Parameterized Node
+.. dropdown:: Exercise 1: Parameterized Node
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -103,7 +103,7 @@ ROS 2 workspace to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 2 -- Dynamic Parameter Update
+.. dropdown:: Exercise 2: Dynamic Parameter Update
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -210,7 +210,7 @@ ROS 2 workspace to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 3 -- Basic Launch File
+.. dropdown:: Exercise 3: Basic Launch File
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -283,7 +283,7 @@ ROS 2 workspace to verify your understanding.
            )
 
 
-.. dropdown:: Exercise 4 -- Launch with Parameters and YAML
+.. dropdown:: Exercise 4: Launch with Parameters and YAML
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -386,7 +386,7 @@ ROS 2 workspace to verify your understanding.
            )
 
 
-.. dropdown:: Exercise 5 -- Multi-Threaded Executor
+.. dropdown:: Exercise 5: Multi-Threaded Executor
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -498,7 +498,7 @@ ROS 2 workspace to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 6 -- Challenge: Configurable Robot System
+.. dropdown:: Exercise 6 Challenge: Configurable Robot System
     :icon: rocket
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

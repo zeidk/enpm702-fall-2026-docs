@@ -26,28 +26,28 @@ References
             :link: https://en.cppreference.com/w/cpp/language/if
             :class-card: sd-border-secondary
 
-            **cppreference -- if statement**
+            **cppreference: if statement**
 
         .. grid-item-card:: switch statement
             :link: https://en.cppreference.com/w/cpp/language/switch
             :class-card: sd-border-secondary
 
-            **cppreference -- switch statement**
+            **cppreference: switch statement**
 
         .. grid-item-card:: for loop
             :link: https://en.cppreference.com/w/cpp/language/for
             :class-card: sd-border-secondary
 
-            **cppreference -- for loop**
+            **cppreference: for loop**
 
         .. grid-item-card:: while loop
             :link: https://en.cppreference.com/w/cpp/language/while
             :class-card: sd-border-secondary
 
-            **cppreference -- while loop**
+            **cppreference: while loop**
 
         .. grid-item-card:: Operator Precedence
             :link: https://en.cppreference.com/w/cpp/language/operator_precedence
             :class-card: sd-border-secondary
 
-            **cppreference -- Operator Precedence**
+            **cppreference: Operator Precedence**

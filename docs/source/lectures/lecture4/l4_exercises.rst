@@ -18,7 +18,7 @@ the skills from the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- String Operations
+.. dropdown:: Exercise 1: String Operations
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -82,7 +82,7 @@ the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 2 -- Array Manipulation
+.. dropdown:: Exercise 2: Array Manipulation
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -144,7 +144,7 @@ the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 3 -- 2D Array
+.. dropdown:: Exercise 3: 2D Array
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -204,7 +204,7 @@ the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 4 -- Vector Basics
+.. dropdown:: Exercise 4: Vector Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -262,7 +262,7 @@ the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 5 -- Vector Memory
+.. dropdown:: Exercise 5: Vector Memory
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -330,7 +330,7 @@ the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 6 -- Simple Gradebook (Challenge)
+.. dropdown:: Exercise 6: Simple Gradebook (Challenge)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

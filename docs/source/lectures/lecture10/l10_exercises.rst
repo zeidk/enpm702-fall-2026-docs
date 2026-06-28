@@ -21,7 +21,7 @@ workspace to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1 -- Basic Node
+.. dropdown:: Exercise 1: Basic Node
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -119,7 +119,7 @@ workspace to verify your understanding.
            [INFO] [basic_node]: Basic node has been started
 
 
-.. dropdown:: Exercise 2 -- Simple Publisher
+.. dropdown:: Exercise 2: Simple Publisher
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -192,7 +192,7 @@ workspace to verify your understanding.
            ros2 topic echo /counter
 
 
-.. dropdown:: Exercise 3 -- Simple Subscriber
+.. dropdown:: Exercise 3: Simple Subscriber
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -270,7 +270,7 @@ workspace to verify your understanding.
            ...
 
 
-.. dropdown:: Exercise 4 -- Custom Message
+.. dropdown:: Exercise 4: Custom Message
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -434,7 +434,7 @@ workspace to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 5 -- Multi-topic Publisher
+.. dropdown:: Exercise 5: Multi-topic Publisher
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -529,7 +529,7 @@ workspace to verify your understanding.
            ros2 topic echo /temperature
 
 
-.. dropdown:: Exercise 6 -- Simulated Robot Pub/Sub System
+.. dropdown:: Exercise 6: Simulated Robot Pub/Sub System
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

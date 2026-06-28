@@ -49,5 +49,5 @@ Next Steps
   - Dynamic memory allocation with ``new`` and ``delete``.
   - Memory debugging with Valgrind.
 
-- Watch the **Flow Control and Operations** pre-recorded video on Canvas if you have not already.
+- Work through the **Flow Control and Operations** reading module if you have not already.
 - Practice the shell and C++ exercises.

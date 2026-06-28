@@ -4,7 +4,7 @@
 Lecture 6 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 6: Functions -- Advanced. Topics include structs, templates, template type deduction, ``decltype``, ``constexpr`` functions, ``inline``/ODR, function pointers, functors, lambdas, capture clauses, and ``std::function``.
+This quiz covers the key concepts from Lecture 6: Functions, Advanced. Topics include structs, templates, template type deduction, ``decltype``, ``constexpr`` functions, ``inline``/ODR, function pointers, functors, lambdas, capture clauses, and ``std::function``.
 
 .. note::
 
@@ -19,7 +19,7 @@ This quiz covers the key concepts from Lecture 6: Functions -- Advanced. Topics 
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ===================================
 
 .. admonition:: Question 1
@@ -198,7 +198,7 @@ Multiple Choice (Questions 1--10)
       ``std::function`` "erases" the concrete type of the stored callable and presents a uniform interface based solely on the function signature. This allows different callable types to be stored in the same variable or passed to the same function parameter.
 
 
-True/False (Questions 11--15)
+True/False (Questions 11-15)
 ===============================
 
 .. admonition:: Question 11

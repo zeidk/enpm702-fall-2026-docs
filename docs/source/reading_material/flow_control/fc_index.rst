@@ -6,7 +6,7 @@ Overview
 --------
 
 This reading material covers selection statements, iteration statements,
-and operations in C++. It is provided as a pre-recorded video on Canvas
+and operations in C++. It is provided as a self-study reading module
 and should be watched before starting RWA1.
 
 

@@ -22,7 +22,7 @@ methods, abstract classes, virtual destructors, concrete classes, and the
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ====================================================
 
 .. admonition:: Question 1
@@ -42,11 +42,11 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Composition
+   **C**, Composition
 
    In composition, the contained object is an integral part of the
    container. When the container is destroyed, all its parts are destroyed
-   as well. For example, a ``Vehicle`` has ``Sensors`` -- if the vehicle is
+   as well. For example, a ``Vehicle`` has ``Sensors``, if the vehicle is
    scrapped, its sensors are destroyed with it.
 
 
@@ -67,7 +67,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``private``
+   **C**, ``private``
 
    In C++, the default inheritance access type for classes is ``private``.
    This means that all ``public`` and ``protected`` members of the base
@@ -108,7 +108,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``Derived``
+   **B**, ``Derived``
 
    Because ``speak()`` is declared ``virtual`` in the base class, C++ uses
    dynamic dispatch. The actual object type is ``Derived``, so
@@ -133,7 +133,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Virtual table (vtable) and dynamic dispatch
+   **C**, Virtual table (vtable) and dynamic dispatch
 
    When a class has virtual methods, the compiler creates a vtable
    containing pointers to the actual implementations. Each object of that
@@ -157,7 +157,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``virtual void drive() = 0;``
+   **B**, ``virtual void drive() = 0;``
 
    A pure virtual method is declared with ``= 0`` after the function
    declaration. This makes the class abstract and requires derived classes
@@ -184,7 +184,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- It is still abstract and cannot be instantiated.
+   **B**, It is still abstract and cannot be instantiated.
 
    A derived class must implement **all** pure virtual methods from the
    base class to become a concrete class. Since ``stop()`` was not
@@ -201,14 +201,14 @@ Multiple Choice (Questions 1--10)
 
    B. Only the derived destructor runs.
 
-   C. Undefined behavior -- only the base destructor runs, derived resources may leak.
+   C. Undefined behavior, only the base destructor runs, derived resources may leak.
 
    D. A compile error occurs.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Undefined behavior -- only the base destructor runs, derived
+   **C**, Undefined behavior, only the base destructor runs, derived
    resources may leak.
 
    Without a virtual destructor, the compiler uses static dispatch for
@@ -234,7 +234,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Aggregation
+   **B**, Aggregation
 
    Aggregation represents a "has-a" relationship with weak ownership. The
    contained objects (``Vehicles``) can exist independently of the
@@ -258,7 +258,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Prevents the class from being inherited by other classes.
+   **B**, Prevents the class from being inherited by other classes.
 
    When ``final`` is applied to a class (e.g., ``class RoboTaxi final : public Vehicle``),
    no other class can derive from it. Any attempt to inherit from a
@@ -281,7 +281,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Method redefinition in a derived class called on a derived
+   **C**, Method redefinition in a derived class called on a derived
    object directly
 
    When you call a redefined method on a derived object directly (not
@@ -294,7 +294,7 @@ Multiple Choice (Questions 1--10)
 ----
 
 
-True / False (Questions 11--15)
+True / False (Questions 11-15)
 ====================================================
 
 .. admonition:: Question 11
@@ -312,7 +312,7 @@ True / False (Questions 11--15)
    ``private`` members are inherited (they exist in the derived class
    object in memory), but they are hidden from the derived class. The
    derived class cannot access them directly. This is why the
-   ``protected`` access specifier exists -- to allow derived classes to
+   ``protected`` access specifier exists, to allow derived classes to
    access base class members while keeping them hidden from external code.
 
 
@@ -344,7 +344,7 @@ True / False (Questions 11--15)
 
    **False.**
 
-   The ``override`` keyword is not *required* -- the code will compile
+   The ``override`` keyword is not *required*, the code will compile
    and work correctly without it. However, it is a **best practice** to
    always use it because it provides compile-time safety: if the method
    signature does not match any virtual method in the base class, the

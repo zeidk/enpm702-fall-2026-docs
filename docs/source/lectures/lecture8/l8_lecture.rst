@@ -6,7 +6,7 @@ Lecture
 Core Principles of OOP
 ============================
 
-Object-Oriented Programming organizes software around objects -- digital models of real-world things that hold data and perform actions. This approach helps make code more understandable, reusable, and easier to manage.
+Object-Oriented Programming organizes software around objects, digital models of real-world things that hold data and perform actions. This approach helps make code more understandable, reusable, and easier to manage.
 
 OOP is built around a set of fundamental principles that shape how code is structured, organized, and maintained. These concepts help developers build modular, scalable, and maintainable systems.
 
@@ -23,18 +23,18 @@ Advantages and Disadvantages
    .. grid-item-card:: Advantages
       :class-card: sd-border-success
 
-      - **Modularity** -- Decomposes complex problems into manageable, self-contained components.
-      - **Reusability** -- Promotes code reuse through inheritance and shared behaviors.
-      - **Flexibility** -- Enables dynamic behavior via polymorphism and interchangeable interfaces.
-      - **Maintainability** -- Facilitates localized changes and clearer code organization.
+      - **Modularity**, Decomposes complex problems into manageable, self-contained components.
+      - **Reusability**, Promotes code reuse through inheritance and shared behaviors.
+      - **Flexibility**, Enables dynamic behavior via polymorphism and interchangeable interfaces.
+      - **Maintainability**, Facilitates localized changes and clearer code organization.
 
    .. grid-item-card:: Disadvantages
       :class-card: sd-border-warning
 
-      - **Learning Curve** -- Requires mastery of abstract concepts and design patterns.
-      - **Design Overhead** -- Often demands more upfront planning and structure.
-      - **Code Size** -- Object-oriented programs can be more verbose than procedural ones.
-      - **Performance Overhead** -- May incur runtime costs (e.g., due to dynamic dispatch).
+      - **Learning Curve**, Requires mastery of abstract concepts and design patterns.
+      - **Design Overhead**, Often demands more upfront planning and structure.
+      - **Code Size**, Object-oriented programs can be more verbose than procedural ones.
+      - **Performance Overhead**, May incur runtime costs (e.g., due to dynamic dispatch).
 
 .. warning::
 
@@ -218,10 +218,10 @@ Requirement Analysis
 
 The requirement analysis defines *what* the system must do before designing *how* it will work.
 
-1. **Functional Requirements** -- Define what the system must do and which specific capabilities it must provide.
-2. **Non-Functional Requirements** -- Specify how well the system must perform in terms of quality attributes like performance, reliability, and safety.
-3. **Technical Constraints** -- Establish design limitations and architectural principles that restrict implementation choices.
-4. **Success Criteria** -- Set measurable outcomes that determine whether the project has achieved its goals.
+1. **Functional Requirements**, Define what the system must do and which specific capabilities it must provide.
+2. **Non-Functional Requirements**, Specify how well the system must perform in terms of quality attributes like performance, reliability, and safety.
+3. **Technical Constraints**, Establish design limitations and architectural principles that restrict implementation choices.
+4. **Success Criteria**, Set measurable outcomes that determine whether the project has achieved its goals.
 
 
 Modeling Phase
@@ -231,13 +231,13 @@ The modeling phase defines *how* the system will be structured and designed to m
 
 1. **Static Structure**
 
-   - **Class Design** -- Define the system's static structure by identifying classes, their attributes, methods, and the relationships among them (such as association, aggregation, composition, and inheritance).
+   - **Class Design**, Define the system's static structure by identifying classes, their attributes, methods, and the relationships among them (such as association, aggregation, composition, and inheritance).
 
 2. **Dynamic Behavior**
 
-   - **Sequence Diagrams** -- Illustrate how objects collaborate and exchange messages over time to achieve specific functionalities.
+   - **Sequence Diagrams**, Illustrate how objects collaborate and exchange messages over time to achieve specific functionalities.
 
-Modeling Languages -- UML
+Modeling Languages: UML
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `UML (Unified Modeling Language) <https://www.uml.org/>`_ was designed specifically for software system design and documentation, particularly in object-oriented programming.
@@ -335,8 +335,8 @@ Object-Oriented Programming is an ideal context for exploring modern C++ feature
 - ``noexcept`` (covered previously)
 - Move semantics (covered previously)
 - Smart pointers (covered previously)
-- ``std::string_view`` -- this lecture
-- ``std::optional`` -- this lecture
+- ``std::string_view``, this lecture
+- ``std::optional``, this lecture
 
 std::string_view
 ^^^^^^^^^^^^^^^^^^
@@ -553,9 +553,9 @@ Access Specifiers
 
 Access specifiers determine the accessibility of the members (attributes and methods) of a ``class``. They play a crucial role in *encapsulation*. There are three primary access specifiers in C++.
 
-- ``public`` -- Members declared under the ``public`` specifier can be accessed from outside the class and by derived classes.
-- ``private`` -- Members declared as ``private`` are restricted to the class in which they are declared. They cannot be accessed from outside the class or by derived classes.
-- ``protected`` -- ``protected`` members are somewhere between ``public`` and ``private``. They cannot be accessed from outside the class, but they can be accessed by derived classes. We see this in detail in the *inheritance* section.
+- ``public``, Members declared under the ``public`` specifier can be accessed from outside the class and by derived classes.
+- ``private``, Members declared as ``private`` are restricted to the class in which they are declared. They cannot be accessed from outside the class or by derived classes.
+- ``protected``, ``protected`` members are somewhere between ``public`` and ``private``. They cannot be accessed from outside the class, but they can be accessed by derived classes. We see this in detail in the *inheritance* section.
 
 .. warning::
 
@@ -803,9 +803,9 @@ A constructor's **member initializer list** allows you to initialize an object's
 
 When an object is created, C++ follows a strict initialization sequence:
 
-1. **Base class constructors** -- If the class inherits from a base class, the base class constructor(s) execute first (in declaration order for multiple inheritance).
-2. **Member attribute constructors** -- All member objects are constructed in the order they are *declared* in the class definition, regardless of the order in the member initializer list.
-3. **Constructor body** -- Finally, the statements in the constructor body execute.
+1. **Base class constructors**, If the class inherits from a base class, the base class constructor(s) execute first (in declaration order for multiple inheritance).
+2. **Member attribute constructors**, All member objects are constructed in the order they are *declared* in the class definition, regardless of the order in the member initializer list.
+3. **Constructor body**, Finally, the statements in the constructor body execute.
 
 **Assignment in Body vs. Member Initializer List:**
 
@@ -877,8 +877,8 @@ Members are always initialized *in the order they are declared*, not in the orde
 
 **Summary:**
 
-- **Direct Initialization** -- Member initializer lists initialize attributes directly, avoiding the two-step process of default construction followed by assignment. This is more efficient, especially for complex types like ``std::string`` or ``std::vector``.
-- **Required for Const and References** -- Attributes declared as ``const`` or references must be initialized using the initializer list, as they cannot be assigned after construction.
+- **Direct Initialization**, Member initializer lists initialize attributes directly, avoiding the two-step process of default construction followed by assignment. This is more efficient, especially for complex types like ``std::string`` or ``std::vector``.
+- **Required for Const and References**, Attributes declared as ``const`` or references must be initialized using the initializer list, as they cannot be assigned after construction.
 
 
 const Objects
@@ -907,7 +907,7 @@ A ``const`` object is an instance of a class whose state cannot be modified afte
 The this Pointer
 ============================
 
-In every *non-static method*, the compiler **implicitly** passes a hidden pointer named ``this`` that points to the current object -- the instance on which the function was called.
+In every *non-static method*, the compiler **implicitly** passes a hidden pointer named ``this`` that points to the current object, the instance on which the function was called.
 
 In other words:
 

@@ -137,7 +137,7 @@ Multiple Choice
 
       **B. Use a member initializer list**
 
-      ``const`` members cannot be assigned after construction -- they must be initialized when created. The member initializer list runs before the constructor body, making it the only way to initialize ``const`` and reference members.
+      ``const`` members cannot be assigned after construction, they must be initialized when created. The member initializer list runs before the constructor body, making it the only way to initialize ``const`` and reference members.
 
 .. admonition:: Question 8
    :class: hint
@@ -216,7 +216,7 @@ True/False
 
       **True**
 
-      When an object is declared ``const``, its state cannot be modified. Therefore, only ``const`` methods -- which guarantee they do not modify the object -- can be called on it. Non-``const`` methods become inaccessible.
+      When an object is declared ``const``, its state cannot be modified. Therefore, only ``const`` methods, which guarantee they do not modify the object, can be called on it. Non-``const`` methods become inaccessible.
 
 .. admonition:: Question 13
    :class: hint

@@ -1,5 +1,5 @@
 ====================================================
-VSCode and CMake -- Quiz
+VSCode and CMake: Quiz
 ====================================================
 
 
@@ -54,7 +54,7 @@ VSCode and CMake -- Quiz
    a) The user settings.
    b) The workspace settings.
    c) Whichever was edited last.
-   d) Neither -- VSCode refuses to start.
+   d) Neither, VSCode refuses to start.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
@@ -115,7 +115,7 @@ VSCode and CMake -- Quiz
    a) Each ``weekX/CMakeLists.txt``.
    b) ``.vscode/settings.json``.
    c) The root ``CMakeLists.txt``.
-   d) Nothing -- CMake defaults to C++17.
+   d) Nothing, CMake defaults to C++17.
 
    .. dropdown:: Answer
       :class-container: sd-border-success

@@ -3,7 +3,7 @@ Lecture
 ====================================================
 
 
-Part I -- The Core Mechanics
+Part I: The Core Mechanics
 -----------------------------
 
 Introduction to Functions
@@ -140,15 +140,15 @@ A function declaration (or prototype) consists of the **return type** + **identi
 
    type identifier(<parameters>); // e.g., int add_numbers(int a, int b);
 
-- ``type`` -- What kind of value the function is expected to return to the calling function (the caller) or main program. When a function does not return anything, its type should be ``void``.
-- ``identifier`` -- The name given to a function.
+- ``type``, What kind of value the function is expected to return to the calling function (the caller) or main program. When a function does not return anything, its type should be ``void``.
+- ``identifier``, The name given to a function.
 
   .. note::
 
      - We use the same naming convention as for variables (``snake_case``).
      - A function does an action, therefore, the identifier should include a verb.
 
-- ``<parameters>`` -- If the function takes parameters, the parameters are listed in the parentheses. Each parameter has the form ``type identifier``. If the function does not use any parameter, the parentheses are left empty.
+- ``<parameters>``, If the function takes parameters, the parameters are listed in the parentheses. Each parameter has the form ``type identifier``. If the function does not use any parameter, the parentheses are left empty.
 
 .. seealso::
 
@@ -216,7 +216,7 @@ You only recompile what actually changes.
          void funcB() { /* ... */ }
          int main()  { /* ... */ }
 
-      Change one line in ``funcA()`` -- the **entire 10,000-line file** must be recompiled.
+      Change one line in ``funcA()``, the **entire 10,000-line file** must be recompiled.
 
    .. grid-item-card:: With Headers
 
@@ -234,7 +234,7 @@ You only recompile what actually changes.
          #include "funcs.hpp"
          void funcA() { /* ... */ }
 
-      Change ``funcA()`` -- only ``funcs.cpp`` recompiles. Fast!
+      Change ``funcA()``, only ``funcs.cpp`` recompiles. Fast!
 
 Benefit 2: Code Reusability
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1125,7 +1125,7 @@ Return-by-pointer allows a function to return the memory address of an **existin
    - `F.60: Prefer T* over T& when "no argument" is a valid option <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f60-prefer-t-over-t-when-no-argument-is-a-valid-option>`_
 
 
-Part II -- Enhancing Functions
+Part II: Enhancing Functions
 -------------------------------
 
 .. seealso::
@@ -1385,7 +1385,7 @@ The compiler needs a single, authoritative source for a function's default argum
          }
 
 
-Part III -- Under the Hood
+Part III: Under the Hood
 ---------------------------
 
 The Call Stack
@@ -1544,7 +1544,7 @@ When using recursion, be mindful of these common issues:
    **Always ask yourself:** Can this be done easily and more efficiently with a loop? If yes, prefer iteration. If the recursive solution is significantly clearer for a complex problem, use it cautiously.
 
 
-Part IV -- Conventions and Best Practices
+Part IV: Conventions and Best Practices
 ------------------------------------------
 
 Documentation with Doxygen

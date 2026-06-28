@@ -1,5 +1,5 @@
 ====================================================
-L12: ROS 2 -- Communication Patterns
+L12: ROS 2 Communication Patterns
 ====================================================
 
 Overview

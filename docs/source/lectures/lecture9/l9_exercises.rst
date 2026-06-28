@@ -18,7 +18,7 @@ previous one. Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1 -- Basic Inheritance
+.. dropdown:: Exercise 1: Basic Inheritance
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -93,7 +93,7 @@ previous one. Write, compile, and run each program to verify your understanding.
            Doors: 4
 
 
-.. dropdown:: Exercise 2 -- Method Overriding with ``virtual``
+.. dropdown:: Exercise 2: Method Overriding with ``virtual``
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -192,7 +192,7 @@ previous one. Write, compile, and run each program to verify your understanding.
            RoboTaxi is driving autonomously
 
 
-.. dropdown:: Exercise 3 -- Abstract Class with Pure Virtual Methods
+.. dropdown:: Exercise 3: Abstract Class with Pure Virtual Methods
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -303,7 +303,7 @@ previous one. Write, compile, and run each program to verify your understanding.
            [Temperature] TEMP-02: 19.8
 
 
-.. dropdown:: Exercise 4 -- Composition vs. Inheritance
+.. dropdown:: Exercise 4: Composition vs. Inheritance
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -423,7 +423,7 @@ previous one. Write, compile, and run each program to verify your understanding.
            Engine stopped
 
 
-.. dropdown:: Exercise 5 -- Virtual Destructors
+.. dropdown:: Exercise 5: Virtual Destructors
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -457,7 +457,7 @@ previous one. Write, compile, and run each program to verify your understanding.
     .. dropdown:: Solution
         :class-container: sd-border-success
 
-        **Part 1 -- Non-virtual destructor (BROKEN):**
+        **Part 1 Non-virtual destructor (BROKEN):**
 
         .. code-block:: cpp
 
@@ -492,7 +492,7 @@ previous one. Write, compile, and run each program to verify your understanding.
                return 0;
            }
 
-        **Part 2 -- Virtual destructor (FIXED):**
+        **Part 2 Virtual destructor (FIXED):**
 
         .. code-block:: cpp
 
@@ -507,7 +507,7 @@ previous one. Write, compile, and run each program to verify your understanding.
         then ``~Base()``.
 
 
-.. dropdown:: Exercise 6 -- Challenge: Shape Hierarchy with Polymorphic Area Calculation
+.. dropdown:: Exercise 6 Challenge: Shape Hierarchy with Polymorphic Area Calculation
     :icon: rocket
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

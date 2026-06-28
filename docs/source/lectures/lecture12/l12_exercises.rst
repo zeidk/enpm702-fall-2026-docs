@@ -20,7 +20,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1 -- Custom Service Definition
+.. dropdown:: Exercise 1: Custom Service Definition
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -105,7 +105,7 @@ Write, compile, and run each program to verify your understanding.
            string message
 
 
-.. dropdown:: Exercise 2 -- Service Server
+.. dropdown:: Exercise 2: Service Server
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -190,7 +190,7 @@ Write, compile, and run each program to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 3 -- Service Client
+.. dropdown:: Exercise 3: Service Client
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -278,7 +278,7 @@ Write, compile, and run each program to verify your understanding.
            [INFO] [command_client]: Success: true | Message: Moving at 2.000000 m/s
 
 
-.. dropdown:: Exercise 4 -- Custom Action Definition
+.. dropdown:: Exercise 4: Custom Action Definition
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -292,9 +292,9 @@ Write, compile, and run each program to verify your understanding.
     1. In the ``robot_interfaces`` package, create an ``action/``
        directory and add ``Patrol.action``:
 
-       - **Goal**: ``int32 num_waypoints`` -- how many waypoints to visit.
+       - **Goal**: ``int32 num_waypoints``, how many waypoints to visit.
        - **Result**: ``bool success`` and ``string message``.
-       - **Feedback**: ``int32 current_waypoint`` -- the waypoint
+       - **Feedback**: ``int32 current_waypoint``, the waypoint
          currently being visited.
 
     2. Update ``CMakeLists.txt`` to generate the action interface.
@@ -348,7 +348,7 @@ Write, compile, and run each program to verify your understanding.
            int32 current_waypoint
 
 
-.. dropdown:: Exercise 5 -- Action Server with Feedback
+.. dropdown:: Exercise 5: Action Server with Feedback
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -476,7 +476,7 @@ Write, compile, and run each program to verify your understanding.
            }
 
 
-.. dropdown:: Exercise 6 -- Challenge: Integrated Communication System
+.. dropdown:: Exercise 6 Challenge: Integrated Communication System
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

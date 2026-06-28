@@ -7,7 +7,7 @@ L7: Smart Pointers and Move Semantics
 Overview
 --------
 
-This lecture introduces **move semantics** and **smart pointers** -- two foundational
+This lecture introduces **move semantics** and **smart pointers**, two foundational
 C++11 features that together eliminate the most common categories of memory
 management bugs. We begin with value categories (lvalues, prvalues, xvalues),
 rvalue references, and ``std::move``, showing how the compiler distinguishes

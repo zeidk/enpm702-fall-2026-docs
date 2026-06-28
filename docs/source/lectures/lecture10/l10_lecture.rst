@@ -25,7 +25,7 @@ What is ROS 2?
 
 ROS 2 (Robot Operating System 2) is an open-source framework for
 building robot applications. Despite its name, ROS 2 is not an operating
-system -- it is a collection of software libraries, tools, and
+system, it is a collection of software libraries, tools, and
 conventions that simplify the task of creating complex robot behaviors
 across a wide variety of platforms.
 
@@ -64,7 +64,7 @@ several limitations that ROS 2 was designed to address:
      - DDS Security (authentication, encryption)
    * - Single point of failure
      - ``roscore`` required
-     - No central master -- fully distributed
+     - No central master, fully distributed
    * - Lifecycle management
      - Not available
      - Managed (lifecycle) nodes
@@ -180,9 +180,9 @@ To create a new ROS 2 C++ package, use the ``ros2 pkg create`` command:
 
 This creates a package named ``my_package`` with:
 
-- ``package.xml`` -- Package metadata and dependencies.
-- ``CMakeLists.txt`` -- Build configuration.
-- ``src/my_node.cpp`` -- A starter node file.
+- ``package.xml``, Package metadata and dependencies.
+- ``CMakeLists.txt``, Build configuration.
+- ``src/my_node.cpp``, A starter node file.
 
 **package.xml** declares the package name, version, description,
 maintainer, license, and dependencies:
@@ -273,14 +273,14 @@ Basic Node Structure
 
 Let us break down this code:
 
-- ``#include "rclcpp/rclcpp.hpp"`` -- The main ROS 2 C++ client library header.
-- ``class MyNode : public rclcpp::Node`` -- Our node class inherits from ``rclcpp::Node``.
-- ``Node("my_node")`` -- The base class constructor takes the node name as a string.
-- ``RCLCPP_INFO(...)`` -- ROS 2 logging macro (similar to ``std::cout`` but integrated with the ROS 2 logging system).
-- ``rclcpp::init(argc, argv)`` -- Initializes the ROS 2 runtime.
-- ``std::make_shared<MyNode>()`` -- Creates the node as a shared pointer (required by ``rclcpp::spin``).
-- ``rclcpp::spin(node)`` -- Keeps the node alive and processes callbacks.
-- ``rclcpp::shutdown()`` -- Cleans up the ROS 2 runtime.
+- ``#include "rclcpp/rclcpp.hpp"``, The main ROS 2 C++ client library header.
+- ``class MyNode : public rclcpp::Node``, Our node class inherits from ``rclcpp::Node``.
+- ``Node("my_node")``, The base class constructor takes the node name as a string.
+- ``RCLCPP_INFO(...)``, ROS 2 logging macro (similar to ``std::cout`` but integrated with the ROS 2 logging system).
+- ``rclcpp::init(argc, argv)``, Initializes the ROS 2 runtime.
+- ``std::make_shared<MyNode>()``, Creates the node as a shared pointer (required by ``rclcpp::spin``).
+- ``rclcpp::spin(node)``, Keeps the node alive and processes callbacks.
+- ``rclcpp::shutdown()``, Cleans up the ROS 2 runtime.
 
 .. admonition:: Why Inherit from ``rclcpp::Node``?
    :class: note
@@ -480,10 +480,10 @@ Complete Publisher Example
 
 Let us examine the key parts:
 
-- ``create_publisher<std_msgs::msg::String>("chatter", 10)`` -- Creates a publisher for ``String`` messages on the ``"chatter"`` topic with a queue depth of ``10``.
-- ``create_wall_timer(...)`` -- Creates a timer that calls ``timer_callback`` every 500 milliseconds.
-- ``std::bind(&MinimalPublisher::timer_callback, this)`` -- Binds the member function to ``this`` so the timer can call it.
-- ``publisher_->publish(message)`` -- Publishes the message on the topic.
+- ``create_publisher<std_msgs::msg::String>("chatter", 10)``, Creates a publisher for ``String`` messages on the ``"chatter"`` topic with a queue depth of ``10``.
+- ``create_wall_timer(...)``, Creates a timer that calls ``timer_callback`` every 500 milliseconds.
+- ``std::bind(&MinimalPublisher::timer_callback, this)``, Binds the member function to ``this`` so the timer can call it.
+- ``publisher_->publish(message)``, Publishes the message on the topic.
 
 .. admonition:: Using Lambdas Instead of ``std::bind``
    :class: tip
@@ -590,9 +590,9 @@ Complete Subscriber Example
 
 Key differences from the publisher:
 
-- ``create_subscription<std_msgs::msg::String>("chatter", 10, callback)`` -- Creates a subscription with the topic name, queue depth, and callback.
-- ``std::placeholders::_1`` -- A placeholder for the incoming message argument in the bound callback.
-- ``const std_msgs::msg::String::SharedPtr msg`` -- The callback receives a shared pointer to the message.
+- ``create_subscription<std_msgs::msg::String>("chatter", 10, callback)``, Creates a subscription with the topic name, queue depth, and callback.
+- ``std::placeholders::_1``, A placeholder for the incoming message argument in the bound callback.
+- ``const std_msgs::msg::String::SharedPtr msg``, The callback receives a shared pointer to the message.
 
 .. admonition:: Lambda Version
    :class: tip
@@ -636,13 +636,13 @@ Open two terminals. In each, source your workspace:
 
    source ~/ros2_ws/install/setup.bash
 
-**Terminal 1** -- run the publisher:
+**Terminal 1**, run the publisher:
 
 .. code-block:: bash
 
    ros2 run my_package minimal_publisher
 
-**Terminal 2** -- run the subscriber:
+**Terminal 2**, run the subscriber:
 
 .. code-block:: bash
 
@@ -669,7 +669,7 @@ Why Custom Messages?
 - Standard types may not match your data model exactly.
 - Custom messages make your code self-documenting.
 - You can bundle related fields into a single message.
-- Type safety -- the compiler catches mismatches at build time.
+- Type safety, the compiler catches mismatches at build time.
 
 
 Creating an Interface Package
@@ -750,7 +750,7 @@ Update ``my_interfaces/CMakeLists.txt``:
 
    ament_package()
 
-Update ``my_interfaces/package.xml`` -- add these dependencies:
+Update ``my_interfaces/package.xml``, add these dependencies:
 
 .. code-block:: xml
 

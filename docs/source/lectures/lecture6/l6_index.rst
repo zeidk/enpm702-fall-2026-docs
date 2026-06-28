@@ -1,13 +1,13 @@
 .. _l6_index:
 
 ==============================
-L6: Functions -- Advanced
+L6: Functions Advanced
 ==============================
 
 Overview
 --------
 
-This lecture builds on the function fundamentals from Lecture 5 and introduces advanced features of C++ functions. We begin with ``struct`` as a lightweight data container and aggregate initialization, then move into templates for writing generic, reusable code. The lecture covers function operators (``decltype``), specifiers (``constexpr``, ``inline``, ``noexcept``), and attributes (``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``). Finally, we explore callables -- function pointers, functors, lambdas, and ``std::function`` -- which enable flexible, composable designs central to modern C++ programming.
+This lecture builds on the function fundamentals from Lecture 5 and introduces advanced features of C++ functions. We begin with ``struct`` as a lightweight data container and aggregate initialization, then move into templates for writing generic, reusable code. The lecture covers function operators (``decltype``), specifiers (``constexpr``, ``inline``, ``noexcept``), and attributes (``[[nodiscard]]``, ``[[maybe_unused]]``, ``[[deprecated]]``). Finally, we explore callables, function pointers, functors, lambdas, and ``std::function``, which enable flexible, composable designs central to modern C++ programming.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives

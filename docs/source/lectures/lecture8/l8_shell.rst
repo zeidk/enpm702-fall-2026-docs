@@ -8,10 +8,10 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--7 and introduce advanced scripting techniques including command-line argument parsing with ``getopts``, associative arrays, JSON processing with ``jq``, signal handling, and process substitution.
+These exercises build on the shell skills from Lectures 1-7 and introduce advanced scripting techniques including command-line argument parsing with ``getopts``, associative arrays, JSON processing with ``jq``, signal handling, and process substitution.
 
 
-.. dropdown:: Exercise 1 -- getopts: Basic Option Parsing
+.. dropdown:: Exercise 1 getopts: Basic Option Parsing
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -52,7 +52,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Add a ``-c`` option that takes a count argument and prints the greeting that many times.
 
 
-.. dropdown:: Exercise 2 -- getopts: Build Script
+.. dropdown:: Exercise 2 getopts: Build Script
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -103,7 +103,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Add validation: ensure ``-j`` is a positive integer and ``-t`` is one of ``debug``, ``release``, or ``test``.
 
 
-.. dropdown:: Exercise 3 -- Associative Arrays
+.. dropdown:: Exercise 3: Associative Arrays
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -149,7 +149,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Write a script that counts the number of files by extension in a given directory, storing results in an associative array and printing a summary.
 
 
-.. dropdown:: Exercise 4 -- JSON Processing with jq: Basics
+.. dropdown:: Exercise 4 JSON Processing with jq: Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -193,7 +193,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     4. Add a new robot to the JSON using ``jq`` and save the result to a new file.
 
 
-.. dropdown:: Exercise 5 -- JSON Processing with jq: Advanced
+.. dropdown:: Exercise 5 JSON Processing with jq: Advanced
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -233,7 +233,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Write a shell script that reads the JSON, checks for any sensor with ``"error"`` status, and prints a warning message with the sensor ID.
 
 
-.. dropdown:: Exercise 6 -- Signal Handling
+.. dropdown:: Exercise 6: Signal Handling
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -280,7 +280,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Modify the script to count the number of times ``Ctrl+C`` is pressed. On the first press, print "Press Ctrl+C again to quit." On the second press, actually exit.
 
 
-.. dropdown:: Exercise 7 -- Subshells and Process Substitution
+.. dropdown:: Exercise 7: Subshells and Process Substitution
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -313,7 +313,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Write a script that uses process substitution to merge two sorted lists of numbers from two files into a single sorted list without creating intermediate files.
 
 
-.. dropdown:: Exercise 8 -- Putting It All Together
+.. dropdown:: Exercise 8: Putting It All Together
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -326,10 +326,10 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
 
     - Accept command-line options using ``getopts``:
 
-      - ``-r <robot_name>`` -- Robot name (required)
-      - ``-c <config_file>`` -- JSON config file (default: ``robot_config.json``)
-      - ``-v`` -- Verbose mode
-      - ``-h`` -- Help message
+      - ``-r <robot_name>``, Robot name (required)
+      - ``-c <config_file>``, JSON config file (default: ``robot_config.json``)
+      - ``-v``, Verbose mode
+      - ``-h``, Help message
 
     - Use an associative array to store supported robot types and their default speeds.
     - Read robot configuration from a JSON file using ``jq``.
@@ -395,7 +395,7 @@ These exercises build on the shell skills from Lectures 1--7 and introduce advan
     3. Add a feature that validates the JSON config file structure using ``jq`` before processing.
 
 
-.. dropdown:: Challenge -- Automated Project Scaffolding
+.. dropdown:: Challenge: Automated Project Scaffolding
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

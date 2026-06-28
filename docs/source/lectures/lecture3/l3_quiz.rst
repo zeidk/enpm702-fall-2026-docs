@@ -105,7 +105,7 @@ Multiple Choice
 
    What happens when you call ``delete`` on a pointer that was not allocated with ``new``?
 
-   A. Nothing -- ``delete`` is a no-op on stack pointers
+   A. Nothing, ``delete`` is a no-op on stack pointers
    B. The stack variable is deallocated immediately
    C. Undefined behavior
    D. A compiler error
@@ -230,7 +230,7 @@ True or False
 
       **False.**
 
-      A memory leak occurs when dynamically allocated memory is **never freed** (i.e., ``delete`` is never called). Not setting the pointer to ``nullptr`` after ``delete`` can lead to a dangling pointer, but the memory itself has been freed -- there is no leak.
+      A memory leak occurs when dynamically allocated memory is **never freed** (i.e., ``delete`` is never called). Not setting the pointer to ``nullptr`` after ``delete`` can lead to a dangling pointer, but the memory itself has been freed, there is no leak.
 
 .. admonition:: Question 14
    :class: hint

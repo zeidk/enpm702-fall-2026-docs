@@ -249,3 +249,17 @@ html[data-theme="dark"] .admonition.demonstration > .admonition-title::before {
     color: #a0c0ef;
   }
 }
+
+/* Reading-material entries in the course schedule (distinct color + italic). */
+.reading {
+  color: #1a7f37;
+  font-style: italic;
+}
+html[data-theme="dark"] .reading {
+  color: #4ade80;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .reading {
+    color: #4ade80;
+  }
+}

@@ -8,7 +8,7 @@ Overview
 This lecture covers advanced object-oriented programming concepts in C++.
 Building on the OOP fundamentals from L8, we explore how classes relate to
 each other through association, aggregation, composition, and inheritance.
-The lecture then introduces polymorphism -- both compile-time and runtime --
+The lecture then introduces polymorphism, both compile-time and runtime,
 showing how ``virtual`` methods, ``override``, and ``= default`` enable
 flexible, extensible designs. We examine why virtual destructors are
 essential for polymorphic hierarchies, how to define abstract classes with

@@ -142,7 +142,7 @@ A **prvalue** is a temporary value without identity.
 - No identity (doesn't occupy addressable memory yet)
 - Temporary (about to disappear)
 - Cannot take its address
-- Can move from it -- it's going away anyway!
+- Can move from it, it's going away anyway!
 
 
 xvalues: Expiring Values
@@ -236,9 +236,9 @@ Think of it as "giving a name" to a temporary object.
 .. admonition:: Key Distinction
    :class: note
 
-   - ``rref``'s **type** --> ``int&&`` (rvalue reference)
-   - ``rref``'s **value category** --> lvalue (has a name and can take its address)
-   - The expression ``10 + 20`` --> prvalue (temporary)
+   - ``rref``'s **type** → ``int&&`` (rvalue reference)
+   - ``rref``'s **value category** → lvalue (has a name and can take its address)
+   - The expression ``10 + 20`` → prvalue (temporary)
 
    The binding is legal because rvalue references can bind to rvalues.
 
@@ -262,7 +262,7 @@ and can therefore be *moved from* rather than copied.
 
 - ``s2`` takes ownership of ``s1``'s resources.
 - ``s1`` remains valid but empty (its state is unspecified).
-- No new object is created -- only a different way of treating ``s1``.
+- No new object is created, only a different way of treating ``s1``.
 
 
 std::move in Detail
@@ -279,7 +279,7 @@ std::move in Detail
 
 **Key Points:**
 
-- Performs a ``static_cast<T&&>`` -- no data is moved.
+- Performs a ``static_cast<T&&>``, no data is moved.
 - Converts an lvalue into an xvalue.
 - Used to enable **move constructors** or **move assignment operators**.
 - The result has **type** ``T&&`` and **value category** xvalue.
@@ -289,8 +289,8 @@ std::move in Detail
 
    All standard STL containers (such as ``std::vector``, ``std::string``,
    ``std::map``, and others) implement efficient move constructors that
-   transfer ownership of their internal resources -- like dynamically
-   allocated memory -- rather than copying them.
+   transfer ownership of their internal resources, like dynamically
+   allocated memory, rather than copying them.
 
 The following example shows a simplified move constructor for a vector class:
 
@@ -340,7 +340,7 @@ When the move constructor is used:
    }
 
 The move constructor is called, which transfers ``v1``'s internal pointers to
-``v2`` and leaves ``v1`` in a valid empty state -- no element-by-element copy
+``v2`` and leaves ``v1`` in a valid empty state, no element-by-element copy
 occurs.
 
 
@@ -417,9 +417,9 @@ C++ provides three distinct smart pointer types, each designed to abstract raw
 pointer management while clearly expressing ownership semantics and programmer
 intent.
 
-- ``std::unique_ptr`` -- **Exclusive ownership**: single object controls the resource lifetime.
-- ``std::shared_ptr`` -- **Shared ownership**: multiple objects collectively manage the resource.
-- ``std::weak_ptr`` -- **Non-owning observer**: monitors resource state without affecting lifetime, prevents circular dependencies.
+- ``std::unique_ptr``, **Exclusive ownership**: single object controls the resource lifetime.
+- ``std::shared_ptr``, **Shared ownership**: multiple objects collectively manage the resource.
+- ``std::weak_ptr``, **Non-owning observer**: monitors resource state without affecting lifetime, prevents circular dependencies.
 
 
 Unique Pointers
@@ -430,10 +430,10 @@ semantics for dynamically allocated resources. This exclusivity guarantees that
 exactly one ``std::unique_ptr`` instance controls any given memory location at
 any time.
 
-- **Automatic Resource Management** -- The ``std::unique_ptr`` owns its resource
+- **Automatic Resource Management**, The ``std::unique_ptr`` owns its resource
   and automatically invokes ``delete`` when the pointer is destroyed, reassigned,
   or goes out of scope, ensuring deterministic cleanup.
-- **Move-Only Semantics** -- ``std::unique_ptr`` is *non-copyable* but *movable*,
+- **Move-Only Semantics**, ``std::unique_ptr`` is *non-copyable* but *movable*,
   enforcing single ownership through the type system and preventing accidental
   resource sharing.
 
@@ -446,9 +446,9 @@ Initialization
    std::unique_ptr<T> identifier = std::make_unique<T>(args...);
    auto identifier = std::make_unique<T>(args...);
 
-- ``T`` -- Type of the managed object allocated on the heap.
-- ``identifier`` -- Variable name for the unique pointer instance.
-- ``args...`` -- Constructor arguments passed to the managed object.
+- ``T``, Type of the managed object allocated on the heap.
+- ``identifier``, Variable name for the unique pointer instance.
+- ``args...``, Constructor arguments passed to the managed object.
 
 .. admonition:: C++ Core Guideline
    :class: tip
@@ -745,7 +745,7 @@ deduce the intent.
 .. admonition:: C++ Standard
    :class: note
 
-   **S 23.11.1** -- After move-transferring ownership from ``source_ptr`` to
+   **S 23.11.1**, After move-transferring ownership from ``source_ptr`` to
    ``dest_ptr``, the source pointer is guaranteed to be in a valid but
    unspecified state (typically ``nullptr``).
 
@@ -903,7 +903,7 @@ Return from Functions
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **Return Value Optimization (RVO)** -- The compiler constructs the return
+   **Return Value Optimization (RVO)**, The compiler constructs the return
    value directly in the caller's memory, eliminating the need for a move
    or copy.
 
@@ -950,9 +950,9 @@ Initialization
    std::shared_ptr<T> identifier = std::shared_ptr<T>(new T(args...));
    auto identifier = std::shared_ptr<T>(new T(args...));
 
-- ``T`` -- Type of the managed object allocated on the heap.
-- ``identifier`` -- Variable name for the shared pointer instance.
-- ``args...`` -- Constructor arguments passed to the managed object.
+- ``T``, Type of the managed object allocated on the heap.
+- ``identifier``, Variable name for the shared pointer instance.
+- ``args...``, Constructor arguments passed to the managed object.
 
 .. admonition:: C++ Core Guideline
    :class: tip
@@ -982,9 +982,9 @@ Structure
 A ``std::shared_ptr`` maintains two essential pointers to implement shared
 ownership semantics.
 
-- **Resource Pointer** (``_M_ptr``) -- Points directly to the managed object
+- **Resource Pointer** (``_M_ptr``), Points directly to the managed object
   on the heap.
-- **Control Block Pointer** (``_M_refcount``) -- Points to the control block
+- **Control Block Pointer** (``_M_refcount``), Points to the control block
   containing reference counts (strong and weak) and metadata. *The control block
   is also created on the heap.*
 
@@ -1126,7 +1126,7 @@ Let's analyze how the control block evolves with the following code:
        s2.reset();
    }
 
-**Step 1: Line 2** -- ``auto s1 = std::make_shared<int>(10);``
+**Step 1: Line 2**, ``auto s1 = std::make_shared<int>(10);``
 
 .. figure:: /_static/images/l7/demo1_shared_ptr_1.png
    :alt: Shared pointer demo step 1
@@ -1135,21 +1135,21 @@ Let's analyze how the control block evolves with the following code:
 
 - Managed object: ``int(10)``
 - Control block: allocated by ``make_shared``
-- ``s_count``: 1 -- ``s1`` owns the object.
-- ``w_count``: 1 -- the *implicit* reference keeping the control block alive.
+- ``s_count``: 1, ``s1`` owns the object.
+- ``w_count``: 1, the *implicit* reference keeping the control block alive.
 
-**Step 2: Line 3** -- ``auto s2{s1};``
+**Step 2: Line 3**, ``auto s2{s1};``
 
 .. figure:: /_static/images/l7/demo1_shared_ptr_2.png
    :alt: Shared pointer demo step 2
    :align: center
    :width: 50%
 
-- Copies ``s1`` --> another ``std::shared_ptr`` pointing to the same control block.
-- ``s_count``: 2 -- ``s1`` and ``s2`` share ownership.
-- ``w_count``: 1 -- unchanged (still only the control block's self-reference).
+- Copies ``s1`` → another ``std::shared_ptr`` pointing to the same control block.
+- ``s_count``: 2, ``s1`` and ``s2`` share ownership.
+- ``w_count``: 1, unchanged (still only the control block's self-reference).
 
-**Step 3: Line 4** -- ``s1.reset();``
+**Step 3: Line 4**, ``s1.reset();``
 
 .. figure:: /_static/images/l7/demo1_shared_ptr_3.png
    :alt: Shared pointer demo step 3
@@ -1157,10 +1157,10 @@ Let's analyze how the control block evolves with the following code:
    :width: 50%
 
 - Releases one shared owner.
-- ``s_count``: 1 -- only ``s2`` remains.
-- ``w_count``: 1 -- unchanged.
+- ``s_count``: 1, only ``s2`` remains.
+- ``w_count``: 1, unchanged.
 
-**Step 4: Line 5** -- ``s2.reset();`` (part a)
+**Step 4: Line 5**, ``s2.reset();`` (part a)
 
 .. figure:: /_static/images/l7/demo1_shared_ptr_4a.png
    :alt: Shared pointer demo step 4a
@@ -1168,11 +1168,11 @@ Let's analyze how the control block evolves with the following code:
    :width: 50%
 
 - Releases the last shared owner.
-- ``s_count``: 0 -- no more shared owners.
-- ``w_count``: 1 -- still held by the control block's own internal ref.
+- ``s_count``: 0, no more shared owners.
+- ``w_count``: 1, still held by the control block's own internal ref.
 - At this moment: the managed ``int(10)`` is cleaned up, because ``s_count`` == 0.
 
-**Step 4: Line 5** -- ``s2.reset();`` (part b)
+**Step 4: Line 5**, ``s2.reset();`` (part b)
 
 .. figure:: /_static/images/l7/demo1_shared_ptr_4b.png
    :alt: Shared pointer demo step 4b
@@ -1191,25 +1191,25 @@ Shared Pointer Methods
 
 **Accessors:**
 
-- ``get()`` -- raw pointer (non-owning).
-- ``operator*()``, ``operator->()`` -- dereference access.
-- ``explicit operator bool()`` -- ``true`` if not empty.
+- ``get()``, raw pointer (non-owning).
+- ``operator*()``, ``operator->()``, dereference access.
+- ``explicit operator bool()``, ``true`` if not empty.
 
 **Observers:**
 
-- ``use_count()`` -- returns the current number of ``std::shared_ptr`` instances
+- ``use_count()``, returns the current number of ``std::shared_ptr`` instances
   sharing ownership of the same resource. Intended primarily for debugging or
-  instrumentation. Avoid using it in program logic -- the count can change at
+  instrumentation. Avoid using it in program logic, the count can change at
   any time in multithreaded contexts.
-- ``unique()`` -- convenience function that checks whether the calling
+- ``unique()``, convenience function that checks whether the calling
   ``std::shared_ptr`` is the only owner of the managed object.
   ``s.unique()`` is equivalent to ``s.use_count() == 1``.
 
 **Modifiers:**
 
-- ``reset()`` / ``reset(ptr)`` -- release current; optionally take new pointer
+- ``reset()`` / ``reset(ptr)``, release current; optionally take new pointer
   (decrements previous control block).
-- ``swap(other)`` -- exchange managed object and control block.
+- ``swap(other)``, exchange managed object and control block.
 
 
 Pass to Functions: Sink (shared_ptr)
@@ -1369,16 +1369,16 @@ resource access.
 Methods
 -------
 
-- ``use_count()`` -- returns the number of ``std::shared_ptr`` instances currently
+- ``use_count()``, returns the number of ``std::shared_ptr`` instances currently
   owning the resource.
-- ``reset()`` -- releases the weak reference, leaving the ``std::weak_ptr`` in
+- ``reset()``, releases the weak reference, leaving the ``std::weak_ptr`` in
   an empty (non-observing) state.
-- ``swap()`` -- exchanges control block references with another ``std::weak_ptr``
+- ``swap()``, exchanges control block references with another ``std::weak_ptr``
   (no ownership or object lifetime change).
-- ``lock()`` -- safely tries to promote the weak reference to a
+- ``lock()``, safely tries to promote the weak reference to a
   ``std::shared_ptr``. Returns a valid ``std::shared_ptr`` if the object is
   still alive, or a **null** ``std::shared_ptr`` if it has expired.
-- ``expired()`` -- returns ``true`` if the managed object has been destroyed;
+- ``expired()``, returns ``true`` if the managed object has been destroyed;
   ``false`` otherwise.
 
 **Reference count tracing example:**

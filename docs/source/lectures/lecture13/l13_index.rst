@@ -1,18 +1,18 @@
 ====================================================
-L13: ROS 2 -- Advanced Topics
+L13: ROS 2 Coordinate Frames and Transforms
 ====================================================
 
 Overview
 --------
 
-This is the final ROS 2 lecture in the course. It covers two essential
-capabilities for building robust robotic systems: **coordinate frame
-management with TF2** and **managed lifecycle nodes**. TF2 provides the
-framework for tracking and transforming between coordinate frames --
-critical when your robot has multiple sensors, links, and reference
-frames. Lifecycle nodes give you deterministic control over node
-startup, shutdown, and error recovery, enabling coordinated system
-bringup. Both topics are essential for **GP3**.
+This lecture covers **coordinate frame management with TF2**, the ROS 2
+framework for tracking and transforming between the many reference frames
+on a robot (its base, each sensor, and the world). TF2 is essential
+whenever your robot has multiple sensors and links, and it underpins the
+spatial reasoning used throughout the autonomy stack. The companion topic,
+**lifecycle nodes**, is covered in the next lecture
+(:doc:`Lecture 14 <../lecture14/l14_index>`).
+
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
@@ -20,12 +20,12 @@ bringup. Both topics are essential for **GP3**.
    By the end of this lecture, you will be able to:
 
    - Understand what coordinate frames are and why they are essential in robotics.
-   - Use TF2 to broadcast and listen for transforms between coordinate frames.
-   - Distinguish between static and dynamic transforms and know when to use each.
-   - Understand the lifecycle node state machine and its states (Unconfigured, Inactive, Active, Finalized).
-   - Implement a lifecycle node by inheriting from ``rclcpp_lifecycle::LifecycleNode``.
-   - Use lifecycle transition callbacks (``on_configure``, ``on_activate``, ``on_deactivate``, ``on_cleanup``, ``on_shutdown``).
-   - Manage lifecycle nodes using ``ros2 lifecycle`` CLI commands and programmatic transitions.
+   - Describe the TF2 frame tree and standard frame conventions.
+   - Use the ``TransformStamped`` message to represent a transform.
+   - Broadcast static and dynamic transforms with TF2.
+   - Listen for transforms and look them up with ``lookupTransform()``.
+   - Handle transform exceptions and debug frames with ``view_frames``, ``tf2_echo``, and RViz2.
+
 
 .. toctree::
    :hidden:
@@ -40,15 +40,10 @@ bringup. Both topics are essential for **GP3**.
 Next Steps
 ----------
 
-- This is the **final lecture** in the course. You now have all the tools
-  and knowledge needed for the remaining assignments.
+- TF2 is used extensively in **GP3**. Complete the exercises and quiz
+  before starting the project.
 
-- **GP3** uses the concepts from this lecture extensively:
-
-  - TF2 for managing coordinate frames between the robot, its sensors,
-    and the world.
-  - Lifecycle nodes for coordinated startup and shutdown of system
-    components.
-
-- Complete the C++ exercises on TF2 and lifecycle nodes, and take the
-  quiz to solidify your understanding before starting GP3.
+- :doc:`Lecture 14 <../lecture14/l14_index>` (Lifecycle Nodes) is the
+  companion to this lecture, and :doc:`Lecture 15 <../lecture15/l15_index>`
+  (Robot Autonomy Architecture) shows how coordinate frames fit into a
+  complete autonomy stack.

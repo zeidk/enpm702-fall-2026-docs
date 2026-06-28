@@ -7,7 +7,7 @@ L8: OOP Basics
 Overview
 --------
 
-This lecture introduces the foundations of Object-Oriented Programming (OOP) in C++. We begin with the core principles -- encapsulation, abstraction, inheritance, and polymorphism -- then explore how classes serve as blueprints for creating objects. The lecture walks through the full development cycle: requirement analysis, modeling with UML, and implementation using modern C++ features. Students will learn to define classes with proper encapsulation (access specifiers), write accessors and mutators with ``const``-correctness, construct objects using default constructors, parameterized constructors, and member initializer lists, and work with the ``this`` pointer and ``static`` members. Modern C++ idioms such as ``std::string_view``, ``std::optional``, ``[[nodiscard]]``, and ``noexcept`` are integrated throughout.
+This lecture introduces the foundations of Object-Oriented Programming (OOP) in C++. We begin with the core principles, encapsulation, abstraction, inheritance, and polymorphism, then explore how classes serve as blueprints for creating objects. The lecture walks through the full development cycle: requirement analysis, modeling with UML, and implementation using modern C++ features. Students will learn to define classes with proper encapsulation (access specifiers), write accessors and mutators with ``const``-correctness, construct objects using default constructors, parameterized constructors, and member initializer lists, and work with the ``this`` pointer and ``static`` members. Modern C++ idioms such as ``std::string_view``, ``std::optional``, ``[[nodiscard]]``, and ``noexcept`` are integrated throughout.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives

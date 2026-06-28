@@ -3,7 +3,7 @@ Git/Github Exercises
 ====================================================
 
 
-.. dropdown:: Exercise 1 -- Git Basics
+.. dropdown:: Exercise 1: Git Basics
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -49,7 +49,7 @@ Git/Github Exercises
          git log --oneline
 
 
-.. dropdown:: Exercise 2 -- Branching
+.. dropdown:: Exercise 2: Branching
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -89,7 +89,7 @@ Git/Github Exercises
          git log --oneline --all --graph
 
 
-.. dropdown:: Exercise 3 -- Merging
+.. dropdown:: Exercise 3: Merging
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -124,7 +124,7 @@ Git/Github Exercises
          git branch -d feature/sensor-config
 
 
-.. dropdown:: Exercise 4 -- Merge Conflict Resolution
+.. dropdown:: Exercise 4: Merge Conflict Resolution
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -180,7 +180,7 @@ Git/Github Exercises
          Resolved conflict between 1.5 (safety) and 3.0 (performance)."
 
 
-.. dropdown:: Exercise 5 -- GitHub Remote
+.. dropdown:: Exercise 5: GitHub Remote
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -228,7 +228,7 @@ Git/Github Exercises
          git pull origin main
 
 
-.. dropdown:: Exercise 6 -- Challenge: Fork Workflow
+.. dropdown:: Exercise 6 Challenge: Fork Workflow
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold

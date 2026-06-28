@@ -126,7 +126,7 @@ Single inheritance: a class inherits from exactly one base class.
    :align: center
    :width: 60%
 
-   Single inheritance -- ``Bird`` and ``Elephant`` inherit from ``Animal``.
+   Single inheritance, ``Bird`` and ``Elephant`` inherit from ``Animal``.
 
 - ``Bird`` and ``Elephant`` inherit ``Animal``'s ``public`` and ``protected`` members.
 
@@ -148,7 +148,7 @@ members from all parent classes.
    :align: center
    :width: 60%
 
-   Multiple inheritance -- ``MythicalCreature`` inherits from both ``Animal`` and ``Human``.
+   Multiple inheritance, ``MythicalCreature`` inherits from both ``Animal`` and ``Human``.
 
 - ``MythicalCreature`` inherits all ``protected`` and ``public`` attributes from ``Animal`` and ``Human``.
 
@@ -173,8 +173,6 @@ Generalization and Specialization
    Bottom-up approach which should be used every time classes have specific
    differences and common similarities, so that the similarities can be
    grouped in a superclass and the differences maintained in subclasses.
-
-   ---
 
    **Specialization**
 
@@ -278,7 +276,7 @@ Consider the following base and derived classes:
    initialized to the default value ``50``.
 
 
-**Approach 1 -- Member Initializer List (Does Not Work)**
+**Approach 1: Member Initializer List (Does Not Work)**
 
 Add another parameter to the constructor for ``Derived`` and use it to
 initialize the attribute ``base_member_`` with the member initializer list.
@@ -301,7 +299,7 @@ initialize the attribute ``base_member_`` with the member initializer list.
    member initializer list of a constructor.
 
 
-**Approach 2 -- Assignment in Constructor Body (Works, But Not Ideal)**
+**Approach 2: Assignment in Constructor Body (Works, But Not Ideal)**
 
 Since we cannot use the member initializer list, can we assign
 ``base_member_`` in the body of the constructor?
@@ -324,7 +322,7 @@ Since we cannot use the member initializer list, can we assign
    will not work if the attribute is a ``const`` or a reference.
 
 
-**Approach 3 -- Explicit Base Class Constructor Call (Recommended)**
+**Approach 3: Explicit Base Class Constructor Call (Recommended)**
 
 Explicit call of the base class constructor. Constructors have to worry
 about their own attributes.
@@ -364,8 +362,8 @@ Polymorphism
 principle. Polymorphism allows objects of different classes to be treated
 uniformly through a common interface. C++ supports two types:
 
-- **Compile-time polymorphism** -- resolved at compile time
-- **Runtime polymorphism** -- resolved at runtime
+- **Compile-time polymorphism**, resolved at compile time
+- **Runtime polymorphism**, resolved at runtime
 
 
 Compile-Time Polymorphism
@@ -630,7 +628,7 @@ Complete Comparison Table
      - Yes
      - No
 
-.. [#f1] No ``auto`` variable involved -- temporary converts at insertion point.
+.. [#f1] No ``auto`` variable involved, temporary converts at insertion point.
 
 
 Why This Happens: Type System Rules
@@ -682,7 +680,7 @@ Solutions for Polymorphic Collections
    rt->drive();  // Polymorphic call
    fleet.push_back(std::move(rt));  // Types match exactly
 
-**Option 3: Explicit cast (AVOID -- verbose and error-prone)**
+**Option 3: Explicit cast (AVOID verbose and error-prone)**
 
 .. code-block:: cpp
 
@@ -772,9 +770,9 @@ Avoid Slicing and Embrace Polymorphic Collections
 Requirements for Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. **Inheritance relationship** -- Derived classes inherit from a common base (``Vehicle``).
-2. **Base handle to derived object** -- Use ``Vehicle&``, ``Vehicle*``, ``std::unique_ptr<Vehicle>``, or ``std::shared_ptr<Vehicle>``.
-3. **virtual method in the base** -- Mark the interface ``virtual``; override it in derived classes.
+1. **Inheritance relationship**, Derived classes inherit from a common base (``Vehicle``).
+2. **Base handle to derived object**, Use ``Vehicle&``, ``Vehicle*``, ``std::unique_ptr<Vehicle>``, or ``std::shared_ptr<Vehicle>``.
+3. **virtual method in the base**, Mark the interface ``virtual``; override it in derived classes.
 
 .. note::
 
@@ -797,7 +795,7 @@ destructor is automatically called: you do not invoke it manually.
 
 - **Naming**: ``~ClassName()`` (e.g., ``~Vehicle()``)
 - **No parameters**, **no return type**
-- **One per class** -- cannot be overloaded
+- **One per class**, cannot be overloaded
 - **Automatic invocation** at scope exit or ``delete``
 
 
@@ -953,7 +951,7 @@ Pure Virtual Methods (``= 0``)
 
 A **pure virtual method** is declared with ``= 0`` and:
 
-- **Makes the class abstract** -- cannot be instantiated.
+- **Makes the class abstract**, cannot be instantiated.
 - **Requires derived classes to implement** the method.
 - **Defines a contract** that concrete classes must fulfill.
 - Can optionally provide a default implementation (rare).
@@ -991,7 +989,7 @@ complete implementations for all inherited pure ``virtual`` methods.
 - **Observable behavior**: Provides complete, working functionality.
 - **Safe to use**: All methods have defined behavior.
 
-**Example -- Complete Concrete Class:**
+**Example Complete Concrete Class:**
 
 .. code-block:: cpp
 
@@ -1016,7 +1014,7 @@ complete implementations for all inherited pure ``virtual`` methods.
    robo_taxi.drive(); // OK
    // transportation::Vehicle v; // ERROR - abstract class
 
-**Example -- Incomplete Concrete Class:**
+**Example Incomplete Concrete Class:**
 
 .. code-block:: cpp
 
@@ -1089,4 +1087,4 @@ Prevent Method Overriding
 Next Class
 ====================================================
 
-- **L10:** ROS 2 -- Introduction.
+- **L10:** ROS 2, Introduction.

@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L12: ROS 2 Communication Patterns**
+        **ENPM702 L12: ROS 2 Communication Patterns**
 
         Covers the three core ROS 2 communication patterns: topics
         (publish-subscribe), services (request-response), and actions
@@ -25,7 +25,7 @@ References
         ``robot_interfaces`` package built and ready.
 
 
-.. dropdown:: ROS 2 Documentation -- Services
+.. dropdown:: ROS 2 Documentation: Services
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
@@ -35,7 +35,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Understanding Services**
+            **ROS 2 Jazzy: Understanding Services**
 
             Beginner tutorial introducing the service concept, CLI
             tools for listing, calling, and inspecting services.
@@ -50,7 +50,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Writing a Simple Service and Client (C++)**
+            **ROS 2 Jazzy: Writing a Simple Service and Client (C++)**
 
             Step-by-step tutorial for implementing a service server and
             client using ``rclcpp``.
@@ -65,7 +65,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Custom Interfaces**
+            **ROS 2 Jazzy: Custom Interfaces**
 
             Tutorial on creating custom ``.msg``, ``.srv``, and
             ``.action`` files in a dedicated interface package.
@@ -77,7 +77,7 @@ References
             - Building and verifying interfaces
 
 
-.. dropdown:: ROS 2 Documentation -- Actions
+.. dropdown:: ROS 2 Documentation: Actions
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
@@ -87,7 +87,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Understanding Actions**
+            **ROS 2 Jazzy: Understanding Actions**
 
             Beginner tutorial covering the action concept, the
             goal-feedback-result lifecycle, and CLI tools for
@@ -103,7 +103,7 @@ References
             :link: https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Cpp.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- Writing an Action Server and Client (C++)**
+            **ROS 2 Jazzy: Writing an Action Server and Client (C++)**
 
             Intermediate tutorial for implementing an action server
             (with goal handling, feedback, and cancellation) and an
@@ -116,11 +116,11 @@ References
             - Goal, cancel, and accepted callbacks
             - ``SendGoalOptions`` and result handling
 
-        .. grid-item-card:: ROS 2 Design -- Actions
+        .. grid-item-card:: ROS 2 Design: Actions
             :link: https://design.ros2.org/articles/actions.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Design -- Actions**
+            **ROS 2 Design: Actions**
 
             Design article explaining the architecture of actions,
             their internal implementation using topics and services,
@@ -136,7 +136,7 @@ References
             :link: https://docs.ros.org/en/jazzy/p/rclcpp_action/
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy -- rclcpp_action API**
+            **ROS 2 Jazzy: rclcpp_action API**
 
             API documentation for the ``rclcpp_action`` library
             including server, client, and goal handle classes.

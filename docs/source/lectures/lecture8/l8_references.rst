@@ -1,8 +1,8 @@
 .. _l8_references:
 
-===================
+====================
 Lecture 8 References
-===================
+====================
 
 .. dropdown:: Lecture 8 Summary
    :class-container: sd-border-success
@@ -32,22 +32,22 @@ Lecture 8 References
 .. dropdown:: cppreference Links
    :class-container: sd-border-success
 
-   - `Classes -- cppreference.com <https://en.cppreference.com/w/cpp/language/classes>`_
-   - `Constructors and member initializer lists -- cppreference.com <https://en.cppreference.com/w/cpp/language/constructor>`_
-   - `Access specifiers -- cppreference.com <https://en.cppreference.com/w/cpp/language/access>`_
-   - `static members -- cppreference.com <https://en.cppreference.com/w/cpp/language/static>`_
-   - `this pointer -- cppreference.com <https://en.cppreference.com/w/cpp/language/this>`_
-   - `const member functions -- cppreference.com <https://en.cppreference.com/w/cpp/language/member_functions>`_
-   - `std::string_view -- cppreference.com <https://en.cppreference.com/w/cpp/string/basic_string_view>`_
-   - `std::optional -- cppreference.com <https://en.cppreference.com/w/cpp/utility/optional>`_
-   - `[[nodiscard]] attribute -- cppreference.com <https://en.cppreference.com/w/cpp/language/attributes/nodiscard>`_
+   - `Classes (cppreference.com) <https://en.cppreference.com/w/cpp/language/classes>`_
+   - `Constructors and member initializer lists (cppreference.com) <https://en.cppreference.com/w/cpp/language/constructor>`_
+   - `Access specifiers (cppreference.com) <https://en.cppreference.com/w/cpp/language/access>`_
+   - `static members (cppreference.com) <https://en.cppreference.com/w/cpp/language/static>`_
+   - `this pointer (cppreference.com) <https://en.cppreference.com/w/cpp/language/this>`_
+   - `const member functions (cppreference.com) <https://en.cppreference.com/w/cpp/language/member_functions>`_
+   - `std::string_view (cppreference.com) <https://en.cppreference.com/w/cpp/string/basic_string_view>`_
+   - `std::optional (cppreference.com) <https://en.cppreference.com/w/cpp/utility/optional>`_
+   - `[[nodiscard]] attribute (cppreference.com) <https://en.cppreference.com/w/cpp/language/attributes/nodiscard>`_
 
 .. dropdown:: Recommended Reading
    :class-container: sd-border-success
 
-   - *A Tour of C++* by Bjarne Stroustrup -- Chapters 5--6 (Classes and Essential Operations)
-   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 7 (Classes)
-   - *Effective Modern C++* by Scott Meyers -- Items 3, 7, 10 (uniform initialization, member init lists, ``noexcept``)
+   - *A Tour of C++* by Bjarne Stroustrup, Chapters 5-6 (Classes and Essential Operations)
+   - *C++ Primer* by Lippman, Lajoie, and Moo, Chapter 7 (Classes)
+   - *Effective Modern C++* by Scott Meyers, Items 3, 7, 10 (uniform initialization, member init lists, ``noexcept``)
    - `LearnCpp.com: Introduction to classes <https://www.learncpp.com/cpp-tutorial/introduction-to-object-oriented-programming/>`_
    - `LearnCpp.com: Constructors <https://www.learncpp.com/cpp-tutorial/constructors/>`_
    - `LearnCpp.com: Access specifiers <https://www.learncpp.com/cpp-tutorial/access-specifiers-and-access-functions/>`_

@@ -1,29 +1,39 @@
 Syllabus
 ========
 
+.. role:: reading
+
 Grade Breakdown
 ---------------
 
 .. list-table::
    :header-rows: 1
-   :widths: 60 20
+   :widths: 48 16 16
    :class: compact-table
 
    * - Component
      - Percentage
+     - Points
    * - RWAs (3) + GPs (3)
      - 70%
+     - 280
    * - Quizzes (5)
      - 25%
+     - 100
    * - Participation/Engagement
      - 5%
+     - 20
    * - **Total**
      - **100%**
+     - **400**
 
 .. note::
 
-   **Participation** is earned by actively engaging in class discussions
-   or by submitting weekly exercise solutions on Canvas.
+   The course is graded out of **400 points** (each component is scored
+   on this scale to simplify grading); final letter grades are computed
+   from the percentages above. **Participation** is earned by actively
+   engaging in class discussions or by submitting weekly exercise
+   solutions on Canvas.
 
 
 .. _course-schedule:
@@ -31,59 +41,109 @@ Grade Breakdown
 Course Schedule
 ---------------
 
+Lectures meet on **Tuesdays**. The first lecture is **September 1, 2026**
+and the last day of class is **Friday, December 11, 2026**. The
+Thanksgiving recess (**Nov 25-29**) does not fall on a Tuesday, so all
+Tuesday lectures meet as scheduled.
+
 .. list-table::
    :header-rows: 1
-   :widths: 10 54 36
-   :class: compact-table
+   :widths: 6 8 20 38 28
+   :class: compact-table schedule-table
 
    * - Week
-     - Topic
-     - Deliverable
+     - Date
+     - Before Class
+     - During Class
+     - After Class
    * - Week 1
+     - Sep 1
+     - :reading:`Read: VSCode & CMake, Version Control`
      - Course Introduction, Linux Shell, VSCode, CMake
-     -
+     - Submit Lecture 1 exercises
    * - Week 2
+     - Sep 8
+     -
      - Introduction to C++ (Variables, Types, Constants, Namespaces)
-     -
+     - Submit Lecture 2 exercises
    * - Week 3
+     - Sep 15
+     - :reading:`Read: Flow Control & Operations`
      - Pointers and Memory Management (Stack, Heap, References)
-     - RWA1 Posted
+     - | Submit Lecture 3 exercises
+       | RWA1 posted
    * - Week 4
-     - STL Containers (Strings, Arrays, Vectors, Iterators)
-     - Quiz 1
-   * - Week 5
-     - Functions -- Basics (Declarations, Parameters, Overloading, Recursion)
-     - RWA1 Due, RWA2 Posted
-   * - Week 6
-     - Functions -- Advanced (Templates, Lambdas, Functors, ``std::function``)
-     - Quiz 2
-   * - Week 7
-     - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
-     - RWA2 Due
-   * - Week 8
-     - OOP Basics (Classes, Objects, Encapsulation, Constructors)
-     - Quiz 3
-   * - Week 9
-     - OOP Advanced (Inheritance, Polymorphism, Abstraction)
-     - RWA3 Posted
-   * - Week 10
-     - ROS 2 -- Foundations (Publisher, Subscriber, Custom Interfaces)
-     - Quiz 4
-   * - Week 11
-     - ROS 2 -- Configuration and Orchestration (Parameters, Launch Files, Executors)
-     - RWA3 Due, GP1 Posted
-   * - Week 12
-     - **THANKSGIVING BREAK**
+     - Sep 22
      -
+     - | STL Containers (Strings, Arrays, Vectors, Iterators)
+       | **Quiz 1**
+     - Submit Lecture 4 exercises
+   * - Week 5
+     - Sep 29
+     -
+     - Functions, Basics (Declarations, Parameters, Overloading, Recursion)
+     - | Submit Lecture 5 exercises
+       | RWA1 due, RWA2 posted
+   * - Week 6
+     - Oct 6
+     -
+     - | Functions, Advanced (Templates, Lambdas, Functors, ``std::function``)
+       | **Quiz 2**
+     - Submit Lecture 6 exercises
+   * - Week 7
+     - Oct 13
+     - :reading:`Read: Exception Handling`
+     - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
+     - | Submit Lecture 7 exercises
+       | RWA2 due
+   * - Week 8
+     - Oct 20
+     -
+     - | OOP Basics (Classes, Objects, Encapsulation, Constructors)
+       | **Quiz 3**
+     - Submit Lecture 8 exercises
+   * - Week 9
+     - Oct 27
+     -
+     - OOP Advanced (Inheritance, Polymorphism, Abstraction)
+     - | Submit Lecture 9 exercises
+       | RWA3 posted
+   * - Week 10
+     - Nov 3
+     -
+     - | ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
+       | **Quiz 4**
+     - Submit Lecture 10 exercises
+   * - Week 11
+     - Nov 10
+     -
+     - ROS 2, Configuration and Orchestration (Parameters, Launch Files, Executors)
+     - | Submit Lecture 11 exercises
+       | RWA3 due, GP1 posted
+   * - Week 12
+     - Nov 17
+     -
+     - | ROS 2, Communication Patterns (Services, Actions)
+       | **Quiz 5**
+     - | Submit Lecture 12 exercises
+       | GP1 due, GP2 posted
    * - Week 13
-     - ROS 2 -- Communication Patterns (Services, Actions)
-     - GP1 Due, GP2 Posted, Quiz 5
+     - Nov 24
+     -
+     - ROS 2, Coordinate Frames and Transforms
+     - Submit Lecture 13 exercises
    * - Week 14
-     - ROS 2 -- Advanced Topics (Frames, Lifecycle Nodes)
-     - GP2 Due, GP3 Posted
+     - Dec 1
+     -
+     - ROS 2, Lifecycle Nodes
+     - | Submit Lecture 14 exercises
+       | GP2 due, GP3 posted
    * - Week 15
-     - No class
-     - GP3 Due
+     - Dec 8
+     -
+     - ROS 2, Robot Autonomy Architecture (Sense-Plan-Act, where AI/ML fits)
+     - | Submit Lecture 15 exercises
+       | GP3 due (Dec 11)
 
 .. note::
 
@@ -101,25 +161,29 @@ improves the codebase:
 
 .. list-table::
    :header-rows: 1
-   :widths: 40 12 12 12
+   :widths: 36 12 12 12 10
    :class: compact-table
 
    * - Assignment
      - Posted
      - Due
      - Duration
+     - Points
    * - RWA1: C++ Fundamentals (Variables, Types, Pointers)
-     - Week 3
-     - Week 5
+     - Sep 15
+     - Sep 29
      - 2 weeks
+     - 44
    * - RWA2: STL Containers and Functions
-     - Week 5
-     - Week 7
+     - Sep 29
+     - Oct 13
      - 2 weeks
+     - 48
    * - RWA3: Smart Pointers and OOP
-     - Week 9
-     - Week 11
+     - Oct 27
+     - Nov 10
      - 2 weeks
+     - 48
 
 
 Group Projects (GPs)
@@ -131,25 +195,29 @@ the previous deliverable:
 
 .. list-table::
    :header-rows: 1
-   :widths: 40 12 12 12
+   :widths: 36 12 12 12 10
    :class: compact-table
 
    * - Project
      - Posted
      - Due
      - Duration
+     - Points
    * - GP1: ROS 2 Pub/Sub with Gazebo
-     - Week 11
-     - Week 13
-     - 2 weeks
+     - Nov 10
+     - Nov 17
+     - 1 week
+     - 44
    * - GP2: Services, Actions, and Robot Inheritance
-     - Week 13
-     - Week 14
-     - 1 week
-   * - GP3: Coordinate Frames and Lifecycle Nodes
-     - Week 14
-     - Week 15
-     - 1 week
+     - Nov 17
+     - Dec 1
+     - 2 weeks (incl. Thanksgiving recess)
+     - 48
+   * - GP3: Autonomy, Frames, Lifecycle, and a Decision Layer
+     - Dec 1
+     - Dec 11
+     - ~1.5 weeks
+     - 48
 
 .. tip::
 
@@ -157,11 +225,48 @@ the previous deliverable:
    foundation in each deliverable makes the next one easier.
 
 
+Quizzes
+-------
+
+There are five short quizzes, each worth **20 points**. They are
+comprehension checks given in class on the dates below:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 20 20 12
+   :class: compact-table
+
+   * - Quiz
+     - Week
+     - Date
+     - Points
+   * - Quiz 1
+     - Week 4
+     - Sep 22
+     - 20
+   * - Quiz 2
+     - Week 6
+     - Oct 6
+     - 20
+   * - Quiz 3
+     - Week 8
+     - Oct 20
+     - 20
+   * - Quiz 4
+     - Week 10
+     - Nov 3
+     - 20
+   * - Quiz 5
+     - Week 12
+     - Nov 17
+     - 20
+
+
 Reading Material
 ----------------
 
-The following topics are provided as pre-recorded videos on Canvas.
-Students are expected to watch these outside of class by the recommended
+The following topics are provided as self-study reading modules.
+Students are expected to work through these outside of class by the recommended
 deadline:
 
 .. list-table::
@@ -172,12 +277,15 @@ deadline:
    * - Topic
      - Description
      - When to Watch
+   * - VSCode and CMake
+     - VSCode installation and interface, the ``.vscode`` folder, recommended extensions, the Command Palette, and the ``CMakeLists.txt`` build configuration.
+     - **Before the semester starts**
    * - Version Control (Git and GitHub)
      - Distributed version control, branching, merging, pull requests, and the fork workflow.
      - **Before the semester starts**
    * - Flow Control and Operations
      - Conditionals, loops, and operators.
-     - **Before Week 3** (before RWA1 is posted)
+     - **Before Sep 15** (before RWA1 is posted)
    * - Exception Handling
      - Exception handling with ``try``, ``catch``, ``throw``, standard and custom exception classes, and RAII.
-     - **Before Week 7** (before Smart Pointers)
+     - **Before Oct 13** (before Smart Pointers)

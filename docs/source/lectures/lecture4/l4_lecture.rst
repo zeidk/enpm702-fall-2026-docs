@@ -7,7 +7,7 @@ Lecture
 Overhead
 --------
 
-In computing, **overhead** refers to the additional resources -- time, memory, bandwidth, or processing -- required beyond the minimum necessary to accomplish a task. For example, calling a function has overhead (saving registers, pushing the return address onto the stack), even though those steps are not part of the function's core logic. When we discuss containers, we will frequently consider the overhead of various operations such as insertion, deletion, and access.
+In computing, **overhead** refers to the additional resources, time, memory, bandwidth, or processing, required beyond the minimum necessary to accomplish a task. For example, calling a function has overhead (saving registers, pushing the return address onto the stack), even though those steps are not part of the function's core logic. When we discuss containers, we will frequently consider the overhead of various operations such as insertion, deletion, and access.
 
 The Standard Library
 --------------------
@@ -39,13 +39,13 @@ Categories of Containers
 
 STL containers are organized into four categories:
 
-1. **Sequence Containers** -- Store elements in a linear order. The position of each element depends on when and where it was inserted, not on its value. Examples: ``std::vector``, ``std::array``, ``std::deque``, ``std::list``, ``std::forward_list``.
+1. **Sequence Containers**, Store elements in a linear order. The position of each element depends on when and where it was inserted, not on its value. Examples: ``std::vector``, ``std::array``, ``std::deque``, ``std::list``, ``std::forward_list``.
 
-2. **Associative Containers** -- Store elements in a sorted order based on keys. They provide fast key-based retrieval, typically in O(log n) time. Examples: ``std::set``, ``std::map``, ``std::multiset``, ``std::multimap``.
+2. **Associative Containers**, Store elements in a sorted order based on keys. They provide fast key-based retrieval, typically in O(log n) time. Examples: ``std::set``, ``std::map``, ``std::multiset``, ``std::multimap``.
 
-3. **Unordered Associative Containers** -- Store elements using hash tables, providing O(1) average-case access time. Elements are not stored in any particular order. Examples: ``std::unordered_set``, ``std::unordered_map``, ``std::unordered_multiset``, ``std::unordered_multimap``.
+3. **Unordered Associative Containers**, Store elements using hash tables, providing O(1) average-case access time. Elements are not stored in any particular order. Examples: ``std::unordered_set``, ``std::unordered_map``, ``std::unordered_multiset``, ``std::unordered_multimap``.
 
-4. **Container Adapters** -- Wrappers around other containers that provide a restricted interface. They limit which operations are available to enforce specific data structure semantics. Examples: ``std::stack``, ``std::queue``, ``std::priority_queue``.
+4. **Container Adapters**, Wrappers around other containers that provide a restricted interface. They limit which operations are available to enforce specific data structure semantics. Examples: ``std::stack``, ``std::queue``, ``std::priority_queue``.
 
 Why Use STL Containers?
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -165,8 +165,8 @@ Components of std::string
 A ``std::string`` object on the stack contains three components:
 
 1. A **pointer** to the character data (which may be on the heap or inline).
-2. The **size** -- the number of characters currently stored.
-3. The **capacity** -- the total number of characters that can be stored before reallocation is needed.
+2. The **size**, the number of characters currently stored.
+3. The **capacity**, the total number of characters that can be stored before reallocation is needed.
 
 .. figure:: /_static/images/l4/string1.pdf
    :alt: std::string components
@@ -706,9 +706,9 @@ Memory Management
 
 A ``std::vector`` object resides on the **stack** and internally maintains a pointer to a dynamically allocated array on the **heap**. The vector manages three internal pointers:
 
-1. **start** -- pointer to the first element of the allocated array.
-2. **finish** -- pointer to one past the last element currently in use.
-3. **end_of_storage** -- pointer to one past the last element of the allocated capacity.
+1. **start**, pointer to the first element of the allocated array.
+2. **finish**, pointer to one past the last element currently in use.
+3. **end_of_storage**, pointer to one past the last element of the allocated capacity.
 
 .. figure:: /_static/images/l4/vector-memory1.pdf
    :alt: Vector memory layout
@@ -1024,7 +1024,7 @@ std::unordered_map
 
    #include <unordered_map>
 
-``std::unordered_map`` has the same interface as ``std::map`` -- you can use ``[]``, ``.at()``, ``.insert()``, ``.emplace()``, ``.erase()``, ``.find()``, ``.count()``, and ``.contains()`` in exactly the same way.
+``std::unordered_map`` has the same interface as ``std::map``, you can use ``[]``, ``.at()``, ``.insert()``, ``.emplace()``, ``.erase()``, ``.find()``, ``.count()``, and ``.contains()`` in exactly the same way.
 
 **When to Use Which**
 
@@ -1106,7 +1106,7 @@ The ``<algorithm>`` header provides a rich set of generic algorithms that operat
 .. admonition:: Best Practice
    :class: tip
 
-   Prefer algorithms over raw loops -- they are more readable, less error-prone, and often optimized by the compiler.
+   Prefer algorithms over raw loops, they are more readable, less error-prone, and often optimized by the compiler.
 
 Overview
 ^^^^^^^^

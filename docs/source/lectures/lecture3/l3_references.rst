@@ -13,7 +13,7 @@ References
    - **Stack vs. Heap**: Stack allocation is fast and automatic but limited in size. Heap allocation is flexible and persists beyond function scope but requires manual management.
    - **Pointer Basics**: Pointers store memory addresses. They are declared with ``*``, initialized with ``nullptr``, ``&variable``, or the result of ``new``.
    - **Dereference Operator**: ``*p`` accesses the value at the address stored in the pointer. It can also be used to modify the value.
-   - **Const-Correctness**: Three modes -- pointer-to-const (``const int *p``), const-pointer (``int *const p``), and const-pointer-to-const (``const int *const p``).
+   - **Const-Correctness**: Three modes, pointer-to-const (``const int *p``), const-pointer (``int *const p``), and const-pointer-to-const (``const int *const p``).
    - **Dynamic Memory**: ``new`` allocates on the heap, ``delete`` frees it. Always ``delete`` what you ``new``.
    - **Common Pitfalls**: Dangling pointers (pointing to freed memory), memory leaks (never freeing memory), double delete (freeing twice), and null dereferencing.
    - **References**: Aliases for existing variables. Must be initialized, cannot be null, cannot be reseated.
@@ -40,7 +40,7 @@ References
 .. dropdown:: C++ Core Guidelines
    :class-container: sd-border-success
 
-   - `R.3: A raw pointer (T*) is non-owning <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r3-a-raw-pointer-t-is-non-owning>`_ -- Raw pointers should not own resources. Use them only to reference data owned by someone else.
-   - `R.11: Avoid calling new and delete explicitly <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r11-avoid-calling-new-and-delete-explicitly>`_ -- Prefer smart pointers (``std::unique_ptr``, ``std::shared_ptr``) or containers that manage memory automatically.
+   - `R.3: A raw pointer (T*) is non-owning <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r3-a-raw-pointer-t-is-non-owning>`_, Raw pointers should not own resources. Use them only to reference data owned by someone else.
+   - `R.11: Avoid calling new and delete explicitly <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r11-avoid-calling-new-and-delete-explicitly>`_, Prefer smart pointers (``std::unique_ptr``, ``std::shared_ptr``) or containers that manage memory automatically.
    - `R.12: Immediately give the result of an explicit resource allocation to a manager object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r12-immediately-give-the-result-of-an-explicit-resource-allocation-to-a-manager-object>`_
    - `R.13: Perform at most one explicit resource allocation in a single expression statement <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r13-perform-at-most-one-explicit-resource-allocation-in-a-single-expression-statement>`_

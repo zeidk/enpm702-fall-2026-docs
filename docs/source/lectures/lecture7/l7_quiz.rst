@@ -24,7 +24,7 @@ blocks), ``std::weak_ptr`` (non-owning observation, ``lock()``, ``expired()``),
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ==================================
 
 .. admonition:: Question 1
@@ -44,7 +44,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- xvalue
+   **C**, xvalue
 
    ``std::move(x)`` performs a ``static_cast<T&&>`` on ``x``, converting the
    lvalue into an xvalue. An xvalue has identity (it still refers to ``x``)
@@ -60,14 +60,14 @@ Multiple Choice (Questions 1--10)
 
    B. It calls the move constructor of the object.
 
-   C. It performs a ``static_cast`` to an rvalue reference -- no data is moved.
+   C. It performs a ``static_cast`` to an rvalue reference, no data is moved.
 
    D. It swaps the contents of two objects.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- It performs a ``static_cast`` to an rvalue reference -- no data is moved.
+   **C**, It performs a ``static_cast`` to an rvalue reference, no data is moved.
 
    ``std::move`` does not move anything. It simply casts an lvalue to an
    xvalue (type ``T&&``), which allows the compiler to select move
@@ -96,7 +96,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Compilation error: ``std::unique_ptr`` is non-copyable.
+   **B**, Compilation error: ``std::unique_ptr`` is non-copyable.
 
    ``std::unique_ptr`` enforces exclusive ownership by deleting its copy
    constructor. To transfer ownership, you must use ``std::move``:
@@ -119,7 +119,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``auto u = std::make_unique<int>(10);``
+   **B**, ``auto u = std::make_unique<int>(10);``
 
    ``std::make_unique`` is the preferred way to create a ``std::unique_ptr``.
    It is exception-safe and avoids the need to use ``new`` directly
@@ -143,7 +143,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- The ``unique_ptr`` gives up ownership and returns a raw pointer;
+   **B**, The ``unique_ptr`` gives up ownership and returns a raw pointer;
    the caller is responsible for calling ``delete``.
 
    After ``release()``, the ``unique_ptr`` is set to ``nullptr`` and no
@@ -168,7 +168,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- A heap-allocated data structure that holds reference counts
+   **B**, A heap-allocated data structure that holds reference counts
    (strong and weak), a managed pointer, a deleter, and allocator information.
 
    The control block is created when the first ``std::shared_ptr`` is
@@ -202,7 +202,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- 2
+   **B**, 2
 
    After creation, ``s1``, ``s2``, and ``s3`` all share ownership (strong
    count = 3). When ``s1.reset()`` is called, ``s1`` releases its ownership,
@@ -226,7 +226,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``std::weak_ptr``
+   **C**, ``std::weak_ptr``
 
    ``std::weak_ptr`` provides non-owning observation of a resource managed
    by ``std::shared_ptr``. It does not increment the strong reference count,
@@ -251,7 +251,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- A ``std::shared_ptr`` that shares ownership if the resource is
+   **C**, A ``std::shared_ptr`` that shares ownership if the resource is
    still alive, or an empty ``std::shared_ptr`` if it has expired.
 
    ``lock()`` atomically checks whether the strong count is greater than
@@ -276,9 +276,9 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **D** -- ``arr[3]``
+   **D**, ``arr[3]``
 
-   ``arr[3]`` names a specific memory location and has identity -- you can
+   ``arr[3]`` names a specific memory location and has identity, you can
    take its address with ``&arr[3]``. The literal ``42`` and the expression
    ``x + y`` are prvalues (temporaries). ``std::move(v)`` is an xvalue.
 
@@ -286,7 +286,7 @@ Multiple Choice (Questions 1--10)
 ----
 
 
-True/False (Questions 11--15)
+True/False (Questions 11-15)
 ==============================
 
 .. admonition:: Question 11

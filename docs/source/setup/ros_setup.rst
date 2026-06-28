@@ -152,13 +152,13 @@ Verify ROS 2
 
 Open two terminals and run:
 
-**Terminal 1 -- Talker:**
+**Terminal 1 Talker:**
 
 .. code-block:: bash
 
    ros2 run demo_nodes_cpp talker
 
-**Terminal 2 -- Listener:**
+**Terminal 2 Listener:**
 
 .. code-block:: bash
 
@@ -171,7 +171,7 @@ receiving them. Press ``Ctrl + C`` in both terminals to stop.
 Gazebo (Simulation)
 -------------------
 
-Gazebo is required for the Group Projects (GP1--GP3). Install it with:
+Gazebo is required for the Group Projects (GP1-GP3). Install it with:
 
 .. code-block:: bash
 

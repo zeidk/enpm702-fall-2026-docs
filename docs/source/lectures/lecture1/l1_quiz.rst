@@ -37,7 +37,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- A program that provides a command-line interface to interact with the operating system.
+   **B**, A program that provides a command-line interface to interact with the operating system.
 
    *Explanation:* A shell is a program that interprets commands and allows users to execute them, run scripts, manage files, and control processes through a CLI.
 
@@ -58,7 +58,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Bash (Bourne Again Shell)
+   **C**, Bash (Bourne Again Shell)
 
    *Explanation:* Bash is the default shell for most Linux distributions and is widely used for scripting and interactive command-line use.
 
@@ -79,7 +79,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``alias identifier='value'``
+   **B**, ``alias identifier='value'``
 
    *Explanation:* The alias command requires no spaces around the equal sign. The value should be enclosed in quotes.
 
@@ -100,7 +100,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``.zshrc``
+   **B**, ``.zshrc``
 
    *Explanation:* Zsh uses ``.zshrc``, located in the user's home directory. Each shell type has its own configuration file.
 
@@ -121,7 +121,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- The current user's home directory.
+   **C**, The current user's home directory.
 
    *Explanation:* In Unix-like operating systems, the tilde ``~`` is a shorthand for the current user's home directory (e.g., ``/home/username``).
 
@@ -142,7 +142,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- A searchable list of all available commands in VSCode.
+   **B**, A searchable list of all available commands in VSCode.
 
    *Explanation:* The Command Palette (``Ctrl + Shift + P``) is a universal search box for actions, including built-in commands and those from installed extensions.
 
@@ -163,7 +163,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- It defines the build configuration for a C++ project.
+   **B**, It defines the build configuration for a C++ project.
 
    *Explanation:* ``CMakeLists.txt`` is used by CMake to specify which source files to compile, which libraries to link against, and other build-related settings.
 
@@ -184,7 +184,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``launch.json``
+   **C**, ``launch.json``
 
    *Explanation:* ``launch.json`` contains debug configurations for the project. ``settings.json`` stores workspace settings, ``tasks.json`` automates workflows, and ``extensions.json`` lists recommended extensions.
 

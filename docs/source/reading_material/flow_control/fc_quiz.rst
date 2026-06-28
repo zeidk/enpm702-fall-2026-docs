@@ -1,5 +1,5 @@
 ====================================================
-Flow Control and Operations -- Quiz
+Flow Control and Operations: Quiz
 ====================================================
 
 
@@ -142,7 +142,7 @@ Flow Control and Operations -- Quiz
       **b) 6**
 
       The loop starts at ``i = 0`` and runs while ``i <= 5``, so it
-      executes for ``i`` values 0, 1, 2, 3, 4, 5 -- that is 6
+      executes for ``i`` values 0, 1, 2, 3, 4, 5, that is 6
       iterations.
 
 

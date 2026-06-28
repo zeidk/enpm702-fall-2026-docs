@@ -7,7 +7,7 @@ L4: STL Containers
 Overview
 --------
 
-This lecture covers the Standard Template Library (STL) containers -- strings, arrays, and vectors. Students will learn about container memory management, access and modification patterns, and iterators. By understanding how the STL organizes and manages data, you will be equipped to choose the right container for a given task and use it effectively.
+This lecture covers the Standard Template Library (STL) containers, strings, arrays, and vectors. Students will learn about container memory management, access and modification patterns, and iterators. By understanding how the STL organizes and manages data, you will be equipped to choose the right container for a given task and use it effectively.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives

@@ -21,7 +21,7 @@ terminal on your Ubuntu machine.
 Navigating the File System
 ==========================
 
-.. dropdown:: Exercise 1 -- Where Am I?
+.. dropdown:: Exercise 1: Where Am I?
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -56,7 +56,7 @@ Navigating the File System
            cd ~
 
 
-.. dropdown:: Exercise 2 -- Creating and Moving Around
+.. dropdown:: Exercise 2: Creating and Moving Around
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -99,7 +99,7 @@ Navigating the File System
            cd
 
 
-.. dropdown:: Exercise 3 -- Absolute vs. Relative Paths
+.. dropdown:: Exercise 3: Absolute vs. Relative Paths
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -148,7 +148,7 @@ Navigating the File System
 Working with Files
 ==================
 
-.. dropdown:: Exercise 4 -- Creating and Viewing Files
+.. dropdown:: Exercise 4: Creating and Viewing Files
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -197,7 +197,7 @@ Working with Files
            Using ``>`` on an existing file will erase its contents.
 
 
-.. dropdown:: Exercise 5 -- Copying, Moving, and Removing
+.. dropdown:: Exercise 5: Copying, Moving, and Removing
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -242,7 +242,7 @@ Working with Files
         .. warning::
 
            ``rm -r`` removes directories and all their contents
-           recursively. Use with caution -- there is no undo.
+           recursively. Use with caution, there is no undo.
 
 
 ----
@@ -251,7 +251,7 @@ Working with Files
 Aliases and Functions
 =====================
 
-.. dropdown:: Exercise 6 -- Creating Aliases
+.. dropdown:: Exercise 6: Creating Aliases
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -296,7 +296,7 @@ Aliases and Functions
            source ~/.bashrc
 
 
-.. dropdown:: Exercise 7 -- Writing Shell Functions
+.. dropdown:: Exercise 7: Writing Shell Functions
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -352,7 +352,7 @@ Aliases and Functions
 Pipes and Redirection
 =====================
 
-.. dropdown:: Exercise 8 -- Combining Commands with Pipes
+.. dropdown:: Exercise 8: Combining Commands with Pipes
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -396,7 +396,7 @@ Pipes and Redirection
            can chain multiple pipes together.
 
 
-.. dropdown:: Exercise 9 -- Redirection Practice
+.. dropdown:: Exercise 9: Redirection Practice
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -441,7 +441,7 @@ Pipes and Redirection
 Challenge
 =========
 
-.. dropdown:: Exercise 10 -- Build a Project Setup Script
+.. dropdown:: Exercise 10: Build a Project Setup Script
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

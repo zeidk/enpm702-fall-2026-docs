@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L2: Introduction to C++**
+        **ENPM702 L2: Introduction to C++**
 
         Covers C++ overview and timeline, the build process (preprocessor,
         compiler, linker), variables (declarations, initializations, naming),

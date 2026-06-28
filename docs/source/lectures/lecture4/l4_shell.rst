@@ -8,7 +8,7 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--3 and introduce new tools for text processing, file comparison, archiving, and shell scripting.
+These exercises build on the shell skills from Lectures 1-3 and introduce new tools for text processing, file comparison, archiving, and shell scripting.
 
 Exercise 1: xargs
 -------------------
@@ -196,7 +196,7 @@ Combine the tools from this lecture to solve more complex tasks.
 2. Create two directories with some overlapping files. Use ``diff -rq`` to compare the directories and save the report using ``tee``.
 3. Write a script that archives all ``.log`` files older than 7 days into a dated ``tar.gz`` file, then deletes the originals.
 
-Exercise 8: Challenge -- C++ Project Scaffold
+Exercise 8: Challenge C++ Project Scaffold
 -----------------------------------------------
 
 Write a shell script called ``create_project.sh`` that creates a complete C++ project scaffold. The script should:

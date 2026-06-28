@@ -18,7 +18,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1 -- Variable Declarations and Initialization
+.. dropdown:: Exercise 1: Variable Declarations and Initialization
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -84,7 +84,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 2 -- Type Conversion Explorer
+.. dropdown:: Exercise 2: Type Conversion Explorer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -161,7 +161,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 3 -- Constants and constexpr
+.. dropdown:: Exercise 3: Constants and constexpr
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -235,7 +235,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 4 -- Scope Detective
+.. dropdown:: Exercise 4: Scope Detective
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -247,7 +247,7 @@ Write, compile, and run each program to verify your understanding.
     **Specification**
 
     1. Create a file called ``scopes.cpp``.
-    2. **Part A -- Predict the output:** Before running the code below, predict
+    2. **Part A, Predict the output:** Before running the code below, predict
        what it will print. Then compile and run it to check your prediction.
 
        .. code-block:: cpp
@@ -272,7 +272,7 @@ Write, compile, and run each program to verify your understanding.
               return 0;
           }
 
-    3. **Part B -- Write your own:** Write a program that:
+    3. **Part B, Write your own:** Write a program that:
 
        - Declares a global variable ``robot_name`` with value ``"GlobalBot"``.
        - In ``main()``, declares a local ``robot_name`` with value ``"LocalBot"``.
@@ -326,7 +326,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 5 -- Namespace Organizer
+.. dropdown:: Exercise 5: Namespace Organizer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -413,7 +413,7 @@ Write, compile, and run each program to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 6 -- Challenge: Unit Converter
+.. dropdown:: Exercise 6 Challenge: Unit Converter
     :icon: rocket
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -437,7 +437,7 @@ Write, compile, and run each program to verify your understanding.
 
        - Display a menu with options: (1) Meters to Feet, (2) Kilograms to Pounds, (3) Celsius to Fahrenheit, (4) Quit.
        - Read the user's choice using ``std::cin``.
-       - For options 1--3, prompt for a value, perform the conversion, and print the result.
+       - For options 1-3, prompt for a value, perform the conversion, and print the result.
        - For option 4, print a goodbye message and exit.
        - For invalid choices, print an error message.
 

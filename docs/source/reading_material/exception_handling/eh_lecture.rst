@@ -7,9 +7,9 @@ What Are Exceptions?
 ====================================================
 
 An **exception** is a runtime event that disrupts the normal flow of a
-program. When something goes wrong during execution -- such as dividing
+program. When something goes wrong during execution, such as dividing
 by zero, accessing an invalid index, failing to open a file, or
-encountering a network timeout -- the program cannot continue normally.
+encountering a network timeout, the program cannot continue normally.
 
 Without exception handling, these errors typically crash the program
 with little useful information. C++ provides a structured mechanism to
@@ -30,9 +30,9 @@ Common situations that produce exceptions:
 
 C++ uses three keywords for exception handling:
 
-- ``throw`` -- raises (throws) an exception.
-- ``try`` -- wraps a block of code that might throw an exception.
-- ``catch`` -- handles the exception if one is thrown.
+- ``throw``, raises (throws) an exception.
+- ``try``, wraps a block of code that might throw an exception.
+- ``catch``, handles the exception if one is thrown.
 
 .. card::
    :class-header: sd-bg-info sd-text-white
@@ -368,6 +368,6 @@ Best Practices
    - Never throw in destructors (can cause ``std::terminate`` during
      stack unwinding).
    - Do not use exceptions for normal control flow.
-   - Do not catch exceptions you cannot handle -- let them propagate
+   - Do not catch exceptions you cannot handle, let them propagate
      to a handler that can.
    - Do not catch by value (causes slicing).

@@ -6,9 +6,9 @@ Overview
 --------
 
 This reading material covers C++ exception handling using ``try``,
-``catch``, and ``throw``. It is provided as a pre-recorded video on
-Canvas. Students should watch this before starting RWA2, as proper
-error handling is expected in all subsequent assignments.
+``catch``, and ``throw``. It is a self-study reading module. Students
+should work through it before starting RWA2, as proper error handling
+is expected in all subsequent assignments.
 
 
 .. admonition:: Learning Objectives

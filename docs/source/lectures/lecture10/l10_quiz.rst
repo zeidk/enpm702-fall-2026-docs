@@ -20,7 +20,7 @@ subscribers, message types, QoS, CLI tools, package creation,
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ====================================================
 
 .. admonition:: Question 1
@@ -39,7 +39,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- DDS (Data Distribution Service)
+   **C**, DDS (Data Distribution Service)
 
    ROS 2 uses DDS as its middleware layer for publish-subscribe
    communication. DDS provides features like configurable QoS,
@@ -64,7 +64,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``ros2 pkg create --build-type ament_cmake my_pkg --dependencies rclcpp``
+   **B**, ``ros2 pkg create --build-type ament_cmake my_pkg --dependencies rclcpp``
 
    The ``ros2 pkg create`` command is the standard way to create
    packages. ``--build-type ament_cmake`` specifies a C++ package,
@@ -91,7 +91,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- The QoS history depth (queue size)
+   **C**, The QoS history depth (queue size)
 
    The second argument to ``create_publisher`` is the QoS depth,
    which specifies how many messages to queue if the subscriber is
@@ -115,7 +115,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``rclcpp::spin(node)``
+   **C**, ``rclcpp::spin(node)``
 
    ``rclcpp::spin()`` blocks and processes incoming callbacks (timer
    callbacks, subscription callbacks, etc.) until the node is shut
@@ -139,12 +139,12 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- It is a placeholder for the first argument of the callback
+   **B**, It is a placeholder for the first argument of the callback
    (the incoming message)
 
    When using ``std::bind`` to bind a member function,
    ``std::placeholders::_1`` reserves a slot for the first argument
-   that will be provided at call time -- in this case, the received
+   that will be provided at call time, in this case, the received
    message.
 
 
@@ -164,7 +164,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- In a ``msg/`` directory within the interface package
+   **C**, In a ``msg/`` directory within the interface package
 
    Custom message definitions are placed in a ``msg/`` directory
    inside a dedicated interface package. The
@@ -189,7 +189,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **A** -- ``ros2 topic list -t``
+   **A**, ``ros2 topic list -t``
 
    The ``-t`` flag adds the message type next to each topic name.
    Without ``-t``, only topic names are listed.
@@ -212,7 +212,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``source ~/ros2_ws/install/setup.bash``
+   **B**, ``source ~/ros2_ws/install/setup.bash``
 
    The ``install/`` directory contains the built artifacts and the
    ``setup.bash`` script that adds them to your environment. The
@@ -237,7 +237,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``rosidl_generate_interfaces()``
+   **B**, ``rosidl_generate_interfaces()``
 
    ``rosidl_generate_interfaces()`` is the ROS 2 CMake macro that
    invokes the ``rosidl`` toolchain to generate C++, Python, and
@@ -255,7 +255,7 @@ Multiple Choice (Questions 1--10)
 
    B. ROS 2 replaces ``roscore`` with ``ros2core``
 
-   C. ROS 2 does not require a central master -- nodes discover each
+   C. ROS 2 does not require a central master, nodes discover each
       other through DDS
 
    D. ROS 2 uses multiple ``roscore`` instances for redundancy
@@ -263,7 +263,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ROS 2 does not require a central master -- nodes discover
+   **C**, ROS 2 does not require a central master, nodes discover
    each other through DDS
 
    ROS 2 uses DDS discovery, which is fully distributed. There is no
@@ -274,7 +274,7 @@ Multiple Choice (Questions 1--10)
 ----
 
 
-True or False (Questions 11--15)
+True or False (Questions 11-15)
 ====================================================
 
 .. admonition:: Question 11

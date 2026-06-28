@@ -5,7 +5,7 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.0.0 -- Original Version (2026-04-01)
+.. dropdown:: v1.0.0: Original Version (2026-04-01)
    :icon: tag
    :class-container: sd-border-success
 

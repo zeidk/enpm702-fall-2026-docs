@@ -23,7 +23,7 @@ Parameters
 
 Parameters are node-specific configuration values that allow you to change a
 node's behavior without modifying and recompiling code. They are ideal for
-values that may vary between deployments -- such as sensor thresholds, timer
+values that may vary between deployments, such as sensor thresholds, timer
 periods, topic names, or robot dimensions.
 
 .. admonition:: Key Concept
@@ -673,7 +673,7 @@ callbacks can run simultaneously.
 
 **Advantages:**
 
-- Simple and safe -- no data races or synchronization needed.
+- Simple and safe, no data races or synchronization needed.
 - Predictable execution order.
 
 **Disadvantages:**

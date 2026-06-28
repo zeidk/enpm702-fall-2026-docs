@@ -25,7 +25,7 @@ builds on the skills from the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- Pointer Basics
+.. dropdown:: Exercise 1: Pointer Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -80,7 +80,7 @@ builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 2 -- Const-Correctness
+.. dropdown:: Exercise 2: Const-Correctness
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -146,7 +146,7 @@ builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 3 -- Dynamic Memory with Valgrind
+.. dropdown:: Exercise 3: Dynamic Memory with Valgrind
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -214,7 +214,7 @@ builds on the skills from the previous one.
            valgrind --leak-check=full ./exercise3
 
 
-.. dropdown:: Exercise 4 -- Reference vs. Pointer
+.. dropdown:: Exercise 4: Reference vs. Pointer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -283,7 +283,7 @@ builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 5 -- Memory Tracing
+.. dropdown:: Exercise 5: Memory Tracing
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -381,7 +381,7 @@ builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 6 -- Dynamic Integer Array Manager (Challenge)
+.. dropdown:: Exercise 6: Dynamic Integer Array Manager (Challenge)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

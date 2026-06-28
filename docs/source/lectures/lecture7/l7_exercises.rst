@@ -18,7 +18,7 @@ exercise builds on the skills from the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- Unique Pointer Basics
+.. dropdown:: Exercise 1: Unique Pointer Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -68,7 +68,7 @@ exercise builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 2 -- Ownership Transfer with std::move
+.. dropdown:: Exercise 2 Ownership Transfer with std::move
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -121,7 +121,7 @@ exercise builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 3 -- Shared Pointer and Reference Counting
+.. dropdown:: Exercise 3: Shared Pointer and Reference Counting
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -174,7 +174,7 @@ exercise builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 4 -- Weak Pointer Lifetime Observation
+.. dropdown:: Exercise 4: Weak Pointer Lifetime Observation
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -231,7 +231,7 @@ exercise builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 5 -- Factory Function Returning unique_ptr
+.. dropdown:: Exercise 5: Factory Function Returning unique_ptr
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -295,7 +295,7 @@ exercise builds on the skills from the previous one.
            }
 
 
-.. dropdown:: Exercise 6 -- Resource Manager with Smart Pointers (Challenge)
+.. dropdown:: Exercise 6: Resource Manager with Smart Pointers (Challenge)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

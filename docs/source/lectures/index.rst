@@ -88,9 +88,11 @@ Each lecture page contains the following sections:
    :hidden:
    :maxdepth: 3
    :titlesonly:
-   :caption: ROS 2 (Weeks 10-14)
+   :caption: ROS 2 (Weeks 10-15)
 
    lecture10/l10_index
    lecture11/l11_index
    lecture12/l12_index
    lecture13/l13_index
+   lecture14/l14_index
+   lecture15/l15_index

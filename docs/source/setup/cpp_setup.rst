@@ -41,9 +41,8 @@ Visual Studio Code
 Installing and configuring VSCode (including the recommended
 extensions, the ``.vscode`` folder, the course workspace layout, and
 the CMake build flow) is covered in its own reading material:
-:doc:`/reading_material/vscode_cmake/vcm_index`. Watch the
-pre-recorded video on Canvas and walk through the exercises before
-the first lecture.
+:doc:`/reading_material/vscode_cmake/vcm_index`. Work through that
+reading module and its exercises before the first lecture.
 
 
 Doxygen
@@ -72,5 +71,5 @@ have one.
 
 .. tip::
 
-   Watch the **Version Control** pre-recorded video on Canvas for a
+   Work through the **Version Control** reading module for a
    full walkthrough of Git and GitHub workflows used in this course.

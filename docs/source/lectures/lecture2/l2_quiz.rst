@@ -33,7 +33,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Preprocessor, compiler, linker
+   **B**, Preprocessor, compiler, linker
 
    *Explanation:* The preprocessor handles directives like ``#include`` and ``#define``, producing a translation unit. The compiler translates each translation unit into an object file. The linker combines object files and libraries into the final executable.
 
@@ -53,7 +53,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``int speed{10};``
+   **C**, ``int speed{10};``
 
    *Explanation:* Uniform initialization uses curly braces ``{}``. This is the preferred initialization style in modern C++ because it prevents narrowing conversions. Option A is copy initialization, B is direct initialization, and D declares an array.
 
@@ -82,7 +82,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``105``
+   **C**, ``105``
 
    *Explanation:* The inner block declares a new variable ``value`` that shadows the outer one. Inside the block, ``value`` is 10. Once the block ends, the inner ``value`` goes out of scope, and the outer ``value`` (which is 5) is printed.
 
@@ -102,7 +102,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- The number of bytes used by a type or variable.
+   **C**, The number of bytes used by a type or variable.
 
    *Explanation:* The ``sizeof`` operator returns the size in bytes of a type or variable. For example, ``sizeof(int)`` typically returns 4 on most modern systems, meaning ``int`` uses 4 bytes (32 bits) of memory.
 
@@ -122,9 +122,9 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``int x{3.14};``
+   **C**, ``int x{3.14};``
 
-   *Explanation:* Assigning a ``double`` literal (3.14) to an ``int`` using brace initialization is a narrowing conversion. The compiler will issue an error because data would be lost (the fractional part). This is one of the key benefits of uniform initialization -- it prevents accidental data loss.
+   *Explanation:* Assigning a ``double`` literal (3.14) to an ``int`` using brace initialization is a narrowing conversion. The compiler will issue an error because data would be lost (the fractional part). This is one of the key benefits of uniform initialization, it prevents accidental data loss.
 
 
 ----
@@ -142,7 +142,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``constexpr`` guarantees compile-time evaluation; ``const`` only means the value cannot be modified after initialization.
+   **B**, ``constexpr`` guarantees compile-time evaluation; ``const`` only means the value cannot be modified after initialization.
 
    *Explanation:* A ``const`` variable can be initialized with a runtime value (e.g., user input). A ``constexpr`` variable must be initialized with a value that can be computed at compile time. This allows the compiler to optimize by substituting the value directly.
 
@@ -162,7 +162,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- snake_case (e.g., ``my_variable``)
+   **C**, snake_case (e.g., ``my_variable``)
 
    *Explanation:* The C++ Core Guidelines recommend snake_case for variable and function names. This convention uses lowercase letters with underscores separating words, improving readability.
 
@@ -188,7 +188,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``double``
+   **C**, ``double``
 
    *Explanation:* When an ``int`` and a ``double`` are used in an arithmetic expression, the ``int`` is implicitly converted to ``double`` through arithmetic conversion (the type with the higher rank wins). The ``auto`` keyword deduces the type of the result, which is ``double``.
 
@@ -208,7 +208,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- It results in undefined behavior.
+   **C**, It results in undefined behavior.
 
    *Explanation:* Reading an uninitialized local variable in C++ is undefined behavior. The variable holds whatever garbage value was previously at that memory location. The compiler may or may not warn about this. Always initialize your variables.
 
@@ -228,7 +228,7 @@ Multiple Choice
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Namespaces prevent naming collisions by grouping identifiers under a unique name.
+   **B**, Namespaces prevent naming collisions by grouping identifiers under a unique name.
 
    *Explanation:* Namespaces are used to organize code and prevent naming collisions. Using ``using namespace std;`` in header files is considered bad practice because it pollutes the global namespace for all files that include that header. Namespaces can be nested, and ``::`` is called the scope resolution operator.
 
@@ -308,4 +308,4 @@ True/False
 
    **False**
 
-   *Explanation:* ``static_cast<int>(3.7)`` truncates the decimal part, resulting in ``3``, not ``4``. The cast does not round -- it simply discards the fractional portion. This is the same behavior as a C-style cast ``(int)3.7`` but is preferred because it is explicit and searchable.
+   *Explanation:* ``static_cast<int>(3.7)`` truncates the decimal part, resulting in ``3``, not ``4``. The cast does not round, it simply discards the fractional portion. This is the same behavior as a C-style cast ``(int)3.7`` but is preferred because it is explicit and searchable.

@@ -2,7 +2,7 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 5: Functions --
+These exercises reinforce the concepts covered in Lecture 5: Functions,
 Basics. Work through them in order, as each exercise builds on the
 skills from the previous one.
 
@@ -18,7 +18,7 @@ skills from the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- Basic Function Declarations and Definitions
+.. dropdown:: Exercise 1: Basic Function Declarations and Definitions
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -114,7 +114,7 @@ skills from the previous one.
              std::cout << "is_even(7) = " << std::boolalpha << is_even(7) << '\n';
          }
 
-.. dropdown:: Exercise 2 -- Pass-by-Value vs. Pass-by-Reference
+.. dropdown:: Exercise 2: Pass-by-Value vs. Pass-by-Reference
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -182,16 +182,16 @@ skills from the previous one.
              print_vector(numbers);
          }
 
-.. dropdown:: Exercise 3 -- Function Overloading
+.. dropdown:: Exercise 3: Function Overloading
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    Write a program that demonstrates function overloading by creating multiple versions of an ``area`` function.
 
-   1. ``double area(double radius)`` -- calculates the area of a circle.
-   2. ``double area(double length, double width)`` -- calculates the area of a rectangle.
-   3. ``double area(double base, double height, bool is_triangle)`` -- calculates the area of a triangle (when ``is_triangle`` is true).
+   1. ``double area(double radius)``, calculates the area of a circle.
+   2. ``double area(double length, double width)``, calculates the area of a rectangle.
+   3. ``double area(double base, double height, bool is_triangle)``, calculates the area of a triangle (when ``is_triangle`` is true).
    4. Call each overloaded function from ``main()`` and print the results.
    5. Observe which version the compiler selects for each call.
 
@@ -227,16 +227,16 @@ skills from the previous one.
              std::cout << "Triangle area (b=3, h=8): " << area(3.0, 8.0, true) << '\n';
          }
 
-.. dropdown:: Exercise 4 -- Recursive Functions
+.. dropdown:: Exercise 4: Recursive Functions
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    Write a program that implements the following recursive functions.
 
-   1. ``int fibonacci(int n)`` -- returns the nth Fibonacci number. ``fibonacci(0) = 0``, ``fibonacci(1) = 1``, ``fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)``.
-   2. ``int sum_digits(int n)`` -- returns the sum of all digits in a non-negative integer. For example, ``sum_digits(1234)`` returns ``10``.
-   3. ``void print_reverse(const std::string& str, int index)`` -- prints a string in reverse, character by character, using recursion.
+   1. ``int fibonacci(int n)``, returns the nth Fibonacci number. ``fibonacci(0) = 0``, ``fibonacci(1) = 1``, ``fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)``.
+   2. ``int sum_digits(int n)``, returns the sum of all digits in a non-negative integer. For example, ``sum_digits(1234)`` returns ``10``.
+   3. ``void print_reverse(const std::string& str, int index)``, prints a string in reverse, character by character, using recursion.
    4. For each function, identify the **base case** and the **recursive step** in a comment.
 
    .. dropdown:: Solution
@@ -299,7 +299,7 @@ skills from the previous one.
              std::cout << '\n';
          }
 
-.. dropdown:: Exercise 5 -- Header File Organization
+.. dropdown:: Exercise 5: Header File Organization
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -362,7 +362,7 @@ skills from the previous one.
    3. Simplify ``main.cpp`` to contain only the ``main`` function and the necessary ``#include``.
    4. Build with: ``g++ -std=c++17 main.cpp student_utils.cpp -o exercise5``
 
-.. dropdown:: Exercise 6 -- Challenge: Calculator with Functions
+.. dropdown:: Exercise 6 Challenge: Calculator with Functions
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold
@@ -374,11 +374,11 @@ skills from the previous one.
       - ``double add(double a, double b);``
       - ``double subtract(double a, double b);``
       - ``double multiply(double a, double b);``
-      - ``double divide(double a, double b);`` -- handle division by zero by printing an error message and returning ``0.0``.
-      - ``double power(double base, int exponent);`` -- implement using a loop (not ``std::pow``). Handle negative exponents.
-      - ``long long factorial(int n);`` -- implement recursively. Return ``1`` for ``n <= 1``.
-      - ``void print_result(const std::string& operation, double result);`` -- format and display the result.
-      - ``void print_menu();`` -- display available operations.
+      - ``double divide(double a, double b);``, handle division by zero by printing an error message and returning ``0.0``.
+      - ``double power(double base, int exponent);``, implement using a loop (not ``std::pow``). Handle negative exponents.
+      - ``long long factorial(int n);``, implement recursively. Return ``1`` for ``n <= 1``.
+      - ``void print_result(const std::string& operation, double result);``, format and display the result.
+      - ``void print_menu();``, display available operations.
 
    2. Use **default parameters**: ``print_result`` should have a default precision parameter (``int precision = 2``).
 

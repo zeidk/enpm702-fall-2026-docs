@@ -56,7 +56,7 @@ Multiple Choice
 
       **B. Storing short strings inline within the string object instead of allocating heap memory**
 
-      SSO avoids the overhead of heap allocation for short strings (typically fewer than 15--22 characters) by storing the character data directly inside the ``std::string`` object on the stack.
+      SSO avoids the overhead of heap allocation for short strings (typically fewer than 15-22 characters) by storing the character data directly inside the ``std::string`` object on the stack.
 
 .. admonition:: Question 4
    :class: hint

@@ -8,7 +8,7 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--6 and introduce tools
+These exercises build on the shell skills from Lectures 1-6 and introduce tools
 for remote access, file transfer, terminal multiplexing, build automation, and
 environment setup.
 
@@ -73,7 +73,7 @@ resumable transfers.
 2. Modify one of the files in the original directory. Use ``rsync -avz`` to sync the changes to ``/tmp/test_transfer/``. Observe that only the changed file is transferred.
 3. Use ``rsync -avzn`` (dry run) to preview a transfer before actually executing it.
 
-Exercise 3: tmux Basics -- Sessions
+Exercise 3: tmux Basics Sessions
 --------------------------------------
 
 ``tmux`` is a terminal multiplexer that lets you create multiple terminal
@@ -108,7 +108,7 @@ reattach later. This is essential for long-running processes on remote machines.
 4. Reattach to the ``build`` session and confirm ``top`` is still running.
 5. Kill the session with ``tmux kill-session -t build``.
 
-Exercise 4: tmux -- Windows and Panes
+Exercise 4: tmux Windows and Panes
 ----------------------------------------
 
 Within a single tmux session, you can create multiple **windows** (like tabs)
@@ -132,7 +132,7 @@ and split windows into **panes** (side-by-side terminals).
 2. In the second window, split the pane vertically (``Ctrl+b``, ``%``). Run ``watch -n 1 date`` in one pane and use the other pane for shell commands.
 3. Split a pane horizontally (``Ctrl+b``, ``"``). Practice navigating between panes with ``Ctrl+b`` + arrow keys.
 
-Exercise 5: Makefile Basics -- Targets and Dependencies
+Exercise 5: Makefile Basics Targets and Dependencies
 ---------------------------------------------------------
 
 A ``Makefile`` automates the build process. Each rule has a **target**, optional

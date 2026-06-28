@@ -8,14 +8,14 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--4 and introduce functions in bash scripts, file processing, string manipulation, and control flow constructs.
+These exercises build on the shell skills from Lectures 1-4 and introduce functions in bash scripts, file processing, string manipulation, and control flow constructs.
 
-.. dropdown:: Exercise 1 -- Functions in Bash Scripts
+.. dropdown:: Exercise 1: Functions in Bash Scripts
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   Bash supports user-defined functions that can be called by name. Functions help organize scripts into reusable, modular pieces -- just like functions in C++.
+   Bash supports user-defined functions that can be called by name. Functions help organize scripts into reusable, modular pieces, just like functions in C++.
 
    .. code-block:: bash
 
@@ -42,12 +42,12 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Write a function ``multiply`` that takes two numbers and prints their product.
    3. Write a function ``file_info`` that takes a filename as an argument and prints whether the file exists, its size (using ``stat`` or ``wc -c``), and the number of lines.
 
-.. dropdown:: Exercise 2 -- Return Values and Local Variables
+.. dropdown:: Exercise 2: Return Values and Local Variables
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   Bash functions do not return values like C++ functions. Instead, they use ``return`` for exit codes (0--255) and ``echo`` to output values that can be captured.
+   Bash functions do not return values like C++ functions. Instead, they use ``return`` for exit codes (0-255) and ``echo`` to output values that can be captured.
 
    .. code-block:: bash
 
@@ -91,7 +91,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Write a function ``celsius_to_fahrenheit`` that takes a Celsius value, computes the Fahrenheit equivalent using ``bc`` (for floating point: ``echo "scale=2; ($1 * 9/5) + 32" | bc``), and echoes the result. Capture the result in a variable and print it.
    3. Write a function that demonstrates the difference between ``local`` and non-local variables.
 
-.. dropdown:: Exercise 3 -- Reading Files Line by Line
+.. dropdown:: Exercise 3: Reading Files Line by Line
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -123,7 +123,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Create a CSV file ``scores.csv`` with columns ``name,score``. Write a script that reads each line, and prints whether each student passed (score >= 60) or failed.
    3. Write a script that reads ``/etc/passwd`` and prints only the usernames (the first field, delimited by ``:``) and their shells (the last field).
 
-.. dropdown:: Exercise 4 -- String Manipulation in Bash
+.. dropdown:: Exercise 4: String Manipulation in Bash
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -166,7 +166,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Write a function ``to_snake_case`` that takes a string like ``"HelloWorld"`` and converts it. (Hint: use ``sed`` for inserting underscores before capitals, then convert to lowercase.)
    3. Write a script that reads a list of filenames and replaces all spaces in filenames with underscores using parameter expansion.
 
-.. dropdown:: Exercise 5 -- Case Statements
+.. dropdown:: Exercise 5: Case Statements
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -198,7 +198,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Write a script that takes a single command-line argument (``start``, ``stop``, ``restart``, ``status``) and prints an appropriate message for each. Include a default case for invalid commands.
    3. Write a script that takes a month name and prints the number of days in that month.
 
-.. dropdown:: Exercise 6 -- Select Menus
+.. dropdown:: Exercise 6: Select Menus
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -238,7 +238,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Create a file management menu with options: "Create file", "Delete file", "List files", "Quit". Implement each action (prompt for filenames where needed).
    3. Create a menu that lets users choose a build type (Debug, Release, RelWithDebInfo) and prints the corresponding ``cmake`` command.
 
-.. dropdown:: Exercise 7 -- Trap for Cleanup
+.. dropdown:: Exercise 7: Trap for Cleanup
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -274,7 +274,7 @@ These exercises build on the shell skills from Lectures 1--4 and introduce funct
    2. Write a script that logs ``"Script started"`` to a log file at the beginning and ``"Script ended"`` at the end using ``trap EXIT``. Include a ``trap 'echo "Interrupted!"; exit 1' INT`` for Ctrl+C handling.
    3. Write a script with ``trap 'echo "Error on line $LINENO"; exit 1' ERR`` and ``set -e`` that runs several commands. Observe how the trap catches the error and reports the line number.
 
-.. dropdown:: Exercise 8 -- Challenge: Build Automation Script
+.. dropdown:: Exercise 8 Challenge: Build Automation Script
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold

@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L11: ROS 2 Configuration and Orchestration**
+        **ENPM702 L11: ROS 2 Configuration and Orchestration**
 
         Covers ROS 2 parameters (declaring, getting, setting, parameter
         types, parameter callbacks, command-line overrides), launch files
@@ -17,7 +17,7 @@ References
         topics, launch arguments with ``DeclareLaunchArgument`` and
         ``LaunchConfiguration``, including other launch files, grouping with
         namespaces), executors (single-threaded, multi-threaded, callback
-        groups -- mutually exclusive and reentrant), YAML configuration files
+        groups, mutually exclusive and reentrant), YAML configuration files
         (structure, loading from launch files and CLI), composable nodes, and
         ROS 2 CLI tools for parameter introspection (``list``, ``get``,
         ``set``, ``describe``, ``dump``).
@@ -26,7 +26,7 @@ References
         launch files, and executors, and take the quiz.
 
 
-.. dropdown:: ROS 2 Documentation -- Parameters
+.. dropdown:: ROS 2 Documentation: Parameters
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
@@ -64,7 +64,7 @@ References
             - Runtime parameter validation
 
 
-.. dropdown:: ROS 2 Documentation -- Launch Files
+.. dropdown:: ROS 2 Documentation: Launch Files
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
@@ -120,7 +120,7 @@ References
             - Passing launch arguments between files
 
 
-.. dropdown:: ROS 2 Documentation -- Executors
+.. dropdown:: ROS 2 Documentation: Executors
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2

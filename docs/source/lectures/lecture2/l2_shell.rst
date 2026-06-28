@@ -21,7 +21,7 @@ process management, command substitution, and basic shell scripting.
 Environment Variables
 =====================
 
-.. dropdown:: Exercise 1 -- Exploring and Setting Environment Variables
+.. dropdown:: Exercise 1: Exploring and Setting Environment Variables
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -72,7 +72,7 @@ Environment Variables
            # Output: (empty)
 
 
-.. dropdown:: Exercise 2 -- Modifying the PATH Variable
+.. dropdown:: Exercise 2: Modifying the PATH Variable
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -91,7 +91,7 @@ Environment Variables
     4. Try running ``greet`` from your home directory. It will likely fail with
        "command not found."
     5. Add ``~/bin`` to the **beginning** of your ``$PATH`` using ``export``.
-    6. Run ``greet`` again -- it should work now.
+    6. Run ``greet`` again, it should work now.
     7. Use ``which greet`` to confirm the shell finds it in ``~/bin``.
 
     .. dropdown:: Solution
@@ -132,7 +132,7 @@ Environment Variables
 File Permissions
 ================
 
-.. dropdown:: Exercise 3 -- Understanding and Changing File Permissions
+.. dropdown:: Exercise 3: Understanding and Changing File Permissions
     :icon: lock
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -154,7 +154,7 @@ File Permissions
        have no permissions for others (i.e., ``rwxr-x---``).
     6. Using **octal notation**, set ``public.txt`` so that everyone can read it
        but only the owner can write it.
-    7. Try running ``./script.sh`` -- it should succeed (the file is empty, so
+    7. Try running ``./script.sh``, it should succeed (the file is empty, so
        nothing happens, but no "Permission denied" error).
     8. Remove execute permission from ``script.sh`` using symbolic notation and
        try ``./script.sh`` again to see the error.
@@ -206,7 +206,7 @@ File Permissions
 Finding Files and Content
 =========================
 
-.. dropdown:: Exercise 4 -- Using find and grep
+.. dropdown:: Exercise 4: Using find and grep
     :icon: search
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -287,7 +287,7 @@ Finding Files and Content
 Process Management
 ==================
 
-.. dropdown:: Exercise 5 -- Managing Background and Foreground Processes
+.. dropdown:: Exercise 5: Managing Background and Foreground Processes
     :icon: iterations
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -359,7 +359,7 @@ Process Management
 Command Substitution
 ====================
 
-.. dropdown:: Exercise 6 -- Using Command Substitution (``*``)
+.. dropdown:: Exercise 6: Using Command Substitution (``*``)
     :icon: code-square
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -415,7 +415,7 @@ Command Substitution
 Shell Scripting Basics
 ======================
 
-.. dropdown:: Exercise 7 -- Writing Your First Shell Script
+.. dropdown:: Exercise 7: Writing Your First Shell Script
     :icon: file-code
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -497,7 +497,7 @@ Shell Scripting Basics
            # Error: '/fake/path' is not a valid directory.
 
 
-.. dropdown:: Exercise 8 -- Build and Run a C++ Program with a Shell Script (``*``)
+.. dropdown:: Exercise 8: Build and Run a C++ Program with a Shell Script (``*``)
     :icon: rocket
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold

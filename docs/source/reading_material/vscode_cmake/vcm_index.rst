@@ -7,7 +7,7 @@ Overview
 
 This reading material walks you through configuring Visual Studio Code
 to write, build, and run C++ programs with CMake on Ubuntu. It is
-provided as a pre-recorded video on Canvas. Students should watch this
+provided as a self-study reading module. Students should watch this
 before the first lecture so that the workspace, extensions, and build
 configuration are ready to use during in-class demonstrations.
 

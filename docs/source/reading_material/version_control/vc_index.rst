@@ -6,7 +6,7 @@ Overview
 --------
 
 This reading material covers version control fundamentals using Git
-and GitHub. It is provided as a pre-recorded video on Canvas and should
+and GitHub. It is provided as a self-study reading module and should
 be watched early in the semester.
 
 

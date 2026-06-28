@@ -6,13 +6,13 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--8 and represent
+These exercises build on the shell skills from Lectures 1-8 and represent
 the **final shell exercise set** before we transition to ROS 2. The focus
 is on shell libraries, building CLI tools, systemd basics, cron jobs, and a
 comprehensive review that ties together everything covered so far.
 
 
-.. dropdown:: Exercise 1 -- Creating a Shell Library
+.. dropdown:: Exercise 1: Creating a Shell Library
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -74,7 +74,7 @@ comprehensive review that ties together everything covered so far.
     4. Add a function ``require_root()`` that checks if the script is running as root and exits with an error if not.
 
 
-.. dropdown:: Exercise 2 -- Using ``source`` vs. Subshells
+.. dropdown:: Exercise 2: Using ``source`` vs. Subshells
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -106,7 +106,7 @@ comprehensive review that ties together everything covered so far.
     4. What happens if you source a file that contains an ``exit`` command? Test it and explain.
 
 
-.. dropdown:: Exercise 3 -- Building a Complete CLI Tool
+.. dropdown:: Exercise 3: Building a Complete CLI Tool
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -177,7 +177,7 @@ comprehensive review that ties together everything covered so far.
     4. Add argument validation: if ``cmd_new`` is called without a filename, print an error and show usage.
 
 
-.. dropdown:: Exercise 4 -- systemd Basics
+.. dropdown:: Exercise 4: systemd Basics
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -237,7 +237,7 @@ comprehensive review that ties together everything covered so far.
        System-level services (in ``/etc/systemd/system/``) require ``sudo``.
 
 
-.. dropdown:: Exercise 5 -- Cron Jobs
+.. dropdown:: Exercise 5: Cron Jobs
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -284,7 +284,7 @@ comprehensive review that ties together everything covered so far.
     5. Remove your test crontab entries when done (use ``crontab -e`` to delete the lines).
 
 
-.. dropdown:: Exercise 6 -- Building a Log Rotation Script
+.. dropdown:: Exercise 6: Building a Log Rotation Script
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -341,7 +341,7 @@ comprehensive review that ties together everything covered so far.
     4. Add a ``--dry-run`` flag that shows what would be rotated without actually doing it.
 
 
-.. dropdown:: Exercise 7 -- Environment Setup Script
+.. dropdown:: Exercise 7: Environment Setup Script
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -357,7 +357,7 @@ comprehensive review that ties together everything covered so far.
        - Verify ``g++`` is installed and print its version.
        - Verify ``cmake`` is installed and print its version.
        - Verify ``git`` is installed and print its version.
-       - Check if ``valgrind`` is installed (optional dependency -- warn if missing).
+       - Check if ``valgrind`` is installed (optional dependency, warn if missing).
        - Check if ``~/.bashrc`` contains a ``PROJECT_ROOT`` export; if not, offer to add it.
 
     2. The script should use your ``utils.sh`` library from Exercise 1.
@@ -365,12 +365,12 @@ comprehensive review that ties together everything covered so far.
     4. Add a ``--fix`` flag that attempts to install missing required packages using ``sudo apt install``.
 
 
-.. dropdown:: Exercise 8 -- Comprehensive Review
+.. dropdown:: Exercise 8: Comprehensive Review
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
-    This exercise combines skills from all previous shell exercises (L1--L9).
+    This exercise combines skills from all previous shell exercises (L1-L9).
     Build a project workspace manager that automates common development tasks.
 
     **Tasks:**

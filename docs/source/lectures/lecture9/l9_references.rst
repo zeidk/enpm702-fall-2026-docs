@@ -9,13 +9,13 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L9: OOP Advanced Topics**
+        **ENPM702 L9: OOP Advanced Topics**
 
         Covers advanced object-oriented programming in C++: class
         relationships (association, aggregation, composition, inheritance),
         inheritance types (single and multiple), generalization vs.
         specialization, inheritance access types, and constructor chaining.
-        Polymorphism is covered in depth -- compile-time (method
+        Polymorphism is covered in depth, compile-time (method
         redefinition, function overloading) and runtime (``virtual``
         methods, dynamic dispatch, vtables). The lecture also covers the
         ``override`` keyword, ``auto`` vs. explicit base types for
@@ -30,7 +30,7 @@ References
         and the quiz. Ensure your ROS 2 installation is complete.
 
 
-.. dropdown:: cppreference -- Inheritance and Virtual Functions
+.. dropdown:: cppreference: Inheritance and Virtual Functions
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
@@ -40,7 +40,7 @@ References
             :link: https://en.cppreference.com/w/cpp/language/derived_class
             :class-card: sd-border-secondary
 
-            **cppreference -- Derived Classes**
+            **cppreference: Derived Classes**
 
             Complete reference for class inheritance in C++ including access
             specifiers, base class initialization, member access rules, and
@@ -57,7 +57,7 @@ References
             :link: https://en.cppreference.com/w/cpp/language/virtual
             :class-card: sd-border-secondary
 
-            **cppreference -- Virtual Functions**
+            **cppreference: Virtual Functions**
 
             Reference for ``virtual`` method declarations, dynamic dispatch,
             vtable mechanics, and the ``override`` and ``final`` specifiers.
@@ -74,7 +74,7 @@ References
             :link: https://en.cppreference.com/w/cpp/language/abstract_class
             :class-card: sd-border-secondary
 
-            **cppreference -- Abstract Classes**
+            **cppreference: Abstract Classes**
 
             Reference for pure virtual functions (``= 0``), abstract class
             rules, and their role in defining interfaces and contracts.
@@ -90,7 +90,7 @@ References
             :link: https://en.cppreference.com/w/cpp/language/destructor
             :class-card: sd-border-secondary
 
-            **cppreference -- Destructors**
+            **cppreference: Destructors**
 
             Complete reference for destructor semantics, virtual
             destructors, destruction order, and the ``= default`` keyword

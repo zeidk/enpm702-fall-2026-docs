@@ -22,7 +22,7 @@ Multiple Choice
 
       **B. A definition includes the function body; a declaration only specifies the return type, name, and parameters**
 
-      A function declaration (prototype) tells the compiler the function's signature -- its return type, name, and parameter types. The definition provides the actual implementation (the body). The declaration is a "promise" that the function will be defined elsewhere.
+      A function declaration (prototype) tells the compiler the function's signature, its return type, name, and parameter types. The definition provides the actual implementation (the body). The declaration is a "promise" that the function will be defined elsewhere.
 
 .. admonition:: Question 2
    :class: hint
@@ -262,7 +262,7 @@ True or False
 
       **True**
 
-      Since C++17, RVO for prvalues (unnamed temporary return values) is mandatory -- the standard guarantees that no copy or move will occur. Named Return Value Optimization (NRVO), however, is still an optional optimization.
+      Since C++17, RVO for prvalues (unnamed temporary return values) is mandatory, the standard guarantees that no copy or move will occur. Named Return Value Optimization (NRVO), however, is still an optional optimization.
 
 .. admonition:: Question 15
    :class: hint

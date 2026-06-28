@@ -3,7 +3,7 @@ Exercises
 ====================================================
 
 
-.. dropdown:: Exercise 1 -- Install VSCode and Confirm the Version
+.. dropdown:: Exercise 1: Install VSCode and Confirm the Version
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -35,7 +35,7 @@ Exercises
          x64
 
 
-.. dropdown:: Exercise 2 -- Create the Course Workspace
+.. dropdown:: Exercise 2: Create the Course Workspace
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -59,7 +59,7 @@ Exercises
          code .
 
 
-.. dropdown:: Exercise 3 -- Configure ``.vscode/extensions.json``
+.. dropdown:: Exercise 3: Configure ``.vscode/extensions.json``
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -102,7 +102,7 @@ Exercises
          install all six at once.
 
 
-.. dropdown:: Exercise 4 -- Add Workspace Settings
+.. dropdown:: Exercise 4: Add Workspace Settings
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -129,7 +129,7 @@ Exercises
          }
 
 
-.. dropdown:: Exercise 5 -- Write a Hello-World ``CMakeLists.txt``
+.. dropdown:: Exercise 5: Write a Hello-World ``CMakeLists.txt``
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -173,7 +173,7 @@ Exercises
          add_subdirectory(week1)
 
 
-.. dropdown:: Exercise 6 -- Build and Run with CMake Tools
+.. dropdown:: Exercise 6: Build and Run with CMake Tools
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -208,7 +208,7 @@ Exercises
          *CMake: Run Without Debugging*.
 
 
-.. dropdown:: Exercise 7 -- Bind a ``cout`` Snippet
+.. dropdown:: Exercise 7: Bind a ``cout`` Snippet
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold

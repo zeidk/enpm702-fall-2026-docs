@@ -30,7 +30,7 @@ This statement may either be:
 
 - A **simple statement**, terminated with a semicolon, e.g.,
   ``int a{10};``
-- A **compound statement** -- a group of statements (each terminated by
+- A **compound statement**, a group of statements (each terminated by
   its own semicolon), but all grouped together in a block enclosed in
   braces.
 
@@ -271,7 +271,7 @@ particular type of ``if``-``else`` statement.
       You have to parenthesize the whole conditional operator as seen
       above.
 
-.. admonition:: Example -- Initializing with the Ternary Operator
+.. admonition:: Example: Initializing with the Ternary Operator
    :class: hint
 
    The conditional operator can be used in some situations where an
@@ -290,7 +290,7 @@ particular type of ``if``-``else`` statement.
       constexpr int larger_value{x > y ? x : y}; // initialize larger_value
       std::cout << "The larger value is: " << larger_value << '\n'; // 3
 
-.. admonition:: Example -- Why ``if``-``else`` Cannot Always Replace the Ternary
+.. admonition:: Example: Why ``if``-``else`` Cannot Always Replace the Ternary
    :class: hint
 
    Trying to write the code from the previous example using an
@@ -502,7 +502,7 @@ these values.
 
    Flowchart for the ``switch`` statement.
 
-.. admonition:: Example -- Side-by-side comparison
+.. admonition:: Example: Side-by-side comparison
    :class: hint
 
    Below is a side-by-side comparison of an ``if``-``else`` statement
@@ -777,7 +777,7 @@ braces.
            break;
          }
 
-   .. grid-item-card:: Fix -- use braces
+   .. grid-item-card:: Fix: use braces
 
       .. code-block:: cpp
 
@@ -806,37 +806,37 @@ braces.
 
       **Pros**
 
-      - *Readability* -- In cases with many conditions, a ``switch`` can
+      - *Readability*, In cases with many conditions, a ``switch`` can
         be more readable than an ``if``-``else`` statement.
-      - *Performance* -- Some compilers can optimize switch statements
+      - *Performance*, Some compilers can optimize switch statements
         better than equivalent ``if``-``else`` statements.
-      - *Fallthrough* -- Allows for multiple cases to execute the same
+      - *Fallthrough*, Allows for multiple cases to execute the same
         block of code (this can be a pitfall if not handled carefully).
 
       **Cons**
 
-      - *Limited to constant expressions* -- You can only switch on
+      - *Limited to constant expressions*, You can only switch on
         integral types, enumerated types, and constant expressions
         (since C++14) that evaluate to one of these types.
-      - *Fallthrough* -- It can be a pitfall if unintentional.
-      - *Scope* -- Variables declared inside a switch case are visible to
+      - *Fallthrough*, It can be a pitfall if unintentional.
+      - *Scope*, Variables declared inside a switch case are visible to
         the subsequent cases unless they are enclosed in braces.
 
    .. grid-item-card:: ``if``-``else``
 
       **Pros**
 
-      - *Flexibility* -- Can handle any boolean conditions, not just
+      - *Flexibility*, Can handle any boolean conditions, not just
         equality checks.
-      - *Mixed conditions* -- Allows for different types of conditions to
+      - *Mixed conditions*, Allows for different types of conditions to
         be mixed (e.g., equality, less than, greater than, logical
         operators, etc.).
 
       **Cons**
 
-      - *Readability* -- Can become hard to read when there are many
+      - *Readability*, Can become hard to read when there are many
         conditions.
-      - *Performance* -- Depending on the compiler and the nature of the
+      - *Performance*, Depending on the compiler and the nature of the
         conditions, ``if``-``else`` statements might not be as optimized
         as ``switch`` statements.
 
@@ -1675,7 +1675,7 @@ In C++, the **comma symbol** is used as a separator or as an operator.
 Most C++ users are more familiar with the use of the comma symbol as a
 separator.
 
-.. admonition:: Example -- Comma as Separator
+.. admonition:: Example: Comma as Separator
    :class: hint
 
    .. code-block:: cpp
@@ -1693,7 +1693,7 @@ expression is allowed. The comma operator evaluates the left operand,
 then the right operand, and then returns the result of the right
 operand.
 
-.. admonition:: Example -- Comma as Operator
+.. admonition:: Example: Comma as Operator
    :class: hint
 
    .. code-block:: cpp

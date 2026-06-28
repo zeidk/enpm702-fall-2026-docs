@@ -18,7 +18,7 @@ the previous one.
 ----
 
 
-.. dropdown:: Exercise 1 -- Define a Simple Class
+.. dropdown:: Exercise 1: Define a Simple Class
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -32,16 +32,16 @@ the previous one.
     1. Create a header file ``robot.hpp`` with a ``Robot`` class.
     2. The class should have the following ``private`` attributes:
 
-       - ``std::string name_`` -- the robot's name
-       - ``std::string model_`` -- the robot's model
-       - ``double battery_level_`` -- battery percentage (0.0 to 100.0), initialized to 100.0
-       - ``bool is_active_`` -- whether the robot is active, initialized to ``false``
+       - ``std::string name_``, the robot's name
+       - ``std::string model_``, the robot's model
+       - ``double battery_level_``, battery percentage (0.0 to 100.0), initialized to 100.0
+       - ``bool is_active_``, whether the robot is active, initialized to ``false``
 
     3. Declare the following ``public`` methods (implement in ``robot.cpp``):
 
-       - ``void activate()`` -- sets ``is_active_`` to ``true`` and prints a message
-       - ``void deactivate()`` -- sets ``is_active_`` to ``false`` and prints a message
-       - ``void move(double distance)`` -- prints a message and reduces ``battery_level_`` by ``distance * 0.5`` (only if active and battery > 0)
+       - ``void activate()``, sets ``is_active_`` to ``true`` and prints a message
+       - ``void deactivate()``, sets ``is_active_`` to ``false`` and prints a message
+       - ``void move(double distance)``, prints a message and reduces ``battery_level_`` by ``distance * 0.5`` (only if active and battery > 0)
 
     4. Add a parameterized constructor that takes ``name`` and ``model``.
     5. Write a ``main.cpp`` that creates two ``Robot`` objects, activates them, moves them, and prints their status.
@@ -95,7 +95,7 @@ the previous one.
     - ``main.cpp`` that demonstrates creating and using objects
 
 
-.. dropdown:: Exercise 2 -- Add Accessors and Mutators
+.. dropdown:: Exercise 2: Add Accessors and Mutators
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -115,8 +115,8 @@ the previous one.
 
     2. Add the following **mutators** (setters):
 
-       - ``void set_name(const std::string& name)`` -- validate that the name is not empty
-       - ``void set_battery_level(double level)`` -- validate that level is between 0.0 and 100.0
+       - ``void set_name(const std::string& name)``, validate that the name is not empty
+       - ``void set_battery_level(double level)``, validate that level is between 0.0 and 100.0
 
     3. Update ``main.cpp`` to use the accessors and mutators.
 
@@ -153,7 +153,7 @@ the previous one.
           }
 
 
-.. dropdown:: Exercise 3 -- Implement Constructors
+.. dropdown:: Exercise 3: Implement Constructors
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -167,7 +167,7 @@ the previous one.
     1. Implement a **default constructor** that initializes the robot with name ``"Unknown"``, model ``"Generic"``, battery at ``100.0``, and inactive.
     2. Implement a **parameterized constructor** that takes ``name`` and ``model``.
     3. Implement a **fully parameterized constructor** that takes ``name``, ``model``, and ``battery_level``.
-    4. **All constructors must use member initializer lists** -- do not use assignment in the constructor body.
+    4. **All constructors must use member initializer lists**, do not use assignment in the constructor body.
     5. Add a ``print_status()`` method that prints the robot's state.
 
     **Starter Code**
@@ -239,7 +239,7 @@ the previous one.
           }
 
 
-.. dropdown:: Exercise 4 -- Static Member Counter
+.. dropdown:: Exercise 4: Static Member Counter
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -292,7 +292,7 @@ the previous one.
     - ``main.cpp`` demonstrating the counter
 
 
-.. dropdown:: Exercise 5 -- const Correctness in Classes
+.. dropdown:: Exercise 5: const Correctness in Classes
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -316,7 +316,7 @@ the previous one.
        - ``[[nodiscard]] const std::string& get_label() const noexcept``
        - ``void set_x(double x) noexcept``
        - ``void set_y(double y) noexcept``
-       - ``[[nodiscard]] double distance_to(const Waypoint& other) const noexcept`` -- compute Euclidean distance
+       - ``[[nodiscard]] double distance_to(const Waypoint& other) const noexcept``, compute Euclidean distance
        - ``void print() const``
 
     4. In ``main.cpp``, create both a ``const`` and non-``const`` ``Waypoint``. Demonstrate which methods can be called on each.
@@ -352,7 +352,7 @@ the previous one.
     - ``main.cpp`` demonstrating ``const`` vs non-``const`` object behavior
 
 
-.. dropdown:: Exercise 6 (Challenge) -- Design a Sensor Class
+.. dropdown:: Exercise 6 (Challenge): Design a Sensor Class
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
@@ -367,10 +367,10 @@ the previous one.
 
        - ``private`` attributes:
 
-         - ``std::string id_`` -- unique sensor identifier
-         - ``std::string type_`` -- sensor type (e.g., "lidar", "camera", "imu")
-         - ``bool is_calibrated_`` -- initialized to ``false``
-         - ``double update_frequency_`` -- in Hz
+         - ``std::string id_``, unique sensor identifier
+         - ``std::string type_``, sensor type (e.g., "lidar", "camera", "imu")
+         - ``bool is_calibrated_``, initialized to ``false``
+         - ``double update_frequency_``, in Hz
          - ``inline static int sensor_count_{0}``
 
        - Constructors:
@@ -381,8 +381,8 @@ the previous one.
 
        - Accessors for all attributes (with ``[[nodiscard]]``, ``const``, ``noexcept`` where appropriate)
        - Mutator for ``update_frequency_`` with validation (must be positive)
-       - ``void calibrate()`` -- sets ``is_calibrated_`` to ``true``
-       - ``void print_info() const`` -- prints all sensor information
+       - ``void calibrate()``, sets ``is_calibrated_`` to ``true``
+       - ``void print_info() const``, prints all sensor information
        - ``static int get_sensor_count() noexcept``
 
     2. Use ``std::optional`` to add a method ``std::optional<double> get_reading() const`` that returns a reading only if the sensor is calibrated. If not calibrated, return ``std::nullopt``.

@@ -1,8 +1,8 @@
 .. _l4_references:
 
-===================
+====================
 Lecture 4 References
-===================
+====================
 
 .. dropdown:: Lecture 4 Summary
    :class-container: sd-border-success
@@ -20,18 +20,18 @@ Lecture 4 References
 .. dropdown:: STL References
    :class-container: sd-border-success
 
-   - `std::string -- cppreference.com <https://en.cppreference.com/w/cpp/string/basic_string>`_
-   - `std::array -- cppreference.com <https://en.cppreference.com/w/cpp/container/array>`_
-   - `std::vector -- cppreference.com <https://en.cppreference.com/w/cpp/container/vector>`_
-   - `Iterator library -- cppreference.com <https://en.cppreference.com/w/cpp/iterator>`_
-   - `Containers library -- cppreference.com <https://en.cppreference.com/w/cpp/container>`_
+   - `std::string (cppreference.com) <https://en.cppreference.com/w/cpp/string/basic_string>`_
+   - `std::array (cppreference.com) <https://en.cppreference.com/w/cpp/container/array>`_
+   - `std::vector (cppreference.com) <https://en.cppreference.com/w/cpp/container/vector>`_
+   - `Iterator library (cppreference.com) <https://en.cppreference.com/w/cpp/iterator>`_
+   - `Containers library (cppreference.com) <https://en.cppreference.com/w/cpp/container>`_
 
 .. dropdown:: Recommended Reading
    :class-container: sd-border-success
 
-   - *A Tour of C++* by Bjarne Stroustrup -- Chapter 11 (Containers) and Chapter 12 (Algorithms)
-   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 3 (Strings, Vectors, and Arrays) and Chapter 9 (Sequential Containers)
-   - *Effective STL* by Scott Meyers -- Items 1--5 on choosing and using containers effectively
+   - *A Tour of C++* by Bjarne Stroustrup, Chapter 11 (Containers) and Chapter 12 (Algorithms)
+   - *C++ Primer* by Lippman, Lajoie, and Moo, Chapter 3 (Strings, Vectors, and Arrays) and Chapter 9 (Sequential Containers)
+   - *Effective STL* by Scott Meyers, Items 1-5 on choosing and using containers effectively
    - `LearnCpp.com: std::string <https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/>`_
    - `LearnCpp.com: std::array <https://www.learncpp.com/cpp-tutorial/stdarray-length-and-indexing/>`_
    - `LearnCpp.com: std::vector <https://www.learncpp.com/cpp-tutorial/introduction-to-stdvector-and-list-constructors/>`_

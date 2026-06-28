@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 -- L1: Course Introduction**
+        **ENPM702 L1: Course Introduction**
 
         Covers the course structure and grading policies, Linux shell
         types and configuration (Bash, Zsh, Fish), aliases and shell

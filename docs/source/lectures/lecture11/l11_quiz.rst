@@ -21,7 +21,7 @@ YAML configuration files, and ROS 2 CLI tools for parameters.
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ====================================================
 
 .. admonition:: Question 1
@@ -40,7 +40,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Declare the parameter using ``declare_parameter()``.
+   **B**, Declare the parameter using ``declare_parameter()``.
 
    In ROS 2, every parameter must be declared before it can be used. If a
    node tries to get an undeclared parameter, an
@@ -64,7 +64,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``ros2 run my_pkg my_node --ros-args -p max_speed:=2.5``
+   **B**, ``ros2 run my_pkg my_node --ros-args -p max_speed:=2.5``
 
    The ``--ros-args`` flag tells the ROS 2 argument parser that the
    following arguments are ROS-specific. The ``-p`` flag sets a parameter
@@ -88,7 +88,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``DeclareLaunchArgument``
+   **C**, ``DeclareLaunchArgument``
 
    ``DeclareLaunchArgument`` defines a launch-time argument with a name,
    default value, and description. ``LaunchConfiguration`` is then used
@@ -163,7 +163,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- A ``SharedPtr`` to a callback handle that must be stored as a
+   **B**, A ``SharedPtr`` to a callback handle that must be stored as a
    member variable.
 
    The returned handle must remain in scope for the callback to stay active.
@@ -187,7 +187,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``SingleThreadedExecutor``
+   **B**, ``SingleThreadedExecutor``
 
    When you call ``rclcpp::spin(node)``, ROS 2 creates a
    ``SingleThreadedExecutor`` behind the scenes and spins the node on a
@@ -211,7 +211,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- Only one callback in the group can execute at a time; others
+   **B**, Only one callback in the group can execute at a time; others
    wait.
 
    A mutually exclusive callback group ensures that at most one callback
@@ -237,7 +237,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``parameters=['/path/to/params.yaml']``
+   **B**, ``parameters=['/path/to/params.yaml']``
 
    The ``parameters`` argument to the ``Node`` action accepts a list. Each
    element can be either a dictionary of parameter key-value pairs or a
@@ -262,7 +262,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``remappings=[('/input', '/sensor/data')]``
+   **C**, ``remappings=[('/input', '/sensor/data')]``
 
    The ``remappings`` argument accepts a list of ``(from, to)`` tuples that
    redirect topic and service names. This is applied at the ROS 2 middleware
@@ -286,7 +286,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``ros2 param dump /my_node``
+   **C**, ``ros2 param dump /my_node``
 
    The ``ros2 param dump`` command outputs all of a node's current parameter
    names and values in YAML format. This can be redirected to a file to
@@ -296,7 +296,7 @@ Multiple Choice (Questions 1--10)
 ----
 
 
-True / False (Questions 11--15)
+True / False (Questions 11-15)
 ====================================================
 
 .. admonition:: Question 11

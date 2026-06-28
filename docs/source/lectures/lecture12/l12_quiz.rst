@@ -20,7 +20,7 @@ patterns, goal handling, feedback, and CLI tools.
 ----
 
 
-Multiple Choice (Questions 1--10)
+Multiple Choice (Questions 1-10)
 ====================================================
 
 .. admonition:: Question 1
@@ -40,7 +40,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- Topic (publish-subscribe)
+   **C**, Topic (publish-subscribe)
 
    Topics use the publish-subscribe pattern, which is designed for
    continuous, many-to-many data streams. LiDAR data is published at a
@@ -64,7 +64,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``---``
+   **B**, ``---``
 
    The three-dash separator ``---`` divides the request section (above)
    from the response section (below) in a ``.srv`` file.
@@ -86,7 +86,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- 2
+   **C**, 2
 
    An ``.action`` file has three sections (goal, result, feedback)
    separated by two ``---`` lines.
@@ -109,7 +109,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``async_send_request()``
+   **C**, ``async_send_request()``
 
    In ``rclcpp``, service clients use ``async_send_request()`` to send
    a request. The method returns a future that resolves when the
@@ -134,7 +134,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- The client blocks waiting, and the server's executor thread
+   **B**, The client blocks waiting, and the server's executor thread
    is occupied
 
    Services are designed for quick request-response interactions. If the
@@ -159,7 +159,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``handle_goal``
+   **C**, ``handle_goal``
 
    The ``handle_goal`` callback receives the goal request and returns
    either ``ACCEPT_AND_EXECUTE``, ``ACCEPT_AND_DEFER``, or ``REJECT``.
@@ -182,7 +182,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``goal_handle->publish_feedback()``
+   **B**, ``goal_handle->publish_feedback()``
 
    The ``publish_feedback()`` method on the goal handle sends a
    feedback message to the action client.
@@ -204,7 +204,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C** -- ``ros2 service call``
+   **C**, ``ros2 service call``
 
    The ``ros2 service call`` command sends a request to a service and
    displays the response.
@@ -227,7 +227,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- It displays feedback messages as they are published by the
+   **B**, It displays feedback messages as they are published by the
    server
 
    Without ``--feedback``, the CLI command waits silently for the
@@ -252,7 +252,7 @@ Multiple Choice (Questions 1--10)
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B** -- ``rclcpp_action``
+   **B**, ``rclcpp_action``
 
    The ``rclcpp_action`` package provides the ``create_server`` and
    ``create_client`` functions for actions. It must be listed in both
@@ -263,7 +263,7 @@ Multiple Choice (Questions 1--10)
 ----
 
 
-True/False (Questions 11--15)
+True/False (Questions 11-15)
 ====================================================
 
 .. admonition:: Question 11

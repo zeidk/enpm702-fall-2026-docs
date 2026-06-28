@@ -103,7 +103,7 @@ Exercise 3: Basic ``sed`` Usage
 
       sed '1d' students.csv
 
-4. Edit the file **in place** (modify the actual file) -- add a ``-i`` flag:
+4. Edit the file **in place** (modify the actual file), add a ``-i`` flag:
 
    .. code-block:: bash
 

@@ -48,5 +48,5 @@ Next Steps
   - Type conversions and deduction.
 
 - Complete your environment setup if not finished in class.
-- Watch the **Version Control** pre-recorded video on Canvas.
-- Watch the **Flow Control and Operations** pre-recorded video on Canvas.
+- Work through the **Version Control** reading module.
+- Work through the **Flow Control and Operations** reading module.

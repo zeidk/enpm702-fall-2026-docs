@@ -100,7 +100,7 @@ Centralized Version Control
 
    .. grid-item-card:: Advantages
 
-      - Simple mental model -- one central authority
+      - Simple mental model, one central authority
       - Fine-grained access control
       - Storage efficient for clients
       - Easy administration and compliance
@@ -214,22 +214,22 @@ Why Git Dominates
 
    .. grid-item-card:: Technical Advantages
 
-      - **Speed** -- Operations like commits and diffs execute in
+      - **Speed**, Operations like commits and diffs execute in
         milliseconds.
-      - **Distributed Nature** -- Every developer has a complete copy of
+      - **Distributed Nature**, Every developer has a complete copy of
         the project history.
-      - **Branching Model** -- Creating and merging branches is
+      - **Branching Model**, Creating and merging branches is
         lightweight and fast.
-      - **Data Integrity** -- SHA-1 checksums ensure your code history
+      - **Data Integrity**, SHA-1 checksums ensure your code history
         cannot be corrupted.
 
    .. grid-item-card:: Ecosystem Advantages
 
-      - **GitHub Integration** -- Seamless hosting with powerful
+      - **GitHub Integration**, Seamless hosting with powerful
         collaboration features.
-      - **Tool Support** -- Every major IDE and editor has excellent Git
+      - **Tool Support**, Every major IDE and editor has excellent Git
         integration.
-      - **Industry Adoption** -- Used by virtually all major tech
+      - **Industry Adoption**, Used by virtually all major tech
         companies and open source projects.
 
 
@@ -292,7 +292,7 @@ thing.
         open an issue.
 
 You can use Git without ever using GitHub. You **cannot** use GitHub
-without Git -- GitHub is built on top of Git.
+without Git, GitHub is built on top of Git.
 
 
 How Git and GitHub Work Together
@@ -365,7 +365,7 @@ Other Git Hosting Services
 
 GitHub is the most popular host, but it is far from the only one.
 Every service below is built on top of Git, so the commands
-(``git clone``, ``git push``, ``git pull``, ...) are identical --
+(``git clone``, ``git push``, ``git pull``, ...) are identical,
 only the remote URL changes.
 
 .. list-table::
@@ -391,7 +391,7 @@ The Mental Model: Three Areas of Git
 ----------------------------------------------------
 
 Understanding Git means understanding the **three areas** where your
-files live. Each step is intentional -- you choose what goes into
+files live. Each step is intentional, you choose what goes into
 each commit.
 
 .. figure:: /_static/images/version_control/three-areas-of-git.png
@@ -432,18 +432,18 @@ Understanding Branches
 ----------------------------------------------------
 
 A **branch** is simply a lightweight, movable pointer to a commit.
-Creating a branch does **not** copy any files -- think of it as a
+Creating a branch does **not** copy any files, think of it as a
 bookmark that says "I'm working here." That is why creating and
 switching branches in Git is nearly instantaneous, even on huge
 projects.
 
 Key concepts:
 
-- **HEAD** -- a special pointer that tells Git which branch you are
+- **HEAD**, a special pointer that tells Git which branch you are
   currently on.
-- **main** (or **master**) -- the default branch; typically holds
+- **main** (or **master**), the default branch; typically holds
   the stable/production code.
-- **Branch pointer** -- moves forward automatically with each new
+- **Branch pointer**, moves forward automatically with each new
   commit on that branch.
 
 .. grid:: 2
@@ -451,12 +451,12 @@ Key concepts:
    .. grid-item-card:: Why Use Branches?
       :class-card: sd-border-info
 
-      - **Isolate features** -- develop without breaking stable code.
-      - **Experiment safely** -- if it does not pan out, delete the
+      - **Isolate features**, develop without breaking stable code.
+      - **Experiment safely**, if it does not pan out, delete the
         branch.
-      - **Parallel development** -- multiple teammates work at the
+      - **Parallel development**, multiple teammates work at the
         same time.
-      - **Hotfixes** -- fix urgent production bugs while feature
+      - **Hotfixes**, fix urgent production bugs while feature
         work continues elsewhere.
 
    .. grid-item-card:: Standard Branch Naming
@@ -464,9 +464,9 @@ Key concepts:
 
       Use a short prefix that describes intent:
 
-      - ``feature/<description>`` -- new features
-      - ``hotfix/<description>`` -- urgent production fixes
-      - ``bugfix/<description>`` -- non-urgent bug fixes
+      - ``feature/<description>``, new features
+      - ``hotfix/<description>``, urgent production fixes
+      - ``bugfix/<description>``, non-urgent bug fixes
 
       Examples:
 
@@ -477,7 +477,7 @@ Key concepts:
 .. tip::
 
    Use lowercase, hyphens instead of spaces, and be descriptive.
-   Your future self -- and your teammates -- will thank you.
+   Your future self, and your teammates, will thank you.
 
 
 Example: A Day in the Life of a Robotics Engineer
@@ -505,7 +505,7 @@ Setting Up the Project
 .. card::
    :class-header: sd-bg-dark-orange sd-text-white
 
-   Monday Morning -- Setting Up the Project
+   Monday Morning: Setting Up the Project
    ^^^
 
    You begin your week by creating the baseline configuration for a new
@@ -552,11 +552,11 @@ Setting Up the Project
 
 3. **Create the files you need to track in the current folder.**
 
-   - ``robot_config.yaml`` -- Configuration file for autonomous delivery
+   - ``robot_config.yaml``, Configuration file for autonomous delivery
      robot.
-   - ``README.md`` -- File that serves as the front door for anyone
+   - ``README.md``, File that serves as the front door for anyone
      encountering a project for the first time.
-   - ``.gitignore`` -- File that tells Git which files and folders to
+   - ``.gitignore``, File that tells Git which files and folders to
      ignore when tracking changes.
 
    .. code-block:: bash
@@ -623,7 +623,7 @@ Setting Up the Project
    area*. You are preparing what you want to include in your next save
    point, but you have not saved it yet.
 
-   - *Analogy*: Drafting an email -- your email is ready to be sent but
+   - *Analogy*: Drafting an email, your email is ready to be sent but
      not sent yet.
 
 5. **Commit changes.**
@@ -639,7 +639,7 @@ Setting Up the Project
    Committing takes everything from your staging area (draft box) and
    creates a permanent save point in your project's history.
 
-   - *Analogy*: Sending an email -- it is now permanently sent and
+   - *Analogy*: Sending an email, it is now permanently sent and
      becomes part of your email history.
 
    .. admonition:: Best Practice
@@ -677,10 +677,10 @@ Adding GPS Navigation
 .. card::
    :class-header: sd-bg-dark-orange sd-text-white
 
-   Feature Development -- Adding GPS Navigation
+   Feature Development: Adding GPS Navigation
    ^^^
 
-   **10:00 AM** -- You receive a task to add GPS navigation capabilities
+   **10:00 AM**, You receive a task to add GPS navigation capabilities
    to the robot.
 
 1. **Create a feature branch for GPS navigation.**
@@ -733,7 +733,7 @@ Adding GPS Navigation
       :width: 70%
 
       Both branches point to the **same commit** ``A``. No files were
-      copied -- Git just created a new pointer and moved ``HEAD`` to
+      copied, Git just created a new pointer and moved ``HEAD`` to
       ``feature/gps-navigation``.
 
 3. **Modify robot_config.yaml for GPS Feature.**
@@ -771,7 +771,7 @@ Adding GPS Navigation
       branch has changes that ``main`` does not.
 
 
-Bug Alert -- Emergency Fix Needed
+Bug Alert: Emergency Fix Needed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. card::
@@ -780,7 +780,7 @@ Bug Alert -- Emergency Fix Needed
    Emergency Fix Needed
    ^^^
 
-   **11:30 AM** -- You get an urgent message: the robot's overall
+   **11:30 AM**, You get an urgent message: the robot's overall
    responsiveness is sluggish! The default navigation ``update_rate`` of
    5Hz is too slow for real-time obstacle avoidance.
 
@@ -886,7 +886,7 @@ Handling Merge Conflicts
    Handling Merge Conflicts
    ^^^
 
-   **12:30 PM** -- After the hotfix is deployed, you return to your GPS
+   **12:30 PM**, After the hotfix is deployed, you return to your GPS
    feature. To stay up-to-date, you must merge the changes from ``main``
    into your feature branch.
 
@@ -975,7 +975,7 @@ Completing the Feature
    Completing the Feature
    ^^^
 
-   **2:00 PM** -- You add final touches to the GPS feature.
+   **2:00 PM**, You add final touches to the GPS feature.
 
    - Add waypoint information to define how the robot handles mission
      destinations based on GPS coordinates.
@@ -1024,7 +1024,7 @@ End of Day Review
    End of Day Review
    ^^^
 
-   **5:00 PM** -- You review your day's work.
+   **5:00 PM**, You review your day's work.
 
 1. View complete project history:
    ``git log --oneline --graph --all``
@@ -1137,7 +1137,7 @@ Connect Local Repo to Remote
 
 .. tab-set::
 
-   .. tab-item:: Scenario 1 -- Local repo first
+   .. tab-item:: Scenario 1: Local repo first
       :sync: scenario1
 
       You already have a local repository and want to push it to
@@ -1177,7 +1177,7 @@ Connect Local Repo to Remote
          Scenario 1: create the empty GitHub repo, add it as a remote
          from your local repo, then push your existing history.
 
-   .. tab-item:: Scenario 2 -- GitHub repo first
+   .. tab-item:: Scenario 2: GitHub repo first
       :sync: scenario2
 
       You start by creating the repository on GitHub and then bring
@@ -1213,8 +1213,8 @@ Connect Local Repo to Remote
          :width: 70%
 
          Scenario 2: create the GitHub repo, clone it locally, work,
-         then push. No ``git remote add`` or ``git push -u`` needed
-         -- ``git clone`` sets both up automatically.
+         then push. No ``git remote add`` or ``git push -u`` needed;
+         ``git clone`` sets both up automatically.
 
 
 Collaboration Workflows
@@ -1304,7 +1304,7 @@ Fork Workflow
 
 1. **Fork** the repository on GitHub (creates your copy).
 
-   *Original*: ``zeidk/enpm702-summer-2025.git`` -->
+   *Original*: ``zeidk/enpm702-summer-2025.git`` →
    *Your fork*: ``yourusername/enpm702-summer-2025.git``
 
 2. Clone **your** fork.
@@ -1324,7 +1324,7 @@ Fork Workflow
       # upstream  https://github.com/zeidk/enpm702-summer-2025.git (original)
 
 .. figure:: /_static/images/version_control/fork-demo-setup.png
-   :alt: Fork demo -- setup phase (fork, clone, add upstream)
+   :alt: Fork demo, setup phase (fork, clone, add upstream)
    :align: center
    :width: 70%
 
@@ -1348,7 +1348,7 @@ Fork Workflow
 7. Create Pull Request from your fork to original repository.
 
 .. figure:: /_static/images/version_control/fork-demo-contribute.png
-   :alt: Fork demo -- branch, commit, push, open PR
+   :alt: Fork demo, branch, commit, push, open PR
    :align: center
    :width: 70%
 
@@ -1370,7 +1370,7 @@ Keeping Your Fork Updated
    e.g., ``git checkout -b feature/next-feature``
 
 .. figure:: /_static/images/version_control/fork-demo-merged.png
-   :alt: Fork demo -- after the maintainer merges the PR
+   :alt: Fork demo, after the maintainer merges the PR
    :align: center
    :width: 70%
 

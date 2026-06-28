@@ -8,10 +8,10 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1--5 and introduce **regular expressions**, **stream editing with sed**, and **awk programming**. By the end, you will be able to combine these tools in powerful text-processing pipelines.
+These exercises build on the shell skills from Lectures 1-5 and introduce **regular expressions**, **stream editing with sed**, and **awk programming**. By the end, you will be able to combine these tools in powerful text-processing pipelines.
 
 
-.. dropdown:: Exercise 1 -- Regular Expressions with ``grep -E``
+.. dropdown:: Exercise 1: Regular Expressions with ``grep -E``
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -59,7 +59,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    5. Find lines that do **not** contain ``Robot`` using ``grep -Ev``.
 
 
-.. dropdown:: Exercise 2 -- More ``grep -E`` Patterns
+.. dropdown:: Exercise 2: More ``grep -E`` Patterns
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -94,7 +94,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
          grep -E "std::[a-z_]+" code_samples.txt
 
 
-.. dropdown:: Exercise 3 -- Stream Editing with ``sed`` (Substitution)
+.. dropdown:: Exercise 3: Stream Editing with ``sed`` (Substitution)
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -123,7 +123,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    4. Remove all text inside square brackets (the log level): ``sed 's/\[.*\] //' robots.log``.
 
 
-.. dropdown:: Exercise 4 -- ``sed`` (Deletion and In-Place Editing)
+.. dropdown:: Exercise 4: ``sed`` (Deletion and In-Place Editing)
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -155,7 +155,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    4. Use ``sed`` to print only lines 2 through 4: ``sed -n '2,4p' robots.log``.
 
 
-.. dropdown:: Exercise 5 -- ``awk`` (Fields and Patterns)
+.. dropdown:: Exercise 5: ``awk`` (Fields and Patterns)
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -187,7 +187,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    4. Print the line number and the line content: ``awk '{print NR, $0}' robots.log``.
 
 
-.. dropdown:: Exercise 6 -- ``awk`` (Actions and Built-in Variables)
+.. dropdown:: Exercise 6: ``awk`` (Actions and Built-in Variables)
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -221,7 +221,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    4. Print lines where the number of fields (``NF``) is greater than 7.
 
 
-.. dropdown:: Exercise 7 -- ``awk`` (Custom Field Separator and Formatting)
+.. dropdown:: Exercise 7: ``awk`` (Custom Field Separator and Formatting)
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -254,7 +254,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
    5. Print the row with the highest temperature.
 
 
-.. dropdown:: Exercise 8 -- Combining Tools in Pipelines
+.. dropdown:: Exercise 8: Combining Tools in Pipelines
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
@@ -289,7 +289,7 @@ These exercises build on the shell skills from Lectures 1--5 and introduce **reg
          sed 's/\[\(.*\)\]/\1/' robots.log | awk '{$1 = tolower($1); print}'
 
 
-.. dropdown:: Challenge -- Log Analyzer Script
+.. dropdown:: Challenge: Log Analyzer Script
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold

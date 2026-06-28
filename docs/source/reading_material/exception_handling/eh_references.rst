@@ -27,34 +27,34 @@ References
             :link: https://en.cppreference.com/w/cpp/language/exceptions
             :class-card: sd-border-secondary
 
-            **cppreference -- Exceptions**
+            **cppreference: Exceptions**
 
         .. grid-item-card:: try-catch
             :link: https://en.cppreference.com/w/cpp/language/try_catch
             :class-card: sd-border-secondary
 
-            **cppreference -- try-catch**
+            **cppreference: try-catch**
 
         .. grid-item-card:: throw expression
             :link: https://en.cppreference.com/w/cpp/language/throw
             :class-card: sd-border-secondary
 
-            **cppreference -- throw expression**
+            **cppreference: throw expression**
 
         .. grid-item-card:: std::exception
             :link: https://en.cppreference.com/w/cpp/error/exception
             :class-card: sd-border-secondary
 
-            **cppreference -- std::exception**
+            **cppreference std::exception**
 
         .. grid-item-card:: std::runtime_error
             :link: https://en.cppreference.com/w/cpp/error/runtime_error
             :class-card: sd-border-secondary
 
-            **cppreference -- std::runtime_error**
+            **cppreference std::runtime_error**
 
         .. grid-item-card:: noexcept specifier
             :link: https://en.cppreference.com/w/cpp/language/noexcept_spec
             :class-card: sd-border-secondary
 
-            **cppreference -- noexcept specifier**
+            **cppreference: noexcept specifier**

@@ -1,15 +1,15 @@
 .. _l5_references:
 
-===================
+====================
 Lecture 5 References
-===================
+====================
 
 .. dropdown:: Lecture 5 Summary
    :class-container: sd-border-success
 
    This lecture covered the fundamentals of functions in C++, organized into four parts:
 
-   - **The Core Mechanics**: We introduced functions as named, reusable units of code, emphasizing the benefits of code reusability (DRY principle), modularity, easier debugging, and abstraction. We covered the function lifecycle -- declaration (the "promise"), definition (the implementation), and call (the execution). Header files (``.hpp``) and source files (``.cpp``) were introduced as the proper way to separate declarations from definitions, along with include guards (``#pragma once``). We also covered the ``return`` keyword, including returning from ``void`` functions, returning values, implicit return type conversion, returning multiple values (``std::pair``, ``std::tuple``, ``struct``), and return type deduction with ``auto``.
+   - **The Core Mechanics**: We introduced functions as named, reusable units of code, emphasizing the benefits of code reusability (DRY principle), modularity, easier debugging, and abstraction. We covered the function lifecycle, declaration (the "promise"), definition (the implementation), and call (the execution). Header files (``.hpp``) and source files (``.cpp``) were introduced as the proper way to separate declarations from definitions, along with include guards (``#pragma once``). We also covered the ``return`` keyword, including returning from ``void`` functions, returning values, implicit return type conversion, returning multiple values (``std::pair``, ``std::tuple``, ``struct``), and return type deduction with ``auto``.
 
    - **The Function Interface**: We examined how data flows into functions through parameters (pass-by-value, pass-by-reference, pass-by-const-reference, pass-by-pointer) and out of functions through return values (return-by-value, return-by-reference, return-by-pointer). Copy elision (RVO and NRVO) was introduced as a key optimization that eliminates unnecessary copying. The dangers of dangling references and dangling pointers were highlighted.
 
@@ -20,14 +20,14 @@ Lecture 5 References
 .. dropdown:: C++ Reference Links
    :class-container: sd-border-success
 
-   - `Functions -- cppreference.com <https://en.cppreference.com/w/cpp/language/functions>`_
-   - `Function overloading -- cppreference.com <https://en.cppreference.com/w/cpp/language/overload_resolution>`_
-   - `Default arguments -- cppreference.com <https://en.cppreference.com/w/cpp/language/default_arguments>`_
-   - `Copy elision -- cppreference.com <https://en.cppreference.com/w/cpp/language/copy_elision>`_
-   - `std::pair -- cppreference.com <https://en.cppreference.com/w/cpp/utility/pair>`_
-   - `std::tuple -- cppreference.com <https://en.cppreference.com/w/cpp/utility/tuple>`_
-   - `Structured bindings -- cppreference.com <https://en.cppreference.com/w/cpp/language/structured_binding>`_
-   - `main function -- cppreference.com <https://en.cppreference.com/w/cpp/language/main_function>`_
+   - `Functions (cppreference.com) <https://en.cppreference.com/w/cpp/language/functions>`_
+   - `Function overloading (cppreference.com) <https://en.cppreference.com/w/cpp/language/overload_resolution>`_
+   - `Default arguments (cppreference.com) <https://en.cppreference.com/w/cpp/language/default_arguments>`_
+   - `Copy elision (cppreference.com) <https://en.cppreference.com/w/cpp/language/copy_elision>`_
+   - `std::pair (cppreference.com) <https://en.cppreference.com/w/cpp/utility/pair>`_
+   - `std::tuple (cppreference.com) <https://en.cppreference.com/w/cpp/utility/tuple>`_
+   - `Structured bindings (cppreference.com) <https://en.cppreference.com/w/cpp/language/structured_binding>`_
+   - `main function (cppreference.com) <https://en.cppreference.com/w/cpp/language/main_function>`_
 
 .. dropdown:: C++ Core Guidelines
    :class-container: sd-border-success
@@ -49,13 +49,13 @@ Lecture 5 References
 
    - `Doxygen Manual <https://www.doxygen.nl/manual/index.html>`_
    - `Doxygen: Documenting the code <https://www.doxygen.nl/manual/docblocks.html>`_
-   - `Doxygen: Special commands <https://www.doxygen.nl/manual/commands.html>`_ -- reference for ``@brief``, ``@param``, ``@return``, ``@note``, ``@warning``, and other commands.
+   - `Doxygen: Special commands <https://www.doxygen.nl/manual/commands.html>`_, reference for ``@brief``, ``@param``, ``@return``, ``@note``, ``@warning``, and other commands.
 
 .. dropdown:: Recommended Reading
    :class-container: sd-border-success
 
-   - *A Tour of C++* by Bjarne Stroustrup -- Chapter 1 (The Basics, functions and scope)
-   - *C++ Primer* by Lippman, Lajoie, and Moo -- Chapter 6 (Functions)
+   - *A Tour of C++* by Bjarne Stroustrup, Chapter 1 (The Basics, functions and scope)
+   - *C++ Primer* by Lippman, Lajoie, and Moo, Chapter 6 (Functions)
    - `LearnCpp.com: Introduction to functions <https://www.learncpp.com/cpp-tutorial/introduction-to-functions/>`_
    - `LearnCpp.com: Function parameters and arguments <https://www.learncpp.com/cpp-tutorial/introduction-to-function-parameters-and-arguments/>`_
    - `LearnCpp.com: Header files <https://www.learncpp.com/cpp-tutorial/header-files/>`_

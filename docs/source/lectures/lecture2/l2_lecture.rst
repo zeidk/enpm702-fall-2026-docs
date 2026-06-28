@@ -114,16 +114,16 @@ a C++ program.
 
     **Key Components**
 
-    - ``#include <iostream>`` -- Preprocessor directive that includes the
+    - ``#include <iostream>``, Preprocessor directive that includes the
       Input/Output stream library.
-    - ``int main()`` -- The entry point of every C++ program. Execution
+    - ``int main()``, The entry point of every C++ program. Execution
       begins here.
-    - ``std::cout`` -- The standard character output stream, used to print
+    - ``std::cout``, The standard character output stream, used to print
       text to the console.
-    - ``'\n'`` -- The newline character, used to move to the next line.
-    - ``return 0;`` -- Returns 0 to the operating system, indicating
+    - ``'\n'``, The newline character, used to move to the next line.
+    - ``return 0;``, Returns 0 to the operating system, indicating
       successful execution.
-    - **Semicolons** (``;``) -- Every statement in C++ must end with a
+    - **Semicolons** (``;``), Every statement in C++ must end with a
       semicolon. A **statement** is an instruction that performs an action.
 
 
@@ -237,9 +237,9 @@ Preprocessor
     - Removes comments.
     - Processes directives that start with ``#``:
 
-      - ``#include`` -- Inserts the contents of a header file.
-      - ``#define`` -- Defines macros (text substitution).
-      - ``#ifdef`` / ``#ifndef`` -- Conditional compilation.
+      - ``#include``, Inserts the contents of a header file.
+      - ``#define``, Defines macros (text substitution).
+      - ``#ifdef`` / ``#ifndef``, Conditional compilation.
 
 .. code-block:: bash
 
@@ -352,15 +352,15 @@ Memory Segments
     When a program is loaded into memory, it is organized into the following
     segments:
 
-    - **Text (Code) Segment** -- Contains the compiled machine code
+    - **Text (Code) Segment**, Contains the compiled machine code
       instructions.
-    - **Data Segment** -- Stores initialized global and static variables.
-    - **BSS Segment** -- Stores uninitialized global and static variables
+    - **Data Segment**, Stores initialized global and static variables.
+    - **BSS Segment**, Stores uninitialized global and static variables
       (initialized to zero).
-    - **Heap** -- Dynamic memory allocated at runtime (grows upward).
-    - **Stack** -- Stores local variables and function call information
+    - **Heap**, Dynamic memory allocated at runtime (grows upward).
+    - **Stack**, Stores local variables and function call information
       (grows downward).
-    - **Arguments** -- Stores command-line arguments and environment
+    - **Arguments**, Stores command-line arguments and environment
       variables.
 
 
@@ -463,7 +463,7 @@ Naming (Identifiers)
 
    - ``camelCase`` (e.g., ``myVariable``)
    - ``PascalCase`` (e.g., ``MyVariable``)
-   - ``ALL_CAPS`` (e.g., ``MY_VARIABLE``) -- reserved for constants and macros.
+   - ``ALL_CAPS`` (e.g., ``MY_VARIABLE``), reserved for constants and macros.
 
 
 Variable Types
@@ -649,7 +649,7 @@ Uninitialized Variables
 .. warning::
 
    A variable that is declared but **not initialized** contains a
-   **garbage value** -- whatever bits happen to be in the memory location.
+   **garbage value**, whatever bits happen to be in the memory location.
    Reading an uninitialized variable is **undefined behavior**.
 
    .. code-block:: cpp
@@ -668,7 +668,7 @@ Undefined Behavior
 
     **Undefined behavior** (UB) is the result of executing code whose
     behavior is not prescribed by the C++ standard. When UB occurs, the
-    program has **no guarantees** -- it may crash, produce incorrect results,
+    program has **no guarantees**, it may crash, produce incorrect results,
     or appear to work correctly.
 
 .. dropdown:: Common Examples of Undefined Behavior
@@ -704,12 +704,12 @@ Integral Types
 
     **Integral Types in C++**
 
-    - ``int`` -- Standard integer.
-    - ``char`` -- Character (also an integer type).
-    - ``short`` -- Short integer.
-    - ``long`` -- Long integer.
-    - ``long long`` -- Extended long integer.
-    - ``bool`` -- Boolean (``true`` or ``false``).
+    - ``int``, Standard integer.
+    - ``char``, Character (also an integer type).
+    - ``short``, Short integer.
+    - ``long``, Long integer.
+    - ``long long``, Extended long integer.
+    - ``bool``, Boolean (``true`` or ``false``).
     - Each type has ``signed`` and ``unsigned`` variants.
 
 
@@ -843,9 +843,9 @@ Floating-point Number Types
 
     **Floating-point Types in C++**
 
-    - ``float`` -- Single precision.
-    - ``double`` -- Double precision.
-    - ``long double`` -- Extended precision.
+    - ``float``, Single precision.
+    - ``double``, Double precision.
+    - ``long double``, Extended precision.
     - Floating-point types are **always signed**.
 
 

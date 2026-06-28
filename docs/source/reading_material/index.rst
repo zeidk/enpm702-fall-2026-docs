@@ -2,8 +2,8 @@
 Reading Material
 ====================================================
 
-Supplemental topics provided as pre-recorded videos on Canvas. Students
-are expected to watch these outside of class.
+Supplemental topics provided as self-study reading modules. Students
+are expected to work through these outside of class.
 
 .. list-table::
    :widths: 35 65

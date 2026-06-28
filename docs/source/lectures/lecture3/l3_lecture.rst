@@ -21,12 +21,12 @@ Capabilities
 
 Valgrind provides several tools for different types of analysis:
 
-- **Memcheck** -- Memory leak detection and memory error detection (the default tool).
-- **Callgrind** -- Function call profiling; generates call graphs.
-- **Cachegrind** -- Cache and branch prediction profiling.
-- **Helgrind** -- Detects synchronization errors in multithreaded programs.
-- **DRD** -- Another thread error detector.
-- **Massif** -- Heap and stack usage analysis.
+- **Memcheck**, Memory leak detection and memory error detection (the default tool).
+- **Callgrind**, Function call profiling; generates call graphs.
+- **Cachegrind**, Cache and branch prediction profiling.
+- **Helgrind**, Detects synchronization errors in multithreaded programs.
+- **DRD**, Another thread error detector.
+- **Massif**, Heap and stack usage analysis.
 
 Basic Usage
 -----------
@@ -153,12 +153,12 @@ Why Learn Pointers?
 
 Even though modern C++ favors smart pointers and references, understanding raw pointers is essential because:
 
-- **Memory savings** -- Passing pointers avoids copying large objects.
-- **Modify external data** -- Functions can modify variables outside their scope via pointers.
-- **Polymorphism** -- Base class pointers enable runtime polymorphism.
-- **Dynamic allocation** -- Pointers are required to manage heap memory.
-- **ROS 2** -- Uses smart pointers extensively (which are built on raw pointers).
-- **Third-party libraries** -- Many libraries use raw pointers in their APIs.
+- **Memory savings**, Passing pointers avoids copying large objects.
+- **Modify external data**, Functions can modify variables outside their scope via pointers.
+- **Polymorphism**, Base class pointers enable runtime polymorphism.
+- **Dynamic allocation**, Pointers are required to manage heap memory.
+- **ROS 2**, Uses smart pointers extensively (which are built on raw pointers).
+- **Third-party libraries**, Many libraries use raw pointers in their APIs.
 
 .. figure:: /_static/images/l3/pointer1.pdf
    :align: center
@@ -186,8 +186,8 @@ A pointer is declared using the ``*`` symbol:
 
 To read a pointer declaration, read **inside-out** (right to left):
 
-- ``int *a;`` -- "``a`` is a pointer to ``int``"
-- ``const int *b;`` -- "``b`` is a pointer to ``const int``"
+- ``int *a;``, "``a`` is a pointer to ``int``"
+- ``const int *b;``, "``b`` is a pointer to ``const int``"
 
 .. warning::
 
@@ -209,9 +209,9 @@ A pointer is initialized using uniform initialization:
 
 Common initial values:
 
-- ``nullptr`` -- Null pointer (points to nothing).
-- ``&variable`` -- Address of an existing variable.
-- Result of ``new`` -- Address of dynamically allocated memory.
+- ``nullptr``, Null pointer (points to nothing).
+- ``&variable``, Address of an existing variable.
+- Result of ``new``, Address of dynamically allocated memory.
 
 .. warning::
 
@@ -388,9 +388,9 @@ Neither the pointer nor the data it points to can be modified.
 
    Read pointer declarations **right to left** to determine const-correctness:
 
-   - ``const int *p`` -- "``p`` is a pointer to a ``const int``"
-   - ``int *const p`` -- "``p`` is a ``const`` pointer to an ``int``"
-   - ``const int *const p`` -- "``p`` is a ``const`` pointer to a ``const int``"
+   - ``const int *p``, "``p`` is a pointer to a ``const int``"
+   - ``int *const p``, "``p`` is a ``const`` pointer to an ``int``"
+   - ``const int *const p``, "``p`` is a ``const`` pointer to a ``const int``"
 
 Wild Pointers
 ~~~~~~~~~~~~~
@@ -432,8 +432,8 @@ The ``new`` operator allocates memory on the heap and returns a pointer to it:
 
 Key points about dynamically allocated objects:
 
-- They have **no identifier** (no variable name) -- they are accessed only through pointers.
-- They **never go out of scope** automatically -- they persist until explicitly deleted.
+- They have **no identifier** (no variable name), they are accessed only through pointers.
+- They **never go out of scope** automatically, they persist until explicitly deleted.
 
 .. figure:: /_static/images/l3/pointer7.pdf
    :align: center
@@ -460,10 +460,10 @@ The ``delete`` operator deallocates heap memory that was allocated with ``new``:
 Important details about ``delete``:
 
 - ``delete`` does **not** destroy the pointer variable itself. The pointer variable is destroyed when it goes out of scope (it lives on the stack).
-- After ``delete``, the pointer becomes a **dangling pointer** -- it still holds the old address, but the memory at that address has been freed.
+- After ``delete``, the pointer becomes a **dangling pointer**, it still holds the old address, but the memory at that address has been freed.
 - After deleting, either point the pointer elsewhere or set it to ``nullptr``.
 - **Deleting a stack resource is undefined behavior**. Only ``delete`` what you ``new``!
-- **Deleting** ``nullptr`` **is safe** -- it does nothing (a no-op).
+- **Deleting** ``nullptr`` **is safe**, it does nothing (a no-op).
 
 .. code-block:: cpp
 
@@ -631,7 +631,7 @@ References have five key characteristics:
    int x{5};
    int& ref{x};   // OK
 
-**2. Is an alias -- modifying the reference modifies the original**
+**2. Is an alias: modifying the reference modifies the original**
 
 .. code-block:: cpp
 
@@ -644,7 +644,7 @@ References have five key characteristics:
    x = 42;
    std::cout << ref << '\n';  // 42
 
-**3. Has no own identity -- same address as the original**
+**3. Has no own identity: same address as the original**
 
 .. code-block:: cpp
 
@@ -654,7 +654,7 @@ References have five key characteristics:
    std::cout << &x << '\n';    // e.g., 0x7ffd1234
    std::cout << &ref << '\n';  // same: 0x7ffd1234
 
-**4. Cannot be reseated -- bound for life**
+**4. Cannot be reseated: bound for life**
 
 .. code-block:: cpp
 

@@ -47,7 +47,7 @@ Topics (Publish-Subscribe)
 
 Topics use the **publish-subscribe** pattern covered in L10. Publishers
 send messages to a named topic; any number of subscribers can receive
-them. Communication is decoupled -- publishers and subscribers do not
+them. Communication is decoupled, publishers and subscribers do not
 know about each other.
 
 - **Many-to-many**: multiple publishers and subscribers per topic.
@@ -120,9 +120,9 @@ Standard Service Types
 
 ROS 2 ships several service types in ``std_srvs`` and ``example_interfaces``:
 
-- ``std_srvs/srv/Trigger`` -- empty request, bool success + string message.
-- ``std_srvs/srv/SetBool`` -- bool request, bool success + string message.
-- ``example_interfaces/srv/AddTwoInts`` -- two int64 fields, one int64 sum.
+- ``std_srvs/srv/Trigger``, empty request, bool success + string message.
+- ``std_srvs/srv/SetBool``, bool request, bool success + string message.
+- ``example_interfaces/srv/AddTwoInts``, two int64 fields, one int64 sum.
 
 Creating a Custom ``.srv``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -662,21 +662,21 @@ interaction.
    * - Scenario
      - Recommended Pattern
    * - Continuous sensor data (LiDAR, IMU, camera)
-     - **Topic** -- publisher streams data; subscribers process it.
+     - **Topic**, publisher streams data; subscribers process it.
    * - Periodic velocity commands
-     - **Topic** -- ``/cmd_vel`` published at a fixed rate.
+     - **Topic**, ``/cmd_vel`` published at a fixed rate.
    * - Quick computation (e.g., add two numbers)
-     - **Service** -- send request, get immediate response.
+     - **Service**, send request, get immediate response.
    * - Configuration query (e.g., get/set a parameter)
-     - **Service** -- one-off request-response.
+     - **Service**, one-off request-response.
    * - Spawning/deleting an entity
-     - **Service** -- short-lived, immediate result.
+     - **Service**, short-lived, immediate result.
    * - Navigation to a waypoint
-     - **Action** -- long-running, needs progress feedback.
+     - **Action**, long-running, needs progress feedback.
    * - Robot arm trajectory execution
-     - **Action** -- takes time, client needs to monitor progress.
+     - **Action**, takes time, client needs to monitor progress.
    * - Any task the operator may want to cancel
-     - **Action** -- supports goal cancellation.
+     - **Action**, supports goal cancellation.
 
 **Rules of thumb:**
 

@@ -319,7 +319,7 @@ Always define template functions and classes in header files (``.hpp``), **not**
 .. admonition:: Remember
    :class: note
 
-   Template code is like a blueprint -- the compiler needs to see the entire blueprint to build the actual function for each type you use.
+   Template code is like a blueprint, the compiler needs to see the entire blueprint to build the actual function for each type you use.
 
 
 Template Documentation
@@ -707,7 +707,7 @@ The type produced by ``decltype(expr)`` depends on whether ``expr`` is an **iden
    int get_value() { return 42; }
    decltype(get_value()) v5{0};  // int (function call -> prvalue)
 
-In template or generic code, ``decltype`` allows perfect type deduction -- preserving references, constness, and distinguishing between lvalues and prvalues.
+In template or generic code, ``decltype`` allows perfect type deduction, preserving references, constness, and distinguishing between lvalues and prvalues.
 
 **Difference Between** ``auto`` **and** ``decltype``
 
@@ -766,7 +766,7 @@ Be mindful of parentheses and expression category. ``decltype((x))`` yields a re
 
    - Use ``decltype`` to replicate another variable's type or an expression's result.
    - Combine with ``auto`` in templates for precise return-type deduction.
-   - Avoid unnecessary usage when the type is obvious -- clarity comes first.
+   - Avoid unnecessary usage when the type is obvious, clarity comes first.
    - Remember: ``decltype`` never evaluates expressions; it only inspects their static type.
 
 
@@ -835,7 +835,7 @@ The trailing return type ``-> decltype(a * b)`` ensures the return type exactly 
        return a + b;
    }
 
-``decltype`` ensures template functions adapt to any operand type -- from built-ins to user-defined types -- by deducing the expression's true return type.
+``decltype`` ensures template functions adapt to any operand type, from built-ins to user-defined types, by deducing the expression's true return type.
 
 **Why This Matters**
 
@@ -947,9 +947,9 @@ When a ``constexpr`` function is evaluated at compile time:
 
 **Compile-time evaluation benefits:**
 
-- Eliminates runtime computation -- improves performance.
+- Eliminates runtime computation, improves performance.
 - Enables use of results in contexts that require compile-time constants (e.g., array sizes, template arguments, ``switch`` cases).
-- Detects logic errors early -- during compilation.
+- Detects logic errors early, during compilation.
 
 **Requirements for constexpr Functions**
 
@@ -1038,7 +1038,7 @@ C++ enforces the **One Definition Rule (ODR)**, which states:
 .. grid:: 2
    :gutter: 3
 
-   .. grid-item-card:: Without ``inline`` -- ODR Violation
+   .. grid-item-card:: Without ``inline``: ODR Violation
       :class-card: sd-border-danger
 
       .. code-block:: cpp
@@ -1068,7 +1068,7 @@ C++ enforces the **One Definition Rule (ODR)**, which states:
 
       Compiling produces a linker error: *multiple definition of 'add(int, int)'*.
 
-   .. grid-item-card:: With ``inline`` -- Legal
+   .. grid-item-card:: With ``inline``: Legal
       :class-card: sd-border-success
 
       .. code-block:: cpp
@@ -1321,7 +1321,7 @@ Avoid using it to silence warnings created by actual mistakes.
 
    - Use when a symbol may legitimately remain unused in certain builds or code paths.
    - Combine with compiler flags such as ``-Wall -Wextra -Werror`` to maintain strict code hygiene.
-   - Document why it is unused -- e.g., performance testing, logging, or template flexibility.
+   - Document why it is unused, e.g., performance testing, logging, or template flexibility.
    - Do **not** use as a blanket fix for warnings; prefer removing unnecessary variables.
 
 
@@ -1350,7 +1350,7 @@ The ``[[deprecated]]`` attribute marks a function, variable, or type as obsolete
    - Always include a message pointing to the preferred alternative.
    - Avoid removing deprecated code abruptly; deprecation helps maintain backward compatibility.
 
-**Summary**: Attributes like ``[[nodiscard]]``, ``[[maybe_unused]]``, and ``[[deprecated]]`` improve code safety, clarity, and maintainability. They do not change program semantics -- they help the compiler help you.
+**Summary**: Attributes like ``[[nodiscard]]``, ``[[maybe_unused]]``, and ``[[deprecated]]`` improve code safety, clarity, and maintainability. They do not change program semantics, they help the compiler help you.
 
 
 Callables
@@ -1466,18 +1466,18 @@ Function pointers allow you to pass behavior as an argument.
        process_list(my_list, array_size, double_number);
    }
 
-In C++, the name of a function **automatically decays** to a *function pointer* when passed as an argument -- just like an array name decays to a pointer to its first element.
+In C++, the name of a function **automatically decays** to a *function pointer* when passed as an argument, just like an array name decays to a pointer to its first element.
 
 **Dangers and Limitations**
 
-- **Type mismatch risk** -- if the pointer's signature does not exactly match the function's, undefined behavior occurs.
-- **No state retention** -- function pointers cannot capture variables or maintain context like lambdas or functors.
-- **Null or invalid pointer calls** -- calling through an uninitialized or dangling pointer leads to crashes.
-- **Poor readability and maintenance** -- the syntax is verbose and less intuitive for large systems.
-- **Overload ambiguity** -- overloaded functions require explicit casting to resolve which overload to use.
-- **No exception safety or lifetime management** -- no automatic handling of destroyed or unloaded code.
-- **Incompatible with member functions** -- require special syntax and cannot be used directly with objects.
-- **Obsolete for many tasks** -- modern alternatives like ``std::function``, lambdas, and ``std::invoke`` provide safer and more flexible mechanisms.
+- **Type mismatch risk**, if the pointer's signature does not exactly match the function's, undefined behavior occurs.
+- **No state retention**, function pointers cannot capture variables or maintain context like lambdas or functors.
+- **Null or invalid pointer calls**, calling through an uninitialized or dangling pointer leads to crashes.
+- **Poor readability and maintenance**, the syntax is verbose and less intuitive for large systems.
+- **Overload ambiguity**, overloaded functions require explicit casting to resolve which overload to use.
+- **No exception safety or lifetime management**, no automatic handling of destroyed or unloaded code.
+- **Incompatible with member functions**, require special syntax and cannot be used directly with objects.
+- **Obsolete for many tasks**, modern alternatives like ``std::function``, lambdas, and ``std::invoke`` provide safer and more flexible mechanisms.
 
 
 Functors
@@ -1886,7 +1886,7 @@ Example: Sensor Data Processing
 ``if constexpr`` (C++17)
 ====================================================
 
-``if constexpr`` is a compile-time conditional introduced in C++17. Unlike a regular ``if`` statement, the condition is evaluated **at compile time**, and the branch that is not taken is **discarded entirely** -- it does not even need to compile for the given type.
+``if constexpr`` is a compile-time conditional introduced in C++17. Unlike a regular ``if`` statement, the condition is evaluated **at compile time**, and the branch that is not taken is **discarded entirely**, it does not even need to compile for the given type.
 
 .. code-block:: cpp
 
@@ -1912,4 +1912,4 @@ When ``process<int>`` is instantiated, only the first branch is compiled. The ``
 .. admonition:: Key Point
    :class: note
 
-   ``if constexpr`` requires ``<type_traits>`` for type-checking utilities like ``std::is_integral_v``, ``std::is_floating_point_v``, ``std::is_same_v``, etc. The discarded branches do not need to be valid for the given template parameter -- they are removed before semantic analysis.
+   ``if constexpr`` requires ``<type_traits>`` for type-checking utilities like ``std::is_integral_v``, ``std::is_floating_point_v``, ``std::is_same_v``, etc. The discarded branches do not need to be valid for the given template parameter, they are removed before semantic analysis.

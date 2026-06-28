@@ -1,7 +1,7 @@
 .. _l5_index:
 
 ==========================
-L5: Functions -- Basics
+L5: Functions Basics
 ==========================
 
 Overview
@@ -34,4 +34,4 @@ This lecture introduces the fundamental building blocks of modular C++ programmi
 Next Steps
 ----------
 
-In **Lecture 6: Functions -- Advanced**, we will explore more advanced function topics including inline functions, lambda expressions, function pointers, ``std::function``, and an introduction to templates. These concepts build on the fundamentals covered here and are essential for writing flexible, high-performance C++ code.
+In **Lecture 6: Functions, Advanced**, we will explore more advanced function topics including inline functions, lambda expressions, function pointers, ``std::function``, and an introduction to templates. These concepts build on the fundamentals covered here and are essential for writing flexible, high-performance C++ code.
