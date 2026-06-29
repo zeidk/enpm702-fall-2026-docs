@@ -18,6 +18,13 @@ References
         and CMake build system setup.
 
 
+.. dropdown:: Course Files (Downloads)
+    :class-container: sd-border-secondary
+    :open:
+
+    - :download:`Cpp17_standard.pdf </_static/files/Cpp17_standard.pdf>` --- the C++17 standard working draft (N4659), the language standard targeted in this course. See the **Language Standard** card in the lecture for context.
+
+
 .. dropdown:: Linux Shells
     :class-container: sd-border-secondary
 

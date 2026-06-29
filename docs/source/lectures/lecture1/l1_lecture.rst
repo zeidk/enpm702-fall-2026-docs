@@ -40,6 +40,30 @@ Course Overview
     - **Valgrind**, Memory debugging and leak detection.
     - **CMake**, Cross-platform build system.
 
+.. card::
+    :class-card: sd-border-success sd-shadow-sm
+
+    **Language Standard**
+
+    All C++ code in this course targets the **C++17** standard. C++17 is
+    the version of the language defined by the ISO standard, and it is the
+    standard your compiler is configured to use (``-std=c++17`` /
+    ``set(CMAKE_CXX_STANDARD 17)``). When in doubt about how a language
+    feature is supposed to behave, the standard is the authoritative
+    reference.
+
+    The official ISO document is paywalled, but the final **working
+    draft** (document N4659) is freely available and is what most people
+    cite in practice. A copy is provided here for reference:
+    :download:`Cpp17_standard.pdf </_static/files/Cpp17_standard.pdf>`.
+
+    .. note::
+
+       The standard is a dense reference, not a tutorial. You are **not**
+       expected to read it cover to cover. For everyday lookups, prefer
+       `cppreference.com <https://en.cppreference.com/w/>`_; reach for the
+       standard when you need the exact, definitive rule.
+
 
 Online Students
 ^^^^^^^^^^^^^^^
