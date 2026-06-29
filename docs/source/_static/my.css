@@ -263,3 +263,32 @@ html[data-theme="dark"] .reading {
     color: #4ade80;
   }
 }
+
+/* Quiz entries in the course schedule (distinct color + bold). */
+.quiz {
+  color: #8250df;
+  font-weight: bold;
+}
+html[data-theme="dark"] .quiz {
+  color: #d2a8ff;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .quiz {
+    color: #d2a8ff;
+  }
+}
+
+/* Assignment (RWA/GP) posted and due entries in the course schedule
+   (distinct color + bold). */
+.assignment {
+  color: #bc4c00;
+  font-weight: bold;
+}
+html[data-theme="dark"] .assignment {
+  color: #ffa657;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .assignment {
+    color: #ffa657;
+  }
+}

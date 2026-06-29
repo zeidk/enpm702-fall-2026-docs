@@ -2,6 +2,8 @@ Syllabus
 ========
 
 .. role:: reading
+.. role:: quiz
+.. role:: assignment
 
 Grade Breakdown
 ---------------
@@ -46,6 +48,9 @@ and the last day of class is **Friday, December 11, 2026**. The
 Thanksgiving recess (**Nov 25-29**) does not fall on a Tuesday, so all
 Tuesday lectures meet as scheduled.
 
+**Color key:** :reading:`reading material`; :quiz:`quizzes`;
+:assignment:`assignments (RWAs and GPs) posted/due`.
+
 .. list-table::
    :header-rows: 1
    :widths: 6 8 20 38 28
@@ -71,62 +76,62 @@ Tuesday lectures meet as scheduled.
      - :reading:`Read: Flow Control & Operations`
      - Pointers and Memory Management (Stack, Heap, References)
      - | Submit Lecture 3 exercises
-       | RWA1 posted
+       | :assignment:`RWA1 posted`
    * - Week 4
      - Sep 22
      -
      - | STL Containers (Strings, Arrays, Vectors, Iterators)
-       | **Quiz 1**
+       | :quiz:`Quiz 1`
      - Submit Lecture 4 exercises
    * - Week 5
      - Sep 29
      -
      - Functions, Basics (Declarations, Parameters, Overloading, Recursion)
      - | Submit Lecture 5 exercises
-       | RWA1 due, RWA2 posted
+       | :assignment:`RWA1 due, RWA2 posted`
    * - Week 6
      - Oct 6
      -
      - | Functions, Advanced (Templates, Lambdas, Functors, ``std::function``)
-       | **Quiz 2**
+       | :quiz:`Quiz 2`
      - Submit Lecture 6 exercises
    * - Week 7
      - Oct 13
      - :reading:`Read: Exception Handling`
      - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
      - | Submit Lecture 7 exercises
-       | RWA2 due
+       | :assignment:`RWA2 due`
    * - Week 8
      - Oct 20
      -
      - | OOP Basics (Classes, Objects, Encapsulation, Constructors)
-       | **Quiz 3**
+       | :quiz:`Quiz 3`
      - Submit Lecture 8 exercises
    * - Week 9
      - Oct 27
      -
      - OOP Advanced (Inheritance, Polymorphism, Abstraction)
      - | Submit Lecture 9 exercises
-       | RWA3 posted
+       | :assignment:`RWA3 posted`
    * - Week 10
      - Nov 3
      -
      - | ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
-       | **Quiz 4**
+       | :quiz:`Quiz 4`
      - Submit Lecture 10 exercises
    * - Week 11
      - Nov 10
      -
      - ROS 2, Configuration and Orchestration (Parameters, Launch Files, Executors)
      - | Submit Lecture 11 exercises
-       | RWA3 due, GP1 posted
+       | :assignment:`RWA3 due, GP1 posted`
    * - Week 12
      - Nov 17
      -
      - | ROS 2, Communication Patterns (Services, Actions)
-       | **Quiz 5**
+       | :quiz:`Quiz 5`
      - | Submit Lecture 12 exercises
-       | GP1 due, GP2 posted
+       | :assignment:`GP1 due, GP2 posted`
    * - Week 13
      - Nov 24
      -
@@ -137,13 +142,13 @@ Tuesday lectures meet as scheduled.
      -
      - ROS 2, Lifecycle Nodes
      - | Submit Lecture 14 exercises
-       | GP2 due, GP3 posted
+       | :assignment:`GP2 due, GP3 posted`
    * - Week 15
      - Dec 8
      -
      - ROS 2, Robot Autonomy Architecture (Sense-Plan-Act, where AI/ML fits)
      - | Submit Lecture 15 exercises
-       | GP3 due (Dec 11)
+       | :assignment:`GP3 due (Dec 11)`
 
 .. note::
 
