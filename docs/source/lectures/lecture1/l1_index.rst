@@ -6,11 +6,10 @@ Overview
 --------
 
 This lecture introduces the ENPM702 course, covering its structure,
-grading policies, and assignment progression. You will set up your
-development environment (Ubuntu, Visual Studio Code, CMake, and Git)
-and learn to customize the Linux shell with aliases and functions. The
-session ends with a hands-on walkthrough of building and running your
-first C++ program using CMake in VSCode.
+grading policies, assignment progression, and the course coding
+conventions. The development environment (Ubuntu, Visual Studio Code,
+CMake, and Git) and the Linux shell are covered in dedicated reading
+modules that you should work through before the semester begins.
 
 
 .. admonition:: Learning Objectives
@@ -20,12 +19,9 @@ first C++ program using CMake in VSCode.
 
    - Understand the course structure, objectives, and grading policies.
    - Identify the software tools used in this course (Ubuntu, VSCode, ROS 2, Git, Valgrind, Doxygen).
-   - Explain what a Linux shell is and name common shell types.
-   - Customize your shell environment using configuration files, aliases, and functions.
-   - Install and configure Visual Studio Code for C++ development.
-   - Set up a workspace with the correct folder structure.
-   - Use the VSCode command palette and essential keyboard shortcuts.
-   - Create a ``CMakeLists.txt`` file and build a C++ project using CMake.
+   - Explain how shell and C++ exercises contribute to your participation grade.
+   - Apply the course coding conventions, such as using ``'\n'`` instead of ``std::endl``.
+   - Know where to find the setup, Linux Shell, and VSCode and CMake reading modules.
 
 
 .. toctree::
@@ -47,6 +43,8 @@ Next Steps
   - Namespaces and scopes.
   - Type conversions and deduction.
 
-- Complete your environment setup if not finished in class.
+- Complete your environment setup before the first lecture.
+- Work through the **Linux Shell** reading module.
+- Work through the **VSCode and CMake** reading module.
 - Work through the **Version Control** reading module.
 - Work through the **Flow Control and Operations** reading module.

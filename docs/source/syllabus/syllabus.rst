@@ -58,8 +58,8 @@ Tuesday lectures meet as scheduled.
      - After Class
    * - Week 1
      - Sep 1
-     - :reading:`Read: VSCode & CMake, Version Control`
-     - Course Introduction, Linux Shell, VSCode, CMake
+     - :reading:`Read: Linux Shell, VSCode & CMake, Version Control`
+     - Course Introduction and Conventions
      - Submit Lecture 1 exercises
    * - Week 2
      - Sep 8
@@ -276,7 +276,10 @@ deadline:
 
    * - Topic
      - Description
-     - When to Watch
+     - When to Complete
+   * - Linux Shell
+     - The Linux command-line shell: shell types, configuration files, aliases, and functions.
+     - **Before the semester starts**
    * - VSCode and CMake
      - VSCode installation and interface, the ``.vscode`` folder, recommended extensions, the Command Palette, and the ``CMakeLists.txt`` build configuration.
      - **Before the semester starts**

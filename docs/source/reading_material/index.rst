@@ -12,6 +12,9 @@ are expected to work through these outside of class.
 
    * - **Topic**
      - **Covers**
+   * - :doc:`linux_shell/ls_index`
+     - The Linux command-line shell: common shell types, configuration
+       files (``.bashrc``, ``.zshrc``), aliases, and functions
    * - :doc:`vscode_cmake/vcm_index`
      - VSCode installation and interface, workspace layout, the
        ``.vscode`` folder, recommended extensions, Command Palette,
@@ -33,6 +36,7 @@ are expected to work through these outside of class.
    :maxdepth: 2
    :titlesonly:
 
+   linux_shell/ls_index
    vscode_cmake/vcm_index
    flow_control/fc_index
    version_control/vc_index

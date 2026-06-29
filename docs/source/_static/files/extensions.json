@@ -1,0 +1,32 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+
+	// List of extensions which should be recommended for users of this workspace.
+	"recommendations": [
+		// Doxygen
+        "cschlosser.doxdocgen",
+        // Python
+		// "njpwerner.autodocstring", //Autodocstring
+        "ms-python.python", //Python support
+        "kevinrose.vsc-python-indent", // Python indent
+        "charliermarsh.ruff", // Python linter
+		// C++
+        "ms-vscode.cpptools",
+        "jeff-hykin.better-cpp-syntax",
+		// CMake
+        "ms-vscode.cmake-tools",
+		// ROS
+        "ranch-hand-robotics.rde-ros-2",
+        // PlantUML (for UML diagrams)
+        // "jebbs.plantuml",
+
+        // Optional
+        // "mhutchie.git-graph", // Git Graph
+        // "sainnhe.gruvbox-material", // Gruvbox Material Theme
+        // "jonathanharty.gruvbox-material-icon-theme", // Gruvbox Material Icon
+        // "gruntfuggly.todo-tree", //todo tree
+        // "leodevbro.blockman", // Blockman
+        // "sainnhe.gruvbox-material"
+	]
+}

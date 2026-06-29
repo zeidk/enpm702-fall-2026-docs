@@ -16,6 +16,18 @@ References
         requests.
 
 
+.. dropdown:: Git Cheat Sheets (Downloads)
+    :class-container: sd-border-secondary
+    :open:
+
+    Printable one-page Git command references. Keep one handy while you
+    work through the branching and merging exercises.
+
+    - :download:`git-cheat-sheet-atlassian.pdf </_static/files/git-cheat-sheet-atlassian.pdf>` --- Atlassian Git cheat sheet.
+    - :download:`git-cheat-sheet-gitlab.pdf </_static/files/git-cheat-sheet-gitlab.pdf>` --- GitLab Git cheat sheet.
+    - :download:`git-cheat-sheet-tower.pdf </_static/files/git-cheat-sheet-tower.pdf>` --- Tower Git cheat sheet.
+
+
 .. dropdown:: Video Tutorials (YouTube)
     :class-container: sd-border-secondary
     :open:

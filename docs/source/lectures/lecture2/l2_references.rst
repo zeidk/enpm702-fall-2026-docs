@@ -19,6 +19,13 @@ References
         global), namespaces, and type aliases.
 
 
+.. dropdown:: Course Files (Downloads)
+    :class-container: sd-border-secondary
+    :open:
+
+    - :download:`Cpp17_standard.pdf </_static/files/Cpp17_standard.pdf>` --- the C++17 standard working draft, the language standard targeted in this course.
+
+
 .. dropdown:: C++ References
     :class-container: sd-border-secondary
 

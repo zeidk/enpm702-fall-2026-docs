@@ -1,0 +1,25 @@
+{
+  "cmake.configureOnOpen": false,
+  "editor.fontFamily": "CommitMono",
+  "window.zoomLevel": 2,
+  "workbench.colorCustomizations": {
+    "sideBar.background": "#0e110e",
+    "list.hoverBackground": "#283228",
+  },
+  "C_Cpp.clang_format_style": "{ BasedOnStyle: Google, AllowShortFunctionsOnASingleLine: None, AllowShortIfStatementsOnASingleLine: Never, AllowShortLoopsOnASingleLine: false, AllowShortBlocksOnASingleLine: Never, AllowShortCaseLabelsOnASingleLine: false, BreakBeforeBraces: Attach }",
+  "explorer.compactFolders": false,
+  "editor.fontSize": 20,
+  "editor.mouseWheelZoom": true,
+  "files.autoSave": "afterDelay",
+  "files.readonlyInclude": {
+    "week2/**": true,
+    "week3/**": true,
+    "week4/**": true,
+    "week5/**": true,
+    "week6/**": true,
+    "week7/**": true,
+    "week8/**": true,
+    "week9/**": true,
+    "week10/**": true,
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "cout": {
+        "scope": "cpp",
+        "prefix": "zz",
+        "body": [
+            "std::cout << $2 << '\\n';"
+        ],
+        "description": "Log output to console with cout"
+    }
+}

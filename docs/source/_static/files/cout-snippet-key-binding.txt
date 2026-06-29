@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ctrl+shift+k",
+        "command": "editor.action.insertSnippet",
+        "when": "editorTextFocus",
+        "args": 
+        {
+            "langId": "cpp",
+            "name": "cout"
+        }
+    }
+]

@@ -187,6 +187,9 @@ A minimal ``extensions.json`` for this course looks like this:
      ]
    }
 
+Download a ready-made copy: :download:`extensions.json
+</_static/files/extensions.json>`.
+
 After placing the file in ``.vscode/``, prompt VSCode to install the
 recommended extensions:
 
@@ -252,6 +255,9 @@ configuration that keeps source consistent across the class:
      "files.trimTrailingWhitespace": true,
      "C_Cpp.default.cppStandard": "c++17"
    }
+
+Download a ready-made copy: :download:`settings.json
+</_static/files/settings.json>`.
 
 .. warning::
 
@@ -435,6 +441,14 @@ A small snippet that expands ``cout`` into a full statement:
 After saving the file, type ``cout`` in any C++ file and press
 ``Tab`` to expand it. The cursor will land between the quotes so you
 can immediately type the message.
+
+Download ready-made copies: :download:`cout.code-snippets
+</_static/files/cout.code-snippets>` (place in ``.vscode/``) and
+:download:`cout-snippet-key-binding.txt
+</_static/files/cout-snippet-key-binding.txt>` (the key-chord binding to
+paste into your ``keybindings.json``). A printable
+:download:`VSCode keyboard shortcuts reference (Linux)
+</_static/files/keyboard-shortcuts-linux.pdf>` is also available.
 
 
 Wrap-Up

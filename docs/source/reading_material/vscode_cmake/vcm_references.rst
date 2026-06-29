@@ -18,6 +18,20 @@ References
         per-lecture build setup used throughout the course.
 
 
+.. dropdown:: Course Files (Downloads)
+    :class-container: sd-border-secondary
+    :open:
+
+    Ready-made VSCode configuration files used in this course. Place the
+    JSON and snippet files in your workspace's ``.vscode/`` folder.
+
+    - :download:`settings.json </_static/files/settings.json>` --- workspace settings (format on save, 80-column ruler, C++17).
+    - :download:`extensions.json </_static/files/extensions.json>` --- recommended extensions for the workspace.
+    - :download:`cout.code-snippets </_static/files/cout.code-snippets>` --- ``cout`` snippet for ``std::cout`` statements.
+    - :download:`cout-snippet-key-binding.txt </_static/files/cout-snippet-key-binding.txt>` --- key-chord binding for the ``cout`` snippet.
+    - :download:`keyboard-shortcuts-linux.pdf </_static/files/keyboard-shortcuts-linux.pdf>` --- printable VSCode keyboard shortcuts reference (Linux).
+
+
 .. dropdown:: Video Tutorials (YouTube)
     :class-container: sd-border-secondary
     :open:
