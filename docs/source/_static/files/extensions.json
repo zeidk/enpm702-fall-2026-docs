@@ -4,29 +4,17 @@
 
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
-		// Doxygen
-        "cschlosser.doxdocgen",
-        // Python
-		// "njpwerner.autodocstring", //Autodocstring
-        "ms-python.python", //Python support
-        "kevinrose.vsc-python-indent", // Python indent
-        "charliermarsh.ruff", // Python linter
-		// C++
-        "ms-vscode.cpptools",
-        "jeff-hykin.better-cpp-syntax",
-		// CMake
-        "ms-vscode.cmake-tools",
-		// ROS
-        "ranch-hand-robotics.rde-ros-2",
-        // PlantUML (for UML diagrams)
-        // "jebbs.plantuml",
-
-        // Optional
-        // "mhutchie.git-graph", // Git Graph
-        // "sainnhe.gruvbox-material", // Gruvbox Material Theme
-        // "jonathanharty.gruvbox-material-icon-theme", // Gruvbox Material Icon
-        // "gruntfuggly.todo-tree", //todo tree
-        // "leodevbro.blockman", // Blockman
-        // "sainnhe.gruvbox-material"
+		// C/C++ (Microsoft): IntelliSense, diagnostics, debugging
+		"ms-vscode.cpptools",
+		// CMake Tools (Microsoft): configure, build, and debug CMake projects
+		"ms-vscode.cmake-tools",
+		// CMake (twxs): syntax highlighting for CMakeLists.txt
+		"twxs.cmake",
+		// Doxygen Documentation Generator: comment blocks from /**
+		"cschlosser.doxdocgen",
+		// Error Lens: inline compiler errors and warnings
+		"usernamehw.errorlens",
+		// GitLens: blame annotations and Git history in the editor
+		"eamodio.gitlens"
 	]
 }

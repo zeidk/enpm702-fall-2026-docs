@@ -25,8 +25,9 @@ VSCode is used in this course for the following reasons:
   `extension ecosystem <https://marketplace.visualstudio.com/vscode>`_
   covers everything we need for C++ work: the ``C/C++`` language
   server, ``CMake Tools``, ``CMake`` syntax highlighting, ``Doxygen``
-  comment generation, and ``GitLens``. See :doc:`vcm_references` for
-  direct Marketplace links to each extension.
+  comment generation, ``Error Lens``, and ``GitLens``. See
+  :doc:`vcm_references` for direct Marketplace links to each
+  extension.
 
 .. note::
 
@@ -92,7 +93,7 @@ guide.
    * - **Terminal**
      - An integrated terminal that runs the same shell as your
        login session (``bash`` or ``zsh``). Open it with
-       ``Ctrl + ` `` (backtick).
+       the ``Ctrl + backtick`` shortcut.
    * - **Status Bar** (bottom edge)
      - Shows the active build target, the current Git branch, line
        and column position, errors and warnings, and any indicators
@@ -116,10 +117,14 @@ weekly lecture lives in its own subfolder:
    ├── CMakeLists.txt          # root CMakeLists.txt (hybrid approach)
    └── weekX/
        ├── CMakeLists.txt      # lecture-level CMakeLists.txt
-       ├── src/
-       │   └── *.cpp
-       └── include/
-           └── *.hpp
+       ├── include/
+       │   └── *.hpp
+       └── src/
+           └── *.cpp
+
+The two ways of laying out these ``CMakeLists.txt`` files ---
+*regular* and *hybrid* --- are compared in the :ref:`CMake
+<vcm-cmake>` section below.
 
 Open the workspace in VSCode from a terminal:
 
@@ -211,11 +216,11 @@ recommended extensions:
        browsing for C and C++. See the
        `C++ in VSCode <https://code.visualstudio.com/docs/languages/cpp>`_
        guide.
-   * - `CMake Tools <https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools>`_ (Microsoft)
+   * - `CMake Tools <https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools>`__ (Microsoft)
      - Configures, builds, and debugs CMake projects from inside
        VSCode. See the
        `CMake Tools documentation <https://code.visualstudio.com/docs/cpp/CMake-linux>`_.
-   * - `CMake <https://marketplace.visualstudio.com/items?itemName=twxs.cmake>`_ (twxs)
+   * - `CMake <https://marketplace.visualstudio.com/items?itemName=twxs.cmake>`__ (twxs)
      - Syntax highlighting for ``CMakeLists.txt``.
    * - `Doxygen Documentation Generator <https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen>`_
      - Generates Doxygen comment blocks when you type ``/**`` above
@@ -288,10 +293,12 @@ Examples of commands we will use often:
 - *Format Document*
 
 
+.. _vcm-cmake:
+
 CMake
 ====================================================
 
-`CMake <https://cmake.org/>`_ is an open-source, cross-platform family
+`CMake <https://cmake.org/>`__ is an open-source, cross-platform family
 of tools designed to build, test, and package software. Rather than
 writing a different build script for every compiler, you describe the
 build once in a
@@ -346,6 +353,55 @@ Each command above is documented in the official CMake reference:
   exposes header search paths to a specific target.
 
 
+Regular Approach
+----------------------------------------------------
+
+In the regular approach, every lecture folder is a **self-contained
+CMake project**. Each folder carries its own complete
+``CMakeLists.txt`` --- ``cmake_minimum_required()``, ``project()``,
+the C++ standard settings, and the executable --- and is configured
+and built independently of the others:
+
+.. code-block:: text
+
+   enpm702_ws/
+   ├── week1/
+   │   ├── CMakeLists.txt      # full, standalone project file
+   │   ├── build/              # build tree for week1 only
+   │   ├── include/
+   │   │   └── *.hpp
+   │   └── src/
+   │       └── main.cpp
+   └── week2/
+       ├── CMakeLists.txt      # full, standalone project file
+       ├── build/              # build tree for week2 only
+       ├── include/
+       │   └── *.hpp
+       └── src/
+           └── main.cpp
+
+Each ``CMakeLists.txt`` repeats the same boilerplate:
+
+.. code-block:: cmake
+
+   cmake_minimum_required(VERSION 3.16)
+   project(week1 LANGUAGES CXX)
+
+   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+   set(CMAKE_CXX_EXTENSIONS OFF)
+
+   add_executable(week1 src/main.cpp)
+   target_include_directories(week1 PRIVATE include)
+
+This works, but it has two drawbacks for a semester-long course:
+
+- The standard, warning flags, and version pin are duplicated in
+  every lecture folder. Changing one means editing all of them.
+- **CMake Tools** can only track one project root at a time, so you
+  have to open each lecture folder as its own workspace to build it.
+
+
 Hybrid Approach
 ----------------------------------------------------
 
@@ -358,6 +414,29 @@ to compose:
   defines settings common to every lecture, and
 - one ``CMakeLists.txt`` **per lecture folder** that defines the
   executable for that lecture.
+
+.. code-block:: text
+
+   enpm702_ws/
+   ├── CMakeLists.txt          # root: version, project, C++ standard,
+   │                           #       add_subdirectory(weekX)
+   ├── build/                  # one build tree for every lecture
+   ├── week1/
+   │   ├── CMakeLists.txt      # add_executable(week1 ...) only
+   │   ├── include/
+   │   │   └── *.hpp
+   │   └── src/
+   │       └── main.cpp
+   └── week2/
+       ├── CMakeLists.txt      # add_executable(week2 ...) only
+       ├── include/
+       │   └── *.hpp
+       └── src/
+           └── main.cpp
+
+Compared to the regular approach, the boilerplate moves *up* into the
+root file and the single ``build/`` tree at the root holds every
+lecture target.
 
 A minimal root ``CMakeLists.txt``:
 
@@ -383,7 +462,7 @@ Each lecture folder then has a much smaller ``CMakeLists.txt``:
    target_include_directories(week1 PRIVATE include)
 
 Workflow with the
-`CMake Tools <https://code.visualstudio.com/docs/cpp/CMake-linux>`_
+`CMake Tools <https://code.visualstudio.com/docs/cpp/CMake-linux>`__
 extension:
 
 1. Make sure ``build-essential`` and ``gdb`` are installed:
@@ -430,6 +509,7 @@ A small snippet that expands ``cout`` into a full statement:
 
    {
      "cout": {
+       "scope": "cpp",
        "prefix": "cout",
        "body": [
          "std::cout << \"$1\" << '\\n';"
