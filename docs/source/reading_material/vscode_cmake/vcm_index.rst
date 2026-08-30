@@ -7,7 +7,7 @@ Overview
 
 This reading material walks you through configuring Visual Studio Code
 to write, build, and run C++ programs with CMake on Ubuntu. It is
-provided as a self-study reading module. Students should watch this
+provided as a self-study reading module. Students should read this
 before the first lecture so that the workspace, extensions, and build
 configuration are ready to use during in-class demonstrations.
 
@@ -32,8 +32,10 @@ following :doc:`/setup/cpp_setup`.
    - Install the recommended VSCode extensions for C++ development.
    - Use the Command Palette to drive common actions.
    - Write a ``CMakeLists.txt`` file that builds a small C++ program.
-   - Apply the hybrid CMake approach used in this course (one root
-     ``CMakeLists.txt`` plus one per lecture folder).
+   - Distinguish the regular CMake approach (one self-contained
+     project per lecture folder) from the hybrid approach used in this
+     course (one root ``CMakeLists.txt`` plus one per lecture folder),
+     and apply the latter.
    - Build and run a target with the **CMake Tools** extension.
 
 

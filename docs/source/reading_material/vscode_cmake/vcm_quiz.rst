@@ -186,9 +186,11 @@ VSCode and CMake: Quiz
 
       **c) weekX/src/**
 
-      ``include/`` holds header files (``*.hpp``), and ``build/`` is
-      created by CMake to store generated build files. Implementation
-      files (``*.cpp``) live in ``src/``.
+      ``include/`` holds header files (``*.hpp``). ``build/`` is
+      created by CMake to store generated build files --- in the
+      hybrid layout used in this course it sits at the *workspace
+      root*, not inside ``weekX/``. Implementation files (``*.cpp``)
+      live in ``src/``.
 
 
 .. admonition:: Question 10
@@ -209,7 +211,9 @@ VSCode and CMake: Quiz
 
       **a) The settings.json file has a syntax error.**
 
-      If JSON parsing fails, VSCode silently falls back to user
-      settings. Open the Problems panel or the *Status Bar* error
-      indicator to see the parse error. (Options b and c are not
-      true; option d does not change tab *size*.)
+      If workspace ``settings.json`` cannot be parsed, VSCode
+      ignores the whole file and falls back to your user settings.
+      Nothing in the editor itself signals this, so check the Problems
+      panel or the *Status Bar* error indicator for the parse error.
+      (Options b and c are not true; option d controls spaces versus
+      tabs, not tab *size*.)
