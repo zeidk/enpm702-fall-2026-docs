@@ -2,8 +2,9 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 1: Linux Shell, Shell
-Configuration, Visual Studio Code, and CMake.
+This quiz covers the key concepts from Lecture 1: the Linux shell and
+shell configuration, Visual Studio Code, the C++ standards, the build
+pipeline from source to executable, and CMake.
 
 .. note::
 
@@ -189,13 +190,186 @@ Multiple Choice
    *Explanation:* ``launch.json`` contains debug configurations for the project. ``settings.json`` stores workspace settings, ``tasks.json`` automates workflows, and ``extensions.json`` lists recommended extensions.
 
 
-----
+.. admonition:: Question 9
+   :class: hint
 
+   Which C++ standard does **all** code in this course target?
+
+   A. C++14
+
+   B. C++17
+
+   C. C++20
+
+   D. C++23
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**, C++20.
+
+   *Explanation:* C++20 is the newest standard that GCC 13, the required compiler, fully supports. GCC's C++23 support is only partial. C++20 is also compatible with the C++17 floor that ROS 2 Jazzy requires, so nothing learned in the first half has to be unlearned in the second.
+
+
+.. admonition:: Question 10
+   :class: hint
+
+   Your program compiles, but the build fails with ``undefined
+   reference to``. Which stage produced that message?
+
+   A. The preprocessor.
+
+   B. The compiler.
+
+   C. The linker.
+
+   D. The loader, at run time.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**, the linker.
+
+   *Explanation:* ``undefined reference to`` means the compiler accepted your code, but the linker could not find the definition of something you used. That is a missing source file or a missing library, not a syntax problem.
+
+
+.. admonition:: Question 11
+   :class: hint
+
+   What does the **preprocessor** operate on?
+
+   A. Machine code, which it optimizes before execution.
+
+   B. Text, with no understanding of C++ syntax or semantics.
+
+   C. The abstract syntax tree produced by the compiler.
+
+   D. Object files, which it merges into an executable.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, text, with no understanding of C++ syntax or semantics.
+
+   *Explanation:* The preprocessor removes comments, adjusts whitespace, and handles directives that start with ``#``. ``#include`` is a literal copy-paste of a file. It applies no language rules, which is why preprocessor mistakes often surface as confusing compiler errors later.
+
+
+.. admonition:: Question 12
+   :class: hint
+
+   What does ``g++ -std=c++20 -c main.cpp`` produce?
+
+   A. Preprocessed source, ``main.i``.
+
+   B. An object file, ``main.o``.
+
+   C. An executable named ``main``.
+
+   D. Assembly source, ``main.s``.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, an object file, ``main.o``.
+
+   *Explanation:* ``-c`` compiles but does not link. It preprocesses, compiles to assembly, and assembles to machine code, stopping before the linker. Use ``-E`` to stop after preprocessing (``main.i``) instead.
+
+
+.. admonition:: Question 13
+   :class: hint
+
+   What is the effect of ``set(CMAKE_CXX_STANDARD_REQUIRED ON)``?
+
+   A. It installs the compiler needed for the requested standard.
+
+   B. It makes the build fail if the compiler cannot provide the
+      requested standard.
+
+   C. It forces ``-std=gnu++20`` rather than ``-std=c++20``.
+
+   D. It has no effect unless ``CMAKE_CXX_EXTENSIONS`` is also set.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, it makes the build fail if the compiler cannot provide the requested standard.
+
+   *Explanation:* Without it, CMake quietly falls back to an older standard when the compiler is too old, and you discover the problem much later. ``CMAKE_CXX_EXTENSIONS OFF`` is the separate setting that asks for ``-std=c++20`` rather than ``-std=gnu++20``.
+
+
+.. admonition:: Question 14
+   :class: hint
+
+   In ``cmake -S . -B build``, what do ``-S`` and ``-B`` specify?
+
+   A. ``-S`` the standard, ``-B`` the build type.
+
+   B. ``-S`` the source directory, ``-B`` the build directory.
+
+   C. ``-S`` silent mode, ``-B`` the binary name.
+
+   D. ``-S`` the system compiler, ``-B`` the build generator.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, ``-S`` is the source directory and ``-B`` is the build directory.
+
+   *Explanation:* This is the *configure* step: CMake reads ``CMakeLists.txt`` from the source directory and generates a build tree in the build directory. ``cmake --build build`` then runs the compiler and linker.
+
+
+.. admonition:: Question 15
+   :class: hint
+
+   Which standard is generally regarded as the point where **modern
+   C++** begins?
+
+   A. C++98
+
+   B. C++03
+
+   C. C++11
+
+   D. C++17
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**, C++11.
+
+   *Explanation:* C++11 introduced uniform initialization, ``auto``, range-based ``for``, lambdas, ``nullptr``, move semantics, and smart pointers. Later standards refine that foundation rather than replace it. A tutorial written before 2011 teaches a different language in practice.
+
+
+.. admonition:: Question 16
+   :class: hint
+
+   You used a generative AI tool to help interpret a compiler error
+   while working on an RWA. What does the course policy require?
+
+   A. Nothing; AI use does not need to be mentioned.
+
+   B. Disclose it at the top of the submission, naming the tool and how
+      it was used.
+
+   C. Remove all AI-assisted code before submitting.
+
+   D. Request written permission from the instructor beforehand.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, disclose it at the top of the submission, naming the tool and how it was used.
+
+   *Explanation:* On RWAs, Group Projects, and weekly exercises, AI use is permitted with disclosure; two or three sentences are enough. Disclosure carries no penalty, while undisclosed use is a violation of the Code of Academic Integrity. AI tools are not permitted during quizzes at all.
+
+
+
+----
 
 True / False
 ============
 
-.. admonition:: Question 9
+.. admonition:: Question 17
    :class: hint
 
    **True or False:** Workspace ``settings.json`` takes precedence over
@@ -209,7 +383,7 @@ True / False
    *Explanation:* Workspace settings override user settings, allowing project-specific configuration without affecting global preferences.
 
 
-.. admonition:: Question 10
+.. admonition:: Question 18
    :class: hint
 
    **True or False:** Shell aliases persist across terminal sessions
@@ -223,7 +397,7 @@ True / False
    *Explanation:* Aliases defined directly in a terminal session are temporary. To persist them across sessions, they must be added to a shell configuration file (e.g., ``.bashrc`` or ``.zshrc``).
 
 
-.. admonition:: Question 11
+.. admonition:: Question 19
    :class: hint
 
    **True or False:** The ``ps -p $$`` command displays the current
@@ -237,7 +411,7 @@ True / False
    *Explanation:* ``$$`` is a special variable that holds the PID of the current shell process. ``ps -p $$`` displays information about that process, including the shell name.
 
 
-.. admonition:: Question 12
+.. admonition:: Question 20
    :class: hint
 
    **True or False:** Fish shell uses ``.bashrc`` as its configuration
@@ -249,3 +423,59 @@ True / False
    **False**
 
    *Explanation:* Fish uses ``config.fish``, located in ``~/.config/fish/``. ``.bashrc`` is used by Bash.
+
+
+.. admonition:: Question 21
+   :class: hint
+
+   **True or False:** The C++ standard a file is compiled against is a
+   property of the source file itself.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False**
+
+   *Explanation:* The standard is a compiler flag (``-std=c++20``), or the equivalent CMake setting. Nothing in the ``.cpp`` file records it. Omitting the flag means silently compiling against whatever your compiler happens to default to.
+
+
+.. admonition:: Question 22
+   :class: hint
+
+   **True or False:** Deleting the ``build/`` directory is safe, and is
+   a reasonable first response to a build that has started behaving
+   strangely.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **True**
+
+   *Explanation:* Everything in ``build/`` is generated by CMake and can be regenerated by configuring again. It should also be listed in ``.gitignore``, since committing a build tree makes a repository unusable for teammates.
+
+
+.. admonition:: Question 23
+   :class: hint
+
+   **True or False:** Generative AI tools may be used during quizzes as
+   long as their use is disclosed.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False**
+
+   *Explanation:* Disclosure covers RWAs, Group Projects, and weekly exercises. Quizzes permit open notes, the book, and online references, but no AI assistance and no makeups.
+
+
+.. admonition:: Question 24
+   :class: hint
+
+   **True or False:** ``return 0;`` can be omitted from ``main()``.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **True**
+
+   *Explanation:* ``main()`` is special: reaching its closing brace returns 0 automatically. It must still be declared to return ``int``, never ``void``.
