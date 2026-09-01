@@ -891,6 +891,14 @@ How You Set It
   beginners actually make. Treat a warning as an error you have not hit
   yet.
 
+.. seealso::
+
+   :doc:`Compiler Warning Flags
+   </reading_material/compiler_warnings/cw_index>` covers what
+   ``-Wall``, ``-Wextra``, and ``-Wpedantic`` each enable, the warnings
+   they catch most often in beginner code, and when to add ``-Wshadow``
+   or ``-Werror``.
+
 .. warning::
 
    **ROS 2 Jazzy packages do not default to C++20.** Starting in Week
