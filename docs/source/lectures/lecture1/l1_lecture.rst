@@ -2,6 +2,21 @@
 Lecture
 ====================================================
 
+.. admonition:: Disclaimer
+   :class: caution
+
+   I teach this course solely in my capacity as a lecturer at the
+   University of Maryland.
+
+   - I do **not** represent NIST in this course.
+   - Opinions, findings, and recommendations expressed here are my own
+     and do not necessarily reflect the views of NIST or the U.S.
+     Department of Commerce.
+   - Nothing stated in this course should be interpreted as an official
+     NIST position, policy, or endorsement.
+   - Course content, assignments, and grading are governed by UMD
+     policy only.
+
 
 Syllabus
 ====================================================
@@ -57,6 +72,29 @@ After successfully completing this course, students will be able to:
    actions, custom interfaces, parameters, launch files, and executors.
 #. Build and simulate robotic systems in Gazebo, including coordinate
    frame management (TF2) and lifecycle node orchestration.
+
+
+Operating System and Software
+----------------------------------------------------
+
+Operating System
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Ubuntu Desktop 24.04 LTS: Noble Numbat (recommended).
+- Or Ubuntu Desktop 22.04 LTS: Jammy Jellyfish.
+
+Software
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Visual Studio Code, plus the recommended extensions.
+- ROS 2:
+
+  - Jazzy Jalisco (for Ubuntu 24.04).
+  - Iron Irwini (for Ubuntu 22.04).
+
+- Code documentation: Doxygen.
+- Version control: Git, and a GitHub account.
+- Valgrind.
 
 
 Logistics
@@ -116,8 +154,10 @@ The Weekly Cycle
 Every lecture has a companion page in this documentation.
 
 - **Lecture notes and references**: what was covered, in written form.
-- **Shell exercises and C++ exercises**: the mechanism by which a
-  lecture becomes a skill.
+- **C++ exercises**: **graded**. Submitting them is one of the two
+  routes to participation credit.
+- **Shell exercises**: **not graded**, but recommended. The terminal is
+  where you will spend the second half of this course.
 - **Self-check quiz**: a way to find the gaps before a graded quiz
   does.
 
@@ -127,8 +167,8 @@ How to Use the Exercises
 - Attempt them in the days right after class, while the material is
   fresh.
 - Bring anything that does not work to the following week.
-- Submitting them is also one of the two routes to participation
-  credit.
+- Only the C++ exercises need to be submitted, and only before the
+  start of the following lecture.
 
 Expected Workload
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -699,10 +739,11 @@ Exercises
 ----------------------------------------------------
 
 Besides the lecture material, every lecture page includes two kinds of
-hands-on practice: **Shell exercises** and **C++ exercises**. These are
-*not* graded like the RWAs, instead, submitting your weekly exercise
-solutions on Canvas is one of the ways you earn **participation** credit
-(see the :doc:`syllabus </syllabus/syllabus>`).
+hands-on practice: **Shell exercises** and **C++ exercises**. The C++
+exercises are **graded**, and submitting them on Canvas before the start
+of the following lecture is one of the two routes to **participation**
+credit (see the :doc:`syllabus </syllabus/syllabus>`). The shell
+exercises are **not graded**, but they are strongly recommended.
 
 .. grid:: 1 2 2 2
     :gutter: 3
@@ -714,6 +755,7 @@ solutions on Canvas is one of the ways you earn **participation** credit
         and build progressively across the semester. They develop the
         terminal fluency you need for the C++ build workflow and, later,
         for ROS 2 development (``colcon``, launch files, and CLI tools).
+        They are **not graded**, but they are strongly recommended.
 
     .. grid-item-card:: C++ Exercises
         :class-card: sd-border-info sd-shadow-sm
@@ -721,13 +763,15 @@ solutions on Canvas is one of the ways you earn **participation** credit
         Short C++ programming exercises tied to each lecture's topic.
         They **begin in Lecture 2** (Lecture 1 has no C++ exercises) and
         let you practice each new language feature by writing and running
-        real code before applying it in the RWAs.
+        real code before applying it in the RWAs. They are **graded**,
+        and submitting them is one of the two routes to participation
+        credit.
 
 .. note::
 
    Work through the exercises after each lecture on your own machine.
    Experimenting with code is the fastest way to internalize the
-   concepts, and submitting your solutions on Canvas counts toward
+   concepts, and submitting your C++ solutions on Canvas counts toward
    your **participation** grade.
 
 
@@ -1067,6 +1111,30 @@ Preprocessor
    C++ syntax, semantics, or language rules.
 
 
+Linemarkers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Open ``main.i`` and you will find it is enormous, and that most of the
+lines are not yours. Scattered through it are lines beginning with
+``#``:
+
+.. code-block:: text
+
+   # 3 "main.cpp" 2
+
+- This says: what follows came from **line 3** of ``main.cpp``.
+- The trailing digit is a flag:
+
+  - **1**: entering a file.
+  - **2**: returning from one.
+  - **3**: a system header.
+  - **4**: treat as ``extern "C"`` (C linkage).
+
+- Flag **3** is how the compiler knows not to warn you about code in
+  ``<iostream>``. Without it, enabling warnings would bury you in
+  complaints about libstdc++ rather than about your own code.
+
+
 Compiler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1211,6 +1279,9 @@ A Minimal Project
      ``-std=gnu++20``, so you compile against the standard itself and
      not GCC's extensions to it. Code that relies on an extension
      compiles for you and fails for someone on a different compiler.
+
+     - A compiler extension is a language feature the compiler accepts
+       that the standard does not define.
 
 
 Configure, Build, Run
@@ -1362,27 +1433,73 @@ Common Failures
 Course Conventions
 ====================================================
 
+A small number of conventions apply to every piece of code you submit
+in this course. They are not stylistic preferences: each one exists
+because the alternative causes a problem you would otherwise meet
+later, in code that is harder to read.
 
-``'\n'`` vs ``std::endl``
+.. important::
+
+   These conventions are applied in the RWAs and Group Projects, and
+   code that ignores them is marked down even when it compiles and runs
+   correctly.
+
+
+Newlines
 ----------------------------------------------------
 
-In this course, always use ``'\n'`` to insert a newline character. Do
-**not** use ``std::endl`` unless you have a specific reason to flush the
-output buffer.
+The Rule
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Always use ``'\n'`` to insert a newline. Do **not** use ``std::endl``
+unless you have a specific reason to flush the output buffer.
 
 .. code-block:: cpp
 
-   std::cout << "Hello, World!" << '\n';    // correct
-   std::cout << "Hello, World!" << std::endl; // avoid
+   std::cout << "Hello, World!" << '\n';       // correct
+   std::cout << "Hello, World!" << std::endl;  // avoid
+
+- Both lines produce the **same visible output**. They differ in what
+  happens to the output buffer, not in what you see.
+- ``'\n'`` is a character literal, written with single quotes.
+  ``"\n"`` is a string literal containing that character; either
+  works, but the character literal is the one to reach for.
+
+.. note::
+
+   This is the convention you will break most often out of habit,
+   because ``std::endl`` appears in most older tutorials.
+
+
+What ``std::endl`` Actually Does
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- It performs **two** operations: it writes a newline character,
+  **and** it flushes the output buffer.
+- Flushing forces the program to write all buffered output to the
+  terminal immediately, rather than letting it accumulate and be
+  written in one go.
+
+Why the Flush Is Usually Unnecessary
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+The buffer is flushed on your behalf in every case that matters:
+
+- when it is full,
+- when the program ends,
+- and when ``std::cin`` is used to read input.
+
+Why It Costs You
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+- A flush is a comparatively expensive operation. Paying for one on
+  **every line** is wasted work.
+- In loops or high-frequency output, which is exactly what robotics
+  code produces, this causes noticeable performance degradation.
 
 .. warning::
 
-   ``std::endl`` inserts a newline **and** flushes the output buffer.
-   Flushing forces the program to write all buffered output to the
-   console immediately, which is significantly slower than simply
-   writing a newline character. In most situations, flushing is
-   unnecessary, because the buffer is automatically flushed when it is
-   full, when the program ends, or when ``std::cin`` is used.
-
-   Using ``std::endl`` in loops or high-frequency output can cause
-   noticeable performance degradation. Use ``'\n'`` by default.
+   Use ``'\n'`` by default. Use ``std::endl`` only when you genuinely
+   need the output to appear **before** the program continues, for
+   example a progress message printed immediately before a long
+   computation or a suspected crash.

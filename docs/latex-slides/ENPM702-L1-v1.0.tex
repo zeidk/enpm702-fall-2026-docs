@@ -1,0 +1,1969 @@
+% !TeX program = lualatex
+
+% \newif\iftagged
+% \taggedtrue  % uncomment for final accessible build
+
+% \iftagged
+%   \DocumentMetadata{
+%   pdfstandard=ua-2, 
+%   pdfversion=2.0, 
+%   lang=en-US}
+% \fi
+
+\newif\ifENPMtagged
+\ENPMtaggedfalse
+
+\ifENPMtagged
+  \DocumentMetadata{pdfstandard=ua-2, pdfversion=2.0, lang=en-US}
+\fi
+% \listfiles
+
+\documentclass[
+    10pt,
+    dvipsnames,
+    svgnames,
+    x11names,
+    aspectratio=1610,
+    english,
+    codeminted]{beamer}
+
+\usepackage{hyperref}
+
+\hypersetup{
+  pdftitle={ENPM702 L1 - Course Introduction},
+  pdfauthor={Zeid Kootbally},
+  pdfkeywords={ENPM702, introductory robot programming, University of Maryland, UMD, robotics, C++, C++20, modern C++, Bjarne Stroustrup, C++ standards, C++11, C++14, C++17, C++23, cppreference, C++ Core Guidelines, statically typed, compiled language, multi-paradigm, build process, preprocessor, compiler, linker, translation unit, object file, executable, machine code, g++, GCC 13, compiler flags, -std=c++20, -Wall, -Wextra, undefined reference, CMake, CMakeLists.txt, cmake_minimum_required, add_executable, add_compile_options, CMAKE_CXX_STANDARD, out-of-source build, build tree, VSCode, CMake Tools, gdb, debugger, breakpoints, Valgrind, Doxygen, Git, GitHub, version control, Ubuntu 24.04, Noble Numbat, Linux shell, toolchain setup, environment verification, ROS 2, ROS 2 Jazzy, rclcpp, Gazebo Harmonic, syllabus, grading, Real-World Applications, RWA, Group Projects, academic integrity, AI policy, generative AI},
+  pdfsubject={Course introduction for ENPM702 Introductory Robot Programming: course structure across the two halves of the semester (C++ foundations in Weeks 1 to 9, ROS 2 and Gazebo in Weeks 10 to 15), learning outcomes, required toolchain and hardware, the weekly cycle of lectures and exercises, self-study reading, grading structure and letter-grade cutoffs, late work and regrade policies, permitted collaboration by assessment type, and the generative AI policy with its disclosure requirement; followed by an introduction to C++ as a statically typed, compiled, multi-paradigm language, the sequence of language standards from C++11 through C++23 and the rationale for targeting C++20, the reasons C++ dominates robotics software, the build pipeline from source through preprocessor, compiler and linker to an executable and its loading and execution in memory, building the same program with CMake and VSCode, and an in-class verification of the student development environment}
+}
+
+\usepackage[cache=true]{minted}
+% \usemintedstyle{one_light.py:OneLightStyle}
+
+
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{skins}
+\usepackage{xcharter-otf}
+\usepackage{hologo}
+\usepackage{underscore}
+\usepackage{paralist}
+\usepackage[justification=centering]{caption}
+\usepackage{babel}
+\usepackage[backend=biber,style=numeric,sorting=ynt]{biblatex}
+
+\usepackage{silence}
+% \WarningFilter{biblatex}{Macro 'volume+number' undefined}
+   
+\addbibresource{L1.bib}
+% \usepackage{cleveref}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,fit}
+\usepackage{fontawesome5}
+\usepackage{fontspec}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage[edges]{forest}
+\usepackage{multicol}
+
+\definecolor{Row1}{RGB}{178,190,181}
+\definecolor{Row2}{RGB}{232,237,241}
+
+\tcbuselibrary{listings,breakable}
+\tcbuselibrary{documentation}
+\tcbset{
+  color command=AmurmapleRed,
+  color environment=AmurmapleRed,
+  color option=AmurmapleGreen
+}
+
+\usepackage[amurmapleblack,nomail]{texmf/beamerthemeAmurmaple}
+\setbeamertemplate{background}{}
+\usepackage{graphicx}
+\input{import}
+
+\newcommand{\showframenumber}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=north west, inner sep=4pt, font=\footnotesize, text=black]
+      at ([xshift=15pt]current page.north west)
+      {\insertframenumber/\insertmainframenumber};
+  \end{tikzpicture}%
+}
+
+% -----------------------------------------------------------------------
+% Three-tier divider color definitions
+% -----------------------------------------------------------------------
+\colorlet{SubsecBg}{white}
+\colorlet{SubsubsecBg}{white}
+
+% -----------------------------------------------------------------------
+% Directory tree
+% -----------------------------------------------------------------------
+\newlength\DirSize
+\setlength\DirSize{4pt}
+\tikzset{%
+  folder/.pic={\node[inner sep=0pt](folder)at(0.16,0){\normalsize\textcolor{black}{\faFolderOpen}};},
+  file/.pic={\node[inner sep=0pt](file)at(0.13,0){\normalsize\faFile*[regular]};},
+}
+\forestset{%
+  declare autowrapped toks={pic me}{},
+  declare boolean register={pic root},
+  pic root=0,
+  pic dir tree/.style={for tree={folder,grow'=0,l=0,},
+    before typesetting nodes={for tree={edge label+/.option={pic me},l=0,},
+    if pic root={tikz+={\pic at ([xshift=\DirSize].west){folder};},align={l}}{},},},
+  pic me set/.code n args=2{\forestset{#1/.style={inner xsep=10,pic me={pic{#2}},}}},
+  pic me set={directory}{folder},
+  pic me set={file}{file},
+}
+
+\title{ENPM702 - Introductory Robot Programming}
+\author[Z.~Kootbally]{Zeid Kootbally}
+\subtitle{\textcolor{MarylandYellow!50}{L1}: Course Introduction}
+\institute[UMD]{University of Maryland\\College Park}
+\date{Fall 2026}
+\mail{zeidk@umd.edu}
+\collaboration{v1.0}
+
+\setcounter{amurmapletoc}{1}
+
+% Section entries: bullet and MarylandYellow text (matches subsection style)
+\setbeamertemplate{section in toc}{%
+  \leavevmode%
+  \textcolor{MarylandYellow!60}{$\bullet$}~\textcolor{MarylandYellow!60}{\inserttocsection}\par%
+}
+
+% Subsection entries: bullet and text in white
+\setbeamertemplate{subsection in toc}{%
+  \leavevmode\leftskip=2em%
+  \textcolor{white}{$\bullet$}~\textcolor{white}{\inserttocsubsection}\par%
+}
+
+\AtBeginDocument{%
+  \setbeamercolor{section in toc}{fg=MarylandYellow}%
+  \setbeamercolor{subsection in toc}{fg=white}%
+}
+\setbeamerfont{caption}{size=\scriptsize}
+\setbeamertemplate{caption}[numbered]
+
+\setbeamertemplate{enumerate item}{\textcolor{black}{\arabic{enumi}.}}
+
+\captionsetup{
+  position=top,
+  skip=1pt,        % gap between caption and table
+  belowskip=2pt    % gap between table and following content
+}
+
+\setmonofont[Ligatures=NoCommon]{FiraCode-Regular}
+
+
+\begin{document}
+\captionsetup{labelfont={color=cCaption}, textfont={color=black}}
+
+{\setbeamertemplate{navigation symbols}{}
+  \begin{frame}[plain,noframenumbering]\titlepage\end{frame}}
+
+% Table of Contents
+{
+\small
+\hypertarget{toc}{}
+\sepframe[title={Table of Contents}]
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Changelog}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+  
+\begin{compactitem}
+    \item \textbf{v1.0:} Original version.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+
+% ============================================================
+% UPDATED LEARNING OBJECTIVES FOR LECTURE 1
+% ============================================================
+% Replace the existing Learning Objectives section with this
+% ============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Learning Objectives}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+
+\begin{compactitem}
+    \item Understand the course structure, objectives, and grading policies.
+    \item Identify the software tools used in this course (Ubuntu, VSCode, ROS 2, Git, Valgrind, Doxygen).
+    \item Explain how shell and C++ exercises contribute to your participation grade.
+    \item Apply the course coding conventions, such as using \mintcpp{'\n'} instead of \mintcpp{std::endl}
+    \item Know where to find the setup, Linux Shell, and VSCode and CMake reading modules.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+%============================================================
+% PART II: About Me
+%============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About Me}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+  
+
+% \begin{compactitem}
+%     \item \textbf{Contact}: zeidk@umd.edu
+%     \item \textbf{Office Hours:} By appointment.
+    
+%     \end{compactitem}
+
+
+\framesection{Affiliations}
+\begin{compactitem}
+        \item Computer Scientist @ National Institute of Standards and Technology (NIST)
+        \begin{compactitem}
+        \item Group Leader: \MyLink{https://www.nist.gov/el/intelligent-systems-division-73500/cognition-and-collaboration-systems}{Cognition and Collaboration Systems}
+        \begin{compactitem}
+            \item Project Leader: \MyLink{https://www.nist.gov/programs-projects/agility-performance-robotic-systems}{Agility Performance of Robotic Systems}
+            \item Project Leader: \MyLink{https://www.nist.gov/programs-projects/measurement-science-automated-vehicles-0}{Measurement Science for Automated Vehicles}
+        \end{compactitem}
+        \item Lecturer @ University of Maryland (UMD)
+        \begin{compactitem}
+            \item \textbf{ENPM702}: Introductory Robot Programming
+            \item \textbf{ENPM605}: Python Applications for Robotics
+            \item \textbf{ENPM818T}: Data Storage and Databases (Cloud Engineering)
+            \item \textbf{ENPM818Z}:  On-Road Automated Vehicles
+            \item \textbf{ENPM663}:  Agile Robot Software Systems for Industrial Automation -- \textcolor{red}{New!} (Spring 2027)
+        \end{compactitem}
+        \end{compactitem}
+\end{compactitem}
+\end{frame}
+\endgroup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{Disclaimer}
+
+\medskip
+\begin{MyBox}
+\large
+ I teach this course solely in my capacity as a lecturer at the University of Maryland.
+\bigskip
+ \begin{compactitem}
+    \item I do \textbf{not} represent NIST in this course.
+    \item Opinions, findings, and recommendations expressed here are my own and do not necessarily reflect the views of NIST or the U.S. Department of Commerce.
+    \item Nothing stated in this course should be interpreted as an official NIST position, policy, or endorsement.
+    \item Course content, assignments, and grading are governed by UMD policy only.
+\end{compactitem}
+\end{MyBox}
+
+\end{frame}
+\endgroup
+%============================================================
+% PART III: About You
+%============================================================
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{About You}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+  
+
+\begin{compactitem}
+        \item What is your name?
+        \item Which semester are you currently in?
+        \item Do you have programming experience?
+        \item Do you have ROS experience?
+    \end{compactitem}
+
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Syllabus}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+The full syllabus is posted on ELMS-Canvas. These slides cover the parts that change how you work week to week.
+
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Course Overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  
+  % \subsecdivheader{\subsecname}
+
+  \framesubtitle{\subsecname}
+Modern C++ for robotics, from language fundamentals to complete systems with ROS 2 and Gazebo.
+
+\framesection{Part 1: C++ Foundations (Weeks 1 to 9)}
+\begin{compactitem}
+    \item Types, pointers, memory management, STL containers
+    \item Functions, templates, lambdas, smart pointers
+    \item Object-oriented programming: classes, inheritance, polymorphism
+    \item Practiced through cumulative \textbf{Real-World Application (RWA)} assignments
+\end{compactitem}
+
+\framesection{Part 2: ROS 2 and Gazebo (Weeks 10 to 15)}
+\begin{compactitem}
+    \item Publishers, subscribers, custom interfaces, parameters, launch files
+    \item Services, actions, coordinate frames (TF2), lifecycle nodes
+    \item Cumulative \textbf{Group Projects (GPs)}: a multi-node system driving a mobile robot in simulation
+\end{compactitem}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Learning Outcomes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c, fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  % \subsecdivheader{\subsecname}
+After successfully completing this course, students will be able to:
+\begin{compactenum}
+    \item Write correct and efficient C++ programs using variables, types, constants, namespaces, and modern initialization (C++ 17 and beyond).
+    \item Manage memory safely with pointers, references, smart pointers (\mintcpp{unique_ptr}, \mintcpp{shared_ptr}, \mintcpp{weak_ptr}), and RAII.
+    \item Use the STL (strings, arrays, vectors, iterators) and write reusable code with function templates, lambdas, and \mintcpp{std::function}.
+    \item Design object-oriented systems using classes, encapsulation, inheritance, polymorphism, and abstract interfaces.
+    \item Develop ROS 2 applications using publishers, subscribers, services, actions, custom interfaces, parameters, launch files, and executors.
+    \item Build and simulate robotic systems in Gazebo, including coordinate frame management (TF2) and lifecycle node orchestration.
+\end{compactenum}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Operating System \& Software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  % \subsecdivheader{\subsecname}
+\framesection{Operating System}
+\begin{compactitem}
+    \item Ubuntu Desktop 24.04 LTS: Noble Numbat (recommended)
+    \item[]or 
+    \item Ubuntu Desktop 22.04: Jammy Jelly‐Fish. 
+\end{compactitem}
+
+\framesection{Software}
+\begin{compactitem}
+    \item Visual Studio Code.
+    \item ROS 2:
+    \begin{compactitem}
+        \item Jazzy Jalisco (for Ubuntu 24.04)
+        \item Iron Irwini (for Ubuntu 22.04)
+    \end{compactitem}
+    \item Code documentation: Doxygen.
+    \item Version Control:
+    \begin{compactitem}
+        \item Git
+        \item Github (account)
+    \end{compactitem}
+    \item Valgrind.
+    \item Visual Studio Code extensions.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Logistics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  % \subsecdivheader{\subsecname}
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Course and Instructor}
+\begin{table}[h]
+\caption{Course meeting details and instructor contact.}
+\footnotesize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{1.8cm}m{3.4cm}}
+  \toprule
+  \textbf{Item} & \textbf{Detail} \\
+  \midrule
+  Credits      & 3 \\
+  Dates        & Sep 1 to Dec 8, 2026 \\
+  Time         & Tuesdays, 7:00 to 9:40 pm \\
+  Room         & JMP 2217 \\
+  Instructor   & Zeid Kootbally \\
+  Email        & \texttt{zeidk@umd.edu} \\
+  Office hours & Fridays, 6 to 7 pm, and by appointment \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Where Things Live}
+\begin{compactitem}
+\small
+    \item \textbf{ELMS-Canvas}: announcements, grades, submissions, team assignments, quiz delivery
+    \item \MyLink{https://enpm702-fall-2026-docs.readthedocs.io/en/latest/}{\textbf{ReadTheDocs}}: lecture notes, weekly exercises, setup guides, self-study reading, glossary
+\end{compactitem}
+
+\framesection{Email Expectations}
+\begin{compactitem}
+\small
+    \item Replies within 24 hours where possible, most reliably Mon, Wed and Fri, 8 to 10 am EST
+    \item Use it for academic and personal concerns, not for due dates and point values already in the syllabus
+\end{compactitem}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\footnotesize
+\textbf{Enable your ELMS notifications}: changes to assignments and due dates are announced there, and checking is your responsibility.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Course Structure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\framesection{The Weekly Cycle}
+Every lecture has a companion page in the course documentation.
+
+\begin{compactitem}
+\small
+    \item \textbf{Lecture notes and references}: what was covered, in written form
+    \item \textbf{C++ exercises}: \textbf{graded}. Submitting them is one of the two routes to participation credit.
+    \item \textbf{Shell exercises}: \textbf{not graded}, but recommended. The terminal is where you will spend the second half of this course.
+    \item \textbf{Self-check quiz}: a way to find the gaps before a graded quiz does
+\end{compactitem}
+
+\medskip
+\framesection{How to Use the Exercises}
+\begin{compactitem}
+\small
+    \item Attempt them in the days right after class, while the material is fresh
+    \item Bring anything that does not work to the following week
+    \item Only the C++ exercises need to be submitted, and only before the start of the following lecture
+\end{compactitem}
+
+\medskip
+\framesection{Expected Workload}
+\begin{compactitem}
+\small
+    \item Roughly 2 to 4 hours per week outside class, more in weeks an assignment is due
+    \item That estimate includes environment problems. Toolchain trouble is normal in systems programming and always takes longer than expected.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Self-Study Material}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  % \subsecdivheader{\subsecname}
+
+Some material is assigned rather than lectured, because it is better learned by doing than by watching. All of it is in the Reading Material section of the course documentation.
+
+\begin{table}[h]
+\caption{Self-study topics and the deadline by which each must be completed.}
+\footnotesize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{6.5cm}m{3.2cm}}
+  \toprule
+  \textbf{Topic} & \textbf{Complete by} \\
+  \midrule
+  Linux shell; VSCode and CMake; version control & Before Sep 1 \\
+  Flow control and operations                    & Before Sep 15 \\
+  Exception handling                             & Before Oct 13 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+\begin{MyBox}
+\textbf{Environment setup is not optional preparation}: it is the first thing the course depends on. Follow the Setup section before the first class and contact me if anything does not work.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Required Resources}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  % \subsecdivheader{\subsecname}
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.52\textwidth}
+\framesection{Toolchain}
+\begin{table}[h]
+\caption{Required software and the standard targeted by all course code.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{2.2cm}m{3.2cm}}
+  \toprule
+  \textbf{Item} & \textbf{Requirement} \\
+  \midrule
+  OS            & Ubuntu 24.04 LTS \\
+  Compiler      & GCC 13 or newer \\
+  Standard      & C++20 \\
+  Build         & CMake \\
+  Debugging     & gdb, Valgrind \\
+  Docs          & Doxygen \\
+  Version control & Git, GitHub account \\
+  Editor        & VSCode plus recommended extensions \\
+  Robotics      & ROS 2 Jazzy, Gazebo Harmonic \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{0.44\textwidth}
+\framesection{Hardware}
+\begin{compactitem}
+\footnotesize
+    \item 8 GB RAM minimum
+    \item Two or more CPU cores
+    \item 50 GB free disk space
+\end{compactitem}
+
+\medskip
+\framesection{Install Advice}
+\begin{compactitem}
+\footnotesize
+    \item Native or dual-boot is strongly recommended
+    \item A VM works for the first half, but Gazebo in the second half is graphics-intensive and will suffer
+    \item ROS 2 and Gazebo are required from Week 10, but install them now so problems surface early
+\end{compactitem}
+
+\medskip
+\framesection{Free References}
+\begin{compactitem}
+\footnotesize
+    \item \MyLink{cppreference.com}{cppreference.com}
+    \item C++ Core Guidelines
+    \item \MyLink{docs.ros.org/en/jazzy}{docs.ros.org/en/jazzy}
+\end{compactitem}
+\end{column}
+\end{columns}
+\begin{MyBox}
+\footnotesize
+\textbf{Total cost of required materials: \$0.00}. There is no textbook and nothing to buy. Every tool is free and installed from the Ubuntu archive.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Assessments}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Grade Distribution}
+\begin{table}[h]
+\caption{Course components and their weight in the final grade.}
+\footnotesize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{2.9cm}m{1.1cm}m{1.1cm}}
+  \toprule
+  \textbf{Component} & \textbf{Pts} & \textbf{Weight} \\
+  \midrule
+  RWA1 to RWA3           & 140 & 35\% \\
+  GP1 to GP3             & 140 & 35\% \\
+  Quizzes (5)            & 100 & 25\% \\
+  Participation          & 20  & 5\% \\
+  \midrule
+  \rowcolor{white}
+  \textbf{Total}         & \textbf{400} & \textbf{100\%} \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Two Phases}
+\begin{compactitem}
+\small
+    \item \textbf{Weeks 1 to 9}: individual work in C++, assessed through three RWAs and five quizzes
+    \item \textbf{Weeks 10 to 15}: teamwork in ROS 2, assessed through three Group Projects
+\end{compactitem}
+
+\medskip
+\framesection{Both Sequences Are Cumulative}
+\begin{compactitem}
+\small
+    \item Each assignment extends the code written for the previous one
+    \item A weak RWA1 is not a closed chapter, it is the starting point for RWA2
+\end{compactitem}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\textbf{No final exam}: GP3 is the capstone assessment.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Assignment Milestones}
+Two cumulative chains: one individual in C++, one in teams in ROS 2.
+
+\begin{table}[h]
+\caption{Real-World Applications and Group Projects with content, dates and points.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{1cm}m{4.6cm}m{1.5cm}m{1.5cm}m{0.9cm}}
+  \toprule
+  \textbf{Item} & \textbf{Content} & \textbf{Posted} & \textbf{Due} & \textbf{Pts} \\
+  \midrule
+  RWA1 & C++ fundamentals                          & Sep 15 & Sep 29 & 44 \\
+  RWA2 & STL containers and functions              & Sep 29 & Oct 13 & 48 \\
+  RWA3 & Smart pointers and object-oriented design & Oct 27 & Nov 10 & 48 \\
+  \midrule
+  GP1  & Publishers, subscribers, simulation       & Nov 10 & Nov 17 & 44 \\
+  GP2  & Services, actions, robot class hierarchies & Nov 17 & Dec 1 & 48 \\
+  GP3  & Coordinate frames, lifecycle nodes, autonomy layer & Dec 1 & Dec 11 & 48 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{compactitem}
+\small
+    \item \textbf{RWAs are individual}. Discussing concepts with classmates is fine; submitted code must be your own.
+    \item \textbf{Group Projects are collaborative}. Teams are assigned on ELMS-Canvas, and each member is responsible for understanding the whole submission, not only the part they wrote.
+\end{compactitem}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.44\textwidth}
+\framesection{Quizzes}
+\begin{table}[h]
+\caption{Quiz dates. Each quiz is worth 20 points.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{1.2cm}m{1.1cm}m{1.6cm}}
+  \toprule
+  \textbf{Quiz} & \textbf{Week} & \textbf{Date} \\
+  \midrule
+  Quiz 1 & 4  & Sep 22 \\
+  Quiz 2 & 6  & Oct 6 \\
+  Quiz 3 & 8  & Oct 20 \\
+  Quiz 4 & 10 & Nov 3 \\
+  Quiz 5 & 12 & Nov 17 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+\begin{compactitem}
+\small
+    \item They check that concepts are absorbed before the next assignment depends on them
+    \item Short, and not designed to be tricky
+    \item No AI assistance, and no makeups
+\end{compactitem}
+\end{column}
+\begin{column}{0.52\textwidth}
+\framesection{Participation and Engagement}
+20 points, earned week by week rather than as a single total.
+
+\begin{compactitem}
+\small
+    \item \textbf{Two equivalent routes}, credited each week: engage in class discussion, \textbf{or} submit that week's exercise solutions on ELMS-Canvas
+    \item The exercise route exists deliberately, so that students for whom speaking up in a large lecture is not the best way to learn are not disadvantaged
+    \item \textbf{Score}: $20 \times (\text{weeks credited} / 15)$, about 1.33 points per week
+    \item Solutions count only when submitted \textbf{before the start of the following lecture}. Week 15 solutions are due December 11.
+\end{compactitem}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\footnotesize
+\textbf{A bulk upload scores zero}, regardless of how many weeks it covers or how good the work is. The point of this component is continuous practice, and a late batch does not serve that purpose.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Grading and Policies}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+  
+\begin{table}[h]
+\caption{Letter grades assigned from the percentage of total points earned.}
+\footnotesize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{0.9cm}m{1.3cm}m{0.9cm}m{1.3cm}m{0.9cm}m{1.3cm}m{0.9cm}m{1.3cm}}
+  \toprule
+  \textbf{Grade} & \textbf{Cutoff} & \textbf{Grade} & \textbf{Cutoff} & \textbf{Grade} & \textbf{Cutoff} & \textbf{Grade} & \textbf{Cutoff} \\
+  \midrule
+  A+ & 97.00\% & B+ & 87.00\% & C+ & 77.00\% & D+ & 67.00\% \\
+  A  & 94.00\% & B  & 84.00\% & C  & 74.00\% & D  & 64.00\% \\
+  A- & 90.00\% & B- & 80.00\% & C- & 70.00\% & D- & 60.00\% \\
+  \bottomrule
+\end{tabular}
+\end{table}
+F is anything below 60.00\%.
+
+\medskip
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Late Work}
+\begin{compactitem}
+\footnotesize
+    \item RWAs and Group Projects: accepted up to \textbf{48 hours} late with a \textbf{20\% penalty}, not accepted after that
+    \item Quizzes and participation cannot be made up
+    \item Extensions for documented excused absences under University policy
+    \item Contact me \textbf{before} a deadline, not after
+\end{compactitem}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Regrades}
+\begin{compactitem}
+\footnotesize
+    \item Submit in writing within \textbf{one week} of receiving the grade
+    \item Errors are corrected immediately
+    \item Questions about how something was scored go to me by email
+\end{compactitem}
+\end{column}
+\end{columns}
+\medskip
+\begin{MyBox}
+\textbf{Cutoffs are applied consistently to every student}: 89.99 is not 90.00. Exceptions are not made for some and not others.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Academic Integrity and AI}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  
+  \framesubtitle{\subsecname}
+
+\begin{table}[h]
+\caption{Resources permitted for each assessment type.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{2.8cm}m{1.2cm}m{1.1cm}m{1.2cm}m{1.2cm}m{1.2cm}m{1.2cm}}
+  \toprule
+  \textbf{Assessment} & \textbf{Open notes} & \textbf{Use book} & \textbf{Learn online} & \textbf{Gather with AI} & \textbf{Ask friends} & \textbf{Work in groups} \\
+  \midrule
+  Real-World Applications & Yes & Yes & Yes & Yes & No  & No  \\
+  Quizzes                 & Yes & Yes & Yes & No  & No  & No  \\
+  Group Projects          & Yes & Yes & Yes & Yes & Yes & Yes \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{compactitem}
+\small
+    \item Some assignments are collected through \textbf{Turnitin} on ELMS
+    \item Course assistance sites such as CourseHero are \textbf{not} permitted sources
+    \item Every assignment carries the signed honor pledge
+    \item If you are ever unclear about the acceptable level of collaboration, ask before submitting
+\end{compactitem}
+\medskip
+\begin{MyBox}
+\textbf{Disclosure carries no penalty. Undisclosed use is a violation of the Code of Academic Integrity.}
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{AI Policy}
+Generative AI tools (TerpAI, ChatGPT, Claude, Gemini, GitHub Copilot and similar) are part of professional robotics practice, and this course treats them that way.
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Permitted, With Disclosure}
+On RWAs, Group Projects and weekly exercises:
+\begin{compactitem}
+\small
+    \item Explaining concepts
+    \item Interpreting compiler and linker errors
+    \item Reviewing code you have \textbf{already written}
+    \item Suggesting debugging strategies
+    \item Generating small illustrative examples
+\end{compactitem}
+\smallskip
+Disclose at the top of the submission: name the tool, describe how it was used. Two or three sentences are enough.
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Not Permitted}
+\begin{compactitem}
+\scriptsize
+    \item AI tools during quizzes
+    \item Submitting AI-generated code you cannot read, explain and modify
+\end{compactitem}
+
+\medskip
+\framesection{The Standard Applied}
+\begin{compactitem}
+\scriptsize
+    \item You are responsible for every line submitted
+    \item I may ask, in class or office hours, for a walkthrough of any part: why it works, what would break it, what would be changed
+    \item Work that cannot be explained does not count, regardless of whether it compiles
+    \item This is the same standard a future employer will apply
+\end{compactitem}
+\end{column}
+\end{columns}
+
+% \medskip
+% \begin{MyBox}
+% \footnotesize
+% \textbf{These tools skew old}. They are strongest on the patterns most common on the public internet, so expect ROS 1 idioms, deprecated \texttt{rclcpp} APIs and pre-C++11 memory management. Verify against the course documentation and the ROS 2 Jazzy documentation before relying on anything. Catching a plausible wrong answer is itself a skill this course is trying to build.
+% \end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Schedule}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  
+  \framesubtitle{\subsecname}
+
+
+Each assignment builds on the previous one, ending in a working autonomous robot in simulation.
+
+\begin{compactitem}
+\small
+    \item \textbf{RWA1} (Weeks 3 to 5): C++ fundamentals. Variables, types, pointers, memory.
+    \item \textbf{RWA2} (Weeks 5 to 7): STL containers and functions added to the RWA1 code.
+    \item \textbf{RWA3} (Weeks 9 to 11): smart pointers and object-oriented design added to the RWA2 code.
+    \item \textbf{GP1} (Weeks 11 to 12): the design moves into ROS 2 with publishers, subscribers and Gazebo.
+    \item \textbf{GP2} (Weeks 12 to 14): services, actions and robot class hierarchies added to GP1.
+    \item \textbf{GP3} (Weeks 14 to 15): coordinate frames, lifecycle nodes and an autonomy decision layer added to GP2.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+\textbf{The second half depends on the first throughout}. No topic is taught for its own sake.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Weekly Schedule}
+
+\begin{table}[h]
+\caption{Weekly topics, quizzes, and assignment deadlines for the semester.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.15}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{1.3cm}m{7.1cm}m{0.9cm}m{3.6cm}}
+  \toprule
+  \textbf{Wk} & \textbf{Topic} & \textbf{Quiz} & \textbf{Deliverable} \\
+  \midrule
+  1 (Sep 1)   & L1: Course introduction and conventions                    &        &                     \\
+  2 (Sep 8)   & L2: Introduction to C++ (variables, types, namespaces)     &        &                     \\
+  3 (Sep 15)  & L3: Pointers and memory (stack, heap, references)          &        & RWA1 posted         \\
+  4 (Sep 22)  & L4: STL containers (strings, arrays, vectors, iterators)   & Quiz 1 &                     \\
+  5 (Sep 29)  & L5: Functions, basics (overloading, recursion)             &        & RWA1 due, RWA2 posted \\
+  6 (Oct 6)   & L6: Functions, advanced (templates, lambdas, functors)     & Quiz 2 &                     \\
+  7 (Oct 13)  & L7: Smart pointers and move semantics                      &        & RWA2 due            \\
+  8 (Oct 20)  & L8: OOP basics (classes, encapsulation, constructors)      & Quiz 3 &                     \\
+  9 (Oct 27)  & L9: OOP advanced (inheritance, polymorphism, abstraction)  &        & RWA3 posted         \\
+  10 (Nov 3)  & L10: ROS 2 foundations (nodes, publishers, subscribers)    & Quiz 4 &                     \\
+  11 (Nov 10) & L11: ROS 2 configuration (parameters, launch, executors)   &        & RWA3 due, GP1 posted \\
+  12 (Nov 17) & L12: ROS 2 communication (services, actions)               & Quiz 5 & GP1 due, GP2 posted \\
+  13 (Nov 24) & L13: ROS 2 coordinate frames and transforms                &        &                     \\
+  14 (Dec 1)  & L14: ROS 2 lifecycle nodes                                 &        & GP2 due, GP3 posted \\
+  15 (Dec 8)  & L15: Robot autonomy architecture (sense-plan-act)          &        & GP3 due Fri, Dec 11 \\
+  \bottomrule
+\end{tabular}
+\end{table}
+Lecture exercises are due every week. Self-study reading is completed before Sep 1, Sep 15 and Oct 13.
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Succeeding in This Course}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  
+  \framesubtitle{\subsecname}
+  
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Tips for Success}
+\begin{compactitem}
+\footnotesize
+    \item \textbf{Participate.} Articulating an idea is how you find out whether you actually have it.
+    \item \textbf{Manage your time.} Block your schedule, including extra time for technology problems.
+    \item \textbf{Log in regularly.} Several times a week, and more often when group submissions are due.
+    \item \textbf{Do not fall behind.} Each week builds on the previous one.
+    \item \textbf{Use ELMS notifications.} Set announcements to instant or daily.
+    \item \textbf{Ask for help.} IT Support for technology, me and your classmates for concepts.
+\end{compactitem}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Support and Accommodations}
+\begin{compactitem}
+\footnotesize
+    \item \textbf{ADS}: 301-314-7682, \MyLink{adsfrontdesk@umd.edu}{adsfrontdesk@umd.edu}. ADS cannot assist retroactively, so request accommodations early.
+    \item \textbf{Names and pronouns}: tell me how you want to be referred to. Identity is self-identified, never presumed.
+    \item \textbf{Other resources}: Counseling Center, Writing Center, Student Academic Support Services, Division of Student Affairs, Veteran Student Life.
+    \item \textbf{Mandatory reporting}: as a Responsible University Employee I must report disclosures of sexual assault, harassment, interpersonal violence and stalking to the Title IX Coordinator. Confidential resources: CARE to Stop Violence (301-741-3442), Counseling Center (301-314-7651).
+\end{compactitem}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\footnotesize
+\textbf{Recording} of class sessions requires advance permission. Maryland is an all-party consent state.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+
+%============================================================
+% PART VI: C++ Overview, Build Process, CMake
+% Moved from the L2 deck and updated to C++20
+%============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{C++ Overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+C++ is a \textbf{statically typed}, \textbf{compiled}, and \textbf{multi-paradigm} programming language. Developed by Bjarne Stroustrup at Bell Labs starting in 1979 as an enhancement to the C programming language, C++ provides low-level control over system resources while offering high-level programming abstractions through features such as classes, templates, and the Standard Template Library \cite{stroustrup2013cpp}.
+
+\framesection{Authoritative and Secondary Sources}
+\begin{compactitem}
+\small
+    \item The C++ standard is the sole authoritative source for C++ specifications. Everything else, including the reputable sites below, is secondary. Secondary sources are generally accurate and highly useful, but they lack the definitive authority of the standard itself.
+    \item \MyLink{https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/n4868.pdf}{N4868}: the final working draft of C++20, free from the ISO C++ committee. The published ISO document is paid, but the draft is what people cite in practice and is what this course refers to.
+    \item \MyLink{https://en.cppreference.com/w/}{cppreference.com}: an extensive reference for C++ and its standard library, covering syntax, functions, and the standards themselves.
+    \item \MyLink{https://cplusplus.com/}{cplusplus.com}: tutorials, references, and examples, aimed at beginners and intermediate learners.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+\textbf{Course code targets C++20} and is compiled with GCC 13 or newer.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Standards}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+C++ is revised on a three-year cycle. Every release is a distinct language version, and code written for one is not automatically valid or idiomatic in another.
+
+\begin{figure}
+    \centering
+    \includegraphics[
+        width=\linewidth,
+        alt={Timeline of C++ language standards from the language's origins through the most recent release.}
+    ]{figures/ENPM702/L1/cpp_timeline.png}
+\end{figure}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{What Each Standard Added}
+The releases below are the ones that matter for the code you will write in this course.
+
+\begin{table}[h]
+\caption{Language standards and the features from each that this course relies on.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{1.6cm}m{7.4cm}m{3.2cm}}
+  \toprule
+  \textbf{Standard} & \textbf{Additions relevant to this course} & \textbf{Where you meet it} \\
+  \midrule
+  C++11  & Uniform initialization, \mintcpp{auto}, range-based \mintcpp{for}, lambdas, \mintcpp{nullptr}, move semantics, smart pointers & Lectures 2, 6, 7 \\
+  C++14  & Generic lambdas, \mintcpp{std::make_unique}                              & Lectures 6, 7 \\
+  C++17  & Structured bindings, \mintcpp{std::optional}, initializers in \mintcpp{if} & Lectures 4, 5 \\
+  C++20  & Concepts, ranges, three-way comparison, designated initializers          & Lectures 6, 9 \\
+  C++23  & \mintcpp{std::expected}, \mintcpp{std::print}, deducing \mintcpp{this}   & Not used in this course \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+\begin{MyBox}
+Most of what people call \textbf{modern C++} arrived in C++11. The later standards refine it rather than replace it. If you find a tutorial written before 2011, close it.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Why C++20 in This Course}
+C++17, C++20 and C++23 were all plausible choices. C++20 wins on three counts.
+
+\begin{compactitem}
+\small
+    \item \textbf{It is the newest standard the required toolchain fully supports.} GCC 13 implements C++20. Its C++23 support is partial, so choosing C++23 would mean checking feature by feature whether your compiler has it.
+    \item \textbf{It costs nothing in the second half.} ROS 2 Jazzy requires C++17 as a floor, and C++20 is compatible with that floor. Nothing you learn in Weeks 1 to 9 has to be unlearned in Weeks 10 to 15.
+    \item \textbf{It is where professional code is.} Teaching C++17 would teach a version the field has already moved past. The habits you build here should be the ones you carry to work.
+\end{compactitem}
+
+\medskip
+\framesection{How You Set It}
+\shellboxmin{g++ -std=c++20 -Wall -Wextra main.cpp -o main}
+
+\begin{compactitem}
+\small
+    \item The standard is a \textbf{compiler flag, not a property of the file}. Omitting it means silently compiling against whatever your compiler defaults to.
+    \item \shellboxmin{-Wall -Wextra} turn on the warnings that catch the mistakes beginners actually make. Treat a warning as an error you have not hit yet.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+\textbf{ROS 2 Jazzy packages do not default to C++20.} Starting in Week 10 you will set the standard in \MyFile{CMakeLists.txt} for every package rather than relying on the default.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Why C++ for Robotics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\framesection{Hardware Interfacing Capabilities}
+As a compiled language, C++ offers robust mechanisms for low-level hardware interaction.
+
+\begin{compactitem}
+\small
+    \item \textbf{Direct memory access}: through pointers, allowing precise manipulation of memory addresses.
+    \item \textbf{Memory-mapped I/O}: reading from and writing to hardware registers mapped into memory space.
+    \item \textbf{Inline assembly}: embedding assembly snippets for highly optimized or specific CPU operations.
+    \item \textbf{System calls and APIs}: interfacing with operating system kernels and hardware-specific APIs for device driver communication.
+    \item \textbf{Specialized libraries}: low-level and platform-specific libraries for peripherals and hardware components.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+There is a second reason, specific to this program: the ROS 2 client library \texttt{rclcpp}, the perception and planning stacks you will read later, and most production robotics code are written in C++. Fluency here is what makes that code something you can change rather than something you work around.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{A Note for Students Arriving from Python}
+There is no prerequisite for this course and no prior C++ is assumed. If your background is Python, the first few weeks are more likely to feel \textbf{unfamiliar} than \textbf{difficult}.
+
+\begin{table}[h]
+\caption{Where C++ asks for something Python handles on your behalf.}
+\footnotesize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{3.6cm}m{4.2cm}m{4.4cm}}
+  \toprule
+  \textbf{What} & \textbf{Python} & \textbf{C++} \\
+  \midrule
+  Type of a variable & Decided at run time          & Declared by you, checked at compile time \\
+  Memory             & Managed for you              & Yours to reason about \\
+  Errors             & Usually surface when the line runs & Many surface before the program runs \\
+  Running code       & Interpreted directly         & Preprocessed, compiled, linked, then run \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+\begin{MyBox}
+C++ requires explicitness about matters that Python handles silently, and \textbf{that explicitness is the point}. It is also why the compiler can catch mistakes for you.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{From Source to Executable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile,noframenumbering]
+  \secdivheader{\secname}
+Running a C++ program is not one step. Source text is transformed by the \textbf{preprocessor}, translated by the \textbf{compiler}, assembled into object code, joined to libraries by the \textbf{linker}, and only then loaded and executed.
+
+\begin{figure}
+    \centering
+    \includegraphics[
+        width=0.75\linewidth,
+        alt={Diagram of the development process from writing source code through building to running the executable.}
+    ]{figures/ENPM702/L1/development.png}
+\end{figure}
+
+\begin{MyBox}
+Each stage has its own errors and its own error messages. \textbf{Knowing which stage produced a message is most of the work of fixing it.}
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Getting the Code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+Every lecture has a matching folder in one repository. Clone it once now, then pull before each lecture.
+
+\framesection{Clone It Once}
+\begin{bashcodebasic}[][fontsize=\small]
+mkdir -p ~/enpm702_cpp && cd ~/enpm702_cpp
+git clone https://github.com/zeidk/enpm702-fall-2026-cpp.git
+ls
+\end{bashcodebasic}
+
+\framesection{Pull Before Every Lecture}
+\begin{bashcodebasic}[][fontsize=\small]
+cd ~/enpm702_cpp/enpm702-fall-2026-cpp
+git pull
+\end{bashcodebasic}
+
+\begin{compactitem}
+\small
+    \item Each week's folder contains \MyFile{src/main.cpp}, a \MyFile{CMakeLists.txt}, and the code shown in that lecture.
+    \item Work in your own copy. If you edit the cloned files directly, \shellboxmin{git pull} will conflict with your changes.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+\textbf{No GitHub account is needed to clone}, but you need one for the course. If \shellboxmin{git} is not installed: \shellboxmin{sudo apt install git}
+\end{MyBox}
+\end{frame}
+\endgroup
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Write}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\framesection{Open week1/src/main.cpp in Visual Studio Code}
+
+\begin{cppcodebasic}[][fontsize=\small]
+#include <iostream>
+
+int main() {
+    std::cout << "Week 1\n";
+    return 0;
+}
+
+\end{cppcodebasic}
+
+\begin{compactitem}
+\small
+   \item \mintcpp{main()} is the required entry point of every C++ program. It must return \mintcpp{int}, not \mintcpp{void}.
+   \begin{compactitem}
+       \item \mintcpp{return 0} can be omitted; reaching the closing brace returns 0 automatically.
+   \end{compactitem}
+   \item \mintcpp{std::cout << "Week 1\n";}
+   \begin{compactitem}
+       \item \mintcpp{std::cout <<} prints to the terminal. Requires \mintinline[style=borland]{cpp}{#include <iostream>}
+       \item \mintcpp{'\n'} adds a newline after the message.
+       \item The semicolon (\mintcpp{;}) terminates the statement. A statement is a complete instruction that tells the computer to perform a specific action.
+   \end{compactitem}
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+The semicolon acts like a period in English: it marks the end of one complete instruction. Without it, the compiler would not know where one statement ends and the next begins.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Comments}
+Comments document code for the people who read, understand, and maintain it. They explain complex logic, record design decisions, and supply context that is not obvious from the code itself. Unlike other code elements, comments are ignored during compilation and do not affect program execution.
+
+\begin{cppcodebasic}[][fontsize=\footnotesize]
+// Single-line comment: explains the next line of code
+/*
+   Multi-line comment: useful for longer explanations,
+   function descriptions, or temporarily disabling code blocks
+*/
+\end{cppcodebasic}
+
+\medskip
+\begin{MyBox}
+Use \textbf{Ctrl} + \textbf{/} to comment and uncomment selected lines in VSCode.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Build}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+The build turns a text file into something the operating system can load and run. It happens in three stages, and each can fail on its own terms.
+
+\begin{figure}
+    \centering
+    \includegraphics[
+        width=14cm,
+        alt={Diagram of the build pipeline: source file through preprocessor, compiler, and linker to an executable.}
+    ]{figures/ENPM702/L1/build.png}
+\end{figure}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Preprocessor}
+\begin{compactitem}
+   \item The preprocessor modifies source code before compilation:
+   \begin{compactitem}
+       \item Removes comments and adjusts whitespace.
+       \item Processes directives starting with \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#}
+       \begin{compactitem}
+           \item \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#include} performs a copy-paste of files.
+           \item Other directives: \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#define}, \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#ifdef}, \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#endif}, etc.
+       \end{compactitem}
+       \item Inserts \textbf{linemarkers} recording where each piece of the output came from.
+   \end{compactitem}
+   \item \shellboxmin{g++ -std=c++20 -E main.cpp} shows preprocessor output before compilation.
+   \item \shellboxmin{g++ -std=c++20 -E main.cpp -o main.i} stores that output in \MyFile{main.i}
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+The preprocessor operates on \textbf{text}. It has no understanding of C++ syntax, semantics, or language rules.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Linemarkers}
+Open \MyFile{main.i} and you will find it is enormous, and that most lines are not yours. Scattered through it are lines beginning with \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#}:
+
+\begin{bashcodebasic}[][fontsize=\footnotesize]
+# 3 "main.cpp" 2
+\end{bashcodebasic}
+
+\begin{compactitem}
+\small
+    \item This says: what follows came from \textbf{line 3} of \MyFile{main.cpp}.
+    \item The trailing digit is a flag: 
+    \begin{compactitem}
+        \item \textbf{1} entering a file
+        \item \textbf{2} returning from one
+        \item \textbf{3} a system header
+        \item \textbf{4} treat as \mintcpp{extern "C"} (C linkage)
+    \end{compactitem}
+        \item Flag \textbf{3} is how the compiler knows not to warn you about code in \mintcpp{<iostream>}. Without it, enabling warnings would bury you in complaints about libstdc++ rather than about your own code.
+\end{compactitem}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Compiler}
+The compiler takes the preprocessed code and generates machine code (object code). Machine code is the lowest-level language the CPU understands directly: binary instructions, not text.
+
+\begin{compactitem}
+\small
+    \item \shellboxmin{g++ -std=c++20 -c main.cpp} does the following:
+    \begin{compactitem}
+    \small
+        \item \textbf{Preprocessing}: handles \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#include}, \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#define}, \mintinline[fontsize=\footnotesize, style=manni]{cpp}{#ifdef}, etc.
+        \item \textbf{Compilation}: converts the preprocessed C++ code to assembly.
+        \item \textbf{Assembly}: converts assembly to a machine code object file (.o)
+    \end{compactitem}
+    \item \shellboxmin{g++ -std=c++20 -c main.i -o main.o} skips the preprocessing step, since the input is already preprocessed, and performs the other two.
+    \item \shellboxmin{hexdump -C main.o} displays raw machine code.
+    \item \shellboxmin{objdump -D main.o} disassembles the object file.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+Read the \textbf{first} compiler error, not the last. One mistake early in a file usually produces a cascade, and the later messages are consequences rather than causes.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Linker}
+The linker combines object files and libraries into an executable program. It resolves dependencies, calculates memory addresses, and links external libraries.
+
+\begin{compactitem}
+    \item \shellboxmin{g++ main.o -o main} does the following:
+    \begin{compactitem}
+        \item Takes the object file \MyFile{main.o}
+        \item Links it, resolving any external references.
+        \item Creates an executable named \MyFile{main}
+        \item \shellboxmin{objdump -d --demangle main}
+    \end{compactitem}
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+Linker errors read differently from compiler errors. \textbf{undefined reference to} means the compiler accepted your code but the linker could not find the definition of something you used. That is a missing source file or a missing library, not a syntax problem.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Run}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\shellboxmin{./main} runs the executable.
+
+\framesection{What Happens When You Run the Program}
+\begin{compactitem}
+    \item The OS loads the executable file from storage into RAM.
+    \item RAM stores the program's machine code instructions and data in memory locations.
+    \item The CPU fetches instructions from RAM one by one.
+    \item The CPU decodes each instruction to determine what operation to perform.
+    \item The CPU executes the instruction (arithmetic, memory access, function calls, and so on).
+    \item This fetch-decode-execute cycle continues until the program terminates.
+\end{compactitem}
+
+\framesection{Two Roles}
+\begin{compactitem}
+    \item \textbf{CPU}: the part that actually performs computations and controls program flow.
+    \item \textbf{RAM}: fast temporary storage holding both program instructions and data during execution.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{The Whole Path}
+
+\begin{figure}
+    \includegraphics[
+        width=12cm,
+        alt={Summary diagram of the full path from source code to a running process.}
+    ]{figures/ENPM702/L1/whole_path.png}
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Building with CMake}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+CMake is a \textbf{build system generator}. You describe your project once, and CMake produces the actual build files for your platform.
+
+\framesection{Why Not Just g++}
+\begin{compactitem}
+    \item Typing \shellboxBlank{g++} by hand works for one file. It does not work for twenty files, three libraries and a dependency graph.
+    \item CMake tracks which files changed and rebuilds only those.
+    \item Every ROS 2 package you write from Week 10 onward is a CMake project. You are learning the tool now so that it is familiar later.
+\end{compactitem}
+
+\framesection{This Is a Demonstration, Not the Lesson}
+\begin{compactitem}
+    \item CMake and VSCode are covered in the \textbf{Reading Material} section of the course documentation, assigned before the first class.
+    \item The next three slides are a working demonstration to anchor that reading, not a substitute for it.
+\end{compactitem}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{A Minimal Project}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.38\textwidth}
+\framesection{Layout}
+
+{\small
+\begin{tikzpicture}
+\path[draw]
+  \FTdirLight(\FTrootLight,r,\MyFolder{week1/})
+    \FTfileLight(r,\MyFile{CMakeLists.txt})
+    \FTdirLight(r,s,\MyFolder{src/})
+      \FTfileLight(s,\MyFile{main.cpp})
+    \FTfileLight(r,\MyFolder{build/})
+  ;
+\end{tikzpicture}
+}
+
+\begin{compactitem}
+\footnotesize
+    \item \MyFile{build/} is generated. Never commit it.
+\end{compactitem}
+\end{column}
+\begin{column}{0.10\textwidth}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{\MyFile{CMakeLists.txt}}
+\begin{cmakecodebasic}[][fontsize=\scriptsize]
+cmake_minimum_required(VERSION 3.22)
+project(week1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_compile_options(-Wall -Wextra)
+
+add_executable(week1 src/main.cpp)
+\end{cmakecodebasic}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\begin{compactitem}
+    \item \textbf{CMAKE_CXX_STANDARD_REQUIRED ON} makes the build \textbf{fail} if the compiler cannot provide C++20, instead of quietly falling back to an older standard.
+     \item \textbf{CMAKE_CXX_EXTENSIONS OFF} asks for \shellboxmin{-std=c++20} rather than \shellboxmin{-std=gnu++20}, so you compile against the standard itself and not GCC's extensions to it. Code that relies on an extension compiles for you and fails for someone on a different compiler.
+     \begin{compactitem}
+         \item A compiler extension is a language feature the compiler accepts that the standard does not define.
+     \end{compactitem}
+\end{compactitem}
+
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Configure, Build, Run}
+CMake works in two steps. \textbf{Configure} reads \MyFile{CMakeLists.txt} and generates a build tree. \textbf{Build} runs the compiler and linker.
+
+\begin{bashcodebasic}[][fontsize=\footnotesize]
+cd week1
+cmake -S . -B build      # configure: generate the build tree
+cmake --build build      # build: compile and link
+./build/week1         # run
+\end{bashcodebasic}
+
+\begin{compactitem}
+\small
+    \item \shellboxmin{-S} is the source directory, \shellboxmin{-B} is the build directory.
+    \item Everything generated goes in \MyFolder{build/}. Deleting that directory is always safe, and is the correct first response to a build that has gone strange.
+    \item Configure only needs rerunning when \MyFile{CMakeLists.txt} changes. Adding a new source file counts as a change.
+    % \item \shellboxmin{cmake -{}-build build -j\$(nproc)} builds in parallel.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+Add \MyFolder{build/} to your \MyFile{.gitignore}. Committing a build tree is a common way to lose points and a common way to make a repository unusable for your teammates.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{VSCode Workflow}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+With the \textbf{CMake Tools} and \textbf{C/C++} extensions installed, the commands on the previous slide have equivalents in the editor.
+
+\begin{columns}[T,onlytextwidth]
+\begin{column}{0.48\textwidth}
+\framesection{Build}
+\begin{compactitem}
+\small
+    \item Open the project folder: \textbf{File}~$\rightarrow$~\textbf{Open Folder}
+    \item \textbf{Ctrl} + \textbf{Shift} + \textbf{P}, then \textbf{CMake: Configure}. Select the GCC 13 kit when prompted.
+    \item \textbf{CMake: Build}, or the Build button in the status bar.
+    \item Pick what runs with the launch target in the status bar.
+\end{compactitem}
+\end{column}
+\begin{column}{0.48\textwidth}
+\framesection{Debug}
+\begin{compactitem}
+\small
+    \item \textbf{CMake: Debug} starts the executable under gdb.
+    \item Click in the gutter to set a breakpoint, then step with the debug toolbar.
+    \item Inspect values in the Variables pane rather than adding print statements.
+    \item You will use gdb directly from Lecture 3, when a wrong pointer stops producing a readable error message.
+\end{compactitem}
+\end{column}
+\end{columns}
+
+\medskip
+\begin{MyBox}
+\textbf{Learn the debugger in week one}, while the programs are four lines long. It is much harder to learn it for the first time on a program that is already broken.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Environment Verification}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+Everything in the rest of this course assumes the toolchain works. We check that now, in the room, rather than discovering it the night RWA1 is due.
+
+\framesection{What We Are Checking}
+\begin{compactitem}
+    \item That each required tool is installed and new enough.
+    \item That you can compile and run a program by hand.
+    \item That you can compile and run the same program through CMake.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+\textbf{A failure here is expected} and is the reason we are doing it together. Toolchain trouble is normal in systems programming and always takes longer than expected.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Toolchain Check}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\framesection{Step 1: Versions}
+Run each command and record what you get. Bring any line that fails to the wrap-up.
+
+\begin{bashcodebasic}[][fontsize=\scriptsize]
+lsb_release -d          # expect: Ubuntu 24.04 LTS
+g++ --version           # expect: 13 or newer
+cmake --version         # expect: 3.22 or newer
+gdb --version
+valgrind --version
+doxygen --version
+git --version
+\end{bashcodebasic}
+
+\framesection{Step 2: Build the Week 1 Code}
+Both routes build the same source. The first produces \MyFile{main}, the second produces \MyFile{build/week1}.
+
+\begin{bashcodebasic}[][fontsize=\scriptsize]
+cd ~/enpm702_cpp/enpm702-fall-2026-cpp/week1
+g++ -std=c++20 -Wall -Wextra src/main.cpp -o main && ./main
+cmake -S . -B build && cmake --build build && ./build/week1
+\end{bashcodebasic}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{Common Failures}
+
+\begin{table}[h]
+\caption{Symptoms you are likely to hit today and what causes them.}
+\scriptsize\centering
+\renewcommand{\arraystretch}{1.2}
+\rowcolors{2}{white}{black!5}
+\begin{tabular}{m{5.8cm}m{6.4cm}}
+  \toprule
+  \textbf{Symptom} & \textbf{Usual cause} \\
+  \midrule
+  \texttt{g++: command not found}          & \shellboxmin{sudo apt install build-essential} \\
+  \texttt{cmake: command not found}        & \shellboxmin{sudo apt install cmake} \\
+  Errors about unavailable language features & The standard flag is missing, or the build tree is stale \\
+  \texttt{undefined reference to main}     & The source file was never added to \texttt{add_executable} \\
+  Changes to the code have no effect       & You ran the old binary, or configure was not rerun after editing \MyFile{CMakeLists.txt} \\
+  CMake reports a cached path that no longer exists & Delete \MyFile{build/} and configure again \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+\begin{MyBox}
+If your environment is not working by the end of class, \textbf{email me this week}, not next week. Lecture 2 assumes you can compile.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Course Conventions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+  \secdivheader{\secname}
+A small number of conventions apply to every piece of code you submit in this course. They are not stylistic preferences: each one exists because the alternative causes a problem you would otherwise meet later, in code that is harder to read.
+
+\bigskip
+\begin{MyBox}
+These conventions are applied in the RWAs and Group Projects, and code that ignores them is marked down even when it compiles and runs correctly.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection*{Newlines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begingroup
+\divframetrue
+\renewcommand{\divbartextA}{\secname}
+\renewcommand{\divbartextB}{}
+\setbeamercolor{background canvas}{bg=SubsecBg}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]{\secname}
+  \showframenumber%
+  \divbar{\secname}{\subsecname}
+  \framesubtitle{\subsecname}
+
+\framesection{The Rule}
+Always use \mintcpp{'\n'} to insert a newline. Do \textbf{not} use \mintcpp{std::endl} unless you have a specific reason to flush the output buffer.
+
+\begin{cppcodebasic}[][fontsize=\small]
+std::cout << "Hello, World!" << '\n';       // correct
+std::cout << "Hello, World!" << std::endl;  // avoid
+\end{cppcodebasic}
+
+\begin{compactitem}
+\small
+    \item Both lines produce the \textbf{same visible output}. They differ in what happens to the output buffer, not in what you see.
+    \item \mintcpp{'\n'} is a character literal, written with single quotes. \mintcpp{"\n"} is a string literal containing that character; either works, but the character literal is the one to reach for.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+This is the convention you will break most often out of habit, because \mintcpp{std::endl} appears in most older tutorials.
+\end{MyBox}
+\end{frame}
+\endgroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[fragile]{\secname}
+\framesubtitle{\subsecname}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framesection{What \mintcpp{std::endl} Actually Does}
+\begin{compactitem}
+\small
+    \item It performs \textbf{two} operations: it writes a newline character, \textbf{and} it flushes the output buffer.
+    \item Flushing forces the program to write all buffered output to the terminal immediately, rather than letting it accumulate and be written in one go.
+\end{compactitem}
+
+\medskip
+\framesection{Why the Flush Is Usually Unnecessary}
+The buffer is flushed on your behalf in every case that matters:
+\begin{compactitem}
+\small
+    \item when it is full,
+    \item when the program ends,
+    \item and when \mintcpp{std::cin} is used to read input.
+\end{compactitem}
+
+\medskip
+\framesection{Why It Costs You}
+\begin{compactitem}
+\small
+    \item A flush is a comparatively expensive operation. Paying for one on \textbf{every line} is wasted work.
+    \item In loops or high-frequency output, which is exactly what robotics code produces, this causes noticeable performance degradation.
+\end{compactitem}
+
+\medskip
+\begin{MyBox}
+Use \mintcpp{'\n'} by default. Use \mintcpp{std::endl} only when you genuinely need the output to appear \textbf{before} the program continues, for example a progress message printed immediately before a long computation or a suspected crash.
+\end{MyBox}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NEXT CLASS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Next Class}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{
+\setbeamercolor{background canvas}{bg=white}
+\setbeamertemplate{navigation symbols}{}
+\begin{frame}[plain,c,fragile]
+  \showframenumber%
+\secdivheader{Next Class}
+\begin{compactitem}
+  \item \textbf{Next Lecture (Sep 8)}: \textit{L2: Introduction to C++}
+  \begin{compactitem}
+    \item Variables: declaration, initialization, memory allocation
+    \item Integral, floating-point and Boolean types
+    \item Type conversion and type deduction
+    \item Constants, scope and namespaces
+  \end{compactitem}
+  \item \textbf{Pre-Work}
+  \begin{compactitem}
+    \item Finish your environment setup if it is not working yet. Email me this week rather than next week.
+    \item Complete the Lecture 1 \MyLink{https://enpm702-fall-2026-docs.readthedocs.io/en/latest/lectures/lecture1/l1_shell.html}{Shell exercises} and \MyLink{https://enpm702-fall-2026-docs.readthedocs.io/en/latest/lectures/lecture1/l1_quiz.html}{quiz} on ReadTheDocs.
+    \item Self-study reading, if not already done: Linux shell, VSCode and CMake, version control.
+  \end{compactitem}
+  \item \textbf{Recommended Reading}
+  \begin{compactitem}
+  \small
+    \item \MyLink{https://en.cppreference.com/w/cpp/language/declarations}{cppreference: declarations}
+    \item \MyLink{https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines\#es-expressions-and-statements}{C++ Core Guidelines, ES: Expressions and statements}
+  \end{compactitem}
+\end{compactitem}
+\end{frame}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{References}
+\scriptsize
+  \printbibliography[heading=none]
+\end{frame}
+
+\end{document}

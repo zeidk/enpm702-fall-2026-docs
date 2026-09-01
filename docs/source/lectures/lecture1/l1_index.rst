@@ -69,8 +69,9 @@ Next Steps
 
   - Finish your environment setup if it is not working yet. Email the
     instructor this week rather than next week.
-  - Complete the Lecture 1 exercises and submit them before the start
-    of Lecture 2 for participation credit.
+  - Complete the Lecture 1 :doc:`shell exercises <l1_shell>` and
+    :doc:`self-check quiz <l1_quiz>`. Lecture 1 has no C++ exercises,
+    so there is nothing to submit for participation credit this week.
   - Self-study reading, if not already done: **Linux Shell**, **VSCode
     and CMake**, **Version Control**.
   - **Flow Control and Operations** is due before Sep 15.
