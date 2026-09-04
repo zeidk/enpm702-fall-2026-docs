@@ -12,7 +12,7 @@ skills from the previous one.
 
    .. code-block:: bash
 
-      g++ -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -std=c++20 -Wall -Wextra -o program program.cpp
 
 
 ----

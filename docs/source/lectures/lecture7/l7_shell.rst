@@ -187,7 +187,7 @@ when many files follow the same compilation pattern.
 
    # Variables
    CXX      = g++
-   CXXFLAGS = -std=c++17 -Wall -Wextra -g
+   CXXFLAGS = -std=c++20 -Wall -Wextra -g
    TARGET   = my_program
    SRCS     = main.cpp utils.cpp math_utils.cpp
    OBJS     = $(SRCS:.cpp=.o)
@@ -236,7 +236,7 @@ workspace).
    export PATH="$PROJECT_ROOT/build/bin:$PATH"
 
    # Set compiler flags
-   export CXXFLAGS="-std=c++17 -Wall -Wextra"
+   export CXXFLAGS="-std=c++20 -Wall -Wextra"
 
    # Create useful aliases
    alias build="cd $PROJECT_ROOT && make -j$(nproc)"

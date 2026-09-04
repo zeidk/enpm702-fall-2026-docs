@@ -477,7 +477,7 @@ Deliverables
    * - Source files (``.cpp``)
      - Corresponding implementations and ``main.cpp``.
    * - ``CMakeLists.txt``
-     - Build configuration targeting C++17 or later.
+     - Build configuration targeting C++20 or later.
    * - UML class diagram
      - Shows the full class hierarchy and relationships.
    * - Valgrind output

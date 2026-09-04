@@ -258,7 +258,7 @@ configuration that keeps source consistent across the class:
      "editor.insertSpaces": true,
      "files.insertFinalNewline": true,
      "files.trimTrailingWhitespace": true,
-     "C_Cpp.default.cppStandard": "c++17"
+     "C_Cpp.default.cppStandard": "c++20"
    }
 
 Download a ready-made copy: :download:`settings.json
@@ -327,7 +327,7 @@ A minimal ``CMakeLists.txt`` for a single executable:
    cmake_minimum_required(VERSION 3.16)
    project(week1 LANGUAGES CXX)
 
-   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_CXX_STANDARD 20)
    set(CMAKE_CXX_STANDARD_REQUIRED ON)
    set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -387,7 +387,7 @@ Each ``CMakeLists.txt`` repeats the same boilerplate:
    cmake_minimum_required(VERSION 3.16)
    project(week1 LANGUAGES CXX)
 
-   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_CXX_STANDARD 20)
    set(CMAKE_CXX_STANDARD_REQUIRED ON)
    set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -445,7 +445,7 @@ A minimal root ``CMakeLists.txt``:
    cmake_minimum_required(VERSION 3.16)
    project(enpm702_ws LANGUAGES CXX)
 
-   set(CMAKE_CXX_STANDARD 17)
+   set(CMAKE_CXX_STANDARD 20)
    set(CMAKE_CXX_STANDARD_REQUIRED ON)
    set(CMAKE_CXX_EXTENSIONS OFF)
 

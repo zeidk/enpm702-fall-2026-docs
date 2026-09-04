@@ -7,7 +7,7 @@ organized alphabetically across all lectures. Click any letter to jump to
 that section.
 
 :ref:`A <g-a>` · :ref:`B <g-b>` · :ref:`C <g-c>` · :ref:`D <g-d>` ·
-:ref:`E <g-e>` · :ref:`F <g-f>` · :ref:`H <g-h>` · :ref:`I <g-i>` ·
+:ref:`E <g-e>` · :ref:`F <g-f>` · :ref:`G <g-g>` · :ref:`H <g-h>` · :ref:`I <g-i>` ·
 :ref:`K <g-k>` · :ref:`L <g-l>` · :ref:`M <g-m>` · :ref:`N <g-n>` ·
 :ref:`O <g-o>` · :ref:`P <g-p>` · :ref:`R <g-r>` · :ref:`S <g-s>` ·
 :ref:`T <g-t>` · :ref:`U <g-u>` · :ref:`V <g-v>` · :ref:`W <g-w>` ·
@@ -144,6 +144,13 @@ A
       Keywords (``public``, ``private``, ``protected``) that control the visibility and accessibility of class members.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Address-of Operator
+      The unary ``&`` operator, which yields the memory address of a
+      variable. ``std::cout << &number;`` prints where ``number`` lives.
+      Not to be confused with a reference declaration, which also uses
+      ``&``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Aggregation
       A "has-a" relationship where the part can exist independently of the whole. Represented by an empty diamond in UML.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
@@ -165,6 +172,13 @@ A
       Implicit type conversion rules applied when binary operators have
       operands of different types. The operand with lower priority is
       converted to the higher-priority type.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Assignment
+      Storing a value in a variable that has already been declared,
+      using the copy assignment operator ``=``. The previous value is
+      overwritten. Distinct from initialization, which gives a variable
+      its value at the point of declaration.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Association
@@ -190,6 +204,30 @@ B
       widely used for scripting and interactive command-line use.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
 
+   Bit
+      Binary digit. The smallest unit of data, holding either ``0`` or
+      ``1``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   bool
+      The Boolean type. Occupies 1 byte and holds ``true`` or ``false``.
+      Any non-zero value converts to ``true``; converting back yields
+      ``1`` or ``0``. Print the words instead of the digits with
+      ``std::boolalpha``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   BSS Segment
+      The region of a process image holding **uninitialized** global and
+      static variables. The loader zeroes it before ``main()`` runs,
+      which is why an uninitialized global is 0 while an uninitialized
+      local is garbage. Short for Block Started by Symbol.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Byte
+      A group of 8 bits, and the smallest individually addressable unit
+      of memory on typical architectures.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
 
 .. _g-c:
 
@@ -201,6 +239,13 @@ C
    Capture Clause
       The ``[]`` part of a lambda expression that specifies which variables from the enclosing scope are available inside the lambda body.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   char
+      The character type, 1 byte, and an integral type. Plain ``char``,
+      ``signed char``, and ``unsigned char`` are three **distinct**
+      types, and whether plain ``char`` is signed is
+      implementation-defined.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Class
       A user-defined type that encapsulates data (attributes) and behavior (methods). A blueprint for creating objects.
@@ -227,6 +272,13 @@ C
       accessed via ``Ctrl + Shift + P``. Includes built-in commands and
       those from installed extensions.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
+
+   Compile-time Constant
+      A constant whose value is known while the program is being
+      compiled, so the compiler can substitute it directly. A ``const``
+      variable is one only if its initializer is itself a constant
+      expression; ``constexpr`` requires it.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Composition
       A strong "has-a" relationship where the part cannot exist without the whole. The whole manages the lifetime of its parts.
@@ -258,10 +310,22 @@ C
       A compiler optimization that eliminates unnecessary copy/move operations when returning objects from functions. Guaranteed in C++17 for certain cases (RVO).
       :doc:`L5 </lectures/lecture5/l5_lecture>`
 
+   Copy Initialization
+      Initialization with ``=``, as in ``int a = 1;``. Inherited from C
+      and little used in modern C++, because unlike uniform
+      initialization it permits narrowing conversions.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    const
       A qualifier that makes a variable read-only after initialization.
       May be evaluated at compile-time or runtime depending on the
       initializer.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Constant Expression
+      An expression the compiler can evaluate at compile time, because
+      every value in it is known then. The compiler replaces it with its
+      result, so ``1 + 2`` never costs anything at runtime.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    constexpr
@@ -284,6 +348,18 @@ D
       ``delete`` or by using smart pointers.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Data Segment
+      The region of a process image holding **initialized** global and
+      static variables. Compare with the BSS segment, which holds the
+      uninitialized ones.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Declaration
+      A statement that introduces a variable's type and name to the
+      compiler, reserving storage and enabling type checking of every
+      later use. ``int number;`` is a declaration.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Default Parameter
       A value provided in a function declaration that is used when no argument is supplied for that parameter. Must be specified from right to left.
       :doc:`L5 </lectures/lecture5/l5_lecture>`
@@ -295,11 +371,24 @@ D
       ``new``.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Demangling
+      Turning a compiler-generated (mangled) symbol or type name back
+      into readable C++. Do it with ``c++filt``; ``./program | c++filt -t``
+      makes the output of ``typeid(...).name()`` legible.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Dereference Operator
       The unary ``*`` operator used to access the value stored at the
       memory address held by a pointer. Also called the indirection
       operator.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Direct Initialization
+      Initialization with parentheses, as in ``int a(1);``. Introduced
+      for efficient initialization of class types; like copy
+      initialization, it permits narrowing conversions and is little
+      used in modern C++.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Dynamic Memory Allocation
       Reserving memory on the heap at runtime using ``new``. The
@@ -326,6 +415,15 @@ E
       An OOP principle that bundles data and methods that operate on that data within a single class, restricting direct access to internal state.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   enum class
+      See :term:`Scoped Enumeration`.
+
+   Extraction Operator
+      The ``>>`` operator, which reads a value out of an input stream
+      and into a variable: ``std::cin >> age;``. The arrows point in the
+      direction the data travels.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
 
 .. _g-f:
 
@@ -333,6 +431,13 @@ F
 =
 
 .. glossary::
+
+   Floating-point Type
+      A type representing real numbers with a fractional part:
+      ``float``, ``double``, and ``long double``. Always signed. Its
+      *precision* is the number of significant decimal digits it can
+      carry, not the number of digits after the decimal point.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Function (Shell)
       A reusable block of shell code that groups commands and can be
@@ -351,6 +456,22 @@ F
    Functor
       An object that can be called like a function by overloading the ``operator()``. Can maintain state between calls.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+
+.. _g-g:
+
+G
+=
+
+.. glossary::
+
+   Global Scope
+      File scope: the region from a declaration made outside every
+      function to the end of that file. Globals live in the data or BSS
+      segment, not on the stack. Non-const globals are strongly
+      discouraged (Core Guideline ``R.6``) because any function can
+      modify them.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
 
 .. _g-h:
@@ -374,6 +495,13 @@ I
 
 .. glossary::
 
+   Identifier
+      The name of a variable, function, type, or other entity. May
+      contain letters, digits and underscores, must not begin with a
+      digit, is case sensitive, and cannot be a reserved keyword. This
+      course names variables in ``snake_case``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Implicit Type Conversion
       A type conversion performed automatically by the compiler when
       one data type is required but a different type is supplied.
@@ -384,9 +512,27 @@ I
       An OOP mechanism where a derived class acquires the properties and behaviors of a base class. Supports code reuse and hierarchical relationships.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Initialization
+      Declaring a variable and giving it a value in a single step. C++
+      offers three forms: copy (``int a = 1;``), direct (``int a(1);``),
+      and uniform (``int a{1};``). This course uses uniform
+      initialization.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Initializer
+      The value used to initialize a variable. In ``int a{1};`` the
+      initializer is ``1``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    inline
       A specifier suggesting the compiler replace a function call with the function body. Required for functions defined in header files to satisfy the One Definition Rule.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Insertion Operator
+      The ``<<`` operator, which sends a value into an output stream:
+      ``std::cout << value;``. Each insertion returns the stream, which
+      is why insertions can be chained.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Integral Type
       A C++ data type that represents whole numbers. Includes ``int``,
@@ -426,10 +572,22 @@ L
       An anonymous function object defined inline. Syntax: ``[capture](params) -> return_type { body }``. Can capture variables from the enclosing scope.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Lifetime
+      The span of program execution during which a variable exists in
+      memory. A local variable's lifetime ends at the closing brace of
+      its block; a global's lasts for the whole program.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Linker
       A program that combines object files and libraries into a single
       executable program. Resolves dependencies and calculates memory
       addresses.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Literal
+      A fixed value written directly into the source code: ``42``,
+      ``3.14``, ``'a'``, ``"Hello"``, ``true``. Numeric literals may
+      carry a suffix (``12L``, ``1.05f``) that sets their type.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Local Scope
@@ -446,6 +604,19 @@ M
 
 .. glossary::
 
+   Macro
+      A preprocessor definition (``#define``) that is substituted
+      textually before compilation. Macros have no type checking and no
+      scope, and do not survive into the debugger. Use ``const`` or
+      ``constexpr`` instead.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Mangling
+      The compiler's encoding of C++ names and types into the unique
+      symbol names the linker works with. Reverse it with ``c++filt``.
+      See :term:`Demangling`.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Member Initialization List
       A constructor syntax that initializes data members before the constructor body executes. More efficient than assignment in the body. Required for ``const`` and reference members.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
@@ -455,6 +626,13 @@ M
       available memory and can cause performance degradation or crashes.
       Detected with tools like Valgrind.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Memory Segment
+      One region of a running process's memory image. From the lowest
+      address up: reserved, text (code), data, BSS, heap, stack, and
+      arguments. Which segment a variable occupies is determined by how
+      it is declared.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
 
 .. _g-n:
@@ -491,6 +669,13 @@ N
       ``NULL`` or ``0`` for initializing pointers that do not yet point
       to a valid object. Deleting a ``nullptr`` is safe.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Numeric Conversion
+      Any conversion between arithmetic types that is not a promotion,
+      such as ``double`` to ``int`` or ``int`` to ``short``. May lose
+      data or precision. ``int`` to ``double`` is a conversion too, even
+      though nothing is lost.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Numeric Promotion
       The conversion of a smaller numeric type to a larger type within
@@ -584,12 +769,35 @@ S
       Scope is a compile-time property.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Scope Resolution Operator
+      The ``::`` operator, which selects a name from a namespace, class,
+      or enumeration: ``std::cout``, ``Color::red``. Written with
+      nothing on its left (``::value``) it names the global namespace.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Scoped Enumeration
+      An ``enum class``. A type-safe enumeration whose enumerators are
+      scoped to the enum name (``Color::red``) and do **not** implicitly
+      convert to ``int``. The underlying integral type can be specified
+      after a colon. Preferred over unscoped ``enum``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Shell
       A program that provides a command-line interface for users to
       interact with the operating system, allowing them to execute
       commands, run scripts, manage files, and control processes.
       Common shells include Bash, Zsh, Fish, Csh, and Ksh.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
+
+   Signedness
+      Whether an integral type can represent negative values.
+      ``signed`` types hold negative, zero and positive values;
+      ``unsigned`` types hold only non-negative values, with twice the
+      positive range and well-defined wraparound on overflow. Comparing
+      the two converts the signed operand first, which is why
+      ``-1 < 1u`` is ``false``; C++20's ``std::cmp_less`` and its
+      siblings in ``<utility>`` compare by mathematical value instead.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Small String Optimization (SSO)
       A std::string optimization where short strings (typically < 15-22
@@ -630,9 +838,22 @@ S
       ``.fill()`` methods.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   std::format
+      The C++20 formatting library, from ``<format>``. Formats one value
+      at a time (``std::format("{:.2f}", x)``) with no sticky state,
+      replacing ``std::fixed`` and ``std::setprecision``. Requires
+      GCC 13.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    std::function
       A general-purpose polymorphic function wrapper from ``<functional>``. Can store any callable (function, lambda, functor, function pointer) with a matching signature.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   std::numbers
+      A C++20 header providing mathematical constants to the full
+      precision of the type: ``std::numbers::pi``, ``e``, ``sqrt2``,
+      ``ln2``, ``phi``. Use these rather than typing digits.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    std::string
       The standard C++ string class from ``<string>``. Manages a
@@ -645,6 +866,11 @@ S
       a collection of objects. Categories: sequence, associative,
       unordered associative, and container adapters.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Symbolic Constant
+      A constant created with a preprocessor macro, e.g.
+      ``#define PI 3.14159``. Avoid in modern C++; use ``constexpr``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Structured Binding
       A C++17 feature that allows unpacking a struct, pair, or tuple into individual named variables. Syntax: ``auto [x, y] = my_pair;``.
@@ -670,9 +896,22 @@ T
       An implicit pointer available inside non-static member functions that points to the object on which the method was called.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Type Conversion
+      Producing a value of one type from a value of another. Implicit
+      when the compiler does it unprompted, explicit when requested with
+      a cast such as ``static_cast``. A conversion never modifies the
+      original object.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Type Deduction
       A C++ feature that allows the compiler to deduce the type of a
       variable from its initializer using the ``auto`` keyword.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   typeid
+      An operator from ``<typeinfo>`` that reports the type of an
+      expression. ``typeid(x).name()`` returns a mangled name; pipe the
+      program's output through ``c++filt -t`` to read it.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
 
@@ -694,6 +933,32 @@ U
       The modern C++ initialization syntax using braces: ``int a{1};``.
       Prevents narrowing conversions and provides consistent syntax
       across all types. Preferred in this course.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Uninitialized Variable
+      A variable declared without an initializer. It holds whatever bits
+      were already at its memory location, and reading it is undefined
+      behavior. Globals are the exception: they are zeroed in the BSS
+      segment.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   using Declaration
+      Imports a **single** name from a namespace into the current scope:
+      ``using std::cout;``. Preferred over a ``using namespace``
+      directive because it brings in only what you asked for.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   using enum
+      A C++20 declaration that makes a scoped enumeration's enumerators
+      usable unqualified inside one scope: ``using enum RobotState;``.
+      Keep it in the narrowest scope that needs it, or it reintroduces
+      the name leakage ``enum class`` prevents.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   using Directive
+      ``using namespace X;``. Makes **every** name in namespace ``X``
+      available unqualified. Avoid it, and never write one in a header:
+      it can create ambiguities and it hides where each name came from.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
 
@@ -736,19 +1001,23 @@ V
       for C++ and ROS 2 development.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
 
-   Wild Pointer
-      A pointer that has not been initialized to a known memory
-      address. Holds a garbage value pointing to an unknown location.
-      Dereferencing a wild pointer is undefined behavior.
-      :doc:`L3 </lectures/lecture3/l3_lecture>`
-
-
 .. _g-w:
 
 W
 =
 
 .. glossary::
+
+   Wild Pointer
+      A pointer that has not been initialized to a known memory
+      address. Holds a garbage value pointing to an unknown location.
+      Dereferencing a wild pointer is undefined behavior.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Word
+      A fixed-size unit of data that the processor handles as a single
+      entity. Architecture-dependent: commonly 16, 32, or 64 bits.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Workspace
       In VSCode, a container that holds a set of related projects or code
@@ -763,6 +1032,13 @@ Z
 =
 
 .. glossary::
+
+   Zero Initialization
+      Initialization with empty braces, ``int a{};``, which sets a
+      variable to zero, or to whatever counts as empty for its type.
+      Use ``{0}`` when the zero is a value you intend to use, and ``{}``
+      when it is a placeholder to be overwritten.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Zsh
       Z Shell. A shell similar to Bash with additional features like

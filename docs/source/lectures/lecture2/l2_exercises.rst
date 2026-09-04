@@ -2,23 +2,457 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 2: Introduction to C++.
-Work through them in order, as each exercise builds on the skills from the previous one.
-Write, compile, and run each program to verify your understanding.
+These exercises reinforce the concepts covered in
+:doc:`Lecture 2 <l2_lecture>`.
+
+**Part A** is a set of short prediction and repair drills taken from the
+lecture. Work them out **on paper first**, then compile them to check.
+Predicting before compiling is the point of the exercise; the compiler
+will happily tell you the answer, but it will not tell you why you were
+wrong.
+
+**Part B** is programming work. Write, compile, and run each program.
 
 .. note::
 
-   Compile all programs with warnings enabled:
+   Compile every program with warnings enabled:
 
    .. code-block:: bash
 
-      g++ -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -std=c++20 -Wall -Wextra -Wpedantic -g program.cpp -o program
 
 
 ----
 
 
-.. dropdown:: Exercise 1: Variable Declarations and Initialization
+Part A: Predict and Fix
+========================
+
+
+.. dropdown:: A1: Valid Identifiers
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Which of these names are **legal** C++ identifiers? For the legal
+    ones, which follow the course convention (``snake_case``)?
+
+    .. code-block:: text
+
+       my_variable        2ndPlace         _internal        user-name
+       MAX_SIZE           class            numberOfStudents PI_VALUE
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        .. list-table::
+           :widths: 26 18 56
+           :header-rows: 1
+           :class: compact-table
+
+           * - Name
+             - Legal?
+             - Comment
+           * - ``my_variable``
+             - Yes
+             - Follows the course convention.
+           * - ``2ndPlace``
+             - **No**
+             - An identifier cannot start with a digit.
+           * - ``_internal``
+             - Yes
+             - Legal, but see the warning below.
+           * - ``user-name``
+             - **No**
+             - ``-`` is not allowed. The compiler reads this as
+               ``user`` minus ``name``.
+           * - ``MAX_SIZE``
+             - Yes
+             - ALL_CAPS conventionally signals a macro. Prefer
+               ``max_size``.
+           * - ``class``
+             - **No**
+             - Reserved keyword.
+           * - ``numberOfStudents``
+             - Yes
+             - camelCase. Prefer ``number_of_students``.
+           * - ``PI_VALUE``
+             - Yes
+             - Same issue as ``MAX_SIZE``. Prefer
+               ``constexpr double pi_value{...};``
+
+        .. warning::
+
+           Leading underscores are a trap. Names beginning with an
+           underscore followed by a **capital** letter, and any name
+           containing a **double underscore**, are reserved for the
+           implementation *everywhere*. A name with a single leading
+           underscore is reserved in the **global** namespace. Just do
+           not start identifiers with an underscore.
+
+
+----
+
+
+.. dropdown:: A2: Declarations and Initializations
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Predict the output of this program. If it does not compile, say
+    which line is at fault and why.
+
+    .. code-block:: cpp
+       :linenos:
+
+       int a;
+       int b = 3.2;
+       int c(1.3);
+       int d{3.5};
+       std::cout << a << '\n';
+       std::cout << b << '\n';
+       std::cout << c << '\n';
+       std::cout << d << '\n';
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        **It does not compile.** Line 4 is the problem:
+
+        .. code-block:: text
+
+           error: narrowing conversion of '3.5e+0' from 'double' to 'int'
+
+        All three of lines 2, 3 and 4 request the same ``double`` to
+        ``int`` conversion, which discards the fractional part. Only the
+        **braced** form rejects it, because uniform initialization
+        forbids narrowing conversions.
+
+        With line 4 removed or written as
+        ``int d{static_cast<int>(3.5)};``:
+
+        .. code-block:: text
+
+           <garbage>   <- line 1 is uninitialized: undefined behavior
+           3           <- 3.2 truncated
+           1           <- 1.3 truncated
+           3           <- if line 4 was cast explicitly
+
+        Line 1 is the bigger problem of the two. It compiles, it may
+        print a plausible number, and it is undefined behavior every
+        time. Write ``int a{};``.
+
+
+----
+
+
+.. dropdown:: A3: Arithmetic Conversions I
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Predict the type and the value printed.
+
+    .. code-block:: cpp
+
+       #include <iostream>
+       #include <typeinfo>
+
+       int main() {
+           int a{3};
+           int b{2};
+           std::cout << "Type of result: " << typeid(a / b).name() << '\n';
+           std::cout << "Value of result: " << a / b << '\n';
+       }
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        .. code-block:: text
+
+           Type of result: i        <- 'i' is the mangled name for int
+           Value of result: 1
+
+        Both operands are already ``int``, so **no conversion happens**.
+        ``3 / 2`` is integer division: the result is ``1`` and the
+        remainder is discarded. Nothing here is rounded, and nothing
+        warns you.
+
+        ``typeid(...).name()`` prints GCC's mangled code, not the word
+        ``int``. See the table of codes in the lecture.
+
+
+----
+
+
+.. dropdown:: A4: Arithmetic Conversions II
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Starting from the program in A3, make it print ``1.5``.
+
+    **Constraint:** you may not modify the two declarations. ``a`` and
+    ``b`` must stay ``int``.
+
+    .. code-block:: cpp
+       :linenos:
+       :emphasize-lines: 5,6
+
+       #include <iostream>
+       #include <typeinfo>
+
+       int main() {
+           int a{3};
+           int b{2};
+           std::cout << "Type of result: " << typeid(a / b).name() << '\n';
+           std::cout << "Value of result: " << a / b << '\n';
+       }
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        Convert **one** operand at the point of use. The usual
+        arithmetic conversions then promote the other one to match.
+
+        .. code-block:: cpp
+
+           #include <iostream>
+           #include <typeinfo>
+
+           int main() {
+               int a{3};
+               int b{2};
+               std::cout << "Type of result: "
+                         << typeid(static_cast<double>(a) / b).name() << '\n';
+               std::cout << "Value of result: "
+                         << static_cast<double>(a) / b << '\n';
+           }
+
+        .. code-block:: text
+
+           Type of result: d
+           Value of result: 1.5
+
+        Note what changed and what did not. ``a`` and ``b`` are still
+        ``int`` variables; only the **expression** is evaluated in
+        ``double``, because ``double`` outranks ``int`` in the priority
+        list.
+
+        Casting the whole expression does **not** work:
+        ``static_cast<double>(a / b)`` computes ``3 / 2`` as integers
+        first, gets ``1``, and then converts ``1`` to ``1.0``. The
+        precision is already gone by then.
+
+
+----
+
+
+.. dropdown:: A5: Fix the Compilation Errors
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    This program has three errors. Find them, explain each one, and fix
+    them.
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       int main() {
+           std::cout << "Enter a number: ";
+           int user_input{};
+           std::cin >> user_input;
+
+           const int a;                  // Error 1
+           constexpr int b{user_input};  // Error 2
+           const int c{42};
+           c = 50;                       // Error 3
+
+           std::cout << a << " " << b << " " << c << '\n';
+       }
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        .. list-table::
+           :widths: 12 44 44
+           :header-rows: 1
+           :class: compact-table
+
+           * - #
+             - Why it fails
+             - Fix
+           * - 1
+             - ``uninitialized const 'a'``. A ``const`` variable can
+               never be assigned to, so it has to get its value at
+               declaration or it can never have one.
+             - ``const int a{10};``
+           * - 2
+             - ``'user_input' is not usable in a constant expression``.
+               ``constexpr`` demands a value known at **compile time**,
+               and ``user_input`` is not read until runtime.
+             - ``const int b{user_input};`` --- a runtime constant is
+               exactly what is wanted here.
+           * - 3
+             - ``assignment of read-only variable 'c'``. ``c`` is
+               ``const``.
+             - Remove the assignment, or drop the ``const`` if ``c``
+               really needs to change.
+
+        .. code-block:: cpp
+
+           #include <iostream>
+
+           int main() {
+               std::cout << "Enter a number: ";
+               int user_input{};
+               std::cin >> user_input;
+
+               const int a{10};            // initialized at declaration
+               const int b{user_input};    // runtime constant: const, not constexpr
+               const int c{42};            // never reassigned
+
+               std::cout << a << " " << b << " " << c << '\n';
+           }
+
+        The pattern worth remembering: **``constexpr`` for values the
+        compiler can know, ``const`` for values fixed at runtime.**
+
+
+----
+
+
+.. dropdown:: A6: Type Deduction
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Predict the **type** and the **value** of each deduced variable.
+
+    .. code-block:: cpp
+
+       #include <iostream>
+       #include <typeinfo>
+
+       int main() {
+           short s{10};
+           int i{20};
+           float f{3.5f};
+           double d{2.7};
+
+           auto result1{s + i};    // Type: _____  Value: _____
+           auto result2{i * f};    // Type: _____  Value: _____
+           auto result3{f / d};    // Type: _____  Value: _____
+           auto result4{s + 5.0};  // Type: _____  Value: _____
+       }
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        .. list-table::
+           :widths: 18 14 14 54
+           :header-rows: 1
+           :class: compact-table
+
+           * - Expression
+             - Type
+             - Value
+             - Why
+           * - ``s + i``
+             - ``int``
+             - 30
+             - No floating point, so step 1 does not apply. Step 2
+               promotes ``short`` to ``int``; both operands now match.
+           * - ``i * f``
+             - ``float``
+             - 70
+             - Step 1: one operand is floating point, so both become
+               the largest floating-point type present, ``float``.
+           * - ``f / d``
+             - ``double``
+             - 1.2963
+             - Step 1 again, and ``double`` is the larger of the two,
+               so ``f`` becomes ``double``. Printed at the default 6
+               significant digits.
+           * - ``s + 5.0``
+             - ``double``
+             - 15
+             - Step 1: ``5.0`` is a ``double`` literal, so the ``short``
+               is converted straight to ``double``.
+
+        The lesson: the deduced type is decided by the **expression**,
+        not by the variable you assign it to. ``auto`` is only as
+        predictable as your grasp of the conversion rules.
+
+
+----
+
+
+.. dropdown:: A7: Scope
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Find the compilation error, then predict every output.
+
+    .. code-block:: cpp
+       :linenos:
+
+       #include <iostream>
+
+       int main() {
+           int x{10};
+           std::cout << x << '\n';     // Output?
+
+           {
+               int y{20};
+               int x{30};
+               std::cout << x << '\n'; // Output?
+               std::cout << y << '\n'; // Output?
+           }
+
+           std::cout << x << '\n';     // Output?
+           std::cout << y << '\n';     // Output?
+       }
+
+    .. dropdown:: Answer
+        :class-container: sd-border-success
+
+        **Line 15 does not compile:**
+
+        .. code-block:: text
+
+           error: 'y' was not declared in this scope
+
+        ``y`` was declared inside the nested block and went out of scope
+        at the closing brace on line 12.
+
+        With that line removed, the outputs are:
+
+        .. code-block:: text
+
+           10   <- the outer x
+           30   <- the inner x shadows the outer one
+           20   <- y, still in scope inside the block
+           10   <- the inner x is gone; the outer x was never touched
+
+        The inner ``int x{30};`` does not modify the outer ``x``. It
+        creates a **second, distinct variable** that hides the first for
+        the duration of the block. Shadowing is legal and occasionally
+        useful, but it is a common source of confusion; ``-Wshadow``
+        will warn about it if you want it flagged.
+
+
+----
+
+
+Part B: Programming Exercises
+==============================
+
+
+.. dropdown:: B1: Variable Declarations and Initialization
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -43,6 +477,8 @@ Write, compile, and run each program to verify your understanding.
 
     3. Print each variable's value and its size using ``sizeof``.
     4. Use ``std::boolalpha`` to print the ``bool`` as ``true``/``false`` instead of ``1``/``0``.
+    5. Compare your ``sizeof`` output with the table in the lecture. Do
+       they match on your machine?
 
     .. dropdown:: Solution
         :class-container: sd-border-success
@@ -76,15 +512,13 @@ Write, compile, and run each program to verify your understanding.
                          << " | size: " << sizeof(counter) << " bytes\n";
                std::cout << "part_number: " << part_number
                          << " | size: " << sizeof(part_number) << " bytes\n";
-
-               return 0;
            }
 
 
 ----
 
 
-.. dropdown:: Exercise 2: Type Conversion Explorer
+.. dropdown:: B2: Type Conversion Explorer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -107,6 +541,9 @@ Write, compile, and run each program to verify your understanding.
        - **Char to int:** Print a ``char`` variable as both a character and its integer (ASCII) value.
 
     4. For each conversion, print a descriptive label explaining what is happening.
+    5. Read the ``typeid`` output using the table of GCC type codes in
+       the lecture. Which of the five conversions changed the type, and
+       which only changed the value?
 
     .. dropdown:: Solution
         :class-container: sd-border-success
@@ -153,15 +590,13 @@ Write, compile, and run each program to verify your understanding.
                std::cout << "=== Char to Int ===\n";
                std::cout << "letter as char: " << letter << "\n";
                std::cout << "letter as int: " << static_cast<int>(letter) << "\n";
-
-               return 0;
            }
 
 
 ----
 
 
-.. dropdown:: Exercise 3: Constants and constexpr
+.. dropdown:: B3: Constants and constexpr
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -191,17 +626,22 @@ Write, compile, and run each program to verify your understanding.
        - Comment out a line that tries to store the same input in a ``constexpr`` variable, with a comment explaining why it fails.
 
     5. Print all results.
+    6. Now delete your hand-written pi and use ``std::numbers::pi`` from
+       the C++20 ``<numbers>`` header instead. Print both to 20 digits
+       with ``std::setprecision(20)`` and compare them.
 
     .. dropdown:: Solution
         :class-container: sd-border-success
 
         .. code-block:: cpp
 
+           #include <iomanip>
            #include <iostream>
+           #include <numbers>
 
            int main() {
                // constexpr: evaluated at compile time
-               constexpr double pi{3.14159265358979};
+               constexpr double pi{std::numbers::pi};  // step 6: was 3.14159265358979
                constexpr int max_joints{6};
                constexpr double radius{5.0};
 
@@ -228,14 +668,26 @@ Write, compile, and run each program to verify your understanding.
                // constexpr int user_constexpr{user_input};
                // Error: the value of 'user_input' is not usable in a constant expression
 
-               return 0;
+               // Step 6: the hand-written value against the library's
+               std::cout << "\n=== Step 6 ===\n";
+               std::cout << std::setprecision(20);
+               std::cout << "typed:   " << 3.14159265358979 << '\n';
+               std::cout << "library: " << std::numbers::pi << '\n';
            }
+
+        **Step 6.** The two agree to about the 15th significant digit
+        and then diverge: the typed literal has no more digits to give,
+        while ``std::numbers::pi`` carries every digit a ``double`` can
+        hold. For a circle the size of this classroom that
+        difference is irrelevant, and for anything involving repeated
+        rotation it is not. There is no reason to accept a worse
+        constant when the better one is one ``#include`` away.
 
 
 ----
 
 
-.. dropdown:: Exercise 4: Scope Detective
+.. dropdown:: B4: Scope Detective
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -269,7 +721,6 @@ Write, compile, and run each program to verify your understanding.
               }
               std::cout << value << "\n";
               std::cout << ::value << "\n";
-              return 0;
           }
 
     3. **Part B, Write your own:** Write a program that:
@@ -299,6 +750,10 @@ Write, compile, and run each program to verify your understanding.
         ends, the local ``value`` (200) is back in scope. Finally, ``::value`` accesses the
         global ``value`` (100).
 
+        The ``::`` with nothing on its left is the scope resolution
+        operator naming the **global** namespace. It is the only way to
+        reach a global that has been shadowed.
+
         **Part B solution:**
 
         .. code-block:: cpp
@@ -318,15 +773,17 @@ Write, compile, and run each program to verify your understanding.
 
                std::cout << "Local scope: " << robot_name << "\n";
                std::cout << "Global scope: " << ::robot_name << "\n";
-
-               return 0;
            }
+
+        This program is a demonstration, not a model. Three variables
+        with the same name in three scopes is exactly the situation
+        ``R.6`` and ``-Wshadow`` exist to discourage.
 
 
 ----
 
 
-.. dropdown:: Exercise 5: Namespace Organizer
+.. dropdown:: B5: Namespace Organizer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -358,6 +815,10 @@ Write, compile, and run each program to verify your understanding.
        - **Using directive:** Use ``using namespace actuators;`` in a limited block scope.
 
     5. Set some values and print them with labels showing which subsystem they belong to.
+    6. Note that both namespaces declare a name ``type``. Explain why
+       that is not an error here, and what would happen if you added
+       ``using namespace sensors;`` alongside ``using namespace actuators;``
+       at file scope.
 
     .. dropdown:: Solution
         :class-container: sd-border-success
@@ -405,15 +866,21 @@ Write, compile, and run each program to verify your understanding.
                std::cout << "\n=== Summary ===\n";
                std::cout << "Sensor reading: " << sensors::current_reading << " cm\n";
                std::cout << "Actuator speed: " << actuators::current_speed << "\n";
-
-               return 0;
            }
+
+        **Step 6.** ``sensors::type`` and ``actuators::type`` are two
+        different names in two different scopes, so there is no
+        collision. Adding both ``using namespace`` directives at file
+        scope brings both ``type`` names into the same scope, and any
+        unqualified use of ``type`` then fails with
+        ``reference to 'type' is ambiguous``. This is the entire
+        argument against ``using namespace`` in three lines of code.
 
 
 ----
 
 
-.. dropdown:: Exercise 6 Challenge: Unit Converter
+.. dropdown:: B6 Challenge: Unit Converter
     :icon: rocket
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -443,6 +910,8 @@ Write, compile, and run each program to verify your understanding.
 
     4. Use ``const`` for the user's input value (it should not change after reading).
     5. Use appropriate types (``double`` for measurements, ``int`` for menu choice).
+    6. Define the menu choices as an ``enum class`` instead of bare
+       integers, and ``static_cast`` the value read from ``std::cin``.
 
     .. dropdown:: Solution
         :class-container: sd-border-success
@@ -458,6 +927,13 @@ Write, compile, and run each program to verify your understanding.
                constexpr double celsius_to_fahrenheit_offset{32.0};
            }
 
+           enum class MenuChoice {
+               meters_to_feet = 1,
+               kg_to_pounds = 2,
+               celsius_to_fahrenheit = 3,
+               quit = 4
+           };
+
            int main() {
                bool running{true};
 
@@ -469,13 +945,15 @@ Write, compile, and run each program to verify your understanding.
                    std::cout << "4. Quit\n";
                    std::cout << "Enter your choice: ";
 
-                   int choice{};
-                   std::cin >> choice;
+                   int raw_choice{};
+                   std::cin >> raw_choice;
+                   const MenuChoice choice{static_cast<MenuChoice>(raw_choice)};
 
-                   if (choice == 4) {
+                   if (choice == MenuChoice::quit) {
                        std::cout << "Goodbye!\n";
                        running = false;
-                   } else if (choice == 1) {
+
+                   } else if (choice == MenuChoice::meters_to_feet) {
                        std::cout << "Enter value in meters: ";
                        double input{};
                        std::cin >> input;
@@ -483,7 +961,7 @@ Write, compile, and run each program to verify your understanding.
                        const double feet{meters * conversion::meters_to_feet};
                        std::cout << meters << " m = " << feet << " ft\n";
 
-                   } else if (choice == 2) {
+                   } else if (choice == MenuChoice::kg_to_pounds) {
                        std::cout << "Enter value in kilograms: ";
                        double input{};
                        std::cin >> input;
@@ -491,7 +969,7 @@ Write, compile, and run each program to verify your understanding.
                        const double pounds{kg * conversion::kg_to_pounds};
                        std::cout << kg << " kg = " << pounds << " lbs\n";
 
-                   } else if (choice == 3) {
+                   } else if (choice == MenuChoice::celsius_to_fahrenheit) {
                        std::cout << "Enter value in Celsius: ";
                        double input{};
                        std::cin >> input;
@@ -505,6 +983,9 @@ Write, compile, and run each program to verify your understanding.
                        std::cout << "Invalid choice. Please try again.\n";
                    }
                }
-
-               return 0;
            }
+
+        The ``static_cast`` is required precisely because ``enum class``
+        does not convert implicitly. That is the safety feature working:
+        the cast is the one place where an arbitrary integer enters the
+        enumeration, so it is the one place that needs checking.

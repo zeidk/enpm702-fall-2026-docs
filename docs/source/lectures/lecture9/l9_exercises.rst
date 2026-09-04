@@ -12,7 +12,7 @@ previous one. Write, compile, and run each program to verify your understanding.
 
    .. code-block:: bash
 
-      g++ -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -std=c++20 -Wall -Wextra -o program program.cpp
 
 
 ----

@@ -109,7 +109,7 @@ Exercises
 
    Add workspace-level editor settings so that every file in the
    workspace formats on save, shows a vertical ruler at column 80, and
-   targets the C++17 standard.
+   targets the C++20 standard.
 
    .. dropdown:: Solution
       :class-container: sd-border-success
@@ -125,7 +125,7 @@ Exercises
            "editor.insertSpaces": true,
            "files.insertFinalNewline": true,
            "files.trimTrailingWhitespace": true,
-           "C_Cpp.default.cppStandard": "c++17"
+           "C_Cpp.default.cppStandard": "c++20"
          }
 
 
@@ -166,7 +166,7 @@ Exercises
          cmake_minimum_required(VERSION 3.16)
          project(enpm702_ws LANGUAGES CXX)
 
-         set(CMAKE_CXX_STANDARD 17)
+         set(CMAKE_CXX_STANDARD 20)
          set(CMAKE_CXX_STANDARD_REQUIRED ON)
          set(CMAKE_CXX_EXTENSIONS OFF)
 

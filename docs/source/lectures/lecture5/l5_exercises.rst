@@ -12,7 +12,7 @@ skills from the previous one.
 
    .. code-block:: bash
 
-      g++ -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -std=c++20 -Wall -Wextra -o program program.cpp
 
 
 ----
@@ -35,7 +35,7 @@ skills from the previous one.
    2. In a source file ``math_utils.cpp``, provide the definitions for all four functions.
    3. In ``main.cpp``, include the header, call each function, and print the results.
    4. Add ``#pragma once`` to the header file.
-   5. Build using: ``g++ -std=c++17 main.cpp math_utils.cpp -o exercise1``
+   5. Build using: ``g++ -std=c++20 main.cpp math_utils.cpp -o exercise1``
 
    .. dropdown:: Solution
       :class-container: sd-border-success
@@ -360,7 +360,7 @@ skills from the previous one.
    1. Create ``student_utils.hpp`` with declarations and Doxygen comments for ``print_menu``, ``add_student``, and ``print_students``.
    2. Create ``student_utils.cpp`` with the definitions.
    3. Simplify ``main.cpp`` to contain only the ``main`` function and the necessary ``#include``.
-   4. Build with: ``g++ -std=c++17 main.cpp student_utils.cpp -o exercise5``
+   4. Build with: ``g++ -std=c++20 main.cpp student_utils.cpp -o exercise5``
 
 .. dropdown:: Exercise 6 Challenge: Calculator with Functions
    :icon: gear

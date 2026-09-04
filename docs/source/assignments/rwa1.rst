@@ -334,7 +334,7 @@ Deliverables
    * - ``main.cpp``
      - Single source file containing all code.
    * - ``CMakeLists.txt``
-     - Build configuration targeting C++17 or later.
+     - Build configuration targeting C++20 or later.
    * - ``README.md``
      - Build and run instructions.
 

@@ -13,7 +13,7 @@ Students progress from fundamental C++ constructs to advanced topics
 including smart pointers, move semantics, STL containers, lambda
 expressions, and polymorphism.  Emphasis is placed on writing safe,
 efficient, and well-documented code using modern C++ best practices
-(C++17 and beyond).
+(C++20 and beyond).
 
 Key topics covered include:
 

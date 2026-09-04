@@ -12,13 +12,13 @@ builds on the skills from the previous one.
 
    .. code-block:: bash
 
-      g++ -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -std=c++20 -Wall -Wextra -o program program.cpp
 
    For memory checking, compile with debug symbols and use Valgrind:
 
    .. code-block:: bash
 
-      g++ -g -std=c++17 -Wall -Wextra -o program program.cpp
+      g++ -g -std=c++20 -Wall -Wextra -o program program.cpp
       valgrind --leak-check=full ./program
 
 
@@ -210,7 +210,7 @@ builds on the skills from the previous one.
 
         .. code-block:: bash
 
-           g++ -g -std=c++17 -o exercise3 exercise3.cpp
+           g++ -g -std=c++20 -o exercise3 exercise3.cpp
            valgrind --leak-check=full ./exercise3
 
 
@@ -504,5 +504,5 @@ builds on the skills from the previous one.
 
         .. code-block:: bash
 
-           g++ -g -std=c++17 -o array_manager array_manager.cpp
+           g++ -g -std=c++20 -o array_manager array_manager.cpp
            valgrind --leak-check=full ./array_manager

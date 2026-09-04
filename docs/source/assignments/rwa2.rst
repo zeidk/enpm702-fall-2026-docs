@@ -333,7 +333,7 @@ Deliverables
    * - Source files (``.cpp``)
      - Implementations and ``main.cpp``.
    * - ``CMakeLists.txt``
-     - Build configuration targeting C++17 or later.
+     - Build configuration targeting C++20 or later.
    * - Doxygen output
      - Generated HTML documentation (or a ``Doxyfile`` that produces it).
 

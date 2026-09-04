@@ -61,7 +61,7 @@ Learning Outcomes
 After successfully completing this course, students will be able to:
 
 #. Write correct and efficient C++ programs using variables, types,
-   constants, namespaces, and modern initialization (C++17 and beyond).
+   constants, namespaces, and modern initialization (C++20 and beyond).
 #. Manage memory safely with pointers, references, smart pointers
    (``unique_ptr``, ``shared_ptr``, ``weak_ptr``), and RAII.
 #. Use the STL (strings, arrays, vectors, iterators) and write reusable

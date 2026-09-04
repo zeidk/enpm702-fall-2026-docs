@@ -581,7 +581,7 @@ Shell Scripting Basics
            echo "Compiling '$SOURCE_FILE' -> '$BINARY_NAME' ..."
 
            # -- Compile --
-           g++ -std=c++17 -Wall -Wextra -o "$BINARY_NAME" "$SOURCE_FILE"
+           g++ -std=c++20 -Wall -Wextra -o "$BINARY_NAME" "$SOURCE_FILE"
 
            if [ $? -ne 0 ]; then
                echo "============================================"

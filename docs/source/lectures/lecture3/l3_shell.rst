@@ -293,7 +293,7 @@ Write a shell script called ``check_leaks.sh`` that compiles and runs a C++ prog
 
    # Compile with debug symbols
    echo "Compiling $source_file..."
-   g++ -g -std=c++17 -o "$executable" "$source_file"
+   g++ -g -std=c++20 -o "$executable" "$source_file"
 
    if [ $? -ne 0 ]; then
        echo "Compilation failed."

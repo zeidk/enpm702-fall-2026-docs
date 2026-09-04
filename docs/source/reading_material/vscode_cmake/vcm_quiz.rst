@@ -115,7 +115,7 @@ VSCode and CMake: Quiz
    a) Each ``weekX/CMakeLists.txt``.
    b) ``.vscode/settings.json``.
    c) The root ``CMakeLists.txt``.
-   d) Nothing, CMake defaults to C++17.
+   d) Nothing, CMake defaults to C++20.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
