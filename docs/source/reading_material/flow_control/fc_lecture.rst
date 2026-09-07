@@ -3,6 +3,27 @@ Lecture
 ====================================================
 
 
+.. note::
+
+   **Running the snippets on this page.** Every C++ snippet below is
+   collected, commented out, in
+   `project/reading_material/src/main.cpp <https://github.com/zeidk/enpm702-fall-2026-cpp/blob/main/project/reading_material/src/main.cpp>`_
+   in the course repository. Uncomment one block, build, and run it, then
+   comment it back and move on. Blocks are labelled with the section
+   heading they come from, so you can read and run side by side.
+
+   The target is not built by default. Uncomment the **last line** of the
+   top-level
+   `CMakeLists.txt <https://github.com/zeidk/enpm702-fall-2026-cpp/blob/main/CMakeLists.txt>`_:
+
+   .. code-block:: cmake
+
+      add_subdirectory(project/reading_material)
+
+   Then configure and build as usual, and run the ``reading_material``
+   target.
+
+
 Flow Control
 ====================================================
 
@@ -13,7 +34,7 @@ allow the programmer to change the normal path of execution through the
 program. Controlling the flow of a program can be performed with
 **selection statements** and **iteration statements**.
 
-.. figure:: /_static/images/rm/figure1.pdf
+.. figure:: /_static/images/reading_material/figure1.png
    :align: center
    :width: 60%
 
@@ -35,6 +56,8 @@ This statement may either be:
   braces.
 
 .. code-block:: cpp
+
+   #include <iostream>
 
    int main() {
        {  // start of compound statement 1
@@ -78,7 +101,7 @@ only if some condition is true.
   - If ``condition`` is ``false`` then ``statement`` is **not** executed
     (it is just ignored).
 
-.. figure:: /_static/images/rm/if.jpg
+.. figure:: /_static/images/reading_material/if.jpg
    :align: center
    :width: 40%
 
@@ -181,7 +204,7 @@ condition is not fulfilled with the ``else`` keyword.
   - If ``condition`` is ``true`` then ``statement_true`` is executed.
   - If ``condition`` is ``false`` then ``statement_false`` is executed.
 
-.. figure:: /_static/images/rm/if-else.jpg
+.. figure:: /_static/images/reading_material/if-else.jpg
    :align: center
    :width: 60%
 
@@ -255,16 +278,16 @@ particular type of ``if``-``else`` statement.
       int x{1};
 
       if (x % 2)
-          std::cout << x << " is even\n";
-      else
           std::cout << x << " is odd\n";
+      else
+          std::cout << x << " is even\n";
 
    Here is the same code using the conditional operator:
 
    .. code-block:: cpp
 
       int x{1};
-      std::cout << ((x % 2) ? "x is even\n" : "x is odd\n");
+      std::cout << ((x % 2) ? "x is odd\n" : "x is even\n");
 
    .. note::
 
@@ -341,7 +364,7 @@ in sequence. We can do so by chaining an ``if`` statement to a prior
       else
           statement3
 
-.. figure:: /_static/images/rm/if_else_if.jpg
+.. figure:: /_static/images/reading_material/if_else_if.jpg
    :align: center
    :width: 60%
 
@@ -496,7 +519,7 @@ these values.
   labels to define all of the values we want to test for equality. There
   are two kinds of labels: ``case`` and ``default``.
 
-.. figure:: /_static/images/rm/switch.jpg
+.. figure:: /_static/images/reading_material/switch.jpg
    :align: center
    :width: 80%
 
@@ -935,7 +958,7 @@ of the three loop types that C++ provides.
 
       i. Go to 1.
 
-.. figure:: /_static/images/rm/while.jpg
+.. figure:: /_static/images/reading_material/while.jpg
    :align: center
    :width: 30%
 
@@ -1068,7 +1091,7 @@ user inputs until the user enters correct inputs.
    a. If ``condition`` is ``false``, exit the loop.
    b. If ``condition`` is ``true``, go to 1.
 
-.. figure:: /_static/images/rm/do-while.pdf
+.. figure:: /_static/images/reading_material/do-while.png
    :align: center
    :width: 30%
 
@@ -1145,7 +1168,7 @@ A ``for`` statement is evaluated in 3 parts:
 
       ``end_expression`` is executed last.
 
-.. figure:: /_static/images/rm/for.pdf
+.. figure:: /_static/images/reading_material/for.png
    :align: center
    :width: 40%
 

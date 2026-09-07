@@ -3,6 +3,13 @@ Git/Github Exercises
 ====================================================
 
 
+.. note::
+
+   **Not graded, and not submitted on Canvas.** These exercises belong to
+   a self-study reading module: work them at your own pace and check
+   yourself against the solutions. Only the assignments listed on Canvas
+   are collected.
+
 .. dropdown:: Exercise 1: Git Basics
    :icon: gear
    :class-container: sd-border-primary

@@ -5,6 +5,44 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
+.. dropdown:: v1.3.0: Lecture 2 and Reading Material Updates (2026-09-07)
+   :icon: tag
+   :class-container: sd-border-success
+   :open:
+
+   **Lecture 2**
+
+   - New section on **characters**: single quotes, escape sequences, and
+     why ``char`` counts as an integral type.
+   - New section on **validating input**, covering what happens when the
+     user types something that is not a number, and two ways to handle
+     it.
+   - New section on **stream manipulators** such as ``std::boolalpha``
+     and ``std::setprecision``.
+   - New material on **how long a variable's memory lasts**, and on the
+     stack.
+   - New short history of why variables have names instead of addresses.
+   - Global variables now show how a local can hide a global, and how
+     ``::`` reaches the global anyway.
+   - The list of promotions is now complete rather than a selection.
+   - Corrections: the memory-segment table now matches the diagram, and
+     the description of ``std::setprecision`` now says when it counts
+     significant digits and when it counts decimal places.
+
+   **Reading material**
+
+   - Every C++ snippet from the reading modules is now collected in one
+     file in the course repository, ready to uncomment and run. Each
+     lecture page links to it.
+   - Exercise pages now state clearly that the exercises are not graded
+     and are not submitted on Canvas.
+   - Fixed an error in **Flow Control**, where an example printed
+     "1 is even".
+   - Fixed three examples that could not be compiled as printed because
+     they were missing an ``#include``.
+   - The **Flow Control** diagrams now display correctly.
+
+
 .. dropdown:: v1.2.0: Lecture 2 Rebuilt, and C++20 Applied Site-wide (2026-09-04)
    :icon: tag
    :class-container: sd-border-success

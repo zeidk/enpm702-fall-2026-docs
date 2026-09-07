@@ -3,6 +3,27 @@ Lecture
 ====================================================
 
 
+.. note::
+
+   **Running the snippets on this page.** Every C++ snippet below is
+   collected, commented out, in
+   `project/reading_material/src/main.cpp <https://github.com/zeidk/enpm702-fall-2026-cpp/blob/main/project/reading_material/src/main.cpp>`_
+   in the course repository. Uncomment one block, build, and run it, then
+   comment it back and move on. Blocks are labelled with the section
+   heading they come from, so you can read and run side by side.
+
+   The target is not built by default. Uncomment the **last line** of the
+   top-level
+   `CMakeLists.txt <https://github.com/zeidk/enpm702-fall-2026-cpp/blob/main/CMakeLists.txt>`_:
+
+   .. code-block:: cmake
+
+      add_subdirectory(project/reading_material)
+
+   Then configure and build as usual, and run the ``reading_material``
+   target.
+
+
 What Are Exceptions?
 ====================================================
 
@@ -186,6 +207,9 @@ std::exception**. This ensures that all catch handlers can rely on the
 
 .. code-block:: cpp
 
+   #include <iostream>
+   #include <stdexcept>
+
    double divide(double a, double b) {
        if (b == 0.0) {
            throw std::invalid_argument("division by zero");
@@ -218,6 +242,7 @@ one of its derived classes (such as ``std::runtime_error``).
 
 .. code-block:: cpp
 
+   #include <iostream>
    #include <stdexcept>
    #include <string>
 

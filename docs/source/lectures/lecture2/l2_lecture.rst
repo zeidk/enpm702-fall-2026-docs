@@ -115,6 +115,222 @@ C++ programs talk to the terminal through **streams** declared in the
    :doc:`Lecture 1 </lectures/lecture1/l1_lecture>` explains why.
 
 
+.. _l2-validating-input:
+
+Validating Input
+----------------
+
+``std::cin >> age`` does not promise you a number. It promises to *try*.
+What happens when the user types something else is worth knowing before
+you write a program that trusts its input.
+
+There are **three** distinct outcomes, and only one of them is obvious.
+
+.. list-table:: What ``std::cin >> age`` does with each input, for ``int age{42};``
+   :widths: 16 12 16 56
+   :header-rows: 1
+   :class: compact-table
+
+   * - Typed
+     - ``age``
+     - Stream state
+     - What happened
+   * - ``42``
+     - ``42``
+     - good
+     - Clean success.
+   * - ``abc``
+     - ``0``
+     - **fail**
+     - Extraction **failed**. Since C++11 the variable is set to ``0``,
+       so your previous value of ``42`` is **destroyed**. ``abc`` is
+       still sitting in the buffer.
+   * - ``3.7``
+     - ``3``
+     - **good**
+     - **Partial read.** It stopped at the ``.`` and succeeded with
+       ``3``. ``.7`` is still in the buffer.
+   * - ``12abc``
+     - ``12``
+     - **good**
+     - Partial read again: ``12`` extracted, ``abc`` left behind.
+
+.. warning::
+
+   The two partial reads leave the stream **good**. Checking whether the
+   read "worked" will not catch them — as far as the stream is concerned,
+   it did work. And in the failure case the offending text stays in the
+   buffer, so the *next* read fails immediately too. A loop that reads
+   without clearing spins forever.
+
+Approach 1: check the stream, then recover
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A stream converts to ``bool``, so ``if (std::cin >> value)`` tests
+whether the extraction succeeded. To recover you must do **two** things:
+clear the error flags, then throw away the text that caused the problem.
+
+.. code-block:: cpp
+
+   #include <iostream>
+   #include <limits>
+
+   int main() {
+       int value{};
+
+       std::cout << "Enter an integer: ";
+       while (!(std::cin >> value)) {
+           std::cin.clear();   // drop the failbit; the stream is usable again
+           std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+           std::cout << "That is not an integer. Try again: ";
+       }
+
+       std::cout << "Got " << value << '\n';
+   }
+
+``clear()`` alone is not enough: without the ``ignore()`` the bad
+characters are still queued and the next read fails on them again.
+``std::numeric_limits<std::streamsize>::max()`` means "as many
+characters as it takes", and the ``'\n'`` says "stop at the end of the
+line".
+
+.. note::
+
+   This handles ``abc``. It does **not** reject ``3.7`` or ``12abc``,
+   because those succeeded.
+
+Approach 2: read a whole line, then parse it
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The robust approach separates the two jobs. Read one whole line with
+``std::getline``, then require the **entire** line to parse as a number.
+Anything left over means the input was not a number.
+
+.. code-block:: cpp
+
+   #include <charconv>
+   #include <iostream>
+   #include <string>
+
+   int main() {
+       std::cout << "Enter an integer: ";
+
+       std::string line;
+       std::getline(std::cin, line);
+
+       int value{};
+       const char* first{line.data()};
+       const char* last{line.data() + line.size()};
+       auto [ptr, ec] = std::from_chars(first, last, value);
+
+       if (ec == std::errc{} && ptr == last) {   // parsed, and consumed it ALL
+           std::cout << "Got " << value << '\n';
+       } else {
+           std::cout << "That was not an integer.\n";
+       }
+   }
+
+The ``ptr == last`` test is the important half. ``ec == std::errc{}``
+only says *some* number was parsed; ``ptr == last`` says nothing was
+left over, which is exactly what rejects ``3.7`` and ``12abc``.
+
+.. list-table:: Whole-line parsing, measured.
+   :widths: 22 22 56
+   :header-rows: 1
+   :class: compact-table
+
+   * - Typed
+     - Result
+     - Why
+   * - ``42``
+     - accept, ``42``
+     - the whole line is a number
+   * - ``-5``
+     - accept, ``-5``
+     - leading sign is fine
+   * - ``abc``
+     - reject
+     - nothing parsed
+   * - ``3.7``
+     - reject
+     - stopped at ``.``, so ``ptr != last``
+   * - ``12abc``
+     - reject
+     - stopped at ``a``, so ``ptr != last``
+   * - ``  7``
+     - reject
+     - ``from_chars`` does **not** skip leading whitespace
+   * - (empty line)
+     - reject
+     - nothing to parse
+
+.. important::
+
+   **Which should you use?**
+
+   - Reach for **Approach 1** when you just need to keep asking until the
+     user cooperates, and a value like ``3`` from ``3.7`` is acceptable.
+     It is short, and it is what most textbooks show.
+   - Reach for **Approach 2** when the input must be *exactly* a number —
+     a robot configuration value, a menu choice, anything where silently
+     accepting ``3`` for ``3.7`` would be a bug.
+
+   ``std::from_chars`` is the C++17 parser: no exceptions, no locale, and
+   it tells you where it stopped. ``std::stoi`` is the older alternative,
+   but it throws on failure and ignores trailing junk unless you check
+   its ``pos`` output, so it needs more care to use correctly.
+
+.. seealso::
+
+   `cppreference: std::from_chars <https://en.cppreference.com/w/cpp/utility/from_chars>`_,
+   `cppreference: std::basic_istream::ignore <https://en.cppreference.com/w/cpp/io/basic_istream/ignore>`_.
+
+
+Stream Manipulators
+-------------------
+
+A **manipulator** is a value you insert into a stream with ``<<`` that
+changes **how the stream formats**, instead of printing anything itself.
+``std::cout << std::boolalpha`` outputs zero characters; it flips a flag
+that changes how every later ``bool`` is rendered.
+
+.. code-block:: cpp
+
+   #include <iomanip>    // only the ones that take an argument need this
+   #include <iostream>
+
+   int main() {
+       std::cout << true << '\n';                    // 1
+       std::cout << std::boolalpha << true << '\n';  // true
+       std::cout << false << '\n';                   // false  <- STILL in effect
+       std::cout << std::noboolalpha;                // switch it back
+
+       std::cout << 3.14159265 << '\n';              // 3.14159
+       std::cout << std::setprecision(3) << 3.14159265 << '\n';   // 3.14
+   }
+
+.. important::
+
+   Manipulators are **sticky**. One changes the stream until something
+   changes it back, so a formatting choice made in one place silently
+   affects output written somewhere else.
+
+   The two headers are not an arbitrary split. Manipulators taking **no
+   argument** — ``boolalpha``, ``noboolalpha``, ``fixed``,
+   ``scientific``, ``defaultfloat``, ``hex`` — live in ``<ios>`` and
+   arrive with ``<iostream>``. Those taking an **argument** —
+   ``setprecision``, ``setw``, ``setfill`` — need ``<iomanip>``. Without
+   it you get ``error: 'setprecision' is not a member of 'std'``.
+
+.. note::
+
+   There is no ``std::precision``. The manipulator is
+   ``std::setprecision(n)``; ``precision`` exists only as a *member
+   function*, written ``std::cout.precision(9)``. The member is the one
+   that appears in autocomplete after ``std::cout.``, which is why the
+   two get confused.
+
+
 Bits, Bytes, and Words
 ====================================================
 
@@ -148,6 +364,9 @@ the vocabulary is worth pinning down.
    Bits, bytes, and words.
 
 
+Process Memory
+====================================================
+
 Memory Segments
 ---------------
 
@@ -166,18 +385,26 @@ behave differently later in this lecture.
    * - **Reserved**
      - Address ``0x0`` and the region around it. Never a valid object;
        this is what makes dereferencing a null pointer detectable.
-   * - **Text (code)**
+   * - **Text** (``.text``)
      - The program's machine instructions. Read-only.
-   * - **Data**
+   * - **Rodata** (``.rodata``)
+     - **Read-only** data: string literals and ``const`` globals.
+       Writing to it faults.
+   * - **Data** (``.data``)
      - **Initialized** global and static variables.
-   * - **BSS**
+   * - **BSS** (``.bss``)
      - **Uninitialized** global and static variables. Zeroed by the
-       loader.
+       loader. A global explicitly initialized to ``0`` also lands here:
+       the loader zeroes the whole segment anyway, so storing the zero
+       in the executable would be wasted space.
    * - **Heap**
      - Dynamically allocated memory. Grows upward. Covered in Lecture 3.
+   * - **Free space**
+     - Unmapped. The heap and the stack grow toward each other into it,
+       and never meet.
    * - **Stack**
      - Local variables and function-call bookkeeping. Grows downward.
-   * - **Arguments**
+   * - **Arguments** (``argv``/``env``)
      - Command-line arguments and the environment passed to ``main()``.
 
 .. figure:: /_static/images/l2/representation.png
@@ -196,6 +423,69 @@ behave differently later in this lecture.
    the ways that can go wrong.
 
 
+Memory Lifetime
+---------------
+
+A variable's **storage duration** is how long its memory exists. It is
+fixed by **how you declare it**, not by where you use it.
+
+.. list-table:: The three storage durations you will meet in this course.
+   :widths: 18 22 60
+   :header-rows: 1
+   :class: compact-table
+
+   * - Duration
+     - Segment
+     - Memory exists...
+   * - **Static**
+     - ``.rodata``, ``.data``, ``.bss``, ``argv``/``env``
+     - from before ``main()`` runs until after it returns. Globals,
+       ``static`` locals, string literals, ``argv``.
+   * - **Automatic**
+     - Stack
+     - from the declaration until the closing brace of the enclosing
+       block. Ordinary locals and parameters.
+   * - **Dynamic**
+     - Heap
+     - from ``new`` until it is released. You choose both ends —
+       Lecture 3.
+
+C++ defines a fourth, ``thread_local``, which this course does not use.
+Note that ``.text`` is left out of the table: it holds machine code, not
+objects, and storage duration is a property of objects.
+
+.. important::
+
+   **Lifetime is not scope.** A ``static`` local's *name* is visible only
+   inside its function, but its *memory* lives for the whole program, so
+   its value survives between calls. Scope is about where a name can be
+   written; lifetime is about when the storage exists.
+
+
+The Stack Segment
+-----------------
+
+Almost every variable in this lecture lives on the **stack**: each
+function call gets one **stack frame**, and that call's parameters and
+locals live in it.
+
+- A local is created when control reaches its **declaration**, and
+  destroyed at the **closing brace** of its block — in **reverse order**
+  of creation.
+- You write no code for either step. That is what **automatic** means.
+- Frames are strictly **last in, first out**: the frame entered most
+  recently is the next one to go.
+- The stack is **not** unlimited. The OS caps it, typically at **8 MiB**
+  on Linux. Past the limit the program touches an unmapped **guard
+  page** and the OS raises ``SIGSEGV``: a **stack overflow**.
+
+.. tip::
+
+   Keep large data out of a frame, and give every recursion a base case
+   you are sure it reaches. Lecture 5 returns to frames and the call
+   stack in detail.
+
+
 Variables
 ====================================================
 
@@ -207,6 +497,65 @@ Variables
     A **variable** is a **symbolic name** for a storage location that
     holds data. The name lets you read and modify that storage without
     ever writing down an address.
+
+
+Why Names, Not Addresses
+------------------------
+
+It took about fifteen years to get from "write the address" to "write a
+name".
+
+.. list-table:: How you referred to a piece of storage, machine by machine.
+   :widths: 14 30 56
+   :header-rows: 1
+   :class: compact-table
+
+   * - Year
+     - Machine or language
+     - How you named storage
+   * - 1945
+     - **ENIAC**
+     - No stored program at all: you set switches and replugged cables
+       by hand.
+   * - 1948
+     - **Manchester Baby**, then Mark 1
+     - Binary machine code. Every operand is an **absolute address**.
+   * - 1949
+     - **EDSAC**
+     - Machine code, but Wheeler's **Initial Orders** begin doing the
+       address arithmetic for you.
+   * - late 1940s
+     - **ARC** (assembly, co-written by **Kathleen Booth**)
+     - The first **assembly language**: a **symbolic label** in place of
+       the number.
+   * - 1954
+     - **SOAP** for the IBM 650 (Stan Poley)
+     - Symbolic names — and it also chose where to put each instruction
+       on the spinning drum, work done by hand until then.
+   * - 1957
+     - **FORTRAN** (Backus, IBM)
+     - **Named, typed variables.** The compiler picks the storage; you
+       never see an address.
+   * - 1959
+     - **COBOL**
+     - Long, deliberately readable data names.
+
+.. important::
+
+   **Why it had to change.** With absolute addresses, inserting one
+   instruction shifts every address below it, and you renumber each
+   reference by hand — with no warning if you miss one.
+
+   **This never went away.** Adding one line to a two-line ``main()``
+   today still moves every later instruction; compile two versions and
+   compare ``objdump -d`` output and you can watch ``ret`` slide down.
+   The compiler simply does the renumbering, because you wrote a
+   **name**.
+
+   And today you could not write the address even if you wanted to. The
+   same program, run four times, put a local at four different
+   addresses: the OS places the stack somewhere different on every run.
+   **The name is the only stable handle you have.**
 
 
 Characteristics
@@ -558,8 +907,10 @@ initialization" is the name you will see in most tutorials.
 
    ``std::cout`` omits digits after the decimal point when they add
    nothing. ``std::fixed`` forces fixed-point notation, and
-   ``std::setprecision`` (from ``<iomanip>``) sets how many digits follow
-   the decimal point.
+   ``std::setprecision`` (from ``<iomanip>``) sets the digit budget —
+   **significant digits normally, digits after the point once**
+   ``std::fixed`` **is in effect**. The same ``setprecision(3)`` gives
+   ``3.14`` on its own and ``3.142`` under ``std::fixed``.
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -698,6 +1049,21 @@ values.
    one expression is where the bugs are, as the next section shows.
 
 
+Writing an unsigned literal: the ``u`` suffix
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A plain ``1`` is an ``int``. Append ``u`` (or ``U``) and the **literal
+itself** is unsigned: ``1u`` is an ``unsigned int``. You will meet this
+notation wherever signed and unsigned values are compared.
+
+.. code-block:: cpp
+
+   1     // int
+   1u    // unsigned int
+   12L   // long           -- a size suffix
+   12uL  // unsigned long  -- the two combine
+
+
 Size Modifiers
 --------------
 
@@ -717,8 +1083,9 @@ therefore its range.
      - Smaller range, smaller footprint.
    * - ``int``
      - 16 bits
-     - In practice matches the processor's natural word size, which is
-       why it is 32 bits on x86-64.
+     - *Intended* to have the architecture's natural width, but that is
+       only a note in the standard: x86-64 is 64-bit and keeps ``int``
+       at 32 bits for compatibility.
    * - ``long``
      - 32 bits
      - 64 bits on 64-bit Linux, 32 bits on Windows.
@@ -731,6 +1098,12 @@ therefore its range.
    The standard guarantees only these minimums and the ordering:
 
    ``sizeof(short) <= sizeof(int) <= sizeof(long) <= sizeof(long long)``
+
+   Since C++20 the minimum widths are in the standard itself, in
+   ``[basic.fundamental]/4`` and its Table 12; the ordering is
+   ``[basic.fundamental]/1``. Every **exact** size is
+   implementation-defined (``[expr.sizeof]/1``) — the one fixed size in the
+   language is ``sizeof(char)``, which is ``1`` by definition.
 
    When you need an **exact** width, use the fixed-width types from
    ``<cstdint>``: ``int8_t``, ``int32_t``, ``uint64_t``, and so on. These
@@ -784,6 +1157,55 @@ Type, Size, and Range
    ``char`` is the exception: plain ``char``, ``signed char`` and
    ``unsigned char`` are **three distinct types**, and whether plain
    ``char`` is signed is implementation-defined.
+
+
+Characters
+----------
+
+A ``char`` holds **one** character and is written in **single quotes**.
+Double quotes make a **string literal**, which is a different type.
+
+.. code-block:: cpp
+
+   char letter{'a'};  // single quotes: one character, one byte
+   std::cout << letter << '\n';                         // a
+   std::cout << static_cast<int>(letter) << '\n';       // 97  <- what is stored
+   std::cout << letter + 1 << '\n';                     // 98, an int
+   std::cout << static_cast<char>(letter + 1) << '\n';  // b
+
+   std::cout << sizeof('a') << '\n';   // 1: 'a' is a char
+   std::cout << sizeof("a") << '\n';   // 2: "a" is 'a' plus a '\0' terminator
+
+**Why it is an** *integral* **type.** A ``char`` **is** a small integer.
+It stores the numeric **character code**, so ``'a'`` is just another way
+to write ``97``. It therefore obeys the integer rules and **promotes to**
+``int`` in arithmetic — which is why ``letter + 1`` gives ``98``, not
+``b``. Only ``std::cout`` treats it specially: it prints the **glyph**.
+Ask for the number with ``static_cast<int>``.
+
+.. list-table:: Escape sequences.
+   :widths: 18 82
+   :header-rows: 1
+   :class: compact-table
+
+   * - Write
+     - Means
+   * - ``'\n'``
+     - newline
+   * - ``'\t'``
+     - tab
+   * - ``'\\'``
+     - one backslash
+   * - ``'\''``
+     - single quote
+   * - ``'\0'``
+     - the null character, value 0
+
+.. note::
+
+   A backslash starts an **escape sequence**: the pair is **one**
+   character. That is why ``'\n'`` fits in a ``char`` at all, and why a
+   literal backslash has to be doubled.
 
 
 Compiler Behavior Differences
@@ -1188,26 +1610,48 @@ A **numeric promotion** widens a smaller type to a larger type **within
 the same family**: integral to integral, floating-point to
 floating-point. It never loses information.
 
-.. list-table::
-   :widths: 34 34 32
+.. list-table:: **Every** promotion in C++20. Integral promotions are
+   ``[conv.prom]/1``–``/6``; floating-point promotion is
+   ``[conv.fpprom]/1``. There are no others.
+   :widths: 34 52 14
    :header-rows: 1
    :class: compact-table
 
-   * - Kind
-     - From
+   * - From
      - To
-   * - Floating-point promotion
-     - ``float``
+     - Clause
+   * - ``bool``
+     - ``int``: ``false`` to 0, ``true`` to 1
+     - /6
+   * - ``char``, ``signed char``, ``unsigned char``, ``char8_t``,
+       ``short``, ``unsigned short``
+     - ``int`` — or ``unsigned int``, if ``int`` cannot represent every
+       value of the source type
+     - /1
+   * - ``char16_t``, ``char32_t``, ``wchar_t``
+     - the first of ``int``, ``unsigned int``, ``long``,
+       ``unsigned long``, ``long long``, ``unsigned long long`` that fits
+     - /2
+   * - an unscoped ``enum``
+     - its underlying type, or the first of that same list that fits
+     - /3, /4
+   * - an integral **bit-field**
+     - ``int``, else ``unsigned int``; wider than both, no promotion
+     - /5
+   * - ``float``
      - ``double``
-   * - Integral promotion
-     - ``char``
-     - ``int``
-   * - Integral promotion
-     - ``short``
-     - ``int``
-   * - Integral promotion
-     - ``bool``
-     - ``int`` (``false`` to 0, ``true`` to 1)
+     - fpprom/1
+
+.. note::
+
+   Only the first two rows matter in this course. On x86-64 every type in
+   rule /1 promotes to ``int``; ``char32_t`` is the one type here that
+   lands on ``unsigned int``, because its underlying type is
+   ``uint_least32_t`` and a 32-bit ``int`` cannot hold every value.
+
+   **Anything not in this table is a numeric conversion**, not a
+   promotion — including ``double`` to ``long double`` and ``int`` to
+   ``double``.
 
 .. code-block:: cpp
 
@@ -1604,6 +2048,56 @@ sees the code.
      ``PI * 10 * 10``.
 
 
+Seeing the substitution
+^^^^^^^^^^^^^^^^^^^^^^^
+
+You do not have to take any of this on trust. ``g++ -E`` stops after the
+preprocessor and writes out exactly what the compiler goes on to see;
+``-P`` drops the line markers that would otherwise clutter it.
+
+.. code-block:: console
+
+   $ g++ -E -P main.cpp -o main.i
+
+Given this ``main.cpp``:
+
+.. code-block:: cpp
+
+   #define PI 3.14159
+   #define SQUARE(x) ((x) * (x))
+
+   int main() {
+       double r{2.0};
+       double area{PI * r * r};
+
+       int i{5};
+       int bad{SQUARE(i++)};
+   }
+
+``main.i`` contains:
+
+.. code-block:: cpp
+
+   int main() {
+       double r{2.0};
+       double area{3.14159 * r * r};
+       int i{5};
+       int bad{((i++) * (i++))};
+   }
+
+Both ``#define`` lines are **gone**, and with them every trace of the
+names ``PI`` and ``SQUARE`` — which is why a debugger can never show them
+back to you. Your ``main()`` is otherwise untouched, blank lines aside.
+The double evaluation of ``i++`` is now plainly visible.
+
+.. tip::
+
+   Try this on your own file. Note that with ``#include`` directives
+   present, ``main.i`` becomes tens of thousands of lines, because every
+   header is pasted in — which is its own lesson about what ``#include``
+   costs. Search the file rather than reading it.
+
+
 Constant Expressions
 --------------------
 
@@ -1724,6 +2218,20 @@ be computable at compile time, and the compiler enforces it.
     - **It documents intent.** ``constexpr`` says "this is knowable now",
       and the compiler checks the claim. ``const`` only says "do not
       reassign this".
+    - **Usable where the language demands a constant expression.** Array
+      sizes, template arguments, ``case`` labels and ``static_assert``
+      all require one.
+
+.. code-block:: cpp
+
+   constexpr int joints{6};
+   static_assert(joints == 6);       // a check the COMPILER runs, not the program
+   static_assert(joints * 2 == 12);  // any constant expression will do
+
+``static_assert`` fails the **build** if its condition is false, so the
+error arrives while you compile rather than while the robot is moving. It
+needs a constant expression, which is exactly what ``constexpr``
+guarantees and ``const`` does not.
 
 .. seealso::
 
@@ -1866,10 +2374,11 @@ uninitialized variables hold garbage.
 Global Scope
 ------------
 
-Variables declared outside every function have **file scope**, informally
-called **global scope**. They are visible from their point of declaration
-to the end of the file. By convention they go at the top, below the
-``#include`` directives and above any code.
+Variables declared outside every function have **namespace scope** —
+specifically the **global namespace** — which is why they are informally
+called **global** variables. They are visible from their point of
+declaration to the end of the file. By convention they go at the top,
+below the ``#include`` directives and above any code.
 
 .. dropdown:: Global scope example
     :class-container: sd-border-secondary
@@ -1879,18 +2388,29 @@ to the end of the file. By convention they go at the top, below the
 
        #include <iostream>
 
-       int global_var{1};
-
-       void my_function() {
-           global_var++;
-       }
+       int global_var{1};                      // global
 
        int main() {
-           std::cout << global_var << '\n';  // 1
-           global_var++;                     // now 2
-           my_function();                    // now 3
-           std::cout << global_var << '\n';  // 3
+           std::cout << global_var << '\n';    // 1
+           global_var++;                       // any code here can change it: now 2
+
+           {
+               int global_var{100};            // a LOCAL that shadows the global
+               std::cout << global_var   << '\n';  // 100  <- the local
+               std::cout << ::global_var << '\n';  // 2    <- :: reaches the global
+           }                                   // the local is gone here
+
+           std::cout << global_var << '\n';    // 2    <- the global again
        }
+
+.. important::
+
+   ``::name``, **with nothing on its left**, is the scope resolution
+   operator naming the **global namespace** — exactly as ``std::cout``
+   names ``std``. It is how you reach a global that a local is hiding.
+
+   Note that ``-Wall -Wextra`` says **nothing** about that shadowing.
+   ``-Wshadow`` is the flag that warns, and it is not enabled by either.
 
 .. warning::
 
