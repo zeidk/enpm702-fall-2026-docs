@@ -29,8 +29,11 @@ constants, scope, and namespaces.
    because everything below builds on them.
 
 
+Terminal Input and Output
+=========================
+
 Basic Input and Output
-====================================================
+----------------------
 
 C++ programs talk to the terminal through **streams** declared in the
 ``<iostream>`` header. Two of them matter for now:
@@ -115,179 +118,19 @@ C++ programs talk to the terminal through **streams** declared in the
    :doc:`Lecture 1 </lectures/lecture1/l1_lecture>` explains why.
 
 
-.. _l2-validating-input:
-
-Validating Input
-----------------
-
-``std::cin >> age`` does not promise you a number. It promises to *try*.
-What happens when the user types something else is worth knowing before
-you write a program that trusts its input.
-
-There are **three** distinct outcomes, and only one of them is obvious.
-
-.. list-table:: What ``std::cin >> age`` does with each input, for ``int age{42};``
-   :widths: 16 12 16 56
-   :header-rows: 1
-   :class: compact-table
-
-   * - Typed
-     - ``age``
-     - Stream state
-     - What happened
-   * - ``42``
-     - ``42``
-     - good
-     - Clean success.
-   * - ``abc``
-     - ``0``
-     - **fail**
-     - Extraction **failed**. Since C++11 the variable is set to ``0``,
-       so your previous value of ``42`` is **destroyed**. ``abc`` is
-       still sitting in the buffer.
-   * - ``3.7``
-     - ``3``
-     - **good**
-     - **Partial read.** It stopped at the ``.`` and succeeded with
-       ``3``. ``.7`` is still in the buffer.
-   * - ``12abc``
-     - ``12``
-     - **good**
-     - Partial read again: ``12`` extracted, ``abc`` left behind.
-
-.. warning::
-
-   The two partial reads leave the stream **good**. Checking whether the
-   read "worked" will not catch them — as far as the stream is concerned,
-   it did work. And in the failure case the offending text stays in the
-   buffer, so the *next* read fails immediately too. A loop that reads
-   without clearing spins forever.
-
-Approach 1: check the stream, then recover
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A stream converts to ``bool``, so ``if (std::cin >> value)`` tests
-whether the extraction succeeded. To recover you must do **two** things:
-clear the error flags, then throw away the text that caused the problem.
-
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <limits>
-
-   int main() {
-       int value{};
-
-       std::cout << "Enter an integer: ";
-       while (!(std::cin >> value)) {
-           std::cin.clear();   // drop the failbit; the stream is usable again
-           std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-           std::cout << "That is not an integer. Try again: ";
-       }
-
-       std::cout << "Got " << value << '\n';
-   }
-
-``clear()`` alone is not enough: without the ``ignore()`` the bad
-characters are still queued and the next read fails on them again.
-``std::numeric_limits<std::streamsize>::max()`` means "as many
-characters as it takes", and the ``'\n'`` says "stop at the end of the
-line".
-
-.. note::
-
-   This handles ``abc``. It does **not** reject ``3.7`` or ``12abc``,
-   because those succeeded.
-
-Approach 2: read a whole line, then parse it
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The robust approach separates the two jobs. Read one whole line with
-``std::getline``, then require the **entire** line to parse as a number.
-Anything left over means the input was not a number.
-
-.. code-block:: cpp
-
-   #include <charconv>
-   #include <iostream>
-   #include <string>
-
-   int main() {
-       std::cout << "Enter an integer: ";
-
-       std::string line;
-       std::getline(std::cin, line);
-
-       int value{};
-       const char* first{line.data()};
-       const char* last{line.data() + line.size()};
-       auto [ptr, ec] = std::from_chars(first, last, value);
-
-       if (ec == std::errc{} && ptr == last) {   // parsed, and consumed it ALL
-           std::cout << "Got " << value << '\n';
-       } else {
-           std::cout << "That was not an integer.\n";
-       }
-   }
-
-The ``ptr == last`` test is the important half. ``ec == std::errc{}``
-only says *some* number was parsed; ``ptr == last`` says nothing was
-left over, which is exactly what rejects ``3.7`` and ``12abc``.
-
-.. list-table:: Whole-line parsing, measured.
-   :widths: 22 22 56
-   :header-rows: 1
-   :class: compact-table
-
-   * - Typed
-     - Result
-     - Why
-   * - ``42``
-     - accept, ``42``
-     - the whole line is a number
-   * - ``-5``
-     - accept, ``-5``
-     - leading sign is fine
-   * - ``abc``
-     - reject
-     - nothing parsed
-   * - ``3.7``
-     - reject
-     - stopped at ``.``, so ``ptr != last``
-   * - ``12abc``
-     - reject
-     - stopped at ``a``, so ``ptr != last``
-   * - ``  7``
-     - reject
-     - ``from_chars`` does **not** skip leading whitespace
-   * - (empty line)
-     - reject
-     - nothing to parse
-
-.. important::
-
-   **Which should you use?**
-
-   - Reach for **Approach 1** when you just need to keep asking until the
-     user cooperates, and a value like ``3`` from ``3.7`` is acceptable.
-     It is short, and it is what most textbooks show.
-   - Reach for **Approach 2** when the input must be *exactly* a number —
-     a robot configuration value, a menu choice, anything where silently
-     accepting ``3`` for ``3.7`` would be a bug.
-
-   ``std::from_chars`` is the C++17 parser: no exceptions, no locale, and
-   it tells you where it stopped. ``std::stoi`` is the older alternative,
-   but it throws on failure and ignores trailing junk unless you check
-   its ``pos`` output, so it needs more care to use correctly.
-
 .. seealso::
 
-   `cppreference: std::from_chars <https://en.cppreference.com/w/cpp/utility/from_chars>`_,
-   `cppreference: std::basic_istream::ignore <https://en.cppreference.com/w/cpp/io/basic_istream/ignore>`_.
+   **What if the user types something that is not a number?**
+   ``std::cin >> age`` can fail, and it can also *partially* succeed --
+   ``3.7`` into an ``int`` gives you ``3`` and leaves ``.7`` in the
+   buffer, with the stream still reporting success. That, and the two
+   standard ways to handle it, are covered in the self-study reading
+   module :doc:`Validating Terminal Input
+   </reading_material/input_validation/iv_index>`.
 
 
 Stream Manipulators
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 A **manipulator** is a value you insert into a stream with ``<<`` that
 changes **how the stream formats**, instead of printing anything itself.
@@ -331,8 +174,11 @@ that changes how every later ``bool`` is rendered.
    two get confused.
 
 
+Memory and Variables
+====================
+
 Bits, Bytes, and Words
-====================================================
+----------------------
 
 Every type in this lecture is ultimately a number of bytes in memory, so
 the vocabulary is worth pinning down.
@@ -365,10 +211,10 @@ the vocabulary is worth pinning down.
 
 
 Process Memory
-====================================================
+--------------
 
 Memory Segments
----------------
+^^^^^^^^^^^^^^^
 
 When the OS loader brings an executable into RAM, the process image is
 divided into segments. Which segment a variable lands in is decided by
@@ -424,7 +270,7 @@ behave differently later in this lecture.
 
 
 Memory Lifetime
----------------
+^^^^^^^^^^^^^^^
 
 A variable's **storage duration** is how long its memory exists. It is
 fixed by **how you declare it**, not by where you use it.
@@ -463,7 +309,7 @@ objects, and storage duration is a property of objects.
 
 
 The Stack Segment
------------------
+^^^^^^^^^^^^^^^^^
 
 Almost every variable in this lecture lives on the **stack**: each
 function call gets one **stack frame**, and that call's parameters and
@@ -487,7 +333,7 @@ locals live in it.
 
 
 Variables
-====================================================
+---------
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -500,7 +346,7 @@ Variables
 
 
 Why Names, Not Addresses
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 It took about fifteen years to get from "write the address" to "write a
 name".
@@ -559,7 +405,7 @@ name".
 
 
 Characteristics
----------------
+^^^^^^^^^^^^^^^
 
 Every variable has five properties. The rest of this lecture works
 through each of them.
@@ -613,7 +459,7 @@ through each of them.
 
 
 Naming (Identifiers)
----------------------
+^^^^^^^^^^^^^^^^^^^^
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -682,7 +528,7 @@ Naming (Identifiers)
 
 
 Variable Types
---------------
+^^^^^^^^^^^^^^
 
 .. grid:: 1 2 2 3
     :gutter: 3
@@ -717,7 +563,7 @@ Variable Types
 
 
 sizeof Operator
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
 ``sizeof`` reports the size in **bytes** of a type or of the type an
 expression would produce. It is evaluated by the compiler, not at
@@ -738,7 +584,7 @@ runtime.
 
 
 Memory Allocation
------------------
+^^^^^^^^^^^^^^^^^
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -786,7 +632,7 @@ prints the decimal value.
 
 
 Declarations
-^^^^^^^^^^^^
+""""""""""""
 
 A **declaration** states a variable's type and name, which is what lets
 the compiler type-check every later use of it.
@@ -818,7 +664,7 @@ statement, but do not.
 
 
 Assignments
-^^^^^^^^^^^
+"""""""""""
 
 Once declared, a variable is given a value with the **assignment
 operator** ``=``. This is called *copy assignment*.
@@ -840,7 +686,7 @@ operator** ``=``. This is called *copy assignment*.
 
 
 Initializations
-^^^^^^^^^^^^^^^
+"""""""""""""""
 
 Declaration and assignment can be collapsed into one step, called
 **initialization**. The value used is the **initializer**.
@@ -880,7 +726,7 @@ Declaration and assignment can be collapsed into one step, called
 
 
 Zero Initialization
-^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""
 
 Empty braces initialize a variable to zero, or to whatever counts as
 empty for its type. The standard calls this **value-initialization**,
@@ -929,7 +775,7 @@ initialization" is the name you will see in most tutorials.
 
 
 Uninitialized Variables
-^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""
 
 .. warning::
 
@@ -947,7 +793,7 @@ Uninitialized Variables
 
 
 Undefined Behavior
-====================================================
+------------------
 
 .. card::
     :class-card: sd-border-danger sd-shadow-sm
@@ -993,8 +839,11 @@ Undefined Behavior
    for what each flag actually detects.
 
 
+Types and Conversions
+=====================
+
 Integral Types
-====================================================
+--------------
 
 **Integral types** represent whole numbers, with no fractional part.
 
@@ -1013,7 +862,7 @@ Integral Types
 
 
 Signedness Modifiers
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 A **signedness modifier** controls whether a type can represent negative
 values.
@@ -1050,7 +899,7 @@ values.
 
 
 Writing an unsigned literal: the ``u`` suffix
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""""""""""""""""
 
 A plain ``1`` is an ``int``. Append ``u`` (or ``U``) and the **literal
 itself** is unsigned: ``1u`` is an ``unsigned int``. You will meet this
@@ -1065,7 +914,7 @@ notation wherever signed and unsigned values are compared.
 
 
 Size Modifiers
---------------
+^^^^^^^^^^^^^^
 
 **Size modifiers** change how many bits an integer type uses, and
 therefore its range.
@@ -1111,8 +960,8 @@ therefore its range.
    formats.
 
 
-Type, Size, and Range
----------------------
+Type, Size and Range
+^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Typical sizes and ranges on a 64-bit Linux machine.
    :widths: 18 10 36 36
@@ -1160,7 +1009,7 @@ Type, Size, and Range
 
 
 Characters
-----------
+^^^^^^^^^^
 
 A ``char`` holds **one** character and is written in **single quotes**.
 Double quotes make a **string literal**, which is a different type.
@@ -1208,8 +1057,8 @@ Ask for the number with ``static_cast<int>``.
    literal backslash has to be doubled.
 
 
-Compiler Behavior Differences
-------------------------------
+Signed vs Unsigned Pitfalls
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. card::
     :class-card: sd-border-warning sd-shadow-sm
@@ -1267,7 +1116,7 @@ Compiler Behavior Differences
 
 
 Floating-point Number Types
-====================================================
+---------------------------
 
 **Floating-point types** represent real numbers, with a fractional part.
 The **precision** of such a type is the number of significant decimal
@@ -1276,7 +1125,7 @@ All floating-point types are **signed**.
 
 
 Precision and Range
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Typical sizes, ranges, and precision on x86-64 Linux.
    :widths: 22 14 34 30
@@ -1315,7 +1164,7 @@ Precision and Range
 
 
 Float Suffix
-^^^^^^^^^^^^
+""""""""""""
 
 A floating-point literal with no suffix is a ``double``. The ``f`` (or
 ``F``) suffix makes it a ``float``.
@@ -1333,8 +1182,8 @@ A floating-point literal with no suffix is a ``double``. The ``f`` (or
    is not a valid integer suffix. Write ``1.0f``.
 
 
-std::setprecision
-^^^^^^^^^^^^^^^^^
+Controlling Output
+""""""""""""""""""
 
 ``std::cout`` shows 6 significant digits by default.
 ``std::setprecision()``, from ``<iomanip>``, changes that.
@@ -1398,7 +1247,7 @@ std::setprecision
 
 
 Boolean Type
-====================================================
+------------
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -1441,7 +1290,7 @@ Boolean Type
 
 
 Type Conversion
-====================================================
+---------------
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -1467,7 +1316,7 @@ Type Conversion
 
 
 Implicit Type Conversion
--------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 The compiler converts automatically in five common situations.
 
@@ -1490,8 +1339,8 @@ The compiler converts automatically in five common situations.
      - ``void f(double x); f(2);``
 
 
-typeid and c++filt
-^^^^^^^^^^^^^^^^^^
+Inspecting Types with typeid
+""""""""""""""""""""""""""""
 
 ``typeid`` from ``<typeinfo>`` lets you ask what type an expression has,
 which is the quickest way to check whether a conversion happened.
@@ -1573,7 +1422,7 @@ which is the quickest way to check whether a conversion happened.
 
 
 Standard Conversions
----------------------
+^^^^^^^^^^^^^^^^^^^^
 
 The standard defines how fundamental types convert into one another.
 These rules are the **standard conversions**, in four categories.
@@ -1604,7 +1453,7 @@ These rules are the **standard conversions**, in four categories.
 
 
 Numeric Promotion
-^^^^^^^^^^^^^^^^^
+"""""""""""""""""
 
 A **numeric promotion** widens a smaller type to a larger type **within
 the same family**: integral to integral, floating-point to
@@ -1672,7 +1521,7 @@ floating-point. It never loses information.
 .. _l2-numeric-conversion:
 
 Numeric Conversion
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 
 A **numeric conversion** is any other conversion between arithmetic
 types. Unlike a promotion, it **may** lose data or precision.
@@ -1754,7 +1603,7 @@ types. Unlike a promotion, it **may** lose data or precision.
 .. _l2-arithmetic-conversion:
 
 Arithmetic Conversions
-^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""
 
 Some operators require both operands to have the **same type**:
 
@@ -1883,7 +1732,7 @@ The ranking used in step 3:
 
 
 Constants
-====================================================
+=========
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -1918,8 +1767,11 @@ C++ has three kinds:
         Preprocessor macros. **Avoid these.**
 
 
+Literals, const and constexpr
+-----------------------------
+
 Literal Constants
------------------
+^^^^^^^^^^^^^^^^^
 
 A **literal** is a notation for a fixed value written into the source
 code. Numeric literals can carry an
@@ -1951,7 +1803,7 @@ or a
 
 
 Constant Variables
-------------------
+^^^^^^^^^^^^^^^^^^
 
 A variable whose value cannot change is a **constant variable**, declared
 with ``const``.
@@ -2003,8 +1855,8 @@ with ``const``.
    `NL.26: Use conventional const notation <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl26-use-conventional-const-notation>`_.
 
 
-Symbolic Constants
-------------------
+Symbolic Constants (Macros)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Symbolic constants** are made with preprocessor **macros**. The
 preprocessor performs a blind text substitution before the compiler ever
@@ -2049,7 +1901,7 @@ sees the code.
 
 
 Seeing the substitution
-^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""
 
 You do not have to take any of this on trust. ``g++ -E`` stops after the
 preprocessor and writes out exactly what the compiler goes on to see;
@@ -2099,7 +1951,7 @@ The double evaluation of ``i++`` is now plainly visible.
 
 
 Constant Expressions
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 A **constant expression** is one the compiler can evaluate **at compile
 time**, because every value in it is known then. The compiler replaces
@@ -2136,7 +1988,7 @@ The compiler emits the equivalent of:
 .. _l2-const-in-constant-expressions:
 
 Compile-time and Runtime Constants
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""
 
 A **compile-time constant** is a constant whose value is known while
 compiling. A ``const`` variable **may or may not** be one; it depends
@@ -2186,8 +2038,8 @@ compiler, and nothing in the code says which one you got.
    type, and it fails loudly instead of silently not qualifying.
 
 
-constexpr
-^^^^^^^^^^
+Why constexpr
+"""""""""""""
 
 ``constexpr`` removes that ambiguity: it states that the value **must**
 be computable at compile time, and the compiler enforces it.
@@ -2242,7 +2094,7 @@ guarantees and ``const`` does not.
 
 
 Type Deduction
-====================================================
+==============
 
 **Type deduction** lets the compiler work out a variable's type from its
 initializer. You write ``auto`` where the type would go.
@@ -2285,8 +2137,11 @@ initializer. You write ``auto`` where the type would go.
        c = 1;                // Error: assignment of read-only variable 'c'
 
 
+Scope and Names
+===============
+
 Compound Statements
-====================================================
+-------------------
 
 A **compound statement**, also called a **block**, is a group of zero or
 more statements between braces.
@@ -2312,7 +2167,7 @@ more statements between braces.
 
 
 Scopes
-====================================================
+------
 
 A variable's **scope** is the region of source code in which its name can
 be used. An identifier that can be used is **in scope**; one that cannot
@@ -2327,7 +2182,7 @@ is **out of scope**.
 
 
 Local Scope
------------
+^^^^^^^^^^^
 
 Function parameters and variables defined inside a function body are
 **local variables**, and their scope is delimited by the enclosing
@@ -2356,7 +2211,7 @@ order at the closing brace.
 
 
 Out of Scope
-^^^^^^^^^^^^
+""""""""""""
 
 When a variable goes out of scope its **lifetime ends**: the name can no
 longer be used, and the storage is released for reuse. What the storage
@@ -2372,7 +2227,7 @@ uninitialized variables hold garbage.
 
 
 Global Scope
-------------
+^^^^^^^^^^^^
 
 Variables declared outside every function have **namespace scope** —
 specifically the **global namespace** — which is why they are informally
@@ -2427,7 +2282,7 @@ below the ``#include`` directives and above any code.
 
 
 Where Globals Live
-^^^^^^^^^^^^^^^^^^
+""""""""""""""""""
 
 Global variables do not live on the stack. **Initialized** globals go in
 the **data** segment; **uninitialized** globals go in the **BSS**
@@ -2459,10 +2314,10 @@ segment, where the loader zeroes them.
 
 
 Naming Collisions and Namespaces
-====================================================
+--------------------------------
 
 Naming Collisions
------------------
+^^^^^^^^^^^^^^^^^
 
 C++ requires every identifier to be unambiguous. A **naming collision**
 occurs when two identifiers with the same name are declared in the same
@@ -2484,7 +2339,7 @@ namespaces are for.
 
 
 Namespaces
-----------
+^^^^^^^^^^
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -2507,7 +2362,7 @@ There are three ways to reach a name inside a namespace.
 
 
 Explicit Qualification
-^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""
 
 Name the namespace with the **scope resolution operator** ``::``. This is
 the form this course uses.
@@ -2528,7 +2383,7 @@ the form this course uses.
 
 
 The ``using namespace`` Directive
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""""""""""
 
 A ``using namespace`` directive makes **every** name in a namespace
 available unqualified.
@@ -2551,7 +2406,7 @@ available unqualified.
 
 
 The ``using`` Declaration
-^^^^^^^^^^^^^^^^^^^^^^^^^
+"""""""""""""""""""""""""
 
 A ``using`` **declaration** imports a **single** name, which is far more
 targeted.
@@ -2574,7 +2429,7 @@ targeted.
 
 
 Why to Avoid ``using namespace``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""
 
 .. warning::
 
@@ -2631,7 +2486,7 @@ namespace each name came from:
 
 
 Aliases
-====================================================
+=======
 
 A **type alias** gives an existing type a second name. The ``using``
 keyword creates one.
@@ -2678,7 +2533,7 @@ keyword creates one.
 
 
 Scoped Enumerations
-====================================================
+===================
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -2709,7 +2564,7 @@ like namespace members: ``Color::red``.
 
 
 Why ``enum class`` over ``enum``
----------------------------------
+--------------------------------
 
 .. grid:: 1 3 3 3
     :gutter: 3
@@ -2751,7 +2606,7 @@ Why ``enum class`` over ``enum``
 
 
 Underlying Type
-----------------
+---------------
 
 The default underlying type is ``int``. Name a different integral type
 after a colon:
@@ -2771,7 +2626,7 @@ width.
 
 
 C++20: ``using enum``
-----------------------
+---------------------
 
 Qualifying every enumerator is what makes ``enum class`` safe, but it
 gets repetitive in a ``switch`` where every label names the same type.
@@ -2795,7 +2650,7 @@ C++20 lets you drop the qualification **inside a limited scope**:
 
 
 Use Cases in Robotics
-----------------------
+---------------------
 
 Scoped enumerations fit any fixed set of named alternatives:
 

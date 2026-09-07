@@ -19,6 +19,10 @@ are expected to work through these outside of class.
      - VSCode installation and interface, workspace layout, the
        ``.vscode`` folder, recommended extensions, Command Palette,
        ``CMakeLists.txt``, hybrid per-lecture build setup
+   * - :doc:`input_validation/iv_index`
+     - Validating terminal input: what ``std::cin >> value`` does when the
+       input is not a number, stream state and recovery, and whole-line
+       parsing with ``std::getline`` and ``std::from_chars``
    * - :doc:`compiler_warnings/cw_index`
      - Compiler warning flags: ``-Wall``, ``-Wextra``, ``-Wpedantic``,
        the warnings each one enables, and the additional flags
@@ -42,6 +46,7 @@ are expected to work through these outside of class.
 
    linux_shell/ls_index
    vscode_cmake/vcm_index
+   input_validation/iv_index
    compiler_warnings/cw_index
    flow_control/fc_index
    version_control/vc_index

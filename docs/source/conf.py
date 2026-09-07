@@ -72,7 +72,9 @@ html_theme_options = {
     # Navigation
     "navigation_depth": 3,
     "show_nav_level": 1,
-    "show_toc_level": 2,
+    # 1 = only top-level sections are expanded in the right-hand "On this page"
+    # TOC; subsections reveal themselves as you scroll into them.
+    "show_toc_level": 1,
     "show_prev_next": True,
     # Footer
     # "footer_start": ["copyright"],

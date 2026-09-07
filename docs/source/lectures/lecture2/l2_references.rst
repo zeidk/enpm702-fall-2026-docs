@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 L2: Introduction to C++**
+        **ENPM702 L2: Variables, Types and Memory**
 
         Covers terminal input and output with ``std::cin`` and
         ``std::cout``; bits, bytes, words, and the memory segments of a

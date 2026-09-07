@@ -625,7 +625,7 @@ autonomous robot in simulation.
      -
      -
    * - 2 (Sep 8)
-     - L2: Introduction to C++ (variables, types, namespaces)
+     - L2: Variables, Types and Memory
      -
      -
    * - 3 (Sep 15)
