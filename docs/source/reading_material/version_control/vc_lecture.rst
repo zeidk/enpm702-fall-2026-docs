@@ -2,10 +2,6 @@
 Lecture
 ====================================================
 
-
-Version Control
-====================================================
-
 Version control is a system that tracks changes to files over time,
 allowing you to:
 
@@ -134,7 +130,7 @@ Distributed Version Control
    git clone https://github.com/user/project.git   # Get complete repo
    git log                                         # View history (offline)
    git branch feature                              # Create branch (instant)
-   git checkout feature                            # Switch branch (instant)
+   git switch feature                            # Switch branch (instant)
    # Make changes...
    git commit -m "My changes"                      # Save locally
    git push origin feature                         # Share when ready
@@ -253,7 +249,7 @@ Common Git Commands
       .. code-block:: bash
 
          git branch          # List branches
-         git checkout -b new # Create & switch
+         git switch -c new # Create & switch
          git merge branch    # Merge branch
          git branch -d old   # Delete branch
 
@@ -302,10 +298,10 @@ In a typical workflow, Git tracks changes locally on your machine
 while GitHub stores a remote copy of the repository that your
 teammates can also reach.
 
-.. figure:: /_static/images/version_control/how-git-and-github-work-together.png
+.. figure:: /_static/images/version_control/git-github.png
    :alt: Laptop running local Git connected to a GitHub cloud repository
    :align: center
-   :width: 70%
+   :width: 100%
 
    Local Git tracks changes on your machine; GitHub stores a remote
    copy. ``git push`` uploads commits; ``git clone``, ``git fetch``,
@@ -397,7 +393,7 @@ each commit.
 .. figure:: /_static/images/version_control/three-areas-of-git.png
    :alt: Working Directory to Staging Area to Repository
    :align: center
-   :width: 80%
+   :width: 100%
 
    The three areas of Git: ``git add`` moves changes from the working
    directory into the staging area, and ``git commit`` records the
@@ -659,7 +655,7 @@ Setting Up the Project
    .. figure:: /_static/images/version_control/git-graph-initial-commit.png
       :alt: Git graph after the initial commit
       :align: center
-      :width: 70%
+      :width: 100%
 
       After the initial commit, both ``main`` and ``HEAD`` point to
       the same commit ``A``. ``HEAD`` tells Git which branch you are
@@ -687,11 +683,10 @@ Adding GPS Navigation
 
    .. code-block:: bash
 
-      git checkout -b feature/gps-navigation
+      git switch -c feature/gps-navigation
 
-   - ``git checkout`` = "Switch to a branch"
-   - ``-b`` = "But first, create a new branch from wherever you are
-     right now"
+   - ``git switch`` = "Switch to a branch"
+   - ``-c`` = "Create it first, from wherever you are right now"
    - **Combined:** "Create a new branch AND switch to it immediately"
    - ``feature/`` is a naming convention (like organizing folders).
    - ``gps-navigation`` describes what this branch is for.
@@ -701,21 +696,21 @@ Adding GPS Navigation
    .. code-block:: bash
 
       git branch feature/gps-navigation     # Create the branch
-      git checkout feature/gps-navigation   # Switch to it
+      git switch feature/gps-navigation   # Switch to it
 
    .. note::
 
-      When you use ``git checkout -b <new-branch-name>``, the new
+      When you use ``git switch -c <new-branch-name>``, the new
       branch is created from the current branch you are on. For
       instance, to create ``feature/gps-navigation`` from ``main``:
 
       .. code-block:: bash
 
-         git checkout main                        # Switch to main
-         git checkout -b feature/gps-navigation   # Create and switch
+         git switch main                        # Switch to main
+         git switch -c feature/gps-navigation   # Create and switch
 
       Alternative:
-      ``git checkout -b feature/gps-navigation main``
+      ``git switch -c feature/gps-navigation main``
 
 2. **Check you are on the current branch.**
 
@@ -730,7 +725,7 @@ Adding GPS Navigation
    .. figure:: /_static/images/version_control/git-graph-feature-branch.png
       :alt: Git graph after creating the feature branch
       :align: center
-      :width: 70%
+      :width: 100%
 
       Both branches point to the **same commit** ``A``. No files were
       copied, Git just created a new pointer and moved ``HEAD`` to
@@ -764,7 +759,7 @@ Adding GPS Navigation
    .. figure:: /_static/images/version_control/git-graph-branches-diverged.png
       :alt: Git graph showing branches diverged after the feature commit
       :align: center
-      :width: 70%
+      :width: 100%
 
       The branches have **diverged**. ``main`` still points at ``A``;
       ``feature/gps-navigation`` advanced to ``B``. The feature
@@ -805,16 +800,16 @@ Bug Alert: Emergency Fix Needed
 
    .. code-block:: bash
 
-      git checkout main                         # switch to main
-      git checkout -b hotfix/fix-navigation-rate
+      git switch main                         # switch to main
+      git switch -c hotfix/fix-navigation-rate
 
    Or, more concisely:
-   ``git checkout -b hotfix/fix-navigation-rate main``
+   ``git switch -c hotfix/fix-navigation-rate main``
 
    .. figure:: /_static/images/version_control/git-graph-hotfix-branch.png
       :alt: Git graph showing the hotfix branch created from main
       :align: center
-      :width: 70%
+      :width: 100%
 
       The feature work on ``B`` is safe and untouched. The hotfix
       branch starts from ``main`` (``A``), not from the feature
@@ -838,7 +833,7 @@ Bug Alert: Emergency Fix Needed
    .. figure:: /_static/images/version_control/git-graph-hotfix-commit.png
       :alt: Git graph after committing the hotfix
       :align: center
-      :width: 70%
+      :width: 100%
 
       The hotfix branch now has its own commit ``C``. ``main`` still
       sits at ``A``; the feature branch is unchanged at ``B``.
@@ -847,7 +842,7 @@ Bug Alert: Emergency Fix Needed
 
    .. code-block:: bash
 
-      git checkout main                        # switch to main
+      git switch main                        # switch to main
       git merge hotfix/fix-navigation-rate
 
    a. Go to the ``main`` version of the project.
@@ -857,7 +852,7 @@ Bug Alert: Emergency Fix Needed
    .. figure:: /_static/images/version_control/git-graph-after-merge-hotfix.png
       :alt: Git graph after merging the hotfix into main
       :align: center
-      :width: 70%
+      :width: 100%
 
       Both ``main`` and ``hotfix/fix-navigation-rate`` now point at
       ``C``. ``main`` has fast-forwarded onto the hotfix commit.
@@ -868,7 +863,7 @@ Bug Alert: Emergency Fix Needed
    .. figure:: /_static/images/version_control/git-graph-delete-hotfix.png
       :alt: Git graph after deleting the hotfix branch
       :align: center
-      :width: 70%
+      :width: 100%
 
       The hotfix branch label is gone; commit ``C`` is still in
       history under ``main``. The feature branch is untouched.
@@ -891,7 +886,7 @@ Handling Merge Conflicts
    into your feature branch.
 
 1. **Switch back to the GPS feature branch:**
-   ``git checkout feature/gps-navigation``
+   ``git switch feature/gps-navigation``
 
 2. **Attempt the merge:** ``git merge main``
 
@@ -959,7 +954,7 @@ Handling Merge Conflicts
    .. figure:: /_static/images/version_control/git-graph-after-merge-conflict.png
       :alt: Git graph after resolving the merge conflict
       :align: center
-      :width: 70%
+      :width: 100%
 
       The new commit ``D`` is a **merge commit** with two parents
       (``B`` and ``C``). It brings the hotfix into the feature
@@ -1000,7 +995,7 @@ Completing the Feature
 
    .. code-block:: bash
 
-      git checkout main
+      git switch main
       git merge feature/gps-navigation
 
 7. Clean up feature branch: ``git branch -d feature/gps-navigation``
@@ -1008,7 +1003,7 @@ Completing the Feature
 .. figure:: /_static/images/version_control/git-graph-final.png
    :alt: Final git graph after the feature is merged into main
    :align: center
-   :width: 80%
+   :width: 100%
 
    The feature branch label is gone, but its commits ``B``, ``D``,
    and ``E`` are still in history. ``main`` now points at the final
@@ -1172,7 +1167,7 @@ Connect Local Repo to Remote
       .. figure:: /_static/images/version_control/scenario-1-sequence.png
          :alt: Sequence diagram of Scenario 1 (local repo first)
          :align: center
-         :width: 70%
+         :width: 100%
 
          Scenario 1: create the empty GitHub repo, add it as a remote
          from your local repo, then push your existing history.
@@ -1196,7 +1191,7 @@ Connect Local Repo to Remote
 
          .. code-block:: bash
 
-            git clone https://github.com/yourusername/new-project.git
+            git clone git@github.com:yourusername/new-project.git
 
             # Move into the directory
             cd new-project
@@ -1210,7 +1205,7 @@ Connect Local Repo to Remote
       .. figure:: /_static/images/version_control/scenario-2-sequence.png
          :alt: Sequence diagram of Scenario 2 (GitHub repo first)
          :align: center
-         :width: 70%
+         :width: 100%
 
          Scenario 2: create the GitHub repo, clone it locally, work,
          then push. No ``git remote add`` or ``git push -u`` needed;
@@ -1252,7 +1247,7 @@ Branch Workflow
 
 .. figure:: /_static/images/version_control/branch-workflow.png
    :align: center
-   :width: 40%
+   :width: 100%
 
    Branch workflow diagram.
 
@@ -1267,7 +1262,7 @@ Branch Workflow
 
    .. code-block:: bash
 
-      git checkout -b feature/sensor-integration
+      git switch -c feature/sensor-integration
 
 3. Work on your changes.
 
@@ -1298,42 +1293,45 @@ Fork Workflow
 
 .. figure:: /_static/images/version_control/fork-workflow.png
    :align: center
-   :width: 40%
+   :width: 100%
 
    Fork workflow diagram.
 
-1. **Fork** the repository on GitHub (creates your copy).
+1. **Fork** `rubixcubic/github-workflow-demo <https://github.com/rubixcubic/github-workflow-demo>`__
+   on GitHub (creates your copy, see how to
+   `fork a repo <https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo>`__).
 
-   *Original*: ``zeidk/enpm702-summer-2025.git`` →
-   *Your fork*: ``yourusername/enpm702-summer-2025.git``
+   - *Original*: ``rubixcubic/github-workflow-demo.git``
+
+   - *Your fork*: ``yourusername/github-workflow-demo.git``
 
 2. Clone **your** fork.
 
    .. code-block:: bash
 
-      git clone git@github.com:yourusername/enpm702-summer-2025.git
-      cd enpm702-summer-2025
+      git clone git@github.com:yourusername/github-workflow-demo.git
+      cd github-workflow-demo
 
 3. Add original repository as upstream.
 
    .. code-block:: bash
 
-      git remote add upstream https://github.com/zeidk/enpm702-summer-2025.git
+      git remote add upstream https://github.com/rubixcubic/github-workflow-demo.git
       git remote -v
-      # origin    git@github.com:yourusername/enpm702-summer-2025.git (your fork)
-      # upstream  https://github.com/zeidk/enpm702-summer-2025.git (original)
+      # origin    git@github.com:yourusername/github-workflow-demo.git (your fork)
+      # upstream  https://github.com/rubixcubic/github-workflow-demo.git (original)
 
 .. figure:: /_static/images/version_control/fork-demo-setup.png
    :alt: Fork demo, setup phase (fork, clone, add upstream)
    :align: center
-   :width: 70%
+   :width: 100%
 
    Setup phase: fork the original repository on GitHub, clone your
    fork to your machine, then add the original repository as the
    ``upstream`` remote.
 
 4. Create feature branch:
-   ``git checkout -b feature/new-algorithm``
+   ``git switch -c feature/new-algorithm``
 
 5. Work on your changes.
 
@@ -1350,7 +1348,7 @@ Fork Workflow
 .. figure:: /_static/images/version_control/fork-demo-contribute.png
    :alt: Fork demo, branch, commit, push, open PR
    :align: center
-   :width: 70%
+   :width: 100%
 
    Contribution phase: create a feature branch, commit your changes,
    push the branch to your fork, then open a pull request from your
@@ -1362,17 +1360,17 @@ Keeping Your Fork Updated
 
 1. Fetch latest changes from original repository:
    ``git fetch upstream``
-2. Switch to main branch: ``git checkout main``
+2. Switch to main branch: ``git switch main``
 3. Merge the latest changes from the upstream repository into your
    local repository: ``git merge upstream/main``
 4. Push updates to your fork: ``git push origin main``
 5. Now create new feature branches from updated main:
-   e.g., ``git checkout -b feature/next-feature``
+   e.g., ``git switch -c feature/next-feature``
 
 .. figure:: /_static/images/version_control/fork-demo-merged.png
    :alt: Fork demo, after the maintainer merges the PR
    :align: center
-   :width: 70%
+   :width: 100%
 
    After the maintainer merges your pull request into the original
    repository, sync your local ``main`` (``git pull upstream main``)
@@ -1485,32 +1483,36 @@ A compact card with the commands you will use most often. See
          git pull origin <br>    # Download + merge
 
 
-Recommended Alternatives
+Older Forms You Will Still Meet
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some older commands have safer, clearer replacements. In practice,
-prefer the recommended forms to build better habits.
+This module uses ``git switch`` throughout, because it is the modern,
+dedicated command. You will nevertheless meet ``git checkout``
+constantly --- in tutorials, in Stack Overflow answers, and in your
+colleagues' muscle memory --- so you need to recognise it.
 
 .. list-table::
    :widths: 35 35 30
    :header-rows: 1
    :class: compact-table
 
-   * - Not recommended
-     - Recommended
+   * - Older form
+     - Modern / safer form
      - Why
    * - ``git add .``
      - ``git add <files>`` (or ``git add -u``)
-     - Avoids staging unwanted files.
+     - Avoids staging unwanted files. Worth the habit on a real project.
    * - ``git commit -m "msg"``
      - ``git commit``
-     - Encourages detailed messages.
+     - Opens an editor, which encourages a real message. The examples
+       in this module use ``-m`` only to keep them short on the page.
    * - ``git checkout -b <br>``
      - ``git switch -c <br>``
-     - Dedicated command; less error-prone.
+     - ``switch`` is a dedicated command; ``checkout`` also restores
+       files, which makes it easy to misuse.
    * - ``git checkout <br>``
      - ``git switch <br>``
-     - Clearer intent.
+     - Clearer intent. Use ``git restore`` for files.
 
 
 Pull Requests
@@ -1532,7 +1534,7 @@ a branch in a repository.
 
 .. code-block:: bash
 
-   git checkout -b feature/add-lidar-support
+   git switch -c feature/add-lidar-support
    # Make changes, add, commit
    git push origin feature/add-lidar-support
    # Create PR on GitHub -> Review -> Merge -> Delete branch

@@ -78,7 +78,7 @@ Git/Github Exercises
       .. code-block:: bash
 
          # Step 1-2: Create and switch to new branch
-         git checkout -b feature/sensor-config
+         git switch -c feature/sensor-config
 
          # Step 3: Add a new file
          echo "lidar_range: 30.0" > sensor_config.yaml
@@ -88,7 +88,7 @@ Git/Github Exercises
          git commit -m "Add sensor configuration file"
 
          # Step 5: Switch back to main and verify
-         git checkout main
+         git switch main
          ls sensor_config.yaml  # Should show: No such file or directory
 
          # Step 6: List branches and view log
@@ -115,7 +115,7 @@ Git/Github Exercises
       .. code-block:: bash
 
          # Step 1: Ensure on main
-         git checkout main
+         git switch main
 
          # Step 2: Merge the feature branch
          git merge feature/sensor-config
@@ -157,7 +157,7 @@ Git/Github Exercises
       .. code-block:: bash
 
          # Step 1: Create and switch to branch
-         git checkout -b feature/speed-update
+         git switch -c feature/speed-update
 
          # Step 2: Edit max_speed to 3.0, then stage and commit
          # (edit robot_config.yaml so max_speed: 3.0)
@@ -165,7 +165,7 @@ Git/Github Exercises
          git commit -m "Increase max speed to 3.0"
 
          # Step 3: Switch back to main
-         git checkout main
+         git switch main
 
          # Step 4: Edit max_speed to 1.5 on main, stage and commit
          # (edit robot_config.yaml so max_speed: 1.5)
@@ -278,7 +278,7 @@ Git/Github Exercises
          # upstream  https://github.com/original-owner/original-project.git (push)
 
          # Step 4: Create feature branch
-         git checkout -b feature/add-readme-section
+         git switch -c feature/add-readme-section
 
          # Step 5: Make changes
          echo "## New Section" >> README.md
@@ -293,7 +293,7 @@ Git/Github Exercises
          # Go to your fork -> Compare & pull request
 
          # Step 8: Sync your fork after merge
-         git checkout main
+         git switch main
          git fetch upstream
          git merge upstream/main
          git push origin main

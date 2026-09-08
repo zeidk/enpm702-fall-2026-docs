@@ -66,7 +66,7 @@ Version Control: Quiz
 .. admonition:: Question 4
    :class: hint
 
-   What does ``git checkout -b feature/gps-navigation`` do?
+   What does ``git switch -c feature/gps-navigation`` do?
 
    a) Deletes the branch ``feature/gps-navigation``
    b) Switches to an existing branch named ``feature/gps-navigation``
@@ -80,9 +80,13 @@ Version Control: Quiz
       **c) Creates a new branch named feature/gps-navigation and
       switches to it**
 
-      The ``-b`` flag tells Git to create a new branch before switching
+      The ``-c`` flag tells Git to create a new branch before switching
       to it. This is equivalent to running ``git branch`` followed by
-      ``git checkout``.
+      ``git switch``.
+
+      You will also see this written ``git checkout -b`` in older
+      material. It does the same thing; ``git switch`` is the modern,
+      dedicated command.
 
 
 .. admonition:: Question 5

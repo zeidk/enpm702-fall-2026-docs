@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?plantuml 1.2026.2beta3?><svg
+   contentStyleType="text/css"
+   data-diagram-type="SEQUENCE"
+   height="694px"
+   preserveAspectRatio="none"
+   style="width:904px;height:694px;background:#FFFFFF;"
+   version="1.1"
+   viewBox="0 0 904 694"
+   width="904px"
+   zoomAndPan="magnify"
+   id="svg41"
+   sodipodi:docname="branching_sequence.svg"
+   inkscape:version="1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview41"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.1628242"
+     inkscape:cx="451.91698"
+     inkscape:cy="790.31723"
+     inkscape:window-width="3840"
+     inkscape:window-height="941"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg41" />
+  <defs
+     id="defs1" />
+  <rect
+     style="fill:#ffffff;stroke-width:64.3924"
+     id="rect15"
+     width="902.974"
+     height="692.28003"
+     x="0.8599807"
+     y="3.1808068e-07"
+     rx="10.93101"
+     ry="10.93101" />
+  <g
+     id="g5"
+     transform="translate(1.0750381,-0.78577868)"
+     inkscape:export-filename="../branch-workflow.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350">
+    <g
+       id="g41"
+       inkscape:export-filename="branching_sequence.png"
+       inkscape:export-xdpi="350"
+       inkscape:export-ydpi="350">
+      <g
+         class="participant-lifeline"
+         data-entity-uid="part1"
+         data-qualified-name="owner"
+         id="part1-lifeline">
+        <g
+           id="g1">
+          <title
+             id="title1">Repo Owner</title>
+          <rect
+             fill="#000000"
+             fill-opacity="0"
+             height="623.25781"
+             width="8"
+             x="65.977501"
+             y="36.296902"
+             id="rect1" />
+          <line
+             style="stroke:#000000;stroke-width:1;stroke-dasharray:5, 5"
+             x1="69"
+             x2="69"
+             y1="36.296902"
+             y2="659.55469"
+             id="line1" />
+        </g>
+      </g>
+      <g
+         class="participant-lifeline"
+         data-entity-uid="part2"
+         data-qualified-name="a"
+         id="part2-lifeline">
+        <g
+           id="g2">
+          <title
+             id="title2">Team Member A</title>
+          <rect
+             fill="#000000"
+             fill-opacity="0"
+             height="623.25781"
+             width="8"
+             x="251.3477"
+             y="36.296902"
+             id="rect2" />
+          <line
+             style="stroke:#000000;stroke-width:1;stroke-dasharray:5, 5"
+             x1="254.625"
+             x2="254.625"
+             y1="36.296902"
+             y2="659.55469"
+             id="line2" />
+        </g>
+      </g>
+      <g
+         class="participant-lifeline"
+         data-entity-uid="part3"
+         data-qualified-name="b"
+         id="part3-lifeline">
+        <g
+           id="g3">
+          <title
+             id="title3">Team Member B</title>
+          <rect
+             fill="#000000"
+             fill-opacity="0"
+             height="623.25781"
+             width="8"
+             x="465.41309"
+             y="36.296902"
+             id="rect3" />
+          <line
+             style="stroke:#000000;stroke-width:1;stroke-dasharray:5, 5"
+             x1="468.67679"
+             x2="468.67679"
+             y1="36.296902"
+             y2="659.55469"
+             id="line3" />
+        </g>
+      </g>
+      <g
+         class="participant-lifeline"
+         data-entity-uid="part4"
+         data-qualified-name="c"
+         id="part4-lifeline">
+        <g
+           id="g4">
+          <title
+             id="title4">Team Member C</title>
+          <rect
+             fill="#000000"
+             fill-opacity="0"
+             height="623.25781"
+             width="8"
+             x="679.47852"
+             y="36.296902"
+             id="rect4" />
+          <line
+             style="stroke:#000000;stroke-width:1;stroke-dasharray:5, 5"
+             x1="682.65668"
+             x2="682.65668"
+             y1="36.296902"
+             y2="659.55469"
+             id="line4" />
+        </g>
+      </g>
+      <g
+         class="participant participant-head"
+         data-entity-uid="part1"
+         data-qualified-name="owner"
+         id="part1-head">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="99.955101"
+           x="20"
+           y="5"
+           id="rect5" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="85.955101"
+           x="27"
+           y="24.9951"
+           id="text5">Repo Owner</text>
+      </g>
+      <g
+         class="participant participant-tail"
+         data-entity-uid="part1"
+         data-qualified-name="owner"
+         id="part1-tail">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="99.955101"
+           x="20"
+           y="658.55469"
+           id="rect6" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="85.955101"
+           x="27"
+           y="678.5498"
+           id="text6">Repo Owner</text>
+      </g>
+      <g
+         class="participant participant-head"
+         data-entity-uid="part2"
+         data-qualified-name="a"
+         id="part2-head">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.4453"
+           x="190.625"
+           y="5"
+           id="rect7" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.4453"
+           x="197.625"
+           y="24.9951"
+           id="text7">Team Member A</text>
+      </g>
+      <g
+         class="participant participant-tail"
+         data-entity-uid="part2"
+         data-qualified-name="a"
+         id="part2-tail">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.4453"
+           x="190.625"
+           y="658.55469"
+           id="rect8" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.4453"
+           x="197.625"
+           y="678.5498"
+           id="text8">Team Member A</text>
+      </g>
+      <g
+         class="participant participant-head"
+         data-entity-uid="part3"
+         data-qualified-name="b"
+         id="part3-head">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.4727"
+           x="404.67679"
+           y="5"
+           id="rect9" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.4727"
+           x="411.67679"
+           y="24.9951"
+           id="text9">Team Member B</text>
+      </g>
+      <g
+         class="participant participant-tail"
+         data-entity-uid="part3"
+         data-qualified-name="b"
+         id="part3-tail">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.4727"
+           x="404.67679"
+           y="658.55469"
+           id="rect10" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.4727"
+           x="411.67679"
+           y="678.5498"
+           id="text10">Team Member B</text>
+      </g>
+      <g
+         class="participant participant-head"
+         data-entity-uid="part4"
+         data-qualified-name="c"
+         id="part4-head">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.6436"
+           x="618.65668"
+           y="5"
+           id="rect11" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.6436"
+           x="625.65668"
+           y="24.9951"
+           id="text11">Team Member C</text>
+      </g>
+      <g
+         class="participant participant-tail"
+         data-entity-uid="part4"
+         data-qualified-name="c"
+         id="part4-tail">
+        <rect
+           fill="#ffffff"
+           height="30.2969"
+           rx="2.5"
+           ry="2.5"
+           style="stroke:#000000;stroke-width:1"
+           width="129.6436"
+           x="618.65668"
+           y="658.55469"
+           id="rect12" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="14px"
+           lengthAdjust="spacing"
+           textLength="115.6436"
+           x="625.65668"
+           y="678.5498"
+           id="text12">Team Member C</text>
+      </g>
+      <rect
+         fill="#ffffff"
+         height="3"
+         style="stroke:#ffffff;stroke-width:1"
+         width="892.54388"
+         x="5"
+         y="66.863297"
+         id="rect13" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="66.863297"
+         y2="66.863297"
+         id="line13" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="69.863297"
+         y2="69.863297"
+         id="line14" />
+      <rect
+         fill="#ffffff"
+         height="23.132799"
+         style="stroke:#000000;stroke-width:1"
+         width="61.480499"
+         x="420.53171"
+         y="56.296902"
+         id="rect14" />
+      <text
+         fill="#000000"
+         font-family="Hack"
+         font-size="13px"
+         font-weight="bold"
+         lengthAdjust="spacing"
+         textLength="42.954601"
+         x="426.53171"
+         y="72.3638"
+         id="text14">Setup</text>
+      <g
+         class="message"
+         data-entity-1="part2"
+         data-entity-2="part1"
+         id="msg1">
+        <polygon
+           fill="#000000"
+           points="80.9775,114.5625 76.9775,110.5625 80.9775,106.5625 70.9775,110.5625 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon14" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="254.3477"
+           y1="110.5625"
+           y2="110.5625"
+           id="line15" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="70.560501"
+           x="86.977501"
+           y="105.4966"
+           id="text15">Clone repo</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part3"
+         data-entity-2="part1"
+         id="msg2">
+        <polygon
+           fill="#000000"
+           points="80.9775,143.6953 76.9775,139.6953 80.9775,135.6953 70.9775,139.6953 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon15" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="468.41309"
+           y1="139.6953"
+           y2="139.6953"
+           id="line16" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="70.560501"
+           x="86.977501"
+           y="134.62939"
+           id="text16">Clone repo</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part4"
+         data-entity-2="part1"
+         id="msg3">
+        <polygon
+           fill="#000000"
+           points="80.9775,172.8281 76.9775,168.8281 80.9775,164.8281 70.9775,168.8281 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon16" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="682.47852"
+           y1="168.82809"
+           y2="168.82809"
+           id="line17" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="70.560501"
+           x="86.977501"
+           y="163.76221"
+           id="text17">Clone repo</text>
+      </g>
+      <rect
+         fill="#ffffff"
+         height="3"
+         style="stroke:#ffffff;stroke-width:1"
+         width="892.54388"
+         x="5"
+         y="197.3945"
+         id="rect17" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="197.3945"
+         y2="197.3945"
+         id="line18" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="200.3945"
+         y2="200.3945"
+         id="line19" />
+      <rect
+         fill="#ffffff"
+         height="23.132799"
+         style="stroke:#000000;stroke-width:1"
+         width="135.2847"
+         x="383.62961"
+         y="186.82809"
+         id="rect19" />
+      <text
+         fill="#000000"
+         font-family="Hack"
+         font-size="13px"
+         font-weight="bold"
+         lengthAdjust="spacing"
+         textLength="116.7588"
+         x="389.62961"
+         y="202.895"
+         id="text19">Work in Parallel</text>
+      <g
+         class="message"
+         data-entity-1="part2"
+         data-entity-2="part2"
+         id="msg4">
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="255.3477"
+           x2="297.34769"
+           y1="241.0938"
+           y2="241.0938"
+           id="line20" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="297.34769"
+           x2="297.34769"
+           y1="241.0938"
+           y2="254.0938"
+           id="line21" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="256.34769"
+           x2="297.34769"
+           y1="254.0938"
+           y2="254.0938"
+           id="line22" />
+        <polygon
+           fill="#000000"
+           points="266.3477,258.0938 262.3477,254.0938 266.3477,250.0938 256.3477,254.0938 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon22" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="200.0654"
+           x="262.34769"
+           y="236.0278"
+           id="text22">Create branch, work &amp; commit</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part3"
+         data-entity-2="part3"
+         id="msg5">
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="469.41309"
+           x2="511.41309"
+           y1="283.22659"
+           y2="283.22659"
+           id="line23" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="511.41309"
+           x2="511.41309"
+           y1="283.22659"
+           y2="296.22659"
+           id="line24" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="470.41309"
+           x2="511.41309"
+           y1="296.22659"
+           y2="296.22659"
+           id="line25" />
+        <polygon
+           fill="#000000"
+           points="480.4131,300.2266 476.4131,296.2266 480.4131,292.2266 470.4131,296.2266 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon25" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="200.0654"
+           x="476.41309"
+           y="278.16061"
+           id="text25">Create branch, work &amp; commit</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part4"
+         data-entity-2="part4"
+         id="msg6">
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="683.47852"
+           x2="725.47852"
+           y1="325.35941"
+           y2="325.35941"
+           id="line26" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="725.47852"
+           x2="725.47852"
+           y1="325.35941"
+           y2="338.35941"
+           id="line27" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="684.47852"
+           x2="725.47852"
+           y1="338.35941"
+           y2="338.35941"
+           id="line28" />
+        <polygon
+           fill="#000000"
+           points="694.4785,342.3594 690.4785,338.3594 694.4785,334.3594 684.4785,338.3594 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon28" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="200.0654"
+           x="690.47852"
+           y="320.29349"
+           id="text28">Create branch, work &amp; commit</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part2"
+         data-entity-2="part1"
+         id="msg7">
+        <polygon
+           fill="#000000"
+           points="80.9775,371.4922 76.9775,367.4922 80.9775,363.4922 70.9775,367.4922 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon29" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="254.3477"
+           y1="367.49219"
+           y2="367.49219"
+           id="line29" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="161.3701"
+           x="86.977501"
+           y="362.4263"
+           id="text29">Push branch &amp; create PR</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part3"
+         data-entity-2="part1"
+         id="msg8">
+        <polygon
+           fill="#000000"
+           points="80.9775,400.625 76.9775,396.625 80.9775,392.625 70.9775,396.625 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon30" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="468.41309"
+           y1="396.625"
+           y2="396.625"
+           id="line30" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="161.3701"
+           x="86.977501"
+           y="391.55911"
+           id="text30">Push branch &amp; create PR</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part4"
+         data-entity-2="part1"
+         id="msg9">
+        <polygon
+           fill="#000000"
+           points="80.9775,429.7578 76.9775,425.7578 80.9775,421.7578 70.9775,425.7578 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon31" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="682.47852"
+           y1="425.75781"
+           y2="425.75781"
+           id="line31" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="161.3701"
+           x="86.977501"
+           y="420.69189"
+           id="text31">Push branch &amp; create PR</text>
+      </g>
+      <rect
+         fill="#ffffff"
+         height="3"
+         style="stroke:#ffffff;stroke-width:1"
+         width="892.54388"
+         x="5"
+         y="454.32419"
+         id="rect31" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="454.32419"
+         y2="454.32419"
+         id="line32" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="457.32419"
+         y2="457.32419"
+         id="line33" />
+      <rect
+         fill="#ffffff"
+         height="23.132799"
+         style="stroke:#000000;stroke-width:1"
+         width="137.7856"
+         x="382.37921"
+         y="443.75781"
+         id="rect33" />
+      <text
+         fill="#000000"
+         font-family="Hack"
+         font-size="13px"
+         font-weight="bold"
+         lengthAdjust="spacing"
+         textLength="119.2598"
+         x="388.37921"
+         y="459.82471"
+         id="text33">Review &amp; Merge</text>
+      <g
+         class="message"
+         data-entity-1="part1"
+         data-entity-2="part1"
+         id="msg10">
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="69.977501"
+           x2="111.9775"
+           y1="498.02341"
+           y2="498.02341"
+           id="line34" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="111.9775"
+           x2="111.9775"
+           y1="498.02341"
+           y2="511.02341"
+           id="line35" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="70.977501"
+           x2="111.9775"
+           y1="511.02341"
+           y2="511.02341"
+           id="line36" />
+        <polygon
+           fill="#000000"
+           points="80.9775,515.0234 76.9775,511.0234 80.9775,507.0234 70.9775,511.0234 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon36" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="135.4019"
+           x="76.977501"
+           y="492.95749"
+           id="text36">Review &amp; merge PRs</text>
+      </g>
+      <rect
+         fill="#ffffff"
+         height="3"
+         style="stroke:#ffffff;stroke-width:1"
+         width="892.54388"
+         x="5"
+         y="539.58978"
+         id="rect36" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="539.58978"
+         y2="539.58978"
+         id="line37" />
+      <line
+         style="stroke:#000000;stroke-width:0.5"
+         x1="5"
+         x2="897.54388"
+         y1="542.58978"
+         y2="542.58978"
+         id="line38" />
+      <rect
+         fill="#ffffff"
+         height="23.132799"
+         style="stroke:#000000;stroke-width:1"
+         width="53.3237"
+         x="424.61011"
+         y="529.02338"
+         id="rect38" />
+      <text
+         fill="#000000"
+         font-family="Hack"
+         font-size="13px"
+         font-weight="bold"
+         lengthAdjust="spacing"
+         textLength="34.797901"
+         x="430.61011"
+         y="545.09027"
+         id="text38">Sync</text>
+      <g
+         class="message"
+         data-entity-1="part2"
+         data-entity-2="part1"
+         id="msg11">
+        <polygon
+           fill="#000000"
+           points="80.9775,587.2891 76.9775,583.2891 80.9775,579.2891 70.9775,583.2891 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon38" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="254.3477"
+           y1="583.28912"
+           y2="583.28912"
+           id="line39" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="122.5669"
+           x="86.977501"
+           y="578.22308"
+           id="text39">git pull origin main</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part3"
+         data-entity-2="part1"
+         id="msg12">
+        <polygon
+           fill="#000000"
+           points="80.9775,616.4219 76.9775,612.4219 80.9775,608.4219 70.9775,612.4219 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon39" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="468.41309"
+           y1="612.42188"
+           y2="612.42188"
+           id="line40" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="122.5669"
+           x="86.977501"
+           y="607.35602"
+           id="text40">git pull origin main</text>
+      </g>
+      <g
+         class="message"
+         data-entity-1="part4"
+         data-entity-2="part1"
+         id="msg13">
+        <polygon
+           fill="#000000"
+           points="80.9775,645.5547 76.9775,641.5547 80.9775,637.5547 70.9775,641.5547 "
+           style="stroke:#000000;stroke-width:1"
+           id="polygon40" />
+        <line
+           style="stroke:#000000;stroke-width:1"
+           x1="74.977501"
+           x2="682.47852"
+           y1="641.55469"
+           y2="641.55469"
+           id="line41" />
+        <text
+           fill="#000000"
+           font-family="Hack"
+           font-size="13px"
+           lengthAdjust="spacing"
+           textLength="122.5669"
+           x="86.977501"
+           y="636.48877"
+           id="text41">git pull origin main</text>
+      </g>
+<?plantuml-src ZT7DIiGm40VmUvxYxnuywGiiLD0zBvQwu7aIXZQOBzBKiczlayXYqL9lOVZDL-Ok3MmPrZilHA2OjDA1NCAXu-3nEZkE1z08drzhSM6oEBEL7F5S46s3bmBaDZWLe8He6hnncWAQHX0Udsfh774otZ7YCfUG6t6r4Sz5tttyW7PeAP8nR6xrATl8b1WoabF30-Pixw6yjJhLRd9FbTvgJwrNQgTn-8QPrCIsM--tXTH_KDwyuq_Dyn8-S-mvxrspVgJVY2saxSPwYAjJl-xGwuGm6GCVTRzyg2NjrXF_ATIU-080?>    </g>
+  </g>
+</svg>
