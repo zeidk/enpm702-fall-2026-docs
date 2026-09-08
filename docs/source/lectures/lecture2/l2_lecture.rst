@@ -1292,42 +1292,13 @@ Controlling Output
    exposes the representation error. Asking for more digits than the type
    carries never adds information.
 
-.. card::
-    :class-card: sd-border-success sd-shadow-sm
+.. note::
 
-    **C++20:** ``std::format``
-
-    The manipulators above are **sticky**: ``std::setprecision(9)``
-    changes the stream until something changes it back, so a formatting
-    choice made in one function silently affects output written by
-    another. C++20's ``<format>`` header formats a single value instead,
-    with no side effects on the stream:
-
-    .. code-block:: cpp
-
-       #include <format>
-       #include <iostream>
-
-       int main() {
-           const double reading{3.14159265};
-
-           std::cout << std::format("{:.2f}\n", reading);   // 3.14
-           std::cout << std::format("{:.5f}\n", reading);   // 3.14159
-           std::cout << std::format("distance: {:.2f} m\n", reading);
-       }
-
-    ``{:.2f}`` means "this argument, fixed notation, two digits after
-    the point". It replaces ``std::fixed << std::setprecision(2)`` and
-    reads far better inside a sentence.
-
-    .. note::
-
-       ``<format>`` requires **GCC 13**, which is the course minimum, so
-       it works for you. It arrived in libstdc++ later than the rest of
-       C++20, so older compilers that otherwise accept ``-std=c++20``
-       will reject it. Lecture examples continue to use ``<<`` because
-       later lectures do, but use ``std::format`` in your own code where
-       it is clearer.
+   Manipulators are **sticky**: ``std::setprecision(9)`` changes the
+   stream until something changes it back, so a formatting choice made
+   in one place silently affects output written somewhere else. C++20
+   adds ``std::format``, which formats a single value with no side
+   effect on the stream; **Lecture 3** introduces it.
 
 
 Boolean Type
@@ -2147,14 +2118,14 @@ be computable at compile time, and the compiler enforces it.
       runtime still carries that cost.
     - **Smaller footprint.** The compiler can substitute the value
       directly rather than storing a variable.
-    - **Better inlining.** ``constexpr`` functions inline more
-      aggressively, removing call overhead.
     - **It documents intent.** ``constexpr`` says "this is knowable now",
       and the compiler checks the claim. ``const`` only says "do not
       reassign this".
-    - **Usable where the language demands a constant expression.** Array
-      sizes, template arguments, ``case`` labels and ``static_assert``
-      all require one.
+    - **Works for every type.** The integral-only special case above
+      simply disappears.
+    - **Some places only accept a value the compiler already knows.**
+      ``static_assert`` below is one you can use today; array sizes and
+      ``case`` labels are the same, from Lecture 4 on.
 
 .. code-block:: cpp
 
