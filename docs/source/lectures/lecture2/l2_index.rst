@@ -26,31 +26,33 @@ in one table and then moves on.
 
    - Perform terminal input and output with ``std::cin`` and
      ``std::cout``, and explain what the ``<<`` and ``>>`` operators do.
-   - Describe how a process is laid out in memory (text, data, BSS,
-     heap, stack) and say which segment a given variable lands in.
+   - Describe how a process is laid out in memory (text, rodata, data,
+     BSS, heap, stack) and say which segment a given variable lands in.
    - Declare, initialize, and use variables following the course
      naming convention (``snake_case``) and uniform initialization.
    - Explain what happens in memory when a variable is created and read,
      and use the ``sizeof`` and ``&`` operators.
+   - Give a variable's **storage duration** -- static, automatic, or
+     dynamic -- from the way it is declared, and tell lifetime from
+     scope.
    - Recognize undefined behavior, name its common sources, and enable
      the compiler warnings that catch some of it.
    - Choose appropriately among the integral, floating-point, and
      boolean types, including signedness and size modifiers.
+   - Use ``char`` for single characters, with single quotes and escape
+     sequences, and explain why it is an *integral* type.
    - Predict the result of implicit conversions: numeric promotions,
      numeric conversions, and the usual arithmetic conversions.
    - Identify a narrowing conversion, explain why uniform initialization
      rejects it, and make it explicit with ``static_cast``.
    - Use ``const``, ``constexpr``, and literals correctly, and explain
      why macros are not an acceptable substitute.
-   - Use type deduction with ``auto``, including what it does to
-     ``const``.
-   - Reason about local and global scope, and avoid naming collisions
-     with namespaces.
-   - Create type aliases and scoped enumerations (``enum class``).
+   - Reason about **blocks**, local scope, and global scope, and avoid
+     naming collisions with namespaces.
+   - Create type aliases with ``using``.
    - Use the C++20 facilities that apply to this material:
-     ``std::numbers`` for mathematical constants, ``std::cmp_*`` for
-     safe signed/unsigned comparison, ``std::format`` for output, and
-     ``using enum``.
+     ``std::numbers`` for mathematical constants and ``std::cmp_*`` for
+     safe signed/unsigned comparison.
 
 
 .. toctree::

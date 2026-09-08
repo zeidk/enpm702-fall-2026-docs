@@ -67,7 +67,10 @@ C++ programs talk to the terminal through **streams** declared in the
       ``std::cin >> value`` pulls data **out of** the stream and into
       ``value``.
 
-.. dropdown:: Output with ``std::cout``
+Output
+^^^^^^
+
+.. dropdown:: ``std::cout`` in practice
     :class-container: sd-border-secondary
     :open:
 
@@ -85,7 +88,10 @@ C++ programs talk to the terminal through **streams** declared in the
     Insertions chain because each ``<<`` returns the stream itself, so
     the next ``<<`` operates on the same stream.
 
-.. dropdown:: Input with ``std::cin``
+Input
+^^^^^
+
+.. dropdown:: ``std::cin`` in practice
     :class-container: sd-border-secondary
     :open:
 
@@ -253,6 +259,14 @@ behave differently later in this lecture.
    * - **Arguments** (``argv``/``env``)
      - Command-line arguments and the environment passed to ``main()``.
 
+.. figure:: /_static/images/l2/segments.png
+   :align: center
+   :alt: A single horizontal band, titled "Virtual address space -- each segment is a contiguous run of 4 KiB pages", running from low addresses on the left to high addresses on the right. Nine coloured segments sit side by side and are labelled, in order: reserved, .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free space is drawn with a dashed grey outline; every other segment has a solid coloured outline.
+
+   The virtual address space of a process. Each segment is a contiguous
+   run of 4 KiB pages. **Free space** is unmapped: the heap and the
+   stack grow toward each other into it, and never meet.
+
 .. figure:: /_static/images/l2/representation.png
    :align: center
    :alt: A memory bank divided into reserved, text, data, BSS, heap, stack and argument segments, expanded below into a grid of addressable bytes.
@@ -269,11 +283,55 @@ behave differently later in this lecture.
    the ways that can go wrong.
 
 
+Virtual vs. Physical Memory
+"""""""""""""""""""""""""""
+
+The addresses a program sees are **virtual**. The operating system maps
+them onto physical RAM, and the layout above is what your process
+believes it has, not how the hardware is arranged.
+
+.. figure:: /_static/images/l2/physical_vs_virtual.png
+   :align: center
+   :alt: Top: a contiguous virtual address space running from low to high addresses through reserved, .text, .rodata, .data, .bss, heap, free space, stack and argv/env, with individual 4 KiB pages numbered inside each segment. Arrows join each page to a frame in the physical RAM bank below, where the same pages sit scattered and out of order, separated by grey frames that are free or belong to other processes.
+
+   Every page of the virtual address space is mapped to a frame of
+   physical RAM. The order is not preserved.
+
+.. list-table:: The three words this diagram distinguishes.
+   :widths: 18 82
+   :header-rows: 1
+   :class: compact-table
+
+   * - Term
+     - Meaning
+   * - **Segment**
+     - One labelled band of the virtual address space (``.text``,
+       ``.data``, the heap, the stack).
+   * - **Page**
+     - The fixed-size block a segment is cut into. **4 KiB** here.
+   * - **Frame**
+     - A physical slot of the same size in RAM. Each page is mapped to
+       one frame.
+
+.. important::
+
+   **Adjacency in the virtual address space means nothing physically.**
+   Two pages that sit side by side in your program's view can land
+   anywhere in RAM, in any order, and the grey frames in the diagram
+   are free or belong to another process entirely.
+
 Memory Lifetime
 ^^^^^^^^^^^^^^^
 
 A variable's **storage duration** is how long its memory exists. It is
 fixed by **how you declare it**, not by where you use it.
+
+.. figure:: /_static/images/l2/memory_layout_lifetime.png
+   :align: center
+   :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colours the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
+
+   The same address space, coloured by **storage duration**. ``.text``
+   is coloured static, but it holds machine code, not objects.
 
 .. list-table:: The three storage durations you will meet in this course.
    :widths: 18 22 60
@@ -631,6 +689,9 @@ prints the decimal value.
    its value, and its address.
 
 
+Declarations and Assignments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Declarations
 """"""""""""
 
@@ -685,8 +746,8 @@ operator** ``=``. This is called *copy assignment*.
    bytes are rewritten in place.
 
 
-Initializations
-"""""""""""""""
+Initialization
+^^^^^^^^^^^^^^
 
 Declaration and assignment can be collapsed into one step, called
 **initialization**. The value used is the **initializer**.
@@ -805,6 +866,9 @@ Undefined Behavior
     all**: the program may produce the right answer, produce a wrong
     answer, crash, or behave differently on the next run or under a
     different optimization level.
+
+Common Sources
+^^^^^^^^^^^^^^
 
 .. dropdown:: Common sources of undefined behavior
     :class-container: sd-border-secondary
@@ -1127,6 +1191,26 @@ All floating-point types are **signed**.
 Precision and Range
 ^^^^^^^^^^^^^^^^^^^
 
+The **precision** of a floating-point type is the number of
+**significant decimal digits** it can carry -- *not* the number of
+digits after the decimal point.
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **What** *significant decimal digits* **means**
+
+    Count from the **first non-zero digit**, left to right, and ignore
+    where the decimal point falls: leading zeros are placeholders, not
+    information. So ``31415.9``, ``3.14159`` and ``0.0000314159`` each
+    carry **six** significant digits.
+
+    Precision is a budget of **digits**, spent wherever the number
+    happens to sit on the number line.
+
+Floating-point types are **always signed**: there is no
+``unsigned double``.
+
 .. list-table:: Typical sizes, ranges, and precision on x86-64 Linux.
    :widths: 22 14 34 30
    :header-rows: 1
@@ -1183,7 +1267,7 @@ A floating-point literal with no suffix is a ``double``. The ``f`` (or
 
 
 Controlling Output
-""""""""""""""""""
+^^^^^^^^^^^^^^^^^^
 
 ``std::cout`` shows 6 significant digits by default.
 ``std::setprecision()``, from ``<iomanip>``, changes that.
@@ -1255,12 +1339,16 @@ Boolean Type
     **The** ``bool`` **type**
 
     - Size: **1 byte** on every platform this course uses, though the
-      standard does not require it.
+      standard explicitly does **not** require it
+      (``[expr.sizeof]/1``, footnote).
     - Values: ``true`` or ``false``.
     - Any **non-zero** value converts to ``true``; ``0`` converts to
       ``false``. Converting back gives ``1`` and ``0``.
 
-.. dropdown:: Printing booleans
+Printing Booleans
+^^^^^^^^^^^^^^^^^
+
+.. dropdown:: Printing booleans in practice
     :class-container: sd-border-secondary
     :open:
 
@@ -1315,6 +1403,34 @@ Type Conversion
    ``int i{2}; double d{i};`` leaves ``i`` an ``int`` holding ``2``.
 
 
+**The standard conversions.** The standard defines how fundamental types convert into one another.
+These rules are the **standard conversions**, in four categories.
+
+.. grid:: 1 2 2 2
+    :gutter: 3
+
+    .. grid-item-card:: Numeric promotions
+        :class-card: sd-border-secondary
+
+        A smaller type widened to a larger one in the same family.
+        Always value-preserving.
+
+    .. grid-item-card:: Numeric conversions
+        :class-card: sd-border-secondary
+
+        Everything else between arithmetic types. May lose data.
+
+    .. grid-item-card:: Arithmetic conversions
+        :class-card: sd-border-secondary
+
+        Applied when a binary operator gets operands of different types.
+
+    .. grid-item-card:: Other conversions
+        :class-card: sd-border-secondary
+
+        Pointer and reference conversions, covered in later lectures.
+
+
 Implicit Type Conversion
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1340,7 +1456,7 @@ The compiler converts automatically in five common situations.
 
 
 Inspecting Types with typeid
-""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ``typeid`` from ``<typeinfo>`` lets you ask what type an expression has,
 which is the quickest way to check whether a conversion happened.
@@ -1421,39 +1537,8 @@ which is the quickest way to check whether a conversion happened.
    just use the table.
 
 
-Standard Conversions
-^^^^^^^^^^^^^^^^^^^^
-
-The standard defines how fundamental types convert into one another.
-These rules are the **standard conversions**, in four categories.
-
-.. grid:: 1 2 2 2
-    :gutter: 3
-
-    .. grid-item-card:: Numeric promotions
-        :class-card: sd-border-secondary
-
-        A smaller type widened to a larger one in the same family.
-        Always value-preserving.
-
-    .. grid-item-card:: Numeric conversions
-        :class-card: sd-border-secondary
-
-        Everything else between arithmetic types. May lose data.
-
-    .. grid-item-card:: Arithmetic conversions
-        :class-card: sd-border-secondary
-
-        Applied when a binary operator gets operands of different types.
-
-    .. grid-item-card:: Other conversions
-        :class-card: sd-border-secondary
-
-        Pointer and reference conversions, covered in later lectures.
-
-
 Numeric Promotion
-"""""""""""""""""
+^^^^^^^^^^^^^^^^^
 
 A **numeric promotion** widens a smaller type to a larger type **within
 the same family**: integral to integral, floating-point to
@@ -1521,7 +1606,7 @@ floating-point. It never loses information.
 .. _l2-numeric-conversion:
 
 Numeric Conversion
-""""""""""""""""""
+^^^^^^^^^^^^^^^^^^
 
 A **numeric conversion** is any other conversion between arithmetic
 types. Unlike a promotion, it **may** lose data or precision.
@@ -1603,7 +1688,7 @@ types. Unlike a promotion, it **may** lose data or precision.
 .. _l2-arithmetic-conversion:
 
 Arithmetic Conversions
-""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^
 
 Some operators require both operands to have the **same type**:
 
@@ -1950,8 +2035,8 @@ The double evaluation of ``i++`` is now plainly visible.
    costs. Search the file rather than reading it.
 
 
-Constant Expressions
-^^^^^^^^^^^^^^^^^^^^
+Compile-time and Runtime Constants
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A **constant expression** is one the compiler can evaluate **at compile
 time**, because every value in it is known then. The compiler replaces
@@ -1986,9 +2071,6 @@ The compiler emits the equivalent of:
 
 
 .. _l2-const-in-constant-expressions:
-
-Compile-time and Runtime Constants
-""""""""""""""""""""""""""""""""""
 
 A **compile-time constant** is a constant whose value is known while
 compiling. A ``const`` variable **may or may not** be one; it depends
@@ -2039,7 +2121,7 @@ compiler, and nothing in the code says which one you got.
 
 
 Why constexpr
-"""""""""""""
+^^^^^^^^^^^^^
 
 ``constexpr`` removes that ambiguity: it states that the value **must**
 be computable at compile time, and the compiler enforces it.
@@ -2091,50 +2173,6 @@ guarantees and ``const`` does not.
    `Con.5: Use constexpr for values that can be computed at compile time <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#con5-use-constexpr-for-values-that-can-be-computed-at-compile-time>`_.
    Full reference:
    `cppreference: constexpr <https://en.cppreference.com/w/cpp/language/constexpr>`_.
-
-
-Type Deduction
-==============
-
-**Type deduction** lets the compiler work out a variable's type from its
-initializer. You write ``auto`` where the type would go.
-
-.. code-block:: cpp
-
-   auto a{3.0};    // 3.0 is a double literal    -> a is double
-   auto b{1 + 2};  // 1 + 2 evaluates to an int  -> b is int
-   auto c{b};      // b is an int                -> c is int
-
-.. warning::
-
-   ``auto`` needs something to deduce **from**. Both of these fail:
-
-   .. code-block:: cpp
-
-      auto a;    // Error: declaration of 'auto a' has no initializer
-      auto b{};  // Error: unable to deduce 'auto' from '{}'
-
-.. card::
-    :class-card: sd-border-warning sd-shadow-sm
-
-    ``auto`` **drops** ``const``
-
-    Type deduction discards the ``const`` qualifier by default:
-
-    .. code-block:: cpp
-
-       const int a{5};  // a is const
-       auto b{a};       // b is int, const has been dropped
-       b = 1;           // OK
-
-    To keep it, say so explicitly:
-
-    .. code-block:: cpp
-
-       constexpr int a{5};   // a is a compile-time constant int
-       const auto b{a};      // b is const int
-       constexpr auto c{a};  // c is a compile-time constant int
-       c = 1;                // Error: assignment of read-only variable 'c'
 
 
 Scope and Names
@@ -2429,7 +2467,7 @@ targeted.
 
 
 Why to Avoid ``using namespace``
-""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. warning::
 
@@ -2530,207 +2568,3 @@ keyword creates one.
    .. code-block:: cpp
 
       using JointAngles = std::vector<std::array<double, 6>>;
-
-
-Scoped Enumerations
-===================
-
-.. card::
-    :class-card: sd-border-info sd-shadow-sm
-
-    **What is** ``enum class`` **?**
-
-    An ``enum class``, or **scoped enumeration**, is a type-safe
-    enumeration introduced in C++11. Unlike a plain ``enum``, its
-    enumerators are **scoped to the enum name** and do **not** implicitly
-    convert to integers.
-
-
-Syntax
-------
-
-.. code-block:: cpp
-
-   enum class Color {
-       red,
-       green,
-       blue
-   };
-
-   Color my_color{Color::red};
-
-Enumerators are reached through the scope resolution operator, exactly
-like namespace members: ``Color::red``.
-
-
-Why ``enum class`` over ``enum``
---------------------------------
-
-.. grid:: 1 3 3 3
-    :gutter: 3
-
-    .. grid-item-card:: Type safety
-        :class-card: sd-border-secondary
-
-        Enumerators do **not** implicitly convert to ``int``. If you want
-        the integer, ask for it with ``static_cast``.
-
-    .. grid-item-card:: Scoped names
-        :class-card: sd-border-secondary
-
-        Enumerator names live inside the enum, so ``Color::red`` and
-        ``TrafficLight::red`` coexist happily.
-
-    .. grid-item-card:: Chosen underlying type
-        :class-card: sd-border-secondary
-
-        The underlying integer type can be specified. The default is
-        ``int``.
-
-.. warning::
-
-   **Avoid unscoped** ``enum`` **in modern C++.** Its enumerators leak
-   into the enclosing scope and convert silently to ``int``:
-
-   .. code-block:: cpp
-
-      // Problem 1: name collisions
-      enum Color { red, green, blue };
-      enum TrafficLight { red, yellow, green };  // Error: 'red' and 'green' redeclared
-
-      // Problem 2: silent conversion to int
-      enum Direction { up, down };
-      int value{up + 42};  // compiles without a warning, almost certainly a bug
-
-   ``enum class`` prevents both.
-
-
-Underlying Type
----------------
-
-The default underlying type is ``int``. Name a different integral type
-after a colon:
-
-.. code-block:: cpp
-
-   #include <cstdint>
-
-   enum class Status : std::uint8_t {
-       active,
-       inactive
-   };
-
-This matters when memory is tight, as on an embedded target, or when the
-value has to match a hardware register or a message field of a specific
-width.
-
-
-C++20: ``using enum``
----------------------
-
-Qualifying every enumerator is what makes ``enum class`` safe, but it
-gets repetitive in a ``switch`` where every label names the same type.
-C++20 lets you drop the qualification **inside a limited scope**:
-
-.. code-block:: cpp
-
-   switch (state) {
-       using enum RobotState;      // C++20: only inside this block
-       case idle:     std::cout << "Robot is idle\n";     break;
-       case moving:   std::cout << "Robot is moving\n";   break;
-       case charging: std::cout << "Robot is charging\n"; break;
-       case error:    std::cout << "Robot error!\n";      break;
-   }
-
-.. warning::
-
-   Put ``using enum`` in the **narrowest** scope that needs it, exactly
-   as with a ``using`` declaration for a namespace. At file scope it
-   reintroduces the leaked names that ``enum class`` existed to prevent.
-
-
-Use Cases in Robotics
----------------------
-
-Scoped enumerations fit any fixed set of named alternatives:
-
-.. grid:: 1 3 3 3
-    :gutter: 3
-
-    .. grid-item-card:: Robot states
-        :class-card: sd-border-secondary
-
-        ``idle``, ``moving``, ``charging``, ``error``
-
-    .. grid-item-card:: Sensor types
-        :class-card: sd-border-secondary
-
-        ``lidar``, ``camera``, ``imu``
-
-    .. grid-item-card:: Command types
-        :class-card: sd-border-secondary
-
-        ``forward``, ``backward``, ``left``, ``right``, ``stop``
-
-.. dropdown:: A robot state machine
-    :class-container: sd-border-secondary
-    :open:
-
-    .. code-block:: cpp
-
-       #include <cstdint>
-       #include <iostream>
-
-       enum class RobotState : std::uint8_t {
-           idle,
-           moving,
-           charging,
-           error
-       };
-
-       int main() {
-           RobotState state{RobotState::idle};
-
-           switch (state) {
-               case RobotState::idle:
-                   std::cout << "Robot is idle" << '\n';
-                   break;
-               case RobotState::moving:
-                   std::cout << "Robot is moving" << '\n';
-                   break;
-               case RobotState::charging:
-                   std::cout << "Robot is charging" << '\n';
-                   break;
-               case RobotState::error:
-                   std::cout << "Robot error!" << '\n';
-                   break;
-           }
-       }
-
-    Leaving out the ``default`` label is deliberate: add a new enumerator
-    later and ``-Wswitch``, part of ``-Wall``, warns you about every
-    ``switch`` that has not been updated.
-
-.. dropdown:: Getting the integer value out
-    :class-container: sd-border-secondary
-
-    .. code-block:: cpp
-
-       #include <iostream>
-
-       enum class SensorType {
-           lidar,
-           camera,
-           imu
-       };
-
-       int main() {
-           SensorType sensor{SensorType::camera};
-
-           // static_cast is required: there is no implicit conversion
-           int sensor_id{static_cast<int>(sensor)};
-           std::cout << "Sensor ID: " << sensor_id << '\n';  // 1
-       }
-
-    Enumerators are numbered from 0 in declaration order unless you give
-    them explicit values, so ``SensorType::camera`` is ``1``.

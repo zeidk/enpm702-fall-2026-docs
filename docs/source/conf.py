@@ -83,8 +83,8 @@ html_theme_options = {
     # "footer_end": ["custom-footer"],
     # "footer_end": [],
     # Syntax highlighting for light and dark modes
-    "pygments_light_style": "igor",
-    "pygments_dark_style": "nord",
+    "pygments_light_style": "xcode",
+    "pygments_dark_style": "github-dark",
 }
 
 # Edit on GitHub button
