@@ -17,8 +17,7 @@ They come in two kinds, and each is labelled:
 
    **What to submit.** All ten, in a **single file** named
    ``firstname_lastname.cpp`` --- for example, ``ada_lovelace.cpp`` ---
-   uploaded to **Canvas**. Do not submit several files, and do not
-   submit an archive.
+   uploaded to **Canvas**. Do not submit several files.
 
    **Your file must build**, and running it must not crash. An exercise
    you could not finish should be left as a comment saying how far you
