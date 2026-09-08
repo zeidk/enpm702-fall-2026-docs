@@ -506,12 +506,12 @@ through each of them.
        #include <iostream>
 
        int main() {
-           int number{20};
+           int number{2500};
        }
 
     - **Type:** ``int``
     - **Name:** ``number``
-    - **Value:** ``20``
+    - **Value:** ``2500``
     - **Scope:** the body of ``main()``
     - **Lifetime:** from the declaration until ``main()`` returns
 
@@ -629,7 +629,7 @@ runtime.
 
 .. code-block:: cpp
 
-   int number{20};
+   int number{2500};
    std::cout << sizeof(number) << '\n';  // 4 on a typical x86-64 machine
    std::cout << sizeof(int) << '\n';     // 4 on a typical x86-64 machine
 
@@ -647,12 +647,12 @@ Memory Allocation
 .. card::
     :class-card: sd-border-info sd-shadow-sm
 
-    **What** ``int number{20};`` **actually does**
+    **What** ``int number{2500};`` **actually does**
 
     1. **Reserves** 4 bytes of memory (the size of an ``int`` here).
     2. **Associates** the address of the first of those bytes with the
        name ``number``.
-    3. **Writes** ``20``, in binary, across those 4 bytes.
+    3. **Writes** ``2500``, in binary, across those 4 bytes.
     4. **Restricts** those bytes to holding an ``int``, so the compiler
        can reject misuse.
 
@@ -662,7 +662,7 @@ Memory Allocation
 
    .. code-block:: cpp
 
-      int number{20};
+      int number{2500};
       std::cout << &number << '\n';  // e.g. 0x7fff214aba04
 
    The value changes from run to run. A variable declared inside a
@@ -673,7 +673,7 @@ Memory Allocation
    :align: center
    :alt: The four bytes of the variable number, at consecutive addresses, located inside the stack segment of a memory bank.
 
-   ``int number{20};`` occupies four consecutive bytes in the stack
+   ``int number{2500};`` occupies four consecutive bytes in the stack
    segment.
 
 Reading the variable back reverses the process. For
@@ -683,7 +683,7 @@ prints the decimal value.
 
 .. figure:: /_static/images/l2/visualization.png
    :align: center
-   :alt: The raw four-byte binary layout on the left, and the simplified single labeled box holding the value 20 on the right.
+   :alt: The raw four-byte binary layout on the left, and the simplified single labeled box holding the value 2500 on the right.
 
    From here on, memory is drawn in this simplified form: a named box,
    its value, and its address.
