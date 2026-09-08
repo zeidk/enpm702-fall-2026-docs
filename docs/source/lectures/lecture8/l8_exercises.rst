@@ -129,30 +129,6 @@ the previous one.
        Setting battery to 50%...
        Robot: Atlas (Humanoid), Battery: 50%
 
-    .. dropdown:: Solution
-       :class-container: sd-border-success
-
-       .. code-block:: cpp
-
-          [[nodiscard]] const std::string& get_name() const noexcept {
-              return name_;
-          }
-
-          void set_name(const std::string& name) {
-              if (name.empty()) {
-                  throw std::invalid_argument("Name cannot be empty");
-              }
-              name_ = name;
-          }
-
-          void set_battery_level(double level) {
-              if (level < 0.0 || level > 100.0) {
-                  throw std::invalid_argument("Battery level must be between 0 and 100");
-              }
-              battery_level_ = level;
-          }
-
-
 .. dropdown:: Exercise 3: Implement Constructors
     :icon: gear
     :class-container: sd-border-primary
@@ -217,27 +193,6 @@ the previous one.
            r3.print_status();
            // Expected: Robot: Spot (Quadruped), Battery: 75%, Active: No
        }
-
-    .. dropdown:: Solution
-       :class-container: sd-border-success
-
-       .. code-block:: cpp
-
-          Robot::Robot()
-              : name_{"Unknown"}, model_{"Generic"} {}
-
-          Robot::Robot(const std::string& name, const std::string& model)
-              : name_{name}, model_{model} {}
-
-          Robot::Robot(const std::string& name, const std::string& model, double battery_level)
-              : name_{name}, model_{model}, battery_level_{battery_level} {}
-
-          void Robot::print_status() const {
-              std::cout << "Robot: " << name_ << " (" << model_
-                        << "), Battery: " << battery_level_
-                        << "%, Active: " << (is_active_ ? "Yes" : "No") << '\n';
-          }
-
 
 .. dropdown:: Exercise 4: Static Member Counter
     :icon: gear

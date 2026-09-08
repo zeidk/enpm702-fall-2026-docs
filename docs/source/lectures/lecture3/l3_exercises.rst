@@ -53,33 +53,6 @@ builds on the skills from the previous one.
     7. Print the dereferenced value of ``p`` to confirm it now points
        to ``y``.
 
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               int x{42};
-               int *p{&x};
-
-               std::cout << "x = " << x << '\n';
-               std::cout << "Address of x: " << &x << '\n';
-               std::cout << "Value of p: " << p << '\n';
-               std::cout << "*p = " << *p << '\n';
-
-               *p = 100;
-               std::cout << "After *p = 100: x = " << x << '\n';
-
-               int y{200};
-               p = &y;
-               std::cout << "After reassigning p to &y: *p = " << *p << '\n';
-
-               return 0;
-           }
-
-
 .. dropdown:: Exercise 2: Const-Correctness
     :icon: gear
     :class-container: sd-border-primary
@@ -110,41 +83,6 @@ builds on the skills from the previous one.
        - Try to reassign ``p3``. Comment out and note the error.
 
     5. For each commented-out line, add a comment explaining **why** it fails.
-
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               int a{10};
-               int b{20};
-
-               // Pointer to const data
-               const int *p1{&a};
-               // *p1 = 50;  // Error: cannot modify data through pointer to const
-               p1 = &b;      // OK: can reassign the pointer itself
-
-               // Const pointer
-               int *const p2{&a};
-               *p2 = 50;     // OK: can modify data
-               // p2 = &b;   // Error: cannot reassign a const pointer
-
-               // Const pointer to const data
-               const int *const p3{&a};
-               // *p3 = 50;  // Error: cannot modify data
-               // p3 = &b;   // Error: cannot reassign pointer
-
-               std::cout << "a = " << a << '\n';
-               std::cout << "*p1 = " << *p1 << '\n';
-               std::cout << "*p2 = " << *p2 << '\n';
-               std::cout << "*p3 = " << *p3 << '\n';
-
-               return 0;
-           }
-
 
 .. dropdown:: Exercise 3: Dynamic Memory with Valgrind
     :icon: gear
@@ -180,40 +118,6 @@ builds on the skills from the previous one.
        and re-run with Valgrind. Note how many bytes are "definitely lost"
        and which line numbers Valgrind identifies.
 
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               // Single int
-               int *p{new int{99}};
-               std::cout << "Value: " << *p << '\n';
-               std::cout << "Address: " << p << '\n';
-               delete p;
-               p = nullptr;
-
-               // Array of doubles
-               double *arr{new double[5]{1.1, 2.2, 3.3, 4.4, 5.5}};
-               for (int i{0}; i < 5; ++i) {
-                   std::cout << "arr[" << i << "] = " << arr[i] << '\n';
-               }
-               delete[] arr;
-               arr = nullptr;
-
-               return 0;
-           }
-
-        Compile and verify:
-
-        .. code-block:: bash
-
-           g++ -g -std=c++20 -o exercise3 exercise3.cpp
-           valgrind --leak-check=full ./exercise3
-
-
 .. dropdown:: Exercise 4: Reference vs. Pointer
     :icon: gear
     :class-container: sd-border-primary
@@ -247,41 +151,6 @@ builds on the skills from the previous one.
     **Key observation:** When you write ``ref = other``, the reference
     is **not** reseated. Instead, the value of ``other`` is copied into
     ``value`` (the variable ``ref`` is bound to).
-
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               int value{50};
-               int *ptr{&value};
-               int &ref{value};
-
-               std::cout << "*ptr = " << *ptr << ", ref = " << ref << '\n';
-               std::cout << "ptr = " << ptr << ", &ref = " << &ref << '\n';
-
-               *ptr = 75;
-               std::cout << "After *ptr = 75: value=" << value
-                         << " *ptr=" << *ptr << " ref=" << ref << '\n';
-
-               ref = 100;
-               std::cout << "After ref = 100: value=" << value
-                         << " *ptr=" << *ptr << " ref=" << ref << '\n';
-
-               int other{999};
-               ptr = &other;
-               ref = other;  // copies value, does NOT rebind ref
-
-               std::cout << "value=" << value << " *ptr=" << *ptr
-                         << " ref=" << ref << " other=" << other << '\n';
-               // value is now 999 (copied), ptr points to other, ref still aliases value
-
-               return 0;
-           }
-
 
 .. dropdown:: Exercise 5: Memory Tracing
     :icon: gear
@@ -336,50 +205,6 @@ builds on the skills from the previous one.
     5. Identify **all** issues in this code (dangling pointers, memory
        leaks, undefined behavior).
     6. Rewrite the code to fix all issues.
-
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        **Issues identified:**
-
-        1. **Dangling pointer:** After ``delete a;`` on line 12, ``c``
-           still points to the freed memory. ``c`` is dangling.
-        2. **Memory leak:** On line 19, ``b`` is reassigned to a new
-           allocation without first deleting the old one (value 20).
-           The original 20-byte block is leaked.
-
-        **Fixed code:**
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               int *a{new int{10}};
-               int *b{new int{20}};
-               int *c{a};
-
-               std::cout << "*a = " << *a << '\n';
-               std::cout << "*b = " << *b << '\n';
-               std::cout << "*c = " << *c << '\n';
-
-               delete a;
-               a = nullptr;
-               c = nullptr;  // Fix: also nullify c (it pointed to same memory)
-
-               *b = 30;
-               std::cout << "*b = " << *b << '\n';
-
-               delete b;     // Fix: delete old b before reassigning
-               b = new int{40};
-               std::cout << "*b = " << *b << '\n';
-
-               delete b;
-               b = nullptr;
-
-               return 0;
-           }
-
 
 .. dropdown:: Exercise 6: Dynamic Integer Array Manager (Challenge)
     :icon: gear
@@ -450,59 +275,3 @@ builds on the skills from the previous one.
 
            return 0;
        }
-
-    .. dropdown:: Solution
-        :class-container: sd-border-success
-
-        .. code-block:: cpp
-
-           #include <iostream>
-
-           int main() {
-               int size{0};
-               std::cout << "Enter initial array size: ";
-               std::cin >> size;
-
-               int *arr{new int[size]};
-               for (int i{0}; i < size; ++i) {
-                   arr[i] = (i + 1) * 10;
-               }
-
-               std::cout << "Array contents: ";
-               for (int i{0}; i < size; ++i) {
-                   std::cout << arr[i] << " ";
-               }
-               std::cout << '\n';
-
-               int new_size{0};
-               std::cout << "Enter new array size: ";
-               std::cin >> new_size;
-
-               // Resize
-               int *new_arr{new int[new_size]{}};  // zero-initialized
-               int copy_count{(size < new_size) ? size : new_size};
-               for (int i{0}; i < copy_count; ++i) {
-                   new_arr[i] = arr[i];
-               }
-               delete[] arr;
-               arr = new_arr;
-               size = new_size;
-
-               std::cout << "Resized array: ";
-               for (int i{0}; i < size; ++i) {
-                   std::cout << arr[i] << " ";
-               }
-               std::cout << '\n';
-
-               delete[] arr;
-               arr = nullptr;
-
-               return 0;
-           }
-
-        Verify with Valgrind:
-
-        .. code-block:: bash
-
-           g++ -g -std=c++20 -o array_manager array_manager.cpp
-           valgrind --leak-check=full ./array_manager
