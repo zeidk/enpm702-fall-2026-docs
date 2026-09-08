@@ -1,0 +1,24 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar">
+        <div id="kl_banner">
+            <h2><span id="kl_banner_right">Post-Work Activities</span></h2>
+            <p><i class="icon-document" style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i><span style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);">POST-WORK Activities</span></p>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p><strong style="color: #ba372a; font-size: 1rem;">INSTRUCTORS: </strong><span style="color: #000000;">Please list any activities or assignments you want your students to complete after class this week. If you do not have any post-work planned, you can write 'No post-work due this week' or delete this submodule.</span></p>
+            </div>
+            <p class="whitespace-normal break-words">Complete the exercises below on your own machine. Full task descriptions and solutions are on the course documentation site (links in each section below, shown as placeholders &mdash; replace with the published Read the Docs URLs). Submitting your exercise solutions on Canvas counts toward your <strong>participation</strong> grade.</p>
+        </div>
+        <div id="kl_readings" class="">
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> C++ Exercises</h3>
+            <p class="whitespace-normal break-words">&rarr; <strong>C++ exercises:</strong> <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture12/l12_exercises.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture12/l12_exercises.html</a></p>
+            <p class="whitespace-normal break-words">This week's C++ exercises cover a custom service definition, service server and client, a custom action definition, an action server with feedback, and an integrated communication-system challenge. Build and run them with the course C++ workspace, then submit your solutions on Canvas.</p>
+            <h3><i class="icon-document"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Required Reading (After Class)</h3>
+            <p class="whitespace-normal break-words">Read the following <strong>after</strong> Lecture 12 to reinforce ROS 2 communication patterns (services and actions):</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>ROS 2: Writing an action server and client (C++)</strong>: <a class="underline" href="https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Cpp.html" target="_blank" rel="noopener">docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Cpp.html</a></li>
+                <li class="whitespace-normal break-words"><strong>ROS 2: About actions</strong>: <a class="underline" href="https://docs.ros.org/en/jazzy/Concepts/Basic/About-Actions.html" target="_blank" rel="noopener">docs.ros.org/en/jazzy/Concepts/Basic/About-Actions.html</a></li>
+                <li class="whitespace-normal break-words"><strong>Lecture 12 references</strong> on the course documentation site: <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture12/l12_references.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture12/l12_references.html</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

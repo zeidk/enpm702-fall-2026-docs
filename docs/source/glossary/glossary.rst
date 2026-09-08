@@ -418,6 +418,13 @@ E
    enum class
       See :term:`Scoped Enumeration`.
 
+   Escape Sequence
+      A two-character sequence beginning with a backslash that stands for
+      one character inside a character or string literal: ``\n`` newline,
+      ``\t`` tab, ``\'`` single quote, ``\\`` backslash, ``\0`` null. It is
+      **one** ``char``, not two.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Extraction Operator
       The ``>>`` operator, which reads a value out of an input stream
       and into a variable: ``std::cin >> age;``. The arrows point in the
@@ -431,6 +438,13 @@ F
 =
 
 .. glossary::
+
+   Fixed-width Integer Type
+      An integer type of guaranteed exact width, declared in ``<cstdint>``:
+      ``int8_t``, ``int32_t``, ``uint64_t`` and so on. Use these when the
+      width actually matters, because the width of ``int``, ``long`` and
+      friends is only implementation-defined.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Floating-point Type
       A type representing real numbers with a fractional part:
@@ -502,6 +516,14 @@ I
       course names variables in ``snake_case``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Implementation-defined Behavior
+      Behavior an implementation must choose and document, but which the
+      standard does not fix. Every fundamental type's exact size is
+      implementation-defined (``[expr.sizeof]/1``); the standard
+      guarantees only minimum widths and their ordering. Unlike undefined
+      behavior, the program is still well formed.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Implicit Type Conversion
       A type conversion performed automatically by the compiler when
       one data type is required but a different type is supplied.
@@ -532,6 +554,14 @@ I
       The ``<<`` operator, which sends a value into an output stream:
       ``std::cout << value;``. Each insertion returns the stream, which
       is why insertions can be chained.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Integer Overflow
+      What happens when an arithmetic result falls outside the range its
+      type can represent. For **signed** types this is undefined
+      behavior; for **unsigned** types it is defined to wrap around
+      modulo the type's range, which is why unsigned ``0 - 1`` yields a
+      very large number rather than ``-1``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Integral Type
@@ -590,6 +620,13 @@ L
       carry a suffix (``12L``, ``1.05f``) that sets their type.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Literal Suffix
+      A suffix that pins a literal's type: ``u`` unsigned, ``L`` long,
+      ``LL`` long long, ``f`` float. They combine, so ``12uLL`` is an
+      ``unsigned long long``. Without one, an integer literal is ``int``
+      and a floating-point literal is ``double``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Local Scope
       The region within a pair of braces ``{}`` where a variable is
       accessible. Variables are destroyed when execution leaves the
@@ -646,6 +683,13 @@ N
       A declarative region that provides a scope to identifiers inside
       it. Used to organize code and avoid naming collisions. The C++
       Standard Library uses the ``std`` namespace.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Naming Collision
+      Two entities with the same name visible in the same scope, which the
+      compiler cannot disambiguate. Namespaces exist to prevent this.
+      Compare shadowing, where an inner declaration hides an outer one
+      instead of colliding with it.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Narrowing Conversion
@@ -709,6 +753,14 @@ P
 
 .. glossary::
 
+   Page
+      The fixed-size block a memory segment is divided into, typically
+      4 KiB. Each page of a process's virtual address space is mapped to
+      a **frame**, a physical slot of the same size in RAM. Pages that sit
+      side by side in the virtual address space need not be adjacent, or
+      in order, in physical memory.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Pointer
       A variable that holds a memory address as its value. The address
       belongs to a variable, literal, or function. Declared with
@@ -755,6 +807,12 @@ R
       ``type& identifier{existing_variable};``
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Rodata Segment
+      The region of a process image holding **read-only** data: string
+      literals and ``const`` globals. Writing to it traps at runtime.
+      Short for read-only data (``.rodata``).
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
 
 .. _g-s:
 
@@ -782,6 +840,13 @@ S
       after a colon. Preferred over unscoped ``enum``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Shadowing
+      Declaring a name in an inner scope that hides the same name from an
+      outer scope. The inner declaration wins for the rest of that block;
+      the outer object still exists and, if it is global, can still be
+      reached through ``::name``. Compile with ``-Wshadow`` to be warned.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Shell
       A program that provides a command-line interface for users to
       interact with the operating system, allowing them to execute
@@ -797,6 +862,13 @@ S
       the two converts the signed operand first, which is why
       ``-1 < 1u`` is ``false``; C++20's ``std::cmp_less`` and its
       siblings in ``<utility>`` compare by mathematical value instead.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Significant Decimal Digits
+      The measure of a floating-point type's precision. Count from the
+      **first non-zero digit**, left to right, ignoring where the decimal
+      point falls, so ``31415.9``, ``3.14159`` and ``0.0000314159`` each
+      carry six. ``float`` carries about 7, ``double`` about 16.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Small String Optimization (SSO)
@@ -822,6 +894,13 @@ S
       but limited in size.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Stack Frame
+      The block of stack memory one function call occupies: its
+      parameters, its local variables, and the bookkeeping needed to
+      return. Created on entry and released at the closing brace, which
+      is what gives automatic variables their lifetime.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Statement
       A complete instruction that tells the computer to perform a
       specific action. Terminated by a semicolon (``;``) in C++.
@@ -837,6 +916,36 @@ S
       ``.at()``, ``.size()``, ``.front()``, ``.back()``, and
       ``.fill()`` methods.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   std::boolalpha
+      Stream manipulator that prints ``bool`` as the words ``true`` and
+      ``false`` instead of ``1`` and ``0``. Sticky; undo it with
+      ``std::noboolalpha``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::cin
+      The standard input stream. Data is read from it with the extraction
+      operator ``>>``, which converts the typed characters into the
+      variable's type and stops at whitespace.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::cout
+      The standard output stream. Data is sent to it with the insertion
+      operator ``<<``, which chains left to right.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::endl
+      Stream manipulator that writes a newline **and** flushes the stream.
+      Prefer a plain ``'\n'``: the flush is rarely needed and is costly
+      inside a loop.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::fixed
+      Stream manipulator selecting fixed-point notation for floating-point
+      output. It also changes what ``std::setprecision`` counts: digits
+      **after the decimal point** rather than significant digits. Undo
+      with ``std::defaultfloat``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    std::format
       The C++20 formatting library, from ``<format>``. Formats one value
@@ -855,6 +964,21 @@ S
       ``ln2``, ``phi``. Use these rather than typing digits.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   std::scientific
+      Stream manipulator selecting scientific notation, as in
+      ``3.142e+00``. Like ``std::fixed`` it makes ``std::setprecision``
+      count digits after the decimal point. Undo with
+      ``std::defaultfloat``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::setprecision
+      Stream manipulator setting how many digits are shown for
+      floating-point output. On its own it counts **significant digits**,
+      so ``setprecision(3)`` prints ``3.14``; combined with ``std::fixed``
+      it counts digits after the decimal point, so the same call prints
+      ``3.142``. Declared in ``<iomanip>``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    std::string
       The standard C++ string class from ``<string>``. Manages a
       dynamic sequence of characters with automatic memory management.
@@ -866,6 +990,28 @@ S
       a collection of objects. Categories: sequence, associative,
       unordered associative, and container adapters.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Storage Duration
+      How long a variable's memory exists, fixed by **how it is declared**
+      rather than by where it is used. *Static* lasts from before
+      ``main()`` until after it returns, *automatic* until the enclosing
+      block ends, and *dynamic* until the memory is released. Compare
+      lifetime and scope.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Stream
+      An object representing a sequence of characters flowing to or from a
+      device. ``<iostream>`` declares ``std::cout`` for output and
+      ``std::cin`` for input; data moves with ``<<`` and ``>>``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Stream Manipulator
+      A value inserted into a stream with ``<<`` that changes **how the
+      stream formats**, instead of printing anything itself.
+      ``std::cout << std::boolalpha`` outputs zero characters; it sets a
+      flag that changes how every later ``bool`` is rendered. Most
+      manipulators are *sticky* -- they persist until changed back.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Symbolic Constant
       A constant created with a preprocessor macro, e.g.
@@ -891,6 +1037,12 @@ T
    Template Specialization
       A mechanism to provide a custom implementation of a template for a specific type. Full specialization handles one specific type.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Text Segment
+      The region of a process image holding the program's **machine
+      code**. Read-only, and shared between processes running the same
+      executable. Also written ``.text``.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    this Pointer
       An implicit pointer available inside non-static member functions that points to the object on which the method was called.
@@ -979,6 +1131,13 @@ V
       A symbolic name for a storage location that holds data. Has five
       characteristics: type, name (identifier), scope, lifetime, and
       value.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Virtual Address Space
+      The contiguous range of addresses a process believes it has. The
+      operating system maps it onto physical RAM one page at a time, so
+      each process gets its own private view and addresses that look
+      adjacent to the program may be scattered in hardware.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Virtual Destructor

@@ -2035,6 +2035,8 @@ The double evaluation of ``i++`` is now plainly visible.
    costs. Search the file rather than reading it.
 
 
+.. _l2-const-in-constant-expressions:
+
 Compile-time and Runtime Constants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2069,8 +2071,6 @@ The compiler emits the equivalent of:
    compiler is doing the work. It happens once, instead of on every run,
    so the resulting executable is faster and often smaller.
 
-
-.. _l2-const-in-constant-expressions:
 
 A **compile-time constant** is a constant whose value is known while
 compiling. A ``const`` variable **may or may not** be one; it depends

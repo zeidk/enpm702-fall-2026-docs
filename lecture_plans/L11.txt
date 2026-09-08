@@ -1,0 +1,61 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Eleven: ROS 2 Configuration and Orchestration</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture covers the tools and techniques for configuring, launching, and orchestrating ROS 2 systems. It begins with parameters, node-specific configuration values that change behavior without recompiling, then explores launch files for starting multiple nodes. It examines executors, the mechanism that controls how callbacks are dispatched, and covers YAML configuration files and ROS 2 CLI tools for parameters.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 11, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Declare, get, and set parameters on ROS 2 nodes using <code>rclcpp</code></li>
+                <li class="whitespace-normal break-words">Use parameter callbacks to respond when parameters change at runtime</li>
+                <li class="whitespace-normal break-words">Write Python launch files to start multiple nodes with parameters, remappings, and arguments</li>
+                <li class="whitespace-normal break-words">Use launch arguments (<code>DeclareLaunchArgument</code>, <code>LaunchConfiguration</code>) for reusable launch files</li>
+                <li class="whitespace-normal break-words">Structure YAML configuration files and load them from launch files</li>
+                <li class="whitespace-normal break-words">Distinguish single-threaded and multi-threaded executors and choose the appropriate one</li>
+                <li class="whitespace-normal break-words">Use callback groups (mutually exclusive and reentrant) to control concurrency</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Parameters</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Declaring and getting parameters; parameter types</li>
+                <li class="whitespace-normal break-words">Parameter callbacks</li>
+                <li class="whitespace-normal break-words">Setting parameters from the command line</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Launch Files</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Why launch files? Python vs. XML</li>
+                <li class="whitespace-normal break-words">The <code>Node</code> action, passing parameters, remapping topics</li>
+                <li class="whitespace-normal break-words">Launch arguments, including other launch files, namespaces</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Executors</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Single-threaded vs. multi-threaded executors</li>
+                <li class="whitespace-normal break-words">Callback groups</li>
+                <li class="whitespace-normal break-words">Component nodes and composition</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. YAML Configuration Files</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">YAML file structure</li>
+                <li class="whitespace-normal break-words">Loading YAML from a launch file or the command line</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. ROS 2 CLI for Parameters</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><code>ros2 param list</code>, <code>get</code>, <code>set</code>, <code>describe</code>, <code>dump</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>Services and Actions</strong></li>
+                <li class="whitespace-normal break-words">Complete the C++ exercises on parameters, launch files, and executors, and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<div id="dp-wrapper" class="dp-wrapper dp-flat-sections-main">
+    <header class="dp-header dp-flat-sections-main" style="background-color: #990000; color: #ffffff;">
+        <h2 class="dp-heading" style="text-align: center; background-color: #990000; color: #ffffff;">ENPM702 &mdash; Introductory Robot Programming</h2>
+    </header>
+    <div id="" class="dp-banner-image">
+        <div class="dp-banner-image"><img role="presentation" src="https://umd.instructure.com/courses/1389209/files/84482626/preview" alt="McKeldin library" data-name="banner4.png" data-size="-- KB" data-available-range="false" data-hidden="false" data-file-id="banner-images.CustomBannerImages1.2" data-filename="" data-locked="false" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/files/84482626" data-api-returntype="File" /></div>
+    </div>
+    <nav class="container-fluid dp-link-grid dp-flat-sections temp" style="background-color: #a21528; color: #ffffff;">
+        <ul class="row">
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon" style="background-color: #990000; color: #ffffff;" title="start here" href="https://umd.instructure.com/courses/1389209/pages/start-here-2" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/pages/start-here-2" data-api-returntype="Page"><i class="icon-forward"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Start Here</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon" style="background-color: #990000; color: #ffffff;" title="syllabus" href="https://umd.instructure.com/courses/1389209/assignments/syllabus"><i class="icon-syllabus"><span class="dp-icon-content" style="display: none; background-color: #990000; color: #ffffff;">&nbsp;</span></i> Syllabus&nbsp;</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon" style="background-color: #990000; color: #ffffff;" title="Modules" href="https://umd.instructure.com/courses/1389209/modules" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/modules" data-api-returntype="[Module]"><i class="fas fa-book-open" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Modules</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon dp-course-link" style="background-color: #990000; color: #ffffff;" title="Join Live Class" href="https://umd.instructure.com/courses/1389209/external_tools/88525?display=borderless"><i class="fas fa-laptop"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;Join Live Class</a></li>
+        </ul>
+    </nav>
+    <nav class="container-fluid dp-link-grid dp-flat-sections temp">
+        <ul class="row">
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon dp-course-link" style="border-top-color: #000000; background-color: #990000; color: #ffffff;" title="Lecture Videos" href="https://umd.instructure.com/courses/1389209/external_tools/28827"><i class="fas fa-play-circle"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;Lecture Videos</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon" style="background-color: #990000; color: #ffffff;" title="Files" href="https://umd.instructure.com/courses/1389209/files" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/folders/root" data-api-returntype="Folder"><i class="fas fa-file-download"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Course Files</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon" style="background-color: #990000; color: #ffffff;" title="Questions?" href="https://umd.instructure.com/courses/1389209/discussion_topics/5737109" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/discussion_topics/5737109" data-api-returntype="Discussion"><i class="far fa-question-circle"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Questions</a></li>
+            <li class="col-sm-12 col-md-3 col-lg-3" style="background-color: #ffffff; text-align: center; color: #2d3b45;"><a class="dp-has-icon dp-course-link" style="background-color: #990000; color: #ffffff;" title="More Resources" href="https://umd.instructure.com/courses/1389209/pages/more-resources" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/pages/more-resources" data-api-returntype="Page"><i class="fas fa-plus"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;Resources</a></li>
+        </ul>
+    </nav>
+    <div class="dp-content-block kl_custom_block_1" style="padding: 0px;">
+        <h3 class="" style="margin-top: 0px; margin-bottom: 0px; background-color: #990000; color: #ffffff;">Instructor</h3>
+        <div class="dp-user-details-wrapper dp-user-details-no-image dp-user-details-h-legacy cp-bg-dp-secondary" data-content-user-id="4478277" data-content-selected-role="teacher" data-avatar-url="https://umd.instructure.com/images/thumbnails/74579544/ecAm975HMN44TOx6SiIGTRqJ99dTB3Afz9SSATOI">
+            <div class="dp-user-details-text-wrapper">
+                <p class="dp-user-details dp-user-name"><i class="fas fa-user"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;ZEID KOOTBALLY</p>
+                <p class="dp-user-details dp-user-role" data-content-role="teacher"><i class="fas fa-tag"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Instructor</p>
+                <p class="dp-user-details dp-user-email"><i class="fas fa-envelope"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;zeidk@umd.edu</p>
+                <p class="dp-user-details dp-user-other1"><i class="fas fa-phone"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;N/A</p>
+                <p class="dp-user-details dp-user-other2"><i class="fas fa-clock"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;By Appointment</p>
+            </div>
+        </div>
+    </div>
+    <div class="dp-content-block" style="padding: 0px;">
+        <h3 class="" style="margin-top: 0px; margin-bottom: 0px; background-color: #990000; color: #ffffff;">Lecture</h3>
+        <div class="dp-user-details-wrapper dp-user-details-no-image dp-user-details-h-legacy cp-bg-dp-secondary" style="padding-bottom: 0px; margin-bottom: 0px;">
+            <div class="dp-user-details-text-wrapper">
+                <p class="dp-user-details"><i class="fas fa-map-marker-alt"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;<a style="color: inherit; text-decoration: underline; cursor: help;" title="Kim Engineering Building (KEB)
+8228 Paint Branch Dr
+College Park, MD 20742
+
+Click to view on campus map" href="https://maps.umd.edu/map/index.html?Welcome=False&amp;loc=0312" target="_blank" rel="noopener">KEB 1110</a></p>
+                <p class="dp-user-details"><i class="fas fa-calendar-alt"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;Tuesdays, 7:00 PM &ndash; 9:40 PM</p>
+                <p class="dp-user-details"><i class="fas fa-video"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>&nbsp;All lectures are recorded</p>
+            </div>
+        </div>
+        <div style="padding: 10px 15px;">
+            <p><strong>Synchronous Online Students:</strong> Access the Zoom link via the Video Conference link in the course menu on the left side of this page, then scroll to the appropriate date.</p>
+            <p><strong>Asynchronous Online Students:</strong> Lecture recordings are uploaded to Canvas within 24 hours of the live session. Access them via the Panopto Recordings link in the course menu. The most recent recording appears at the top.</p>
+        </div>
+    </div>
+    <div class="dp-content-block" style="padding: 0px;">
+        <h3 class="" style="margin-top: 0px; margin-bottom: 0px; background-color: #990000; color: #ffffff;">External Links</h3>
+        <div style="padding: 10px 15px;">
+            <ul style="list-style: none; padding-left: 0; margin: 0;">
+                <li style="padding: 6px 0;"><i class="fas fa-book" style="color: #990000; margin-right: 8px;"></i><a style="color: #2d3b45; text-decoration: none;" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/"><strong>Lecture Notes</strong></a> &mdash; Lectures, exercises, quizzes, and references (ReadTheDocs)</li>
+                <li style="padding: 6px 0;"><i class="fas fa-code-branch" style="color: #990000; margin-right: 8px;"></i><a style="color: #2d3b45; text-decoration: none;" href="https://github.com/zeidk/enpm702-fall-2026-cpp"><strong>Github C++</strong></a> &mdash; C++ Snippets (Weeks 1-9 Lectures)</li>
+                <li style="padding: 6px 0;"><i class="fas fa-code-branch" style="color: #990000; margin-right: 8px;"></i><a style="color: #2d3b45; text-decoration: none;" href="https://github.com/zeidk/enpm702-fall-2026-ros"><strong>Github ROS</strong></a> &mdash; ROS 2 packages (Weeks 10-15 Lectures)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="dp-content-block kl_custom_block_3" style="padding: 0px;">
+        <h3 class="" style="background-color: #990000; color: #ffffff; margin-top: 0px; margin-bottom: 0px;">Course Overview</h3>
+        <div style="padding: 10px 15px;">
+            <p>ENPM702 teaches modern C++ programming for robotics, progressing from core language fundamentals to building complete robotic systems with ROS 2 and Gazebo.</p>
+            <p><strong>Part 1 &mdash; C++ Foundations (Weeks 1&ndash;9):</strong> You will learn the building blocks of C++ &mdash; variables, types, pointers, memory management, STL containers, functions, templates, lambdas, smart pointers, and object-oriented programming (classes, inheritance, polymorphism). Each concept is practiced through cumulative Real-World Application (RWA) assignments that progressively build a robotics-themed C++ application.</p>
+            <p><strong>Part 2 &mdash; ROS 2 &amp; Gazebo (Weeks 10&ndash;15):</strong> You will apply your C++ skills within the Robot Operating System (ROS 2) framework. Topics include publishers, subscribers, custom interfaces, parameters, launch files, services, actions, coordinate frames (TF2), and lifecycle nodes. Through cumulative Group Projects (GPs), your team will build a multi-node robotic system controlling a mobile robot in Gazebo simulation.</p>
+            <p>By the end of the course, you will be able to design, implement, and deploy C++ applications for robotic systems &mdash; from managing memory safely with smart pointers to orchestrating multi-robot coordination through ROS 2.</p>
+        </div>
+    </div>
+    <div class="dp-content-block kl_custom_block_4" style="padding: 0px;">
+        <h3 class="" style="margin-top: 0px; margin-bottom: 0px; background-color: #990000; color: #ffffff;">Course Outcomes</h3>
+        <div style="padding: 10px 15px;">
+            <p>After successfully completing this course, students will be able to:</p>
+            <ol style="list-style-type: decimal;">
+                <li><strong>Write correct and efficient C++ programs</strong> using variables, types, constants, namespaces, and modern initialization practices (C++17 and beyond).</li>
+                <li><strong>Manage memory safely</strong> using pointers, references, smart pointers (<code>unique_ptr</code>, <code>shared_ptr</code>, <code>weak_ptr</code>), and RAII principles &mdash; eliminating memory leaks and undefined behavior.</li>
+                <li><strong>Use the Standard Template Library</strong> (strings, arrays, vectors, iterators) and write reusable code with function templates, lambdas, and <code>std::function</code>.</li>
+                <li><strong>Design object-oriented systems</strong> using classes, encapsulation, inheritance, polymorphism, and abstract interfaces to build modular and extensible software.</li>
+                <li><strong>Develop ROS 2 applications</strong> using publishers, subscribers, services, actions, custom interfaces, parameters, launch files, and executors.</li>
+                <li><strong>Build and simulate robotic systems</strong> in Gazebo, including coordinate frame management (TF2) and lifecycle node orchestration for production-quality deployments.</li>
+            </ol>
+        </div>
+    </div>
+    <div class="dp-content-block kl_custom_block_5" style="padding: 0px;">
+        <h3 style="background-color: #990000; color: #ffffff; margin-top: 0px; margin-bottom: 0px;">Prerequisites</h3>
+        <div style="padding: 10px 15px;">
+            <p>Basic programming experience in any language. No prior C++ or ROS experience required. Students with previous programming background will find the course content more approachable.</p>
+        </div>
+    </div>
+</div>

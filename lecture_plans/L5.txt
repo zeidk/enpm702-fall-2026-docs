@@ -1,0 +1,60 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Five: Functions Basics</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture introduces the fundamental building blocks of modular C++ programming: functions. Students learn to declare, define, and call functions, how data flows in and out through parameter-passing mechanisms, and how to organize code using header files. The lecture also covers function overloading, default parameters, static variables, the call stack, recursion, and documentation with Doxygen.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 5, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Explain</strong> function fundamentals: declarations, definitions, calls, and the benefits of modularity</li>
+                <li class="whitespace-normal break-words"><strong>Select</strong> appropriate methods for passing data to functions (by-value, by-reference, by-pointer) and returning data</li>
+                <li class="whitespace-normal break-words"><strong>Implement</strong> enhanced features: function overloading, default parameters, and static variables</li>
+                <li class="whitespace-normal break-words"><strong>Describe</strong> the execution model: the call stack, stack frames, and recursion</li>
+                <li class="whitespace-normal break-words"><strong>Apply</strong> best practices for documentation with Doxygen and handle command-line arguments in <code>main()</code></li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Core Mechanics</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The DRY principle and the function lifecycle</li>
+                <li class="whitespace-normal break-words">Benefits: faster compilation, reusability, organization</li>
+                <li class="whitespace-normal break-words">Include guards</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. The Function Interface</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Pass-by-value, pass-by-reference, pass-by-const-reference, pass-by-pointer</li>
+                <li class="whitespace-normal break-words">How to choose a passing method</li>
+                <li class="whitespace-normal break-words">Return-by-value (and copy elision), return-by-reference, return-by-pointer</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Enhancing Functions</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Static variables in functions</li>
+                <li class="whitespace-normal break-words">Function overloading</li>
+                <li class="whitespace-normal break-words">Default parameters</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Under the Hood</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The call stack and stack frames</li>
+                <li class="whitespace-normal break-words">Recursive functions</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. Conventions and Best Practices</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Documentation with Doxygen</li>
+                <li class="whitespace-normal break-words">The <code>main()</code> function and command-line arguments</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>Functions, Advanced</strong> (inline functions, lambdas, function pointers, <code>std::function</code>, templates)</li>
+                <li class="whitespace-normal break-words">Complete the shell and C++ exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

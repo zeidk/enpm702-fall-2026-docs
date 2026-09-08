@@ -1,0 +1,61 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Six: Functions Advanced</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture builds on the function fundamentals from Lecture 5 and introduces advanced features of C++ functions. It begins with <code>struct</code> and aggregate initialization, then moves into templates for generic, reusable code. The lecture covers function operators (<code>decltype</code>), specifiers (<code>constexpr</code>, <code>inline</code>, <code>noexcept</code>), and attributes, and explores callables: function pointers, functors, lambdas, and <code>std::function</code>.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 6, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Use struct</strong>: aggregate initialization and structured bindings</li>
+                <li class="whitespace-normal break-words"><strong>Write generic code</strong>: function templates, type deduction, and specialization</li>
+                <li class="whitespace-normal break-words"><strong>Apply type inspection</strong>: the <code>decltype</code> operator and trailing return types</li>
+                <li class="whitespace-normal break-words"><strong>Apply function specifiers</strong>: <code>constexpr</code>, <code>inline</code>, and <code>noexcept</code></li>
+                <li class="whitespace-normal break-words"><strong>Apply function attributes</strong>: <code>[[nodiscard]]</code>, <code>[[maybe_unused]]</code>, <code>[[deprecated]]</code></li>
+                <li class="whitespace-normal break-words"><strong>Master callables</strong>: function pointers, functors, lambdas, and <code>std::function</code></li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. struct</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><code>struct</code> vs <code>class</code></li>
+                <li class="whitespace-normal break-words">Aggregate initialization and structured bindings</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Templates</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Syntax, benefits, and instantiation</li>
+                <li class="whitespace-normal break-words">Type deduction and deduction failures</li>
+                <li class="whitespace-normal break-words">Template specialization and multiple parameters</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Operators, Specifiers, and Attributes</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><code>decltype</code> operator and trailing return type</li>
+                <li class="whitespace-normal break-words"><code>constexpr</code>, <code>inline</code>, and <code>noexcept</code></li>
+                <li class="whitespace-normal break-words">Attributes: <code>[[nodiscard]]</code>, <code>[[maybe_unused]]</code>, <code>[[deprecated]]</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Callables</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Function pointers and functors</li>
+                <li class="whitespace-normal break-words">Lambdas</li>
+                <li class="whitespace-normal break-words"><code>std::function</code> and type erasure</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. C++17 Features</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><code>std::variant</code> and <code>std::visit</code></li>
+                <li class="whitespace-normal break-words"><code>if constexpr</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>Smart Pointers</strong> (<code>std::unique_ptr</code>, <code>std::shared_ptr</code>, <code>std::weak_ptr</code>, and RAII)</li>
+                <li class="whitespace-normal break-words">Complete the shell and C++ exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

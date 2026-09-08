@@ -1,0 +1,48 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Fourteen: ROS 2 Lifecycle Nodes</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture covers managed (lifecycle) nodes, ROS 2 nodes whose execution is governed by a state machine, giving deterministic startup, shutdown, and error recovery. Lifecycle nodes let you bring up a complex system in a controlled order and are widely used in production-grade ROS 2 software. The lecture builds on the coordinate frame material from Lecture 13.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 14, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Explain why managed nodes exist and when to use them</li>
+                <li class="whitespace-normal break-words">Describe the lifecycle state machine and its primary states (Unconfigured, Inactive, Active, Finalized)</li>
+                <li class="whitespace-normal break-words">Implement a lifecycle node by inheriting from <code>rclcpp_lifecycle::LifecycleNode</code></li>
+                <li class="whitespace-normal break-words">Use the transition callbacks (<code>on_configure</code>, <code>on_activate</code>, <code>on_deactivate</code>, <code>on_cleanup</code>, <code>on_shutdown</code>)</li>
+                <li class="whitespace-normal break-words">Understand <code>LifecyclePublisher</code> behavior across states</li>
+                <li class="whitespace-normal break-words">Manage lifecycle nodes using <code>ros2 lifecycle</code> CLI commands and programmatic transitions</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Lifecycle Nodes</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The lifecycle state machine</li>
+                <li class="whitespace-normal break-words">Lifecycle transitions</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Implementing Lifecycle Nodes</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Complete example: lifecycle sensor node</li>
+                <li class="whitespace-normal break-words">CMakeLists.txt additions</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Managing Lifecycle Nodes</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">CLI commands and a typical startup sequence</li>
+                <li class="whitespace-normal break-words">Programmatic transitions</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Lifecycle nodes (with TF2 from Lecture 13) are used extensively in <strong>GP3</strong>; complete the exercises and quiz before the project</li>
+                <li class="whitespace-normal break-words">Lecture 15 (Robot Autonomy Architecture) shows how lifecycle nodes fit into a complete autonomy stack</li>
+            </ul>
+        </div>
+    </div>
+</div>

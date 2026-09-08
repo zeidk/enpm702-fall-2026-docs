@@ -1,0 +1,60 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Eight: OOP Basics</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture introduces the foundations of Object-Oriented Programming (OOP) in C++. It begins with the core principles, encapsulation, abstraction, inheritance, and polymorphism, then walks through the development cycle: requirement analysis, UML modeling, and implementation. Students learn to define classes with proper encapsulation, write accessors and mutators with <code>const</code>-correctness, construct objects with member initializer lists, and work with the <code>this</code> pointer and <code>static</code> members.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 8, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Understand the core principles of OOP (encapsulation, abstraction, inheritance, polymorphism)</li>
+                <li class="whitespace-normal break-words">Define and implement classes with proper encapsulation using access specifiers</li>
+                <li class="whitespace-normal break-words">Create default and parameterized constructors with member initializer lists</li>
+                <li class="whitespace-normal break-words">Implement accessors and mutators with proper <code>const</code>-correctness</li>
+                <li class="whitespace-normal break-words">Apply modern C++ features: <code>std::string_view</code>, <code>std::optional</code>, <code>[[nodiscard]]</code>, and <code>noexcept</code></li>
+                <li class="whitespace-normal break-words">Understand the <code>this</code> pointer and use <code>static</code> data members and member functions</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Core Principles of OOP</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Encapsulation, abstraction, inheritance, polymorphism</li>
+                <li class="whitespace-normal break-words">Advantages and disadvantages</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Classes and Objects</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Defining a class</li>
+                <li class="whitespace-normal break-words">State and behavior</li>
+                <li class="whitespace-normal break-words">Instantiation</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Design Phase</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Requirement analysis</li>
+                <li class="whitespace-normal break-words">Modeling with UML and modeling tools</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Implementation Phase</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Project structure and modern C++ (<code>std::string_view</code>, <code>std::optional</code>)</li>
+                <li class="whitespace-normal break-words">Encapsulation and access specifiers</li>
+                <li class="whitespace-normal break-words">Accessors/mutators, constructors, member initializer lists, const objects</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. The <code>this</code> Pointer and <code>static</code> Members</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The <code>this</code> pointer</li>
+                <li class="whitespace-normal break-words"><code>static</code> attributes and methods</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>OOP Advanced</strong> (inheritance, composition, aggregation, polymorphism, operator overloading)</li>
+                <li class="whitespace-normal break-words">Complete the shell and C++ exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

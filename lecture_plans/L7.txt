@@ -1,0 +1,60 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Seven: Smart Pointers and Move Semantics</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture introduces move semantics and smart pointers, two foundational C++11 features that together eliminate the most common memory management bugs. It begins with value categories (lvalues, prvalues, xvalues), rvalue references, and <code>std::move</code>, then explores the three smart pointer types: <code>std::unique_ptr</code> (exclusive ownership), <code>std::shared_ptr</code> (shared ownership), and <code>std::weak_ptr</code> (non-owning observation).</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 7, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Understand</strong> move semantics and the differences between <em>lvalue</em>, <em>rvalue</em>, and <em>xvalue</em></li>
+                <li class="whitespace-normal break-words"><strong>Understand</strong> the different types of smart pointers and their use cases</li>
+                <li class="whitespace-normal break-words"><strong>Use</strong> <code>std::unique_ptr</code> to express exclusive ownership with move-only semantics</li>
+                <li class="whitespace-normal break-words"><strong>Use</strong> <code>std::shared_ptr</code> and its reference-counted control block for shared ownership</li>
+                <li class="whitespace-normal break-words"><strong>Use</strong> <code>std::weak_ptr</code> to observe shared resources without affecting their lifetime</li>
+                <li class="whitespace-normal break-words"><strong>Apply</strong> idiomatic patterns for passing smart pointers to and returning them from functions</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Move Semantics</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Why move semantics? Value categories: lvalues, prvalues, xvalues</li>
+                <li class="whitespace-normal break-words">rvalue references</li>
+                <li class="whitespace-normal break-words"><code>std::move</code> and xvalues; lifetime and expiration</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Smart Pointers Overview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Types of smart pointers and when to use each</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Unique Pointers</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Initialization and exclusive ownership</li>
+                <li class="whitespace-normal break-words">Methods: <code>get</code>, <code>release</code>, <code>reset</code>, <code>swap</code></li>
+                <li class="whitespace-normal break-words">Passing to functions (sink/reseat) and returning</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Shared Pointers</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Initialization and the control block</li>
+                <li class="whitespace-normal break-words">Reference-counted shared ownership</li>
+                <li class="whitespace-normal break-words">Passing to functions and returning</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. Weak Pointers</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Initialization and structure</li>
+                <li class="whitespace-normal break-words">Methods: <code>lock</code> and <code>expired</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>OOP Basics</strong> (classes and objects, access specifiers, constructors/destructors, <code>this</code>, <code>static</code> members)</li>
+                <li class="whitespace-normal break-words">Complete the C++ exercises (especially the resource-manager challenge) and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

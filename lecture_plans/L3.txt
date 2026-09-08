@@ -1,0 +1,64 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Three: Pointers and Memory Management</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture covers memory allocation types, raw pointers, references, and dynamic memory management. Students learn to declare, initialize, and use pointers safely, understand const-correctness, and recognize common pitfalls. Valgrind is introduced for memory debugging.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 3, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Identify and explain the three types of memory allocation: static, automatic, and dynamic</li>
+                <li class="whitespace-normal break-words">Declare, initialize, and use raw pointers, including the address-of (<code>&amp;amp;</code>) and dereference (<code>*</code>) operators</li>
+                <li class="whitespace-normal break-words">Apply const-correctness to pointers (pointer-to-const, const-pointer, and const-pointer-to-const)</li>
+                <li class="whitespace-normal break-words">Allocate and deallocate memory dynamically using <code>new</code> and <code>delete</code></li>
+                <li class="whitespace-normal break-words">Recognize common pointer pitfalls: dangling pointers, memory leaks, double delete, and null dereferencing</li>
+                <li class="whitespace-normal break-words">Distinguish between references and pointers and know when to use each</li>
+                <li class="whitespace-normal break-words">Use Valgrind to detect memory leaks and memory errors in C++ programs</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Valgrind</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Installation and capabilities</li>
+                <li class="whitespace-normal break-words">Basic usage and CMake integration</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Memory Allocation</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Static, automatic, and dynamic allocation</li>
+                <li class="whitespace-normal break-words">Stack vs. heap</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Pointers</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Declaration, initialization, and the null pointer</li>
+                <li class="whitespace-normal break-words">Indirection (dereference) operator and size of pointers</li>
+                <li class="whitespace-normal break-words">Typed pointers, const-correctness, and wild pointers</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Dynamic Memory Allocation</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The <code>new</code> and <code>delete</code> operators</li>
+                <li class="whitespace-normal break-words">Common issues: dangling pointers, memory leaks, double delete, null dereferencing</li>
+                <li class="whitespace-normal break-words">Strategies for minimizing memory issues</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. References</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Characteristics of references</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Pointers vs. References</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">When to use each</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">7. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>STL Containers</strong> (strings, arrays, vectors, and iterators) building on dynamic memory</li>
+                <li class="whitespace-normal break-words">Complete the shell and C++ exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

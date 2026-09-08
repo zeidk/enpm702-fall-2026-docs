@@ -1,0 +1,47 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar">
+        <div id="kl_banner">
+            <h2><span id="kl_banner_right">Pre-Work Activities</span></h2>
+            <p><i class="icon-document" style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i><span style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);">PRE-WORK Activities</span></p>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p><strong style="color: #ba372a; font-size: 1rem;">INSTRUCTORS: </strong><span style="color: #000000;">Please list any activities or assignments you want your students to complete before class this week. Prework activities may be particularly relevant if you are implementing a flipped learning class/module in which you need students to complete certain activities (e.g., watch a short lecture or video, do a problem set, etc.) before they can actively participate in the in-class activities you have planned. For more information about flipping your classroom, consider reviewing these resources for UMD's Teaching and Learning Transformation Center (TLTC).</span></p>
+                <p><a class="instructure_file_link instructure_scribd_file inline_disabled" title="Flipped Classroom Level 1 Slides.pdf" href="https://umd.instructure.com/courses/1389209/files/84482625?wrap=1" target="_blank" data-canvas-previewable="false" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/files/84482625" data-api-returntype="File" rel="noopener">Flipped Classrooms </a></p>
+                <p><a class="inline_disabled" style="font-size: 1rem;" title="Link" href="https://drive.google.com/drive/folders/18oT9QHj3XtEhek1hdnHXNPawSnQVO0N6" target="_blank" rel="noopener"></a><a class="instructure_file_link instructure_scribd_file inline_disabled" title="Flipping the Classroom - 10 Lessons Learned.pdf" href="https://umd.instructure.com/courses/1389209/files/84482624?wrap=1" target="_blank" data-canvas-previewable="false" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/files/84482624" data-api-returntype="File" rel="noopener">Flipping the Classroom - 10 Lessons Learned</a></p>
+                <p><a class="instructure_file_link instructure_scribd_file inline_disabled" title="Flipping the Classroom - 10 Lessons Learned.pdf" href="https://umd.instructure.com/courses/1389209/files/84482624?wrap=1" target="_blank" data-canvas-previewable="false" data-api-endpoint="https://umd.instructure.com/api/v1/courses/1389209/files/84482624" data-api-returntype="File" rel="noopener"></a><span style="color: var(--ic-brand-font-color-dark); font-size: 1rem;">If you do not have any pre-work planned, you can write 'No pre-work due this week' or delete this submodule.</span></p>
+            </div>
+            <p class="whitespace-normal break-words">These activities prepare you for <strong>Lecture 11: ROS 2 Configuration and Orchestration</strong>. The lecture pages, reading modules, and exercises live on the course documentation site:</p>
+            <p class="whitespace-normal break-words">&rarr; <strong>Course documentation:</strong> <a class="underline" href="https://REPLACE-ME.readthedocs.io" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io</a> <em>(placeholder &mdash; replace with the published Read the Docs URL)</em></p>
+            <p class="whitespace-normal break-words"><strong>Before attending Lecture 11, students should:</strong></p>
+            <ol class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-decimal space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Complete the Lecture 10 post-work</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Finish the C++ exercises and the quiz</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Download the Lecture 11 slides and materials from Canvas</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Get the lecture notes and any handouts posted for this week</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Update and build your ROS 2 workspace</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Rebuild your workspace with <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">colcon build</code> and source it (<code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">source install/setup.bash</code>) so it is ready for the new nodes</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Preview this week's topic</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Read the <strong>Lecture 11 overview</strong> on the documentation site and skim the linked reading below to preview ROS 2 configuration and orchestration (parameters, launch files, and executors)</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        <div id="kl_readings" class="">
+            <h3><i class="icon-document"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Required Reading (Before Class)</h3>
+            <p class="whitespace-normal break-words">Skim the following <strong>before</strong> Lecture 11 to preview ROS 2 configuration and orchestration (parameters, launch files, and executors):</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Lecture 11 page</strong> on the course documentation site: <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture11/l11_index.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture11/l11_index.html</a> <em>(placeholder &mdash; replace with the published Read the Docs URL)</em></li>
+                <li class="whitespace-normal break-words"><strong>ROS 2: Using parameters in a class (C++)</strong>: <a class="underline" href="https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-CPP.html" target="_blank" rel="noopener">docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-CPP.html</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

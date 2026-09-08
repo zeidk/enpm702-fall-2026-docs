@@ -1,0 +1,70 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Welcome to ENPM702: Introductory Robot Programming!</strong></h2>
+        </div>
+        <div id="kl_objectives" class="">
+            <p class="whitespace-normal break-words">Hello everyone, and welcome to <strong>ENPM702: Introductory Robot Programming</strong>! I'm excited to have you in the course. Over the semester we will build a solid foundation in modern <strong>C++</strong> and then apply it to <strong>ROS 2</strong> robotics development, working all the way up to a complete robot autonomy stack.</p>
+            <p class="whitespace-normal break-words">Our first class meets on <strong>Tuesday, September 1</strong>. To make sure we can hit the ground running, please complete the steps below <strong>before the first lecture</strong>. The development-environment setup is done on your own as self-study so that we can spend class time on the material itself.</p>
+            <h3><i class="far fa-handshake-o" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> First, Introduce Yourself</h3>
+            <p class="whitespace-normal break-words">I'd love to learn a little about you. Please post a short introduction on our class discussion board: tell us your background, your experience with C++/Linux/robotics (no experience required!), and what you hope to get out of the course.</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">&rarr; <a title="Introduce Yourself" href="/courses/1409037/discussion_topics/6052525" data-course-type="discussions" data-published="true"><strong>Introduce yourself here</strong></a></li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Get Ready Before the First Class</h3>
+            <p class="whitespace-normal break-words">All setup instructions live on the course documentation site. Work through them there:</p>
+            <p class="whitespace-normal break-words">&rarr; <strong>Course documentation:</strong> <a class="inline_disabled" title="Link" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">https://enpm702-fall-2026-docs.readthedocs.io/en/latest/index.html</a></p>
+            <ol class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-decimal space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>Read the syllabus</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Review the grading, schedule, and course policies. <strong>Note:</strong> the syllabus PDF will be uploaded to Canvas at a later time.</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Install Ubuntu</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Install <strong>Ubuntu 24.04 LTS (Noble Numbat)</strong> &mdash; recommended &mdash; or <strong>22.04 LTS (Jammy Jellyfish)</strong>. See the <a class="underline" href="https://ubuntu.com/tutorials/install-ubuntu-desktop" target="_blank" rel="noopener">official install guide</a>.</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Set up Git and GitHub</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Create a <a class="underline" href="https://github.com" target="_blank" rel="noopener">GitHub account</a> (use a professional username) and verify your email.</li>
+                        <li class="whitespace-normal break-words">Install Git, configure your name/email, and set up SSH authentication.</li>
+                        <li class="whitespace-normal break-words">Work through the <a class="underline" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/reading_material/version_control/vc_index.html" target="_blank" rel="noopener"><strong>Version Control (Git and GitHub)</strong></a> reading module.</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Install and configure Visual Studio Code</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Install <a class="underline" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">VSCode</a> on Ubuntu.</li>
+                        <li class="whitespace-normal break-words">Install the recommended extensions: <strong>C/C++</strong>, <strong>CMake Tools</strong>, <strong>CMake</strong>, <strong>Doxygen Documentation Generator</strong>, <strong>Error Lens</strong>, and <strong>GitLens</strong>.</li>
+                        <li class="whitespace-normal break-words">Follow the <a class="underline" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/reading_material/vscode_cmake/vcm_index.html" target="_blank" rel="noopener"><strong>VSCode and CMake</strong></a> reading module to set up the <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">.vscode</code> folder and build a hello-world CMake project.</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Work through the Linux Shell module</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Complete the <a class="underline" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/reading_material/linux_shell/ls_index.html" target="_blank" rel="noopener"><strong>Linux Shell</strong></a> reading module (shell types, configuration files, aliases, and functions).</li>
+                    </ul>
+                </li>
+                <li class="whitespace-normal break-words"><strong>Clone the course C++ repository and build the Lecture 1 code</strong>
+                    <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                        <li class="whitespace-normal break-words">Clone it: <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">git clone https://github.com/zeidk/enpm702-fall-2026-cpp.git ~/enpm702-cpp</code></li>
+                        <li class="whitespace-normal break-words">Source the helper script (<code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">enpm702-cpp.sh</code>), run <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">enpm702</code>, then build with <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">702configure</code> and <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">702build</code>.</li>
+                        <li class="whitespace-normal break-words">Run the Lecture 1 executable to confirm your toolchain works: <code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">~/enpm702-cpp/build/src/lecture1/lecture1</code></li>
+                        <li class="whitespace-normal break-words">Full instructions are in the <strong>Lecture 1 Pre-Work</strong> on Canvas.</li>
+                    </ul>
+                </li>
+            </ol>
+            <h3><i class="far fa-lightbulb-o" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Good to Know</h3>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">All course code targets the <strong>C++17</strong> standard.</li>
+                <li class="whitespace-normal break-words">Each week includes <strong>shell</strong> and <strong>C++</strong> exercises &mdash; submitting them on Canvas earns <strong>participation</strong> credit.</li>
+                <li class="whitespace-normal break-words">One more reading module, <strong>Flow Control and Operations</strong>, is due <strong>before Week 3 (Sep 15)</strong>. You can start it early if you like.</li>
+                <li class="whitespace-normal break-words"><strong>No prior C++, Linux, or robotics experience is required</strong> &mdash; if you get stuck on setup, don't worry; bring your questions to the first class.</li>
+                <li class="whitespace-normal break-words">The <strong>syllabus PDF</strong> and the <strong>PDF lecture files</strong> will be uploaded to Canvas at a later time.</li>
+            </ul>
+            <h3><i class="far fa-question-circle" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Questions?</h3>
+            <p class="whitespace-normal break-words">If you run into trouble setting things up, post on the discussion board or email me. Otherwise, complete the steps above, introduce yourself, and I'll see you on <strong>September 1</strong>!</p>
+            <p class="whitespace-normal break-words">Looking forward to a great semester,</p>
+            <p class="whitespace-normal break-words"><br /><strong>Prof. Zeid Kootbally</strong></p>
+        </div>
+    </div>
+</div>

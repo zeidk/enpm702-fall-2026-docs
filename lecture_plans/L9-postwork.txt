@@ -1,0 +1,27 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar">
+        <div id="kl_banner">
+            <h2><span id="kl_banner_right">Post-Work Activities</span></h2>
+            <p><i class="icon-document" style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i><span style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);">POST-WORK Activities</span></p>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p><strong style="color: #ba372a; font-size: 1rem;">INSTRUCTORS: </strong><span style="color: #000000;">Please list any activities or assignments you want your students to complete after class this week. If you do not have any post-work planned, you can write 'No post-work due this week' or delete this submodule.</span></p>
+            </div>
+            <p class="whitespace-normal break-words">Complete the exercises below on your own machine. Full task descriptions and solutions are on the course documentation site (links in each section below, shown as placeholders &mdash; replace with the published Read the Docs URLs). Submitting your exercise solutions on Canvas counts toward your <strong>participation</strong> grade.</p>
+        </div>
+        <div id="kl_readings" class="">
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Shell Exercises</h3>
+            <p class="whitespace-normal break-words">&rarr; <strong>Shell exercises:</strong> <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_shell.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_shell.html</a></p>
+            <p class="whitespace-normal break-words">This week's shell exercises cover shell libraries, source vs. subshells, building a complete CLI tool, systemd basics, cron jobs, log rotation, and a comprehensive review (the final shell set before ROS 2). Complete them in a terminal (<code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">Ctrl + Alt + T</code>).</p>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> C++ Exercises</h3>
+            <p class="whitespace-normal break-words">&rarr; <strong>C++ exercises:</strong> <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_exercises.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_exercises.html</a></p>
+            <p class="whitespace-normal break-words">This week's C++ exercises cover basic inheritance, overriding with virtual, abstract classes with pure virtual methods, composition vs. inheritance, virtual destructors, and a shape-hierarchy challenge. Build and run them with the course C++ workspace, then submit your solutions on Canvas.</p>
+            <h3><i class="icon-document"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Required Reading (After Class)</h3>
+            <p class="whitespace-normal break-words">Read the following <strong>after</strong> Lecture 9 to reinforce advanced OOP (class relationships, polymorphism, virtual destructors, and abstract classes):</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>cppreference: virtual function specifier</strong>: <a class="underline" href="https://en.cppreference.com/w/cpp/language/virtual" target="_blank" rel="noopener">en.cppreference.com/w/cpp/language/virtual</a></li>
+                <li class="whitespace-normal break-words"><strong>cppreference: Abstract class</strong>: <a class="underline" href="https://en.cppreference.com/w/cpp/language/abstract_class" target="_blank" rel="noopener">en.cppreference.com/w/cpp/language/abstract_class</a></li>
+                <li class="whitespace-normal break-words"><strong>Lecture 9 references</strong> on the course documentation site: <a class="underline" href="https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_references.html" target="_blank" rel="noopener">https://REPLACE-ME.readthedocs.io/lectures/lecture9/l9_references.html</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

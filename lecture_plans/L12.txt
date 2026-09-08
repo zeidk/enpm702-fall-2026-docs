@@ -1,0 +1,57 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Twelve: ROS 2 Communication Patterns</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture extends the ROS 2 toolkit beyond publish-subscribe by introducing two additional communication patterns: services and actions. Services provide a synchronous request-response mechanism for quick queries and commands, while actions support long-running tasks that report incremental feedback and can be preempted. Students define custom <code>.srv</code> and <code>.action</code> interfaces, implement servers and clients in C++, and learn when each pattern is appropriate.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 12, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Distinguish the three core communication patterns: topics, services, and actions</li>
+                <li class="whitespace-normal break-words">Define custom service interfaces (<code>.srv</code> files) and build them with <code>ament_cmake</code></li>
+                <li class="whitespace-normal break-words">Implement a service server using <code>create_service</code> and handle requests in a callback</li>
+                <li class="whitespace-normal break-words">Implement a service client using <code>create_client</code> and <code>async_send_request</code></li>
+                <li class="whitespace-normal break-words">Define custom action interfaces (<code>.action</code> files) and build them with <code>ament_cmake</code></li>
+                <li class="whitespace-normal break-words">Implement an action server using <code>rclcpp_action</code> that publishes feedback and returns a result</li>
+                <li class="whitespace-normal break-words">Implement an action client that sends goals, receives feedback, and processes results asynchronously</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Communication Patterns Overview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Topics (publish-subscribe)</li>
+                <li class="whitespace-normal break-words">Services (request-response)</li>
+                <li class="whitespace-normal break-words">Actions (goal-feedback-result)</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Services</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">What is a service? Service definition (<code>.srv</code> files)</li>
+                <li class="whitespace-normal break-words">Service server and client</li>
+                <li class="whitespace-normal break-words">Service CLI tools</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Actions</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">What is an action? Action definition (<code>.action</code> files)</li>
+                <li class="whitespace-normal break-words">Action server and client</li>
+                <li class="whitespace-normal break-words">Action CLI tools</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. When to Use What</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Choosing between topics, services, and actions</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>Coordinate Frames and Transforms (TF2)</strong>; lifecycle nodes follow in Lecture 14</li>
+                <li class="whitespace-normal break-words">Complete the C++ exercises on services and actions, and the quiz</li>
+                <li class="whitespace-normal break-words">Make sure you can build and run a service and an action server/client pair</li>
+            </ul>
+        </div>
+    </div>
+</div>

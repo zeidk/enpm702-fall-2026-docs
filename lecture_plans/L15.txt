@@ -1,0 +1,65 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Fifteen: Robot Autonomy Architecture</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This is the final lecture in the course, a capstone that ties together everything from the ROS 2 lectures. Rather than introducing a new ROS 2 feature, it shows how nodes, topics, services, actions, parameters, launch files, TF2, and lifecycle nodes compose into an autonomy architecture, a standard way of organizing perception, decision-making, and control. It also shows where Artificial Intelligence and Machine Learning fit into a robotic system.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 15, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Describe the <strong>Sense-Plan-Act</strong> paradigm and the autonomy cycle</li>
+                <li class="whitespace-normal break-words">Map an autonomy architecture onto ROS 2 nodes and communication patterns</li>
+                <li class="whitespace-normal break-words">Identify the perception, decision, and control layers in a robotic system</li>
+                <li class="whitespace-normal break-words">Explain <strong>where AI and ML fit</strong> and why the decision layer's implementation is interchangeable</li>
+                <li class="whitespace-normal break-words">Recognize how trained models are integrated for inference in C++ (OpenCV DNN, ONNX Runtime, LibTorch), conceptually</li>
+                <li class="whitespace-normal break-words">Distinguish reactive, deliberative, and hybrid architectures, and name common ROS 2 frameworks (Nav2, BehaviorTree.CPP)</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. The Sense-Plan-Act Paradigm</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The autonomy cycle</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Mapping the Architecture to ROS 2</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Nodes and communication patterns as building blocks</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. The Three Layers as ROS 2 Nodes</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Perception, decision, and control layers</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Where AI and Machine Learning Fit</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">The decision and perception layers</li>
+                <li class="whitespace-normal break-words">Integrating trained models for inference in C++</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. A Concrete Example</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">A reactive decision node</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Architectural Styles</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Reactive, deliberative, and hybrid architectures</li>
+                <li class="whitespace-normal break-words">Common frameworks: Nav2, BehaviorTree.CPP</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">7. Coordinating the System</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Bringing the components together into a working stack</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">8. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">This is the <strong>final lecture</strong>; you now have all the tools needed for the remaining assignments</li>
+                <li class="whitespace-normal break-words">The autonomy architecture is the conceptual frame for the <strong>Group Projects</strong> (the TurtleBot3 system is a Sense-Plan-Act stack)</li>
+                <li class="whitespace-normal break-words">Review TF2 (Lecture 13) and lifecycle nodes (Lecture 14), especially before <strong>GP3</strong></li>
+                <li class="whitespace-normal break-words">Work through the exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>

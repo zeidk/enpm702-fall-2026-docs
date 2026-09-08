@@ -1,0 +1,60 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Nine: OOP Advanced</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture covers advanced object-oriented programming in C++. Building on the OOP fundamentals from Lecture 8, it explores how classes relate through association, aggregation, composition, and inheritance, then introduces compile-time and runtime polymorphism with <code>virtual</code> methods, <code>override</code>, and <code>= default</code>. It examines virtual destructors, abstract classes with pure virtual methods, and the <code>final</code> keyword.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 9, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Understand class relationships: association, aggregation, composition, and inheritance</li>
+                <li class="whitespace-normal break-words">Distinguish compile-time vs. runtime polymorphism and use <code>virtual</code> methods</li>
+                <li class="whitespace-normal break-words">Apply the <code>override</code>, <code>= default</code>, and <code>final</code> keywords correctly</li>
+                <li class="whitespace-normal break-words">Choose between <code>auto</code> and explicit base types for polymorphic objects</li>
+                <li class="whitespace-normal break-words">Implement <code>virtual</code> destructors to prevent resource leaks</li>
+                <li class="whitespace-normal break-words">Create abstract classes with pure <code>virtual</code> methods and concrete implementations</li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. Class Relationships</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Association, aggregation, composition</li>
+                <li class="whitespace-normal break-words">Inheritance: types, access, and constructors</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Polymorphism</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Compile-time polymorphism (method redefinition)</li>
+                <li class="whitespace-normal break-words">Runtime polymorphism and the <code>virtual</code> keyword</li>
+                <li class="whitespace-normal break-words">Polymorphic collections, slicing, and the <code>override</code> keyword</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Destructors</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">What a destructor does</li>
+                <li class="whitespace-normal break-words">Virtual destructors and inheritance; <code>= default</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Abstraction</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">When to use abstract classes</li>
+                <li class="whitespace-normal break-words">Pure virtual methods (<code>= 0</code>)</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. Concrete Classes and the <code>final</code> Keyword</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Concrete classes</li>
+                <li class="whitespace-normal break-words">Preventing inheritance and method overriding with <code>final</code></li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>ROS 2 Foundations</strong> (architecture, publisher/subscriber, custom interfaces, packages and nodes)</li>
+                <li class="whitespace-normal break-words">Complete the shell exercises (the final set before ROS 2), the C++ exercises, and the quiz</li>
+                <li class="whitespace-normal break-words">Make sure your ROS 2 installation is complete and working</li>
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar">
+        <div id="kl_banner">
+            <h2><span id="kl_banner_right">Post-Work Activities</span></h2>
+            <p><i class="icon-document" style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i><span style="font-family: 'Lato Extended', Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1.5em; color: var(--ic-brand-font-color-dark);">POST-WORK Activities</span></p>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p><strong style="color: #ba372a; font-size: 1rem;">INSTRUCTORS: </strong><span style="color: #000000;">Please list any activities or assignments you want your students to complete after class this week. If you do not have any post-work planned, you can write 'No post-work due this week' or delete this submodule.</span></p>
+            </div>
+            <p class="whitespace-normal break-words">Complete the exercises below on your own machine. Full task descriptions and solutions are on the course documentation site (links in each section below, shown as placeholders &mdash; replace with the published Read the Docs URLs). Submitting your exercise solutions on Canvas counts toward your <strong>participation</strong> grade.</p>
+        </div>
+        <div id="kl_readings" class="">
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Shell Exercises</h3>
+            <p class="whitespace-normal break-words">&rarr; <a class="inline_disabled" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/lectures/lecture2/l2_shell.html" target="_blank" rel="noopener"><strong>Shell exercises</strong></a></p>
+            <p class="whitespace-normal break-words">This week's shell exercises cover environment variables, the PATH, file permissions, find/grep, process management, command substitution, and writing your first shell scripts (including building a C++ program from a script). Complete them in a terminal (<code class="bg-text-200/5 border border-0.5 border-border-300 text-danger-000 whitespace-pre-wrap rounded-[0.4rem] px-1 py-px text-[0.9rem]">Ctrl + Alt + T</code>).</p>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> C++ Exercises</h3>
+            <p class="whitespace-normal break-words">&rarr; <a class="inline_disabled" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/lectures/lecture2/l2_exercises.html" target="_blank" rel="noopener"><strong>C++ exercises</strong></a></p>
+            <p class="whitespace-normal break-words">This week's C++ exercises cover variable declarations and initialization, type conversion, constants and constexpr, scope, namespaces, and a unit-converter challenge. Build and run them with the course C++ workspace, then submit your solutions on Canvas.</p>
+            <h3><i class="icon-document"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Required Reading (After Class)</h3>
+            <p class="whitespace-normal break-words">Read the following <strong>after</strong> Lecture 2 to reinforce the fundamentals of C++ (variables, types, constants, scopes, and namespaces):</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><strong>cppreference: Declarations</strong>: <a class="underline" href="https://en.cppreference.com/w/cpp/language/declarations" target="_blank" rel="noopener">en.cppreference.com/w/cpp/language/declarations</a></li>
+                <li class="whitespace-normal break-words"><strong>C++ Core Guidelines: Expressions and statements</strong>: <a class="underline" href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-expr" target="_blank" rel="noopener">isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-expr</a></li>
+                <li class="whitespace-normal break-words"><a class="inline_disabled" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/lectures/lecture2/l2_references.html" target="_blank" rel="noopener"><strong>Lecture 2 references</strong></a> on the course documentation site</li>
+            </ul>
+            <h3><i class="icon-document"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Required Reading (Before Week 3)</h3>
+            <p class="whitespace-normal break-words">Per the syllabus, work through the <a class="inline_disabled" href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/reading_material/flow_control/fc_index.html" target="_blank" rel="noopener"><strong>Flow Control and Operations</strong></a> self-study reading module (conditionals, loops, and operators) <strong>before Week 3 (Sep 15)</strong>, when Pointers and Memory Management is covered in class and <strong>RWA1 is posted</strong>.</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+<div id="dp-wrapper" class="dp-wrapper">
+    <div id="kl_wrapper_3" class="kl_basic_bar kl_wrapper">
+        <div id="kl_banner">
+            <h2><strong>Week Four: STL Containers</strong></h2>
+            <div class="dp-action-item dp-action-item-block dp-action-item-note" style="display: none;" aria-hidden="false">
+                <p>INSTRUCTORS: Here is a space for you to introduce your students to the general topic for the week. You may talk about how the topic this week relates to the previous week's topic or just overview what you will be talking about this week. It doesn't need to be long, just let your students know what they will be learning this week!</p>
+                <p>You may also want to list your learning objectives for the week. By doing this, it helps you stay on track, but it also lets your students know what they are supposed to know/be able to do by the end of the class session. If they cannot do these things by the end of the week/class session, then they will know to ask questions for clarification.</p>
+                <p>Lastly, consider adding an agenda that outlines what students are supposed to do this week. This is particularly helpful to asynchronous online students.</p>
+            </div>
+            <p>&nbsp;</p>
+            <h3 id="kl_objectives"></h3>
+        </div>
+        <div id="kl_objectives" class="">
+            <h3><i class="icon-rubric-dark"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i>Unit Objectives</h3>
+            <p>This lecture covers the Standard Template Library (STL) containers, strings, arrays, and vectors. Students learn about container memory management, access and modification patterns, and iterators. By understanding how the STL organizes and manages data, students can choose the right container for a task and use it effectively.</p>
+            <p class="whitespace-normal break-words">By the end of Lecture 4, students will be able to:</p>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Describe the STL and its role in the C++ Standard Library, including the four categories of containers</li>
+                <li class="whitespace-normal break-words">Distinguish C-style strings from <code>std::string</code> and explain why <code>std::string</code> is preferred</li>
+                <li class="whitespace-normal break-words">Perform common string operations: initialization, concatenation, insertion, removal, and searching</li>
+                <li class="whitespace-normal break-words">Compare <code>std::array</code> with C-style arrays and use multidimensional arrays</li>
+                <li class="whitespace-normal break-words">Use <code>std::vector</code> for dynamic arrays with automatic memory management</li>
+                <li class="whitespace-normal break-words">Use iterators to traverse containers and understand the iterator abstraction</li>
+                <li class="whitespace-normal break-words">Explain container memory management: capacity, size, <code>reserve()</code>, and <code>shrink_to_fit()</code></li>
+            </ul>
+            <h3><i class="far fa-clipboard" aria-hidden="true"><span class="dp-icon-content" style="display: none;">&nbsp;</span></i> Agenda&nbsp;</h3>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">1. The STL and Containers</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Overhead and the Standard Library</li>
+                <li class="whitespace-normal break-words">Categories of containers and why to use them</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">2. Strings</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">C-style strings vs. <code>std::string</code></li>
+                <li class="whitespace-normal break-words">Initialization, length, access, and modification</li>
+                <li class="whitespace-normal break-words">Small String Optimization (SSO), iterators, concatenation, insert/remove</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">3. Arrays</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Declaration, initialization, and array length</li>
+                <li class="whitespace-normal break-words">C-style arrays and pointers</li>
+                <li class="whitespace-normal break-words">Multidimensional arrays</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">4. Vectors</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Memory management, initialization, access, and modification</li>
+                <li class="whitespace-normal break-words">Insertion (<code>push_back</code>, <code>emplace_back</code>, <code>insert</code>, <code>emplace</code>)</li>
+                <li class="whitespace-normal break-words">Deletion (<code>pop_back</code>, <code>erase</code>, <code>clear</code>) and capacity growth</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">5. Maps</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words"><code>std::map</code> and <code>std::unordered_map</code></li>
+                <li class="whitespace-normal break-words">Use cases in robotics (e.g., sensor registry)</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">6. STL Algorithms</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Common algorithms</li>
+                <li class="whitespace-normal break-words">Combining algorithms with lambdas</li>
+            </ul>
+            <h4 class="text-lg font-bold text-text-100 mt-1 -mb-1.5">7. Next Steps and Assignment Preview</h4>
+            <ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7">
+                <li class="whitespace-normal break-words">Next lecture: <strong>Functions Basics</strong> (parameters, return types, overloading, default arguments)</li>
+                <li class="whitespace-normal break-words">Complete the shell and C++ exercises and take the quiz</li>
+            </ul>
+        </div>
+    </div>
+</div>
