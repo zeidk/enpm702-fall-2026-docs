@@ -127,7 +127,7 @@ Input
 .. seealso::
 
    **What if the user types something that is not a number?**
-   ``std::cin >> age`` can fail, and it can also *partially* succeed --
+   ``std::cin >> age`` can fail, and it can also *partially* succeed:
    ``3.7`` into an ``int`` gives you ``3`` and leaves ``.7`` in the
    buffer, with the stream still reporting success. That, and the two
    standard ways to handle it, are covered in the self-study reading
@@ -165,10 +165,10 @@ that changes how every later ``bool`` is rendered.
    affects output written somewhere else.
 
    The two headers are not an arbitrary split. Manipulators taking **no
-   argument** — ``boolalpha``, ``noboolalpha``, ``fixed``,
-   ``scientific``, ``defaultfloat``, ``hex`` — live in ``<ios>`` and
-   arrive with ``<iostream>``. Those taking an **argument** —
-   ``setprecision``, ``setw``, ``setfill`` — need ``<iomanip>``. Without
+   argument** (``boolalpha``, ``noboolalpha``, ``fixed``,
+   ``scientific``, ``defaultfloat``, ``hex``) live in ``<ios>`` and
+   arrive with ``<iostream>``. Those taking an **argument**
+   (``setprecision``, ``setw``, ``setfill``) need ``<iomanip>``. Without
    it you get ``error: 'setprecision' is not a member of 'std'``.
 
 .. note::
@@ -261,7 +261,7 @@ behave differently later in this lecture.
 
 .. figure:: /_static/images/l2/segments.png
    :align: center
-   :alt: A single horizontal band, titled "Virtual address space -- each segment is a contiguous run of 4 KiB pages", running from low addresses on the left to high addresses on the right. Nine coloured segments sit side by side and are labelled, in order: reserved, .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free space is drawn with a dashed grey outline; every other segment has a solid coloured outline.
+   :alt: A single horizontal band, titled "Virtual address space, where each segment is a contiguous run of 4 KiB pages", running from low addresses on the left to high addresses on the right. Nine colored segments sit side by side and are labelled, in order: reserved, .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free space is drawn with a dashed grey outline; every other segment has a solid colored outline.
 
    The virtual address space of a process. Each segment is a contiguous
    run of 4 KiB pages. **Free space** is unmapped: the heap and the
@@ -328,10 +328,10 @@ fixed by **how you declare it**, not by where you use it.
 
 .. figure:: /_static/images/l2/memory_layout_lifetime.png
    :align: center
-   :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colours the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
+   :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colors the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
 
-   The same address space, coloured by **storage duration**. ``.text``
-   is coloured static, but it holds machine code, not objects.
+   The same address space, colored by **storage duration**. ``.text``
+   is colored static, but it holds machine code, not objects.
 
 .. list-table:: The three storage durations you will meet in this course.
    :widths: 18 22 60
@@ -351,7 +351,7 @@ fixed by **how you declare it**, not by where you use it.
        block. Ordinary locals and parameters.
    * - **Dynamic**
      - Heap
-     - from ``new`` until it is released. You choose both ends —
+     - from ``new`` until it is released. You choose both ends, and
        Lecture 3.
 
 C++ defines a fourth, ``thread_local``, which this course does not use.
@@ -374,7 +374,7 @@ function call gets one **stack frame**, and that call's parameters and
 locals live in it.
 
 - A local is created when control reaches its **declaration**, and
-  destroyed at the **closing brace** of its block — in **reverse order**
+  destroyed at the **closing brace** of its block, in **reverse order**
   of creation.
 - You write no code for either step. That is what **automatic** means.
 - Frames are strictly **last in, first out**: the frame entered most
@@ -434,7 +434,7 @@ name".
        the number.
    * - 1954
      - **SOAP** for the IBM 650 (Stan Poley)
-     - Symbolic names — and it also chose where to put each instruction
+     - Symbolic names. It also chose where to put each instruction
        on the spinning drum, work done by hand until then.
    * - 1957
      - **FORTRAN** (Backus, IBM)
@@ -448,7 +448,7 @@ name".
 
    **Why it had to change.** With absolute addresses, inserting one
    instruction shifts every address below it, and you renumber each
-   reference by hand — with no warning if you miss one.
+   reference by hand, with no warning if you miss one.
 
    **This never went away.** Adding one line to a two-line ``main()``
    today still moves every later instruction; compile two versions and
@@ -814,7 +814,7 @@ initialization" is the name you will see in most tutorials.
 
    ``std::cout`` omits digits after the decimal point when they add
    nothing. ``std::fixed`` forces fixed-point notation, and
-   ``std::setprecision`` (from ``<iomanip>``) sets the digit budget —
+   ``std::setprecision`` (from ``<iomanip>``) sets the digit budget,
    **significant digits normally, digits after the point once**
    ``std::fixed`` **is in effect**. The same ``setprecision(3)`` gives
    ``3.14`` on its own and ``3.142`` under ``std::fixed``.
@@ -973,8 +973,8 @@ notation wherever signed and unsigned values are compared.
 
    1     // int
    1u    // unsigned int
-   12L   // long           -- a size suffix
-   12uL  // unsigned long  -- the two combine
+   12L   // long, a size suffix
+   12uL  // unsigned long, the two combine
 
 
 Size Modifiers
@@ -1015,7 +1015,7 @@ therefore its range.
    Since C++20 the minimum widths are in the standard itself, in
    ``[basic.fundamental]/4`` and its Table 12; the ordering is
    ``[basic.fundamental]/1``. Every **exact** size is
-   implementation-defined (``[expr.sizeof]/1``) — the one fixed size in the
+   implementation-defined (``[expr.sizeof]/1``). It is the one fixed size in the
    language is ``sizeof(char)``, which is ``1`` by definition.
 
    When you need an **exact** width, use the fixed-width types from
@@ -1092,7 +1092,7 @@ Double quotes make a **string literal**, which is a different type.
 **Why it is an** *integral* **type.** A ``char`` **is** a small integer.
 It stores the numeric **character code**, so ``'a'`` is just another way
 to write ``97``. It therefore obeys the integer rules and **promotes to**
-``int`` in arithmetic — which is why ``letter + 1`` gives ``98``, not
+``int`` in arithmetic, which is why ``letter + 1`` gives ``98``, not
 ``b``. Only ``std::cout`` treats it specially: it prints the **glyph**.
 Ask for the number with ``static_cast<int>``.
 
@@ -1192,7 +1192,7 @@ Precision and Range
 ^^^^^^^^^^^^^^^^^^^
 
 The **precision** of a floating-point type is the number of
-**significant decimal digits** it can carry -- *not* the number of
+**significant decimal digits** it can carry, *not* the number of
 digits after the decimal point.
 
 .. card::
@@ -1516,7 +1516,7 @@ the same family**: integral to integral, floating-point to
 floating-point. It never loses information.
 
 .. list-table:: **Every** promotion in C++20. Integral promotions are
-   ``[conv.prom]/1``–``/6``; floating-point promotion is
+   ``[conv.prom]/1`` to ``/6``; floating-point promotion is
    ``[conv.fpprom]/1``. There are no others.
    :widths: 34 52 14
    :header-rows: 1
@@ -1530,7 +1530,7 @@ floating-point. It never loses information.
      - /6
    * - ``char``, ``signed char``, ``unsigned char``, ``char8_t``,
        ``short``, ``unsigned short``
-     - ``int`` — or ``unsigned int``, if ``int`` cannot represent every
+     - ``int``, or ``unsigned int`` if ``int`` cannot represent every
        value of the source type
      - /1
    * - ``char16_t``, ``char32_t``, ``wchar_t``
@@ -1555,7 +1555,7 @@ floating-point. It never loses information.
    ``uint_least32_t`` and a 32-bit ``int`` cannot hold every value.
 
    **Anything not in this table is a numeric conversion**, not a
-   promotion — including ``double`` to ``long double`` and ``int`` to
+   promotion, including ``double`` to ``long double`` and ``int`` to
    ``double``.
 
 .. code-block:: cpp
@@ -1994,7 +1994,7 @@ Given this ``main.cpp``:
    }
 
 Both ``#define`` lines are **gone**, and with them every trace of the
-names ``PI`` and ``SQUARE`` — which is why a debugger can never show them
+names ``PI`` and ``SQUARE``, which is why a debugger can never show them
 back to you. Your ``main()`` is otherwise untouched, blank lines aside.
 The double evaluation of ``i++`` is now plainly visible.
 
@@ -2002,7 +2002,7 @@ The double evaluation of ``i++`` is now plainly visible.
 
    Try this on your own file. Note that with ``#include`` directives
    present, ``main.i`` becomes tens of thousands of lines, because every
-   header is pasted in — which is its own lesson about what ``#include``
+   header is pasted in, which is its own lesson about what ``#include``
    costs. Search the file rather than reading it.
 
 
@@ -2238,8 +2238,8 @@ uninitialized variables hold garbage.
 Global Scope
 ^^^^^^^^^^^^
 
-Variables declared outside every function have **namespace scope** —
-specifically the **global namespace** — which is why they are informally
+Variables declared outside every function have **namespace scope**,
+specifically the **global namespace**, which is why they are informally
 called **global** variables. They are visible from their point of
 declaration to the end of the file. By convention they go at the top,
 below the ``#include`` directives and above any code.
@@ -2270,7 +2270,7 @@ below the ``#include`` directives and above any code.
 .. important::
 
    ``::name``, **with nothing on its left**, is the scope resolution
-   operator naming the **global namespace** — exactly as ``std::cout``
+   operator naming the **global namespace**, exactly as ``std::cout``
    names ``std``. It is how you reach a global that a local is hiding.
 
    Note that ``-Wall -Wextra`` says **nothing** about that shadowing.
@@ -2494,6 +2494,122 @@ namespace each name came from:
    exactly where the name comes from.
 
 
+Type Deduction
+==============
+
+``auto`` asks the compiler to work out a variable's type from its
+initializer. The type is still fixed, still checked, and still decided at
+compile time. The only thing that changes is who writes it down.
+
+.. code-block:: cpp
+
+   auto count{10};       // int
+   auto ratio{2.5};      // double
+   auto initial{'A'};    // char
+   auto ready{true};     // bool
+
+.. important::
+
+   ``auto`` needs an initializer. There is nothing to deduce from
+   ``auto x;``, and it does not compile. In practice this is a feature:
+   an ``auto`` variable can never be uninitialized.
+
+What deduction throws away
+--------------------------
+
+Two things are dropped on the way, and both surprise people once:
+
+.. code-block:: cpp
+
+   const int limit{5};
+
+   auto copy{limit};         // int, the const is gone
+   copy = 6;                 // so this compiles
+
+   const auto kept{limit};   // const int, ask for it back
+
+The same happens to references: deducing from a reference gives you a
+**copy**, not another name for the object. When you want to bind rather
+than copy, say so:
+
+.. code-block:: cpp
+
+   std::vector<double> voltages{11.1, 11.4};
+
+   auto  value{voltages.front()};        // double, a copy
+   const auto& view{voltages.front()};   // const double&, no copy, read-only
+   auto& slot{voltages.back()};          // double&, no copy, writable
+
+   slot += 0.1;                          // changes the vector
+
+.. list-table:: What you get for each spelling.
+   :widths: 26 24 50
+   :header-rows: 1
+   :class: compact-table
+
+   * - Written
+     - Deduced
+     - Use it when
+   * - ``auto x{e};``
+     - value, no ``const``
+     - you want your own copy to work on
+   * - ``const auto x{e};``
+     - value, ``const``
+     - you want a copy nobody can change
+   * - ``auto& x{e};``
+     - reference
+     - you want to modify the original
+   * - ``const auto& x{e};``
+     - reference to ``const``
+     - you only want to read it, and it is expensive to copy
+
+When to use it
+--------------
+
+.. grid:: 1 1 2 2
+    :gutter: 3
+
+    .. grid-item-card:: Reach for ``auto``
+        :class-card: sd-border-secondary
+
+        - The type is already written on the right:
+          ``auto reading{std::stod(line)};``
+        - The type is long and says nothing:
+          container iterators, in
+          :doc:`Lecture 4 </lectures/lecture4/l4_index>`, are the case
+          that converts most people.
+        - In range-based ``for`` loops, where ``const auto&`` avoids a
+          copy per element.
+
+    .. grid-item-card:: Write the type instead
+        :class-card: sd-border-warning
+
+        - When the type is the point of the line. ``auto speed{0};``
+          hides that ``speed`` is an ``int`` and not a ``double``,
+          which is a bug waiting for the first division.
+        - For **pointers**: ``auto ptr{&value};`` compiles, but a reader
+          cannot see that ``ptr`` is a pointer.
+          :doc:`Lecture 3 </lectures/lecture3/l3_index>` comes back to
+          this.
+
+.. warning::
+
+   ``auto`` and braces interact. ``auto x{10};`` gives an ``int``, but
+   ``auto x{1, 2};`` is not a variable with two values. It is a compile
+   error, and in older compilers it quietly produced a
+   ``std::initializer_list<int>``. Use one value per ``auto``
+   declaration and the question never arises.
+
+.. seealso::
+
+   The C++ Core Guidelines put it as
+   `ES.11: Use auto to avoid redundant repetition of type names
+   <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es11-use-auto-to-avoid-redundant-repetition-of-type-names>`_.
+   The word that matters there is "redundant": ``auto`` is for types
+   the reader can already see, not for types the reader needs to be
+   told.
+
+
 Aliases
 =======
 
@@ -2539,3 +2655,112 @@ keyword creates one.
    .. code-block:: cpp
 
       using JointAngles = std::vector<std::array<double, 6>>;
+
+
+Scoped Enumerations
+===================
+
+A robot's state is one of a fixed set of possibilities: idle, moving,
+charging. Writing that as an ``int``, with ``0`` for idle and ``1`` for
+moving, compiles, and then nothing stops ``state = 47;``. An
+**enumeration** makes the set of values into a type.
+
+.. code-block:: cpp
+
+   enum class RobotState { idle, moving, charging };
+
+   RobotState state{RobotState::idle};
+   state = RobotState::moving;      // OK
+   // state = 1;                    // error: no conversion from int
+
+The enumerators are ``RobotState::idle``, ``RobotState::moving`` and
+``RobotState::charging``. Underneath they are ``0``, ``1`` and ``2``, but
+the type keeps that detail where it belongs.
+
+Why ``class``, and why it matters
+---------------------------------
+
+``enum class`` is the **scoped** enumeration. The older unscoped
+``enum`` is still legal and still a trap:
+
+.. list-table::
+   :widths: 26 37 37
+   :header-rows: 1
+   :class: compact-table
+
+   * -
+     - ``enum class`` (scoped)
+     - ``enum`` (unscoped)
+   * - Enumerator names
+     - Live inside the type: ``RobotState::idle``
+     - Leak into the enclosing scope: plain ``idle``
+   * - Two enums, one name
+     - Fine, ``Color::red`` and ``LedState::red`` never meet
+     - **Collision**: both declare ``red`` in the same scope
+   * - Converts to ``int``
+     - Only with ``static_cast``
+     - Silently, anywhere a number is expected
+   * - Use it
+     - Always
+     - Only when someone else's API hands you one
+
+.. code-block:: cpp
+
+   enum class Color { red, green };
+   enum class LedState { red, off };     // fine: red is scoped to each type
+
+   // enum Color2 { red, green };
+   // enum LedState2 { red, off };       // error: red declared twice
+
+The absence of a silent conversion is a feature: it is what stops a
+state from being compared against a speed, or added to a loop counter.
+When you really need the number, for printing it or counting with it,
+ask for it:
+
+.. code-block:: cpp
+
+   std::cout << static_cast<int>(RobotState::charging) << '\n';   // 2
+
+Choosing the underlying type
+----------------------------
+
+An enumeration is stored as an integral type, ``int`` by default. On a
+message that goes over a network or a serial link, say which one:
+
+.. code-block:: cpp
+
+   #include <cstdint>
+
+   enum class Speed : std::uint8_t { slow = 1, fast = 200 };
+
+   std::cout << sizeof(Speed) << '\n';        // 1
+   std::cout << sizeof(RobotState) << '\n';   // 4
+
+Enumerators may be given explicit values, as ``Speed`` does. Without
+them, numbering starts at ``0`` and increments.
+
+.. tip::
+
+   **C++20:** ``using enum`` brings the enumerators of one enumeration
+   into the current scope, which makes a ``switch`` readable without
+   giving up the scoping everywhere else:
+
+   .. code-block:: cpp
+
+      switch (led) {
+          using enum LedColor;                    // C++20
+          case red:   std::cout << "red\n";   break;
+          case green: std::cout << "green\n"; break;
+          case blue:  std::cout << "blue\n";  break;
+      }
+
+   Keep it inside the smallest scope that needs it, here the body of the
+   ``switch``, for the same reason the course avoids
+   ``using namespace std;`` at file scope.
+
+.. note::
+
+   A scoped enumeration is the course's answer to **magic numbers**.
+   ``if (state == 1)`` needs a comment to be readable and a search to be
+   safe to change; ``if (state == RobotState::moving)`` needs neither,
+   and the compiler checks it.

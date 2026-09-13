@@ -32,8 +32,8 @@ in one table and then moves on.
      naming convention (``snake_case``) and uniform initialization.
    - Explain what happens in memory when a variable is created and read,
      and use the ``sizeof`` and ``&`` operators.
-   - Give a variable's **storage duration** -- static, automatic, or
-     dynamic -- from the way it is declared, and tell lifetime from
+   - Give a variable's **storage duration** (static, automatic, or
+     dynamic) from the way it is declared, and tell lifetime from
      scope.
    - Recognize undefined behavior, name its common sources, and enable
      the compiler warnings that catch some of it.
@@ -50,6 +50,12 @@ in one table and then moves on.
    - Reason about **blocks**, local scope, and global scope, and avoid
      naming collisions with namespaces.
    - Create type aliases with ``using``.
+   - Let the compiler deduce a type with ``auto``, and say what
+     deduction drops (top-level ``const`` and references), and how to
+     ask for them back with ``const auto&``.
+   - Define a scoped enumeration with ``enum class``, explain why the
+     enumerators do not leak or convert silently, choose an underlying
+     type, and use C++20's ``using enum`` inside a ``switch``.
    - Use the C++20 facilities that apply to this material:
      ``std::numbers`` for mathematical constants and ``std::cmp_*`` for
      safe signed/unsigned comparison.

@@ -65,7 +65,7 @@ Tuesday lectures meet as scheduled.
      - Sep 1
      - :reading:`Read: Linux Shell, VSCode & CMake, Version Control`
      - Course Introduction and Conventions
-     - Submit Lecture 1 exercises
+     -
    * - Week 2
      - Sep 8
      -
@@ -174,7 +174,7 @@ improves the codebase:
      - Due
      - Duration
      - Points
-   * - RWA1: C++ Fundamentals (Variables, Types, Pointers)
+   * - RWA1: Search-and-Rescue Drone
      - Sep 15
      - Sep 29
      - 2 weeks
@@ -293,7 +293,7 @@ deadline:
      - **Before the semester starts**
    * - Flow Control and Operations
      - Conditionals, loops, and operators.
-     - **Before Sep 15** (before RWA1 is posted)
+     - **Before Sep 15** (before Lecture 3)
    * - Exception Handling
      - Exception handling with ``try``, ``catch``, ``throw``, standard and custom exception classes, and RAII.
      - **Before Oct 13** (before Smart Pointers)

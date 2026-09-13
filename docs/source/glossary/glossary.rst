@@ -698,6 +698,16 @@ N
       ``static_cast`` for explicit narrowing.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Ownership
+      The responsibility for releasing a resource. A raw pointer records
+      no ownership: ``T*`` looks identical whether it owns a heap block,
+      merely observes one, or points at storage that has already been
+      freed. Leaks, double deletes and dangling pointers are all
+      ownership mistakes, which is why C++ expresses ownership in the
+      type instead --- ``std::unique_ptr``, ``std::shared_ptr``, or a
+      container.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
+
    new
       An operator that dynamically allocates memory on the heap at
       runtime and returns a pointer to the allocated memory. Must be
@@ -876,6 +886,15 @@ S
       characters) are stored directly inside the string object rather
       than on the heap, avoiding expensive dynamic allocation.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Sanitizer
+      Compiler instrumentation that checks a program as it runs.
+      ``-fsanitize=address`` catches use-after-free, buffer overruns and
+      leaks; ``-fsanitize=undefined`` catches undefined behavior such as
+      signed overflow and null dereference. Roughly 2x slower than an
+      uninstrumented build, against Valgrind's 20x, and the two find
+      overlapping but not identical sets of bugs.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
 
    sizeof
       A C++ operator that returns the size (in bytes) of a type or

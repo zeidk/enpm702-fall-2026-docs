@@ -1,17 +1,62 @@
 ====================================================
-RWA1: C++ Fundamentals
+RWA1: Search-and-Rescue Drone
 ====================================================
+
+.. figure:: /_static/images/rwa1/rwa1.jpeg
+   :align: center
+   :alt: A pencil sketch of a quadrotor drone flying over a mountain valley. A gimbal-mounted camera under the drone casts a grid of scan lines across the rocky ground, where a person is lying among the scrub.
+
+   A search-and-rescue drone sweeping a valley for a casualty. This is
+   the machine your program reports on. Image generated with Google
+   Gemini.
 
 Overview
 --------
 
-In this assignment you build a simple disaster-site search-and-rescue
-(SAR) simulator in pure C++. This first version models rescue robots,
-on-board sensors, and located victims using basic types, fixed-size
-arrays, pointers, pointer arithmetic, and references. There is no
-dynamic memory allocation (no ``new`` or ``delete``) and no
-object-oriented design yet. The goal is to practice foundational C++
-constructs before refactoring in later assignments.
+You are writing the on-board status program for a **search-and-rescue
+drone**. The drone holds an altitude, watches its battery, moves through
+mission phases, and records one victim it has located.
+
+Everything in this assignment comes from Lectures 1 to 3: variables and
+types, constants, scoped enumerations, pointers, references,
+const-correctness, and dynamic memory with ``new`` and ``delete``. There
+are no arrays, no containers, no functions of your own, and no classes.
+Those arrive in later lectures and later assignments.
+
+.. important::
+
+   **Posted Sep 15, due Sep 29.** Everything it asks for is covered by
+   Lecture 3, so you can start the day it is posted. It is deliberately
+   small: the whole program is a single ``main()``, about 100 lines once
+   your comments are in. If yours is growing well past that, you are
+   probably solving a problem that was not asked for.
+
+
+.. admonition:: Using AI on this assignment
+   :class: important
+
+   The course AI policy from
+   :doc:`Lecture 1 </lectures/lecture1/l1_lecture>` applies here in full.
+   In short:
+
+   * You **may** use a tool such as TerpAI, ChatGPT, Claude, Gemini or
+     Copilot to explain a concept, read a compiler error, suggest a way
+     to debug something, or review code **you have already written**.
+   * You **must** say so at the top of your ``README.md``: name the tool
+     and describe in two or three sentences what you used it for.
+     Disclosure carries no penalty. Undisclosed use is a violation of
+     the Code of Academic Integrity.
+   * You **may not** submit generated code that you cannot read,
+     explain, and change. You are responsible for every line you hand
+     in, and you may be asked to walk through any part of it and say why
+     it works and what would break it.
+
+   Two warnings specific to RWA1. These tools skew old, and memory
+   management is where that shows most: expect suggestions written for
+   C++98, along with raw arrays and habits this assignment does not
+   want. And the whole point of R2 to R4 is to find out whether *you*
+   can reason about pointers and references. Code you did not think
+   through will not survive the walkthrough.
 
 
 Learning Objectives
@@ -19,324 +64,329 @@ Learning Objectives
 
 After completing this assignment you will be able to:
 
-1. Apply variables, types, and constants in a practical context.
-2. Use pointers and pointer arithmetic to access and traverse fixed-size arrays.
-3. Apply const-correctness with pointers (a pointer to ``const``).
-4. Use references to alias and modify variables.
-5. Follow ``snake_case`` naming and uniform initialization conventions.
-6. Produce formatted console output with ``'\n'`` (not ``std::endl``).
-
-.. note::
-
-   This assignment uses **only stack memory**. You point at variables and
-   arrays that already exist; you do **not** allocate memory with
-   ``new``. Dynamic allocation and smart pointers come in later
-   assignments.
+1. Declare and initialize variables, constants, and a scoped enumeration
+   for a small robotics program.
+2. Use pointers to read and change an object you do not name directly.
+3. Apply const-correctness: choose between ``const T*`` and
+   ``T* const`` and say why.
+4. Use a reference as a second name for an object, and explain what
+   assigning to it does.
+5. Allocate an object on the heap, release it exactly once, and prove
+   with Valgrind that nothing leaked.
+6. Follow the course conventions: ``snake_case``, uniform
+   initialization, and ``'\n'`` rather than ``std::endl``.
 
 
 Requirements
 ------------
 
-.. dropdown:: R1: Search Zone Environment
-   :open:
+.. dropdown:: R1: Mission Setup
 
-   Set up the variables that describe the disaster site your robots will
-   search. These values are the "scene" for the rest of the program.
+   Declare the state of the drone and its mission.
 
-   Step by step:
-
-   1. Declare ``length`` and ``width`` as ``double`` values for the
-      search-zone dimensions, in meters.
-   2. Declare ``site_name`` as a ``std::string`` holding the building or
-      grid designation (for example, the name of a collapsed structure).
-   3. Declare ``num_sectors`` as an ``int`` recording how many sectors
-      the zone is divided into.
-   4. Declare a ``constexpr`` value for any quantity that is fixed at
-      compile time and never changes during the mission, such as the
-      maximum number of victims the registry can track. You will reuse
-      this capacity to size the array in R4, so choose a sensible
-      positive value.
-
-   Acceptance criteria:
-
-   * All five items above exist and use uniform initialization (braces).
-   * The compile-time capacity is declared with ``constexpr`` (not a
-     plain variable).
-   * Each variable has a clear, ``snake_case`` name.
-
-   The block below shows the kinds of declarations expected. Choose your
-   own values.
-
-   .. code-block:: cpp
-
-      constexpr int max_victims{200};
-      std::string site_name{"Sector 7, Collapsed Office Block"};
-      double length{90.0};
-      double width{60.0};
-      int num_sectors{12};
-
-.. dropdown:: R2: Rescue Robot Representation
-   :open:
-
-   Model each rescue robot using a small group of individual variables.
-   You do not have classes or structs yet, so every robot is described by
-   its own set of plain variables.
-
-   Each robot needs:
-
-   * ``robot_id`` (``int``): a unique identifier.
-   * ``x_position`` and ``y_position`` (``double``): the robot's
-     coordinates inside the search zone.
-   * ``battery_level`` (``double`` in the range 0 to 100): remaining
-     charge as a percentage.
-   * ``is_operational`` (``bool``): whether the robot is online and able
-     to move.
-
-   Step by step:
-
-   1. Create **at least three** robots, each with the five values above.
-   2. Give the robots **distinct** values so the output is meaningful
-      (different positions, different battery levels, and at least one
-      robot that is not operational).
-   3. Use a consistent naming scheme so it is obvious which variable
-      belongs to which robot (for example, prefix every variable for the
-      first robot with ``robot1_``).
+   1. Two limits whose values are known before the program starts and
+      never change while it runs: a maximum altitude of **120** meters
+      and a minimum safe battery percentage of **20.0**. Use these two
+      values exactly, so that every submission reports the same limits.
+      Lecture 2 gave you two ways to write a constant; pick the one that
+      fits a value the compiler already knows, and be ready to say why.
+   2. A **scoped enumeration** for the mission phase, with at least the
+      values ``idle``, ``searching``, and ``returning``. Declare a
+      variable of that type and set it to ``searching``.
+   3. The drone's telemetry, each with uniform initialization: an ``int``
+      altitude in meters, a ``double`` battery percentage, a ``double``
+      rotor speed in RPM, and a ``bool`` saying whether the drone is
+      airborne.
+   4. Use ``auto`` for **exactly one** of these declarations, choosing a
+      line where the type is already obvious from the initializer, and
+      add a comment saying why ``auto`` is reasonable there and not
+      everywhere.
 
    Acceptance criteria:
 
-   * Three or more robots are fully described.
-   * No two robots are identical.
-   * At least one robot has ``is_operational`` set to ``false`` so the
-     report in R6 can distinguish online from offline robots.
+   * The two limits are compile-time constants, not ordinary variables
+     that merely happen never to be reassigned.
+   * The phase type is a scoped enumeration, and the phase variable is
+     set using an enumerator's qualified name.
+   * Every variable uses braces and a ``snake_case`` name that says what
+     the value is.
 
-   The block below shows the variables for a single robot. Repeat the
-   pattern for the other robots with your own values.
+   R1 prints nothing on its own. Its values show up in the report in R5.
 
-   .. code-block:: cpp
+.. dropdown:: R2: Reading and Changing Telemetry Through a Pointer
 
-      // Robot 1
-      int robot1_id{1};
-      double robot1_x{0.0};
-      double robot1_y{0.0};
-      double robot1_battery{100.0};
-      bool robot1_operational{true};
+   A pointer lets one piece of code work on a value that is named
+   somewhere else. Use one here.
 
-.. dropdown:: R3: Sensor Data and Pointers
-   :open:
-
-   Each robot carries sensors. In this requirement you store sensor
-   readings in fixed-size arrays and then access them through pointers,
-   using pointer arithmetic rather than array indexing.
-
-   Step by step:
-
-   1. Create a C-style **fixed-size array** of **thermal** readings
-      (temperature in degrees Celsius) with at least 5 elements, and a
-      second C-style fixed-size array of **gas concentration** readings
-      (carbon monoxide, in ppm) with at least 5 elements. Initialize both
-      arrays with sample values.
-   2. Declare a **pointer** that points at the first element of an array.
-      Remember that the array name decays to the address of its first
-      element, so the pointer can be initialized directly from the array.
-   3. Traverse one of the arrays using **pointer arithmetic** (for
-      example, by dereferencing ``*(ptr + i)``) and print each reading
-      with its sensor index. Do **not** use array indexing such as
-      ``ptr[i]`` for this traversal; the point is to practice pointer
-      arithmetic.
-   4. **Modify** at least one reading through the pointer (write a new
-      value through the dereferenced pointer), then show that the change
-      is visible in the array.
+   1. Declare a pointer to your altitude variable. Print the value of
+      the pointer (the address it holds), the address of the variable,
+      and the object it points at. The first two must match.
+   2. The drone climbs. Add 15 meters to the altitude **through the
+      pointer**, not by naming the variable, then print the variable
+      itself to show that it changed.
+   3. Declare a second ``int`` for a target altitude, with a value
+      clearly different from the current altitude, and point the same
+      pointer at it instead. Print what it reads now. This is the
+      difference between ``ptr = ...`` and ``*ptr = ...``, so add a
+      comment saying which line does which.
+   4. Declare a **pointer to const** that reads the battery percentage.
+      Read through it and print the value. Then write the line that
+      would change the battery through that pointer, confirm that it
+      does not compile, comment it out, and explain in a comment which
+      ``const`` rejected it.
 
    Acceptance criteria:
 
-   * Two fixed-size arrays exist, each with 5 or more elements.
-   * The traversal prints every element of at least one array, labeled
-     with its index, using pointer arithmetic.
-   * At least one element is changed through the pointer, and the new
-     value appears in later output.
+   * The address printed through the pointer equals ``&altitude_m``.
+   * The altitude is changed once through the pointer and once by
+     repointing, and the comments say which is which.
+   * A ``const double*`` is used for read-only access, with the rejected
+     line left in place as a comment.
 
-   Expected console output (illustrative; your values will differ)::
+   Expected output (illustrative: your addresses will differ on every
+   run, and your values are your own):
 
-      Thermal sensor 0: 31.2 C
-      Thermal sensor 1: 36.7 C
-      ...
+   .. code-block:: text
 
-   The skeleton below shows the declarations and the pointer setup. Fill
-   in the logic where marked.
+      -- R2: telemetry through a pointer --
+      pointer holds  : 0x7ffd9f0c08f8
+      address of var : 0x7ffd9f0c08f8
+      points at      : 95 m
+      after climbing : 110 m
+      now points at  : 60 m
+      battery (read-only): 78.5 %
 
-   .. code-block:: cpp
+   The first two lines must be the same address. The last line is read
+   through the pointer to ``const``.
 
-      double thermal_readings[5]{31.2, 36.7, 29.4, 37.1, 33.8};
-      double* thermal_ptr{thermal_readings};
+.. dropdown:: R3: A Victim Record on the Heap
 
-      // TODO: traverse the array using pointer arithmetic, e.g.
-      // *(thermal_ptr + i), and print each reading with its index.
-      // Do not use array indexing (thermal_ptr[i]) here.
+   The drone locates one victim. You do not know at compile time whether
+   it will find anybody, so the record goes on the heap.
 
-      // TODO: modify at least one reading by writing through the
-      // pointer, e.g. *(thermal_ptr + k) = new_value;
+   .. admonition:: Why you use ``new`` and ``delete`` here
+      :class: important
 
-      // TODO: repeat the array, pointer, and traversal steps for the
-      // gas-concentration readings.
+      Lecture 3 says not to manage heap memory by hand, and later in the
+      course you will use tools that do it for you. In this one
+      requirement you write ``new`` and ``delete`` yourself, once, so
+      that you have done it by hand before those tools arrive.
 
-.. dropdown:: R4: Victim Registry (No Dynamic Allocation)
-   :open:
-
-   Track located victims using a **fixed-size array on the stack**. Do
-   **not** use ``new`` or ``delete``.
-
-   The registry stores the IDs of victims as they are located. Because
-   you cannot allocate memory yet, you reserve the maximum space up front
-   with a fixed-size array and track how much of it is actually used.
-
-   Step by step:
-
-   1. Declare a fixed-size array of victim IDs sized by your
-      ``constexpr`` capacity from R1, for example
-      ``int victim_ids[max_victims]``. Value-initialize it so all unused
-      entries start at zero.
-   2. Keep a separate ``int victim_count`` that records how many victims
-      have been located so far. It starts at zero.
-   3. Simulate locating several victims: for each one, store its ID in
-      the next free slot (the slot at index ``victim_count``) and then
-      increase ``victim_count`` by one. Add at least a few victims this
-      way.
-   4. Print the registry using a **pointer** and **pointer arithmetic**.
-      Iterate only over the **filled** entries (indices ``0`` up to but
-      not including ``victim_count``), never over the entire capacity, so
-      that empty slots are not printed.
+   1. Declare an ``int*`` named for the victim record and initialize it
+      to ``nullptr``. This is the state "nothing found yet".
+   2. Print whether a victim has been located, using a test on the
+      pointer itself (``if (victim_ptr)``), before anything is
+      allocated. It must report that nothing has been found, and it must
+      not dereference the pointer.
+   3. Allocate the record with ``new``, giving it a victim ID, and print
+      the ID through the pointer.
+   4. Release it with ``delete`` and set the pointer to ``nullptr`` on
+      the next line.
+   5. Run the same "has a victim been located" test again. It must now
+      report that nothing is there, without crashing. Add a comment
+      explaining what that test would have done if you had skipped
+      step 4.
 
    Acceptance criteria:
 
-   * The array is sized by the ``constexpr`` capacity, not a hard-coded
-     literal.
-   * ``victim_count`` always equals the number of IDs actually stored.
-   * The print loop visits exactly ``victim_count`` entries using pointer
-     arithmetic, and unused slots are not shown.
-   * No ``new`` or ``delete`` appears anywhere.
+   * The pointer starts as ``nullptr`` and ends as ``nullptr``.
+   * Exactly one ``new`` and exactly one ``delete`` appear in the
+     program.
+   * The pointer is never dereferenced while it is null.
+   * A comment explains why ``delete`` and ``nullptr`` belong on
+     consecutive lines.
 
-   Expected console output (illustrative; your values will differ)::
+   Expected output (illustrative):
 
-      Victim 0: 500
-      Victim 1: 501
-      ...
+   .. code-block:: text
 
-   The skeleton below shows the declarations. Fill in the logic where
-   marked.
+      -- R3: victim record --
+      before search  : no victim located
+      located victim : id 5017
+      after release  : no victim on record
 
-   .. code-block:: cpp
+   The first and third lines come from the *same* test on the pointer,
+   run before the allocation and after the release.
 
-      int victim_ids[max_victims]{};   // value-initialized, all zeros
-      int victim_count{0};
+.. dropdown:: R4: A Reference as a Second Name
 
-      // TODO: log several located victims. For each one, write its ID
-      // into victim_ids[victim_count], then increment victim_count.
-
-      int* victim_ptr{victim_ids};
-      // TODO: print only the filled entries (indices 0 .. victim_count-1)
-      // using pointer arithmetic, e.g. *(victim_ptr + i).
-
-.. dropdown:: R5: References and Const-Correctness
-   :open:
-
-   This requirement contrasts two ideas: a reference, which is an alias
-   that lets you change the original variable, and a pointer to
-   ``const``, which lets you read data but not change it through that
-   pointer.
-
-   Step by step:
-
-   1. Create **reference variables** that alias one robot's position
-      variables (its x and y coordinates). A reference must be bound to
-      an existing variable when it is declared.
-   2. Update the robot's position by assigning **through the
-      references**, not through the original variable names.
-   3. Print the original position variables afterward to demonstrate that
-      writing through a reference changed the original variables (the
-      reference and the variable name refer to the same storage).
-   4. Create a **pointer to const** (for example,
-      ``const double* read_only_ptr``) that points at the thermal
-      readings array. Read one or more values through it. Confirm for
-      yourself that an attempt to assign through this pointer, such as
-      ``*read_only_ptr = ...;``, would fail to compile; do not leave such
-      a line in your submission, but explain in a comment why it is
-      rejected.
+   1. Bind a reference to your battery percentage variable, with a name a
+      reader would understand.
+   2. Drain the battery by 12.5 through the reference, then print the
+      original variable to show that there is only one object.
+   3. Print ``&battery_pct`` and the address of the reference. Explain in
+      a comment why they are the same and what that tells you about what
+      a reference is.
+   4. Declare a second ``double`` holding a reserve battery level, then
+      assign it to the reference. Print all three values and explain in a
+      comment why the reference did **not** start naming the reserve
+      variable.
 
    Acceptance criteria:
 
-   * At least one reference is declared and bound to a robot position
-     variable.
-   * The position is updated through the reference, and the printed
-     original variable reflects that update.
-   * A pointer to ``const`` is used for read-only access to the sensor
-     data, with a comment noting that modification through it is not
-     allowed.
+   * The reference is bound when it is declared.
+   * The battery is changed through the reference, and the original
+     variable shows the change.
+   * The comment on step 4 says clearly that assignment copies a value
+     and never rebinds a reference.
 
-   The skeleton below shows the declarations. Fill in the logic where
-   marked.
+   Expected output (illustrative):
 
-   .. code-block:: cpp
+   .. code-block:: text
 
-      double& ref_x{robot1_x};
-      double& ref_y{robot1_y};
+      -- R4: the battery, by another name --
+      battery after draining 12.5: 66 %
+      address of battery_pct : 0x7ffd9f0c0908
+      address of the reference: 0x7ffd9f0c0908
+      after assigning the reserve level: battery_pct 40, reference 40, reserve 40
 
-      // TODO: update the robot's position by assigning through ref_x
-      // and ref_y (not through robot1_x / robot1_y directly).
+   Both addresses are the same address. On the last line all three
+   numbers are equal, which is the whole point: the assignment copied the
+   reserve value into the battery, and the reference still names the
+   battery.
 
-      // TODO: print robot1_x and robot1_y to show the originals changed.
+.. dropdown:: R5: Situation Report and a Clean Valgrind Run
 
-      // Read-only access: the data cannot be changed through this pointer.
-      const double* read_only_ptr{thermal_readings};
-      // TODO: read and print one or more readings through read_only_ptr.
-      // Note in a comment why "*read_only_ptr = ...;" would not compile.
-
-.. dropdown:: R6: Output
-   :open:
-
-   Bring everything together into a single, readable situation report
-   printed to the console. This report is what a rescue coordinator would
-   read at a glance, so group related information under clear headings.
-
-   Your report must include, in clearly separated sections:
-
-   1. **Search-zone information**: the site name, the dimensions (length
-      and width), the number of sectors, and the victim capacity from R1.
-   2. **Robot statuses**: for every robot, its ID, position (x and y),
-      battery level, and whether it is operational or offline. Print the
-      word "operational" or "offline" rather than a raw ``true`` or
-      ``false`` so the report reads naturally.
-   3. **Sensor readings**: all thermal readings and all gas-concentration
-      readings from R3, including any value you modified through a
-      pointer.
-   4. **Victim registry**: the located victims from R4, iterating only
-      over the filled entries.
+   1. Print one report with three labeled sections: **mission** (phase
+      and the two limits), **telemetry** (altitude, battery, rotor speed,
+      airborne or grounded), and **victim** (located or not).
+   2. Print the mission phase as readable text, not a number. A
+      ``switch`` over the enumeration is the natural way; C++20's
+      ``using enum`` inside the ``switch`` keeps it readable.
+   3. Print the airborne flag as "airborne" or "grounded", not ``1`` or
+      ``0``.
+   4. Compare the battery against ``min_battery_pct`` and print a warning
+      line when it is below the limit.
+   5. Build the project, then run the program under Valgrind and copy the
+      last lines of its output into your ``README.md``.
 
    Acceptance criteria:
 
-   * All four sections appear and are visually separated (for example,
-     with a header line before each section).
-   * Robot operational status is shown as readable text, not ``1`` or
-     ``0``.
-   * The sensor and victim output reflects the values produced in R3 and
-     R4 (for example, the modified thermal reading appears).
-   * Every newline uses ``'\n'``. Do **not** use ``std::endl``.
+   * All three sections appear, separated by a header line.
+   * No raw ``true``/``false`` or enumerator numbers appear in the
+     output.
+   * Valgrind reports ``All heap blocks were freed -- no leaks are
+     possible`` and ``ERROR SUMMARY: 0 errors``.
+   * Every newline is ``'\n'``. ``std::endl`` appears nowhere.
+
+   Expected report (illustrative: your values are your own):
+
+   .. code-block:: text
+
+      ===== MISSION =====
+      phase        : searching
+      max altitude : 120 m
+      min battery  : 20 %
+
+      ===== TELEMETRY =====
+      altitude : 110 m
+      battery  : 40 %
+      rotors   : 5400 rpm
+      state    : airborne
+      WARNING: battery below the safe minimum
+
+      ===== VICTIM =====
+      none on record
+
+   In that run the battery ended at 40 %, which is above the 20 % limit,
+   so the warning line would **not** appear. It is shown here only so you
+   can see its wording. Drain the battery further, or raise the limit,
+   to see it fire in your own program.
+
+   Run it under Valgrind once the report is right:
+
+   .. code-block:: bash
+
+      valgrind --leak-check=full <path to your built program>
+
+   The last lines you paste into ``README.md`` should look like this:
+
+   .. code-block:: text
+
+      ==12345== All heap blocks were freed -- no leaks are possible
+      ==12345== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 
 Deliverables
 ------------
 
+Submit **one zip file** on Canvas, named after the folder it contains:
+``rwa1_firstname_lastname.zip``, for example
+``rwa1_bjarne_stroustrup.zip``.
+
+The zip must contain exactly one folder, with exactly these three files
+in it and nothing else:
+
+.. code-block:: text
+
+   rwa1_firstname_lastname/
+   ├── CMakeLists.txt          # builds src/main.cpp into an executable
+   ├── README.md               # how to build and run, plus Valgrind output
+   └── src/
+       └── main.cpp            # all of your code
+
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 25 75
+   :class: compact-table
 
-   * - Item
+   * - File
      - Description
-   * - ``main.cpp``
-     - Single source file containing all code.
    * - ``CMakeLists.txt``
-     - Build configuration targeting C++20 or later.
+     - Builds ``src/main.cpp`` into an executable named ``rwa1``, with
+       ``CMAKE_CXX_STANDARD`` set to 20. Five lines is enough. Note the
+       path: the source sits in ``src/``, so the target line reads
+       ``add_executable(rwa1 src/main.cpp)``.
+   * - ``src/main.cpp``
+     - One source file, with all of your code inside ``main()``.
    * - ``README.md``
-     - Build and run instructions.
+     - How to build and run it, the last lines of your Valgrind output
+       pasted in showing no leaks and no errors, and your AI disclosure
+       if you used a tool.
+
+``src/main.cpp`` starts with a Doxygen file header and is laid out like
+this. The markers are how your work gets found when it is graded, so keep
+them and keep the requirements in this order. Everything inside the
+blocks is yours to write.
+
+.. code-block:: cpp
+
+   /**
+    * @file main.cpp
+    * @author Firstname Lastname (your_email@umd.edu)
+    * @brief RWA1: pointers, references, and dynamic memory on a
+    *        search-and-rescue drone.
+    * @version 0.1
+    * @date 2026-09-29
+    *
+    * @copyright Copyright (c) 2026
+    */
+
+   #include <iostream>
+   // TODO: add any other headers you need as you go
+
+   int main() {
+       // ===== R1: mission setup =====
+
+       // ===== R2: telemetry through a pointer =====
+
+       // ===== R3: victim record on the heap =====
+
+       // ===== R4: a reference =====
+
+       // ===== R5: situation report =====
+   }
+
+Fill in ``@author`` and ``@date`` with your own name and your submission
+date. Doxygen comments are covered properly in Lecture 5; for now, copy
+the header and fill in the fields.
+
+.. warning::
+
+   Do **not** include the ``build/`` directory, editor folders such as
+   ``.vscode/``, or the compiled executable. The project will be graded
+   by configuring and building it from your ``CMakeLists.txt``, so a
+   submission that does not configure and build cannot be graded.
 
 
 Grading Rubric
@@ -344,48 +394,104 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 15 50
+   :widths: 32 12 56
+   :class: compact-table
 
    * - Category
      - Weight
      - Criteria
    * - Correctness
-     - 40 %
-     - Program compiles, runs, and produces the required output.
-   * - Pointers and References
      - 30 %
-     - Correct use of pointers, pointer arithmetic, const-correctness,
-       and references. No dynamic allocation (no ``new`` or ``delete``).
-   * - Code Quality
+     - The program builds with no warnings under ``-Wall -Wextra`` and
+       prints the report described in R5.
+   * - Pointers and const
+     - 25 %
+     - R2 is correct: the pointer reads and writes the right object, the
+       difference between ``ptr =`` and ``*ptr =`` is demonstrated, and
+       the pointer to ``const`` is used and explained.
+   * - Dynamic memory
      - 20 %
-     - Uniform initialization, ``snake_case`` naming, ``'\n'`` usage,
-       clear variable names.
-   * - Documentation
+     - R3 is correct: one ``new``, one ``delete``, no dereference of a
+       null pointer, and a clean Valgrind run.
+   * - References
+     - 15 %
+     - R4 is correct, including the explanation that assignment does not
+       rebind a reference.
+   * - Code quality
      - 10 %
-     - README with build instructions, plus inline comments explaining
-       pointer and reference usage.
+     - The Doxygen file header is filled in, and the code uses uniform
+       initialization, ``snake_case``, names that say what the value is,
+       ``'\n'``, and comments that explain the pointer and reference
+       lines.
 
 
 Tips
 ----
 
-.. admonition:: Start Early
+.. admonition:: Write it in the order of the requirements
    :class: tip
 
-   Begin with the search-zone variables and robot representations, then
-   add the sensor arrays and the victim registry.
+   R1 to R5 are in dependency order. Get R1 printing, then add R2, and so
+   on. Build and run after each requirement rather than at the end.
 
-.. admonition:: Point Only at What Exists
+.. admonition:: The pointer questions are the assignment
    :class: tip
 
-   Every pointer in this assignment points at a variable or array that
-   already exists on the stack. You do not need ``new`` or ``delete``
-   anywhere. If you find yourself reaching for ``new``, step back: a
-   fixed-size array and a count are enough.
+   For every pointer line, be able to say out loud what the pointer holds
+   and which object you are changing. If you cannot, that line is where
+   your bug is.
 
-.. admonition:: Follow the Conventions
+.. admonition:: Run Valgrind before you submit
    :class: tip
 
-   * Use **uniform initialization**: ``int a{1};`` not ``int a = 1;``
-   * Use **snake_case**: ``battery_level`` not ``batteryLevel``
-   * Use ``'\n'`` instead of ``std::endl``
+   There is one heap allocation in this whole program, so there is no
+   excuse for a leak. ``valgrind --leak-check=full`` on your built
+   program should end with ``0 errors``.
+
+.. admonition:: Follow the conventions
+   :class: tip
+
+   * Uniform initialization: ``int count{0};``, not ``int count = 0;``
+   * ``snake_case``: ``sensor_reading``, not ``sensorReading``
+   * ``'\n'``, never ``std::endl``
+   * Pointer declarations as ``int* ptr``, one per line
+
+References
+----------
+
+The **C++ Core Guidelines** are the rules this course grades against.
+These are the ones that apply to RWA1. Read the short entry behind each
+link before you decide how to write the matching requirement.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 84
+   :class: compact-table
+
+   * - Rule
+     - Says
+   * - `ES.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es20-always-initialize-an-object>`_
+     - Always initialize an object.
+   * - `ES.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es10-declare-one-name-only-per-declaration>`_
+     - Declare one name (only) per declaration.
+   * - `Con.5 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#con5-use-constexpr-for-values-that-can-be-computed-at-compile-time>`_
+     - Use ``constexpr`` for values that can be computed at compile
+       time.
+   * - `ES.45 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es45-avoid-magic-constants-use-symbolic-constants>`_
+     - Avoid "magic constants"; use symbolic constants.
+   * - `Enum.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#enum3-prefer-class-enums-over-plain-enums>`_
+     - Prefer ``enum class`` over plain ``enum``.
+   * - `Enum.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#enum2-use-enumerations-to-represent-sets-of-related-named-constants>`_
+     - Use enumerations to represent sets of related named constants.
+   * - `ES.11 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es11-use-auto-to-avoid-redundant-repetition-of-type-names>`_
+     - Use ``auto`` to avoid redundant repetition of type names.
+   * - `ES.65 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es65-dont-dereference-an-invalid-pointer>`_
+     - Do not dereference an invalid pointer.
+   * - `R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r3-a-raw-pointer-a-t-is-non-owning>`_
+     - A raw pointer (a ``T*``) is non-owning.
+   * - `R.11 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r11-avoid-calling-new-and-delete-explicitly>`_
+     - Avoid calling ``new`` and ``delete`` explicitly.
+   * - `NL.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl10-prefer-underscore_style-names>`_
+     - Prefer ``underscore_style`` names.
+   * - `NL.19 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl19-avoid-names-that-are-easily-misread>`_
+     - Avoid names that are easily misread.

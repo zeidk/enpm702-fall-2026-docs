@@ -23,6 +23,12 @@ The RWAs progressively build a C++ application using robotics-themed
 use cases. Each RWA refactors and extends the previous one,
 demonstrating why each new C++ feature improves the codebase.
 
+.. note::
+
+   Only **RWA1** is published so far. The other rows here, and the group
+   projects below, are the plan for the semester. Each one becomes a link
+   when that assignment is released.
+
 .. list-table::
    :header-rows: 1
    :widths: 15 40 15 15 15
@@ -34,16 +40,16 @@ demonstrating why each new C++ feature improves the codebase.
      - Due
      - Duration
    * - :doc:`RWA1 <rwa1>`
-     - C++ Fundamentals (Variables, Types, Pointers)
+     - Pointers, References, and Dynamic Memory
      - Sep 15
      - Sep 29
      - 2 weeks
-   * - :doc:`RWA2 <rwa2>`
+   * - RWA2
      - STL Containers and Functions
      - Sep 29
      - Oct 13
      - 2 weeks
-   * - :doc:`RWA3 <rwa3>`
+   * - RWA3
      - Smart Pointers and OOP
      - Oct 27
      - Nov 10
@@ -66,17 +72,17 @@ in Gazebo. Each GP extends the previous deliverable.
      - Posted
      - Due
      - Duration
-   * - :doc:`GP1 <gp1>`
+   * - GP1
      - ROS 2 Pub/Sub with Gazebo
      - Nov 10
      - Nov 17
      - 1 week
-   * - :doc:`GP2 <gp2>`
+   * - GP2
      - Services, Actions, and Robot Inheritance
      - Nov 17
      - Dec 1
      - 2 weeks
-   * - :doc:`GP3 <gp3>`
+   * - GP3
      - Autonomy, Frames, Lifecycle, and a Decision Layer
      - Dec 1
      - Dec 11
@@ -89,6 +95,11 @@ in Gazebo. Each GP extends the previous deliverable.
    :titlesonly:
 
    rwa1
+
+..
+   Hidden for now. Uncomment an entry when that assignment is rewritten,
+   and restore its row in the table above.
+
    rwa2
    rwa3
    gp1
