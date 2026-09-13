@@ -478,13 +478,13 @@ why does a pointer have a type at all?
 
 .. figure:: /_static/images/l3/png/typed_pointer.png
    :align: center
-   :alt: Three rows, each showing a pointer and the bytes it reads. In every row a blue stack box holds the same address 0x…a00 and is marked sizeof(p) == 8. An arrow runs from it to the same strip of eight bytes, holding the hex values 41 through 48. The bytes the dereference reads are tinted teal: one byte for char* status_ptr, giving the character A; four for int* altitude_ptr, giving 1145258561; and eight for double* voltage_ptr, giving 1.58e+40.
+   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 41, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four bytes, 78 00 00 00, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight bytes, 33 33 33 33 33 33 26 40, reading as 11.1. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
 
-   All three pointers are **8 bytes**, because all three hold an address.
-   The type is there for the **dereference**: ``sizeof(p)`` is the size of
-   the pointer, ``sizeof(*p)`` is the size of the object it points at.
-   Holding one address in all three at once takes a cast, and only
-   ``char*`` may legally read another object's raw bytes.
+   These are the three variables from the ``sizeof`` example above, each
+   at its own address. All three pointers are **8 bytes**, because all
+   three hold an address. The type is there for the **dereference**:
+   ``sizeof(p)`` is the size of the pointer, ``sizeof(*p)`` is the size of
+   the object it points at.
 
 The type also lets the compiler stop you from mixing things up. There is
 no implicit conversion between unrelated pointer types:
@@ -971,6 +971,7 @@ On a normal system it is an immediate segmentation fault:
 .. figure:: /_static/images/l3/png/null_dereference.png
    :align: center
    :alt: A stack box named sensor holding nullptr, with a dashed arrow pointing down to an empty dashed circle containing a red cross: there is no object at the other end, so dereferencing the pointer is undefined behavior.
+   :width: 60%
 
    The arrow leads nowhere. Test the pointer before following it.
 

@@ -257,79 +257,84 @@ def f_ops():
 def f_typed():
     """Why a pointer has a type: sizeof(p) against sizeof(*p).
 
-    Drawn as three complete rows, pointer and pointee both, because the
-    figure sits right under "every pointer is 8 bytes". A bar labelled
-    "int*" next to "4 bytes" reads as "an int* is 4 bytes", which is the
-    one thing this page must not say. So each row carries both numbers,
-    in the sizeof() form the section above already uses.
+    Three real objects at three different addresses, which is the whole
+    of the legality question: each pointer points at an object of its own
+    type, so there is no cast and no aliasing anywhere in the picture.
+    The values are the ones from the sizeof example just above in the
+    notes, and the bytes are what GCC really stores for them.
 
-    The pointer boxes are Stack blue because in this deck colour means
-    segment, not type. The bytes a dereference reads are tinted teal,
-    which is no segment, so it cannot be misread as "this lives on the
-    heap".
+    The figure sits directly under "every pointer is 8 bytes", so every
+    row carries BOTH numbers in sizeof() form. A bar labelled "int*" next
+    to "4 bytes" reads as "an int* is 4 bytes", which is the one thing
+    this page must not say.
+
+    Pointer boxes are Stack blue because in this deck colour means
+    segment, not type. The pointee bytes are tinted teal, which is no
+    segment, so they cannot be misread as "this lives on the heap".
     """
     x_box, boxw = 130, 290
-    sx, cw, chh, n = 560, 56, 64, 8
-    W, H = 1300, 920
+    sx, cw, chh = 560, 56, 64
+    W, H = 1300, 900
     teal_l = "#cfe8e3"
-    resx = sx + n * cw + 36
+    resx = sx + 8 * cw + 36
     o = [txt(W / 2, 62, "every pointer is 8 bytes, whatever it points at",
              30, INK, FS, weight="600"),
          txt(W / 2, 98, "the type decides what the dereference reads, "
-                        "not how big the pointer is", 23, DIM)]
-    # 0x41..0x48 is "ABCDEFGH" in ASCII. Real bytes, so the three results
-    # are real too: verified with memcpy on the course toolchain.
-    rows = [("status_ptr", "char*", 1, "'A'"),
-            ("altitude_ptr", "int*", 4, "1145258561"),
-            ("voltage_ptr", "double*", 8, "1.58e+40")]
-    for i, (name, ptype, count, value) in enumerate(rows):
+                        "not how big the pointer is", 23, DIM),
+         txt(resx, 138, "value read", 20, FAINT, FS, anchor="start")]
+    # Byte patterns dumped with memcpy on the course toolchain (GCC 13,
+    # little-endian), not worked out by hand.
+    rows = [("status_ptr", "char*", "status", "0x7ffd…a00",
+             ["41"], "'A'"),
+            ("altitude_ptr", "int*", "altitude_m", "0x7ffd…a04",
+             ["78", "00", "00", "00"], "120"),
+            ("voltage_ptr", "double*", "voltage", "0x7ffd…a08",
+             ["33", "33", "33", "33", "33", "33", "26", "40"], "11.1")]
+    for i, (pname, ptype, oname, addr, hexes, value) in enumerate(rows):
         rtop = 150 + i * 212
         mid = rtop + 80
-        # the pointer itself: a stack variable holding an address
-        o += var_box(x_box, rtop + 20, "stack", "0x…a00", w=boxw, mono=True)
-        # the declaration, not just the name: the type is the whole point
-        o.append(txt(x_box + boxw / 2, rtop + 4, f"{ptype} {name}", 24, INK,
+        count = len(hexes)
+        end = sx + cw * count
+        # the pointer: a stack variable whose value is an address
+        o += var_box(x_box, rtop + 20, "stack", addr, w=boxw, mono=True)
+        o.append(txt(x_box + boxw / 2, rtop + 4, f"{ptype} {pname}", 24, INK,
                      FM, weight="bold"))
-        o.append(txt(x_box + boxw / 2, rtop + 170,
-                     f"sizeof({name}) == 8", 20, DIM, FM))
+        o.append(txt(x_box + boxw / 2, rtop + 170, f"sizeof({pname}) == 8",
+                     20, DIM, FM))
         o.append(arrow(x_box + boxw + 12, mid, sx - 12, mid))
-        # what the dereference reaches: the tinted bytes are the ones read
-        o.append(txt(sx, rtop + 24, f"sizeof(*{name}) == {count}", 22,
-                     TEAL, FM, anchor="start", weight="bold"))
+        # the pointee: exactly the bytes this object occupies
+        o.append(txt(sx, rtop + 24, f"sizeof(*{pname}) == {count}", 22, TEAL,
+                     FM, anchor="start", weight="bold"))
         o.append(rect(sx, rtop + 34, cw * count, 7, fill=TEAL, rx=3))
-        for k in range(n):
-            read = k < count
-            o.append(rect(sx + k * cw, rtop + 48, cw, chh,
-                          fill=teal_l if read else "#f4f4f4",
-                          stroke=TEAL if read else "#b8b8b8", sw=2))
-            o.append(txt(sx + k * cw + cw / 2, rtop + 48 + chh / 2 + 8,
-                         f"{0x41 + k:02x}", 22, INK if read else FAINT, FM,
-                         weight="bold" if read else "normal"))
-        o.append(arrow(sx + n * cw + 8, mid, resx - 6, mid, color=GREY,
-                       sw=3))
-        o.append(txt(resx + 4, mid + 8, value, 24, INK, FM, anchor="start",
+        for k, h in enumerate(hexes):
+            o.append(rect(sx + k * cw, rtop + 48, cw, chh, fill=teal_l,
+                          stroke=TEAL, sw=2))
+            o.append(txt(sx + k * cw + cw / 2, rtop + 48 + chh / 2 + 8, h,
+                         22, INK, FM, weight="bold"))
+        o.append(txt(sx, rtop + 140, f"{oname} at {addr}", 19, DIM, FM,
+                     anchor="start"))
+        if resx - end > 40:
+            o.append(line(end + 14, mid, resx - 14, mid, stroke="#c9c9c9",
+                          sw=2, dash="5 6"))
+        o.append(txt(resx, mid + 8, value, 24, INK, FM, anchor="start",
                      weight="bold"))
-        if i == len(rows) - 1:
-            for k in range(n):
-                o.append(txt(sx + k * cw + cw / 2, rtop + 48 + chh + 28,
-                             f"…a0{k:x}", 18, DIM, FM))
-    o.append(txt(W / 2, 800, "sizeof(p) is the pointer. sizeof(*p) is the "
+    o.append(txt(W / 2, 810, "sizeof(p) is the pointer. sizeof(*p) is the "
                              "object it points at.", 24, INK, FS))
-    o.append(txt(W / 2, 834, "char* may always read the raw bytes. int* and "
-                             "double* need reinterpret_cast,", 21, DIM, FS))
-    o.append(txt(W / 2, 862, "and only work if an object of that type really "
-                             "lives there.", 21, DIM, FS))
+    o.append(txt(W / 2, 846, "the boxes on the left are all the same size. "
+                             "the bytes on the right are not.", 21, DIM, FS))
     return write("typed_pointer", W, H, o,
                  "Pointer size against pointee size",
-                 "Three rows, each showing a pointer and the bytes it "
-                 "reads. In every row a blue stack box holds the same "
-                 "address 0x…a00 and is marked sizeof(p) == 8. An arrow "
-                 "runs from it to the same strip of eight bytes, holding "
-                 "the hex values 41 through 48. The bytes the dereference "
-                 "reads are tinted teal: one byte for char* status_ptr, "
-                 "giving the character A; four for int* altitude_ptr, "
-                 "giving 1145258561; and eight for double* voltage_ptr, "
-                 "giving 1.58e+40.")
+                 "Three rows, each a pointer and the object it points at. "
+                 "In every row a blue stack box holds an address and is "
+                 "marked sizeof(p) == 8, with an arrow to the bytes of its "
+                 "object, tinted teal. char* status_ptr holds 0x7ffd…a00 "
+                 "and points at status, one byte, 41, reading as the "
+                 "character A. int* altitude_ptr holds 0x7ffd…a04 and "
+                 "points at altitude_m, four bytes, 78 00 00 00, reading "
+                 "as 120. double* voltage_ptr holds 0x7ffd…a08 and points "
+                 "at voltage, eight bytes, 33 33 33 33 33 33 26 40, "
+                 "reading as 11.1. Each pointer is 8 bytes; the objects "
+                 "are 1, 4 and 8 bytes.")
 
 
 def f_where():

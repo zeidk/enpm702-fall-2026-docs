@@ -1,26 +1,293 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" version="1.1" id="address_of_deref">
-  <title>The address-of and dereference operators</title>
-  <desc>The boxes altitude_ptr and altitude_m. A teal arrow curves through the gap from altitude_m to altitude_ptr, labelled &amp;altitude_m, the address of altitude_m, which is what altitude_ptr stores. A red arrow curves the other way, labelled *altitude_ptr, the object at that address, which is altitude_m.</desc>
-  <defs><marker id="a-2f6fb5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6fb5"/></marker><marker id="a-c0392b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b"/></marker><marker id="a-555555" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/></marker><marker id="a-7d8f1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7d8f1c"/></marker><marker id="a-1f7a6c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7a6c"/></marker><marker id="a-9a9a9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9a9a9a"/></marker></defs>
-  <rect width="1400" height="620" fill="#ffffff"/>
-  <text x="700.0" y="60" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="normal" fill="#555555" text-anchor="middle">the two operators that move between the boxes</text>
-  <rect x="150" y="270" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
-  <rect x="148.75" y="268.75" width="302.5" height="44" fill="#2f6fb5"/>
-  <text x="300.0" y="301" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
-  <text x="300.0" y="361.1" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="26" font-weight="bold" fill="#1b1b1b" text-anchor="middle">0x7ffd…a04</text>
-  <text x="300.0" y="254" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_ptr</text>
-  <rect x="950" y="270" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
-  <rect x="948.75" y="268.75" width="302.5" height="44" fill="#2f6fb5"/>
-  <text x="1100.0" y="301" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
-  <text x="1100.0" y="364.6" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="36" font-weight="bold" fill="#1b1b1b" text-anchor="middle">120</text>
-  <text x="1100.0" y="254" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_m</text>
-  <path d="M 938,330.0 Q 700.0,150 462,330.0" fill="none" stroke="#1f7a6c" stroke-width="4.5" marker-end="url(#a-1f7a6c)"/>
-  <text x="700.0" y="178" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="30" font-weight="bold" fill="#1f7a6c" text-anchor="middle">&amp;altitude_m</text>
-  <text x="700.0" y="208" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#1f7a6c" text-anchor="middle">the address of altitude_m,</text>
-  <text x="700.0" y="234" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#1f7a6c" text-anchor="middle">which is what altitude_ptr stores</text>
-  <path d="M 462,374.0 Q 700.0,580 938,374.0" fill="none" stroke="#c0392b" stroke-width="4.5" marker-end="url(#a-c0392b)"/>
-  <text x="700.0" y="512" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="30" font-weight="bold" fill="#c0392b" text-anchor="middle">*altitude_ptr</text>
-  <text x="700.0" y="542" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#c0392b" text-anchor="middle">the object at that address,</text>
-  <text x="700.0" y="568" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#c0392b" text-anchor="middle">which is altitude_m</text>
+<svg
+   width="1400"
+   height="620"
+   viewBox="0 0 1400 620"
+   version="1.1"
+   id="address_of_deref"
+   sodipodi:docname="address_of_deref.svg"
+   inkscape:version="1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview19"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.48192215"
+     inkscape:cx="589.3068"
+     inkscape:cy="424.34239"
+     inkscape:window-width="1600"
+     inkscape:window-height="881"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="address_of_deref" />
+  <title
+     id="title1">The address-of and dereference operators</title>
+  <desc
+     id="desc1">The boxes altitude_ptr and altitude_m. A teal arrow curves through the gap from altitude_m to altitude_ptr, labelled &amp;altitude_m, the address of altitude_m, which is what altitude_ptr stores. A red arrow curves the other way, labelled *altitude_ptr, the object at that address, which is altitude_m.</desc>
+  <defs
+     id="defs6">
+    <marker
+       id="a-2f6fb5"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#2f6fb5"
+         id="path1" />
+    </marker>
+    <marker
+       id="a-c0392b"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#c0392b"
+         id="path2" />
+    </marker>
+    <marker
+       id="a-555555"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#555555"
+         id="path3" />
+    </marker>
+    <marker
+       id="a-7d8f1c"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#7d8f1c"
+         id="path4" />
+    </marker>
+    <marker
+       id="a-1f7a6c"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#1f7a6c"
+         id="path5" />
+    </marker>
+    <marker
+       id="a-9a9a9a"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#9a9a9a"
+         id="path6" />
+    </marker>
+  </defs>
+  <rect
+     width="1132.3219"
+     height="435.32288"
+     fill="#ffffff"
+     id="rect6"
+     x="136.46393"
+     y="120.35137"
+     style="stroke-width:0.753583" />
+  <g
+     id="g19"
+     transform="translate(2.6248631,10.065171)">
+    <rect
+       x="149.82022"
+       y="269.82022"
+       width="300.35956"
+       height="87.859558"
+       fill="#ffffff"
+       stroke="#2f6fb5"
+       stroke-width="2.14044"
+       id="rect7" />
+    <rect
+       x="148.75"
+       y="268.75"
+       width="302.5"
+       height="44"
+       fill="#2f6fb5"
+       id="rect8" />
+    <text
+       x="299.7067"
+       y="301"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="26"
+       font-weight="600"
+       fill="#ffffff"
+       text-anchor="middle"
+       id="text8"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+    <text
+       x="299.95599"
+       y="347.10001"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="26"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text9"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
+    <text
+       x="300.02933"
+       y="254"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="28"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text10"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_ptr</text>
+    <rect
+       x="949.82025"
+       y="269.82022"
+       width="300.35956"
+       height="87.859558"
+       fill="#ffffff"
+       stroke="#2f6fb5"
+       stroke-width="2.14044"
+       id="rect10" />
+    <rect
+       x="948.75"
+       y="268.75"
+       width="302.5"
+       height="44"
+       fill="#2f6fb5"
+       id="rect11" />
+    <text
+       x="1099.7067"
+       y="301"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="26"
+       font-weight="600"
+       fill="#ffffff"
+       text-anchor="middle"
+       id="text11"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+    <text
+       x="1099.8827"
+       y="346.44"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="36"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text12"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+    <text
+       x="1099.8826"
+       y="254"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="28"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text13"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m</text>
+    <path
+       d="m 938.16361,302.14836 q -238.16334,-150.05526 -476.32668,0"
+       fill="none"
+       stroke="#1f7a6c"
+       stroke-width="4.11009"
+       marker-end="url(#a-1f7a6c)"
+       id="path13" />
+    <text
+       x="700"
+       y="150"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="30px"
+       font-weight="bold"
+       fill="#1f7a6c"
+       text-anchor="middle"
+       id="text14">&amp;altitude_m</text>
+    <text
+       x="700"
+       y="180"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="21"
+       font-weight="normal"
+       fill="#1f7a6c"
+       text-anchor="middle"
+       id="text15"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the address of altitude_m,</text>
+    <text
+       x="700"
+       y="206"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="21"
+       font-weight="normal"
+       fill="#1f7a6c"
+       text-anchor="middle"
+       id="text16"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">which is what altitude_ptr stores</text>
+    <path
+       d="m 461.87127,331.88628 q 238.12858,178.68323 476.25715,0"
+       fill="none"
+       stroke="#c0392b"
+       stroke-width="4.19216"
+       marker-end="url(#a-c0392b)"
+       id="path16" />
+    <text
+       x="700"
+       y="470"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="30px"
+       font-weight="bold"
+       fill="#c0392b"
+       text-anchor="middle"
+       id="text17">*altitude_ptr</text>
+    <text
+       x="700"
+       y="500"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="21"
+       font-weight="normal"
+       fill="#c0392b"
+       text-anchor="middle"
+       id="text18"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the object at that address,</text>
+    <text
+       x="700"
+       y="526"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="21"
+       font-weight="normal"
+       fill="#c0392b"
+       text-anchor="middle"
+       id="text19"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">which is altitude_m</text>
+  </g>
 </svg>

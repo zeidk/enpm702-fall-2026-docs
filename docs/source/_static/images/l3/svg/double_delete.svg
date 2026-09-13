@@ -1,25 +1,298 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="560" viewBox="0 0 760 560" version="1.1" id="double_delete">
-  <title>A double delete</title>
-  <desc>Two stack boxes, primary and backup, both holding the same heap address 0x5591…2b0, with dashed arrows converging on one greyed heap box labelled Heap (freed). Deleting through primary and then through backup frees the same block twice.</desc>
-  <defs><marker id="a-2f6fb5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6fb5"/></marker><marker id="a-c0392b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b"/></marker><marker id="a-555555" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/></marker><marker id="a-7d8f1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7d8f1c"/></marker><marker id="a-1f7a6c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7a6c"/></marker><marker id="a-9a9a9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9a9a9a"/></marker></defs>
-  <rect width="760" height="560" fill="#ffffff"/>
-  <rect x="90" y="120" width="200" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
-  <rect x="88.75" y="118.75" width="202.5" height="44" fill="#2f6fb5"/>
-  <text x="190.0" y="151" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
-  <text x="190.0" y="209.0" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="20" font-weight="bold" fill="#1b1b1b" text-anchor="middle">0x5591…2b0</text>
-  <text x="190.0" y="104" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">primary</text>
-  <rect x="470" y="120" width="200" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
-  <rect x="468.75" y="118.75" width="202.5" height="44" fill="#2f6fb5"/>
-  <text x="570.0" y="151" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
-  <text x="570.0" y="209.0" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="20" font-weight="bold" fill="#1b1b1b" text-anchor="middle">0x5591…2b0</text>
-  <text x="570.0" y="104" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">backup</text>
-  <line x1="190.0" y1="250" x2="340.0" y2="330" stroke="#9a9a9a" stroke-width="4.5" marker-end="url(#a-9a9a9a)" stroke-dasharray="10 8"/>
-  <line x1="570.0" y1="250" x2="420.0" y2="330" stroke="#9a9a9a" stroke-width="4.5" marker-end="url(#a-9a9a9a)" stroke-dasharray="10 8"/>
-  <rect x="255.0" y="338" width="250" height="120" fill="#ececec" stroke="#9a9a9a" stroke-width="2.5" stroke-dasharray="10 8"/>
-  <rect x="253.75" y="336.75" width="252.5" height="44" fill="#9a9a9a"/>
-  <text x="380.0" y="369" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Heap (freed)</text>
-  <text x="380.0" y="432.6" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="36" font-weight="bold" fill="#8a8a8a" text-anchor="middle">88</text>
-  <text x="380.0" y="508" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="24" font-weight="normal" fill="#c0392b" text-anchor="middle">delete primary;   delete backup;</text>
-  <text x="380.0" y="538" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="23" font-weight="normal" fill="#c0392b" text-anchor="middle">the second one is undefined behavior</text>
+<svg
+   width="760"
+   height="560"
+   viewBox="0 0 760 560"
+   version="1.1"
+   id="double_delete"
+   sodipodi:docname="double_delete.svg"
+   inkscape:version="1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview18"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.3420029"
+     inkscape:cx="4.3859277"
+     inkscape:cy="-74.560771"
+     inkscape:window-width="1600"
+     inkscape:window-height="881"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="double_delete" />
+  <title
+     id="title1">A double delete</title>
+  <desc
+     id="desc1">Two stack boxes, primary and backup, both holding the same heap address 0x5591…2b0, with dashed arrows converging on one greyed heap box labelled Heap (freed). Deleting through primary and then through backup frees the same block twice.</desc>
+  <defs
+     id="defs6">
+    <marker
+       id="a-2f6fb5"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#2f6fb5"
+         id="path1" />
+    </marker>
+    <marker
+       id="a-c0392b"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#c0392b"
+         id="path2" />
+    </marker>
+    <marker
+       id="a-555555"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#555555"
+         id="path3" />
+    </marker>
+    <marker
+       id="a-7d8f1c"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#7d8f1c"
+         id="path4" />
+    </marker>
+    <marker
+       id="a-1f7a6c"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#1f7a6c"
+         id="path5" />
+    </marker>
+    <marker
+       id="a-9a9a9a"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#9a9a9a"
+         id="path6" />
+    </marker>
+  </defs>
+  <rect
+     width="628.42218"
+     height="451.81378"
+     fill="#ffffff"
+     id="rect6"
+     x="71.837166"
+     y="58.943008"
+     style="stroke-width:0.816779" />
+  <g
+     id="g18"
+     transform="translate(6.0482559,10.265892)">
+    <rect
+       x="89.820541"
+       y="119.82054"
+       width="200.35892"
+       height="87.858925"
+       fill="#ffffff"
+       stroke="#2f6fb5"
+       stroke-width="2.14107"
+       id="rect7" />
+    <rect
+       x="88.75"
+       y="118.75"
+       width="202.5"
+       height="44"
+       fill="#2f6fb5"
+       id="rect8" />
+    <text
+       x="190"
+       y="151"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="26"
+       font-weight="600"
+       fill="#ffffff"
+       text-anchor="middle"
+       id="text8"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+    <text
+       x="190"
+       y="195"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="20"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text9"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x5591…2b0</text>
+    <text
+       x="190"
+       y="104"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="28"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text10"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:32px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">primary</text>
+    <rect
+       x="469.82053"
+       y="119.82053"
+       width="200.35893"
+       height="87.858925"
+       fill="#ffffff"
+       stroke="#2f6fb5"
+       stroke-width="2.14107"
+       id="rect10" />
+    <rect
+       x="468.75"
+       y="118.75"
+       width="202.5"
+       height="44"
+       fill="#2f6fb5"
+       id="rect11" />
+    <text
+       x="570"
+       y="151"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="26"
+       font-weight="600"
+       fill="#ffffff"
+       text-anchor="middle"
+       id="text11"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+    <text
+       x="570.29333"
+       y="195"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="20"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text12"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x5591…2b0</text>
+    <text
+       x="570"
+       y="104"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="28"
+       font-weight="bold"
+       fill="#1b1b1b"
+       text-anchor="middle"
+       id="text13"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:32px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">backup</text>
+    <line
+       x1="190"
+       y1="212"
+       x2="340"
+       y2="292"
+       stroke="#9a9a9a"
+       stroke-width="4.5"
+       marker-end="url(#a-9a9a9a)"
+       stroke-dasharray="10, 8"
+       id="line13" />
+    <line
+       x1="570"
+       y1="212"
+       x2="420"
+       y2="292"
+       stroke="#9a9a9a"
+       stroke-width="4.5"
+       marker-end="url(#a-9a9a9a)"
+       stroke-dasharray="10, 8"
+       id="line14" />
+    <rect
+       x="254.82034"
+       y="299.82034"
+       width="250.3593"
+       height="87.859306"
+       fill="#ececec"
+       stroke="#9a9a9a"
+       stroke-width="2.1407"
+       stroke-dasharray="10, 8"
+       id="rect14" />
+    <rect
+       x="253.75"
+       y="298.75"
+       width="252.5"
+       height="44"
+       fill="#9a9a9a"
+       id="rect15" />
+    <text
+       x="380"
+       y="331"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="26"
+       font-weight="600"
+       fill="#ffffff"
+       text-anchor="middle"
+       id="text15"
+       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#ffffff">Heap (freed)</text>
+    <text
+       x="380"
+       y="374.60001"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="36"
+       font-weight="bold"
+       fill="#8a8a8a"
+       text-anchor="middle"
+       id="text16"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#8a8a8a">88</text>
+    <text
+       x="382.22934"
+       y="428"
+       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+       font-size="24"
+       font-weight="normal"
+       fill="#c0392b"
+       text-anchor="middle"
+       id="text17"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#c0392b">delete primary; delete backup;</text>
+    <text
+       x="380.01465"
+       y="470"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="23"
+       font-weight="normal"
+       fill="#c0392b"
+       text-anchor="middle"
+       id="text18"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#c0392b">the second one is undefined behavior</text>
+  </g>
 </svg>
