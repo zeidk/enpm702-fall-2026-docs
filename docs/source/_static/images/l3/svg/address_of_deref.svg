@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" version="1.1" id="address_of_deref">
+  <title>The address-of and dereference operators</title>
+  <desc>The boxes altitude_ptr and altitude_m. A teal arrow curves through the gap from altitude_m to altitude_ptr, labelled &amp;altitude_m, the address of altitude_m, which is what altitude_ptr stores. A red arrow curves the other way, labelled *altitude_ptr, the object at that address, which is altitude_m.</desc>
+  <defs><marker id="a-2f6fb5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6fb5"/></marker><marker id="a-c0392b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b"/></marker><marker id="a-555555" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/></marker><marker id="a-7d8f1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7d8f1c"/></marker><marker id="a-1f7a6c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7a6c"/></marker><marker id="a-9a9a9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9a9a9a"/></marker></defs>
+  <rect width="1400" height="620" fill="#ffffff"/>
+  <text x="700.0" y="60" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="normal" fill="#555555" text-anchor="middle">the two operators that move between the boxes</text>
+  <rect x="150" y="270" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
+  <rect x="148.75" y="268.75" width="302.5" height="44" fill="#2f6fb5"/>
+  <text x="300.0" y="301" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
+  <text x="300.0" y="361.1" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="26" font-weight="bold" fill="#1b1b1b" text-anchor="middle">0x7ffd…a04</text>
+  <text x="300.0" y="254" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_ptr</text>
+  <rect x="950" y="270" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
+  <rect x="948.75" y="268.75" width="302.5" height="44" fill="#2f6fb5"/>
+  <text x="1100.0" y="301" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
+  <text x="1100.0" y="364.6" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="36" font-weight="bold" fill="#1b1b1b" text-anchor="middle">120</text>
+  <text x="1100.0" y="254" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_m</text>
+  <path d="M 938,330.0 Q 700.0,150 462,330.0" fill="none" stroke="#1f7a6c" stroke-width="4.5" marker-end="url(#a-1f7a6c)"/>
+  <text x="700.0" y="178" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="30" font-weight="bold" fill="#1f7a6c" text-anchor="middle">&amp;altitude_m</text>
+  <text x="700.0" y="208" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#1f7a6c" text-anchor="middle">the address of altitude_m,</text>
+  <text x="700.0" y="234" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#1f7a6c" text-anchor="middle">which is what altitude_ptr stores</text>
+  <path d="M 462,374.0 Q 700.0,580 938,374.0" fill="none" stroke="#c0392b" stroke-width="4.5" marker-end="url(#a-c0392b)"/>
+  <text x="700.0" y="512" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="30" font-weight="bold" fill="#c0392b" text-anchor="middle">*altitude_ptr</text>
+  <text x="700.0" y="542" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#c0392b" text-anchor="middle">the object at that address,</text>
+  <text x="700.0" y="568" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="21" font-weight="normal" fill="#c0392b" text-anchor="middle">which is altitude_m</text>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="540" viewBox="0 0 1400 540" version="1.1" id="pointer_anatomy">
+  <title>A pointer and the object it points to</title>
+  <desc>Two variable boxes on the stack. The left box, named altitude_ptr, holds the address 0x7ffd…a04 and itself sits at address 0x7ffd…9f8. The right box, named altitude_m, holds the value 120 and sits at address 0x7ffd…a04. A blue arrow runs from altitude_ptr to altitude_m, labelled points to.</desc>
+  <defs><marker id="a-2f6fb5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6fb5"/></marker><marker id="a-c0392b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c0392b"/></marker><marker id="a-555555" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/></marker><marker id="a-7d8f1c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7d8f1c"/></marker><marker id="a-1f7a6c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f7a6c"/></marker><marker id="a-9a9a9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#9a9a9a"/></marker></defs>
+  <rect width="1400" height="540" fill="#ffffff"/>
+  <text x="700.0" y="78" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="29" font-weight="bold" fill="#1b1b1b" text-anchor="middle">int altitude_m{120};    int* altitude_ptr{&amp;altitude_m};</text>
+  <rect x="180" y="230" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
+  <rect x="178.75" y="228.75" width="302.5" height="44" fill="#2f6fb5"/>
+  <text x="330.0" y="261" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
+  <text x="330.0" y="321.1" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="26" font-weight="bold" fill="#1b1b1b" text-anchor="middle">0x7ffd…a04</text>
+  <text x="330.0" y="214" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_ptr</text>
+  <text x="330.0" y="382" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="21" font-weight="normal" fill="#555555" text-anchor="middle">0x7ffd…9f8</text>
+  <rect x="900" y="230" width="300" height="120" fill="#ffffff" stroke="#2f6fb5" stroke-width="2.5"/>
+  <rect x="898.75" y="228.75" width="302.5" height="44" fill="#2f6fb5"/>
+  <text x="1050.0" y="261" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="26" font-weight="600" fill="#ffffff" text-anchor="middle">Stack</text>
+  <text x="1050.0" y="324.6" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="36" font-weight="bold" fill="#1b1b1b" text-anchor="middle">120</text>
+  <text x="1050.0" y="214" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#1b1b1b" text-anchor="middle">altitude_m</text>
+  <text x="1050.0" y="382" font-family="'Fira Mono', 'DejaVu Sans Mono', monospace" font-size="21" font-weight="normal" fill="#555555" text-anchor="middle">0x7ffd…a04</text>
+  <line x1="492" y1="312.0" x2="888" y2="312.0" stroke="#2f6fb5" stroke-width="4.5" marker-end="url(#a-2f6fb5)"/>
+  <text x="690.0" y="290.0" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="24" font-weight="normal" fill="#2f6fb5" text-anchor="middle">points to</text>
+  <text x="330.0" y="452" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="normal" fill="#8a8a8a" text-anchor="middle">a pointer is a variable: it has its own</text>
+  <text x="330.0" y="480" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="normal" fill="#8a8a8a" text-anchor="middle">address, and its value is another address</text>
+  <text x="1050.0" y="452" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="normal" fill="#8a8a8a" text-anchor="middle">the object being pointed at;</text>
+  <text x="1050.0" y="480" font-family="'Fira Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="normal" fill="#8a8a8a" text-anchor="middle">it does not know about the pointer</text>
+</svg>

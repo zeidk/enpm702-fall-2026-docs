@@ -39,7 +39,7 @@ Three storage durations, one manual
 Lecture 2 gave you the three storage durations, and the map they live
 on:
 
-.. figure:: /_static/images/l2/memory_layout_lifetime.png
+.. figure:: /_static/images/l3/png/memory_layout_lifetime.png
    :align: center
    :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colors the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
 
@@ -132,7 +132,7 @@ What a Pointer Is
 A pointer is a variable that holds an address. It is a variable in the
 full sense: it has a type, a value, a size, and an address of its own.
 
-.. figure:: /_static/images/l3/pointer_anatomy.png
+.. figure:: /_static/images/l3/png/pointer_anatomy.png
    :align: center
    :alt: Two variable boxes on the stack. The left box, named altitude_ptr, holds the address 0x7ffd…a04 and itself sits at address 0x7ffd…9f8. The right box, named altitude_m, holds the value 120 and sits at address 0x7ffd…a04. A blue arrow runs from altitude_ptr to altitude_m, labelled points to.
 
@@ -272,7 +272,7 @@ The Address-of and Dereference Operators
 Two operators move between an object and its address, in opposite
 directions.
 
-.. figure:: /_static/images/l3/address_of_deref.png
+.. figure:: /_static/images/l3/png/address_of_deref.png
    :align: center
    :alt: The boxes altitude_ptr and altitude_m. A teal arrow curves through the gap from altitude_m to altitude_ptr, labelled &altitude_m, the address of altitude_m, which is what altitude_ptr stores. A red arrow curves the other way, labelled *altitude_ptr, the object at that address, which is altitude_m.
 
@@ -476,13 +476,15 @@ Typed Pointers
 If all pointers are the same size and all hold the same kind of value,
 why does a pointer have a type at all?
 
-.. figure:: /_static/images/l3/typed_pointer.png
+.. figure:: /_static/images/l3/png/typed_pointer.png
    :align: center
-   :alt: A strip of eight bytes at consecutive addresses. Above it, three colored bars all start at the same first byte: a teal bar one byte wide labelled char* status, a blue bar four bytes wide labelled int* altitude, and a red bar eight bytes wide labelled double* voltage.
+   :alt: Three rows, each showing a pointer and the bytes it reads. In every row a blue stack box holds the same address 0x…a00 and is marked sizeof(p) == 8. An arrow runs from it to the same strip of eight bytes, holding the hex values 41 through 48. The bytes the dereference reads are tinted teal: one byte for char* status_ptr, giving the character A; four for int* altitude_ptr, giving 1145258561; and eight for double* voltage_ptr, giving 1.58e+40.
 
-   The type is not there for the address. It is there for the
-   **dereference**: it says how many bytes to read, and how to interpret
-   them.
+   All three pointers are **8 bytes**, because all three hold an address.
+   The type is there for the **dereference**: ``sizeof(p)`` is the size of
+   the pointer, ``sizeof(*p)`` is the size of the object it points at.
+   Holding one address in all three at once takes a cast, and only
+   ``char*`` may legally read another object's raw bytes.
 
 The type also lets the compiler stop you from mixing things up. There is
 no implicit conversion between unrelated pointer types:
@@ -657,7 +659,7 @@ Nothing so far required the heap. A pointer can just as happily point at
 an ordinary local variable, and most of the pointers you will write in
 this course do.
 
-.. figure:: /_static/images/l3/pointee_location.png
+.. figure:: /_static/images/l3/png/pointee_location.png
    :align: center
    :alt: Two rows. In the top row, int altitude_m{120}; int* altitude_ptr{&altitude_m}; draws a stack pointer box with a blue arrow to a named stack box holding 120. In the bottom row, int* battery_pct{new int{88}}; draws the same pointer with a red arrow to an unnamed heap box holding 88.
 
@@ -707,7 +709,7 @@ The ``new`` Operator
 3. yields the **address** of that object, which is what ``battery_pct``
    stores.
 
-.. figure:: /_static/images/l3/new_delete.png
+.. figure:: /_static/images/l3/png/new_delete.png
    :align: center
    :alt: Three numbered stages. One: int* battery_pct{new int{88}}; a stack box named battery_pct holds a heap address and a red arrow points to a live heap box holding 88. Two: delete battery_pct; the heap box is greyed and labelled freed, and the arrow is dashed and labelled dangling. Three: battery_pct = nullptr; the pointer holds nullptr and there is no arrow.
 
@@ -902,7 +904,7 @@ Memory leaks
 A **memory leak** is allocated storage that nothing points at any more.
 It is not freed, and it cannot be freed.
 
-.. figure:: /_static/images/l3/memory_leak.png
+.. figure:: /_static/images/l3/png/memory_leak.png
    :align: center
    :alt: A greyed-out stack box named battery_pct, labelled Stack (gone) because its scope has ended, with a dashed arrow down to a live heap box holding 88. The arrow is crossed out: the block is still allocated and nothing points at it any more.
 
@@ -943,7 +945,7 @@ pointers and one honest mistake:
    primary = nullptr;
    delete backup;          // UB: this block was freed a moment ago
 
-.. figure:: /_static/images/l3/double_delete.png
+.. figure:: /_static/images/l3/png/double_delete.png
    :align: center
    :alt: Two stack boxes, primary and backup, both holding the same heap address 0x5591…2b0, with dashed arrows converging on one greyed heap box labelled Heap (freed). Deleting through primary and then through backup frees the same block twice.
 
@@ -966,7 +968,7 @@ On a normal system it is an immediate segmentation fault:
    int* sensor{nullptr};
    std::cout << *sensor << '\n';   // UB
 
-.. figure:: /_static/images/l3/null_dereference.png
+.. figure:: /_static/images/l3/png/null_dereference.png
    :align: center
    :alt: A stack box named sensor holding nullptr, with a dashed arrow pointing down to an empty dashed circle containing a red cross: there is no object at the other end, so dereferencing the pointer is undefined behavior.
 
@@ -1369,7 +1371,7 @@ it
 passes or stores an **address**, which behaves exactly like an
 ``int* const``: pointer-sized, and never repointed.
 
-.. figure:: /_static/images/l3/reference_memory.png
+.. figure:: /_static/images/l3/png/reference_memory.png
    :align: center
    :alt: Two panels. On the left, what the language says: a single stack box holding 120 with two names above it, altitude_m and alt, joined by a brace, and the notes &alt is &altitude_m and sizeof(alt) is sizeof(int). On the right, what GCC emitted: in a Debug build at -O0 an unnamed greyed-out eight-byte stack slot holds the address 0x7ffd…00c, exactly like an int* const; in a Release build at -O2 there is no slot at all, drawn as an empty dashed box with a cross through it.
 
@@ -1450,7 +1452,7 @@ will not be modified.
 Pointers vs. References
 =======================
 
-.. figure:: /_static/images/l3/pointer_vs_reference.png
+.. figure:: /_static/images/l3/png/pointer_vs_reference.png
    :align: center
    :alt: On the left, int* altitude_ptr{&altitude_m}; draws two stack boxes joined by an arrow: altitude_ptr holds the address of altitude_m, which holds 120. On the right, int& alt{altitude_m}; draws a single stack box holding 120 with two names above it, altitude_m and alt, joined to the box by a brace.
 
