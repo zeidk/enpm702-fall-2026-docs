@@ -435,6 +435,35 @@ you test it, and it is ``false`` exactly when the pointer is null.
       them as map keys, say), use ``std::less<int*>``, which is required
       to provide one.
 
+    .. code-block:: cpp
+
+       #include <functional>   // std::less
+
+       int altitude_m{120};
+       int battery_pct{88};        // an unrelated object
+
+       int* alt_ptr{&altitude_m};
+       int* bat_ptr{&battery_pct};
+
+       // unspecified: it compiles and produces an answer that means nothing
+       bool guess{alt_ptr < bat_ptr};
+
+       // well defined: a real order, and the same one every time you ask
+       bool ordered{std::less<int*>{}(alt_ptr, bat_ptr)};
+
+    Both lines produce a ``bool``, and on a given run they may well agree.
+    The difference is that only the second one is *promised* to: ``<`` on
+    pointers into unrelated objects has no meaning the standard will stand
+    behind, so nothing stops it from answering differently after a
+    recompile. ``std::less<int*>`` is specialized to give a strict total
+    order over **all** ``int*`` values, whatever they point at.
+
+    This is also why the ordered containers work on pointer keys: a
+    ``std::map<int*, T>`` compares its keys with ``std::less<int*>`` by
+    default, not with ``<``, so the container is on firm ground even
+    though writing ``<`` yourself would not be. Lecture 4 covers the
+    containers themselves.
+
 Size of a Pointer
 -----------------
 
@@ -470,6 +499,8 @@ The first line is the size of the three **pointers**; the second is the
 size of the three **objects** they point to. ``sizeof(p)`` never tells
 you anything about the object at the other end.
 
+.. _l3-typed-pointers:
+
 Typed Pointers
 --------------
 
@@ -478,13 +509,91 @@ why does a pointer have a type at all?
 
 .. figure:: /_static/images/l3/png/typed_pointer.png
    :align: center
-   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 41, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four bytes, 78 00 00 00, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight bytes, 33 33 33 33 33 33 26 40, reading as 11.1. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
+   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
 
    These are the three variables from the ``sizeof`` example above, each
    at its own address. All three pointers are **8 bytes**, because all
    three hold an address. The type is there for the **dereference**:
    ``sizeof(p)`` is the size of the pointer, ``sizeof(*p)`` is the size of
    the object it points at.
+
+.. card::
+    :class-card: sd-border-info sd-shadow-sm
+
+    **Byte order: little-endian and big-endian**
+
+    A one-byte object has nothing to arrange. An object of two bytes or
+    more does: its bytes sit at consecutive addresses, and **byte order**,
+    or **endianness**, is the question of which end goes first.
+
+    Take ``int mission_id{16909060};``, whose four bytes are all
+    different:
+
+    .. list-table:: One ``int``, two possible arrangements.
+       :widths: 34 16 16 16 16
+       :header-rows: 1
+       :class: compact-table
+
+       * - stored at
+         - ``…a04``
+         - ``…a05``
+         - ``…a06``
+         - ``…a07``
+       * - **little-endian**
+         - ``0000 0100``
+         - ``0000 0011``
+         - ``0000 0010``
+         - ``0000 0001``
+       * - **big-endian**
+         - ``0000 0001``
+         - ``0000 0010``
+         - ``0000 0011``
+         - ``0000 0100``
+
+    - **Little-endian** puts the **least** significant byte at the
+      **lowest** address. Every machine in this course is little-endian,
+      which is why ``altitude_m`` in the figure above begins with
+      ``0111 1000`` (that is 120) and is followed by three zero bytes,
+      rather than the other way round.
+    - **Big-endian** puts the **most** significant byte first, which is
+      the order you would write the number on paper. The internet
+      protocols specify it, so it is also called **network byte order**.
+
+    The names come from *Gulliver's Travels*, where a war is fought over
+    which end of a boiled egg to crack. That is the point: neither order
+    is better, and each machine has simply picked one.
+
+    **Does it change what your program computes?** No. Inside one program
+    on one machine you reach an object through its type, and the compiler
+    arranges the bytes the way its target expects. ``altitude_m`` is 120
+    whatever the byte order is. Endianness becomes visible only when raw
+    bytes cross a boundary:
+
+    - **Looking at memory directly**, in a debugger's memory view or a
+      hex dump. The bytes appear in address order, so a little-endian
+      ``int`` reads backwards, and 120 shows up as ``78 00 00 00``
+      instead of ``00 00 00 78``. (That is **hexadecimal**: two hex
+      digits are exactly one byte, so ``78`` is the ``0111 1000`` drawn
+      above. It is the notation every debugger uses, because eight bits
+      per byte gets unreadable quickly.)
+    - **Moving bytes between machines**, over a network or through a
+      binary file that one machine writes and another reads.
+    - **Reading an object's bytes through a different pointer type**,
+      which is how most endianness bugs actually get written.
+
+    C++20 lets you ask the question in the language itself, with
+    ``<bit>``:
+
+    .. code-block:: cpp
+
+       #include <bit>
+
+       // prints 1 on every machine used in this course
+       std::cout << (std::endian::native == std::endian::little) << '\n';
+
+    You are not asked to *handle* byte order in ENPM702. You are asked to
+    recognize it, so that a debugger showing ``78 00 00 00`` for the value
+    120 looks correct rather than broken.
 
 The type also lets the compiler stop you from mixing things up. There is
 no implicit conversion between unrelated pointer types:
@@ -521,6 +630,128 @@ no implicit conversion between unrelated pointer types:
    .. code-block:: bash
 
       ./week3 | c++filt -t
+
+Pointer Arithmetic
+------------------
+
+The type decides how much ``*ptr`` reads. It decides one more thing: how
+far ``ptr + 1`` moves. Adding ``1`` to a pointer does **not** mean "one
+byte later". It means **one object later**, so the compiler scales the
+step by ``sizeof(*ptr)``:
+
+.. code-block:: cpp
+
+   int altitude_m{120};
+   double voltage{11.1};
+
+   int* alt_ptr{&altitude_m};
+   double* volt_ptr{&voltage};
+
+   std::cout << alt_ptr << '\n';       // 0x7ffd…a24
+   std::cout << alt_ptr + 1 << '\n';   // 0x7ffd…a28, four bytes on
+   std::cout << volt_ptr << '\n';      // 0x7ffd…a28
+   std::cout << volt_ptr + 1 << '\n';  // 0x7ffd…a30, eight bytes on
+
+.. list-table:: ``+ 1`` moves by one object, and objects are not the same size.
+   :widths: 26 20 54
+   :header-rows: 1
+   :class: compact-table
+
+   * - Pointer
+     - ``sizeof(*p)``
+     - ``p + 1`` lands
+   * - ``char*``
+     - 1
+     - 1 byte on
+   * - ``int*``
+     - 4
+     - 4 bytes on
+   * - ``double*``
+     - 8
+     - 8 bytes on
+
+This is the figure from :ref:`Typed Pointers <l3-typed-pointers>` read
+from the other side. There, the type said how many bytes a dereference
+*reads*; here, the same number says how far a step *moves*. Both come
+from ``sizeof(*p)``, which is why a pointer that has lost its type has
+lost both.
+
+The rest of the arithmetic follows from that one rule. ``++p`` and
+``p += 1`` advance one object, ``--p`` and ``p -= 1`` go back one, and
+subtracting two pointers gives a count of **objects, not bytes**:
+
+.. code-block:: cpp
+
+   std::cout << (alt_ptr + 1) - alt_ptr << '\n';   // 1, not 4
+
+.. note::
+
+   ``std::cout << p`` prints an address for every pointer type except
+   ``char*``, which the stream treats as the start of a C-string and
+   tries to print as text. That is a Lecture 4 topic; for now, just know
+   that ``char*`` is the one type where printing a pointer does not show
+   you a pointer.
+
+What is legal on a single object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For the purposes of arithmetic, a lone variable counts as an array of
+one element. That gives exactly two positions you are allowed to name:
+
+- ``alt_ptr``, the object itself.
+- ``alt_ptr + 1``, the **one-past-the-end** position. You may form it and
+  compare with it. You may **not** dereference it.
+
+.. danger::
+
+   Everything beyond those two is undefined behaviour, and **none of it
+   is a compile error**:
+
+   .. code-block:: cpp
+
+      int altitude_m{120};
+      int* alt_ptr{&altitude_m};
+
+      std::cout << *(alt_ptr + 1) << '\n';   // UB: reading past the object
+      int* far{alt_ptr + 2};                 // UB: even forming this
+      int battery_pct{88};
+      &battery_pct - alt_ptr;                // UB: unrelated objects
+
+   ``*(alt_ptr + 1)`` is the dangerous one, because it *works*. Compiled
+   normally it prints whatever happens to sit next on the stack:
+
+   .. code-block:: text
+
+      433613372
+
+   No warning, no crash, a plausible-looking number, and a different
+   answer tomorrow. Built with ``-fsanitize=address`` that same
+   ``*(alt_ptr + 1)`` says what is really going on:
+
+   .. code-block:: text
+
+      ERROR: AddressSanitizer: stack-buffer-overflow
+      READ of size 4 at 0x711a76d00024
+
+   This is exactly the case the sanitizers section below exists for.
+
+   ``&battery_pct - alt_ptr`` is the same rule you met in **Comparing
+   pointers** above: arithmetic between pointers into *unrelated* objects
+   has no meaning, whether you subtract them or compare them with ``<``.
+
+.. note::
+
+   **Why this section is short.** On a single variable, pointer
+   arithmetic is all rules and no use: there is nowhere to go and nothing
+   to find. It earns its keep when the objects it steps through are
+   genuinely laid out one after another in memory, which is what an
+   **array** is. :doc:`Lecture 4 </lectures/lecture4/l4_index>` introduces
+   arrays and ``std::vector``, and there ``p + 1``, ``++p`` and
+   ``p2 - p1`` stop being trivia and become how you walk a container.
+   What you need from this section is the *scaling* rule, because that is
+   the part students get wrong later: ``p + 1`` moves by
+   ``sizeof(*p)`` bytes, never by one.
+
 
 Const-Correctness
 -----------------
@@ -613,44 +844,65 @@ through it, and repoint it. Each ``const`` takes one of them away.
 .. admonition:: Discussion 1 (in class): Who is ``const`` for?
    :class: important
 
-   A function can take a robot's pose in four ways:
+   A flight controller has one altitude reading, and several parts of the
+   code need to get at it. Here are four ways to hand it out:
 
    .. code-block:: cpp
 
-      void log_pose(Pose pose);               // a copy
-      void log_pose(Pose* pose);              // a pointer
-      void log_pose(const Pose* pose);        // a pointer to const
-      void log_pose(const Pose& pose);        // a reference to const
+      int altitude_m{120};
+      int target_alt_m{80};
+
+      int altitude_copy{altitude_m};            // 1. a copy
+      int* altitude_ctrl{&altitude_m};          // 2. a pointer
+      const int* altitude_view{&altitude_m};    // 3. a pointer to const
+      int* const altitude_fixed{&altitude_m};   // 4. a const pointer
 
    All four compile. Discuss with the person next to you:
 
-   1. Which of the four can modify the caller's ``Pose``? Which of them
-      *says so in the signature*, before you read the body?
-   2. ``Pose`` is, say, 64 bytes. Which ones copy it?
-   3. Which one can be handed "no pose at all", and which cannot?
-   4. Someone argues that ``const`` is pointless because they simply will
+   1. Which of the four can set ``altitude_m`` to 90? Which of them can
+      be made to refer to ``target_alt_m`` instead? Answer both from the
+      declarations alone, without reading the code that follows them.
+   2. What does ``sizeof`` report for each? Which cost 8 bytes and which
+      costs 4?
+   3. Suppose the very next line is ``altitude_m = 118;``. Which of the
+      four report 118 afterwards, and which does not?
+   4. Which of the four can be given "no altitude at all", and which
+      cannot? When is that worth having, and when is it a nuisance?
+   5. Someone argues that ``const`` is pointless because they simply will
       not write to the object. What does the compiler give you that a
       promise does not?
 
    .. dropdown:: Talking points
       :class-container: sd-border-success
 
-      - Only ``Pose*`` can modify the caller's object without saying so.
-        ``const Pose*`` and ``const Pose&`` are read-only at that access
-        path; the copy modifies only the copy.
-      - The copy is the only one that copies 64 bytes. The other three
-        pass 8 bytes, an address, whatever the size of ``Pose``.
-      - Only the pointer forms can be null. That is a feature when
-        "no pose available" is a real state to represent, and a liability
-        when it is not, because every user then has to check.
-      - ``const`` is checked at compile time on **every** call, including
-        the ones written next semester by someone who never read your
-        promise. It also documents the interface at the only place a
-        caller reliably looks: the signature. The habit of writing
-        ``const`` where it is true is what "const-correctness" means, and
-        it is easier to start that way than to add it afterwards. ``const``
-        spreads: once one function takes a ``const`` reference, the
-        functions it calls usually have to be ``const`` too.
+      - Writing: only ``altitude_ctrl`` and ``altitude_fixed`` can do
+        ``*p = 90``. Repointing: only ``altitude_ctrl`` and
+        ``altitude_view`` can be aimed at ``target_alt_m``. Each
+        ``const`` takes away exactly one of the two, and the declaration
+        is where it says so. ``altitude_copy = target_alt_m;`` compiles,
+        but it changes only the copy: it was never a way to reach
+        anything.
+      - ``altitude_copy`` is an ``int``, so 4 bytes. All three pointers
+        are 8 bytes, whatever they point at and whatever ``const`` is
+        attached to them.
+      - All three pointers report 118. ``altitude_copy`` still reports
+        120: it was a snapshot, and it went stale the moment
+        ``altitude_m`` changed. In particular ``altitude_view`` reports
+        118, which is the point of the note above: pointer-to-const
+        restricts *this access path*, it does not promise the object
+        never changes.
+      - Only the pointers can hold ``nullptr``, so only they can
+        represent "no reading available" as a value. That is a feature
+        when absence is a real state to model, and a liability when it is
+        not, because then every single use has to be guarded first.
+      - ``const`` is checked by the compiler on **every** use, including
+        the ones written next semester by someone who never heard your
+        promise. It also records the intent in the one place a reader
+        reliably looks: the declaration. Writing ``const`` wherever it is
+        true is what **const-correctness** means, and it is much easier
+        to start that way than to add it afterwards, because ``const``
+        spreads: once an access path is ``const``, everything you reach
+        through it has to be ``const`` too.
 
 Where the Pointee Lives
 -----------------------
@@ -1107,10 +1359,16 @@ executable CMake produced:
 A ``memcheck`` target in CMake
 ------------------------------
 
-Instead of typing the Valgrind command every time, add a target to
-``CMakeLists.txt`` that runs it for you:
+Instead of typing the Valgrind command every time, add a target that runs
+it for you. It belongs in the week's own file,
+``project/week3/CMakeLists.txt``, directly under the ``add_executable``
+line, because everything in it names the ``week3`` target:
 
 .. code-block:: cmake
+   :caption: project/week3/CMakeLists.txt
+   :emphasize-lines: 1
+
+   add_executable(week3 src/main.cpp)
 
    find_program(VALGRIND_EXECUTABLE valgrind)
 
@@ -1127,9 +1385,43 @@ Instead of typing the Valgrind command every time, add a target to
            VERBATIM)
    endif()
 
-.. code-block:: bash
+Then, in the **top-level** ``CMakeLists.txt``, uncomment the line that
+brings that directory into the build:
 
-   cmake --build build --target memcheck
+.. code-block:: cmake
+   :caption: CMakeLists.txt
+
+   add_subdirectory(project/week3)
+
+``memcheck`` then shows up next to ``week3`` in the target list, and you
+run it the way you build everything else in this course:
+
+1. Open the Command Palette (``Ctrl + Shift + P``) and run
+   *CMake: Set Build Target*, then pick ``memcheck``.
+2. Run *CMake: Build*. Valgrind's report appears in the output panel,
+   and the build fails if it finds anything, because of
+   ``--error-exitcode=1``.
+3. Run *CMake: Set Build Target* once more and pick ``week3`` again.
+   Until you do, the play button (▶) and the Status Bar are still
+   pointed at ``memcheck`` rather than at your program.
+
+.. warning::
+
+   Put the ``memcheck`` block in the **week's** file, not the top-level
+   one. ``$<TARGET_FILE:week3>`` and ``DEPENDS week3`` both name a target
+   that only exists once ``project/week3`` has been added, so a copy in
+   the top-level file fails at configure time whenever
+   ``add_subdirectory(project/week3)`` is still commented out:
+
+   .. code-block:: text
+
+      CMake Error at CMakeLists.txt (add_custom_target):
+        Error evaluating generator expression:
+          $<TARGET_FILE:week3>
+
+   Keeping it in ``project/week3/CMakeLists.txt`` also means the target
+   appears exactly when that week is enabled, and each later week can
+   have its own without anyone editing the root file.
 
 ``--track-origins=yes`` is worth the slowdown: it reports where an
 uninitialized value came from, not merely that one was used.

@@ -20,13 +20,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.48192215"
-     inkscape:cx="589.3068"
-     inkscape:cy="424.34239"
-     inkscape:window-width="1600"
-     inkscape:window-height="881"
+     inkscape:zoom="1.3630817"
+     inkscape:cx="560.12784"
+     inkscape:cy="296.38723"
+     inkscape:window-width="3840"
+     inkscape:window-height="941"
      inkscape:window-x="0"
-     inkscape:window-y="32"
+     inkscape:window-y="28"
      inkscape:window-maximized="1"
      inkscape:current-layer="address_of_deref" />
   <title
@@ -116,178 +116,267 @@
   </defs>
   <rect
      width="1132.3219"
-     height="435.32288"
+     height="399.37491"
      fill="#ffffff"
      id="rect6"
      x="136.46393"
-     y="120.35137"
-     style="stroke-width:0.753583" />
+     y="133.55675"
+     style="stroke-width:0.721798" />
+  <rect
+     x="152.44508"
+     y="279.88541"
+     width="300.35956"
+     height="87.859558"
+     fill="#ffffff"
+     stroke="#2f6fb5"
+     stroke-width="2.14044"
+     id="rect7" />
+  <rect
+     x="151.37486"
+     y="278.81519"
+     width="302.5"
+     height="44"
+     fill="#2f6fb5"
+     id="rect8" />
+  <text
+     x="302.33157"
+     y="311.06519"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="26"
+     font-weight="600"
+     fill="#ffffff"
+     text-anchor="middle"
+     id="text8"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+  <text
+     x="302.58087"
+     y="357.16519"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="26"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text9"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
+  <text
+     x="302.65421"
+     y="264.06519"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="28"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text10"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.33333333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_ptr</text>
+  <rect
+     x="952.44513"
+     y="279.88541"
+     width="300.35956"
+     height="87.859558"
+     fill="#ffffff"
+     stroke="#2f6fb5"
+     stroke-width="2.14044"
+     id="rect10" />
+  <rect
+     x="951.37488"
+     y="278.81519"
+     width="302.5"
+     height="44"
+     fill="#2f6fb5"
+     id="rect11" />
+  <text
+     x="1102.3315"
+     y="311.06519"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="26"
+     font-weight="600"
+     fill="#ffffff"
+     text-anchor="middle"
+     id="text11"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+  <text
+     x="1102.5076"
+     y="356.50519"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="36"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text12"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+  <text
+     x="1102.5074"
+     y="264.06519"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="28"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text13"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.33333333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m</text>
+  <path
+     d="m 940.78847,312.21353 q -238.16334,-150.05526 -476.32668,0"
+     fill="none"
+     stroke="#1f7a6c"
+     stroke-width="4.11009"
+     marker-end="url(#a-1f7a6c)"
+     id="path13" />
+  <path
+     d="m 464.49613,341.95145 q 238.12858,178.68323 476.25715,0"
+     fill="none"
+     stroke="#c0392b"
+     stroke-width="4.19216"
+     marker-end="url(#a-c0392b)"
+     id="path16" />
+  <text
+     x="1102.5809"
+     y="398.90311"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="26"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text1"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">0x7ffd…a04</text>
   <g
-     id="g19"
-     transform="translate(2.6248631,10.065171)">
-    <rect
-       x="149.82022"
-       y="269.82022"
-       width="300.35956"
-       height="87.859558"
-       fill="#ffffff"
-       stroke="#2f6fb5"
-       stroke-width="2.14044"
-       id="rect7" />
-    <rect
-       x="148.75"
-       y="268.75"
-       width="302.5"
-       height="44"
-       fill="#2f6fb5"
-       id="rect8" />
+     id="g28"
+     transform="translate(-0.53924017,3.734966)">
     <text
-       x="299.7067"
-       y="301"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="26"
-       font-weight="600"
-       fill="#ffffff"
-       text-anchor="middle"
-       id="text8"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
-    <text
-       x="299.95599"
-       y="347.10001"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="26"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text9"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
-    <text
-       x="300.02933"
-       y="254"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="28"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text10"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_ptr</text>
-    <rect
-       x="949.82025"
-       y="269.82022"
-       width="300.35956"
-       height="87.859558"
-       fill="#ffffff"
-       stroke="#2f6fb5"
-       stroke-width="2.14044"
-       id="rect10" />
-    <rect
-       x="948.75"
-       y="268.75"
-       width="302.5"
-       height="44"
-       fill="#2f6fb5"
-       id="rect11" />
-    <text
-       x="1099.7067"
-       y="301"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="26"
-       font-weight="600"
-       fill="#ffffff"
-       text-anchor="middle"
-       id="text11"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
-    <text
-       x="1099.8827"
-       y="346.44"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="36"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text12"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
-    <text
-       x="1099.8826"
-       y="254"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="28"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text13"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m</text>
-    <path
-       d="m 938.16361,302.14836 q -238.16334,-150.05526 -476.32668,0"
-       fill="none"
-       stroke="#1f7a6c"
-       stroke-width="4.11009"
-       marker-end="url(#a-1f7a6c)"
-       id="path13" />
-    <text
-       x="700"
-       y="150"
+       x="702.62488"
+       y="160.06517"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="30px"
        font-weight="bold"
        fill="#1f7a6c"
        text-anchor="middle"
-       id="text14">&amp;altitude_m</text>
+       id="text14"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1">&amp;altitude_m</text>
+    <g
+       id="g24"
+       transform="translate(-78.684059)">
+      <text
+         x="702.62488"
+         y="190.06517"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#1f7a6c"
+         text-anchor="middle"
+         id="text15"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1f7a6c"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+           id="tspan4">the address of</tspan></text>
+      <text
+         x="863.71698"
+         y="190.39716"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#1f7a6c"
+         text-anchor="middle"
+         id="text20"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#000000;fill-opacity:1"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1"
+   id="tspan7">a</tspan><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1"
+   id="tspan8">ltitude_m</tspan>,</text>
+    </g>
+    <g
+       id="g25"
+       transform="translate(-125.24401)">
+      <text
+         x="702.62488"
+         y="216.06517"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#1f7a6c"
+         text-anchor="middle"
+         id="text16"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1f7a6c"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+           id="tspan5">which is what</tspan></text>
+      <text
+         x="870.95697"
+         y="216.37718"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#1f7a6c"
+         text-anchor="middle"
+         id="text22"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#000000;fill-opacity:1"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1"
+           id="tspan20">altitude_ptr</tspan></text>
+      <text
+         x="995.56091"
+         y="216.06517"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#1f7a6c"
+         text-anchor="middle"
+         id="text24"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1f7a6c"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+           id="tspan24">stores</tspan></text>
+    </g>
+  </g>
+  <g
+     id="g27"
+     transform="translate(-0.00456722,-14.001435)"
+     inkscape:export-filename="../png/address_of_deref.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350">
     <text
-       x="700"
-       y="180"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="21"
-       font-weight="normal"
-       fill="#1f7a6c"
-       text-anchor="middle"
-       id="text15"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the address of altitude_m,</text>
-    <text
-       x="700"
-       y="206"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="21"
-       font-weight="normal"
-       fill="#1f7a6c"
-       text-anchor="middle"
-       id="text16"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">which is what altitude_ptr stores</text>
-    <path
-       d="m 461.87127,331.88628 q 238.12858,178.68323 476.25715,0"
-       fill="none"
-       stroke="#c0392b"
-       stroke-width="4.19216"
-       marker-end="url(#a-c0392b)"
-       id="path16" />
-    <text
-       x="700"
-       y="470"
+       x="702.62488"
+       y="480.06519"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="30px"
        font-weight="bold"
        fill="#c0392b"
        text-anchor="middle"
-       id="text17">*altitude_ptr</text>
+       id="text17"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1">*altitude_ptr</text>
     <text
-       x="700"
-       y="500"
+       x="703.51019"
+       y="510.06519"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="21"
        font-weight="normal"
        fill="#c0392b"
        text-anchor="middle"
        id="text18"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the object at that address,</text>
-    <text
-       x="700"
-       y="526"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="21"
-       font-weight="normal"
-       fill="#c0392b"
-       text-anchor="middle"
-       id="text19"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">which is altitude_m</text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#c0392b">the object at that address,</text>
+    <g
+       id="g26"
+       transform="translate(-74.998733)">
+      <text
+         x="702.62488"
+         y="536.06519"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#c0392b"
+         text-anchor="middle"
+         id="text19"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#c0392b"
+         inkscape:export-filename="../png/address_of_deref.png"
+         inkscape:export-xdpi="350"
+         inkscape:export-ydpi="350">which is</text>
+      <text
+         x="825.77295"
+         y="535.89722"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="21"
+         font-weight="normal"
+         fill="#c0392b"
+         text-anchor="middle"
+         id="text25"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#000000;fill-opacity:1"
+         inkscape:export-filename="../png/address_of_deref.png"
+         inkscape:export-xdpi="350"
+         inkscape:export-ydpi="350">altitude_m</text>
+    </g>
   </g>
 </svg>

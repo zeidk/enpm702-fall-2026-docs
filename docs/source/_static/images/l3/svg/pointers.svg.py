@@ -20,7 +20,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PNGDIR = os.path.dirname(HERE)
+PNGDIR = os.path.join(os.path.dirname(HERE), "png")
 
 # --- the L2 palette, unchanged ---------------------------------------------
 FS = "'Fira Sans', Helvetica, Arial, sans-serif"
@@ -283,7 +283,8 @@ def f_typed():
                         "not how big the pointer is", 23, DIM),
          txt(resx, 138, "value read", 20, FAINT, FS, anchor="start")]
     # Byte patterns dumped with memcpy on the course toolchain (GCC 13,
-    # little-endian), not worked out by hand.
+    # little-endian), not worked out by hand. Written here in hex
+    # because that is how the dump came out; drawn as bits below.
     rows = [("status_ptr", "char*", "status", "0x7ffd…a00",
              ["41"], "'A'"),
             ("altitude_ptr", "int*", "altitude_m", "0x7ffd…a04",
@@ -309,10 +310,24 @@ def f_typed():
         for k, h in enumerate(hexes):
             o.append(rect(sx + k * cw, rtop + 48, cw, chh, fill=teal_l,
                           stroke=TEAL, sw=2))
-            o.append(txt(sx + k * cw + cw / 2, rtop + 48 + chh / 2 + 8, h,
-                         22, INK, FM, weight="bold"))
-        o.append(txt(sx, rtop + 140, f"{oname} at {addr}", 19, DIM, FM,
-                     anchor="start"))
+            # A byte is eight bits, so draw eight bits. L2 drew them this
+            # way in visualization.svg, grouped in nibbles with the
+            # all-zero bytes greyed out, and that is the only byte
+            # notation the course has taught. The two nibbles are stacked
+            # rather than side by side purely so they fit a 56px cell:
+            # same grouping L2 used, turned through ninety degrees, which
+            # costs nothing to read and saves introducing hex here.
+            bits = f"{int(h, 16):08b}"
+            ink = FAINT if h == "00" else INK
+            cx = sx + k * cw + cw / 2
+            o.append(txt(cx, rtop + 75, bits[:4], 16, ink, FM, weight="bold"))
+            o.append(txt(cx, rtop + 96, bits[4:], 16, ink, FM, weight="bold"))
+        # Byte order is invisible in a one-byte object and unmissable once
+        # the bits are on the page, so say it where it applies.
+        caption = f"{oname} at {addr}"
+        if count > 1:
+            caption += "  ·  little-endian"
+        o.append(txt(sx, rtop + 140, caption, 19, DIM, FM, anchor="start"))
         if resx - end > 40:
             o.append(line(end + 14, mid, resx - 14, mid, stroke="#c9c9c9",
                           sw=2, dash="5 6"))
@@ -328,13 +343,17 @@ def f_typed():
                  "In every row a blue stack box holds an address and is "
                  "marked sizeof(p) == 8, with an arrow to the bytes of its "
                  "object, tinted teal. char* status_ptr holds 0x7ffd…a00 "
-                 "and points at status, one byte, 41, reading as the "
-                 "character A. int* altitude_ptr holds 0x7ffd…a04 and "
-                 "points at altitude_m, four bytes, 78 00 00 00, reading "
-                 "as 120. double* voltage_ptr holds 0x7ffd…a08 and points "
-                 "at voltage, eight bytes, 33 33 33 33 33 33 26 40, "
-                 "reading as 11.1. Each pointer is 8 bytes; the objects "
-                 "are 1, 4 and 8 bytes.")
+                 "and points at status, one byte, 0100 0001, reading as "
+                 "the character A. int* altitude_ptr holds 0x7ffd…a04 and "
+                 "points at altitude_m, four little-endian bytes, "
+                 "0111 1000 then three zero bytes, reading as 120. "
+                 "double* voltage_ptr holds 0x7ffd…a08 and points at "
+                 "voltage, eight little-endian bytes, 0011 0011 repeated "
+                 "six times then 0010 0110 and 0100 0000, reading as "
+                 "11.1. Every byte is drawn as its eight bits, split into "
+                 "two nibbles on two lines, the way Lecture 2 drew them. "
+                 "Each pointer is 8 bytes; the objects are 1, 4 and 8 "
+                 "bytes.")
 
 
 def f_where():

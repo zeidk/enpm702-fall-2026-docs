@@ -20,19 +20,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.38596898"
-     inkscape:cx="626.9934"
-     inkscape:cy="822.60497"
-     inkscape:window-width="1600"
-     inkscape:window-height="881"
+     inkscape:zoom="0.77193796"
+     inkscape:cx="871.83172"
+     inkscape:cy="488.38122"
+     inkscape:window-width="3840"
+     inkscape:window-height="941"
      inkscape:window-x="0"
-     inkscape:window-y="32"
+     inkscape:window-y="28"
      inkscape:window-maximized="1"
-     inkscape:current-layer="typed_pointer" />
+     inkscape:current-layer="typed_pointer"
+     showgrid="false" />
   <title
      id="title1">Pointer size against pointee size</title>
   <desc
-     id="desc1">Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 41, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four bytes, 78 00 00 00, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight bytes, 33 33 33 33 33 33 26 40, reading as 11.1. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.</desc>
+     id="desc1">Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.</desc>
   <defs
      id="defs6">
     <marker
@@ -122,42 +123,41 @@
      x="75.135567"
      y="23.317867"
      style="stroke-width:0.888425" />
+  <text
+     x="660.89264"
+     y="62.769535"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="30"
+     font-weight="600"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text6"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">every pointer is 8 bytes, whatever it points at</text>
+  <text
+     x="660.89264"
+     y="98.769531"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="23"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="middle"
+     id="text7"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555">the type decides what the dereference reads, not how big the pointer is</text>
+  <text
+     x="1025.0975"
+     y="160.79202"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="20"
+     font-weight="normal"
+     fill="#8a8a8a"
+     text-anchor="start"
+     id="text8"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#8a8a8a">value read</text>
   <g
-     id="g44"
-     transform="translate(10.892657,0.76953357)">
-    <text
-       x="650"
-       y="62"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="30"
-       font-weight="600"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text6"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">every pointer is 8 bytes, whatever it points at</text>
-    <text
-       x="650"
-       y="98"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="23"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="middle"
-       id="text7"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555">the type decides what the dereference reads, not how big the pointer is</text>
-    <text
-       x="1044"
-       y="138"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="20"
-       font-weight="normal"
-       fill="#8a8a8a"
-       text-anchor="start"
-       id="text8"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#8a8a8a">value read</text>
+     id="g5">
     <rect
-       x="129.82025"
-       y="169.82025"
+       x="140.71291"
+       y="170.58978"
        width="290.3595"
        height="87.859512"
        fill="#ffffff"
@@ -165,83 +165,93 @@
        stroke-width="2.14049"
        id="rect8" />
     <rect
-       x="128.75"
-       y="168.75"
+       x="139.64265"
+       y="169.51953"
        width="292.5"
        height="44"
        fill="#2f6fb5"
        id="rect9" />
+  </g>
+  <text
+     x="285.59937"
+     y="201.76953"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="26"
+     font-weight="600"
+     fill="#ffffff"
+     text-anchor="middle"
+     id="text9"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+  <text
+     x="285.89267"
+     y="245.86954"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="26"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text10"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#14bb3a;fill-opacity:1"><tspan
+       style="fill:#14bb3a;fill-opacity:1"
+       id="tspan11">0x7ffd…a00</tspan></text>
+  <text
+     x="285.42334"
+     y="154.76953"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text11"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.33333333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">char* status_ptr</text>
+  <text
+     x="285.77264"
+     y="285.91949"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="20"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="middle"
+     id="text12"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(status_ptr) == 8</text>
+  <line
+     x1="442.89267"
+     y1="214.51953"
+     x2="558.89264"
+     y2="214.51953"
+     stroke="#2f6fb5"
+     stroke-width="4.5"
+     marker-end="url(#a-2f6fb5)"
+     id="line12" />
+  <g
+     id="g10"
+     transform="translate(0,-14.25)">
     <text
-       x="274.7067"
-       y="201"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="26"
-       font-weight="600"
-       fill="#ffffff"
-       text-anchor="middle"
-       id="text9"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
-    <text
-       x="275"
-       y="245.10001"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="26"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text10"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a00</text>
-    <text
-       x="274.53067"
-       y="154"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text11"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">char* status_ptr</text>
-    <text
-       x="274.87997"
-       y="285.14996"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="20"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="middle"
-       id="text12"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(status_ptr) == 8</text>
-    <line
-       x1="432"
-       y1="216"
-       x2="548"
-       y2="216"
-       stroke="#2f6fb5"
-       stroke-width="4.5"
-       marker-end="url(#a-2f6fb5)"
-       id="line12" />
-    <text
-       x="560"
-       y="174"
+       x="570.89264"
+       y="174.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1f7a6c"
        text-anchor="start"
        id="text13"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*status_ptr) == 1</text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*status_ptr) == 1</text>
     <rect
-       x="560"
-       y="184"
+       x="570.89264"
+       y="184.76953"
        width="56"
        height="7"
        fill="#1f7a6c"
        rx="3"
        id="rect13"
        ry="3" />
+  </g>
+  <g
+     id="g4"
+     transform="translate(0,-16.25)">
     <rect
-       x="560"
-       y="198"
+       x="570.89264"
+       y="198.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -249,47 +259,60 @@
        stroke-width="2"
        id="rect14" />
     <text
-       x="588"
-       y="238"
+       x="598.89264"
+       y="238.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text14"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">41</text>
-    <text
-       x="560"
-       y="290"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="19"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="start"
-       id="text15"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">status at 0x7ffd…a00</text>
-    <line
-       x1="630"
-       y1="230"
-       x2="1030"
-       y2="230"
-       stroke="#c9c9c9"
-       stroke-width="2"
-       stroke-dasharray="5, 6"
-       id="line15" />
-    <text
-       x="1044"
-       y="238"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="start"
-       id="text16"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">'A'</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="598.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan1">0100</tspan><tspan
+         x="598.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan2">0001</tspan></text>
+  </g>
+  <text
+     x="568.18597"
+     y="277.59952"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="19"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="start"
+     id="text15"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">status at <tspan
+   style="fill:#14bb3a;fill-opacity:1"
+   id="tspan10">0x7ffd…a00</tspan></text>
+  <line
+     x1="640.89264"
+     y1="214.51953"
+     x2="1040.8927"
+     y2="214.51953"
+     stroke="#c9c9c9"
+     stroke-width="2"
+     stroke-dasharray="5, 6"
+     id="line15" />
+  <text
+     x="1054.8927"
+     y="224.41286"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="start"
+     id="text16"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">'A'</text>
+  <g
+     id="g6">
     <rect
-       x="129.82025"
-       y="381.82025"
+       x="140.71291"
+       y="382.58978"
        width="290.3595"
        height="87.859512"
        fill="#ffffff"
@@ -297,83 +320,93 @@
        stroke-width="2.14049"
        id="rect16" />
     <rect
-       x="128.75"
-       y="380.75"
+       x="139.64265"
+       y="381.51953"
        width="292.5"
        height="44"
        fill="#2f6fb5"
        id="rect17" />
+  </g>
+  <text
+     x="285.59937"
+     y="413.76953"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="26"
+     font-weight="600"
+     fill="#ffffff"
+     text-anchor="middle"
+     id="text17"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+  <text
+     x="285.84866"
+     y="457.86954"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="26"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text18"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+       style="fill:#a31c70;fill-opacity:1"
+       id="tspan12">0x7ffd…a04</tspan></text>
+  <text
+     x="285.17401"
+     y="366.76953"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text19"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.33333333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">int* altitude_ptr</text>
+  <text
+     x="285.77264"
+     y="497.91949"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="20"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="middle"
+     id="text20"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(altitude_ptr) == 8</text>
+  <line
+     x1="442.89267"
+     y1="426.51953"
+     x2="558.89264"
+     y2="426.51953"
+     stroke="#2f6fb5"
+     stroke-width="4.5"
+     marker-end="url(#a-2f6fb5)"
+     id="line20" />
+  <g
+     id="g9"
+     transform="translate(0,-14.25)">
     <text
-       x="274.7067"
-       y="413"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="26"
-       font-weight="600"
-       fill="#ffffff"
-       text-anchor="middle"
-       id="text17"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
-    <text
-       x="274.95599"
-       y="457.10001"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="26"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text18"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
-    <text
-       x="274.28134"
-       y="366"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text19"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">int* altitude_ptr</text>
-    <text
-       x="274.87997"
-       y="497.14996"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="20"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="middle"
-       id="text20"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(altitude_ptr) == 8</text>
-    <line
-       x1="432"
-       y1="428"
-       x2="548"
-       y2="428"
-       stroke="#2f6fb5"
-       stroke-width="4.5"
-       marker-end="url(#a-2f6fb5)"
-       id="line20" />
-    <text
-       x="560"
-       y="386"
+       x="570.89264"
+       y="386.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1f7a6c"
        text-anchor="start"
        id="text21"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*altitude_ptr) == 4</text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*altitude_ptr) == 4</text>
     <rect
-       x="560"
-       y="396"
+       x="570.89264"
+       y="396.76953"
        width="224"
        height="7"
        fill="#1f7a6c"
        rx="3"
        id="rect21"
        ry="3" />
+  </g>
+  <g
+     id="g3"
+     transform="translate(0,-16.25)">
     <rect
-       x="560"
-       y="410"
+       x="570.89264"
+       y="410.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -381,18 +414,26 @@
        stroke-width="2"
        id="rect22" />
     <text
-       x="588"
-       y="450"
+       x="598.89264"
+       y="450.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text22"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">78</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="598.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan3">0111</tspan><tspan
+         x="598.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan4">1000</tspan></text>
     <rect
-       x="616"
-       y="410"
+       x="626.89264"
+       y="410.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -400,18 +441,26 @@
        stroke-width="2"
        id="rect23" />
     <text
-       x="644"
-       y="450"
+       x="654.89264"
+       y="450.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text23"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">00</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="654.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan5">0000</tspan><tspan
+         x="654.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan6">0000</tspan></text>
     <rect
-       x="672"
-       y="410"
+       x="682.89264"
+       y="410.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -419,18 +468,26 @@
        stroke-width="2"
        id="rect24" />
     <text
-       x="700"
-       y="450"
+       x="710.89264"
+       y="450.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text24"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">00</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="710.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan7">0000</tspan><tspan
+         x="710.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan8">0000</tspan></text>
     <rect
-       x="728"
-       y="410"
+       x="738.89264"
+       y="410.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -438,47 +495,63 @@
        stroke-width="2"
        id="rect25" />
     <text
-       x="756"
-       y="450"
+       x="766.89264"
+       y="450.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text25"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">00</text>
-    <text
-       x="560"
-       y="502"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="19"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="start"
-       id="text26"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m at 0x7ffd…a04</text>
-    <line
-       x1="798"
-       y1="442"
-       x2="1030"
-       y2="442"
-       stroke="#c9c9c9"
-       stroke-width="2"
-       stroke-dasharray="5, 6"
-       id="line26" />
-    <text
-       x="1044"
-       y="450"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="start"
-       id="text27"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="766.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan9">0000</tspan><tspan
+         x="766.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#8a8a8a"
+         id="tspan13">0000</tspan></text>
+  </g>
+  <text
+     x="568.39929"
+     y="490.5062"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="19"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="start"
+     id="text26"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m at <tspan
+   style="fill:#a31c70;fill-opacity:1"
+   id="tspan14">0x7ffd…a04</tspan><tspan
+   dx="16"
+   style="font-size:19px;fill:#8a8a8a"
+   id="tspan15">· little-endian</tspan></text>
+  <line
+     x1="808.89264"
+     y1="426.51953"
+     x2="1040.8927"
+     y2="426.51953"
+     stroke="#c9c9c9"
+     stroke-width="2"
+     stroke-dasharray="5, 6"
+     id="line26" />
+  <text
+     x="1054.8927"
+     y="435.77289"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="start"
+     id="text27"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+  <g
+     id="g7">
     <rect
-       x="129.82025"
-       y="593.82025"
+       x="140.71291"
+       y="594.58978"
        width="290.3595"
        height="87.859512"
        fill="#ffffff"
@@ -486,83 +559,93 @@
        stroke-width="2.14049"
        id="rect27" />
     <rect
-       x="128.75"
-       y="592.75"
+       x="139.64265"
+       y="593.51953"
        width="292.5"
        height="44"
        fill="#2f6fb5"
        id="rect28" />
+  </g>
+  <text
+     x="285.59937"
+     y="625.76953"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="26"
+     font-weight="600"
+     fill="#ffffff"
+     text-anchor="middle"
+     id="text28"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
+  <text
+     x="285.79001"
+     y="669.86951"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="26"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text29"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+       style="fill:#2ba5e5;fill-opacity:1"
+       id="tspan16">0x7ffd…a08</tspan></text>
+  <text
+     x="285.84866"
+     y="578.76953"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text30"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.33333333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">double* voltage_ptr</text>
+  <text
+     x="285.77264"
+     y="709.91949"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="20"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="middle"
+     id="text31"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(voltage_ptr) == 8</text>
+  <line
+     x1="442.89267"
+     y1="638.51953"
+     x2="558.89264"
+     y2="638.51953"
+     stroke="#2f6fb5"
+     stroke-width="4.5"
+     marker-end="url(#a-2f6fb5)"
+     id="line31" />
+  <g
+     id="g8"
+     transform="translate(0,-14.25)">
     <text
-       x="274.7067"
-       y="625"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="26"
-       font-weight="600"
-       fill="#ffffff"
-       text-anchor="middle"
-       id="text28"
-       style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
-    <text
-       x="274.89734"
-       y="669.09998"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="26"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text29"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a08</text>
-    <text
-       x="274.95599"
-       y="578"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text30"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">double* voltage_ptr</text>
-    <text
-       x="274.87997"
-       y="709.14996"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="20"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="middle"
-       id="text31"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(voltage_ptr) == 8</text>
-    <line
-       x1="432"
-       y1="640"
-       x2="548"
-       y2="640"
-       stroke="#2f6fb5"
-       stroke-width="4.5"
-       marker-end="url(#a-2f6fb5)"
-       id="line31" />
-    <text
-       x="560"
-       y="598"
+       x="570.89264"
+       y="598.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1f7a6c"
        text-anchor="start"
        id="text32"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*voltage_ptr) == 8</text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">sizeof(*voltage_ptr) == 8</text>
     <rect
-       x="560"
-       y="608"
+       x="570.89264"
+       y="608.76953"
        width="448"
        height="7"
        fill="#1f7a6c"
        rx="3"
        id="rect32"
        ry="3" />
+  </g>
+  <g
+     id="g2"
+     transform="translate(0,-16.25)">
     <rect
-       x="560"
-       y="622"
+       x="570.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -570,18 +653,26 @@
        stroke-width="2"
        id="rect33" />
     <text
-       x="588"
-       y="662"
+       x="598.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text33"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="598.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan17">0011</tspan><tspan
+         x="598.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan18">0011</tspan></text>
     <rect
-       x="616"
-       y="622"
+       x="626.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -589,18 +680,26 @@
        stroke-width="2"
        id="rect34" />
     <text
-       x="644"
-       y="662"
+       x="654.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text34"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="654.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan19">0011</tspan><tspan
+         x="654.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan20">0011</tspan></text>
     <rect
-       x="672"
-       y="622"
+       x="682.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -608,18 +707,26 @@
        stroke-width="2"
        id="rect35" />
     <text
-       x="700"
-       y="662"
+       x="710.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text35"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="710.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan21">0011</tspan><tspan
+         x="710.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan22">0011</tspan></text>
     <rect
-       x="728"
-       y="622"
+       x="738.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -627,18 +734,26 @@
        stroke-width="2"
        id="rect36" />
     <text
-       x="756"
-       y="662"
+       x="766.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text36"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="766.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan23">0011</tspan><tspan
+         x="766.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan24">0011</tspan></text>
     <rect
-       x="784"
-       y="622"
+       x="794.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -646,18 +761,26 @@
        stroke-width="2"
        id="rect37" />
     <text
-       x="812"
-       y="662"
+       x="822.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text37"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="822.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan25">0011</tspan><tspan
+         x="822.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan26">0011</tspan></text>
     <rect
-       x="840"
-       y="622"
+       x="850.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -665,18 +788,26 @@
        stroke-width="2"
        id="rect38" />
     <text
-       x="868"
-       y="662"
+       x="878.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text38"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">33</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="878.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan27">0011</tspan><tspan
+         x="878.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan28">0011</tspan></text>
     <rect
-       x="896"
-       y="622"
+       x="906.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -684,18 +815,26 @@
        stroke-width="2"
        id="rect39" />
     <text
-       x="924"
-       y="662"
+       x="934.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text39"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">26</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="934.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan29">0010</tspan><tspan
+         x="934.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan30">0110</tspan></text>
     <rect
-       x="952"
-       y="622"
+       x="962.89264"
+       y="622.76953"
        width="56"
        height="64"
        fill="#cfe8e3"
@@ -703,54 +842,71 @@
        stroke-width="2"
        id="rect40" />
     <text
-       x="980"
-       y="662"
+       x="990.89264"
+       y="662.76953"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="22"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text40"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">40</text>
-    <text
-       x="560"
-       y="714"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="19"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="start"
-       id="text41"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">voltage at 0x7ffd…a08</text>
-    <text
-       x="1044"
-       y="662"
-       font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-       font-size="24"
-       font-weight="bold"
-       fill="#1b1b1b"
-       text-anchor="start"
-       id="text42"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">11.1</text>
-    <text
-       x="650"
-       y="794"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="24"
-       font-weight="normal"
-       fill="#1b1b1b"
-       text-anchor="middle"
-       id="text43"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">sizeof(p) is the pointer. sizeof(*p) is the object it points at.</text>
-    <text
-       x="650"
-       y="830"
-       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="21"
-       font-weight="normal"
-       fill="#555555"
-       text-anchor="middle"
-       id="text44"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555">the boxes on the left are all the same size. the bytes on the right are not.</text>
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+         x="990.89264"
+         dy="-13"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan31">0100</tspan><tspan
+         x="990.89264"
+         dy="21"
+         style="font-size:16px;font-weight:bold;fill:#1b1b1b"
+         id="tspan32">0000</tspan></text>
   </g>
+  <text
+     x="568.61267"
+     y="701.59949"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="19"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="start"
+     id="text41"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">voltage at <tspan
+   style="fill:#2ba5e5;fill-opacity:1"
+   id="tspan33">0x7ffd…a08</tspan><tspan
+   dx="16"
+   style="font-size:19px;fill:#8a8a8a"
+   id="tspan34">· little-endian</tspan></text>
+  <text
+     x="1054.8927"
+     y="647.5329"
+     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
+     font-size="24"
+     font-weight="bold"
+     fill="#1b1b1b"
+     text-anchor="start"
+     id="text42"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">11.1</text>
+  <text
+     x="660.89264"
+     y="794.76953"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="24"
+     font-weight="normal"
+     fill="#1b1b1b"
+     text-anchor="middle"
+     id="text43"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b"><tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan35">sizeof(p)</tspan> is the pointer. <tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan36">sizeof(*p)</tspan> is the object it points at.</text>
+  <text
+     x="660.89264"
+     y="830.76953"
+     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+     font-size="21"
+     font-weight="normal"
+     fill="#555555"
+     text-anchor="middle"
+     id="text44"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555">the boxes on the left are all the same size. the bytes on the right are not.</text>
 </svg>

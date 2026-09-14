@@ -26,8 +26,10 @@ more often.
 The C++20 facility that belongs to this material is allocation inside a
 constant expression, where a leak becomes a compile error. It is covered
 alongside the classical material, together with the reason this course
-asks you to write almost none of it by hand. Arrays, and the pointer
-arithmetic that goes with them, wait for Lecture 4.
+asks you to write almost none of it by hand. Pointer arithmetic is
+introduced here in the only form a single variable can show, the rule
+that ``p + 1`` steps by ``sizeof(*p)``; arrays, and the arithmetic that
+finally makes it useful, wait for Lecture 4.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
@@ -46,6 +48,10 @@ arithmetic that goes with them, wait for Lecture 4.
      uninitialized (wild) one.
    - Explain why every pointer has the same size, and what the pointer's
      *type* actually determines.
+   - Apply pointer arithmetic: explain why ``p + 1`` advances by
+     ``sizeof(*p)`` rather than one byte, say which positions are legal
+     around a single object, and name what makes dereferencing a
+     one-past-the-end pointer undefined.
    - Apply const-correctness: distinguish ``const int*``,
      ``int* const``, and ``const int* const``, and choose the right one
      for a function parameter.
