@@ -2,16 +2,16 @@
 C++ Exercises
 ====================================================
 
-Six exercises reinforcing :doc:`Lecture 3 <l3_lecture>`, in the order
-the lecture covers the material. Exercises 1 to 4 are **code**, Exercise
-5 is a **written** trace done on paper, and Exercise 6 is a **challenge**
+Seven exercises reinforcing :doc:`Lecture 3 <l3_lecture>`, in the order
+the lecture covers the material. Exercises 1 to 5 are **code**, Exercise
+6 is a **written** trace done on paper, and Exercise 7 is a **challenge**
 that puts the whole lecture together. None of them needs an array;
 arrays and the containers that replace them are
 :doc:`Lecture 4 </lectures/lecture4/l4_index>`.
 
 .. note::
 
-   **What to submit.** All six, in a **single file** named
+   **What to submit.** All seven, in a **single file** named
    ``firstname_lastname.cpp`` (for example, ``bjarne_stroustrup.cpp``),
    uploaded to **Canvas**. Written answers go in comments. Each code
    exercise gets its own **block** inside ``main()``, headed by a
@@ -24,7 +24,7 @@ arrays and the containers that replace them are
 
           }
 
-          {   // ===== Exercise 2: Const-Correctness =====
+          {   // ===== Exercise 2: Pointer Arithmetic =====
 
           }
       }
@@ -34,16 +34,21 @@ arrays and the containers that replace them are
 
 .. note::
 
-   **Building.** Use the course project in VS Code, exactly as in
-   Lecture 1. ``-std=c++20 -Wall -Wextra`` are already set in
-   ``CMakeLists.txt``. To build one of these by hand instead:
+   **Building.** Work in the course project in VS Code, exactly as in
+   Lecture 1. Write your code in ``project/week3/src/main.cpp``, uncomment
+   ``add_subdirectory(project/week3)`` in the top-level ``CMakeLists.txt``,
+   then open the Command Palette (``Ctrl + Shift + P``), run
+   *CMake: Set Build Target* and pick ``week3``, and run *CMake: Build*.
+   ``-std=c++20 -Wall -Wextra`` are already set for you.
 
-   .. code-block:: bash
+   Submit a **copy** of that file renamed ``firstname_lastname.cpp``. The
+   name is for grading; the file you actually build is
+   ``project/week3/src/main.cpp``.
 
-      g++ -std=c++20 -Wall -Wextra -Wpedantic -g main.cpp -o main
-
-   The ``-g`` is not optional this week: without it, Valgrind reports
-   leaks without telling you which line allocated them.
+   Leave the build type on **Debug**, which the course project selects by
+   default. Debug compiles with ``-g``, and the ``-g`` is not optional
+   this week: without those symbols, Valgrind reports leaks without
+   telling you which line allocated them.
 
 .. warning::
 
@@ -54,11 +59,12 @@ arrays and the containers that replace them are
 
 .. note::
 
-   **Memory checking.** Exercises 3 and 6 are checked with Valgrind:
-
-   .. code-block:: bash
-
-      valgrind --leak-check=full ./main
+   **Memory checking.** Exercises 4 and 7 are checked with Valgrind. Use
+   the ``memcheck`` target from
+   :doc:`the lecture <l3_lecture>`: run *CMake: Set Build Target*, pick
+   ``memcheck``, then *CMake: Build*. Set the target back to ``week3``
+   afterwards, or the play button (▶) will keep running Valgrind instead
+   of your program.
 
    A clean run ends with ``All heap blocks were freed -- no leaks are
    possible``. Anything else is a bug to fix, not a warning to note.
@@ -98,7 +104,73 @@ arrays and the containers that replace them are
     7. Print ``*altitude_ptr`` to confirm it now reads
        ``target_alt_m``.
 
-.. dropdown:: Exercise 2: Const-Correctness
+.. dropdown:: Exercise 2: Pointer Arithmetic
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    **Goal**
+
+    See for yourself that ``p + 1`` steps by ``sizeof(*p)`` rather than by
+    one byte, and find the edge of what is legal on a single object.
+
+    **Specification**
+
+    1. Declare three variables: ``char status{'A'}``,
+       ``int altitude_m{120}`` and ``double voltage{11.1}``. Declare a
+       pointer to each.
+    2. For the ``int`` and the ``double`` pointer, print the pointer and
+       then the pointer plus one:
+
+       .. code-block:: cpp
+
+          std::cout << alt_ptr << '\n';
+          std::cout << alt_ptr + 1 << '\n';
+
+       Subtract the two addresses by hand and write, in a comment next to
+       each pair, how many bytes ``+ 1`` moved and what ``sizeof(*p)`` is
+       for that pointer. They should be the same number.
+    3. Print ``(alt_ptr + 1) - alt_ptr``. In a comment, explain why the
+       answer is ``1`` and not ``4``.
+    4. Print ``sizeof`` of all three **pointers**, then ``sizeof`` of all
+       three **dereferences** (``sizeof(*status_ptr)`` and so on). In a
+       comment, say which group changes with the type and which does not,
+       and why.
+    5. Write each of these three lines, then **comment it out** with a
+       note saying exactly what is wrong with it. All three compile
+       without a single warning, which is the point:
+
+       .. code-block:: cpp
+
+          int battery_pct{88};
+
+          std::cout << *(alt_ptr + 1) << '\n';
+          int* far{alt_ptr + 2};
+          std::cout << (&battery_pct - alt_ptr) << '\n';
+
+    6. Uncomment **only** ``*(alt_ptr + 1)`` and run the program once
+       normally. Record what it printed. Then add the sanitizer options
+       from the lecture to ``project/week3/CMakeLists.txt``:
+
+       .. code-block:: cmake
+
+          target_compile_options(week3 PRIVATE -fsanitize=address)
+          target_link_options(week3 PRIVATE -fsanitize=address)
+
+       build and run again, and record what AddressSanitizer says. In two
+       sentences, explain which of the two runs you would rather have
+       gotten, and why the quiet one is the dangerous one. Comment the
+       line out again, and remove the sanitizer options, before you
+       submit.
+
+    .. note::
+
+       Step 2 skips the ``char`` pointer on purpose: ``std::cout << p``
+       prints an address for every pointer type *except* ``char*``, which
+       the stream tries to print as text. Its ``sizeof`` values in step 4
+       are still worth having.
+
+.. dropdown:: Exercise 3: Const-Correctness
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -135,7 +207,7 @@ arrays and the containers that replace them are
     5. For each commented-out line, add a comment explaining **why** it
        fails.
 
-.. dropdown:: Exercise 3: Dynamic Memory with Valgrind
+.. dropdown:: Exercise 4: Dynamic Memory with Valgrind
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -175,7 +247,7 @@ arrays and the containers that replace them are
        statements and run Valgrind again. Note how many bytes are
        "definitely lost" and which line numbers it names.
 
-.. dropdown:: Exercise 4: Reference vs. Pointer
+.. dropdown:: Exercise 5: Reference vs. Pointer
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -208,7 +280,7 @@ arrays and the containers that replace them are
     reference. It copies the value of ``target_alt_m`` into
     ``altitude_m``, the object ``alt`` names.
 
-.. dropdown:: Exercise 5: Memory Tracing
+.. dropdown:: Exercise 6: Memory Tracing
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
@@ -263,7 +335,7 @@ arrays and the containers that replace them are
        leaks, undefined behavior).
     6. Rewrite the code to fix all issues.
 
-.. dropdown:: Exercise 6: Make It Valgrind-Clean (Challenge)
+.. dropdown:: Exercise 7: Make It Valgrind-Clean (Challenge)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold

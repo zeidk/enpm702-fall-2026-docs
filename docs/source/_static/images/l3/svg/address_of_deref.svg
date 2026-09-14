@@ -157,7 +157,7 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text9"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#9f11af;fill-opacity:1">0x7ffd…a04</text>
   <text
      x="302.65421"
      y="264.06519"
@@ -203,7 +203,7 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text12"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
   <text
      x="1102.5074"
      y="264.06519"
@@ -237,7 +237,7 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text1"
-     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">0x7ffd…a04</text>
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#9f11af;fill-opacity:1">0x7ffd…a04</text>
   <g
      id="g28"
      transform="translate(-0.53924017,3.734966)">

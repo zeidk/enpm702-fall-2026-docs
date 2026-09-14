@@ -21,7 +21,7 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.77193796"
-     inkscape:cx="871.83172"
+     inkscape:cx="871.184"
      inkscape:cy="488.38122"
      inkscape:window-width="3840"
      inkscape:window-height="941"
@@ -191,8 +191,8 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text10"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#14bb3a;fill-opacity:1"><tspan
-       style="fill:#14bb3a;fill-opacity:1"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#14bb3a;fill-opacity:1"><tspan
+       style="fill:#14bb3a;fill-opacity:1;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;font-weight:500;font-style:normal;font-stretch:normal;font-variant:normal;font-size:29.33329964px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
        id="tspan11">0x7ffd…a00</tspan></text>
   <text
      x="285.42334"
@@ -346,8 +346,8 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text18"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
-       style="fill:#a31c70;fill-opacity:1"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+       style="fill:#a31c70;fill-opacity:1;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;font-weight:500;font-style:normal;font-stretch:normal;font-variant:normal;font-size:29.33329964px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
        id="tspan12">0x7ffd…a04</tspan></text>
   <text
      x="285.17401"
@@ -585,8 +585,8 @@
      fill="#1b1b1b"
      text-anchor="middle"
      id="text29"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
-       style="fill:#2ba5e5;fill-opacity:1"
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.33329964px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"><tspan
+       style="fill:#2ba5e5;fill-opacity:1;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;font-weight:500;font-style:normal;font-stretch:normal;font-variant:normal;font-size:29.33329964px;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
        id="tspan16">0x7ffd…a08</tspan></text>
   <text
      x="285.84866"
@@ -908,5 +908,8 @@
      fill="#555555"
      text-anchor="middle"
      id="text44"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555">the boxes on the left are all the same size. the bytes on the right are not.</text>
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#555555"
+     inkscape:export-filename="../png/typed_pointer.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350">the boxes on the left are all the same size. the bytes on the right are not.</text>
 </svg>

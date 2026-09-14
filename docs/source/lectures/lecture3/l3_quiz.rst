@@ -381,6 +381,97 @@ Multiple Choice
 .. admonition:: Question 14
    :class: hint
 
+   ``volt_ptr`` is a ``double*`` holding the address ``0x7ffd…a08``.
+   What does ``volt_ptr + 1`` hold?
+
+   A. ``0x7ffd…a09``
+   B. ``0x7ffd…a0c``
+   C. ``0x7ffd…a10``
+   D. Nothing useful; pointer arithmetic is only allowed on arrays.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**, ``0x7ffd…a10``.
+
+   *Explanation:* ``+ 1`` moves by one **object**, not one byte, and the
+   object here is a ``double``, so the step is ``sizeof(double)`` = 8
+   bytes. A is the answer you would get if the step were one byte, and B
+   if it were four, which is what an ``int*`` would do. The pointer's
+   type decides the size of the step for exactly the same reason it
+   decides how many bytes a dereference reads.
+
+
+----
+
+
+.. admonition:: Question 15
+   :class: hint
+
+   .. code-block:: cpp
+
+      int altitude_m{120};
+      int* alt_ptr{&altitude_m};
+
+   Which of these is well defined?
+
+   A. ``*(alt_ptr + 1)``
+   B. ``alt_ptr + 1``, as long as it is never dereferenced
+   C. ``alt_ptr + 2``
+   D. All three: the compiler accepts every one of them.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B.**
+
+   *Explanation:* For arithmetic, a lone variable counts as an array of
+   one element, which gives exactly two legal positions: the object
+   itself, and the **one-past-the-end** position ``alt_ptr + 1``. You may
+   form that one and compare with it; you may not read through it, so A
+   is undefined. C is undefined even though nothing is dereferenced,
+   because the position itself does not exist. D is the trap: the
+   compiler does accept all three without a warning, which is why
+   undefined behaviour here is found at run time with
+   ``-fsanitize=address``, or not at all.
+
+
+----
+
+
+.. admonition:: Question 16
+   :class: hint
+
+   ``int altitude_m{120};`` on the little-endian machines this course
+   targets. Reading its four bytes from the **lowest** address upward,
+   what do you see?
+
+   A. ``0111 1000``, then three zero bytes.
+   B. Three zero bytes, then ``0111 1000``.
+   C. ``0000 1111``, then three zero bytes.
+   D. It depends on the compiler rather than the machine.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **A.**
+
+   *Explanation:* 120 is ``0111 1000``, which fits in a single byte, so
+   the other three bytes of the ``int`` are zero. Little-endian puts the
+   **least** significant byte at the **lowest** address, so the non-zero
+   byte comes first. B is the big-endian arrangement: the order you would
+   write the number on paper, and the one network protocols use. C is
+   ``0000 1111``, which is 15, not 120. D is wrong in a way worth
+   remembering: byte order is a property of the hardware, and the
+   compiler simply follows whatever its target does.
+
+
+----
+
+
+.. admonition:: Question 17
+   :class: hint
+
    Which of these is the right tool for owning one object on the heap?
 
    A. A raw ``int*`` with matching ``new``/``delete``.
@@ -406,7 +497,7 @@ Multiple Choice
 True or False
 =============
 
-.. admonition:: Question 15
+.. admonition:: Question 18
    :class: hint
 
    **True or False:** ``sizeof(double*)`` is larger than
@@ -426,7 +517,7 @@ True or False
 ----
 
 
-.. admonition:: Question 16
+.. admonition:: Question 19
    :class: hint
 
    **True or False:** Calling ``delete`` on a null pointer is undefined
@@ -446,7 +537,7 @@ True or False
 ----
 
 
-.. admonition:: Question 17
+.. admonition:: Question 20
    :class: hint
 
    **True or False:** A memory leak is what happens when you free memory
@@ -466,7 +557,7 @@ True or False
 ----
 
 
-.. admonition:: Question 18
+.. admonition:: Question 21
    :class: hint
 
    **True or False:** Given ``int& r{a};``, the statement ``r = b;``
@@ -487,7 +578,7 @@ True or False
 ----
 
 
-.. admonition:: Question 19
+.. admonition:: Question 22
    :class: hint
 
    **True or False:** A reference cannot be null, so a reference can
@@ -509,7 +600,7 @@ True or False
 ----
 
 
-.. admonition:: Question 20
+.. admonition:: Question 23
    :class: hint
 
    **True or False:** Because ``&r`` and ``&a`` print the same address
