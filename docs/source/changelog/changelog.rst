@@ -5,6 +5,134 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
+.. dropdown:: v1.4.0: Lecture 3 Synced with the L3 Slide Deck (2026-09-15)
+   :icon: tag
+   :class-container: sd-border-success
+   :open:
+
+   Lecture 3 brought into **one-to-one correspondence** with the
+   ``ENPM702-L3-v1.0`` slide deck: everything the deck teaches is on the
+   page, and anything commented out of the deck has been taken off it.
+
+   **Lecture (**\ ``l3_lecture.rst``\ **)**
+
+   - New **Memory Addresses and Hexadecimal** section, ahead of
+     everything else: what an address is, why it is printed in base 16,
+     that one hex digit is 4 bits so two are exactly one byte, and the
+     arithmetic trap that makes ``0x…a28 + 8`` look like two bytes when
+     it is eight. Also explains the ``0x7ffd…a10`` elision used
+     throughout the page, and why addresses end in ``0``, ``4``, ``8``
+     or ``c``.
+   - New **Debug and Release Builds** section covering all five variants
+     VS Code's *CMake: Select Variant* offers, with the flags CMake adds
+     for each, measured rather than quoted: ``Debug`` ``-g``,
+     ``Release`` ``-O3 -DNDEBUG``, ``MinSizeRel`` ``-Os -DNDEBUG``,
+     ``RelWithDebInfo`` ``-O2 -g -DNDEBUG``, and ``Unspecified``
+     nothing at all. Includes the ``if(NOT CMAKE_BUILD_TYPE)`` guard,
+     since the course project sets no build type of its own, and a
+     warning that ``Unspecified`` gives neither optimization nor debug
+     information.
+   - New **Same address, and the same type** subsection: ``&altitude_m``
+     does not yield "an address" in some generic sense, it yields an
+     ``int*``, which is why the initialization compiles. Demonstrated
+     with ``typeid`` and ``c++filt -t``, including the mangled ``Pi``
+     that students will actually see first.
+   - **Pointer Arithmetic** now opens by naming the operations
+     (``ptr + n``, ``ptr - n``, ``++ptr``, ``--ptr``, ``ptr2 - ptr1``)
+     and the single rule behind all of them, before working the
+     example.
+   - **The delete Operator** now opens with the ownership handoff and
+     the ``delete p; p = nullptr;`` pair, and states the sentence the
+     rest of the section unpacks: ``delete`` acts on the **storage**,
+     not on the pointer.
+   - The **unit suffix** convention is now explained where the running
+     example is introduced, rather than left for students to infer:
+     ``altitude_m`` is metres, ``voltage_v`` volts, ``battery_pct``
+     percent, with the Mars Climate Orbiter as the reason it matters.
+   - ``voltage`` renamed to ``voltage_v`` throughout, so the convention
+     is applied consistently. It was previously the one unit-bearing
+     variable without a suffix, sitting next to ``altitude_m`` in the
+     same examples.
+   - The reason ``const Battery&`` costs 8 bytes is now stated: it
+     passes an **address**, the same 8 bytes any pointer is, rather than
+     copying the object.
+   - Addresses in the pointer-arithmetic example changed from
+     ``…a24``/``…a28``/``…a30`` to ``…a10``/``…a14``/``…a20``/``…a28``,
+     so the hex arithmetic reads correctly whether or not the reader
+     notices it is hex.
+   - **ES.10: Declare one name (only) per declaration** now linked from
+     the "one declaration per line" rule, matching how it is cited in
+     Lecture 2 and RWA1.
+   - The pointer-formatting note no longer sends students to the VS Code
+     ``Vc Format`` settings, which have no effect while clang-format is
+     the active engine. It now points at the ``.clang-format`` file
+     added to the course code repository.
+
+   **Removed, because the slides no longer cover them**
+
+   - **The Modern Alternative** section, with RAII, the which-tool-for-
+     which-job table and **C++20 and pointers**.
+   - **Discussion 2** (reading a real signature).
+   - The implementation half of *What a reference is in memory*: the
+     compiler's-answer discussion, the ``reference_memory`` figure and
+     the Debug/Release assembly walkthrough. The language's answer and
+     its three-row table stay, which is what the slide shows.
+   - The *when byte order becomes visible* material, leaving the
+     little-endian and big-endian comparison the slide carries.
+   - The ``memory_leak`` and ``null_dereference`` figures, along with
+     captions such as "the pointer was the only way to reach the block",
+     which never appeared on a slide.
+   - The **Where Objects Live** wrapper, so the page opens the two
+     sections the way the deck does: *Three Storage Durations* and
+     *Stack and Heap*.
+
+   **Figures**
+
+   - ``typed_pointer.png`` redrawn to show each object's bytes as bits,
+     split into nibbles the way Lecture 2 draws them, and relabelled for
+     ``voltage_v``.
+   - Two new figures added to match the deck: ``new.png`` on **The new
+     Operator**, showing the stack pointer and the unnamed heap object
+     it addresses, and ``new2.png`` on the same page, showing the pointer
+     gone and the object stranded.
+   - ``new_delete.png`` moved to **The delete Operator**, where the deck
+     places it.
+   - The page and the deck now use the **same ten figures**, with none
+     left over on either side.
+
+   **Glossary**
+
+   - Four Lecture 3 terms added: *Alignment*, *Build Type*,
+     *Endianness*, and *Hexadecimal*.
+
+   **Exercises and quiz**
+
+   - ``l3_exercises.rst``: new **Exercise 7, Debug and Release Are Not
+     the Same Build**, which has students watch Valgrind lose the line
+     number when ``-g`` goes away and get it back under
+     ``RelWithDebInfo``. The Valgrind-clean challenge is now Exercise 8.
+   - ``l3_quiz.rst``: 27 questions, up from 23. New questions on hex
+     address arithmetic, the type of ``&x``, why ``Release`` costs
+     Valgrind its line numbers, and why leaving the build type unset is
+     not a safe default.
+
+   **Knock-on fixes**
+
+   - ``l3_index.rst``: the overview no longer promises the C++20
+     constant-expression material, the RAII and C++20 learning
+     objectives are gone, and *Next Steps* no longer refers to a
+     Discussion 2 that is not there. Two objectives added for the new
+     hexadecimal and build-type sections.
+   - ``glossary.rst``: **RAII** now points at :doc:`L7
+     </lectures/lecture7/l7_lecture>`, Smart Pointers, rather than at a
+     Lecture 3 section that no longer exists.
+
+   **Shell exercises**
+
+   - Unchanged. They teach general shell skills and already finish with
+     a Valgrind script.
+
+
 .. dropdown:: v1.3.0: Lecture 2 and Reading Material Updates (2026-09-07)
    :icon: tag
    :class-container: sd-border-success

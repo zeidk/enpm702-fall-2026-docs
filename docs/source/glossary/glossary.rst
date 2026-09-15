@@ -168,6 +168,13 @@ A
       ``using Integer = int;``
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Alignment
+      The requirement that an object's address be a multiple of a certain
+      number of bytes, usually its own size. An ``int`` sits at a multiple
+      of 4 and a ``double`` at a multiple of 8, which is why addresses in
+      these notes end in ``0``, ``4``, ``8`` or ``c``.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
+
    Arithmetic Conversion
       Implicit type conversion rules applied when binary operators have
       operands of different types. The operand with lower priority is
@@ -222,6 +229,15 @@ B
       which is why an uninitialized global is 0 while an uninitialized
       local is garbage. Short for Block Started by Symbol.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Build Type
+      The CMake setting (``CMAKE_BUILD_TYPE``) that decides which compiler
+      flags are added. ``Debug`` adds ``-g``, ``Release`` adds
+      ``-O3 -DNDEBUG``, ``RelWithDebInfo`` adds ``-O2 -g -DNDEBUG``, and
+      ``MinSizeRel`` adds ``-Os -DNDEBUG``. Leaving it unset adds nothing
+      at all: no optimization and no debug information. This course builds
+      ``Debug``, because Valgrind needs ``-g`` to name a line.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
 
    Byte
       A group of 8 bits, and the smallest individually addressable unit
@@ -418,6 +434,16 @@ E
    enum class
       See :term:`Scoped Enumeration`.
 
+   Endianness
+      The order in which the bytes of a multi-byte object are stored.
+      **Little-endian** puts the least significant byte at the lowest
+      address and is what every machine in this course uses;
+      **big-endian** puts the most significant byte first and is the order
+      the internet protocols specify. It changes nothing inside one
+      program, and becomes visible in a debugger, in a hex dump, or when
+      raw bytes cross machines.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
+
    Escape Sequence
       A two-character sequence beginning with a backslash that stands for
       one character inside a character or string literal: ``\n`` newline,
@@ -508,6 +534,14 @@ I
 =
 
 .. glossary::
+
+   Hexadecimal
+      Base 16, written with the ``0x`` prefix and the digits ``0``--``9``
+      then ``a``--``f``. One hex digit is exactly 4 bits, so two hex
+      digits are exactly one byte, which is why addresses and memory dumps
+      are printed this way. Beware the arithmetic: ``0x28 + 8`` is
+      ``0x30``, not ``0x36``.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`
 
    Identifier
       The name of a variable, function, type, or other entity. May
@@ -804,7 +838,7 @@ R
       Resource Acquisition Is Initialization. A C++ idiom where resource
       management (memory, file handles, etc.) is tied to object lifetime.
       Smart pointers implement RAII for dynamic memory.
-      :doc:`L3 </lectures/lecture3/l3_lecture>`
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Recursion
       A programming technique where a function calls itself to solve a problem by breaking it into smaller subproblems. Requires a base case to terminate.

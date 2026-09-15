@@ -617,3 +617,87 @@ True or False
    occupies storage is unspecified, and a compiler commonly implements
    one as a ``const`` pointer when it has to. The language model to keep
    is that a reference is a **name**.
+
+.. admonition:: Question 24
+   :class: hint
+
+   A pointer prints as ``0x7ffd…a28``. Another prints as ``0x7ffd…a30``.
+   How many bytes apart are the two addresses?
+
+   a) 2
+   b) 8
+   c) 12
+   d) 30
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **b) 8**
+
+   *Explanation:* Addresses print in **hexadecimal**, so the digits are
+   base 16, not base 10. ``0x28`` is :math:`2 \times 16 + 8 = 40`;
+   ``0x30`` is :math:`3 \times 16 = 48`. The difference is 8. Reading
+   ``28`` and ``30`` as decimal is what makes this look like 2, and it
+   is the single most common mistake when reading a debugger.
+
+.. admonition:: Question 25
+   :class: hint
+
+   **True or False:** ``typeid(&altitude_m).name()`` and
+   ``typeid(altitude_ptr).name()`` print the same thing for
+   ``int altitude_m{120}; int* altitude_ptr{&altitude_m};``.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **True.**
+
+   *Explanation:* ``&altitude_m`` does not produce "an address" in some
+   generic sense. It produces an ``int*``, which is exactly the type of
+   ``altitude_ptr``, and that is why the initialization compiles. Both
+   print the mangled name ``Pi`` under GCC; pipe the program through
+   ``c++filt -t`` to see ``int*``.
+
+.. admonition:: Question 26
+   :class: hint
+
+   You build with VS Code's ``Release`` variant and run Valgrind. It
+   reports that 4 bytes are definitely lost, but names no line number.
+   Why?
+
+   a) Valgrind cannot detect leaks in optimized builds
+   b) ``Release`` adds ``-O3 -DNDEBUG`` and no ``-g``, so there are no
+      debug symbols to map the address back to a line
+   c) The leak is in the standard library, which has no source
+   d) Valgrind needs ``--track-origins=yes`` to report line numbers
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **b) ``Release`` adds ``-O3 -DNDEBUG`` and no ``-g``**
+
+   *Explanation:* Valgrind still sees the allocation, because it watches
+   the allocator rather than the source. What it has lost is the
+   **debug information** that maps a machine address back to a file and
+   line. ``-g`` is what supplies that, which is why this course builds
+   ``Debug``. ``RelWithDebInfo`` (``-O2 -g -DNDEBUG``) gets the line
+   numbers back while keeping optimization.
+
+.. admonition:: Question 27
+   :class: hint
+
+   **True or False:** Leaving ``CMAKE_BUILD_TYPE`` unset is a safe
+   default, because CMake then picks a sensible one for you.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False.**
+
+   *Explanation:* VS Code calls this ``Unspecified`` and describes it as
+   "let CMake pick the default build type", which sounds reassuring.
+   What CMake actually adds is **nothing**: no ``-O`` and no ``-g``. You
+   get a program that is neither fast nor debuggable, which is the one
+   combination with no advantage. Set the build type, or set a default
+   in ``CMakeLists.txt`` with
+   ``if(NOT CMAKE_BUILD_TYPE) set(CMAKE_BUILD_TYPE Debug ...)``.

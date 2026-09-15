@@ -20,20 +20,20 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.77193796"
-     inkscape:cx="871.184"
-     inkscape:cy="488.38122"
-     inkscape:window-width="3840"
-     inkscape:window-height="941"
+     inkscape:zoom="0.28582727"
+     inkscape:cx="673.48368"
+     inkscape:cy="680.48091"
+     inkscape:window-width="1600"
+     inkscape:window-height="881"
      inkscape:window-x="0"
-     inkscape:window-y="28"
+     inkscape:window-y="32"
      inkscape:window-maximized="1"
      inkscape:current-layer="typed_pointer"
      showgrid="false" />
   <title
      id="title1">Pointer size against pointee size</title>
   <desc
-     id="desc1">Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.</desc>
+     id="desc1">Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage_v, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.</desc>
   <defs
      id="defs6">
     <marker
@@ -116,16 +116,19 @@
     </marker>
   </defs>
   <rect
-     width="1116.0474"
-     height="827.45532"
+     width="1095.3203"
+     height="605.93494"
      fill="#ffffff"
      id="rect6"
      x="75.135567"
-     y="23.317867"
-     style="stroke-width:0.888425" />
+     y="121.77138"
+     style="stroke-width:0.753165"
+     inkscape:export-filename="../png/typed_pointer.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350" />
   <text
-     x="660.89264"
-     y="62.769535"
+     x="405.6908"
+     y="1263.6432"
      font-family="'Fira Sans', Helvetica, Arial, sans-serif"
      font-size="30"
      font-weight="600"
@@ -134,8 +137,8 @@
      id="text6"
      style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">every pointer is 8 bytes, whatever it points at</text>
   <text
-     x="660.89264"
-     y="98.769531"
+     x="405.6908"
+     y="1299.6432"
      font-family="'Fira Sans', Helvetica, Arial, sans-serif"
      font-size="23"
      font-weight="normal"
@@ -869,7 +872,7 @@
      fill="#555555"
      text-anchor="start"
      id="text41"
-     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">voltage at <tspan
+     style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">voltage_v at <tspan
    style="fill:#2ba5e5;fill-opacity:1"
    id="tspan33">0x7ffd…a08</tspan><tspan
    dx="16"
@@ -886,8 +889,8 @@
      id="text42"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:26.6667px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">11.1</text>
   <text
-     x="660.89264"
-     y="794.76953"
+     x="430.30417"
+     y="1499.4894"
      font-family="'Fira Sans', Helvetica, Arial, sans-serif"
      font-size="24"
      font-weight="normal"
@@ -900,8 +903,8 @@
    style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
    id="tspan36">sizeof(*p)</tspan> is the object it points at.</text>
   <text
-     x="660.89264"
-     y="830.76953"
+     x="430.30417"
+     y="1535.4894"
      font-family="'Fira Sans', Helvetica, Arial, sans-serif"
      font-size="21"
      font-weight="normal"

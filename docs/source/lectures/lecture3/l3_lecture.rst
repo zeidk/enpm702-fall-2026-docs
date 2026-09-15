@@ -21,6 +21,13 @@ longer than ``a`` and ``p``, and that is on purpose. In code that flies
 something, a pointer called ``p`` is a pointer whose purpose no reviewer
 can check.
 
+Variables also carry their **unit** as a suffix: ``altitude_m`` is metres,
+``voltage_v`` is volts, ``battery_pct`` is percent. The unit belongs in the
+name so a reviewer can catch a wrong assignment by reading the two names
+alone, without hunting for where either value came from. NASA lost the Mars
+Climate Orbiter in 1999 to exactly that mistake: one team worked in
+pound-seconds, another in newton-seconds.
+
 .. seealso::
 
    Assumed from :doc:`Lecture 2 </lectures/lecture2/l2_lecture>` and not
@@ -30,11 +37,105 @@ can check.
    for inspecting a type. Go back to that page if any of those are hazy.
 
 
-Where Objects Live
-==================
+Memory Addresses and Hexadecimal
+================================
 
-Three storage durations, one manual
------------------------------------
+An **address** is just a number: *which byte*, counting from zero. On the
+64-bit machines this course targets it is a 64-bit number, which is why
+every pointer is **8 bytes**. Addresses print in **hexadecimal**, base 16,
+marked by the ``0x`` prefix.
+
+**Why hexadecimal.** The digits run ``0`` to ``9``, then ``a b c d e f``,
+so ``0xf`` is 15. One hex digit is exactly **4 bits**, so two hex digits
+are exactly **one byte**: ``0x41`` is ``0100 0001``. That is why debuggers
+print bytes in pairs; binary would be four times longer and unreadable.
+
+.. warning::
+
+   **Hex arithmetic catches people out.**
+
+   .. code-block:: text
+
+      0x...a28 + 8  ==  0x...a30      not a36
+
+   ``0x28`` is :math:`2 \times 16 + 8 = 40`. Add 8 to get 48, and 48 is
+   ``0x30``. So ``a28`` to ``a30`` really *is* eight bytes, even though it
+   looks like two.
+
+.. note::
+
+   **Reading the addresses on this page.** A real address is long, such as
+   ``0x7ffd2e233a10``, and it changes on every run because of address
+   space layout randomization. These notes elide the middle and write
+   ``0x7ffd…a10``, so only the digits that matter are shown. Expect the
+   last digit to be ``0``, ``4``, ``8`` or ``c``: an ``int`` sits at a
+   multiple of 4 and a ``double`` at a multiple of 8, which is
+   **alignment**.
+
+
+Debug and Release Builds
+========================
+
+The same source compiles several very different ways. VS Code's
+*CMake: Select Variant* offers five, and CMake turns the choice into
+compiler flags:
+
+.. list-table:: The five variants, with the flags CMake adds for each.
+   :widths: 20 26 54
+   :header-rows: 1
+   :class: compact-table
+
+   * - Variant
+     - Flags CMake adds
+     - What VS Code says it does
+   * - ``Debug``
+     - ``-g``
+     - Disable optimizations, include debug information
+   * - ``Release``
+     - ``-O3 -DNDEBUG``
+     - Optimize for speed, exclude debug information
+   * - ``MinSizeRel``
+     - ``-Os -DNDEBUG``
+     - Optimize for smallest binary size
+   * - ``RelWithDebInfo``
+     - ``-O2 -g -DNDEBUG``
+     - Optimize for speed, include debug information
+   * - ``Unspecified``
+     - *nothing at all*
+     - "Let CMake pick the default build type"
+
+**In VS Code.** Press :kbd:`Ctrl+Shift+P`, run *CMake: Select Variant*,
+pick one, then *CMake: Build*. The current variant is shown in the Status
+Bar. CMake Tools passes your choice as ``-DCMAKE_BUILD_TYPE=...`` when it
+configures.
+
+**In CMakeLists.txt.** Nothing in the course project sets a build type, so
+choose one when nobody passes it:
+
+.. code-block:: cmake
+
+   if(NOT CMAKE_BUILD_TYPE)
+       set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+   endif()
+
+From a terminal you pass it yourself:
+
+.. code-block:: bash
+
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+.. important::
+
+   **This course builds Debug.** Valgrind can only name the *line* that
+   leaked when ``-g`` is there.
+
+   Beware ``Unspecified``. It sounds like a sensible default, and it
+   leaves you with no optimization **and** no debug information, which is
+   the one combination nobody wants.
+
+
+Three Storage Durations
+=======================
 
 Lecture 2 gave you the three storage durations, and the map they live
 on:
@@ -79,8 +180,8 @@ lifetime begins and ends, and emits the code to match. The third is the
 one that has a human in the loop, and that is the entire reason this
 lecture has a section called *What Goes Wrong*.
 
-Stack and heap, side by side
-----------------------------
+Stack and Heap
+--------------
 
 .. list-table:: The two regions a pointer normally points into.
    :widths: 20 40 40
@@ -129,8 +230,14 @@ Pointers
 What a Pointer Is
 -----------------
 
-A pointer is a variable that holds an address. It is a variable in the
-full sense: it has a type, a value, a size, and an address of its own.
+A pointer is a variable whose **value** is the address **of another
+object**. Its type says which kind: an ``int*`` holds the address of an
+``int``, a ``double*`` the address of a ``double``.
+
+It is a variable itself, so it also has a type, a size, and an address of
+its own: where the *pointer* lives, not where it points. Those are two
+different addresses, and keeping them apart is most of what the next
+figure is for.
 
 .. figure:: /_static/images/l3/png/pointer_anatomy.png
    :align: center
@@ -217,16 +324,25 @@ outward:
    The course style is ``int* altitude_ptr``, with the ``*`` next to the
    type, because
    that is where the reader looks for it. The cost of that style is the
-   trap above, and the fix is simple: **one declaration per line**.
+   trap above, and the fix is simple: **one declaration per line**, which
+   is also `ES.10: Declare one name (only) per declaration
+   <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es10-declare-one-name-only-per-declaration>`_.
 
 .. note::
 
    ``int* ptr``, ``int *ptr``, and ``int * ptr`` are the same
-   declaration to
-   the compiler. Pick one and be consistent; the course uses the first.
-   In VS Code the formatter's choice lives under
-   :kbd:`Ctrl+,` → ``C_Cpp`` → *Vc Format* → *Space: Pointer Reference
-   Alignment*.
+   declaration to the compiler. Pick one and be consistent; the course
+   uses the first.
+
+   You do not have to do it by hand. The course project has a
+   ``.clang-format`` file at its root setting ``PointerAlignment: Left``,
+   so **Format Document** rewrites all three spellings to ``int* ptr``.
+   VS Code's C/C++ extension finds that file on its own.
+
+   Ignore the ``Vc Format`` entries in the VS Code settings UI. They
+   belong to a different formatting engine and are read only when
+   ``C_Cpp.formatting`` is set to ``vcFormat``, which is not the default.
+   Changing them while clang-format is in charge does nothing.
 
 Initializing a Pointer
 ----------------------
@@ -293,6 +409,46 @@ directions.
        std::cout << *altitude_ptr << '\n';    // 120, the object there
        std::cout << *(&altitude_m) << '\n';   // 120, the same object
    }
+
+Same address, and the same type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``&altitude_m`` does not produce merely *an* address. It produces an
+``int*``, which is exactly the type of ``altitude_ptr``, and that is why
+the initialization compiles at all. Ask the compiler rather than take it
+on trust:
+
+.. code-block:: cpp
+
+   #include <iostream>
+   #include <typeinfo>
+
+   int main() {
+       int altitude_m{120};
+       int* altitude_ptr{&altitude_m};
+
+       std::cout << typeid(&altitude_m).name() << '\n';    // the type of &altitude_m
+       std::cout << typeid(altitude_ptr).name() << '\n';   // the same type
+   }
+
+Run it and you get the *mangled* name, which is compiler-specific:
+
+.. code-block:: text
+
+   Pi
+   Pi
+
+``Pi`` is GCC for "**P**\ ointer to **i**\ nt". Pipe the program through
+``c++filt -t`` to read it:
+
+.. code-block:: bash
+
+   ./week3 | c++filt -t
+
+.. code-block:: text
+
+   int*
+   int*
 
 Dereferencing is not read-only. ``*altitude_ptr`` names the object, so it
 can appear on the left of an assignment, and writing through it changes
@@ -433,7 +589,9 @@ you test it, and it is ``false`` exactly when the pointer is null.
       unspecified. It will compile, but the answer means nothing.
     - If you genuinely need a total order over unrelated pointers (to use
       them as map keys, say), use ``std::less<int*>``, which is required
-      to provide one.
+      to provide one. It is a comparison *object*: you construct one, then
+      call it. It compares the two **addresses**, never the objects they
+      point at.
 
     .. code-block:: cpp
 
@@ -442,14 +600,15 @@ you test it, and it is ``false`` exactly when the pointer is null.
        int altitude_m{120};
        int battery_pct{88};        // an unrelated object
 
-       int* alt_ptr{&altitude_m};
-       int* bat_ptr{&battery_pct};
+       int* altitude_ptr{&altitude_m};
+       int* battery_ptr{&battery_pct};
 
        // unspecified: it compiles and produces an answer that means nothing
-       bool guess{alt_ptr < bat_ptr};
+       bool guess{altitude_ptr < battery_ptr};
 
        // well defined: a real order, and the same one every time you ask
-       bool ordered{std::less<int*>{}(alt_ptr, bat_ptr)};
+       std::less<int*> address_order{};
+       bool ordered{address_order(altitude_ptr, battery_ptr)};
 
     Both lines produce a ``bool``, and on a given run they may well agree.
     The difference is that only the second one is *promised* to: ``<`` on
@@ -477,16 +636,16 @@ this course targets, that is **8 bytes**.
 
    int main() {
        int altitude_m{120};
-       double voltage{11.1};
+       double voltage_v{11.1};
        char status{'A'};
 
        int* altitude_ptr{&altitude_m};
-       double* voltage_ptr{&voltage};
+       double* voltage_ptr{&voltage_v};
        char* status_ptr{&status};
 
        std::cout << sizeof(altitude_ptr) << ' ' << sizeof(voltage_ptr) << ' '
                  << sizeof(status_ptr) << '\n';
-       std::cout << sizeof(altitude_m) << ' ' << sizeof(voltage) << ' '
+       std::cout << sizeof(altitude_m) << ' ' << sizeof(voltage_v) << ' '
                  << sizeof(status) << '\n';
    }
 
@@ -509,7 +668,7 @@ why does a pointer have a type at all?
 
 .. figure:: /_static/images/l3/png/typed_pointer.png
    :align: center
-   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
+   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage_v, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
 
    These are the three variables from the ``sizeof`` example above, each
    at its own address. All three pointers are **8 bytes**, because all
@@ -563,49 +722,17 @@ why does a pointer have a type at all?
     which end of a boiled egg to crack. That is the point: neither order
     is better, and each machine has simply picked one.
 
-    **Does it change what your program computes?** No. Inside one program
-    on one machine you reach an object through its type, and the compiler
-    arranges the bytes the way its target expects. ``altitude_m`` is 120
-    whatever the byte order is. Endianness becomes visible only when raw
-    bytes cross a boundary:
-
-    - **Looking at memory directly**, in a debugger's memory view or a
-      hex dump. The bytes appear in address order, so a little-endian
-      ``int`` reads backwards, and 120 shows up as ``78 00 00 00``
-      instead of ``00 00 00 78``. (That is **hexadecimal**: two hex
-      digits are exactly one byte, so ``78`` is the ``0111 1000`` drawn
-      above. It is the notation every debugger uses, because eight bits
-      per byte gets unreadable quickly.)
-    - **Moving bytes between machines**, over a network or through a
-      binary file that one machine writes and another reads.
-    - **Reading an object's bytes through a different pointer type**,
-      which is how most endianness bugs actually get written.
-
-    C++20 lets you ask the question in the language itself, with
-    ``<bit>``:
-
-    .. code-block:: cpp
-
-       #include <bit>
-
-       // prints 1 on every machine used in this course
-       std::cout << (std::endian::native == std::endian::little) << '\n';
-
-    You are not asked to *handle* byte order in ENPM702. You are asked to
-    recognize it, so that a debugger showing ``78 00 00 00`` for the value
-    120 looks correct rather than broken.
-
-The type also lets the compiler stop you from mixing things up. There is
+The type also lets the compiler stop you from mixing things up.The type also lets the compiler stop you from mixing things up. There is
 no implicit conversion between unrelated pointer types:
 
 .. code-block:: cpp
 
    int altitude_m{120};
-   double voltage{11.1};
+   double voltage_v{11.1};
 
    int* altitude_ptr{nullptr};
    altitude_ptr = &altitude_m;   // OK
-   altitude_ptr = &voltage;      // error: cannot convert 'double*' to 'int*'
+   altitude_ptr = &voltage_v;    // error: cannot convert 'double*' to 'int*'
 
 .. warning::
 
@@ -635,22 +762,37 @@ Pointer Arithmetic
 ------------------
 
 The type decides how much ``*ptr`` reads. It decides one more thing: how
-far ``ptr + 1`` moves. Adding ``1`` to a pointer does **not** mean "one
-byte later". It means **one object later**, so the compiler scales the
-step by ``sizeof(*ptr)``:
+far ``ptr + 1`` moves. These are the operations, and one rule sits behind
+all of them:
+
+.. code-block:: cpp
+
+   ptr + n     ptr - n     ++ptr     --ptr     ptr2 - ptr1
+
+Every one of them counts in **objects**, never in bytes. ``sizeof(*ptr)``
+scales the step going out and scales it back on the way in, which is why
+subtracting two pointers gives a count of objects rather than a distance
+in bytes.
+
+Adding ``1`` therefore does **not** mean "one byte later". It means
+**one object later**:
 
 .. code-block:: cpp
 
    int altitude_m{120};
-   double voltage{11.1};
+   double voltage_v{11.1};
 
-   int* alt_ptr{&altitude_m};
-   double* volt_ptr{&voltage};
+   int* altitude_ptr{&altitude_m};
+   double* voltage_ptr{&voltage_v};
 
-   std::cout << alt_ptr << '\n';       // 0x7ffd…a24
-   std::cout << alt_ptr + 1 << '\n';   // 0x7ffd…a28, four bytes on
-   std::cout << volt_ptr << '\n';      // 0x7ffd…a28
-   std::cout << volt_ptr + 1 << '\n';  // 0x7ffd…a30, eight bytes on
+   std::cout << altitude_ptr << '\n';       // 0x7ffd…a10
+   std::cout << altitude_ptr + 1 << '\n';   // 0x7ffd…a14, four bytes on
+   std::cout << voltage_ptr << '\n';        // 0x7ffd…a20
+   std::cout << voltage_ptr + 1 << '\n';    // 0x7ffd…a28, eight bytes on
+
+Addresses print in **hexadecimal**. The ones above are picked so the
+arithmetic reads the same either way; real ones often will not, and
+``a28 + 8`` is ``a30``, not ``a36``.
 
 .. list-table:: ``+ 1`` moves by one object, and objects are not the same size.
    :widths: 26 20 54
@@ -682,7 +824,7 @@ subtracting two pointers gives a count of **objects, not bytes**:
 
 .. code-block:: cpp
 
-   std::cout << (alt_ptr + 1) - alt_ptr << '\n';   // 1, not 4
+   std::cout << (altitude_ptr + 1) - altitude_ptr << '\n';   // 1, not 4
 
 .. note::
 
@@ -698,8 +840,8 @@ What is legal on a single object
 For the purposes of arithmetic, a lone variable counts as an array of
 one element. That gives exactly two positions you are allowed to name:
 
-- ``alt_ptr``, the object itself.
-- ``alt_ptr + 1``, the **one-past-the-end** position. You may form it and
+- ``altitude_ptr``, the object itself.
+- ``altitude_ptr + 1``, the **one-past-the-end** position. You may form it and
   compare with it. You may **not** dereference it.
 
 .. danger::
@@ -710,14 +852,14 @@ one element. That gives exactly two positions you are allowed to name:
    .. code-block:: cpp
 
       int altitude_m{120};
-      int* alt_ptr{&altitude_m};
+      int* altitude_ptr{&altitude_m};
 
-      std::cout << *(alt_ptr + 1) << '\n';   // UB: reading past the object
-      int* far{alt_ptr + 2};                 // UB: even forming this
+      std::cout << *(altitude_ptr + 1) << '\n';   // UB: reading past the object
+      int* far{altitude_ptr + 2};                 // UB: even forming this
       int battery_pct{88};
-      &battery_pct - alt_ptr;                // UB: unrelated objects
+      &battery_pct - altitude_ptr;                // UB: unrelated objects
 
-   ``*(alt_ptr + 1)`` is the dangerous one, because it *works*. Compiled
+   ``*(altitude_ptr + 1)`` is the dangerous one, because it *works*. Compiled
    normally it prints whatever happens to sit next on the stack:
 
    .. code-block:: text
@@ -726,7 +868,7 @@ one element. That gives exactly two positions you are allowed to name:
 
    No warning, no crash, a plausible-looking number, and a different
    answer tomorrow. Built with ``-fsanitize=address`` that same
-   ``*(alt_ptr + 1)`` says what is really going on:
+   ``*(altitude_ptr + 1)`` says what is really going on:
 
    .. code-block:: text
 
@@ -735,7 +877,7 @@ one element. That gives exactly two positions you are allowed to name:
 
    This is exactly the case the sanitizers section below exists for.
 
-   ``&battery_pct - alt_ptr`` is the same rule you met in **Comparing
+   ``&battery_pct - altitude_ptr`` is the same rule you met in **Comparing
    pointers** above: arithmetic between pointers into *unrelated* objects
    has no meaning, whether you subtract them or compare them with ``<``.
 
@@ -770,22 +912,22 @@ the arrow itself.
    :class: compact-table
 
    * - Declaration
-     - ``*alt_ptr = 90;``
-     - ``alt_ptr = &target_alt_m;``
+     - ``*altitude_ptr = 90;``
+     - ``altitude_ptr = &target_alt_m;``
      - Read right to left as
-   * - ``int* alt_ptr{&altitude_m};``
+   * - ``int* altitude_ptr{&altitude_m};``
      - yes
      - yes
      - a pointer to an ``int``
-   * - ``const int* alt_ptr{&altitude_m};``
+   * - ``const int* altitude_ptr{&altitude_m};``
      - **no**
      - yes
      - a pointer to a ``const int``
-   * - ``int* const alt_ptr{&altitude_m};``
+   * - ``int* const altitude_ptr{&altitude_m};``
      - yes
      - **no**
      - a ``const`` pointer to an ``int``
-   * - ``const int* const alt_ptr{&altitude_m};``
+   * - ``const int* const altitude_ptr{&altitude_m};``
      - **no**
      - **no**
      - a ``const`` pointer to a ``const int``
@@ -799,28 +941,28 @@ through it, and repoint it. Each ``const`` takes one of them away.
    int target_alt_m{80};
 
    // 1. pointer to const: the object is read-only *through this pointer*
-   const int* alt_ptr1{&altitude_m};
-   // *alt_ptr1 = 90;               // error
-   alt_ptr1 = &target_alt_m;        // OK
+   const int* altitude_ptr1{&altitude_m};
+   // *altitude_ptr1 = 90;               // error
+   altitude_ptr1 = &target_alt_m;        // OK
 
    // 2. const pointer: the arrow is frozen, the object is not
-   int* const alt_ptr2{&altitude_m};   // must be initialized here
-   *alt_ptr2 = 90;                     // OK
-   // alt_ptr2 = &target_alt_m;        // error
+   int* const altitude_ptr2{&altitude_m};   // must be initialized here
+   *altitude_ptr2 = 90;                     // OK
+   // altitude_ptr2 = &target_alt_m;        // error
 
    // 3. const pointer to const: both frozen
-   const int* const alt_ptr3{&altitude_m};
-   // *alt_ptr3 = 90;                  // error
-   // alt_ptr3 = &target_alt_m;        // error
+   const int* const altitude_ptr3{&altitude_m};
+   // *altitude_ptr3 = 90;                  // error
+   // altitude_ptr3 = &target_alt_m;        // error
 
 .. tip::
 
    **The reading rule.** Go right to left from the identifier, and read
    ``*`` as "pointer to":
 
-   - ``const int* alt_ptr`` → *pointer to* a *const int*.
-   - ``int* const alt_ptr`` → *const pointer* to an *int*.
-   - ``const int* const alt_ptr`` → *const pointer* to a *const int*.
+   - ``const int* altitude_ptr`` → *pointer to* a *const int*.
+   - ``int* const altitude_ptr`` → *const pointer* to an *int*.
+   - ``const int* const altitude_ptr`` → *const pointer* to a *const int*.
 
    ``const int*`` and ``int const*`` mean the same thing. The right-to-
    left rule works on the second spelling with no exceptions, which is
@@ -961,13 +1103,13 @@ The ``new`` Operator
 3. yields the **address** of that object, which is what ``battery_pct``
    stores.
 
-.. figure:: /_static/images/l3/png/new_delete.png
+.. figure:: /_static/images/l3/png/new.png
    :align: center
-   :alt: Three numbered stages. One: int* battery_pct{new int{88}}; a stack box named battery_pct holds a heap address and a red arrow points to a live heap box holding 88. Two: delete battery_pct; the heap box is greyed and labelled freed, and the arrow is dashed and labelled dangling. Three: battery_pct = nullptr; the pointer holds nullptr and there is no arrow.
+   :alt: A stack box named battery_pct holding the address 0x5591…2b0, with a red arrow to a heap box holding 88 whose own address is 0x5591…2b0.
 
-   The three states of a raw owning pointer. Stage 2 is the dangerous
-   one, and it is the state your program is in between every ``delete``
-   and the line after it.
+   ``battery_pct`` is an ordinary stack variable. What it holds is an
+   address, and what lives at that address is on the heap, with no name
+   of its own.
 
 .. note::
 
@@ -982,18 +1124,48 @@ The ``new`` Operator
    **The object created by ``new`` has no name.** It is not a variable.
    It cannot go out of scope, because it is not in any scope. The only
    way to reach it, ever, is through the address you were handed at
-   allocation. Lose that address and the object is unreachable but still
-   allocated, which is precisely the definition of a memory leak.
+   allocation.
+
+So losing the address is not an inconvenience. It is final:
+
+.. code-block:: cpp
+
+   {
+       int* battery_pct{new int{88}};   // the only address of that object
+   }   // battery_pct dies here. The int does not: it is still
+       // allocated, and nothing knows where it is any more.
+
+.. figure:: /_static/images/l3/png/new2.png
+   :align: center
+   :alt: The same two boxes, but the stack box named battery_pct is now greyed out, dashed and labelled freed, while the heap box still holds 88 at address 0x5591…2b0 with no arrow reaching it.
+
+   The pointer went out of scope; **the object could not**, because it
+   was never in one. Lose that address and the object is unreachable but
+   still allocated, which is precisely the definition of a memory leak.
 
 The ``delete`` Operator
 -----------------------
+
+``new`` made you the owner. ``delete`` is the only way to hand the storage
+back. Write the two lines as a pair, and in this order:
 
 .. code-block:: cpp
 
    int* battery_pct{new int{88}};
    // ... use *battery_pct ...
-   delete battery_pct;       // returns the storage to the allocator
-   battery_pct = nullptr;    // and now say so
+   delete battery_pct;       // the storage goes back
+   battery_pct = nullptr;    // and now the pointer says so
+
+.. figure:: /_static/images/l3/png/new_delete.png
+   :align: center
+   :alt: Three numbered stages. One: int* battery_pct{new int{88}}; a stack box named battery_pct holds a heap address and a red arrow points to a live heap box holding 88. Two: delete battery_pct; the heap box is greyed and labelled freed, and the arrow is dashed and labelled dangling. Three: battery_pct = nullptr; the pointer holds nullptr and there is no arrow.
+
+   The three states of a raw owning pointer. Stage 2 is the dangerous
+   one, and it is the state your program is in between every ``delete``
+   and the line after it.
+
+``delete`` acts on the **storage**, not on the pointer. Everything below
+follows from that one sentence.
 
 .. warning::
 
@@ -1156,13 +1328,6 @@ Memory leaks
 A **memory leak** is allocated storage that nothing points at any more.
 It is not freed, and it cannot be freed.
 
-.. figure:: /_static/images/l3/png/memory_leak.png
-   :align: center
-   :alt: A greyed-out stack box named battery_pct, labelled Stack (gone) because its scope has ended, with a dashed arrow down to a live heap box holding 88. The arrow is crossed out: the block is still allocated and nothing points at it any more.
-
-   The pointer was the only way to reach the block. When it died, so did
-   the last chance to free what it addressed.
-
 .. code-block:: cpp
 
    for (int i{0}; i < 100000; ++i) {
@@ -1219,13 +1384,6 @@ On a normal system it is an immediate segmentation fault:
 
    int* sensor{nullptr};
    std::cout << *sensor << '\n';   // UB
-
-.. figure:: /_static/images/l3/png/null_dereference.png
-   :align: center
-   :alt: A stack box named sensor holding nullptr, with a dashed arrow pointing down to an empty dashed circle containing a red cross: there is no object at the other end, so dereferencing the pointer is undefined behavior.
-   :width: 60%
-
-   The arrow leads nowhere. Test the pointer before following it.
 
 Of the four failures this is the friendly one: it stops the program at
 the line that is wrong, rather than corrupting something and failing
@@ -1451,88 +1609,6 @@ something, which is what turns it into a check rather than a suggestion.
    same things and will fight.
 
 
-The Modern Alternative
-======================
-
-Everything in the previous two sections is a manual solution to one
-question: **who frees this, and when?** C++ answers that question in the
-type system, and the answer is RAII.
-
-**RAII** stands for *Resource Acquisition Is Initialization*. It means the
-resource is owned by an object whose destructor releases it. When that
-object dies, at the end of its scope, the resource is released. There is
-no line to forget, and no path out of the scope, not even an exception, that
-skips it.
-
-.. code-block:: cpp
-
-   #include <memory>
-
-   // raw: correct only if nothing between the two lines returns or throws
-   int* raw_battery{new int{88}};
-   delete raw_battery;
-
-   // RAII: freed at the end of the scope, on every path out of it
-   std::unique_ptr<int> battery_pct{std::make_unique<int>(88)};
-
-.. list-table:: Which tool for which job.
-   :widths: 32 68
-   :header-rows: 1
-   :class: compact-table
-
-   * - Use
-     - When
-   * - A local variable
-     - The default. If it fits and its lifetime is the scope, use it.
-   * - ``std::vector``, ``std::string``
-     - Many objects, or a size known only at run time. These *are* heap
-       allocation, done correctly.
-   * - ``std::unique_ptr<T>``
-     - One object on the heap with exactly one owner.
-   * - ``std::shared_ptr<T>``
-     - Genuinely shared ownership. This is what ``rclcpp`` hands you.
-   * - A raw ``T*`` or ``T&``
-     - **Observing** an object you do not own. Never for owning one.
-
-.. seealso::
-
-   The C++ Core Guidelines state this as a rule:
-   `R.11: Avoid calling new and delete explicitly
-   <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r11-avoid-calling-new-and-delete-explicitly>`_,
-   with `R.3: A raw pointer (a T*) is non-owning
-   <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r3-a-raw-pointer-a-t-is-non-owning>`_
-   as its companion. Smart pointers are
-   :doc:`Lecture 7 </lectures/lecture7/l7_index>`.
-
-C++20 and pointers
-------------------
-
-.. note::
-
-   C++20 changed what raw pointers are *for*, in two ways worth knowing
-   about now and using later:
-
-   - **Allocation in a constant expression.** ``new`` and ``delete`` may
-     run while the compiler is evaluating a constant, provided everything
-     allocated is freed before that evaluation ends. It is the one place
-     in C++ where forgetting to free is a **compile error** rather than a
-     leak you have to go looking for.
-   - **Passing a sequence safely.** ``std::span`` carries a pointer and a
-     length as one object, so the two can never disagree. It replaces the
-     old habit of passing an address and a separate count.
-
-   Both of them only show up once you are writing **functions**, which is
-   :doc:`Lecture 5 </lectures/lecture5/l5_index>`. We will come back to
-   them there, with the syntax to go with them.
-
-.. note::
-
-   Arithmetic on pointers, such as ``ptr + 2`` or ``++ptr``, only means
-   anything when the pointer runs along a sequence of objects, so it
-   waits for :doc:`Lecture 4 </lectures/lecture4/l4_index>` and the
-   containers it belongs to.
-
-
 References
 ==========
 
@@ -1656,69 +1732,8 @@ all three yourself:
    |                              | ``90``                 | object.                                              |
    +------------------------------+------------------------+------------------------------------------------------+
 
-**The compiler's answer: whatever is cheapest.** Where the compiler can
-see both the reference and the object, it emits nothing for the
-reference and uses the object directly. Where it cannot, for example
-across a function boundary, or when a reference is stored inside a class,
-it
-passes or stores an **address**, which behaves exactly like an
-``int* const``: pointer-sized, and never repointed.
-
-.. figure:: /_static/images/l3/png/reference_memory.png
-   :align: center
-   :alt: Two panels. On the left, what the language says: a single stack box holding 120 with two names above it, altitude_m and alt, joined by a brace, and the notes &alt is &altitude_m and sizeof(alt) is sizeof(int). On the right, what GCC emitted: in a Debug build at -O0 an unnamed greyed-out eight-byte stack slot holds the address 0x7ffd…00c, exactly like an int* const; in a Release build at -O2 there is no slot at all, drawn as an empty dashed box with a cross through it.
-
-   The same two lines of C++, seen two ways. The left panel is what you
-   reason about; the right is what the compiler happened to do with it,
-   and it changes with the build type.
-
-.. dropdown:: Watching it happen, in the generated code
-    :class-container: sd-border-secondary
-
-    .. code-block:: cpp
-
-       int local_reference() {
-           int altitude_m{120};
-           int& alt{altitude_m};
-           alt = 90;
-           return altitude_m;
-       }
-
-    Compiled as a **Debug** build (``-O0``), GCC really does make a
-    hidden slot. It takes the address of ``altitude_m``, stores it eight
-    bytes away, then loads it back to write through it:
-
-    .. code-block:: text
-
-       mov  DWORD PTR -20[rbp], 120   ; altitude_m = 120
-       lea  rax, -20[rbp]             ; take its address
-       mov  QWORD PTR -16[rbp], rax   ; store it: this slot IS the reference
-       mov  rax, QWORD PTR -16[rbp]   ; load it back
-       mov  DWORD PTR [rax], 90       ; alt = 90, written through the address
-
-    The same function as a **Release** build (``-O2``) is this, in its
-    entirety:
-
-    .. code-block:: text
-
-       endbr64                        ; branch-protection marker, not our code
-       mov  eax, 90
-       ret
-
-    The reference is gone, the variable is gone, and only the answer
-    remains. Neither version is "what a reference is". They are two
-    legal ways to implement the same meaning.
-
-.. important::
-
-   So "a reference takes no memory" is not a rule you can rely on: there
-   are places where the compiler has no choice but to store an address.
-   The rule you can rely on is the language's: **a reference is a name
-   for an object that already exists**. Anything else you might reason
-   about, stack slot, register, or no storage at all, is a detail of the
-   compiler that changes when you change the build type.
-
 Where references are actually used
+----------------------------------Where references are actually used
 ----------------------------------
 
 You will write far more references than pointers, and mostly in two
@@ -1737,9 +1752,14 @@ places:
 Both are the subject of later lectures:
 :doc:`Lecture 4 </lectures/lecture4/l4_index>` for containers and
 :doc:`Lecture 5 </lectures/lecture5/l5_index>` for parameter passing.
-The reason is already visible here: ``const Battery&`` passes 8
-bytes instead of copying the object, and says in the signature that it
-will not be modified.
+The reason is already visible here: ``const Battery&`` passes an
+**address**, the same 8 bytes any pointer is, instead of copying the whole
+object. Across a function boundary the compiler has to pass *something*,
+and what it passes is the address, exactly as the previous section
+described. Measured with GCC on a 56-byte ``Battery``: the by-reference
+call copies nothing and hands over one register, while the by-value call
+emits four instructions to copy all 56 bytes onto the stack. And the
+signature says the object will not be modified.
 
 
 Pointers vs. References
@@ -1780,10 +1800,17 @@ Pointers vs. References
      - No, ``&r`` is the object's address
    * - **Can own heap memory**
      - Yes (but should not; use a smart pointer)
-     - No
+     - No: it can *refer* to a heap object, but never owns it
    * - **Arithmetic**
      - Yes, once there is a sequence to walk (Lecture 4)
      - No
+
+.. note::
+
+   **Owning** means being responsible for the ``delete``. A reference can
+   perfectly well be *bound* to a heap object, and Exercise 3 does exactly
+   that with ``int& fused{*imu_reading};``. The pointer is still the owner;
+   the reference only gives that object a second name.
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -1799,55 +1826,7 @@ Pointers vs. References
        and some C++ ones, take ``T*``.
     4. **Use a smart pointer to own heap memory.** Never a raw one.
 
-.. admonition:: Discussion 2 (in class): Reading a real signature
-   :class: important
-
-   Here are four ways a function that finds the closest obstacle might be
-   declared:
-
-   .. code-block:: cpp
-
-      Obstacle  closest_a(const std::vector<Obstacle>& obstacles);
-      Obstacle* closest_b(const std::vector<Obstacle>& obstacles);
-      Obstacle& closest_c(const std::vector<Obstacle>& obstacles);
-      bool      closest_d(const std::vector<Obstacle>& obstacles,
-                          Obstacle& result);
-
-   Discuss:
-
-   1. What does each one do when the vector is **empty**? Which of them
-      can answer that question honestly?
-   2. Which return types force the caller to write a check? Which allow
-      the caller to skip one?
-   3. ``closest_b`` returns a pointer. Who owns what it points at, and
-      how long is that pointer valid for?
-   4. Which would you choose, and what would you have to document?
-
-   .. dropdown:: Talking points
-      :class-container: sd-border-success
-
-      - ``closest_a`` must return *something*, so on an empty vector it
-        has to invent an obstacle or throw. It also copies.
-      - ``closest_b`` can return ``nullptr`` for "none", which is honest,
-        and the caller must check. This is the classic use of a raw
-        pointer: it can say "nothing", and it owns nothing.
-      - ``closest_c`` cannot express "none" at all. On an empty vector it
-        has no correct behavior left except to throw.
-      - ``closest_d`` separates the two answers: a ``bool`` for "was
-        there one" and a reference for "here it is". It works, and it is
-        the C-style shape; many would find the pointer version cleaner.
-      - On (3): the pointer points **into the caller's vector**. The
-        function owns nothing and must not ``delete`` it. It is valid
-        only until the vector is modified: ``push_back`` may reallocate
-        and every pointer into it dangles at once. That is a real
-        constraint you would have to document, and it is the reason
-        Lecture 4 keeps coming back to iterator and pointer invalidation.
-      - Worth mentioning: C++17's ``std::optional<Obstacle>`` says
-        "maybe an obstacle" in the type itself. There is no null pointer
-        to check and nothing that can dangle. Reach for it when the answer is a value rather than a
-        view into something else.
-
-.. admonition:: Exercise 3 (in class): Audit this code
+.. admonition:: Exercise 3 (in class): Audit this code.. admonition:: Exercise 3 (in class): Audit this code
    :class: hint
 
    Eleven lines, several bugs. For each line, say whether it is fine or

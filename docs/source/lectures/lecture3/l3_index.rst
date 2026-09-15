@@ -23,19 +23,22 @@ and the four ways it goes wrong; finding those bugs with Valgrind and the
 sanitizers; and references, the safer alternative you will reach for far
 more often.
 
-The C++20 facility that belongs to this material is allocation inside a
-constant expression, where a leak becomes a compile error. It is covered
-alongside the classical material, together with the reason this course
-asks you to write almost none of it by hand. Pointer arithmetic is
-introduced here in the only form a single variable can show, the rule
-that ``p + 1`` steps by ``sizeof(*p)``; arrays, and the arithmetic that
-finally makes it useful, wait for Lecture 4.
+Pointer arithmetic is introduced here in the only form a single variable
+can show, the rule that ``p + 1`` steps by ``sizeof(*p)``; arrays, and
+the arithmetic that finally makes it useful, wait for Lecture 4. Smart
+pointers, the tool that makes almost all of the manual work unnecessary,
+are :doc:`Lecture 7 </lectures/lecture7/l7_index>`.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
 
    By the end of this lecture, you will be able to:
 
+   - Read a memory address: why it is printed in hexadecimal, why two
+     hex digits are one byte, and why ``0x…a28 + 8`` is ``0x…a30``.
+   - Choose a **build type** and say what it changes: ``Debug`` against
+     ``Release``, and why Valgrind loses its line numbers without
+     ``-g``.
    - Say which storage duration an object has, where it lives, and who
      ends its lifetime.
    - Declare and initialize pointers, read a pointer declaration
@@ -65,10 +68,6 @@ finally makes it useful, wait for Lecture 4.
    - Use references: state the five properties, explain why they cannot
      be reseated, and choose between a reference and a pointer for a
      given interface.
-   - Explain what RAII means and why the course prefers containers and
-     smart pointers to explicit ``new``/``delete``.
-   - Use the C++20 facility that applies here: allocation in a constant
-     expression, where failing to free is a compile error.
 
 .. toctree::
    :hidden:
@@ -88,8 +87,8 @@ Next Steps
 
   - ``std::string``, ``std::array``, and ``std::vector``.
   - Iterators, and why they are a generalization of pointers.
-  - Pointer and iterator invalidation, the constraint that Discussion 2
-    of this lecture ran into.
+  - Pointer and iterator invalidation: why a pointer into a container
+    can go stale when the container changes.
 
 - **Pre-work:**
 

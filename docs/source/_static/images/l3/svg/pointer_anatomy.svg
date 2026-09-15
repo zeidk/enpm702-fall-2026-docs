@@ -20,9 +20,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.65375622"
-     inkscape:cx="695.21327"
-     inkscape:cy="335.75206"
+     inkscape:zoom="0.41145303"
+     inkscape:cx="156.76152"
+     inkscape:cy="241.8259"
      inkscape:window-width="1600"
      inkscape:window-height="881"
      inkscape:window-x="0"
@@ -116,36 +116,21 @@
   </defs>
   <rect
      width="1170.5566"
-     height="385.50815"
+     height="278.57007"
      fill="#ffffff"
      id="rect6"
-     x="19.885082"
-     y="71.89222"
-     style="stroke-width:0.772595" />
-  <text
-     x="628.67377"
-     y="112.22369"
-     font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
-     font-size="29"
-     font-weight="bold"
-     fill="#1b1b1b"
-     text-anchor="middle"
-     id="text6"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b"><tspan
-       sodipodi:role="line"
-       id="tspan20"
-       x="628.67377"
-       y="112.22369">int altitude_m{120};</tspan><tspan
-       sodipodi:role="line"
-       id="tspan21"
-       x="628.67377"
-       y="152.22369">int* altitude_ptr{&amp;altitude_m};</tspan></text>
+     x="182.72263"
+     y="96.19632"
+     style="stroke-width:0.656753" />
   <g
-     id="g22"
-     transform="translate(-2.9909096,4.2236938)">
+     id="g1"
+     transform="translate(162.83753,-85.217012)"
+     inkscape:export-filename="../png/pointer_anatomy.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350">
     <rect
-       x="179.86423"
-       y="229.82022"
+       x="176.87332"
+       y="234.04391"
        width="300.35956"
        height="87.859558"
        fill="#ffffff"
@@ -153,15 +138,15 @@
        stroke-width="2.14044"
        id="rect7" />
     <rect
-       x="178.75"
-       y="228.75"
+       x="175.75909"
+       y="232.97369"
        width="302.5"
        height="44"
        fill="#2f6fb5"
        id="rect8" />
     <text
-       x="329.69202"
-       y="261"
+       x="326.70111"
+       y="265.22369"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="26"
        font-weight="600"
@@ -170,18 +155,18 @@
        id="text8"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
     <text
-       x="330"
-       y="309.10001"
+       x="327.00909"
+       y="309.3237"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="26"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text9"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#8c22b6;fill-opacity:1">0x7ffd…a04</text>
     <text
-       x="330"
-       y="213.55998"
+       x="327.00909"
+       y="217.78368"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="28"
        font-weight="bold"
@@ -190,8 +175,8 @@
        id="text10"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_ptr</text>
     <text
-       x="330"
-       y="352.72061"
+       x="327.00909"
+       y="356.94431"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="21"
        font-weight="normal"
@@ -199,13 +184,9 @@
        text-anchor="middle"
        id="text11"
        style="font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Oblique';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…9f8</text>
-  </g>
-  <g
-     id="g23"
-     transform="translate(-2.9909096,4.2236938)">
     <rect
-       x="779.93756"
-       y="229.82022"
+       x="776.94666"
+       y="234.04391"
        width="300.35956"
        height="87.859558"
        fill="#ffffff"
@@ -213,15 +194,15 @@
        stroke-width="2.14044"
        id="rect11" />
     <rect
-       x="779.01398"
-       y="228.75"
+       x="776.02307"
+       y="232.97369"
        width="302.5"
        height="44"
        fill="#2f6fb5"
        id="rect12" />
     <text
-       x="929.9707"
-       y="261"
+       x="926.9798"
+       y="265.22369"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="26"
        font-weight="600"
@@ -230,18 +211,18 @@
        id="text12"
        style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:29.3333px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Stack</text>
     <text
-       x="930"
-       y="308.44"
+       x="927.00909"
+       y="308.6637"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="36"
        font-weight="bold"
        fill="#1b1b1b"
        text-anchor="middle"
        id="text13"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">120</text>
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Medium';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#1b1b1b">120</text>
     <text
-       x="930"
-       y="214"
+       x="927.00909"
+       y="218.22369"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
        font-size="28"
        font-weight="bold"
@@ -250,81 +231,81 @@
        id="text14"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">altitude_m</text>
     <text
-       x="930"
-       y="352.85263"
+       x="927.00909"
+       y="357.07632"
        font-family="'Fira Mono', 'DejaVu Sans Mono', monospace"
        font-size="21"
        font-weight="normal"
        fill="#555555"
        text-anchor="middle"
        id="text15"
-       style="font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Oblique';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">0x7ffd…a04</text>
-  </g>
-  <g
-     id="g21"
-     transform="translate(-4.8589546,-18.031326)">
-    <line
-       x1="492"
-       y1="312"
-       x2="769.49744"
-       y2="312"
-       stroke="#2f6fb5"
-       stroke-width="3.76699"
-       marker-end="url(#a-2f6fb5)"
-       id="line15"
-       style="stroke-width:4;stroke-dasharray:none" />
+       style="font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'Fira Mono', 'DejaVu Sans Mono', monospace;-inkscape-font-specification:'Fira Mono, DejaVu Sans Mono, monospace, Oblique';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#8c22b6;fill-opacity:1">0x7ffd…a04</text>
+    <g
+       id="g21"
+       transform="translate(-4.8589546,-18.031326)">
+      <line
+         x1="492"
+         y1="312"
+         x2="769.49744"
+         y2="312"
+         stroke="#2f6fb5"
+         stroke-width="3.76699"
+         marker-end="url(#a-2f6fb5)"
+         id="line15"
+         style="stroke-width:4;stroke-dasharray:none" />
+      <text
+         x="631.38873"
+         y="290"
+         font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+         font-size="24"
+         font-weight="normal"
+         fill="#2f6fb5"
+         text-anchor="middle"
+         id="text16"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#2f6fb5">points to</text>
+    </g>
     <text
-       x="631.38873"
-       y="290"
+       x="327.76712"
+       y="404.22369"
        font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-       font-size="24"
+       font-size="22"
        font-weight="normal"
-       fill="#2f6fb5"
+       fill="#8a8a8a"
        text-anchor="middle"
-       id="text16"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:middle;fill:#2f6fb5">points to</text>
+       id="text17"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">a pointer is a variable: it has its own</text>
+    <text
+       x="326.95111"
+       y="440.22369"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="22"
+       font-weight="normal"
+       fill="#8a8a8a"
+       text-anchor="middle"
+       id="text18"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">address, and its value is another address</text>
+    <text
+       x="927.87177"
+       y="404.22369"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="22"
+       font-weight="normal"
+       fill="#8a8a8a"
+       text-anchor="middle"
+       id="text19"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the object being pointed at;</text>
+    <text
+       x="926.19171"
+       y="439.47168"
+       font-family="'Fira Sans', Helvetica, Arial, sans-serif"
+       font-size="22"
+       font-weight="normal"
+       fill="#8a8a8a"
+       text-anchor="middle"
+       id="text20"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+       inkscape:export-filename="../png/pointer_anatomy.png"
+       inkscape:export-xdpi="350"
+       inkscape:export-ydpi="350">it does not know about the pointer</text>
   </g>
-  <text
-     x="327.76712"
-     y="404.22369"
-     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-     font-size="22"
-     font-weight="normal"
-     fill="#8a8a8a"
-     text-anchor="middle"
-     id="text17"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">a pointer is a variable: it has its own</text>
-  <text
-     x="326.95111"
-     y="440.22369"
-     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-     font-size="22"
-     font-weight="normal"
-     fill="#8a8a8a"
-     text-anchor="middle"
-     id="text18"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">address, and its value is another address</text>
-  <text
-     x="927.87177"
-     y="404.22369"
-     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-     font-size="22"
-     font-weight="normal"
-     fill="#8a8a8a"
-     text-anchor="middle"
-     id="text19"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">the object being pointed at;</text>
-  <text
-     x="926.19171"
-     y="439.47168"
-     font-family="'Fira Sans', Helvetica, Arial, sans-serif"
-     font-size="22"
-     font-weight="normal"
-     fill="#8a8a8a"
-     text-anchor="middle"
-     id="text20"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:'Fira Sans', Helvetica, Arial, sans-serif;-inkscape-font-specification:'Fira Sans, Helvetica, Arial, sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
-     inkscape:export-filename="../png/pointer_anatomy.png"
-     inkscape:export-xdpi="350"
-     inkscape:export-ydpi="350">it does not know about the pointer</text>
 </svg>

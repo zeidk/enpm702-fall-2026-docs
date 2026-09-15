@@ -2,16 +2,17 @@
 C++ Exercises
 ====================================================
 
-Seven exercises reinforcing :doc:`Lecture 3 <l3_lecture>`, in the order
+Eight exercises reinforcing :doc:`Lecture 3 <l3_lecture>`, in the order
 the lecture covers the material. Exercises 1 to 5 are **code**, Exercise
-6 is a **written** trace done on paper, and Exercise 7 is a **challenge**
-that puts the whole lecture together. None of them needs an array;
+6 is a **written** trace done on paper, Exercise 7 is a **build and
+observe** exercise that needs no new code, and Exercise 8 is a
+**challenge** that puts the whole lecture together. None of them needs an array;
 arrays and the containers that replace them are
 :doc:`Lecture 4 </lectures/lecture4/l4_index>`.
 
 .. note::
 
-   **What to submit.** All seven, in a **single file** named
+   **What to submit.** All eight, in a **single file** named
    ``firstname_lastname.cpp`` (for example, ``bjarne_stroustrup.cpp``),
    uploaded to **Canvas**. Written answers go in comments. Each code
    exercise gets its own **block** inside ``main()``, headed by a
@@ -335,7 +336,57 @@ arrays and the containers that replace them are
        leaks, undefined behavior).
     6. Rewrite the code to fix all issues.
 
-.. dropdown:: Exercise 7: Make It Valgrind-Clean (Challenge)
+.. dropdown:: Exercise 7: Debug and Release Are Not the Same Build
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    **Goal**
+
+    See for yourself what the build type changes, and why this course
+    builds ``Debug``.
+
+    **Specification**
+
+    1. Start from a program with a deliberate leak:
+
+       .. code-block:: cpp
+
+          int* battery_pct{new int{88}};
+          std::cout << *battery_pct << '\n';
+          // no delete
+
+    2. Build it as ``Debug`` (:kbd:`Ctrl+Shift+P` → *CMake: Select
+       Variant* → ``Debug``) and run it under Valgrind. Write down the
+       **file and line number** Valgrind names for the allocation.
+    3. Switch the variant to ``Release`` and build again. Run the same
+       Valgrind command.
+    4. Compare the two reports. Valgrind still says 4 bytes are
+       definitely lost, but the line number is gone. Explain in a comment
+       **why**, in terms of the flags each variant adds.
+    5. Switch to ``RelWithDebInfo`` and run once more. Does the line
+       number come back? What does that tell you about which flag
+       actually matters?
+    6. Finally, configure from a terminal with no build type at all:
+
+       .. code-block:: bash
+
+          cmake -S . -B build-none
+          cmake --build build-none
+
+       Inspect the compile command with
+       ``grep CXX_FLAGS build-none/project/week3/CMakeFiles/week3.dir/flags.make``
+       and say what optimization and what debug information you got.
+       This is what VS Code calls ``Unspecified``.
+
+    .. note::
+
+       You are not expected to memorize the flags. You are expected to
+       know that ``-g`` is what turns Valgrind's output from "something
+       leaked" into "line 4 leaked", and that a build with neither ``-g``
+       nor ``-O`` is the one combination with no advantage at all.
+
+.. dropdown:: Exercise 8: Make It Valgrind-Clean (Challenge)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
