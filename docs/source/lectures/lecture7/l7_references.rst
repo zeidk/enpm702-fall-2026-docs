@@ -40,6 +40,6 @@ Lecture 7 References
 
    - *A Tour of C++* by Bjarne Stroustrup, Chapter 5 (Essential Operations), Chapter 13 (Resource Management)
    - *Effective Modern C++* by Scott Meyers, Items 18-22 (Smart Pointers), Items 23-25 (Move Semantics)
-   - `C++ Core Guidelines: Resource Management <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-resource>`_
+   - `C++ Core Guidelines: Resource Management <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r-resource-management>`_
    - `LearnCpp.com: Move semantics <https://www.learncpp.com/cpp-tutorial/introduction-to-smart-pointers-move-semantics/>`_
    - `LearnCpp.com: Smart pointers <https://www.learncpp.com/cpp-tutorial/introduction-to-smart-pointers-move-semantics/>`_

@@ -21,8 +21,11 @@ Installation Options
 
         Follow the official installation guide for your version:
 
-        - `Install Ubuntu 24.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_
-        - `Install Ubuntu 22.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop-2204>`_
+        - `Install Ubuntu Desktop <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_,
+          the official guide. The steps are the same for both releases.
+        - For **22.04**, take the ISO from
+          `releases.ubuntu.com/22.04 <https://releases.ubuntu.com/22.04/>`_
+          instead of the download link in the guide, which offers 24.04.
 
         .. warning::
 
@@ -44,8 +47,11 @@ Installation Options
 
         3. Follow the official installation guide:
 
-           - `Install Ubuntu 24.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_
-           - `Install Ubuntu 22.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop-2204>`_
+           - `Install Ubuntu Desktop <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_,
+             the official guide. The steps are the same for both releases.
+           - For **22.04**, take the ISO from
+             `releases.ubuntu.com/22.04 <https://releases.ubuntu.com/22.04/>`_
+             instead of the download link in the guide, which offers 24.04.
 
         .. tip::
 
@@ -61,8 +67,11 @@ Installation Options
         Only choose this option if you do not need Windows or macOS
         on this machine.
 
-        - `Install Ubuntu 24.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_
-        - `Install Ubuntu 22.04 LTS <https://ubuntu.com/tutorials/install-ubuntu-desktop-2204>`_
+        - `Install Ubuntu Desktop <https://ubuntu.com/tutorials/install-ubuntu-desktop>`_,
+          the official guide. The steps are the same for both releases.
+        - For **22.04**, take the ISO from
+          `releases.ubuntu.com/22.04 <https://releases.ubuntu.com/22.04/>`_
+          instead of the download link in the guide, which offers 24.04.
 
 
 .. note::

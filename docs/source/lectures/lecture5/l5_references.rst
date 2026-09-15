@@ -32,7 +32,7 @@ Lecture 5 References
 .. dropdown:: C++ Core Guidelines
    :class-container: sd-border-success
 
-   - `F: Functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-functions>`_
+   - `F: Functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f-functions>`_
    - `F.1: "Package" meaningful operations as carefully named functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f1-package-meaningful-operations-as-carefully-named-functions>`_
    - `F.2: A function should perform a single logical operation <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f2-a-function-should-perform-a-single-logical-operation>`_
    - `F.3: Keep functions short and simple <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f3-keep-functions-short-and-simple>`_
@@ -42,7 +42,7 @@ Lecture 5 References
    - `F.21: To return multiple "out" values, prefer returning a struct <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f21-to-return-multiple-out-values-prefer-returning-a-struct>`_
    - `F.43: Never return a pointer or reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
    - `F.46: int is the return type for main() <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f46-int-is-the-return-type-for-main>`_
-   - `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#Rf-default-args>`_
+   - `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f51-where-there-is-a-choice-prefer-default-arguments-over-overloading>`_
 
 .. dropdown:: Doxygen Documentation
    :class-container: sd-border-success

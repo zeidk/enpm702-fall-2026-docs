@@ -13,7 +13,7 @@ A function is a named group of statements that can be executed as a unit. Functi
 
 .. seealso::
 
-   `C++ Core Guidelines: F (Functions) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-functions>`_
+   `C++ Core Guidelines: F (Functions) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f-functions>`_
 
 Code Reusability
 """"""""""""""""
@@ -152,7 +152,7 @@ A function declaration (or prototype) consists of the **return type** + **identi
 
 .. seealso::
 
-   - `NL.25: Don't use void as an argument type <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rl-void>`_
+   - `NL.25: Don't use void as an argument type <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl25-dont-use-void-as-an-argument-type>`_
    - `F.1: "Package" meaningful operations as carefully named functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f1-package-meaningful-operations-as-carefully-named-functions>`_
 
 **The "Promise"**
@@ -1341,7 +1341,7 @@ Often, you can achieve the same result with either overloading or default parame
 
 .. seealso::
 
-   `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#Rf-default-args>`_
+   `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f51-where-there-is-a-choice-prefer-default-arguments-over-overloading>`_
 
 Where to Specify Default Values
 """""""""""""""""""""""""""""""""

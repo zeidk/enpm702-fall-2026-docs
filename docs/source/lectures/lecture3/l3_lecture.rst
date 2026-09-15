@@ -142,7 +142,15 @@ on:
 
 .. figure:: /_static/images/l3/png/memory_layout_lifetime.png
    :align: center
-   :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colors the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
+   :alt: A horizontal band showing one process's virtual address space from
+      low to high addresses: reserved, .text, .rodata, .data, .bss, heap,
+      free space, stack and argv/env, each with a one-line note on its
+      contents. The heap is red and labelled grows up, the stack is blue
+      and labelled grows down, and their arrows point at each other into
+      the grey free space between them, annotated: both grow into it, but
+      never meet. A legend below colours the segments by storage duration:
+      yellow for static, the whole program; blue for automatic, the
+      enclosing block; red for dynamic, the heap.
 
    The address space of Lecture 2, colored by **storage duration**.
    This lecture lives in the two bands facing each other across the free
@@ -241,7 +249,13 @@ figure is for.
 
 .. figure:: /_static/images/l3/png/pointer_anatomy.png
    :align: center
-   :alt: Two variable boxes on the stack. The left box, named altitude_ptr, holds the address 0x7ffd…a04 and itself sits at address 0x7ffd…9f8. The right box, named altitude_m, holds the value 120 and sits at address 0x7ffd…a04. A blue arrow runs from altitude_ptr to altitude_m, labelled points to.
+   :alt: Two variable boxes on the stack. The left box, named altitude_ptr,
+      holds the address 0x7ffd...a04 and itself sits at 0x7ffd...9f8,
+      noted: a pointer is a variable, it has its own address, and its value
+      is another address. The right box, named altitude_m, holds 120 and
+      sits at 0x7ffd...a04, noted: the object being pointed at, it does not
+      know about the pointer. A blue arrow runs from altitude_ptr to
+      altitude_m, labelled points to.
 
    ``int altitude_m{120}; int* altitude_ptr{&altitude_m};``. Here
    ``altitude_ptr`` is drawn the same way every other variable was drawn
@@ -390,7 +404,12 @@ directions.
 
 .. figure:: /_static/images/l3/png/address_of_deref.png
    :align: center
-   :alt: The boxes altitude_ptr and altitude_m. A teal arrow curves through the gap from altitude_m to altitude_ptr, labelled &altitude_m, the address of altitude_m, which is what altitude_ptr stores. A red arrow curves the other way, labelled *altitude_ptr, the object at that address, which is altitude_m.
+   :alt: The boxes altitude_ptr and altitude_m, the first holding 0x7ffd...a04
+      and the second holding 120 at that address. A teal arrow curves
+      through the gap from altitude_m to altitude_ptr, labelled
+      &altitude_m, the address of altitude_m, which is what altitude_ptr
+      stores. A red arrow curves the other way, labelled *altitude_ptr, the
+      object at that address, which is altitude_m.
 
    ``&`` goes from an object to its address; ``*`` goes from an address
    back to the object. They undo each other: ``*(&altitude_m)`` **is**
@@ -668,7 +687,16 @@ why does a pointer have a type at all?
 
 .. figure:: /_static/images/l3/png/typed_pointer.png
    :align: center
-   :alt: Three rows, each a pointer and the object it points at. In every row a blue stack box holds an address and is marked sizeof(p) == 8, with an arrow to the bytes of its object, tinted teal. char* status_ptr holds 0x7ffd…a00 and points at status, one byte, 0100 0001, reading as the character A. int* altitude_ptr holds 0x7ffd…a04 and points at altitude_m, four little-endian bytes, 0111 1000 then three zero bytes, reading as 120. double* voltage_ptr holds 0x7ffd…a08 and points at voltage_v, eight little-endian bytes, 0011 0011 six times then 0010 0110 and 0100 0000, reading as 11.1. Every byte is drawn as its eight bits, split into two nibbles on two lines, the way Lecture 2 drew them. Each pointer is 8 bytes; the objects are 1, 4 and 8 bytes.
+   :alt: Three rows, each a pointer and the object it points at. In every row
+      a blue stack box holds an address and is marked sizeof of the pointer
+      equals 8, with an arrow to the bytes of its object, tinted teal. Row
+      one: char* status_ptr holds 0x7ffd...a00 and points at status, one
+      byte, 0100 0001, marked sizeof(*status_ptr) == 1, read as the
+      character 'A'. Row two: int* altitude_ptr holds 0x7ffd...a04 and
+      points at altitude_m, four bytes, marked sizeof(*altitude_ptr) == 4
+      and little-endian, read as 120. Row three: double* voltage_ptr holds
+      0x7ffd...a08 and points at voltage_v, eight bytes, marked
+      sizeof(*voltage_ptr) == 8 and little-endian, read as 11.1.
 
    These are the three variables from the ``sizeof`` example above, each
    at its own address. All three pointers are **8 bytes**, because all
@@ -1055,7 +1083,13 @@ this course do.
 
 .. figure:: /_static/images/l3/png/pointee_location.png
    :align: center
-   :alt: Two rows. In the top row, int altitude_m{120}; int* altitude_ptr{&altitude_m}; draws a stack pointer box with a blue arrow to a named stack box holding 120. In the bottom row, int* battery_pct{new int{88}}; draws the same pointer with a red arrow to an unnamed heap box holding 88.
+   :alt: Two rows. In the top row, int altitude_m{120}; int*
+      altitude_ptr{&altitude_m}; draws a stack pointer box with a blue
+      arrow to a named stack box holding 120, noted: the object has a name
+      and a scope, it dies at the end of it. In the bottom row, int*
+      battery_pct{new int{88}}; draws the same pointer with a red arrow to
+      a heap box holding 88 headed no name, noted: the object has no name
+      and no scope, it lives until delete.
 
    The pointer is the same variable in both rows. What differs is the
    object at the other end: one has a name and a scope, the other has
@@ -1105,7 +1139,9 @@ The ``new`` Operator
 
 .. figure:: /_static/images/l3/png/new.png
    :align: center
-   :alt: A stack box named battery_pct holding the address 0x5591…2b0, with a red arrow to a heap box holding 88 whose own address is 0x5591…2b0.
+   :alt: A stack box named battery_pct holding the address 0x5591...2b0, with
+      a red arrow to a heap box holding 88 whose own address is
+      0x5591...2b0.
 
    ``battery_pct`` is an ordinary stack variable. What it holds is an
    address, and what lives at that address is on the heap, with no name
@@ -1137,7 +1173,9 @@ So losing the address is not an inconvenience. It is final:
 
 .. figure:: /_static/images/l3/png/new2.png
    :align: center
-   :alt: The same two boxes, but the stack box named battery_pct is now greyed out, dashed and labelled freed, while the heap box still holds 88 at address 0x5591…2b0 with no arrow reaching it.
+   :alt: The same two boxes, but the stack box named battery_pct is now greyed
+      out, dashed and labelled freed, while the heap box still holds 88 at
+      address 0x5591...2b0 with no arrow reaching it.
 
    The pointer went out of scope; **the object could not**, because it
    was never in one. Lose that address and the object is unreachable but
@@ -1158,7 +1196,13 @@ back. Write the two lines as a pair, and in this order:
 
 .. figure:: /_static/images/l3/png/new_delete.png
    :align: center
-   :alt: Three numbered stages. One: int* battery_pct{new int{88}}; a stack box named battery_pct holds a heap address and a red arrow points to a live heap box holding 88. Two: delete battery_pct; the heap box is greyed and labelled freed, and the arrow is dashed and labelled dangling. Three: battery_pct = nullptr; the pointer holds nullptr and there is no arrow.
+   :alt: Three numbered stages. One, int* battery_pct{new int{88}};: a stack
+      box named battery_pct holds a heap address and a red arrow points to
+      a live heap box holding 88. Two, delete battery_pct;: the heap box is
+      greyed, dashed and labelled freed, the arrow is dashed and labelled
+      dangling, and the pointer still holds the old address. Three,
+      battery_pct = nullptr;: the pointer holds nullptr and no arrow leaves
+      it, noted: no arrow, it points nowhere.
 
    The three states of a raw owning pointer. Stage 2 is the dangerous
    one, and it is the state your program is in between every ``delete``
@@ -1364,7 +1408,12 @@ pointers and one honest mistake:
 
 .. figure:: /_static/images/l3/png/double_delete.png
    :align: center
-   :alt: Two stack boxes, primary and backup, both holding the same heap address 0x5591…2b0, with dashed arrows converging on one greyed heap box labelled Heap (freed). Deleting through primary and then through backup frees the same block twice.
+   :alt: Two stack boxes, primary and backup, both holding the same heap
+      address 0x5591...2b0, with dashed arrows converging on one heap box
+      holding 88 that is greyed, dashed and labelled freed. The left arrow
+      is labelled delete primary; and marked OK in green; the right is
+      labelled delete backup; and marked UB in red. The same block is freed
+      twice.
 
    Two pointers, one block. Nulling ``primary`` does nothing to
    ``backup``.
@@ -1767,7 +1816,14 @@ Pointers vs. References
 
 .. figure:: /_static/images/l3/png/pointer_vs_reference.png
    :align: center
-   :alt: On the left, int* altitude_ptr{&altitude_m}; draws two stack boxes joined by an arrow: altitude_ptr holds the address of altitude_m, which holds 120. On the right, int& alt{altitude_m}; draws a single stack box holding 120 with two names above it, altitude_m and alt, joined to the box by a brace.
+   :alt: Two panels. On the left, int* altitude_ptr{&altitude_m}; draws two
+      stack boxes joined by an arrow: altitude_ptr holds 0x7ffd...a04 and
+      altitude_m holds 120, noted: two objects, altitude_ptr holds the
+      address of altitude_m, and *altitude_ptr reaches it. On the right,
+      int& alt{altitude_m}; draws a single stack box holding 120 with two
+      names above it, altitude_m and alt, joined to the box by a brace,
+      noted: one object with two names, alt is altitude_m, and nothing
+      else, for ever.
 
    A pointer is a second **object**. A reference is a second **name**.
    Every difference in the table below follows from that one.

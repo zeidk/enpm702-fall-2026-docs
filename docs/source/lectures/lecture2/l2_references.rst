@@ -86,9 +86,21 @@ References
        * - `ES.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es10-declare-one-name-only-per-declaration>`_
          - Declare one name (only) per declaration.
          - Declarations
+       * - `ES.11 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es11-use-auto-to-avoid-redundant-repetition-of-type-names>`_
+         - Use ``auto`` to avoid redundant repetition of type names.
+         - Type deduction
        * - `ES.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es20-always-initialize-an-object>`_
          - Always initialize an object.
          - Initialization
+       * - `ES.45 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#es45-avoid-magic-constants-use-symbolic-constants>`_
+         - Avoid "magic constants"; use symbolic constants.
+         - Constants
+       * - `Enum.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#enum3-prefer-class-enums-over-plain-enums>`_
+         - Prefer ``enum class``\ es over plain ``enum``\ s.
+         - Enumerations
+       * - `T.43 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#t43-prefer-using-over-typedef-for-defining-aliases>`_
+         - Prefer ``using`` over ``typedef`` for defining aliases.
+         - Aliases
        * - `Con.5 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#con5-use-constexpr-for-values-that-can-be-computed-at-compile-time>`_
          - Use ``constexpr`` for values that can be computed at compile
            time.
@@ -160,6 +172,24 @@ References
 
             Scoped and unscoped enumerations, underlying types, and
             conversion rules.
+
+        .. grid-item-card:: Type Deduction
+            :link: https://en.cppreference.com/w/cpp/language/auto
+            :class-card: sd-border-secondary
+
+            **cppreference: placeholder type specifiers**
+
+            What ``auto`` deduces, and the qualifiers deduction drops
+            along the way.
+
+        .. grid-item-card:: Type Aliases
+            :link: https://en.cppreference.com/w/cpp/language/type_alias
+            :class-card: sd-border-secondary
+
+            **cppreference: type alias, alias template**
+
+            The ``using`` form, why it replaces ``typedef``, and why an
+            alias is not a new type.
 
         .. grid-item-card:: Keywords
             :link: https://en.cppreference.com/w/cpp/keyword
@@ -244,7 +274,8 @@ References
             make ``typeid(...).name()`` readable.
 
         .. grid-item-card:: Compiler warnings module
-            :link: ../../reading_material/compiler_warnings/cw_lecture.html
+            :link: /reading_material/compiler_warnings/cw_lecture
+            :link-type: doc
             :class-card: sd-border-secondary
 
             **Course reading: compiler warnings**

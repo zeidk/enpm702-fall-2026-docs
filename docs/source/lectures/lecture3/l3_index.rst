@@ -103,4 +103,4 @@ Next Steps
   - `cppreference: pointer declaration <https://en.cppreference.com/w/cpp/language/pointer>`_
   - `cppreference: new expression <https://en.cppreference.com/w/cpp/language/new>`_
   - `Valgrind Quick Start <https://valgrind.org/docs/manual/quick-start.html>`_
-  - `C++ Core Guidelines, R: Resource management <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-resource>`_
+  - `C++ Core Guidelines, R: Resource management <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r-resource-management>`_

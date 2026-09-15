@@ -211,7 +211,10 @@ the vocabulary is worth pinning down.
 
 .. figure:: /_static/images/l2/memory.png
    :align: center
-   :alt: A row of eight bit cells labeled as one byte, with a wider bracket labeled one word.
+   :alt: Sixteen bit cells in a row, each holding a 0 or a 1. One cell is
+      highlighted and labelled 1 bit. Two brackets underneath each span
+      eight cells and are labelled 1 byte (8 bits). A single bracket above
+      spans all sixteen and is labelled 1 word (16, 32, or 64 bits).
 
    Bits, bytes, and words.
 
@@ -261,7 +264,13 @@ behave differently later in this lecture.
 
 .. figure:: /_static/images/l2/segments.png
    :align: center
-   :alt: A single horizontal band, titled "Virtual address space, where each segment is a contiguous run of 4 KiB pages", running from low addresses on the left to high addresses on the right. Nine colored segments sit side by side and are labelled, in order: reserved, .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free space is drawn with a dashed grey outline; every other segment has a solid colored outline.
+   :alt: A single horizontal band titled Virtual address space, noting that
+      each segment is a contiguous run of 4 KiB pages. It runs from 0x0 at
+      the low addresses on the left to high addresses on the right. Nine
+      coloured segments sit side by side, labelled in order: reserved,
+      .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free
+      space has a dashed grey outline; every other segment has a solid
+      coloured outline.
 
    The virtual address space of a process. Each segment is a contiguous
    run of 4 KiB pages. **Free space** is unmapped: the heap and the
@@ -269,7 +278,15 @@ behave differently later in this lecture.
 
 .. figure:: /_static/images/l2/representation.png
    :align: center
-   :alt: A memory bank divided into reserved, text, data, BSS, heap, stack and argument segments, expanded below into a grid of addressable bytes.
+   :alt: Titled Virtual address space, every segment is a run of individually
+      addressed bytes. At the top, the band of segments from reserved to
+      argv/env, with .data and .bss outlined. Below, those two are zoomed
+      into twelve byte cells at consecutive addresses from 0x404a18 to
+      0x404a23, with a marker showing where .data ends and .bss begins,
+      annotated: consecutive addresses, one address per byte, no gaps. The
+      byte at 0x404a1b is zoomed again into eight bits, 0 1 0 0 1 1 0 1,
+      annotated: one byte is 8 bits, the smallest individually addressable
+      unit.
 
    The segments of a process, and the same memory seen as a sequence of
    addressable bytes.
@@ -292,7 +309,15 @@ believes it has, not how the hardware is arranged.
 
 .. figure:: /_static/images/l2/physical_vs_virtual.png
    :align: center
-   :alt: Top: a contiguous virtual address space running from low to high addresses through reserved, .text, .rodata, .data, .bss, heap, free space, stack and argv/env, with individual 4 KiB pages numbered inside each segment. Arrows join each page to a frame in the physical RAM bank below, where the same pages sit scattered and out of order, separated by grey frames that are free or belong to other processes.
+   :alt: Top: a contiguous virtual address space running from low to high
+      addresses through reserved, .text, .rodata, .data, .bss, heap, free
+      space, stack and argv/env, with individual 4 KiB pages numbered
+      inside each segment. Three terms are labelled on the drawing: segment
+      for a band, page for a numbered 4 KiB cell, and frame for a 4 KiB
+      slot of physical RAM. Coloured lines join each page to a frame in the
+      physical RAM module below, captioned Physical RAM, the same pages,
+      scattered and out of order, where the named pages sit out of order
+      among unlabelled grey 4 KiB frames.
 
    Every page of the virtual address space is mapped to a frame of
    physical RAM. The order is not preserved.
@@ -328,7 +353,15 @@ fixed by **how you declare it**, not by where you use it.
 
 .. figure:: /_static/images/l2/memory_layout_lifetime.png
    :align: center
-   :alt: A horizontal band showing one process's virtual address space from low to high addresses, each segment with a one-line note on its contents. The heap is red and labelled grows up, the stack is blue and labelled grows down, and their arrows point at each other into the grey free space between them, annotated: both grow into it, but never meet, stack limit about 8 MiB. A legend colors the segments by storage duration: yellow for static, blue for automatic, red for dynamic.
+   :alt: A horizontal band showing one process's virtual address space from
+      low to high addresses: reserved, .text, .rodata, .data, .bss, heap,
+      free space, stack and argv/env, each with a one-line note on its
+      contents. The heap is red and labelled grows up, the stack is blue
+      and labelled grows down, and their arrows point at each other into
+      the grey free space between them, annotated: both grow into it, but
+      never meet. A legend below colours the segments by storage duration:
+      yellow for static, the whole program; blue for automatic, the
+      enclosing block; red for dynamic, the heap.
 
    The same address space, colored by **storage duration**. ``.text``
    is colored static, but it holds machine code, not objects.
@@ -671,7 +704,14 @@ Memory Allocation
 
 .. figure:: /_static/images/l2/demo.png
    :align: center
-   :alt: The four bytes of the variable number, at consecutive addresses, located inside the stack segment of a memory bank.
+   :alt: Titled int number{2500}, four bytes in the stack segment. At the top,
+      the band of segments from reserved to argv/env with stack outlined.
+      Below, the stack is zoomed into four consecutive bytes, 1100 0100,
+      0000 1001, 0000 0000 and 0000 0000, at addresses 0x7fff214aba04 to
+      0x7fff214aba07, captioned: number, one int, 4 bytes, value 2500. Two
+      notes read: the address of number is 0x7fff214aba04, the address of
+      its first byte; and x86-64 stores the low-order byte
+      first (little-endian), so 0x09c4 appears as c4, then 09.
 
    ``int number{2500};`` occupies four consecutive bytes in the stack
    segment.
@@ -683,7 +723,13 @@ prints the decimal value.
 
 .. figure:: /_static/images/l2/visualization.png
    :align: center
-   :alt: The raw four-byte binary layout on the left, and the simplified single labeled box holding the value 2500 on the right.
+   :alt: Two halves. Left, headed what is actually in memory: four byte cells
+      holding 1100 0100, 0000 1001, 0000 0000 and 0000 0000 at consecutive
+      addresses ending aba04 to aba07, annotated 4 bytes, little-endian, 32
+      bits. An arrow labelled we draw it as leads to the right half, headed
+      how we will draw it from now on: a single box whose four parts are
+      labelled the segment it lives in (Stack), its name (number), its
+      current value (2500) and its address (0x7fff214aba04).
 
    From here on, memory is drawn in this simplified form: a named box,
    its value, and its address.
@@ -2229,7 +2275,14 @@ uninitialized variables hold garbage.
 
 .. figure:: /_static/images/l2/outofscope.png
    :align: center
-   :alt: Three stack diagrams: unknown values before the declaration, x holding 1 after it, and the same bits still present after the closing brace.
+   :alt: Three stack diagrams in sequence, headed 1. Before int x{1}, 2. After
+      int x{1}, and 3. After the closing brace. In the first, three slots
+      hold question marks, noted storage exists, contents unknown. In the
+      second, the top slot holds 1 and is named x, noted the name x names
+      this slot. In the third, that slot still holds 1 but is drawn dotted
+      and the name x is struck through, noted the bits survive, only the
+      name is gone. Below, the matching program, int main() with int x{1};
+      inside, has arrows marking stages 2 and 3.
 
    The bit pattern left by ``x`` survives the closing brace; only the
    name is gone.
@@ -2311,7 +2364,11 @@ segment, where the loader zeroes them.
 
 .. figure:: /_static/images/l2/globalvars.png
    :align: center
-   :alt: A memory bank with global_y labeled in the data segment and global_x labeled in the BSS segment.
+   :alt: A horizontal band of the virtual address space from reserved and
+      .text through to stack and argv/env. An arrow from the label global_y
+      points to .data, which is marked initialized, and an arrow from the
+      label global_x points to .bss, which is marked uninitialized and
+      zeroed.
 
    ``global_y`` in the data segment, ``global_x`` in BSS.
 
@@ -2517,7 +2574,8 @@ compile time. The only thing that changes is who writes it down.
 What deduction throws away
 --------------------------
 
-Two things are dropped on the way, and both surprise people once:
+Deduction does not carry the type across untouched. The top-level
+``const`` is dropped, which surprises everybody once:
 
 .. code-block:: cpp
 
@@ -2527,20 +2585,6 @@ Two things are dropped on the way, and both surprise people once:
    copy = 6;                 // so this compiles
 
    const auto kept{limit};   // const int, ask for it back
-
-The same happens to references: deducing from a reference gives you a
-**copy**, not another name for the object. When you want to bind rather
-than copy, say so:
-
-.. code-block:: cpp
-
-   std::vector<double> voltages{11.1, 11.4};
-
-   auto  value{voltages.front()};        // double, a copy
-   const auto& view{voltages.front()};   // const double&, no copy, read-only
-   auto& slot{voltages.back()};          // double&, no copy, writable
-
-   slot += 0.1;                          // changes the vector
 
 .. list-table:: What you get for each spelling.
    :widths: 26 24 50
@@ -2556,12 +2600,13 @@ than copy, say so:
    * - ``const auto x{e};``
      - value, ``const``
      - you want a copy nobody can change
-   * - ``auto& x{e};``
-     - reference
-     - you want to modify the original
-   * - ``const auto& x{e};``
-     - reference to ``const``
-     - you only want to read it, and it is expensive to copy
+
+.. note::
+
+   That is not the whole rule. Deduction drops one more thing, and stating
+   it needs **references**, which are
+   :doc:`Lecture 3 </lectures/lecture3/l3_index>`. Until then, read ``auto``
+   as "give me my own copy".
 
 When to use it
 --------------
@@ -2578,8 +2623,6 @@ When to use it
           container iterators, in
           :doc:`Lecture 4 </lectures/lecture4/l4_index>`, are the case
           that converts most people.
-        - In range-based ``for`` loops, where ``const auto&`` avoids a
-          copy per element.
 
     .. grid-item-card:: Write the type instead
         :class-card: sd-border-warning
@@ -2650,11 +2693,32 @@ keyword creates one.
    type, and the compiler treats them interchangeably. What you gain is
    readability and a single place to change. Aliases pay for themselves
    once the underlying types get long, which happens quickly with the
-   standard library:
+   standard library.
+
+   A 6-DOF arm's trajectory is a list of waypoints, and each waypoint is
+   six joint angles. Spelled out, that type is a mouthful. Named once, it
+   reads like what it is:
 
    .. code-block:: cpp
 
       using JointAngles = std::vector<std::array<double, 6>>;
+
+      JointAngles trajectory{
+          {0.0, -1.57, 1.57, 0.0, 0.0, 0.0},   // waypoint 1
+          {0.2, -1.40, 1.40, 0.0, 0.1, 0.0}    // waypoint 2
+      };
+
+      // No conversion here: one type, two names
+      std::vector<std::array<double, 6>> spelled_out{trajectory};
+
+      std::cout << trajectory.size() << '\n';   // 2
+      std::cout << trajectory[0][1] << '\n';    // -1.57
+
+   ``std::vector`` and ``std::array`` are
+   :doc:`Lecture 4 </lectures/lecture4/l4_index>`, so do not worry about
+   what they do yet. The point is the last three lines: both spellings
+   name the **same type**, so ``spelled_out`` is a plain copy, with no
+   conversion anywhere.
 
 
 Scoped Enumerations
@@ -2710,7 +2774,8 @@ Why ``class``, and why it matters
    enum class LedState { red, off };     // fine: red is scoped to each type
 
    // enum Color2 { red, green };
-   // enum LedState2 { red, off };       // error: red declared twice
+   // enum LedState2 { red, off };       // error: 'red' conflicts with a
+                                        //        previous declaration
 
 The absence of a silent conversion is a feature: it is what stops a
 state from being compared against a speed, or added to a loop counter.
@@ -2747,11 +2812,11 @@ them, numbering starts at ``0`` and increments.
 
    .. code-block:: cpp
 
-      switch (led) {
-          using enum LedColor;                    // C++20
-          case red:   std::cout << "red\n";   break;
-          case green: std::cout << "green\n"; break;
-          case blue:  std::cout << "blue\n";  break;
+      switch (state) {
+          using enum RobotState;                  // C++20
+          case idle:     std::cout << "idle\n";     break;
+          case moving:   std::cout << "moving\n";   break;
+          case charging: std::cout << "charging\n"; break;
       }
 
    Keep it inside the smallest scope that needs it, here the body of the
@@ -2760,7 +2825,8 @@ them, numbering starts at ``0`` and increments.
 
 .. note::
 
-   A scoped enumeration is the course's answer to **magic numbers**.
+   A scoped enumeration is the course's answer to `magic numbers
+   <https://en.wikipedia.org/wiki/Magic_number_(programming)>`_.
    ``if (state == 1)`` needs a comment to be readable and a search to be
    safe to change; ``if (state == RobotState::moving)`` needs neither,
-   and the compiler checks it.
+   and the compiler checks it. See :term:`Magic Number`.

@@ -3,7 +3,8 @@ C++ Exercises
 ====================================================
 
 Ten exercises reinforcing :doc:`Lecture 2 <l2_lecture>`, in the order the
-lecture covers the material.
+lecture covers the material. A worked in-class exercise follows them at
+the bottom of the page; it is not one of the ten and is not submitted.
 
 They come in two kinds, and each is labelled:
 
@@ -63,7 +64,7 @@ They come in two kinds, and each is labelled:
    in ``CMakeLists.txt``, so every build already has warnings enabled.
 
    The exercises themselves live on this page, not in the course
-   repository --- there is nothing to pull to get them.
+   repository, so there is nothing to pull to get them.
 
    Several exercises below are about **warnings** rather than errors, so
    read the build output, not just the final success or failure.
@@ -124,8 +125,9 @@ They come in two kinds, and each is labelled:
        my_variable        2ndPlace         _internal        user-name
        MAX_SIZE           class            numberOfStudents PI_VALUE
 
-    **Write:** one line per name --- legal or not, and if legal, whether
-    it follows the convention. Give the reason in a few words.
+    **Write:** one line per name, saying whether it is legal and, if it
+    is, whether it follows the convention. Give the reason in a few
+    words.
 
     Two of them are legal but still poor choices, for different reasons.
     Say which, and why.
@@ -190,7 +192,7 @@ They come in two kinds, and each is labelled:
            std::cout << g_ready << ' ' << g_count << ' ' << local << '\n';
        }
 
-    **Write:** the segment for each of (1)--(4), then answer:
+    **Write:** the segment for each of (1) to (4), then answer:
 
     - What does ``g_count`` print, and is that value guaranteed?
     - If you moved ``g_count`` inside ``main()`` and still did not
@@ -324,7 +326,7 @@ They come in two kinds, and each is labelled:
 
     Replace a macro-based program with one the compiler can check.
 
-    This is the code you are replacing. **Do not submit it working** ---
+    This is the code you are replacing. **Do not submit it working**:
     submit the version that has no macros in it at all.
 
     .. code-block:: cpp
@@ -467,3 +469,146 @@ They come in two kinds, and each is labelled:
            //         It compiles. In a comment, say what a type alias
            //         does and does not buy you.
        }
+
+
+----
+
+
+.. dropdown:: From the lecture: Shadowing, ``::``, and why the global has to go
+    :icon: book
+    :class-container: sd-border-info
+    :class-title: sd-font-weight-bold
+
+    This is **Exercise 2 from the lecture slides**, not one of the ten
+    above. Nothing here is submitted. It is on this page so you can check
+    your prediction against a worked answer.
+
+    Predict the output, then compile and run it. The name ``counter`` is
+    declared **three** times: work out which one each line reaches.
+
+    .. code-block:: cpp
+
+       #include <iostream>
+
+       int counter{1};                       // global
+
+       int main() {
+           int counter{100};                 // shadows the global from here on
+
+           counter   += 5;                   // which counter?
+           ::counter += 3;                   // and which one?
+
+           std::cout << counter   << '\n';   // (1)
+           std::cout << ::counter << '\n';   // (2)
+
+           {
+               int counter{7};               // shadows again, inside this block
+               std::cout << counter << '\n'; // (3)
+           }
+
+           std::cout << counter << '\n';     // (4)
+       }
+
+    **Write:** the value at (1) to (4), the memory segment holding each of
+    the three ``counter`` variables, and which one has **static** storage
+    duration. Then rewrite the program without the global
+    (`R.6 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r6-avoid-non-const-global-variables>`_).
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        **The output is 105, 4, 7, 105.**
+
+        .. list-table::
+           :widths: 10 22 28 40
+           :header-rows: 1
+           :class: compact-table
+
+           * - Line
+             - Reaches
+             - Segment
+             - Why
+           * - (1)
+             - the ``counter`` in ``main()``
+             - stack
+             - ``100 + 5``. The unqualified name finds the nearest
+               declaration, which is the local one.
+           * - (2)
+             - the global ``counter``
+             - data
+             - ``1 + 3``. ``::`` skips every local and names the global
+               explicitly.
+           * - (3)
+             - the ``counter`` in the inner block
+             - stack
+             - A third variable, alive only inside the braces.
+           * - (4)
+             - the ``counter`` in ``main()``
+             - stack
+             - Still ``105``. The inner one died at the closing brace and
+               never touched this one.
+
+        Only the global has **static** storage duration: it is alive from
+        before ``main()`` starts until after it returns. It is
+        initialized to a non-zero value, so it sits in ``.data`` rather
+        than ``.bss``. Both locals have **automatic** storage duration.
+
+        **Now remove the global.** ``const`` is not the way out. R.6 is
+        titled "Avoid **non-const** global variables", which offers two
+        remedies: add ``const``, or remove the variable. The first is
+        unavailable here, because the program writes to it:
+
+        .. code-block:: cpp
+
+           const int counter{1};
+           // ...
+           ::counter += 3;   // error: assignment of read-only variable 'counter'
+
+        A ``const`` global is a **value**. This one is mutable state that
+        happens to live at namespace scope, so the only way left to
+        satisfy R.6 is to get rid of the global itself:
+
+        .. code-block:: cpp
+
+           #include <iostream>
+
+           int main() {
+               int total_count{1};                 // was the global
+               int counter{100};
+
+               counter     += 5;
+               total_count += 3;
+
+               std::cout << counter     << '\n';   // (1) 105
+               std::cout << total_count << '\n';   // (2) 4
+
+               {
+                   int counter{7};
+                   std::cout << counter << '\n';   // (3) 7
+               }
+
+               std::cout << counter << '\n';       // (4) 105
+           }
+
+        Same four numbers, no global, and no ``::``.
+
+        The renaming is the real lesson. Once the outer variable is called
+        ``total_count``, nothing is shadowed, ``::`` has no work to do, and
+        the question "which ``counter`` does this line reach?" stops
+        existing. The global was not only risky, it was what forced the
+        confusing name in the first place.
+
+        .. note::
+
+           If you want a global constant to survive, make the **starting
+           value** the constant and keep the counting local. That
+           satisfies R.6 and prints the same four numbers:
+
+           .. code-block:: cpp
+
+              constexpr int initial_count{1};     // a const global is fine
+
+              int main() {
+                  int total_count{initial_count}; // the mutable part is local
+                  // ...
+              }

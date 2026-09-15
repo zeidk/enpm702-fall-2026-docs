@@ -50,9 +50,9 @@ in one table and then moves on.
    - Reason about **blocks**, local scope, and global scope, and avoid
      naming collisions with namespaces.
    - Create type aliases with ``using``.
-   - Let the compiler deduce a type with ``auto``, and say what
-     deduction drops (top-level ``const`` and references), and how to
-     ask for them back with ``const auto&``.
+   - Let the compiler deduce a type with ``auto``, say that deduction
+     drops the top-level ``const``, and ask for it back with
+     ``const auto``.
    - Define a scoped enumeration with ``enum class``, explain why the
      enumerators do not leak or convert silently, choose an underlying
      type, and use C++20's ``using enum`` inside a ``switch``.

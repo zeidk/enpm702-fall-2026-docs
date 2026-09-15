@@ -453,7 +453,7 @@ Initialization
 .. admonition:: C++ Core Guideline
    :class: tip
 
-   `R.23: Use make_unique() to make unique_ptrs <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-make_unique>`_
+   `R.23: Use make_unique() to make unique_ptrs <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#r23-use-make_unique-to-make-unique_ptrs>`_
 
 
 Discouraged Approaches

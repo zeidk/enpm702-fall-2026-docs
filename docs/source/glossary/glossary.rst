@@ -682,6 +682,13 @@ M
       ``constexpr`` instead.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Magic Number
+      A bare literal written into the logic, such as the ``1`` in
+      ``if (state == 1)``. It needs a comment to be readable and a search
+      to be safe to change. Replace it with a named constant or, for a
+      fixed set of alternatives, a :term:`Scoped Enumeration`.
+      :doc:`L2 </lectures/lecture2/l2_lecture>`
+
    Mangling
       The compiler's encoding of C++ names and types into the unique
       symbol names the linker works with. Reverse it with ``c++filt``.
