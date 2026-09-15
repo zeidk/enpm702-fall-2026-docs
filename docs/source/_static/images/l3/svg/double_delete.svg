@@ -20,9 +20,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.66595196"
-     inkscape:cx="301.07277"
-     inkscape:cy="371.64843"
+     inkscape:zoom="0.39672351"
+     inkscape:cx="-28.987443"
+     inkscape:cy="359.19222"
      inkscape:window-width="1600"
      inkscape:window-height="881"
      inkscape:window-x="0"
@@ -121,7 +121,10 @@
      id="rect6"
      x="36.387123"
      y="82.719788"
-     style="stroke-width:0.772647" />
+     style="stroke-width:0.772647"
+     inkscape:export-filename="../png/double_delete.png"
+     inkscape:export-xdpi="350"
+     inkscape:export-ydpi="350" />
   <rect
      x="97.419464"
      y="132.96375"

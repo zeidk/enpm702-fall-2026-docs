@@ -72,6 +72,18 @@ print bytes in pairs; binary would be four times longer and unreadable.
    multiple of 4 and a ``double`` at a multiple of 8, which is
    **alignment**.
 
+.. seealso::
+
+   If base 16 is new, or you want the conversion worked the other way
+   (divide by 16, the remainder is the right-hand digit):
+
+   - `Wikipedia: Hexadecimal
+     <https://en.wikipedia.org/wiki/Hexadecimal>`_, for place value and
+     converting either way.
+   - `cppreference: Integer literals
+     <https://en.cppreference.com/w/cpp/language/integer_literal>`_, for
+     writing ``0x`` and ``0b`` constants in C++.
+
 
 Debug and Release Builds
 ========================

@@ -79,6 +79,24 @@ References
     .. grid:: 1 1 2 2
         :gutter: 2
 
+        .. grid-item-card:: Hexadecimal
+            :link: https://en.wikipedia.org/wiki/Hexadecimal
+            :class-card: sd-border-secondary
+
+            **Wikipedia: hexadecimal**
+
+            Base 16: place value, the digits ``0`` to ``f``, and
+            converting to and from decimal in both directions.
+
+        .. grid-item-card:: Integer literals
+            :link: https://en.cppreference.com/w/cpp/language/integer_literal
+            :class-card: sd-border-secondary
+
+            **cppreference: integer literals**
+
+            Writing constants in hex (``0x``), binary (``0b``) and octal,
+            and the suffixes that pin a literal's type.
+
         .. grid-item-card:: Pointer declaration
             :link: https://en.cppreference.com/w/cpp/language/pointer
             :class-card: sd-border-secondary
