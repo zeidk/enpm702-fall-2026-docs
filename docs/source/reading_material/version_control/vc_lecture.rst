@@ -164,6 +164,21 @@ time.
 - Collaborate with others without overwriting each other's work.
 - Revert to previous versions if something breaks.
 
+.. important::
+
+   **A commit is one saved snapshot of your project**, together with a
+   note saying what changed and why. It records the state of every file
+   Git is watching at that moment, plus who made it and when.
+
+   The word works as both a noun and a verb: "a commit" is the saved
+   snapshot, "to commit" is the act of saving one. Your project's
+   history is nothing more than its commits, in order.
+
+   Everything else in this module is built on that one idea. A branch
+   points at a commit. A merge joins two lines of commits. Pushing sends
+   commits to GitHub. So it is worth reading that paragraph twice before
+   going on.
+
 Setting Up Git
 ----------------------------------------------------
 
@@ -216,8 +231,8 @@ Why Git Dominates
         the project history.
       - **Branching Model**, Creating and merging branches is
         lightweight and fast.
-      - **Data Integrity**, SHA-1 checksums ensure your code history
-        cannot be corrupted.
+      - **Data Integrity**, every commit is named by a checksum of its
+        own contents, so corruption cannot pass unnoticed.
 
    .. grid-item-card:: Ecosystem Advantages
 
@@ -238,11 +253,11 @@ Common Git Commands
 
       .. code-block:: bash
 
-         git status              # Check status
-         git add .               # Stage changes
-         git commit -m "msg"     # Commit changes
-         git push                # Upload to GitHub
-         git pull                # Download updates
+         git status              # What has changed so far?
+         git add .               # Choose what goes in the next snapshot
+         git commit -m "msg"     # Save the snapshot, with a message
+         git push                # Upload your commits to GitHub
+         git pull                # Download other people's commits
 
    .. grid-item-card:: Branching Commands
 
@@ -422,6 +437,50 @@ each commit.
       - Hidden ``.git/`` folder at the project root.
       - ``git commit`` is the act of sending a staged snapshot into
         the repository.
+
+
+Tracked and Untracked Files
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Inside the working directory, Git splits your files in two:
+
+- **Tracked**: files Git already knows about, because some earlier
+  ``git add`` introduced them. Git watches these and reports when they
+  change.
+- **Untracked**: everything else. Git can see the file sitting there
+  and deliberately does nothing about it until you ``git add`` it.
+
+``git status`` lists the two groups separately. The split is also what
+decides how each form of ``git add`` behaves:
+
+.. list-table::
+   :widths: 24 76
+   :header-rows: 1
+   :class: compact-table
+
+   * - Form
+     - What it stages
+   * - ``git add <file>``
+     - Exactly that file, whether it was tracked or not.
+   * - ``git add .``
+     - Everything under the current directory, **including untracked
+       files**. This is how build output and password files get into
+       repositories by accident.
+   * - ``git add -u``
+     - Changes to **tracked files only**: both edits and deletions. New
+       files are left alone. The ``u`` stands for "update".
+   * - ``git add -p``
+     - Walks you through your changes one **hunk** at a time (a hunk is
+       one contiguous block of changed lines) and asks yes or no for
+       each. Use it when one file holds two unrelated changes that
+       belong in separate commits.
+
+.. tip::
+
+   ``git add .`` is what every tutorial shows, including the examples
+   further down this page, because it is short. ``git add -u`` is the
+   one worth building a habit around on a real project: it cannot stage
+   a file you never meant to add in the first place.
 
 
 Understanding Branches
@@ -733,8 +792,16 @@ Adding GPS Navigation
 
 3. **Modify robot_config.yaml for GPS Feature.**
 
-   - Implement GPS feature in ``robot_config.yaml``.
-   - Fix any typos.
+   - Add a ``gps`` block to ``robot_config.yaml``.
+   - Lower ``navigation.update_rate`` from 5 to 3 Hz. The GPS fix needs
+     time to settle between updates, and at 5 Hz the reported position
+     jumps around.
+
+   .. note::
+
+      Remember that second change. Nobody told you the hotfix team was
+      about to edit the same line, and that is exactly how most merge
+      conflicts start.
 
 4. **Check what changed.**
 
@@ -921,9 +988,9 @@ Handling Merge Conflicts
    navigation:
      # General navigation settings for the robot
    <<<<<<< HEAD
-     update_rate: 5  # Hz. Lowered from 10 to 5 for GPS stability.
+     update_rate: 3  # Hz. Lowered from 5 to 3 so the GPS fix can settle.
    =======
-     update_rate: 20  # Hz. Increased from 10 to 20 for responsiveness.
+     update_rate: 10  # Hz. Raised from 5 to 10 for responsiveness.
    >>>>>>> main
      coordinate_system: "WGS84"
 
@@ -937,6 +1004,26 @@ Handling Merge Conflicts
    markers.
 5. Edit the file to contain only the final, correct code and remove all
    conflict markers.
+
+   .. tip::
+
+      VS Code offers a **Resolve in Merge Editor** button on a
+      conflicted file. It shows three panes: your branch on the left,
+      the incoming branch on the right, and the result at the bottom.
+      Click **Accept Incoming**, **Accept Current**, or edit the result
+      pane by hand.
+
+      Learn to read the raw markers first. The merge editor is faster
+      once you already know what it is doing, and useless if you do
+      not.
+
+   .. warning::
+
+      Resolving a conflict is a decision, not a cleanup job. Neither
+      side is automatically right. Read both, work out what the code is
+      supposed to do, and write the answer. "Accept incoming" is a
+      choice you have to be able to defend.
+
 6. **Stage the file:** ``git add robot_config.yaml``
 7. **Complete the merge with a descriptive commit message:**
 
@@ -944,10 +1031,16 @@ Handling Merge Conflicts
 
       git commit -m "Merge main into feature/gps-navigation
 
-      Resolved navigation update_rate conflict:
-      - The GPS feature required 5Hz, while a hotfix needed 20Hz.
-      - Set the rate to 15Hz as a compromise between GPS stability
-        and overall system responsiveness."
+      Resolved the navigation update_rate conflict:
+      - The GPS work lowered the rate to 3Hz; the hotfix raised it to 10Hz.
+      - Settled on 8Hz: measured on the test robot, the GPS fix still
+        settles at 8Hz and responsiveness stays acceptable."
+
+.. note::
+
+   If you get lost partway through a conflict, you are not stuck.
+   ``git merge --abort`` puts the repository back exactly as it was
+   before you typed ``git merge``, as if nothing had happened.
 
 8. **Verify the merge history:** ``git log --oneline --graph``
 
@@ -996,7 +1089,38 @@ Completing the Feature
    .. code-block:: bash
 
       git switch main
-      git merge feature/gps-navigation
+      git merge --no-ff feature/gps-navigation
+
+   .. dropdown:: Why ``--no-ff`` here?
+      :class-container: sd-border-info
+
+      You already merged ``main`` into the feature branch when you
+      resolved the conflict. That means ``main`` has no commits the
+      feature branch is missing: ``main`` is an **ancestor** of the
+      feature branch.
+
+      When that is true, Git does not need to merge anything. It just
+      slides the ``main`` pointer forward to the feature branch's tip.
+      That is a **fast-forward**, and it leaves no record that a feature
+      branch ever existed.
+
+      ``--no-ff`` tells Git to create a merge commit anyway. The history
+      then shows where the feature started and where it landed, which is
+      what you want for a reviewable unit of work.
+
+      .. list-table::
+         :widths: 30 70
+         :header-rows: 1
+         :class: compact-table
+
+         * - Result
+           - When you get it
+         * - Fast-forward
+           - The target branch has no commits of its own since the
+             branch point. No merge commit is created.
+         * - Merge commit
+           - Both branches moved on independently, **or** you passed
+             ``--no-ff``.
 
 7. Clean up feature branch: ``git branch -d feature/gps-navigation``
 
@@ -1027,14 +1151,433 @@ End of Day Review
 3. View the complete configuration file: ``cat robot_config.yaml``
 4. Create a summary of what was accomplished:
    ``git log --oneline --since="1 day ago"``
-5. View detailed changes for the day:
-   ``git diff a1b2c3d..HEAD --stat``
+5. View detailed changes for the day. Copy the short hash of your first
+   commit of the day out of ``git log --oneline``, then:
+   ``git diff <that-hash>..HEAD --stat``
 
 .. note::
 
    Many Git commands are available directly within Visual Studio Code,
    typically located in the **Source Control** view or through the
    **Command Palette**.
+
+
+Reading History
+----------------------------------------------------
+
+Commits are only worth writing if you can read them back. Four commands
+answer almost every "what happened here?" question.
+
+.. list-table::
+   :widths: 42 58
+   :header-rows: 1
+   :class: compact-table
+
+   * - Command
+     - Question it answers
+   * - ``git log --oneline --graph --all``
+     - What is the shape of the history?
+   * - ``git show <hash>``
+     - What exactly did that one commit change?
+   * - ``git blame <file>``
+     - Who last touched each line, and in which commit?
+   * - ``git log -p <file>``
+     - How did this one file change over time?
+
+**Who changed this line, and why?**
+
+``git blame`` puts a commit hash, an author, and a date in front of every
+line of a file:
+
+.. code-block:: bash
+
+   git blame robot_config.yaml
+
+.. code-block:: text
+
+   a1b2c3d4 (Zeid Kootbally 2026-09-14 10:22:01 -0400  8)   update_rate: 8
+   9f8e7d6c (Priya Raman    2026-09-15 16:40:55 -0400  9)   coordinate_system: "WGS84"
+
+That gives you a hash. Feed the hash to ``git show`` to see the whole
+change and, more importantly, the message explaining it:
+
+.. code-block:: bash
+
+   git show a1b2c3d4
+
+.. tip::
+
+   This is the payoff of writing real commit messages. Six weeks from
+   now, ``git blame`` will point somebody at your commit and they will
+   read your message to find out why the value is 8 and not 10. "fixed
+   stuff" will not help them.
+
+**Searching history for a string:**
+
+.. code-block:: bash
+
+   git log -S "update_rate" --oneline   # commits that added or removed it
+   git log --grep "hotfix" --oneline    # commits whose message mentions it
+
+
+Parking Work with ``git stash``
+----------------------------------------------------
+
+Half-finished work is normal. Git will not always let you walk away from
+it: if switching branches would overwrite your edits, Git refuses.
+
+.. code-block:: text
+
+   error: Your local changes to the following files would be overwritten by checkout:
+       robot_config.yaml
+   Please commit your changes or stash them before you switch branches.
+   Aborting
+
+You have three ways out: commit the half-finished work, throw it away, or
+**stash** it. Stashing lifts your uncommitted changes off the working
+tree, stores them, and leaves you with a clean checkout.
+
+.. code-block:: bash
+
+   git stash push -m "half-done waypoint block"   # park the work
+   git switch main                                # now this works
+   # ... deal with the interruption ...
+   git switch feature/waypoints
+   git stash pop                                  # bring the work back
+
+.. list-table::
+   :widths: 40 60
+   :header-rows: 1
+   :class: compact-table
+
+   * - Command
+     - What it does
+   * - ``git stash push -m "msg"``
+     - Parks tracked modifications and cleans the working tree.
+   * - ``git stash push -u -m "msg"``
+     - Also parks **untracked** files. Without ``-u`` they stay behind.
+   * - ``git stash list``
+     - Shows the parked entries, newest first (``stash@{0}``).
+   * - ``git stash show -p stash@{0}``
+     - Shows what is inside an entry before you restore it.
+   * - ``git stash pop``
+     - Restores the newest entry and removes it from the list.
+   * - ``git stash apply stash@{1}``
+     - Restores an older entry and **keeps** it in the list.
+   * - ``git stash drop stash@{0}``
+     - Throws an entry away.
+
+.. warning::
+
+   A stash is a scratch pad, not a backup.
+
+   - Stashes are local. They are never pushed, so they are not a way to
+     move work between machines or teammates.
+   - Stashes have no branch and no message unless you give them one.
+     Three unlabeled stashes from last week are indistinguishable.
+   - ``git stash pop`` can itself produce a conflict, if the branch moved
+     while your work was parked.
+
+   For anything you would be upset to lose, commit it on a branch
+   instead. A commit you are not proud of is still recoverable. An
+   unlabeled stash from two weeks ago is archaeology.
+
+
+When Things Go Wrong: Undo and Recovery
+----------------------------------------------------
+
+Everything so far has worked first time. Real Git use is not like that.
+This section is the one you will come back to.
+
+There is a single question that picks the right command:
+**where is the change you want to undo?** Every answer maps to one of the
+three areas, plus a fourth case for changes you have already shared.
+
+.. list-table::
+   :widths: 34 30 36
+   :header-rows: 1
+   :class: compact-table
+
+   * - Where the change is
+     - Command
+     - What happens
+   * - Working directory, not staged
+     - ``git restore <file>``
+     - The file goes back to the last committed version.
+   * - Staged, not committed
+     - ``git restore --staged <file>``
+     - Unstaged. Your edits stay on disk.
+   * - Committed, not pushed
+     - ``git commit --amend``
+     - The last commit is replaced by a new one.
+   * - Committed **and** pushed
+     - ``git revert <hash>``
+     - A new commit undoes the old one. History is untouched.
+
+.. danger::
+
+   The line between rows three and four is the most important line in
+   Git. ``--amend``, ``reset`` and ``rebase`` all **rewrite** history:
+   they replace commits with different ones. That is harmless on commits
+   only you have, and hostile on commits other people have already
+   pulled, because their history and yours no longer agree.
+
+   **The rule:** rewrite freely before you push. After you push, undo
+   with ``git revert``.
+
+
+Undoing Uncommitted Work
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+   git restore robot_config.yaml     # discard edits to one file
+   git restore .                     # discard all edits in this directory
+   git restore --staged robot.log    # unstage, keep the edits on disk
+   git restore --staged --worktree robot_config.yaml   # unstage AND discard
+
+.. warning::
+
+   ``git restore <file>`` deletes work that Git has never seen. There is
+   no undo for it, no reflog, nothing. It is the one command in this
+   module that can genuinely lose your code. Check ``git diff`` first.
+
+
+Fixing the Last Commit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You committed, then noticed the typo in the message, or that you forgot a
+file. As long as you have **not pushed**, fix it in place:
+
+.. code-block:: bash
+
+   git commit --amend                       # reword the message in the editor
+   git commit --amend -m "Better message"   # reword in one line
+
+   git add forgotten_file.cpp               # forgot a file?
+   git commit --amend --no-edit             # fold it in, keep the message
+
+``--amend`` does not edit the old commit. It builds a replacement and
+moves the branch pointer to it. The original is still in the reflog, but
+for everyone else it has simply been swapped out, which is why this is
+safe only before pushing.
+
+
+Undoing a Commit You Have Pushed
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Once teammates have pulled a commit, you may not remove it. You add a new
+commit that reverses it:
+
+.. code-block:: bash
+
+   git log --oneline                 # find the bad commit's hash
+   git show 0f7c291                  # confirm it is the right one
+   git revert 0f7c291                # create a commit that undoes it
+   git push
+
+``git revert`` opens an editor with a prepared message. The bad commit
+stays in the history, and so does the commit that undid it. That is the
+point: the record is honest, and nobody else has to do anything.
+
+.. note::
+
+   Reverting a **merge** commit needs ``-m 1`` to say which parent to
+   treat as the mainline, for example ``git revert -m 1 <hash>``. If you
+   need this, read ``git revert --help`` first rather than guessing.
+
+
+``git reset``: the Three Flavors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``git reset`` moves the current branch pointer to a different commit. The
+flag decides what happens to your files.
+
+.. list-table::
+   :widths: 26 74
+   :header-rows: 1
+   :class: compact-table
+
+   * - Flag
+     - Effect on the staging area and your files
+   * - ``--soft``
+     - Both untouched. The changes from the discarded commits are left
+       staged, ready to be recommitted differently.
+   * - ``--mixed`` (default)
+     - Staging area cleared, files untouched. Changes are back in the
+       working directory as unstaged edits.
+   * - ``--hard``
+     - Both thrown away. Your files become exactly the target commit.
+
+.. code-block:: bash
+
+   git reset --soft HEAD~1    # undo the commit, keep everything staged
+   git reset HEAD~1           # undo the commit, keep the edits unstaged
+   git reset --hard HEAD~1    # undo the commit and destroy the edits
+
+A common, legitimate use: you made three messy commits that should have
+been one.
+
+.. code-block:: bash
+
+   git reset --soft HEAD~3            # roll the branch back three commits
+   git commit -m "Add GPS waypoint support"   # recommit as one
+
+.. danger::
+
+   ``git reset --hard`` on commits you have pushed is the classic way to
+   ruin a teammate's afternoon. Their history keeps the commits you
+   deleted, and the next ``git pull`` drags them back in. Use
+   ``git revert`` on anything that has been pushed.
+
+
+``git reflog``: the Undo History
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Deleted the wrong branch? Ran ``git reset --hard`` and regretted it?
+Commits are almost never gone immediately. Git records **every** position
+``HEAD`` has held, including the ones no branch points at any more.
+
+.. code-block:: bash
+
+   git reflog
+
+.. code-block:: text
+
+   c3c0e33 HEAD@{0}: checkout: moving from feature/battery-monitor to main
+   46fa602 HEAD@{1}: commit: Enable the battery monitor in the configuration
+   31bfa20 HEAD@{2}: commit: Add battery voltage monitoring
+   c3c0e33 HEAD@{3}: checkout: moving from main to feature/battery-monitor
+
+The work you thought you lost is at ``46fa602``. Put a branch back on it:
+
+.. code-block:: bash
+
+   git branch feature/battery-monitor 46fa602
+   git switch feature/battery-monitor
+
+The same trick undoes a bad reset: find the hash you were on before, then
+``git reset --hard <hash>``.
+
+.. note::
+
+   The reflog is **local to your clone** and it expires (unreachable
+   entries default to 30 days). It cannot rescue a colleague's mistake,
+   and it is not a backup strategy. It is a safety net for the last few
+   weeks of your own work.
+
+.. admonition:: The two-minute version
+   :class: tip
+
+   - Wrong edits, not staged: ``git restore <file>``
+   - Staged the wrong file: ``git restore --staged <file>``
+   - Bad message on the last commit: ``git commit --amend``
+   - Bad commit, not pushed: ``git reset --soft HEAD~1``
+   - Bad commit, pushed: ``git revert <hash>``
+   - Everything is on fire: ``git reflog``
+
+.. seealso::
+
+   Reading about recovery is not the same as having done it once. The
+   :doc:`vc_exercises` page ends with **Live Workshop: The Broken
+   Repository**, a script that drops you into seven repositories that
+   are already broken (detached ``HEAD``, a half-finished merge, a
+   deleted branch, a pushed mistake) and asks you to get each one out.
+   Every one of them is solved with a command from this section.
+
+
+A ``.gitignore`` for This Course
+----------------------------------------------------
+
+The generic advice above becomes concrete here. Two kinds of files must
+never reach a commit in ENPM702: **build output** and **secrets**.
+
+Put this at the root of every C++ assignment repository, before your
+first commit:
+
+.. code-block:: text
+
+   # --- C++ and CMake build output ---
+   build/
+   *.o
+   *.a
+   *.so
+   CMakeCache.txt
+   CMakeFiles/
+   cmake_install.cmake
+   Makefile
+   compile_commands.json
+
+   # --- ROS 2 / colcon workspace output ---
+   install/
+   log/
+
+   # --- Editor and OS clutter ---
+   .vscode/
+   .idea/
+   .DS_Store
+   *.swp
+
+   # --- Never commit these ---
+   *.pem
+   *.key
+   secrets.yaml
+   .env
+
+.. note::
+
+   Keep ``.vscode/`` ignored by default. If your team agrees to share
+   editor settings, unignore the two files worth sharing and nothing
+   else:
+
+   .. code-block:: text
+
+      .vscode/*
+      !.vscode/settings.json
+      !.vscode/extensions.json
+
+
+Two Things ``.gitignore`` Does Not Do
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**It does not untrack files that are already tracked.** Adding
+``build/`` to ``.gitignore`` changes nothing for files Git is already
+following. Stop tracking them, keeping your local copies:
+
+.. code-block:: bash
+
+   git rm -r --cached build/
+   git commit -m "Stop tracking build output"
+
+**It does not erase history.** This is the part that surprises people:
+
+.. code-block:: bash
+
+   git rm --cached robot_secrets.yaml
+   git commit -m "Stop tracking robot_secrets.yaml"
+
+After this the file is gone from the latest commit, and the password is
+still sitting in the commit that added it. Anyone with the repository can
+read it:
+
+.. code-block:: bash
+
+   git log --oneline -S "Terrapins2026"   # finds the commit that added it
+   git show <hash>                        # prints the password
+
+.. danger::
+
+   **If you commit a credential, treat it as leaked.** Rotate it: change
+   the password, revoke the token, regenerate the key. Do that first.
+
+   Removing the secret from history is possible (``git filter-repo``, or
+   GitHub's support team for a public repository) but it rewrites every
+   commit hash, breaks every clone, and does nothing about the copy an
+   automated scanner already took. Rotation is the fix. Rewriting is
+   cleanup.
+
+   The reliable version of this advice is the boring one: write the
+   ``.gitignore`` before the first commit.
 
 
 GitHub
@@ -1103,6 +1646,108 @@ Setup
         elliptic-curve algorithm recommended for new SSH keys.
       - The ``-C`` flag adds a label to help you identify the key
         later. GitHub matches the **key itself**, not the comment.
+
+
+Check That It Works
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Do not wait until your first ``git push`` to find out whether the key
+works. Ask GitHub directly:
+
+.. code-block:: bash
+
+   ssh -T git@github.com
+
+A working setup answers like this:
+
+.. code-block:: text
+
+   Hi yourusername! You've successfully authenticated, but GitHub does not
+   provide shell access.
+
+That sentence looks like a rejection. It is not. "Successfully
+authenticated" is the part that matters; GitHub never gives you a shell.
+
+.. dropdown:: ``Permission denied (publickey)``
+   :class-container: sd-border-warning
+
+   GitHub does not recognize your key. Work through these in order:
+
+   1. **Does the key exist?**
+
+      .. code-block:: bash
+
+         ls -l ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub
+
+      Nothing there means ``ssh-keygen`` never ran, or ran somewhere
+      else. Generate it again.
+
+   2. **Did you paste the public key, not the private one?** GitHub
+      needs ``id_ed25519.pub``, the one ending in ``.pub``. The file
+      without ``.pub`` is private and must never leave your machine.
+
+   3. **Is the key loaded?**
+
+      .. code-block:: bash
+
+         eval "$(ssh-agent -s)"
+         ssh-add ~/.ssh/id_ed25519
+
+   4. **Are the permissions too open?** SSH refuses keys that other
+      users could read.
+
+      .. code-block:: bash
+
+         chmod 700 ~/.ssh
+         chmod 600 ~/.ssh/id_ed25519
+
+   5. **Still stuck?** Ask SSH what it is trying:
+
+      .. code-block:: bash
+
+         ssh -vT git@github.com
+
+.. dropdown:: ``fatal: Authentication failed`` or a password prompt
+   :class-container: sd-border-warning
+
+   Your remote is an HTTPS URL, not an SSH one, so Git is asking for a
+   password. GitHub stopped accepting account passwords for Git
+   operations in 2021: over HTTPS you need a **personal access token**
+   instead.
+
+   Check which one you have:
+
+   .. code-block:: bash
+
+      git remote -v
+
+   ``https://github.com/...`` is HTTPS. ``git@github.com:...`` is SSH.
+   Since your key is already set up, switch the remote over:
+
+   .. code-block:: bash
+
+      git remote set-url origin git@github.com:yourusername/robot-config.git
+
+.. list-table::
+   :widths: 20 40 40
+   :header-rows: 1
+   :class: compact-table
+
+   * -
+     - SSH
+     - HTTPS
+   * - Remote URL
+     - ``git@github.com:user/repo.git``
+     - ``https://github.com/user/repo.git``
+   * - Proves who you are with
+     - A key pair on your machine
+     - A personal access token
+   * - Set up
+     - Once per machine
+     - Token expires, then again
+   * - Recommended here
+     - **Yes**
+     - Only if SSH is blocked by a firewall
 
 
 Public vs. Private Repositories
@@ -1210,6 +1855,250 @@ Connect Local Repo to Remote
          Scenario 2: create the GitHub repo, clone it locally, work,
          then push. No ``git remote add`` or ``git push -u`` needed;
          ``git clone`` sets both up automatically.
+
+
+Staying in Sync with the Remote
+----------------------------------------------------
+
+Pushing your own work is the easy half. The interesting half is what
+happens when somebody else pushed while you were working, which on a
+group project is most of the time.
+
+Before the commands, three names that look alike and are not:
+
+.. list-table::
+   :widths: 22 78
+   :header-rows: 1
+   :class: compact-table
+
+   * - Name
+     - What it is
+   * - ``main``
+     - **Your** branch, in your clone. It moves when you commit.
+   * - ``origin``
+     - The nickname for the GitHub repository, set when you ran
+       ``git remote add origin ...`` or when ``git clone`` did it for
+       you. Nothing about the name is special; it is just the
+       convention for "the repository I cloned from".
+   * - ``origin/main``
+     - A **remote-tracking branch**: a local, read-only pointer
+       recording where ``main`` on ``origin`` was **the last time you
+       fetched**.
+
+That third one is the one people misread. ``origin/main`` is not the
+remote. It is your own clone's memory of the remote, and it updates
+only when you run ``git fetch`` (or ``git pull``, which fetches first).
+If you have not fetched since yesterday, ``origin/main`` is a day out
+of date and nothing will warn you.
+
+That is exactly why ``git fetch`` is worth running on its own: it
+refreshes ``origin/main`` so you can look at what landed, without
+touching your branch or your files.
+
+.. admonition:: Reading ``A..B``
+   :class: note
+
+   Two dots between two names mean "commits reachable from ``B`` but
+   not from ``A``", which in practice reads as "what ``B`` has that
+   ``A`` does not":
+
+   .. code-block:: bash
+
+      git log --oneline main..origin/main   # on the remote, not in my branch
+      git log --oneline origin/main..main   # in my branch, not on the remote
+
+   Swapping the two sides answers the opposite question, so it is worth
+   running both before a merge.
+
+Three commands, and the difference between them matters:
+
+.. list-table::
+   :widths: 28 72
+   :header-rows: 1
+   :class: compact-table
+
+   * - Command
+     - What it does
+   * - ``git fetch``
+     - Downloads new commits and updates ``origin/main``. Your branch
+       and your files are **not** touched.
+   * - ``git merge origin/main``
+     - Merges what you downloaded into your current branch.
+   * - ``git pull``
+     - ``fetch`` followed by ``merge``, in one step.
+
+``git pull`` is convenient and it is also how people get surprised. The
+safer habit is to look before you leap:
+
+.. code-block:: bash
+
+   git fetch origin
+   git log --oneline main..origin/main    # what they have that I do not
+   git log --oneline origin/main..main    # what I have that they do not
+   git diff main origin/main              # what actually differs
+   git merge origin/main                  # now merge, knowing what is coming
+
+
+When the Push Is Rejected
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: text
+
+   ! [rejected]        main -> main (fetch first)
+   error: failed to push some refs to 'github.com:team/robot-project.git'
+   hint: Updates were rejected because the remote contains work that you do
+   hint: not have locally.
+
+This is not an error in your repository. It means a teammate pushed
+after you last pulled, so the remote has commits you have never seen.
+Git refuses rather than silently discarding their work.
+
+The fix is always the same shape: bring their work in, then push.
+
+.. code-block:: bash
+
+   git pull            # fetch + merge their commits into yours
+   # resolve conflicts if there are any
+   git push
+
+.. danger::
+
+   The internet will tell you to use ``git push --force``. It makes the
+   message go away by **deleting your teammate's commits from the
+   remote**. Never do this on a shared branch.
+
+   If you genuinely need to force-push your own feature branch after
+   rewriting it, use ``git push --force-with-lease``, which refuses if
+   anyone else has pushed to that branch since you last fetched. On
+   ``main``, the answer is simply no.
+
+
+When Git Asks How to Reconcile
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The first time you ``git pull`` into a branch that has diverged, Git
+stops and refuses to choose for you:
+
+.. code-block:: text
+
+   hint: You have divergent branches and need to specify how to reconcile them.
+   hint:   git config pull.rebase false  # merge
+   hint:   git config pull.rebase true   # rebase
+   hint:   git config pull.ff only       # fast-forward only
+   fatal: Need to specify how to reconcile divergent branches
+
+Nothing is broken. Git wants to know what shape you want the history to
+take. Set it once and never see this again:
+
+.. code-block:: bash
+
+   git config --global pull.rebase false     # merge: the course default
+
+.. list-table::
+   :widths: 26 36 38
+   :header-rows: 1
+   :class: compact-table
+
+   * - Setting
+     - What ``git pull`` does
+     - Resulting history
+   * - ``pull.rebase false``
+     - Merges the remote work into yours
+     - A merge commit appears. Truthful, slightly bushy.
+   * - ``pull.rebase true``
+     - Replays your commits on top of theirs
+     - A straight line. Your commit hashes change.
+   * - ``pull.ff only``
+     - Refuses unless it can fast-forward
+     - Nothing happens automatically. You decide each time.
+
+Use ``merge`` for this course. It never rewrites anything, so it cannot
+surprise a teammate.
+
+
+Rebase, and the One Rule That Matters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Merging joins two histories with a merge commit. **Rebasing** takes your
+commits, sets them aside, fast-forwards your branch to the other tip, and
+replays your commits on top. The result reads as if you had started your
+work after their work landed.
+
+.. code-block:: bash
+
+   git switch feature/gps-navigation
+   git fetch origin
+   git rebase origin/main       # replay my commits on top of theirs
+
+.. grid:: 2
+
+   .. grid-item-card:: Merge
+      :class-card: sd-border-info
+
+      - Never changes existing commits.
+      - History shows what really happened, including the branching.
+      - Always safe.
+      - Many merge commits make ``git log`` noisy.
+
+   .. grid-item-card:: Rebase
+      :class-card: sd-border-info
+
+      - Creates **new** commits with new hashes.
+      - History is a straight line and easy to read.
+      - Conflicts can come back once per replayed commit.
+      - Dangerous on anything already shared.
+
+.. danger::
+
+   **The golden rule of rebasing: never rebase commits that other
+   people already have.**
+
+   Rebasing replaces commits with new ones that have different hashes.
+   For you the result looks tidy. For anyone who already pulled the old
+   commits, their Git now sees two versions of the same work and the
+   next pull tangles them together.
+
+   Rebase your own unpushed work as much as you like. Once it is on a
+   shared branch, merge.
+
+For ENPM702, use merges. Rebase is listed here so you recognize it, and
+so that when a teammate proposes it you know which question to ask:
+"has anyone pulled this branch yet?"
+
+
+Tagging a Submission
+----------------------------------------------------
+
+A branch pointer moves every time you commit. A **tag** does not: it
+names one specific commit permanently. That makes tags the right way to
+mark "this is the version I am submitting".
+
+.. code-block:: bash
+
+   git tag -a rwa1-final -m "RWA1 submission"   # tag the current commit
+   git push origin rwa1-final                   # tags are not pushed by git push
+
+Useful follow-ups:
+
+.. code-block:: bash
+
+   git tag                        # list tags
+   git show rwa1-final            # what commit is it, and what is in it
+   git tag -a rwa2-final -m "..." 9f8e7d6    # tag an older commit by hash
+   git push origin --tags         # push all tags at once
+
+.. note::
+
+   ``-a`` creates an **annotated** tag: a real object with your name, the
+   date, and a message. Without ``-a`` you get a lightweight tag, which
+   is just a name. Use ``-a`` for anything you submit or release, so the
+   record says who tagged it and when.
+
+On GitHub, a tag shows up under **Releases**, where anyone can download
+that exact snapshot as a zip. If the grading instructions ask for a
+commit hash or a tag, this is the mechanism they mean: it pins the
+graded version, so work you push afterwards cannot change what was
+submitted.
 
 
 Collaboration Workflows
@@ -1356,7 +2245,7 @@ Fork Workflow
 
 
 Keeping Your Fork Updated
-""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. Fetch latest changes from original repository:
    ``git fetch upstream``
@@ -1380,16 +2269,16 @@ Keeping Your Fork Updated
 
 ::
 
-   Original: zeidk/enpm702-summer-2025 (upstream)
+   Original: zeidk/enpm702-fall-2026 (upstream)
        main branch
 
-   Your Fork: yourusername/enpm702-summer-2025 (origin)
+   Your Fork: yourusername/enpm702-fall-2026 (origin)
        main branch (synced with upstream)
        feature/new-algorithm (your work)
 
 
 When to Use Each Approach
-""""""""""""""""""""""""""""""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table::
    :widths: 50 50
@@ -1436,6 +2325,51 @@ Best Practices
 - Configure automated testing for pull requests.
 
 
+Protecting the ``main`` Branch
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"Always use pull requests" is a promise your team will break under
+deadline pressure. Make it a setting instead, so the repository enforces
+it. Do this once, at the start of each group project, before anyone
+writes code.
+
+On GitHub: **Settings** -> **Branches** -> **Add branch ruleset** (older
+repositories say **Add rule**), targeting ``main``:
+
+.. list-table::
+   :widths: 45 55
+   :header-rows: 1
+   :class: compact-table
+
+   * - Setting
+     - Why
+   * - Require a pull request before merging
+     - Nothing lands on ``main`` without review.
+   * - Required approvals: **1**
+     - One teammate must actually read it. On a team of four, more than
+       one approval stalls the project.
+   * - Dismiss stale approvals on new commits
+     - An approval covers the code that was approved, not whatever gets
+       pushed afterwards.
+   * - Block force pushes
+     - Nobody can rewrite shared history, even by accident.
+   * - Restrict deletions
+     - ``main`` cannot be deleted.
+
+.. note::
+
+   Do not enable "Require status checks" until your project actually has
+   a build running on GitHub Actions. A required check that never reports
+   blocks every pull request permanently.
+
+.. warning::
+
+   Branch protection applies to everyone, including the person who
+   created the repository. That is the point. If your team decides one
+   member should be able to merge without review, say so out loud and
+   change the setting, rather than working around it.
+
+
 Quick Reference
 ----------------------------------------------------
 
@@ -1479,8 +2413,29 @@ A compact card with the commands you will use most often. See
 
          git clone <url>         # Download repo
          git remote -v           # List remotes
+         git fetch origin        # Download, do not merge
          git push origin <br>    # Upload branch
          git pull origin <br>    # Download + merge
+
+   .. grid-item-card:: Undoing
+
+      .. code-block:: bash
+
+         git restore <f>         # Discard edits
+         git restore --staged <f># Unstage
+         git commit --amend      # Fix last commit
+         git revert <hash>       # Undo a pushed commit
+         git reflog              # Find lost commits
+
+   .. grid-item-card:: Parking & History
+
+      .. code-block:: bash
+
+         git stash push -m "msg" # Park edits
+         git stash pop           # Bring them back
+         git show <hash>         # One commit
+         git blame <file>        # Who wrote each line
+         git tag -a <name> -m ".."  # Mark a version
 
 
 Older Forms You Will Still Meet
@@ -1488,8 +2443,8 @@ Older Forms You Will Still Meet
 
 This module uses ``git switch`` throughout, because it is the modern,
 dedicated command. You will nevertheless meet ``git checkout``
-constantly --- in tutorials, in Stack Overflow answers, and in your
-colleagues' muscle memory --- so you need to recognise it.
+constantly (in tutorials, in Stack Overflow answers, and in your
+colleagues' muscle memory), so you need to recognize it.
 
 .. list-table::
    :widths: 35 35 30
@@ -1624,3 +2579,95 @@ knowledge sharing.
 3. **Detailed Review** (15-30 minutes)
 
    - Logic, code quality, performance, testing.
+
+
+Git Rules for This Course
+----------------------------------------------------
+
+.. admonition:: Confirm against the syllabus and Canvas before teaching
+   :class: caution
+
+   This section states the workflow rules the course expects. Check the
+   specifics (repository names, who to add as a collaborator, submission
+   format) against the current assignment instructions on Canvas, which
+   take precedence if they differ.
+
+Individual Assignments (RWA1 to RWA3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. danger::
+
+   **Keep RWA repositories private.** A public repository containing
+   your solution is visible to every other student and to next year's
+   class. If a classmate copies from it, both of you are in an academic
+   integrity case, and "I did not know it was public" is not a defense.
+
+   Check now: on GitHub, a private repository shows a **Private** badge
+   next to its name. If yours says **Public**, fix it under
+   **Settings** -> **General** -> **Danger Zone** -> **Change
+   visibility**.
+
+- One repository per RWA, private, owned by you.
+- Add the instructor and the TAs as collaborators so the work can be
+  graded (**Settings** -> **Collaborators** -> **Add people**).
+- Do not fork a classmate's assignment repository, and do not accept a
+  fork of yours.
+- Commit as you go. A repository whose entire history is one commit
+  called "final" the night before the deadline tells the grader nothing
+  about your process, and tells them something about your process.
+
+Group Projects (GP1 to GP3)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- One repository per team, with every member as a collaborator.
+- Protect ``main`` on day one, as described above.
+- Everybody works on branches. Nobody commits directly to ``main``.
+- Every change reaches ``main`` through a pull request that a teammate
+  approved.
+- Use your real name and university email in ``git config``, so
+  contributions are attributable to the right person.
+
+.. note::
+
+   Git history is part of how group work is assessed. ``git log
+   --author="Your Name" --oneline`` is a command the teaching staff can
+   run. If one member has four hundred commits and another has three,
+   the history says so. Commit your own work under your own name, from
+   the start, rather than trying to reconstruct a story at the end.
+
+Never Commit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+   :header-rows: 1
+   :class: compact-table
+
+   * - Do not commit
+     - Instead
+   * - ``build/``, ``install/``, ``log/``, ``*.o``
+     - ``.gitignore``, written before the first commit.
+   * - Passwords, tokens, keys, ``.env``
+     - Keep them out of the repository. If one slips in, rotate it.
+   * - Large binaries, datasets, bag files
+     - Link to them, or use Git LFS if the assignment allows it.
+   * - AI-generated code
+     - Course policy: you write the code you submit. This applies to
+       every commit, not just the final one.
+   * - Somebody else's solution
+     - Cite and link anything you adapt, in the commit message and in
+       the README.
+
+.. admonition:: Before every deadline
+   :class: tip
+
+   .. code-block:: bash
+
+      git status                    # nothing uncommitted, nothing untracked
+      git log --oneline -5          # the work is really committed
+      git push                      # the work is really on GitHub
+
+   Then **open the repository in a browser** and look at it. Pushing to
+   the wrong remote, pushing a branch that is not ``main``, and
+   forgetting to push at all are the three ways students submit an empty
+   repository. Thirty seconds in the browser catches all three.

@@ -19,9 +19,17 @@ be watched early in the semester.
    - Distinguish between centralized and distributed version control systems.
    - Use core Git commands (init, add, commit, branch, merge, push, pull).
    - Resolve merge conflicts.
+   - Read history with ``log``, ``show``, and ``blame``.
+   - Park unfinished work with ``git stash``.
+   - Undo mistakes at every stage, and recover lost commits with
+     ``git reflog``.
+   - Tell apart the changes you may rewrite from the ones you must
+     ``revert``.
+   - Diagnose a failed push, a failed pull, and a failed SSH connection.
    - Use GitHub for remote collaboration.
    - Apply the branch workflow and fork workflow.
    - Create and review pull requests.
+   - Keep build output and secrets out of a repository.
 
 
 .. toctree::
