@@ -20,12 +20,85 @@ References
     :class-container: sd-border-secondary
     :open:
 
-    Printable one-page Git command references. Keep one handy while you
-    work through the branching and merging exercises.
+    Printable one-page command references. Download one, print it, and
+    keep it next to you while you work through the exercises. All four
+    cover the same core commands, so pick whichever layout you find
+    easiest to scan.
 
-    - :download:`git-cheat-sheet-atlassian.pdf </_static/files/git-cheat-sheet-atlassian.pdf>` --- Atlassian Git cheat sheet.
-    - :download:`git-cheat-sheet-gitlab.pdf </_static/files/git-cheat-sheet-gitlab.pdf>` --- GitLab Git cheat sheet.
-    - :download:`git-cheat-sheet-tower.pdf </_static/files/git-cheat-sheet-tower.pdf>` --- Tower Git cheat sheet.
+    - :download:`git-cheat-sheet-github.pdf </_static/files/git-cheat-sheet-github.pdf>`,
+      GitHub Education. Two pages, the clearest layout of the four, and
+      the one to print if you only print one.
+    - :download:`git-cheat-sheet-atlassian.pdf </_static/files/git-cheat-sheet-atlassian.pdf>`,
+      Atlassian. Grouped by task rather than alphabetically.
+    - :download:`git-cheat-sheet-gitlab.pdf </_static/files/git-cheat-sheet-gitlab.pdf>`,
+      GitLab. Compact, one page.
+    - :download:`git-cheat-sheet-tower.pdf </_static/files/git-cheat-sheet-tower.pdf>`,
+      Tower. Includes a short section on undoing things.
+
+    .. note::
+
+       The GitHub sheet is reproduced here from
+       `github/training-kit <https://github.com/github/training-kit>`__,
+       which is licensed CC BY 4.0. The others are hosted locally so
+       they still work if the vendor moves the file, or if the network
+       does not.
+
+
+.. dropdown:: Interactive Cheat Sheets and Visualizers
+    :class-container: sd-border-secondary
+    :open:
+
+    A printed list of commands tells you what to type. These show you
+    what the commands **do**, which is a different and usually more
+    useful thing.
+
+    .. grid:: 1 1 2 2
+        :gutter: 2
+
+        .. grid-item-card:: Dangit, Git!?!
+            :link: https://dangitgit.com/
+            :class-card: sd-border-secondary
+
+            **dangitgit.com**
+
+            Organized by the problem, not by the command: "I committed
+            to the wrong branch", "I need to undo a commit". Go here
+            first when something has gone wrong. Pairs with the
+            :doc:`recovery section <vc_lecture>` of the lecture.
+
+        .. grid-item-card:: Visualizing Git
+            :link: https://git-school.github.io/visualizing-git/
+            :class-card: sd-border-secondary
+
+            **git-school.github.io/visualizing-git**
+
+            A sandbox: type real commands and watch ``HEAD``, the branch
+            pointers and the commits move. The fastest way to make the
+            pointer model concrete. Try ``git commit`` three times, then
+            ``git switch --detach HEAD~1``, and watch what happens to
+            ``HEAD``. (The sandbox also accepts the older
+            ``git checkout HEAD~1``.)
+
+        .. grid-item-card:: Learn Git Branching
+            :link: https://learngitbranching.js.org/
+            :class-card: sd-border-secondary
+
+            **learngitbranching.js.org**
+
+            Guided exercises on the same visual model, from your first
+            commit through rebasing. Good practice before the workshop
+            drills.
+
+        .. grid-item-card:: NDP Git Cheatsheet
+            :link: https://ndpsoftware.com/git-cheatsheet.html
+            :class-card: sd-border-secondary
+
+            **ndpsoftware.com/git-cheatsheet.html**
+
+            An interactive diagram placing each command across stash,
+            workspace, index, local repository and upstream. The same
+            mental model as the lecture's three areas, with the remote
+            added.
 
 
 .. dropdown:: Video Tutorials (YouTube)
@@ -81,12 +154,6 @@ References
             :class-card: sd-border-secondary
 
             **git-scm.com: Reference Manual**
-
-        .. grid-item-card:: Git Cheat Sheet
-            :link: https://education.github.com/git-cheat-sheet-education.pdf
-            :class-card: sd-border-secondary
-
-            **GitHub Education: Git Cheat Sheet (PDF)**
 
 
 .. dropdown:: GitHub Guides

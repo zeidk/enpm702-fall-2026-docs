@@ -72,9 +72,14 @@ html_theme_options = {
     # Navigation
     "navigation_depth": 3,
     "show_nav_level": 1,
-    # 1 = only top-level sections are expanded in the right-hand "On this page"
-    # TOC; subsections reveal themselves as you scroll into them.
-    "show_toc_level": 1,
+    # Right-hand "On this page" TOC. The theme marks lists visible while
+    # `level <= show_toc_level + 1`, so 0 means only the outermost level is
+    # shown. Deeper levels appear as you scroll, via the theme's
+    # `.bd-toc .nav > .active > ul` rule driven by scrollspy.
+    # On this site that gives: the H1 parts on multi-part pages such as the
+    # version-control lecture, and the H2 sections on ordinary single-title
+    # pages. Raise to 1 to also expand one level by default.
+    "show_toc_level": 0,
     "show_prev_next": True,
     # Footer
     # "footer_start": ["copyright"],
@@ -103,6 +108,12 @@ numfig_format = {
 
 html_static_path = ["_static"]
 master_doc = "index"
+
+# Loaded without `defer` so the stored sidebar state is applied before the
+# first paint; see _static/sidebar-persist.js.
+html_js_files = [
+    ("sidebar-persist.js", {"defer": None}),
+]
 
 html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",

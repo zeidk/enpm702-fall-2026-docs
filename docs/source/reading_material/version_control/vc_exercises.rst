@@ -103,8 +103,14 @@ Git/Github Exercises
       repository: RWA repositories are private and individual work.
    2. Clone **your fork** to your local machine.
    3. Add the original repository as an ``upstream`` remote.
-   4. Create a feature branch called ``feature/add-readme-section``.
-   5. Make changes (e.g., add a section to the README).
+   4. Create a feature branch called ``feature/add-<your-username>``.
+   5. Copy ``contributors/TEMPLATE.md`` to
+      ``contributors/<your-github-username>.md`` and fill it in.
+
+      Add a **new file** rather than editing an existing one. If thirty
+      people all append to the same ``README.md``, the first pull
+      request merges and every later one conflicts. One file each and
+      they all merge cleanly, in any order.
    6. Commit and push the feature branch to **your fork** (``origin``).
    7. On GitHub, create a Pull Request from your fork's feature branch
       to the original repository's ``main`` branch.
@@ -230,7 +236,7 @@ Git/Github Exercises
       the two branches **and** you have modified it. If the file were
       identical on both branches, Git would carry your edit across
       without complaining. That inconsistency is why "commit or stash
-      before switching" is the habit worth building.
+      before switching" is the reliable habit.
 
 .. dropdown:: Exercise 10: Losing and Recovering a Branch
    :icon: gear
@@ -388,10 +394,10 @@ things on purpose.
 
 .. warning::
 
-   Read the printed briefing before typing anything, and resist the urge
-   to search for a command. Every one of these has been solved in the
-   lecture. Work out *where* the problem is first (working directory,
-   staging area, repository, remote), and the command follows.
+   Read the printed briefing before typing anything. Every one of these
+   is solvable with a command covered in the lecture. Identify *where*
+   the problem is first (working directory, staging area, repository,
+   remote), and the command follows.
 
 .. dropdown:: Scenario 1: Detached HEAD
    :icon: gear
@@ -535,8 +541,8 @@ things on purpose.
          git commit -m "Stop tracking robot_secrets.yaml"
          git push
 
-      Now the part that matters. The password is **still in the
-      repository**, in the commit that added it:
+      The password is **still in the repository**, in the commit that
+      added it:
 
       .. code-block:: bash
 

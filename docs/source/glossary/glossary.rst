@@ -206,6 +206,12 @@ B
 
 .. glossary::
 
+   Bare repository
+      A repository holding history but no checked-out files. This is what a
+      server holds. ``git init --bare`` creates one, which is all a remote
+      needs to be.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Bash
       Bourne Again Shell. The default shell for most Linux distributions,
       widely used for scripting and interactive command-line use.
@@ -222,6 +228,12 @@ B
       ``1`` or ``0``. Print the words instead of the digits with
       ``std::boolalpha``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Branch
+      A file under ``.git/refs/heads/`` holding one commit hash. Creating a
+      branch copies no files, which is why it is instant. The file is
+      rewritten forward with each new commit on that branch.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    BSS Segment
       The region of a process image holding **uninitialized** global and
@@ -267,6 +279,12 @@ C
       A user-defined type that encapsulates data (attributes) and behavior (methods). A blueprint for creating objects.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Clone
+      A complete copy of a repository, including its full history and every
+      branch. A clone is a repository in its own right, not a view of one
+      elsewhere.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    CMake
       An open-source, cross-platform build system used to build, test,
       and package C++ software. Uses ``CMakeLists.txt`` files to define
@@ -288,6 +306,12 @@ C
       accessed via ``Ctrl + Shift + P``. Includes built-in commands and
       those from installed extensions.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
+
+   Commit
+      One saved snapshot of the project, with a message saying what changed
+      and why. A commit never changes once made; its hash is fixed and it
+      records its parent, so commits form a chain backwards through history.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Compile-time Constant
       A constant whose value is known while the program is being
@@ -399,12 +423,24 @@ D
       operator.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Detached HEAD
+      The state where ``.git/HEAD`` holds a commit hash instead of a branch
+      name. You are on a commit rather than a branch, so new commits have no
+      branch to move forward and become unreachable when you switch away.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Direct Initialization
       Initialization with parentheses, as in ``int a(1);``. Introduced
       for efficient initialization of class types; like copy
       initialization, it permits narrowing conversions and is little
       used in modern C++.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Diverged
+      The state where two branches each hold commits the other lacks, so
+      neither can fast-forward to the other. Distinct from one branch simply
+      being **ahead** of another.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Dynamic Memory Allocation
       Reserving memory on the heap at runtime using ``new``. The
@@ -465,6 +501,19 @@ F
 
 .. glossary::
 
+   Fast-forward
+      A merge that needs no new commit because the target branch is an
+      ancestor of the source. Git just moves the branch pointer forward.
+      ``--no-ff`` forces a merge commit instead, preserving the record that a
+      branch existed.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Fetch
+      Downloading commits from a remote and updating the remote-tracking
+      branches. It does not touch your branch or your files, which is what
+      makes it safe to run at any time.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Fixed-width Integer Type
       An integer type of guaranteed exact width, declared in ``<cstdint>``:
       ``int8_t``, ``int32_t``, ``uint64_t`` and so on. Use these when the
@@ -478,6 +527,12 @@ F
       *precision* is the number of significant decimal digits it can
       carry, not the number of digits after the decimal point.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Fork
+      A server-side copy of a repository under your own account. A GitHub
+      feature, not a Git one. It lets you contribute without write access to
+      the original.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Function (Shell)
       A reusable block of shell code that groups commands and can be
@@ -521,11 +576,22 @@ H
 
 .. glossary::
 
+   HEAD
+      The file ``.git/HEAD``, holding the name of the branch you are
+      currently on. It normally points at a branch, and through that branch
+      at a commit.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Heap
       A region of memory used for dynamic memory allocation at runtime.
       Memory on the heap persists until explicitly deallocated. Flexible
       in size but requires manual management (or smart pointers).
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Hunk
+      One contiguous block of changed lines in a diff, with a few unchanged
+      lines of context either side. ``git add -p`` stages a hunk at a time.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
 
 .. _g-i:
@@ -712,6 +778,18 @@ M
       it is declared.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Merge
+      Combining another branch's commits into the current branch. Produces a
+      merge commit with two parents, unless it can fast-forward.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Merge conflict
+      What happens when two branches change the same lines and Git cannot
+      choose between them. Git pauses, writes ``<<<<<<<``, ``=======`` and
+      ``>>>>>>>`` markers into the file, and waits for you to decide.
+      ``git merge --abort`` backs out.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
 
 .. _g-n:
 
@@ -790,6 +868,12 @@ O
       An instance of a class. Contains its own copy of the class's data members and can call the class's methods.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Origin
+      The conventional name for the remote a repository was cloned from.
+      Nothing about the name is special; it is set by ``git clone`` or by
+      ``git remote add origin``.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Overhead
       Additional resources (time, memory, bandwidth) required to
       perform a task beyond the minimum necessary. Understanding
@@ -829,9 +913,26 @@ P
       ``#define``, etc.), removing comments, and adjusting whitespace.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Pull
+      ``fetch`` followed by ``merge``, in one command. Downloads commits from
+      a remote and integrates them into the current branch.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Pull request
+      A request to merge one branch into another, with review and discussion
+      attached. A GitHub feature, not a Git one. A pull request tracks a
+      **branch**, so pushing again updates the same request.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Pure Virtual Function
       A virtual function declared with ``= 0`` that has no implementation in the base class. Forces derived classes to provide their own implementation.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Push
+      Uploading commits from a local branch to a remote. Rejected if the
+      remote holds commits you do not have, which protects a teammate's work
+      from being overwritten.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
 
 .. _g-r:
@@ -847,6 +948,12 @@ R
       Smart pointers implement RAII for dynamic memory.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
+   Rebase
+      Replaying your commits on top of another branch, producing new commits
+      with new hashes and a linear history. Never rebase commits others
+      already have.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Recursion
       A programming technique where a function calls itself to solve a problem by breaking it into smaller subproblems. Requires a base case to terminate.
       :doc:`L5 </lectures/lecture5/l5_lecture>`
@@ -857,6 +964,34 @@ R
       same memory address as the original variable. Syntax:
       ``type& identifier{existing_variable};``
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Reflog
+      A local record of every position ``HEAD`` has held, including commits
+      no branch points at any more. The way to recover work after a deleted
+      branch or a bad reset. Local to one clone, and it expires.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Remote
+      A repository your repository can reach. It need not be a service: a
+      folder, a USB stick, or any machine you can reach over SSH all work.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Remote-tracking branch
+      A local, read-only pointer such as ``origin/main``, recording where a
+      branch on the remote was **the last time you fetched**. Not the remote
+      itself, and it does not update on its own.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Repository
+      A project plus its complete history, stored in the hidden ``.git``
+      directory at the project root.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Revert
+      Adding a new commit that undoes an earlier one. The safe way to undo
+      anything already pushed, because it adds to history rather than
+      rewriting it.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Rodata Segment
       The region of a process image holding **read-only** data: string
@@ -941,6 +1076,23 @@ S
       A C++ operator that returns the size (in bytes) of a type or
       variable. The result is platform-dependent.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Sparse checkout
+      Checking out only part of a repository's tree. Combined with a partial
+      clone (``--filter=blob:none``) it cuts both disk and download
+      substantially. A convenience, not access control: the history is still
+      complete.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Staging area
+      The area holding the changes that will go into the next commit. Filled
+      by ``git add``, emptied by ``git commit``. Also called the index.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Stash
+      A scratch area for uncommitted changes, letting you switch branches
+      with a clean working tree. Local, never pushed, and not a backup.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    static_cast
       A C++ cast operator used for explicit type conversions. Preferred
@@ -1090,6 +1242,12 @@ T
 
 .. glossary::
 
+   Tag
+      A name permanently attached to one commit. Unlike a branch it does not
+      move, which is what makes it usable for marking a submission or a
+      release.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
+
    Template
       A mechanism for writing generic code that works with any data type. The compiler generates specific versions (instantiations) for each type used.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
@@ -1107,6 +1265,12 @@ T
    this Pointer
       An implicit pointer available inside non-static member functions that points to the object on which the method was called.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Tracked file
+      A file Git already knows about, because an earlier ``git add``
+      introduced it. Git watches tracked files for changes and reports them;
+      untracked files it ignores until added.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Type Conversion
       Producing a value of one type from a value of another. Implicit
@@ -1153,6 +1317,12 @@ U
       behavior. Globals are the exception: they are zeroed in the BSS
       segment.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Upstream
+      The remote pointing at the original repository you forked from, by
+      convention named ``upstream``. Fetching from it is how a fork is kept
+      in sync.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    using Declaration
       Imports a **single** name from a namespace into the current scope:
@@ -1237,6 +1407,11 @@ W
       A fixed-size unit of data that the processor handles as a single
       entity. Architecture-dependent: commonly 16, 32, or 64 bits.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Working directory
+      The actual project files on disk, the ones you edit. One of Git's three
+      areas, alongside the staging area and the repository.
+      :doc:`VC </reading_material/version_control/vc_lecture>`
 
    Workspace
       In VSCode, a container that holds a set of related projects or code

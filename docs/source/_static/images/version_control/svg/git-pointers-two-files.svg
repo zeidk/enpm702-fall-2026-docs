@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 300" width="1020" height="300">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#CA4027"/>
+    </marker>
+    <style>
+      .mono { font-family: "DejaVu Sans Mono", monospace; font-weight: bold; }
+      .lbl  { font-family: "DejaVu Sans Mono", monospace; font-size: 21px; fill: #5E5D60; }
+      .ptr  { stroke: #CA4027; stroke-width: 5; marker-end: url(#ar); }
+    </style>
+  </defs>
+  <rect width="1020" height="300" fill="#ffffff"/>
+
+  <!-- commit A -->
+  <circle cx="100" cy="170" r="54" fill="#C6C6C6" stroke="#111111" stroke-width="5"/>
+  <text class="mono" x="100" y="186" font-size="46" text-anchor="middle">A</text>
+  <text class="mono" x="100" y="262" font-size="30" text-anchor="middle" fill="#111111">a1b2c3d</text>
+
+  <!-- branch file -->
+  <text class="lbl" x="405" y="88" text-anchor="middle">.git/refs/heads/main</text>
+  <rect x="255" y="115" width="300" height="110" rx="12" fill="#EADCF0" stroke="#8F46AD" stroke-width="5"/>
+  <text class="mono" x="405" y="180" font-size="25" text-anchor="middle" fill="#111111">a1b2c3d4e5f6...</text>
+
+  <!-- HEAD file -->
+  <text class="lbl" x="815" y="88" text-anchor="middle">.git/HEAD</text>
+  <rect x="655" y="115" width="320" height="110" rx="12" fill="#D6E9F8" stroke="#2980B9" stroke-width="5"/>
+  <text class="mono" x="815" y="180" font-size="22" text-anchor="middle" fill="#111111">ref: refs/heads/main</text>
+
+  <!-- pointers -->
+  <line class="ptr" x1="255" y1="170" x2="162" y2="170"/>
+  <line class="ptr" x1="655" y1="170" x2="563" y2="170"/>
+</svg>

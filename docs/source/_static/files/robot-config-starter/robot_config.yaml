@@ -1,0 +1,21 @@
+# robot_config.yaml
+#
+# Baseline configuration for the ENPM702Tech delivery robot fleet.
+# Every robot boots from this file, so a wrong value here reaches the
+# whole fleet at the next flash.
+
+robot:
+  name: "delivery-bot"
+  wheel_radius: 0.08      # meters
+  max_speed: 1.5          # m/s
+
+navigation:
+  # General navigation settings for the robot
+  update_rate: 5          # Hz
+  coordinate_system: "WGS84"
+  obstacle_margin: 0.35   # meters
+
+sensors:
+  lidar: true
+  imu: true
+  gps: false

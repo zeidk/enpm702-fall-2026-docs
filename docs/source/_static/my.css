@@ -292,3 +292,122 @@ html[data-theme="dark"] .assignment {
     color: #ffa657;
   }
 }
+/* ============================================================
+ * Scenario stage boxes: the "day in the life" timeline
+ *
+ * Usage:
+ *   .. admonition:: 10:00 AM · Adding GPS Navigation
+ *      :class: vc-stage
+ *
+ * Replaces the old `.. card::` with `:class-header: sd-bg-dark-orange`.
+ * Rendered as a timeline entry: accent rail on the left, clock icon,
+ * time and title in the accent colour, softly tinted body.
+ * ============================================================ */
+
+:root,
+[data-theme="light"] {
+  --vc-stage-accent: #8b1a1a;
+  --vc-stage-title: #6d1414;
+  --vc-stage-title-bg: rgba(139, 26, 26, 0.10);
+  --vc-stage-body-bg: rgba(139, 26, 26, 0.035);
+}
+
+[data-theme="dark"] {
+  --vc-stage-accent: #ff8a50;
+  --vc-stage-title: #ffb894;
+  --vc-stage-title-bg: rgba(255, 138, 80, 0.16);
+  --vc-stage-body-bg: rgba(255, 138, 80, 0.06);
+}
+
+div.admonition.vc-stage,
+.admonition.vc-stage {
+  border: 1px solid var(--vc-stage-title-bg);
+  border-left: 5px solid var(--vc-stage-accent);
+  border-radius: 0 0.4rem 0.4rem 0;
+  background-color: var(--vc-stage-body-bg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  margin-top: 2rem;
+  margin-bottom: 1.4rem;
+}
+
+div.admonition.vc-stage > .admonition-title,
+.admonition.vc-stage > .admonition-title {
+  background-color: var(--vc-stage-title-bg);
+  color: var(--vc-stage-title);
+  font-size: 1.02rem;
+  letter-spacing: 0.01em;
+}
+
+/* the clock, in place of the default admonition bell */
+div.admonition.vc-stage > .admonition-title::after,
+.admonition.vc-stage > .admonition-title::after {
+  color: var(--vc-stage-accent);
+  content: "\f017";
+}
+
+/* the leading time reads as a chip */
+div.admonition.vc-stage > .admonition-title > strong,
+.admonition.vc-stage > .admonition-title > strong {
+  color: var(--vc-stage-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+ * Changed-line highlight inside code blocks
+ * Usage:  .. code-block:: yaml
+ *            :emphasize-lines: 8, 12-16
+ *
+ * Overrides the Pygments default (pale yellow / flat grey) with a
+ * marked band that reads as "this is the line that changed".
+ * ============================================================ */
+
+html[data-theme="light"] .highlight .hll {
+  background-color: #fff3cd;
+  box-shadow: inset 3px 0 0 0 #e0a800;
+  display: block;
+}
+
+html[data-theme="dark"] .highlight .hll {
+  background-color: rgba(255, 196, 84, 0.16);
+  box-shadow: inset 3px 0 0 0 #ffc454;
+  display: block;
+}
+
+/* ============================================================
+ * Desktop toggle for the left section navigation
+ *
+ * The theme ships the button (.primary-toggle), a hidden checkbox
+ * (#pst-primary-sidebar-checkbox) and the JS that links them, but hides
+ * the button above 960px so the sidebar is permanent on desktop. These
+ * rules put the button back and collapse the sidebar when it is used.
+ *
+ * The logic is inverted relative to mobile: on narrow screens the
+ * sidebar is hidden by default and `:checked` reveals it, so the theme's
+ * own rule stays untouched below 960px.
+ * ============================================================ */
+
+@media (min-width: 960px) {
+  .sidebar-toggle.primary-toggle {
+    display: flex !important;
+    align-items: center;
+  }
+
+  input#pst-primary-sidebar-checkbox:checked ~ .bd-container .bd-sidebar-primary {
+    display: none;
+  }
+
+  /* the theme dims the overlay label on mobile; keep it inert on desktop
+     so a collapsed sidebar does not leave a click-blocking layer behind */
+  input#pst-primary-sidebar-checkbox:checked + label.overlay.overlay-primary {
+    display: none;
+  }
+}
+
+/* Restored (persisted) collapsed state, applied by sidebar-persist.js
+   before first paint. The :checked rule above covers the live toggle;
+   this covers the state carried over from the previous page. */
+@media (min-width: 960px) {
+  html.pst-primary-collapsed .bd-sidebar-primary {
+    display: none;
+  }
+}
