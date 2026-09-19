@@ -1,17 +1,23 @@
-/* Remember whether the left section navigation is collapsed.
+/* Desktop hide/unhide for the left section navigation, with memory.
  *
- * The theme supplies the button (.primary-toggle), a hidden checkbox
- * (#pst-primary-sidebar-checkbox) and the click handler that flips it.
- * my.css makes that work on desktop. This file adds the memory.
+ * The theme ships a .primary-toggle button, a hidden checkbox and a click
+ * handler, all built for mobile, where "checked" means the drawer is OPEN.
+ * On desktop the sidebar is shown by default, so the meaning is inverted.
+ * Sharing the theme's handler caused two problems:
  *
- * Only desktop state is stored. Below 960px the same checkbox means the
- * opposite thing (checked = drawer open), so persisting it there would
- * reopen the drawer on every page and flip the meaning on desktop.
+ *   - after collapsing, the theme focused the first link inside the
+ *     sidebar we had just hidden, so focus landed on nothing;
+ *   - the two handlers had to agree about the checkbox, which is fragile.
+ *
+ * So on desktop we intercept the click during the CAPTURE phase on
+ * document, before it reaches the button, and handle it ourselves. Below
+ * 960px we do nothing at all and the theme behaves exactly as shipped.
  */
 (function () {
   "use strict";
 
   var KEY = "pst-primary-sidebar-collapsed";
+  var CLS = "pst-primary-collapsed";
   var WIDE = "(min-width: 960px)";
   var root = document.documentElement;
 
@@ -19,45 +25,56 @@
     return window.matchMedia(WIDE).matches;
   }
 
-  function stored() {
+  function read() {
     try {
       return localStorage.getItem(KEY) === "1";
     } catch (e) {
-      return false; // private mode, blocked storage: fall back to shown
+      return false; // blocked storage: start expanded
     }
   }
 
-  // Apply before first paint so the sidebar does not appear and then vanish.
-  if (stored()) {
-    root.classList.add("pst-primary-collapsed");
+  function write(collapsed) {
+    try {
+      localStorage.setItem(KEY, collapsed ? "1" : "0");
+    } catch (e) {
+      /* the toggle still works for this page */
+    }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    var box = document.getElementById("pst-primary-sidebar-checkbox");
-    var btn = document.querySelector(".primary-toggle");
-    if (!box || !btn) {
-      return;
-    }
+  // Apply the stored state before first paint, so nothing flashes.
+  if (read()) {
+    root.classList.add(CLS);
+  }
 
-    // Sync the checkbox to the restored state, desktop only.
-    if (isWide()) {
-      box.checked = root.classList.contains("pst-primary-collapsed");
-    }
+  document.addEventListener(
+    "click",
+    function (ev) {
+      if (!isWide()) {
+        return; // mobile: leave the theme's drawer alone
+      }
+      var target = ev.target;
+      if (!target || !target.closest) {
+        return;
+      }
+      if (!target.closest(".primary-toggle")) {
+        return;
+      }
 
-    // The theme's own handler flips box.checked on click, so read it
-    // after that handler has run rather than predicting the new value.
-    btn.addEventListener("click", function () {
-      window.setTimeout(function () {
-        if (!isWide()) {
-          return;
-        }
-        root.classList.toggle("pst-primary-collapsed", box.checked);
-        try {
-          localStorage.setItem(KEY, box.checked ? "1" : "0");
-        } catch (e) {
-          /* storage unavailable: the toggle still works for this page */
-        }
-      }, 0);
-    });
-  });
+      // Stop the event before the theme's own handler sees it.
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      var collapsed = !root.classList.contains(CLS);
+      root.classList.toggle(CLS, collapsed);
+      write(collapsed);
+
+      // Keep the theme's checkbox in step, so that resizing down to
+      // mobile does not start with the drawer in a stale state.
+      var box = document.getElementById("pst-primary-sidebar-checkbox");
+      if (box) {
+        box.checked = false;
+      }
+    },
+    true // capture: runs before the listener on the button itself
+  );
 })();
