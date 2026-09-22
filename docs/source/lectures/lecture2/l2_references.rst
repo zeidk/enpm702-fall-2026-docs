@@ -261,7 +261,7 @@ References
 
             **GCC warning options**
 
-            What ``-Wall``, ``-Wextra``, ``-Wpedantic``,
+            What ``-Wall``, ``-Wextra``, ``-pedantic-errors``,
             ``-Wsign-compare`` and ``-Wshadow`` actually enable.
 
         .. grid-item-card:: c++filt

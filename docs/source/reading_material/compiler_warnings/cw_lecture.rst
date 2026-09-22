@@ -32,7 +32,7 @@ course:
 
 .. code-block:: bash
 
-   g++ -std=c++20 -Wall -Wextra -Wpedantic -g main.cpp -o main
+   g++ -std=c++20 -Wall -Wextra -pedantic-errors -g main.cpp -o main
 
 .. card::
     :class-card: sd-border-info sd-shadow-sm
@@ -42,7 +42,9 @@ course:
     ``-Wall``, ``-Wextra``, and ``-Wpedantic`` are *groups* of compiler
     warnings understood by both ``g++`` and ``clang++``. None of them
     change the code that is generated. They only change what the
-    compiler tells you about the code you wrote.
+    compiler tells you about the code you wrote. ``-pedantic-errors``
+    is the third group with every one of its diagnostics turned into an
+    error, and it is the form this course uses.
 
 .. tip::
 
@@ -52,7 +54,7 @@ course:
 
    .. code-block:: bash
 
-      alias 702g++='g++ -std=c++20 -Wall -Wextra -Wpedantic -g'
+      alias 702g++='g++ -std=c++20 -Wall -Wextra -pedantic-errors -g'
 
    Add it to your ``~/.bashrc`` (or ``~/.zshrc``) and you can then
    build with ``702g++ main.cpp -o main``.
@@ -131,7 +133,7 @@ The stray semicolon is worth seeing once:
    at all.
 
 
-``-Wpedantic``
+``-Wpedantic`` and ``-pedantic-errors``
 ----------------------------------------------------
 
 This one sits on a different axis.
@@ -148,17 +150,22 @@ exists in C99 but not in C++:
 
    int n{};
    std::cin >> n;
-   int arr[n];  // warning: ISO C++ forbids variable length array
+   int arr[n];  // ISO C++ forbids variable length array
 
-The portable version is ``std::vector<int> arr(n);``.
+With ``-Wpedantic`` that line is a warning and the program still builds.
+With ``-pedantic-errors`` the same diagnostic is an error and the build
+stops. This course passes ``-pedantic-errors``, so code that relies on a
+GNU extension does not compile here, which is what you want to find out
+before the day it meets another compiler. The portable version is
+``std::vector<int> arr(n);``.
 
 .. note::
 
    This is the same concern as ``set(CMAKE_CXX_EXTENSIONS OFF)`` in
    :doc:`Lecture 1 </lectures/lecture1/l1_lecture>`, approached from
    the other side. ``CMAKE_CXX_EXTENSIONS OFF`` asks for
-   ``-std=c++20`` instead of ``-std=gnu++20``; ``-Wpedantic`` reports
-   the places where your code relied on the difference.
+   ``-std=c++20`` instead of ``-std=gnu++20``; ``-pedantic-errors``
+   refuses the places where your code relied on the difference.
 
 
 Why All Three in This Course
@@ -180,7 +187,7 @@ Two Things Worth Knowing
 They Are Not Cumulative in a Tidy Way
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In practice ``-Wextra`` pulls in most of ``-Wall``, but ``-Wpedantic``
+In practice ``-Wextra`` pulls in most of ``-Wall``, but ``-pedantic-errors``
 is independent of both, and even all three together leave plenty of
 warnings disabled. Two useful additions:
 
@@ -223,7 +230,9 @@ Quick Reference
    * - ``-Wextra``
      - Is this suspicious, even if it might be intentional?
    * - ``-Wpedantic``
-     - Is this standard C++, or a GNU extension?
+     - Is this standard C++, or a GNU extension? Warn if not.
+   * - ``-pedantic-errors``
+     - The same question, but stop the build if not. The course flag.
    * - ``-Werror``
      - Should warnings stop the build?
    * - ``-g``

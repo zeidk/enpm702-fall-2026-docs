@@ -24,7 +24,7 @@ are expected to work through these outside of class.
        input is not a number, stream state and recovery, and whole-line
        parsing with ``std::getline`` and ``std::from_chars``
    * - :doc:`compiler_warnings/cw_index`
-     - Compiler warning flags: ``-Wall``, ``-Wextra``, ``-Wpedantic``,
+     - Compiler warning flags: ``-Wall``, ``-Wextra``, ``-pedantic-errors``,
        the warnings each one enables, and the additional flags
        ``-Wshadow``, ``-Wconversion``, and ``-Werror``
    * - :doc:`flow_control/fc_index`

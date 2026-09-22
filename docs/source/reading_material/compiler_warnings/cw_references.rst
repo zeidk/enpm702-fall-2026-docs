@@ -12,7 +12,7 @@ References
         **Compiler Warning Flags**
 
         Covers the warning groups used in this course: ``-Wall``,
-        ``-Wextra``, and ``-Wpedantic``, the warnings each one enables,
+        ``-Wextra``, and ``-pedantic-errors``, the warnings each one enables,
         the additional flags ``-Wshadow``, ``-Wconversion``, and
         ``-Werror``, and why warnings matter in beginner code.
 

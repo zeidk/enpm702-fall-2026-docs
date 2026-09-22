@@ -14,7 +14,7 @@ constants, scope, and namespaces.
 
    .. code-block:: bash
 
-      g++ -std=c++20 -Wall -Wextra -Wpedantic -g main.cpp -o main
+      g++ -std=c++20 -Wall -Wextra -pedantic-errors -g main.cpp -o main
 
    If that command is not working yet, fix your environment before going
    further. See :doc:`/lectures/lecture1/l1_lecture`.

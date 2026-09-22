@@ -1281,7 +1281,7 @@ exercises:
 .. admonition:: Exercise 2 (in class): Where does it go wrong?
    :class: hint
 
-   This compiles cleanly with ``-Wall -Wextra -Wpedantic``. It has
+   This compiles cleanly with ``-Wall -Wextra -pedantic-errors``. It has
    **three** distinct memory bugs. Find them, name them, and say what the
    minimal fix for each one is.
 

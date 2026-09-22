@@ -6,7 +6,7 @@ Overview
 --------
 
 This reading material explains the compiler warning flags used
-throughout this course: ``-Wall``, ``-Wextra``, and ``-Wpedantic``. It
+throughout this course: ``-Wall``, ``-Wextra``, and ``-pedantic-errors``. It
 is a self-study reading module. Work through it alongside
 :doc:`Lecture 1 </lectures/lecture1/l1_lecture>`, where these flags
 first appear in the build command. None of these flags change the code
@@ -18,8 +18,9 @@ about the code you wrote.
 
    By the end of this material, you will be able to:
 
-   - Explain what ``-Wall``, ``-Wextra``, and ``-Wpedantic`` each
-     enable, and why ``-Wall`` does not mean "all warnings".
+   - Explain what ``-Wall``, ``-Wextra``, and ``-pedantic-errors`` each
+     enable, why ``-Wall`` does not mean "all warnings", and how
+     ``-pedantic-errors`` differs from ``-Wpedantic``.
    - Recognize the warnings these flags produce most often in beginner
      code, such as signed/unsigned comparisons and unused variables.
    - Distinguish a likely-bug warning from a portability warning.

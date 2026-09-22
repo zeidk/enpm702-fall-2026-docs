@@ -151,6 +151,12 @@ A
       ``&``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Aggregate
+      A class with no constructor of its own, such as ``std::array`` or
+      a plain ``struct``. Nothing runs when one is declared, so its
+      members hold garbage until braces zero or fill them.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Aggregation
       A "has-a" relationship where the part can exist independently of the whole. Represented by an empty diamond in UML.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
@@ -175,11 +181,25 @@ A
       these notes end in ``0``, ``4``, ``8`` or ``c``.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Amortized O(1)
+      Constant cost per operation on average over a long run, even
+      though one operation now and then is expensive. ``push_back`` is
+      amortized O(1): a reallocation moves every element, but geometric
+      growth makes reallocations rare.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Arithmetic Conversion
       Implicit type conversion rules applied when binary operators have
       operands of different types. The operand with lower priority is
       converted to the higher-priority type.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Array decay
+      The rule that an array name turns into a pointer to its first
+      element in almost every expression. It happens automatically and
+      the length goes with it, so ``sizeof`` on the pointer gives 8, not
+      the array size. ``std::array`` never decays.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Assignment
       Storing a value in a variable that has already been declared,
@@ -192,12 +212,25 @@ A
       A general relationship between classes where objects of one class use or interact with objects of another.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Associative container
+      A container that stores key and value pairs and finds a value from
+      its key rather than from a position: ``std::map`` (sorted) and
+      ``std::unordered_map`` (hashed).
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    auto
       A keyword that enables type deduction, allowing the compiler to
       deduce the type of a variable from its initializer. Requires an
       initializer; drops ``const`` by default.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+
+   std::array
+      A class template from ``<array>`` that wraps a C array of the same
+      size: the same bytes, no header, plus the members a C array lacks
+      (``size()``, ``at()``, ``begin()``, ``fill()``, ``data()``). Its
+      length is part of its type, so it never decays.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
 .. _g-b:
 
@@ -216,6 +249,13 @@ B
       Bourne Again Shell. The default shell for most Linux distributions,
       widely used for scripting and interactive command-line use.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
+
+   Big-O notation
+      The notation that states time complexity: O(1), O(log n), O(n),
+      O(n log n), O(n²). It keeps the fastest-growing term and drops
+      constant factors, so it names the shape of the growth, not a
+      count.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Bit
       Binary digit. The smallest unit of data, holding either ``0`` or
@@ -264,6 +304,26 @@ C
 
 .. glossary::
 
+   C-string
+      Not a type: a ``char`` array that everyone agrees ends with a
+      ``'\0'`` byte. The length is stored nowhere; ``strlen`` walks to
+      the terminator, O(n), on every call. A string literal is a
+      C-string in the read-only ``.rodata`` segment.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Cache line
+      The unit the hardware fetches from memory, 64 bytes on a typical
+      CPU, which is 16 ``int`` values. Walking contiguous memory in
+      order lets one fetch serve the next 16 reads.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Capacity
+      How many elements a ``std::vector`` or ``std::string`` could hold
+      before the block has to be replaced. Never smaller than
+      ``size()``. Read it with ``capacity()``, raise it with
+      ``reserve()``, release it with ``shrink_to_fit()``.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Capture Clause
       The ``[]`` part of a lambda expression that specifies which variables from the enclosing scope are available inside the lambda body.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
@@ -278,6 +338,12 @@ C
    Class
       A user-defined type that encapsulates data (attributes) and behavior (methods). A blueprint for creating objects.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Class template
+      A recipe for a type, not a type. ``std::array`` on its own is not
+      a type; ``std::array<int, 6>`` and ``std::array<double, 6>`` are
+      two different types made from the same template.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Clone
       A complete copy of a repository, including its full history and every
@@ -345,6 +411,13 @@ C
    Constructor
       A special member function automatically called when an object is created. Initializes the object's data members.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Contiguous
+      Stored in one block with no gaps, so element *i* sits exactly i ×
+      sizeof(element) bytes after element 0 and its address is
+      arithmetic, not a lookup. Arrays, ``std::vector`` and
+      ``std::string`` are contiguous; the maps are not.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Copy Elision
       A compiler optimization that eliminates unnecessary copy/move operations when returning objects from functions. Guaranteed in C++17 for certain cases (RVO).
@@ -458,9 +531,10 @@ E
 .. glossary::
 
    emplace_back
-      A ``std::vector`` method that constructs an element in place at
-      the end of the container, avoiding the creation of a temporary
-      object. More efficient than ``push_back`` for complex types.
+      A ``std::vector`` member that builds the new element directly in
+      the vector from constructor arguments, so no temporary is created.
+      ``push_back`` builds the object first and then moves it in. For
+      ``int`` or ``double`` the difference is nothing.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Encapsulation
@@ -479,6 +553,13 @@ E
       program, and becomes visible in a debugger, in a hex dump, or when
       raw bytes cross machines.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Erase-remove idiom
+      The pre-C++20 way to remove every element equal to a value:
+      ``v.erase(std::remove(v.begin(), v.end(), x), v.end())``. Since
+      C++20 it is one call, ``std::erase(v, x)`` or ``std::erase_if(v,
+      predicate)``.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Escape Sequence
       A two-character sequence beginning with a backslash that stands for
@@ -576,6 +657,13 @@ H
 
 .. glossary::
 
+   Half-open range
+      The pair [begin, end): closed on the left, open on the right. The
+      first position is in the range, the last one is not, so ``end() -
+      begin()`` is the length with no plus or minus one, and an empty
+      container is ``begin() == end()``.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    HEAD
       The file ``.git/HEAD``, holding the name of the branch you are
       currently on. It normally points at a branch, and through that branch
@@ -671,18 +759,19 @@ I
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    Iterator
-      An object that facilitates traversal of a container. Behaves
-      conceptually like a pointer. ``begin()`` returns the first
-      position, ``end()`` returns past-the-end.
+      An object that identifies a position in a sequence and can advance
+      to the next one, supporting ``*``, ``++``, ``==`` and ``!=``. For
+      an array it really is a pointer. ``begin()`` names the first
+      element and ``end()`` the position one past the last.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
-
-.. _g-k:
-
-K
-=
-
-.. glossary::
+   Iterator invalidation
+      An iterator, pointer or reference into a container stops being
+      usable once a later operation moves or destroys what it points at.
+      A ``std::vector`` reallocation invalidates everything; ``erase``
+      invalidates from the erased position on; reading never
+      invalidates.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Ksh
       Korn Shell. A Unix shell with advanced scripting features,
@@ -690,6 +779,13 @@ K
       configuration file.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
 
+
+   std::size_t
+      The one unsigned type every size in the standard library uses,
+      from ``<cstddef>``: what ``sizeof`` and every ``size()`` return.
+      Subtracting past zero wraps to the top of the range, and ``i >=
+      0`` is always true.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
 .. _g-l:
 
@@ -791,6 +887,13 @@ M
       :doc:`VC </reading_material/version_control/vc_lecture>`
 
 
+   std::map
+      An associative container that keeps its keys in sorted order in a
+      balanced binary tree. Lookup, insert and erase cost O(log n), the
+      elements are not contiguous, and iterating visits the keys in
+      order.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
 .. _g-n:
 
 N
@@ -816,6 +919,13 @@ N
       ``int``). Disallowed by uniform initialization. Use
       ``static_cast`` for explicit narrowing.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   npos
+      What ``std::string::find`` returns when nothing is found. Not a
+      special marker: the largest possible ``std::size_t``,
+      18446744073709551615. Always compare a ``find`` result against
+      ``npos``.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Ownership
       The responsibility for releasing a resource. A raw pointer records
@@ -868,25 +978,17 @@ O
       An instance of a class. Contains its own copy of the class's data members and can call the class's methods.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Occupancy grid
+      A map cut into cells, each recording whether that patch of floor
+      is free, blocked, or never scanned. Store one number per cell and
+      the map becomes a two-dimensional array in row-major order.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Origin
       The conventional name for the remote a repository was cloned from.
       Nothing about the name is special; it is set by ``git clone`` or by
       ``git remote add origin``.
       :doc:`VC </reading_material/version_control/vc_lecture>`
-
-   Overhead
-      Additional resources (time, memory, bandwidth) required to
-      perform a task beyond the minimum necessary. Understanding
-      overhead helps in writing efficient code.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
-
-
-.. _g-p:
-
-P
-=
-
-.. glossary::
 
    Page
       The fixed-size block a memory segment is divided into, typically
@@ -906,6 +1008,12 @@ P
    Polymorphism
       The ability to process objects differently based on their type. Compile-time (overloading) and runtime (virtual functions) forms exist in C++.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Predicate
+      A function that answers yes or no about one element. Algorithms
+      such as ``count_if``, ``find_if`` and ``std::erase_if`` call it once
+      per element; you pass the function's name without parentheses.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Preprocessor
       The first stage of the C++ build process. Modifies source code
@@ -943,10 +1051,27 @@ R
 .. glossary::
 
    RAII
-      Resource Acquisition Is Initialization. A C++ idiom where resource
-      management (memory, file handles, etc.) is tied to object lifetime.
-      Smart pointers implement RAII for dynamic memory.
+      Resource acquisition is initialization: the constructor takes the
+      resource, the destructor gives it back, and the compiler runs the
+      destructor on every way out of the scope. It is why a
+      ``std::vector`` needs no ``delete``. Smart pointers apply the same idea to single objects.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`,
       :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   Range-based for
+      A loop that visits every element in order without an index: ``for
+      (const auto& r : container)``. You never write the bounds, so it
+      cannot run off either end. Use ``const auto&`` by default,
+      ``auto&`` to modify, ``auto`` for a copy.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Reallocation
+      What a ``std::vector`` does when ``size() == capacity()`` and
+      another element arrives: allocate a larger block, move every
+      element across, free the old block, update its three pointers.
+      O(n) once, and the reason every iterator into the old block
+      dangles.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Rebase
       Replaying your commits on top of another branch, producing new commits
@@ -987,6 +1112,13 @@ R
       directory at the project root.
       :doc:`VC </reading_material/version_control/vc_lecture>`
 
+   reserve
+      ``vector::reserve(n)`` allocates a block for at least ``n``
+      elements now. Capacity becomes at least ``n``, size does not
+      change, and it never shrinks. Use it whenever the count is known
+      up front; it also prevents invalidation during the fill.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Revert
       Adding a new commit that undoes an earlier one. The safe way to undo
       anything already pushed, because it adds to history rather than
@@ -999,6 +1131,27 @@ R
       Short for read-only data (``.rodata``).
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+
+   Row-major order
+      Rows stored one after another in one flat block. ``grid[i][j]``
+      sits at element i × cols + j, so the compiler must know the row
+      width but not the number of rows, and the last index belongs in
+      the inner loop.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   std::string
+      A class from ``<string>`` that owns its characters and stores its
+      length. It took ``std::vector``'s interface and C++20 calls it a
+      contiguous container, though it never came from the STL. It keeps
+      a ``'\0'`` after the last character for C APIs.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   std::string_view
+      A pointer and a length over someone else's characters. It owns,
+      allocates and copies nothing, which makes it the right read-only
+      parameter type and a dangling view if it outlives the string it
+      refers to.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
 .. _g-s:
 
@@ -1040,6 +1193,13 @@ S
       Common shells include Bash, Zsh, Fish, Csh, and Ksh.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
 
+   shrink_to_fit
+      ``vector::shrink_to_fit()`` asks the vector to release spare
+      capacity so that capacity drops to size. The standard calls it a
+      non-binding request; when it shrinks, it reallocates and moves
+      every element.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Signedness
       Whether an integral type can represent negative values.
       ``signed`` types hold negative, zero and positive values;
@@ -1057,12 +1217,6 @@ S
       carry six. ``float`` carries about 7, ``double`` about 16.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
-   Small String Optimization (SSO)
-      A std::string optimization where short strings (typically < 15-22
-      characters) are stored directly inside the string object rather
-      than on the heap, avoiding expensive dynamic allocation.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
-
    Sanitizer
       Compiler instrumentation that checks a program as it runs.
       ``-fsanitize=address`` catches use-after-free, buffer overruns and
@@ -1076,6 +1230,13 @@ S
       A C++ operator that returns the size (in bytes) of a type or
       variable. The result is platform-dependent.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Small String Optimization (SSO)
+      A small buffer kept inside the ``std::string`` object and used
+      whenever the text fits, so short strings never touch the heap. The
+      object is 32 bytes on libstdc++ and holds up to 15 characters in
+      place; the number belongs to the implementation.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Sparse checkout
       Checking out only part of a repository's tree. Combined with a partial
@@ -1121,13 +1282,6 @@ S
    Static Variable
       A local variable that retains its value between function calls. Initialized once and persists for the program's lifetime.
       :doc:`L5 </lectures/lecture5/l5_lecture>`
-
-   std::array
-      A fixed-size container from ``<array>`` that stores elements in
-      contiguous memory. Size must be a compile-time constant. Provides
-      ``.at()``, ``.size()``, ``.front()``, ``.back()``, and
-      ``.fill()`` methods.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    std::boolalpha
       Stream manipulator that prints ``bool`` as the words ``true`` and
@@ -1191,16 +1345,26 @@ S
       ``3.142``. Declared in ``<iomanip>``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
-   std::string
-      The standard C++ string class from ``<string>``. Manages a
-      dynamic sequence of characters with automatic memory management.
-      Supports SSO for short strings.
+   STL
+      The Standard Template Library, written by Stepanov and Lee at HP
+      in the early 1990s and adopted into the draft standard in 1994.
+      Containers, iterators and algorithms came from it; the standard
+      itself never uses the name.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   STL algorithm
+      A function template that operates on a range given by two
+      iterators, independently of the container that supplied them:
+      ``sort``, ``find``, ``count_if``, ``min_element``, ``accumulate``.
+      Since C++20, ``std::ranges::`` versions take the container
+      directly.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    STL Container
-      A class template from the Standard Template Library that manages
-      a collection of objects. Categories: sequence, associative,
-      unordered associative, and container adapters.
+      A class template from the Standard Template Library that owns a
+      collection of objects of one type and manages their storage. Four
+      categories: sequence, associative, unordered associative, and
+      container adapters.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Storage Duration
@@ -1224,6 +1388,13 @@ S
       flag that changes how every later ``bool`` is rendered. Most
       manipulators are *sticky* -- they persist until changed back.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Subscript inserts
+      On a map, ``operator[]`` with a missing key builds a default
+      value, inserts it and hands you a reference to it, so a read makes
+      the map bigger. Read with ``at()``, ask with ``contains()`` or
+      ``find()``, and use ``[]`` only when inserting is wanted.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Symbolic Constant
       A constant created with a preprocessor macro, e.g.
@@ -1266,6 +1437,13 @@ T
       An implicit pointer available inside non-static member functions that points to the object on which the method was called.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Time complexity
+      How the number of steps an operation takes grows with the size of
+      its input, n. Written in Big-O notation. Not seconds: it drops the
+      machine, the compiler and constant factors and keeps the shape of
+      the growth.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Tracked file
       A file Git already knows about, because an earlier ``git add``
       introduced it. Git watches tracked files for changes and reports them;
@@ -1297,6 +1475,12 @@ U
 =
 
 .. glossary::
+
+   std::unordered_map
+      An associative container that stores each pair in a bucket chosen
+      by a hash function. Lookup is O(1) on average and O(n) at worst,
+      and there is no order at all.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Undefined Behavior
       The result of executing code that violates the C++ language rules.
@@ -1351,6 +1535,13 @@ V
 
 .. glossary::
 
+   std::vector
+      A sequence container that holds its elements contiguously on the
+      heap and resizes itself as elements are added or removed. The
+      object is three pointers (begin, end, capacity), 24 bytes; the
+      elements live in a separate heap block.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Valgrind
       A programming tool for memory management, memory error detection,
       and profiling. Detects memory leaks, use-after-free, and other
@@ -1377,12 +1568,6 @@ V
    Virtual Function
       A member function declared with the ``virtual`` keyword that enables runtime polymorphism. The correct function is called based on the actual object type, not the pointer/reference type.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
-
-   std::vector
-      A dynamic array from ``<vector>`` whose size can change at
-      runtime. The object variable lives on the stack; its contents
-      are stored on the heap. Manages size and capacity separately.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Visual Studio Code
       A free, cross-platform code editor by Microsoft. Supports virtually

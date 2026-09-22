@@ -895,7 +895,7 @@ How You Set It
 
    :doc:`Compiler Warning Flags
    </reading_material/compiler_warnings/cw_index>` covers what
-   ``-Wall``, ``-Wextra``, and ``-Wpedantic`` each enable, the warnings
+   ``-Wall``, ``-Wextra``, and ``-pedantic-errors`` each enable, the warnings
    they catch most often in beginner code, and when to add ``-Wshadow``
    or ``-Werror``.
 
