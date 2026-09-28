@@ -25,7 +25,7 @@ Those arrive in later lectures and later assignments.
 
 .. important::
 
-   **Posted Sep 15, due Sep 29.** Everything it asks for is covered by
+   **Posted Sep 15, due Oct 1.** Everything it asks for is covered by
    Lecture 3, so you can start the day it is posted. It is deliberately
    small: the whole program is a single ``main()``, about 100 lines once
    your comments are in. If yours is growing well past that, you are

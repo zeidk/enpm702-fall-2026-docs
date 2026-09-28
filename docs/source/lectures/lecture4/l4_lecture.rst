@@ -16,6 +16,9 @@ each third-level heading is one slide. Every number on this page was
 measured on the course machine, GCC 13 with libstdc++ on x86-64 Linux,
 unless the text says otherwise.
 
+The `Further Reading`_ part, after the summary, is the appendix of the
+slides. It is not presented. Read it on your own.
+
 The examples come from a small robot: joint angles of an arm, a lidar
 scan, an occupancy grid, sensor names and their sampling periods. Names
 carry their unit as a suffix, as in Lecture 3: ``ranges_m`` is metres,
@@ -24,7 +27,7 @@ carry their unit as a suffix, as in Lecture 3: ``ranges_m`` is metres,
 .. seealso::
 
    Assumed from earlier lectures and not repeated here: the segments of
-   a process (``.rodata``, stack, heap) and undefined behaviour from
+   a process (``.rodata``, stack, heap) and undefined behavior from
    :doc:`Lecture 2 </lectures/lecture2/l2_lecture>`; pointers, ``p + 1``
    stepping by ``sizeof(*p)``, dangling pointers, references and
    const-correctness from :doc:`Lecture 3 </lectures/lecture3/l3_lecture>`.
@@ -289,7 +292,7 @@ the standard never uses the name. The figure shows where it sits.
 .. figure:: /_static/images/l4/stl_in_stdlib.png
    :width: 90%
    :align: center
-   :alt: One large box labelled C++ Standard Library. Inside it, a dashed region labelled from the STL holds Containers, Algorithms, Iterators, Function objects and Allocators, with arrows noting that algorithms see only iterators, never a container. To the right, still inside the library box but outside the STL region, a column lists the rest of the library: strings, streams, smart pointers, numerics, threads, filesystem and ranges.
+   :alt: One large box headed C++ Standard Library, subtitled everything the ISO C++ standard requires a compiler to ship. Inside it, a dashed olive region labelled from the STL, Stepanov and Lee, HP, adopted into the draft standard in 1994, holds five boxes. Across the top, Algorithms (sort, find, count, min_element, accumulate), Iterators (begin(), end(), *it, ++it, it != end) and Containers (vector, array, unordered_map, map, list, deque, set) sit in a row, joined by an arrow from Algorithms to Iterators and another from Iterators to Containers. Under them a note reads: an algorithm never touches a container directly, it works through iterators, so one sort fits them all. Below that are Function objects (std::less, std::hash, std::greater) and Allocators, which decide where the elements' memory comes from. To the right, still inside the library box but outside the STL region, a column headed the rest of the library, not from the STL, lists seven grey boxes with their headers: strings and string_view, streams, smart pointers with optional and variant, numerics with chrono and random, threads and atomics, filesystem with regex and locale, and ranges, C++20, built on iterators.
 
    The STL inside the Standard Library. Containers, iterators and
    algorithms came from the STL; ``std::string`` took the container
@@ -429,7 +432,7 @@ Initialization
    int c[6]{10, 20, 30};// 3. 10 20 30 0 0 0  -- the rest are zeroed
    int d[]{10, 20, 30}; // 4. size deduced: d has 3 elements
 
-- Case 1 is the **undefined behaviour** from Lecture 2, six times over.
+- Case 1 is the **undefined behavior** from Lecture 2, six times over.
   Reading ``a[0]`` before you write it is a bug, and the compiler does
   not have to warn you.
 - Case 3 is a **partial** initializer: it zeroes the rest, so ``c[3]``
@@ -529,7 +532,7 @@ One Block, Read Two Ways
 .. figure:: /_static/images/l4/array_memory.png
    :width: 90%
    :align: center
-   :alt: Six adjoining cells holding 10, 20, 30, 0, 0, 0, each divided into four byte cells, labelled with index 0 to 5 above and byte offset plus 0 to plus 20 below. The base address 0x7ffd…a10 marks the left edge, the third cell is annotated joint_deg[2] equals star of joint_deg plus 2, and a brace under the run reads 24 bytes: six ints, four bytes each, no gaps.
+   :alt: Six adjoining cells in a row holding 10, 20, 30, 0, 0, 0, behind a blue tab labelled stack. Each cell is divided into four byte cells, and the first byte of the cells holding 10 and 30 is shaded grey. Below each cell are its index, [0] to [5], and its byte offset from the start, +0, +4, +8, +12, +16 and +20. Dotted lines drop from the first byte of cell 0 to the address 0x7ffd…a10, labelled base, and from the first byte of cell 2 to the address 0x7ffd…a18. An olive arrow points down at the cell holding 30 from the annotation joint_deg[2] == *(joint_deg + 2). A brace under the whole run reads 24 bytes: six ints, four bytes each, no gaps.
 
    The array as bytes. The address of element 2 is the base plus
    2 × 4 bytes, and the value there is 30.
@@ -757,7 +760,7 @@ Access and Modification
    it.
 
 - ``operator[]`` is **unchecked**. Going out of range is undefined
-  behaviour. It might overwrite a nearby variable, crash, or look like it
+  behavior. It might overwrite a nearby variable, crash, or look like it
   worked.
 - ``at()`` is **checked**. It throws, and the message gives you the
   numbers: ``array::at: __n (which is 9) >= _Nm (which is 6)``.
@@ -843,7 +846,7 @@ Row-major Order
 .. figure:: /_static/images/l4/row_major.png
    :width: 90%
    :align: center
-   :alt: Two panels for int grid[3][4]. On the left, the grid as a table of three rows by four columns with the 1 at row 1 column 2 highlighted. On the right, the same twelve values as one flat strip with the flat index 0 to 11 below each cell and the rows braced as row 0, row 1 and row 2, with the highlighted cell at flat index 6. A curved arrow joins the two highlighted cells over the caption grid[1][2] maps to flat index 1 times 4 plus 2 equals 6.
+   :alt: Two panels for int grid[3][4] holding occupancy values. On the left, headed how you write it, a table of three rows by four columns labelled row 0 to row 2, reading 0, 0, 1, -1 then 0, 0, 1, -1 then 1, 0, 0, 0, with the 1 at row 1 column 2 highlighted in blue. On the right, headed how it is stored, the same twelve values as a single flat strip in the order 0, 0, 1, -1, 0, 0, 1, -1, 1, 0, 0, 0, with the four cells of row 1 shaded grey and the highlighted cell at flat index 6. The flat index 0 to 11 is printed below each cell, labelled flat index, and the rows are braced underneath as row 0, row 1 and row 2. A curved olive arrow joins the highlighted cell in the table to the highlighted cell in the strip. A caption below reads grid[1][2] maps to flat index 1 times 4 plus 2 equals 6.
 
    The grid as it is written, and the grid as it is stored.
 
@@ -916,7 +919,7 @@ Walk an array with an iterator:
 .. figure:: /_static/images/l4/pointer_iterator.png
    :width: 85%
    :align: center
-   :alt: A row of six cells holding 10 to 60, labelled with index and byte offset. A grey marker labelled it points at the first cell; a curved arrow labelled plus plus it, one element forward, four bytes, runs to a bold marker over the second cell holding 20. A caption reads: star it gives 20; the pointer names a position, dereferencing it reads the element there.
+   :alt: Two rows showing an iterator before and after ++it. Each row has a blue stack tab, then a cell holding the iterator it, an empty cell, and six adjoining int cells holding 10, 20, 30, 40, 50 and 60. Each int cell is divided into four byte cells and carries its index [0] to [5] and its byte offset +0 to +20 below. Dotted lines drop from the first byte of cells 0 and 1 to their addresses, 0x7ffd…a10 and 0x7ffd…a14. In the top row, it holds 0x7ffd…a10 in red and a curved arrow from it points at the cell holding 10, whose address is also red. A large downward arrow labelled ++it leads to the bottom row. There, it holds 0x7ffd…a14 in blue and its arrow points at the cell holding 20, whose address is also blue.
 
    The pointer names a position; dereferencing it reads the element
    there.
@@ -954,7 +957,7 @@ One Past the End
 ^^^^^^^^^^^^^^^^
 
 ``end()`` is a **position**, not an element. Dereferencing it is
-undefined behaviour, just like dereferencing a one-past-the-end pointer.
+undefined behavior, just like dereferencing a one-past-the-end pointer.
 
 .. code-block:: cpp
 
@@ -963,7 +966,7 @@ undefined behaviour, just like dereferencing a one-past-the-end pointer.
 .. figure:: /_static/images/l4/half_open_range.png
    :width: 90%
    :align: center
-   :alt: Six solid cells holding 10 through 60, indexed 0 to 5, followed by a seventh dashed grey cell left empty. A blue arrow labelled begin() points at the first cell; a grey arrow labelled end() points at the dashed cell, annotated not an element, never dereference. A brace under the six real cells reads end() minus begin() equals 6.
+   :alt: Six solid cells in a row holding 10 through 60, indexed [0] to [5], followed by a seventh cell with a dashed grey outline, left empty. A blue arrow labelled begin() points down at the first cell. A grey arrow labelled end() points down at the dashed cell, which is annotated not an element, never dereference. A brace spanning all seven cells, from the first cell to the dashed one, is labelled end() minus begin() equals 6.
 
    Half-open: the length needs no plus or minus one, and an empty
    container is exactly ``begin() == end()``.
@@ -997,7 +1000,7 @@ Writing the Loop
 Exercise 1: Writing the Loop
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Trace the behaviour of the iterator ``iter`` in this loop.
+Trace the behavior of the iterator ``iter`` in this loop.
 
 .. code-block:: cpp
 
@@ -1056,7 +1059,7 @@ Vector in Memory
 .. figure:: /_static/images/l4/vector_memory.png
    :width: 80%
    :align: center
-   :alt: At the top, a stack box named ranges_m with three fields labelled begin, end and capacity, each holding an address. Below, a heap row of six cells; the first three hold 10, 20 and 30 and the other three are empty. Three arrows drop from the fields onto the first cell, the cell just past the last element, and the point just past the last slot. Braces read size() equals 3, spare room, and capacity() equals 6.
+   :alt: At the top, a brace labelled ranges_m spans three stack cells labelled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2b0, 0x6311…2bc and 0x6311…2c8. Below, a red heap tab marks a row of six int cells. The first three hold 10, 20 and 30 and are each split into four bytes; the last three are empty. The first byte of the first and fourth cells is shaded grey, and a grey cell follows the block. Three black arrows drop from the fields: begin to the first cell, end to the fourth cell just past the last element, and capacity to the point just past the sixth cell. A brace under the first three cells reads size() == 3, a brace under the other three reads spare room, and a brace under all six reads capacity() == 6.
 
 Who Gives the Memory Back
 -------------------------
@@ -1148,7 +1151,7 @@ The nested form:
 .. figure:: /_static/images/l4/nested_grid.png
    :width: 90%
    :align: center
-   :alt: A stack object named nested with begin, end and capacity fields points at an outer heap block of three vector objects labelled nested[0], nested[1] and nested[2], each showing its own begin, end and cap fields and annotated 3 objects, 72 bytes. From each object's begin field a black arrow runs down to a separate heap block of four int cells; the middle block reads 0 0 7 0 and the others 0 0 0 0, braced as row 0 block, row 1 block and row 2 block.
+   :alt: At the top, a brace labelled nested spans three stack cells labelled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2d0, 0x6311…318 and 0x6311…318. Below, a red heap tab marks an outer block of three cells labelled nested[0], nested[1] and nested[2] in purple, green and gold, each showing its three fields begin, end and cap, annotated 3 objects, 72 bytes. Black arrows run from begin to the first cell and from end and capacity to just past the last. Below that, three separate heap blocks hold four int cells each, split into four bytes. The middle block reads 0 0 7 0 and the others 0 0 0 0, braced as row 0 block, row 1 block and row 2 block. From each object, arrows in its own colour run down to its row block: begin to the first cell, end and cap to just past the fourth cell.
 
    Four allocations: the outer block, then one block per row.
 
@@ -1178,7 +1181,7 @@ Size and Capacity
    v.capacity();   // 4  -- room for one more before it moves
 
 The gap is **spare room**, not elements. Reading ``v[3]`` here is
-undefined behaviour, even though the storage is sitting right there.
+undefined behavior, even though the storage is sitting right there.
 
 Growth and Reallocation
 -----------------------
@@ -1191,10 +1194,10 @@ much* bigger.
 .. figure:: /_static/images/l4/bookshelf.png
    :width: 85%
    :align: center
-   :alt: Two rows of bookshelves. The top row, headed grow by one, shows a full shelf of capacity four, then a move to a full shelf of five, then another move to a full shelf of six: two more books, two whole moves. The bottom row, headed grow by a factor, shows the same shelf of four and a single move to a shelf of eight with four empty slots: the next four books just go on the shelf.
+   :alt: A sketched illustration in two halves joined by an arrow. On the left, a bookshelf labelled original shelf is completely full, with a hand holding a new book beside it and the note move is expensive, carry every book across. A box below reads: the strategy, how much bigger? Buy a shelf with room to spare so future moves are rare. On the right, a much wider shelf, labelled grow by a large factor, e.g. 2X, and new, larger shelf with room to spare, holds the same books with empty space on both shelves. Notes beside it read the move is costly, avoid constant expansions, and, in a box, growth is by factor, not a fixed amount. A line underneath reads a move is expensive, so you want it to happen rarely, not every time.
 
-   Grow by one and every new book means a move. Grow by a factor and one
-   move buys room for many.
+   Grow by a factor, not a fixed amount: one move buys room for many
+   books.
 
 .. note::
 
@@ -1523,10 +1526,8 @@ Lecture 3's Dangling Pointer, Renamed
 Strings
 =======
 
-A **string** is a sequence of characters stored one after another. C++
-has two: the **C-string**, a ``char`` array ended by a ``'\0'`` byte,
-and ``std::string``, a container that stores its length, owns its buffer
-and grows as text is added. See
+A **string** is a sequence of characters, stored contiguously in memory.
+See
 `cppreference: null-terminated byte strings <https://en.cppreference.com/w/cpp/string/byte>`_
 and
 `cppreference: std::string <https://en.cppreference.com/w/cpp/string/basic_string>`_.
@@ -1534,80 +1535,115 @@ and
 C-Strings
 ---------
 
-.. code-block:: cpp
-
-   auto name{"John Doe"};
-   std::cout << typeid(name).name() << '\n';  // PKc: char const*
-
 .. admonition:: Definition: C-string
    :class: tip
 
-   Not a type. ``"John Doe"`` is a ``const char[9]``, eight characters
-   and a ``'\0'``, that everyone agrees ends at that byte. Handed to
-   ``auto`` it decays, so ``name`` is a pointer to the first character
-   and nothing more.
+   An array of ``char`` ending with a ``'\0'`` byte. That byte marks
+   where the text stops, so to find the length you read forward until
+   you meet it.
 
-- The length is stored nowhere. ``strlen`` walks from the pointer to the
-  ``'\0'``, O(n) on every call.
-- The ``s`` suffix from ``<string>`` makes the literal a ``std::string``
-  instead: it stores its length and owns its buffer.
-
-.. code-block:: cpp
-
-   using namespace std::literals;
-   auto name2{"John Doe"s};  // std::string
-   std::cout << name2.size() << '\n';  // 8, stored: O(1)
-
-Where the Characters Live
-^^^^^^^^^^^^^^^^^^^^^^^^^
+- You hold it two ways: the array itself, or a pointer to its first
+  character.
+- ``char[N]`` is memory you own and can change. ``const char*`` usually
+  points at a read-only literal.
+- ``sizeof`` shows which one you have: the array gives its size, the
+  pointer gives 8.
 
 .. code-block:: cpp
 
-   auto name{"John Doe"};  // name: on the stack, 0x7ffe...9b0
-                           // the chars: .rodata, 0x61f6...004
-   name = "Jane Doe";      // repoints name. "John Doe" is untouched
-   name[0] = 'j';          // error: read-only location
+   char lidar[]{"OS1-64"};           // sizeof 7:  your array, with the '\0'
+   char camera[]{"BFS-U3-51S5"};     // sizeof 12: a longer array
+   const char* radar{"ARS 408-21"};  // sizeof 8:  the pointer
+   auto imu{"BMI088"};               // sizeof 8:  auto gives you the pointer
 
-- The literal has **static storage**. It sits in the ``.rodata`` segment
-  from Lecture 2, next to the code, for the whole run. Only the pointer
-  is a local.
-- Assigning to ``name`` changes which literal it points at. Nothing
-  rewrites ``"John Doe"``, and nothing is copied or freed.
-- The characters are ``const``, so a write through the pointer does not
-  compile. Cast the ``const`` away and the OS refuses instead:
-  ``.rodata`` is mapped read-only, and the write segfaults.
+.. _l4-cstring-literal:
+
+``const char*``: Immutable
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   const char* radar{"ARS 408-21"};  // pointer: stack
+                                     // "ARS 408-21": .rodata
+   radar = "ESR 2.5";  // moves the pointer
+                       // "ARS 408-21" is untouched
+   radar[0] = 'a';     // error: assignment of read-only location
+
+- The pointer is a local on the stack; the characters have **static
+  storage duration** and sit in ``.rodata`` for the whole run.
+- Assigning to ``radar`` only changes where it points. Nothing rewrites
+  ``"ARS 408-21"``, and nothing is copied or freed.
+- The characters are ``const``, so writing through the pointer does not
+  compile.
+- Remove the ``const`` and it compiles.
+- The write is **undefined behavior**. On Linux the literal is
+  read-only, so the OS stops the program: a **segmentation fault**.
 
 .. note::
 
-   A C-string from a literal is **not mutable**. To edit text, copy it
-   into storage you own: ``char name[]{"John Doe"}`` puts a copy on the
-   stack, and ``"John Doe"s`` puts one in a ``std::string``. See
+   To change text you need your own copy: an array or a
+   ``std::string``. See
    `cppreference: string literal <https://en.cppreference.com/w/cpp/language/string_literal>`_.
+   More in `Three C-String Traps`_ under Further Reading.
 
-The Terminator
-^^^^^^^^^^^^^^
+.. _l4-cstring-terminator:
+
+C-array: Mutable
+^^^^^^^^^^^^^^^^
 
 The other way to write a C-string copies the literal into an array you
-own, terminator included:
+own:
 
 .. code-block:: cpp
 
-   char name[]{"lidar"};   // a copy on the stack, 6 bytes
-   sizeof(name);           // 6: array, terminator included
-   std::strlen(name);      // 5: walks to '\0' on each call
+   char radar[]{"ARS 408-21"};  // a copy on the stack
+   sizeof(radar);               // 11: array, terminator included
+   std::strlen(radar);          // 10: walks to '\0' on each call
 
-- This copy is yours, so ``name[0] = 'L'`` is allowed. ``sizeof`` works
-  only because ``name`` is an array; on the pointer form it would be 8.
-- The length is still **not stored anywhere**: ``strlen`` is O(n) per
-  call, and a loop with it in the condition is O(n²).
+- ``radar[0] = 'L'`` is allowed.
+- ``std::strlen`` from ``<cstring>`` reads from the first character to
+  the ``'\0'`` and returns the count.
 
 .. figure:: /_static/images/l4/c_string.png
    :width: 70%
    :align: center
-   :alt: Six cells holding l, i, d, a, r and a null byte drawn in pale red, indexed 0 to 5. The last cell is annotated the terminator, one byte, not a character. A brace over all six reads sizeof(name) equals 6; a brace under the first five reads std::strlen(name) equals 5.
+   :alt: Eleven cells in a row under a brace labelled radar, holding the characters A, R, S, a space, 4, 0, 8, -, 2, 1 and then a null byte, indexed 0 to 10 below each cell with the index 10 in red. The last cell is annotated the terminator, one byte, not a character.
 
-   The length is stored nowhere: ``strlen`` walks from the front until
-   it meets the ``'\0'``, every time.
+   ``char radar[]{"ARS 408-21"}``: ten characters and the terminator, 11
+   bytes. The length is stored nowhere: ``strlen`` walks from the front
+   until it meets the ``'\0'``, every time.
+
+For ``strcpy``, ``strncpy`` and ``strcat``, see
+`The C-String Functions`_ under Further Reading.
+
+The s Suffix
+^^^^^^^^^^^^
+
+Add an ``s`` after the literal and you get a ``std::string`` instead:
+
+.. code-block:: cpp
+
+   using namespace std::literals;  // needed for the s suffix
+
+   auto imu1{"BMI088"};   // const char*: just a pointer
+   auto imu2{"BMI088"s};  // std::string
+
+   std::strlen(imu1);  // 6: the '\0' is not counted
+   imu2.size();        // 6
+
+- The ``s`` comes from ``<string>``. Without the ``using`` line it does
+  not compile.
+- ``std::string imu2{"BMI088"}`` does the same thing. Use the suffix
+  when you do not write the type, as after ``auto``.
+- The string owns its characters, so it can grow: ``imu2 += "-XS1"``
+  gives ``BMI088-XS1``, size 10.
+- ``==`` compares the characters, not the addresses.
+
+.. note::
+
+   Three C-string problems go away at once: the length is stored, the
+   memory is owned, and ``==`` compares the text. Rule:
+   `Core Guidelines SL.str.12 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rstr-s>`_.
 
 std::string
 -----------
@@ -1626,12 +1662,12 @@ std::string
 
    topic.size();    topic.empty();    topic.capacity();
    topic[0];        topic.at(0);      topic.front();   topic.back();
-   topic.push_back('!');              topic.reserve(64);
+   topic.push_back('s');              topic.reserve(64);
    for (char c : topic) { /* ... */ }
 
 - Same names, same meanings, same costs as ``std::vector``. It grows the
   same way and it invalidates the same way.
-- Measured: appending one character at a time takes the capacity through
+- Appending one character at a time takes the capacity through
   **15, 30, 60, 120**. That is geometric growth, exactly as in Growth and
   Reallocation.
 
@@ -1641,51 +1677,75 @@ std::string
    next. Rule:
    `Core Guidelines SL.str.1 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rstr-string>`_.
 
-Small String Optimization
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Small String Optimization (SSO)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. admonition:: Definition: Small string optimization
+.. admonition:: Definition: Small string optimization (SSO)
    :class: tip
 
-   A small buffer kept *inside* the string object and used whenever the
-   text fits. Most strings in real programs are short, like a topic name,
-   and a heap block for ``"imu"`` would cost more than the string is
-   worth.
+   A buffer inside the ``std::string`` object itself, used when the text
+   is short. With GCC it holds up to 15 characters; longer text moves to
+   the heap. A short name like ``"BMI088"`` or ``"ICM-42688-P"`` then
+   needs no heap allocation at all.
 
 .. code-block:: cpp
 
-   sizeof(std::string) // 32 bytes, whatever the text is
+   sizeof(std::string)  // 32 bytes, whatever the text is
 
-- Those 32 bytes are a pointer, a length, and a ``union`` of *either*
-  the heap capacity *or* the small buffer.
+Those 32 bytes are a pointer, a length, and a ``union`` of *either* the
+heap capacity (8 bytes) *or* the small buffer (16 bytes).
 
-Inside the Object
-^^^^^^^^^^^^^^^^^
+Six characters fit in the buffer, so the pointer points back into the
+object itself:
 
-Three characters fit in the 16-byte buffer, so the pointer points back
-into the object itself:
+.. code-block:: cpp
 
-.. figure:: /_static/images/l4/sso_short.png
-   :width: 90%
+   std::string imu{"BMI088"};
+   std::cout << imu.size() << '\n';      // 6
+   std::cout << imu.capacity() << '\n';  // 15
+
+.. figure:: /_static/images/l4/sso1.png
+   :width: 100%
    :align: center
-   :alt: One 32-byte string object with three fields: pointer, size 3, and a 16-byte buffer split into byte cells holding i, m, u and a null byte. An arrow from the pointer loops back into the first buffer cell, and a note reads the characters are inside the object, nothing is allocated, capacity() equals 15.
+   :alt: The string object imu on the stack, braced as one object, with three fields: an 8-byte pointer holding 0x7ffe...9b00, an 8-byte size holding 6, and a buffer of 15 plus 1 bytes whose cells hold B, M, I, 0, 8, 8 and a null byte, indexed 0 to 15. An arrow from the pointer loops back to the first buffer cell.
 
-   ``std::string s{"imu"}``: the third field is the buffer, and nothing
-   is allocated.
+   ``std::string imu{"BMI088"}``: the characters are inside the object,
+   and nothing is allocated.
+
+Eleven characters still fit:
+
+.. code-block:: cpp
+
+   imu = "ICM-42688-P";
+   std::cout << imu.size() << '\n';      // 11
+   std::cout << imu.capacity() << '\n';  // 15
+
+.. figure:: /_static/images/l4/sso2.png
+   :width: 100%
+   :align: center
+   :alt: The same string object imu, now with size 11 and buffer cells holding I, C, M, -, 4, 2, 6, 8, 8, -, P and a null byte, indexed 0 to 15. The pointer still loops back to the first buffer cell.
+
+   ``imu = "ICM-42688-P"``: still inside the object.
 
 On the Heap
 ^^^^^^^^^^^
 
-Twenty-three characters do not fit. The same bytes now hold the
-capacity, and the pointer goes to a heap block:
+Eighteen characters do not fit. The same bytes now hold the capacity,
+and the pointer goes to a heap block:
 
-.. figure:: /_static/images/l4/sso_long.png
-   :width: 90%
+.. code-block:: cpp
+
+   imu = "Xsens MTi-630 AHRS";
+   std::cout << imu.size() << '\n';      // 18
+   std::cout << imu.capacity() << '\n';  // 30
+
+.. figure:: /_static/images/l4/sso3.png
+   :width: 100%
    :align: center
-   :alt: One 32-byte string object with three fields: pointer, size 23, and a third field holding the capacity 23 with its second half greyed out as unused. An arrow from the pointer runs down to a heap block of character cells braced as 23 chars and a terminator, and a note reads the object holds only the address, the characters are on the heap.
+   :alt: The string object imu on the stack with four 8-byte fields: a pointer holding 0x62fa...ab00, size 18, capacity 30, and a greyed field marked unused. An arrow from the pointer runs down to a heap block of cells holding X, s, e, n, s, a space, M, T, i, -, 6, 3, 0, a space, A, H, R, S and a null byte, indexed 0 to 29, with the cells after the null byte left empty.
 
-   ``std::string l{"a-very-long-sensor-name"}``: the third field is the
-   capacity, and the characters live on the heap.
+   ``imu = "Xsens MTi-630 AHRS"``: the third field is the capacity, and
+   the characters live on the heap.
 
 Common Operations
 ^^^^^^^^^^^^^^^^^
@@ -1742,25 +1802,60 @@ Searching
 Input
 ^^^^^
 
-``>>`` stops at the first whitespace. ``std::getline`` takes everything
-up to the newline.
+``>>`` reads one word and stops at whitespace. ``std::getline`` reads a
+whole line, up to the newline.
 
 .. code-block:: cpp
 
-   int id{};
-   std::string topic;
+   int robot_id{};
+   std::string mission;  // a whole line, spaces included
 
-   std::cin >> id;                 // reads 7, leaves the newline in the buffer
-   std::getline(std::cin, topic);  // reads that leftover newline: EMPTY
+   std::cout << "Robot ID: ";
+   std::cin >> robot_id;  // 7 and Enter: reads 7, the '\n' stays
+   std::cout << "Mission: ";
+   std::getline(std::cin, mission);  // meets '\n': mission is ""
 
-- The fix is to eat the whitespace first. Put ``std::cin >> std::ws``
-  before the ``getline`` and the topic reads ``/robot/scan`` as intended.
+.. code-block:: text
+
+   Robot ID: 7
+   Mission:
+
+- A mission like "inspect loading dock B" has spaces, and
+  ``std::cin >>`` would read only ``"inspect"``. That is why it needs
+  ``getline``.
 
 .. note::
 
-   ``>>`` leaves the newline in the buffer and ``getline`` stops at it.
-   The two functions disagree about whose job the newline is. See
+   ``>>`` stops before the newline and leaves it in the input.
+   ``getline`` reads up to the next newline, finds that one at once, and
+   returns an empty line. See
    `cppreference: std::getline <https://en.cppreference.com/w/cpp/string/basic_string/getline>`_.
+
+Skipping Whitespace with ``std::ws``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::cout << "Robot ID: ";
+   std::cin >> robot_id;  // 7
+   std::cout << "Mission: ";
+   std::getline(std::cin >> std::ws, mission);  // "inspect loading dock B"
+
+.. code-block:: text
+
+   Robot ID: 7
+   Mission: inspect loading dock B
+
+- ``std::ws`` discards all leading whitespace, the ``'\n'`` included.
+  ``>>`` returns the stream, so it chains into ``getline``.
+- It also drops leading spaces and skips blank lines, so a line meant to
+  be empty cannot be read this way.
+
+.. note::
+
+   After a ``>>``, the next ``getline`` meets the leftover ``'\n'``
+   first. Put ``std::ws`` between them. See
+   `cppreference: std::ws <https://en.cppreference.com/w/cpp/io/manip/ws>`_.
 
 String Views
 ^^^^^^^^^^^^
@@ -1768,33 +1863,52 @@ String Views
 .. admonition:: Definition: ``std::string_view``
    :class: tip
 
-   **A pointer and a length** over someone else's characters. It owns
-   nothing, allocates nothing and copies nothing.
+   **A pointer and a length** that refer to characters stored elsewhere:
+   in a ``std::string``, a ``char`` array or a literal. It owns nothing,
+   allocates nothing and copies nothing.
 
 .. code-block:: cpp
 
-   void log(std::string_view msg);   // takes std::string, const char*,
-                                     // or a literal -- with no copy
-
-   std::string_view bad() {
-       std::string local{"a-long-name-on-the-heap"};
-       return local;   // the string dies here; the view outlives it
+   void log(std::string_view msg) {
+     std::cout << msg << " (" << msg.size() << " chars)\n";
    }
 
-- As a **read-only parameter** it is strictly better than
-  ``const std::string&``, because a ``const char*`` argument no longer
-  has to build a temporary string.
-- ``bad()`` returns a **dangling view**. That is the dangling pointer
-  from Lecture 3 with a length attached, and ASan reports it the same
-  way.
+   std::string status{"lidar ready"};
+   const char* model{"OS1-64"};
 
-.. warning::
+   log(status);              // std::string: lidar ready (11 chars)
+   log(model);               // const char*: OS1-64 (6 chars)
+   log("radar ARS 408-21");  // literal: radar ARS 408-21 (16 chars)
 
-   Store the ``std::string``. Pass the ``std::string_view``. Never store
-   or return a view. See
+- None of the three calls allocates. With ``const std::string&``, the
+  16-character literal would build a temporary on the heap.
+
+.. note::
+
+   A function that only reads text should take a ``std::string_view``.
+   See
    `cppreference: string_view <https://en.cppreference.com/w/cpp/string/basic_string_view>`_.
    Rule:
    `Core Guidelines SL.str.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rstr-view>`_.
+
+Dangling Views
+^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::string_view bad() {
+     std::string local{"a-long-name-on-the-heap"};
+     return local;  // local is destroyed here; the view is left dangling
+   }
+
+   std::string_view v{bad()};
+   std::cout << v << '\n';  // undefined behavior
+
+.. warning::
+
+   Store a ``std::string``, pass a ``std::string_view``, and never let a
+   view outlive the characters it points at. AddressSanitizer reports
+   this one as a ``heap-use-after-free``.
 
 
 Maps
@@ -1850,7 +1964,7 @@ Ordered Maps
    std::map<std::string, double> sensors{{"lidar", 0.25}, {"imu", 0.01}};
 
    for (const auto& [name, period] : sensors)
-     std::cout << name << ' '; // imu lidar   -- sorted, not inserted
+     std::cout << name << ' '; // imu lidar -- sorted
 
 Insertion
 ^^^^^^^^^
@@ -2057,61 +2171,11 @@ Side by Side
      - by key, O(1) avg.
      - rehash; erase
 
-- None of this is specific to ``int`` or ``double``. A
-  ``std::vector<Pose>`` or a ``std::map<std::string, JointState>``
-  behaves exactly the same way, using types **you** write. **Lecture 6**
-  covers how to declare them.
-- Two questions decide it. Is the **size** fixed when you compile, and
-  is the **handle** a position or a key?
-
 .. note::
 
    The C-style array is left out of this table on purpose. It does
    everything ``std::array`` does, loses its length at the first function
    call, and gives you nothing back in return.
-
-Default to Vector
------------------
-
-**Use** ``std::vector`` **unless you have a reason not to.**
-
-The reasons not to:
-
-- Fixed size: Use ``std::array``.
-- The size is a **compile-time constant**. Use ``std::array``.
-- The handle is a **key**. Use ``std::unordered_map``, or ``std::map``
-  for order.
-- It is **text**. Use ``std::string``.
-- You insert **in the middle** constantly, and you have measured it.
-
-.. note::
-
-   Contiguous memory is fast: walking a vector uses every byte the
-   hardware loads. Reach for something cleverer only when you can point
-   to the measurement that made you. Rule:
-   `Core Guidelines SL.con.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rsl-vector>`_.
-
-Exercise 3: Pick the Container
-------------------------------
-
-For each one, name the container and give **one sentence** explaining
-why. Some of these have more than one good answer.
-
-1. The six joint angles of a manipulator arm, read every control cycle.
-2. A log of waypoints the robot has visited, appended to as it drives,
-   length unknown in advance.
-3. Calibration offsets, looked up by sensor name, printed in a report
-   sorted by name at shutdown.
-4. One lidar scan: 1080 range values, count known before the first
-   sample arrives.
-5. The last 100 commands, appended at one end and discarded from the
-   other.
-
-Answer the two questions from the table first. **Is the size fixed at
-compile time**, and **is the handle a position or a key**? Number 5 is
-not covered by today's five containers on purpose. Say what you would
-need, rather than forcing one of ours to fit.
-
 
 STL Algorithms
 ==============
@@ -2168,38 +2232,6 @@ The Ones You Will Use
    accumulator's type, so an ``int`` seed truncates every addition. Both
    compile without a warning.
 
-Predicates
-^^^^^^^^^^
-
-.. admonition:: Definition: Predicate
-   :class: tip
-
-   A function that answers yes or no about one element. Write it as an
-   ordinary named function and pass its name to the algorithm.
-
-.. code-block:: cpp
-
-   bool is_far(const Waypoint& w) { return w.x * w.x + w.y * w.y > 25.0; }
-
-   std::vector<Waypoint> path{{1, 2}, {3, 4}, {6, 0}, {0, 1}, {5, 5}};
-
-   std::count_if(path.begin(), path.end(), is_far);  // 2
-   std::find_if(path.begin(), path.end(), is_far);   // -> (6, 0), index 2
-
-- You pass the function's **name**, with no parentheses. The algorithm
-  calls it once per element.
-- ``Waypoint`` is **a type you wrote**. Everything today works on it
-  unchanged.
-
-.. note::
-
-   **Lecture 6 teaches lambdas properly.** You will meet this same test
-   written inline as
-   ``[](const Waypoint& w){ return w.x * w.x + w.y * w.y > 25.0; }``,
-   which is an unnamed function written right where it is used. Read it
-   that way today. You are not expected to write one.
-
-
 Summary
 =======
 
@@ -2244,3 +2276,124 @@ Summary
         - ``std::vector``, unless the size is a compile-time constant
           (``std::array``), the handle is a key (a map), or it is text
           (``std::string``). Never a raw array, never ``new[]``.
+
+
+Further Reading
+===============
+
+The sections below come from the appendix of the slides. They are **not
+presented** in the lecture. Read them on your own.
+
+Three C-String Traps
+--------------------
+
+Continues :ref:`l4-cstring-literal`.
+
+**1. The Terminator Goes Missing**
+
+.. code-block:: cpp
+
+   char buf[5]{'l', 'i', 'd', 'a', 'r'};  // five characters, no '\0'
+   std::strlen(buf);                      // runs off the end
+
+- Listed character by character, nothing reserves the terminator byte,
+  and the compiler says nothing. Every read walks past the array until
+  it meets a zero byte by luck.
+- ``char buf[]{"lidar"}`` sizes the array from the literal, so the
+  ``'\0'`` is always there. Prefer it.
+
+**2. Writing Through a Literal**
+
+- A literal lives in read-only memory, which is why its type is
+  ``const char*``. Casting the ``const`` away and writing is undefined
+  behavior, and on Linux it segfaults.
+
+.. note::
+
+   Both traps are about storage the C-string does not own or does not
+   size for itself. ``std::string`` owns its buffer and keeps its own
+   length, so neither one can happen. Rule:
+   `Core Guidelines SL.str.1 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rstr-string>`_.
+
+**3. Comparing with ==**
+
+.. code-block:: cpp
+
+   char a[]{"scan"};
+   char b[]{"scan"};
+   a == b;                  // 0: compares addresses, not text
+   std::strcmp(a, b) == 0;  // 1: the comparison you wanted
+
+- ``a`` and ``b`` are two separate arrays, so they sit at two addresses.
+  Comparing them compares the addresses and the text is never read.
+- ``std::strcmp`` returns 0 when the text matches, so the test reads
+  ``== 0``. It is O(n), and it needs both terminators to be there.
+
+.. note::
+
+   On the array form the compiler helps: GCC 13.3 reports
+   ``comparison between two arrays is deprecated in C++20`` under
+   ``-Warray-compare``. On two ``const char*`` it says nothing, and there
+   the bug is worse. Identical literals may share one address, and in the
+   same build ``pa == pb`` printed 1, so the wrong comparison looked
+   correct. ``std::string`` compares by value with ``==``. See
+   `cppreference: strcmp <https://en.cppreference.com/w/cpp/string/byte/strcmp>`_.
+
+Printing a char Pointer
+-----------------------
+
+Continues :ref:`l4-cstring-literal`.
+
+.. code-block:: cpp
+
+   const char* name{"lidar"};
+   int value{42};
+
+   std::cout << name;                            // lidar        the text
+   std::cout << static_cast<const void*>(name);  // 0x560e...07c the address
+   std::cout << &value;                          // 0x7ffe...4d0 the address
+
+- Printing any pointer gives an address, except ``char*``: the stream
+  follows it and prints characters until the ``'\0'``.
+- Usually that is what you wanted. It is a problem when the thing you
+  are debugging is the pointer itself.
+- Cast to ``const void*`` when you want the address. That is a habit
+  worth forming.
+
+.. note::
+
+   Going the other way, ``c_str()`` hands a C API a ``const char*`` with
+   the ``'\0'`` already in place. That pointer is **borrowed**, in the
+   sense Lecture 3 used: valid only until the string is changed or
+   destroyed, and never passed to ``delete``. See
+   `cppreference: c_str <https://en.cppreference.com/w/cpp/string/basic_string/c_str>`_.
+
+The C-String Functions
+----------------------
+
+Continues :ref:`l4-cstring-terminator`.
+
+.. code-block:: cpp
+
+   char dst[6];
+   std::strncpy(dst, "lidar_scan", 6);  // dst holds l i d a r _
+                                        // and no terminator at all
+
+- ``std::strcpy`` writes until the source terminator, however small the
+  destination is. Nothing checks the size, so the overflow lands in
+  whatever follows ``dst``.
+- ``std::strncpy`` takes a limit, and that is the trap above: when the
+  source does not fit, it stops at the limit and writes **no**
+  terminator. Every later read runs off the end.
+- ``std::strcat`` joins, and needs the destination to already have room
+  for both texts plus the terminator. Counting that room is the caller's
+  job.
+
+.. note::
+
+   GCC 13.3 does warn here, ``output truncated copying 6 bytes from a
+   string of length 10`` under ``-Wstringop-truncation``, but only when
+   it can see both sizes. Write ``std::string`` instead: ``a + b`` joins,
+   ``=`` copies, and the length and the buffer are the string's problem.
+   See
+   `cppreference: strncpy <https://en.cppreference.com/w/cpp/string/byte/strncpy>`_.

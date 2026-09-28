@@ -256,7 +256,7 @@ Multiple Choice
 
    A. 5, and ``*last`` reads 60.
    B. 6, and ``*last`` reads 60.
-   C. 6, and ``*last`` is undefined behaviour.
+   C. 6, and ``*last`` is undefined behavior.
    D. 7, and ``*last`` reads the terminator.
 
 .. dropdown:: Answer
@@ -267,7 +267,7 @@ Multiple Choice
    *Explanation:* The range is half-open, [begin, end): ``end()`` is
    the position one past the last element, so the difference is the
    length, 6, with no plus or minus one. ``end()`` is a position, not an
-   element. Dereferencing it is undefined behaviour, exactly like
+   element. Dereferencing it is undefined behavior, exactly like
    dereferencing a one-past-the-end pointer in Lecture 3.
 
 
@@ -395,12 +395,12 @@ Multiple Choice
 
    .. code-block:: cpp
 
-      auto name{"John Doe"};
+      auto imu{"BMI088"};
 
-   What is the type of ``name``, and where are the eight characters?
+   What is the type of ``imu``, and where are the six characters?
 
    A. ``std::string``, on the heap.
-   B. ``char[9]``, on the stack.
+   B. ``char[7]``, on the stack.
    C. ``const char*`` on the stack, pointing at characters in the
       read-only ``.rodata`` segment.
    D. ``const char*`` on the stack, pointing at characters on the heap.
@@ -410,13 +410,14 @@ Multiple Choice
 
    **C.**
 
-   *Explanation:* ``"John Doe"`` is a ``const char[9]`` with static
-   storage in ``.rodata``, next to the code. Handed to ``auto`` it
-   decays, so ``name`` is a pointer and nothing more, and ``typeid``
-   prints ``PKc``, which ``c++filt`` reads as ``char const*``. The
-   characters are ``const``: ``name = "Jane Doe"`` repoints the pointer
-   and leaves ``"John Doe"`` untouched, and ``name[0] = 'j'`` does not
-   compile.
+   *Explanation:* ``"BMI088"`` is a ``const char[7]``, six characters
+   and a ``'\0'``, with static storage duration in ``.rodata``. Handed
+   to ``auto`` it decays, so ``imu`` is a pointer and nothing more:
+   ``sizeof(imu)`` is 8, not 7. The characters are ``const``:
+   ``imu = "ICM-42688-P"`` repoints the pointer and leaves ``"BMI088"``
+   untouched, and ``imu[0] = 'b'`` does not compile. To get an array you
+   own, write ``char imu[]{"BMI088"}``; to get a ``std::string``, add
+   the ``s`` suffix.
 
 
 ----

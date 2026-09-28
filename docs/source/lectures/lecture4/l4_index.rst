@@ -51,14 +51,16 @@ measured on the course machine.
    - Use ``reserve`` and ``shrink_to_fit`` correctly, and state which
      operations invalidate iterators.
    - Tell a C-string from a ``std::string`` by what each stores, say
-     where a string literal lives, and use ``find``, ``npos`` and
-     ``getline`` without the classic mistakes.
+     where a string literal lives, and use ``find``, ``npos``,
+     ``getline`` and ``std::ws`` without the classic mistakes.
+   - Pass read-only text as a ``std::string_view``, and never let a
+     view outlive the characters it points at.
    - Use ``[]``, ``at``, ``find`` and ``contains`` on a map each for
      what it is for, and choose between ``std::map`` and
      ``std::unordered_map``.
    - Pick a container from two questions: is the size fixed at compile
      time, and is the handle a position or a key.
-   - Call ``sort``, ``find``, ``count_if``, ``min_element`` and
+   - Call ``sort``, ``find``, ``count``, ``min_element`` and
      ``accumulate`` with a pair of iterators or, in C++20, a range.
 
 .. toctree::
@@ -79,5 +81,5 @@ In **Lecture 5: Functions Basics**, you will write the functions this
 lecture only used: declarations and definitions, header files, passing
 by value, by reference and by pointer, which is the choice Lecture 3 set
 up and left open, overloading, default arguments and the call stack. The
-predicates you passed to ``count_if`` and ``erase_if`` here become
-functions you design there.
+predicate you passed to ``erase_if`` here becomes a function you design
+there.

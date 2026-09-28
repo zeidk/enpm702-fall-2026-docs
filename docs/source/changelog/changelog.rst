@@ -5,6 +5,22 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
+.. dropdown:: v1.6.0: Lecture 4 Synced with the L4 Slides v2.0 (2026-09-28)
+   :icon: tag
+   :class-container: sd-border-success
+   :open:
+
+   - **Lecture 4** matches the L4 slides v2.0: Strings reworked, three
+     frames removed, and a new **Further Reading** part with the slide
+     appendix.
+   - **C++ exercises:** Exercises 6, 7 and 8 and TODO 4 of Exercise 2
+     are optional, since class stopped before Strings.
+   - The exercises go in ``project/week4/exercises/exercises.cpp``,
+     target ``week4_exercises``. The ``week4`` target is now the slide
+     snippets.
+   - **Quiz** question 14 uses the new C-string example.
+   - **RWA1** is due **Oct 1**.
+
 .. dropdown:: v1.5.0: Lecture 5 Synced with the L5 Slide Deck (2026-09-27)
    :icon: tag
    :class-container: sd-border-success

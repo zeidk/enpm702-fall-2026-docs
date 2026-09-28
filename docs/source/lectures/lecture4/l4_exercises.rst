@@ -11,13 +11,22 @@ algorithms together.
 None of them needs a function of your own, a class or a lambda; those
 are Lectures 5 and 6.
 
+.. important::
+
+   **Exercises 6, 7 and 8 are optional.** Class stopped at the end of the
+   Vectors section, and these three need the sections after it: Strings,
+   Maps and STL Algorithms. So is **TODO 4 of Exercise 2**, which uses
+   ``std::count`` from STL Algorithms. Each one is marked
+   :bdg-warning:`Optional` below.
+
 .. note::
 
-   **What to submit.** All eight, in a **single file** named
+   **What to submit.** Exercises 1 to 5, plus any optional ones you do,
+   in a **single file** named
    ``firstname_lastname.cpp`` (for example, ``bjarne_stroustrup.cpp``),
    uploaded to **Canvas**. Each exercise gets its own **block** inside
    ``main()``, headed by a comment, so that names do not collide between
-   exercises:
+   exercises. The starter file already has all eight blocks:
 
    .. code-block:: cpp
 
@@ -37,25 +46,31 @@ are Lectures 5 and 6.
 .. note::
 
    **Building.** Work in the course project in VS Code, exactly as in
-   Lecture 1. Write your code in ``project/week4/src/main.cpp``, make
-   sure ``add_subdirectory(project/week4)`` is uncommented in the
+   Lecture 1. Write your code in ``project/week4/exercises/exercises.cpp``,
+   make sure ``add_subdirectory(project/week4)`` is uncommented in the
    top-level ``CMakeLists.txt``, then open the Command Palette
    (``Ctrl + Shift + P``), run *CMake: Set Build Target* and pick
-   ``week4``, and run *CMake: Build*. ``-std=c++20 -Wall -Wextra
+   ``week4_exercises``, and run *CMake: Build*. ``-std=c++20 -Wall -Wextra
    -pedantic-errors`` are already set for you.
 
    Submit a **copy** of that file renamed ``firstname_lastname.cpp``.
    The name is for grading; the file you actually build is
-   ``project/week4/src/main.cpp``.
+   ``project/week4/exercises/exercises.cpp``.
+
+   The other target in that folder, ``week4``, builds
+   ``project/week4/src/main.cpp``: every code snippet from the slides,
+   each one switched off until you set its ``#if 0`` to ``#if 1``. It is
+   for trying the slides, not for your answers.
 
    Exercise 5 asks for AddressSanitizer. The two lines that turn it on
-   are in ``project/week4/CMakeLists.txt``, commented out; uncomment
-   them for that exercise and comment them back before you submit.
+   for ``week4_exercises`` are in ``project/week4/CMakeLists.txt``,
+   commented out; uncomment them for that exercise and comment them back
+   before you submit.
 
 .. warning::
 
    Several exercises ask you to write a line that **must not compile**,
-   or that is undefined behaviour. Comment those lines out before you
+   or that is undefined behavior. Comment those lines out before you
    submit, and leave the explanation next to them. A file that does not
    build cannot be graded.
 
@@ -157,7 +172,9 @@ are Lectures 5 and 6.
            // TODO 3: print the flat index and the value of the cell at
            //         row 1, column 2, and of the cell at row 2, column 0.
 
-           // TODO 4: count the blocked cells (value 1) with std::count,
+           // TODO 4 (OPTIONAL: std::count is in STL Algorithms, not
+           //         covered in class):
+           //         count the blocked cells (value 1) with std::count,
            //         passing grid.begin() and grid.end(), and print the
            //         count.
 
@@ -289,8 +306,8 @@ are Lectures 5 and 6.
            //         Run it once WITHOUT the sanitizer and record in a
            //         comment what it printed.
 
-           // TODO 2: uncomment the two -fsanitize lines in
-           //         project/week4/CMakeLists.txt, rebuild, run again, and
+           // TODO 2: uncomment the two week4_exercises -fsanitize lines
+           //         in project/week4/CMakeLists.txt, rebuild, run again, and
            //         copy the first line of the report into a comment.
            //         Name the Lecture 3 bug it is.
 
@@ -313,10 +330,15 @@ are Lectures 5 and 6.
 ----
 
 
-.. dropdown:: Exercise 6 (code): Two Kinds of String
+.. dropdown:: Exercise 6 (code): Two Kinds of String :bdg-warning:`Optional`
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
+
+    .. note::
+
+       :bdg-warning:`Optional` This exercise needs the Strings section, which class did
+       not reach.
 
     **Goal**
 
@@ -366,10 +388,15 @@ are Lectures 5 and 6.
 ----
 
 
-.. dropdown:: Exercise 7 (code): A Sensor Registry
+.. dropdown:: Exercise 7 (code): A Sensor Registry :bdg-warning:`Optional`
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
+
+    .. note::
+
+       :bdg-warning:`Optional` This exercise needs the Maps section, which class did
+       not reach.
 
     **Goal**
 
@@ -390,7 +417,7 @@ are Lectures 5 and 6.
            // TODO 2: print readings.size(). Then write
            //         double last{readings["gps"].back()};  comment it out,
            //         and say in a comment what it would do to the map
-           //         and why back() on the result is undefined behaviour.
+           //         and why back() on the result is undefined behavior.
 
            // TODO 3: look up "gps" with find and print either its last
            //         reading or "no gps readings yet". Then do the same
@@ -420,10 +447,15 @@ are Lectures 5 and 6.
 ----
 
 
-.. dropdown:: Exercise 8 (challenge): A Scan Pipeline
+.. dropdown:: Exercise 8 (challenge): A Scan Pipeline :bdg-warning:`Optional`
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
+
+    .. note::
+
+       :bdg-warning:`Optional` This exercise needs the Maps and STL Algorithms sections, which class did
+       not reach.
 
     **Goal**
 

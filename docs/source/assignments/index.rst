@@ -42,7 +42,7 @@ demonstrating why each new C++ feature improves the codebase.
    * - :doc:`RWA1 <rwa1>`
      - Pointers, References, and Dynamic Memory
      - Sep 15
-     - Sep 29
+     - Oct 1
      - 2 weeks
    * - RWA2
      - STL Containers and Functions
