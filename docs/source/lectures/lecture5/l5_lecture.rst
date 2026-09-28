@@ -36,7 +36,7 @@ The Program We Will Build
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l5/narrative.jpeg
-   :alt: Pencil sketch of the program in three steps. On the left, a robot arm with three joints is drawn twice, (a) before clamping and (b) after clamping, with its joint angles marked. Step 1, Input: a terminal where the user enters the angles 180, 95 and minus 10 degrees. Step 2, Clamp and Convert: each angle is checked against its joint limit and converted to radians. A table shows 180 clamped to 135 (2.356 rad), 95 clamped to 90 (1.571 rad), and minus 10 kept as minus 10 (minus 0.175 rad). Step 3, Compute and Report: a forward kinematics gear produces a report with the tool position (minus 4.5, 3.2) in the base frame, which is also marked at the tip of the arm below.
+   :alt: Pencil sketch of the program in three steps. On the left, a robot arm with three joints is drawn twice, (a) before clamping and (b) after clamping, with its joint angles marked. Step 1, Input: a terminal where the user enters the angles 180, 95 and minus 10 degrees. Step 2, Clamp and Convert: each angle is checked against its joint limit (theta 1 from minus 135 to 135 degrees, theta 2 from minus 90 to 90, theta 3 from minus 45 to 45) and converted to radians by multiplying by pi over 180. A table shows 180 clamped to 135 (2.356 rad), 95 clamped to 90 (1.571 rad), and minus 10 kept as minus 10 (minus 0.175 rad). Step 3, Compute and Report: a forward kinematics gear produces a report with the tool position (minus 0.882, minus 0.101) metres in the base frame, which is also marked at the tip of the arm below.
    :align: center
    :width: 90%
 
