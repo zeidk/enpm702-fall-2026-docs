@@ -5,6 +5,19 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
+.. dropdown:: v1.5.0: Lecture 5 Synced with the L5 Slide Deck (2026-09-27)
+   :icon: tag
+   :class-container: sd-border-success
+   :open:
+
+   - **Lecture 5** matches the ``ENPM702-L5-v1.0`` deck, built around the
+     ``arm_demo`` program, with the deck's figures.
+   - **C++ exercises** rewritten: four programming exercises on a mining
+     rover.
+   - **Quiz** and **references** updated to the new lecture.
+   - New reading material, **Documentation with Sphinx and Breathe**,
+     linked from Lecture 5.
+
 .. dropdown:: v1.4.0: Lecture 3 Synced with the L3 Slide Deck (2026-09-15)
    :icon: tag
    :class-container: sd-border-success

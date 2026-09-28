@@ -1,24 +1,24 @@
 .. _l5_index:
 
 ==========================
-L5: Functions Basics
+L5: Functions
 ==========================
 
 Overview
 --------
 
-This lecture introduces the fundamental building blocks of modular C++ programming: functions. Students will learn how to declare, define, and call functions, how data flows into and out of functions through various parameter-passing mechanisms, and how to organize code using header files. The lecture also covers function overloading, default parameters, static variables, the call stack, recursion, and documentation with Doxygen.
+This lecture introduces functions: how to declare, define and call them, and how to split a program into header and source files that CMake builds together. It covers how arguments are passed (by value, by reference, by ``const`` reference, by pointer, with ``std::string_view`` and ``std::span``), how results come back (by value with copy elision, by reference, by pointer), overloading and default arguments, static local variables, the call stack, the ``main`` function with its command-line arguments, and documenting functions with Doxygen. The running example is a program for a planar arm with three joints: read the joint angles, clamp each one to its limit, convert it to radians, and report where the tool ends up.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
 
    By the end of this lecture, you will be able to:
 
-   1. **Explain** function fundamentals, including declarations, definitions, calls, and the benefits of modularity.
-   2. **Select** appropriate methods for passing data to functions (by-value, by-reference, by-pointer) and returning data from them.
-   3. **Implement** enhanced features like function overloading, default parameters, and static variables.
-   4. **Describe** the program's execution model, including the call stack, stack frames, and recursion.
-   5. **Apply** best practices for function documentation with Doxygen and handle command-line arguments in ``main()``.
+   1. **Write**, declare and call functions, and split them into header and source files.
+   2. **Choose** how to pass arguments and how to return results.
+   3. **Overload** a function and give it default arguments.
+   4. **Explain** static locals, stack frames, and the arguments of ``main``.
+   5. **Document** functions with Doxygen.
 
 .. toctree::
    :hidden:
@@ -31,7 +31,16 @@ This lecture introduces the fundamental building blocks of modular C++ programmi
    l5_quiz
    l5_references
 
+Before the Next Lecture
+-----------------------
+
+The next lecture is on **Oct 6**.
+
+- The :doc:`C++ exercises <l5_exercises>` are **graded**. Hand them in on Canvas before the next lecture.
+- The :doc:`shell exercises <l5_shell>` and the :doc:`quiz <l5_quiz>` are for your own practice. They are **not** collected.
+- **RWA1** is due **Oct 1**.
+
 Next Steps
 ----------
 
-In **Lecture 6: Functions, Advanced**, we will explore more advanced function topics including inline functions, lambda expressions, function pointers, ``std::function``, and an introduction to templates. These concepts build on the fundamentals covered here and are essential for writing flexible, high-performance C++ code.
+In **Lecture 6: Functions, Advanced Topics**, we return several values with types you write and structured bindings, write function templates and use the class templates Lecture 4 relied on, and write lambdas, the inline functions Lecture 4 showed with the algorithms.

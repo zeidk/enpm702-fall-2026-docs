@@ -37,6 +37,10 @@ are expected to work through these outside of class.
    * - :doc:`exception_handling/eh_index`
      - Exception handling with ``try``, ``catch``, ``throw``, standard
        and custom exception classes, ``noexcept``, RAII
+   * - :doc:`sphinx_breathe/sb_index`
+     - Reference pages built from Doxygen comments with Sphinx and the
+       Breathe extension: Doxygen XML output, ``conf.py``, Breathe
+       directives, rebuilding after a change
 
 
 .. toctree::
@@ -51,3 +55,4 @@ are expected to work through these outside of class.
    flow_control/fc_index
    version_control/vc_index
    exception_handling/eh_index
+   sphinx_breathe/sb_index

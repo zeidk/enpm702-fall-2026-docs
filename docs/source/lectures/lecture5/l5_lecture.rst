@@ -2,1263 +2,1315 @@
 Lecture
 ====================================================
 
-
-Part I: The Core Mechanics
------------------------------
-
-Introduction to Functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A function is a named group of statements that can be executed as a unit. Functions are one of the most important concepts in C++ and form the foundation of modular programming.
-
-.. seealso::
-
-   `C++ Core Guidelines: F (Functions) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#f-functions>`_
-
-Code Reusability
-""""""""""""""""
-
-Functions eliminate the need to copy and paste code blocks (**DRY = Don't Repeat Yourself**). Create a function once and call it multiple times throughout your program.
-
-.. code-block:: cpp
-
-   constexpr unsigned int calculate_area(unsigned int length, unsigned int width) {
-       return length * width;
-   }
-
-   int main() {
-       // Use it anywhere:
-       unsigned int room1_area{calculate_area(10, 12)};
-       unsigned int room2_area{calculate_area(8, 15)};
-
-       std::cout << "Room 1 Area: " << room1_area << '\n';
-       std::cout << "Room 2 Area: " << room2_area << '\n';
-   }
-
-The DRY Principle: Don't Repeat Yourself
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The DRY principle states that every piece of logic should have a single, unambiguous representation within a system. In short: **avoid duplicating code**.
-
-.. grid:: 2
-
-   .. grid-item-card:: WET Code (Write Everything Twice)
-
-      .. code-block:: cpp
-
-         // --- In your shopping cart ---
-         double price{100.0};
-         double discount{price * 0.10}; // 10% discount
-         double final_price1{price - discount};
-
-         // --- In the checkout page ---
-         double order_total{100.0};
-         double final_discount{order_total * 0.10};
-         double final_price2{order_total - final_discount};
-
-      The discount logic is repeated. If you need to change the discount to 15%, you have to find and update it in **every location**, which is error-prone.
-
-   .. grid-item-card:: DRY Code (Using a Function)
-
-      .. code-block:: cpp
-
-         double calculate_final_price(double price) {
-             double discount{price * 0.10};
-             return price - discount;
-         }
-
-         // --- In your shopping cart ---
-         double final_price1{calculate_final_price(100.0)};
-
-         // --- In the checkout page ---
-         double final_price2{calculate_final_price(100.0)};
-
-      The logic exists in **one place**. To change the discount, you only need to edit the function, guaranteeing consistency everywhere it's used.
-
-Modularity and Organization
-"""""""""""""""""""""""""""""
-
-Functions help organize code logically, making it easier to understand and maintain large projects.
-
-.. code-block:: cpp
-
-   // Each function has a specific purpose
-   void get_user_input();
-   void process_data();
-   void display_results();
-
-   int main() {
-       get_user_input();
-       process_data();
-       display_results();
-   }
-
-.. seealso::
-
-   - `F.2: A function should perform a single logical operation <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f2-a-function-should-perform-a-single-logical-operation>`_
-   - `F.3: Keep functions short and simple <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f3-keep-functions-short-and-simple>`_
-
-Easier Debugging and Testing
-""""""""""""""""""""""""""""""
-
-When code is organized in functions, you can test and debug individual components separately, making bug fixing much more efficient.
-
-.. code-block:: cpp
-
-   // Test individual functions
-   bool is_valid_email(std::string email) {
-       // Validation logic here
-       return email.find("@") != std::string::npos;
-   }
-
-   // Easy to test:
-   is_valid_email("test@email.com");
-
-Abstraction of Complex Operations
-"""""""""""""""""""""""""""""""""""
-
-Functions allow you to use complex operations without worrying about implementation details.
-
-.. code-block:: cpp
-
-   // Complex math hidden behind simple function
-   double calculate_interest(double principal, double rate, int years) {
-       // Complex formula abstracted away
-       return principal * pow(1 + rate, years);
-   }
-
-
-The Function Lifecycle
-^^^^^^^^^^^^^^^^^^^^^^
-
-Function Declaration
-""""""""""""""""""""
-
-A function declaration (or prototype) consists of the **return type** + **identifier** + **parameters** (types and names). The body of the function is not part of the declaration.
-
-.. code-block:: cpp
-
-   type identifier(<parameters>); // e.g., int add_numbers(int a, int b);
-
-- ``type``, What kind of value the function is expected to return to the calling function (the caller) or main program. When a function does not return anything, its type should be ``void``.
-- ``identifier``, The name given to a function.
-
-  .. note::
-
-     - We use the same naming convention as for variables (``snake_case``).
-     - A function does an action, therefore, the identifier should include a verb.
-
-- ``<parameters>``, If the function takes parameters, the parameters are listed in the parentheses. Each parameter has the form ``type identifier``. If the function does not use any parameter, the parentheses are left empty.
-
-.. seealso::
-
-   - `NL.25: Don't use void as an argument type <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#nl25-dont-use-void-as-an-argument-type>`_
-   - `F.1: "Package" meaningful operations as carefully named functions <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f1-package-meaningful-operations-as-carefully-named-functions>`_
-
-**The "Promise"**
-
-- The function declaration provides a *promise* that the function will be implemented (defined) elsewhere in the code, either later in the same source file or in a different source file.
-- *A function declaration allows you to use (call) that function before its actual definition in the code*. This is particularly useful in scenarios where multiple functions call each other.
-- During compilation, the *linker* will look for the actual definition of the function.
-
-Function Definition
-""""""""""""""""""""
-
-A function definition (often referred to as a function **implementation**) consists of the **declaration** + **body**.
-
-.. code-block:: cpp
-
-   type identifier(<parameters>) {
-       // body of the function
-   }
-
-.. code-block:: cpp
-
-   // declaration
-   int add_numbers(int a, int b);
-
-   // definition
-   int add_numbers(int a, int b) {
-       return a + b;
-   }
-
-   int main() {
-       std::cout << add_numbers(3, 5) << '\n';
-   }
-
-Header Files and Source Files
-""""""""""""""""""""""""""""""
-
-Think of your code like a book:
-
-- **Header File (.hpp)**: The **Table of Contents**. It tells you *what* functions are available (declarations) but not how they work. It is a public-facing menu or interface.
-- **Source File (.cpp)**: The **Chapters**. It contains the actual story and details (definitions) of how each function works. This is the private implementation.
-
-Separating code this way gives us three huge wins:
-
-1. Faster Compilation
-2. Code Reusability
-3. Better Organization
-
-Benefit 1: Faster Compilation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You only recompile what actually changes.
-
-.. grid:: 2
-
-   .. grid-item-card:: Without Headers
-
-      .. code-block:: cpp
-
-         // big_file.cpp - 10,000 lines
-         void funcA() { /* ... */ }
-         void funcB() { /* ... */ }
-         int main()  { /* ... */ }
-
-      Change one line in ``funcA()``, the **entire 10,000-line file** must be recompiled.
-
-   .. grid-item-card:: With Headers
-
-      .. code-block:: cpp
-
-         // funcs.hpp
-         void funcA();
-         void funcB();
-
-         // main.cpp
-         #include "funcs.hpp"
-         int main() { /* ... */ }
-
-         // funcs.cpp
-         #include "funcs.hpp"
-         void funcA() { /* ... */ }
-
-      Change ``funcA()``, only ``funcs.cpp`` recompiles. Fast!
-
-Benefit 2: Code Reusability
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Declare once, use everywhere. Headers are the single source of truth.
-
-.. grid:: 2
-
-   .. grid-item-card:: Without Headers
-
-      .. code-block:: cpp
-
-         // file1.cpp
-         int add(int a, int b); // Declaration
-         // ...
-         // file2.cpp
-         int add(int a, int b); // Repeated!
-         // ...
-         // file3.cpp
-         int add(int a, int b); // Repeated again!
-
-      Changing the function signature requires finding and updating it in **every single file**.
-
-   .. grid-item-card:: With Headers
-
-      .. code-block:: cpp
-
-         // math.hpp
-         #pragma once
-         int add(int a, int b); // Declared ONCE
-
-         // file1.cpp
-         #include "math.hpp"
-
-         // file2.cpp
-         #include "math.hpp"
-
-      Change the declaration in **one place**, and every file that uses it gets the update automatically.
-
-Benefit 3: Better Organization
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Headers group related functionality into logical modules.
-
-.. grid:: 2
-
-   .. grid-item-card:: Without Headers
-
-      .. code-block:: cpp
-
-         // mess.cpp - 5000 lines
-         // --- Customer Logic ---
-         struct Customer { /*...*/ };
-         void save_customer() { /*...*/ }
-         // --- Pricing Logic ---
-         struct Product { /*...*/ };
-         void calculate_price() { /*...*/ }
-         // --- Utility Logic ---
-         void send_email() { /*...*/ }
-
-      Finding code is difficult, different logic is tangled together, and it is impossible for a team to work on the code without conflicts.
-
-   .. grid-item-card:: With Headers
-
-      .. code-block:: cpp
-
-         // customer.hpp
-         struct Customer;
-         void save_customer();
-
-         // pricing.hpp
-         struct Product;
-         void calculate_price();
-
-         // main.cpp
-         #include "customer.hpp"
-         #include "pricing.hpp"
-
-      The project is clean and self-documenting. Need to work on pricing? Open ``pricing.hpp`` and ``pricing.cpp``. Simple, modular, and scalable.
-
-Include Guards
-~~~~~~~~~~~~~~~
-
-What if a file includes your header twice by accident? You will get "redefinition" errors. We solve this with **include guards**.
-
-.. grid:: 2
-
-   .. grid-item-card:: Old Way
-
-      .. code-block:: cpp
-
-         #ifndef MY_HEADER_HPP
-         #define MY_HEADER_HPP
-
-         // All your declarations go here...
-         int add(int a, int b);
-
-         #endif // MY_HEADER_HPP
-
-   .. grid-item-card:: Modern Way
-
-      .. code-block:: cpp
-
-         #pragma once
-
-         // All your declarations go here...
-         int add(int a, int b);
-
-      This is simpler, less error-prone, and supported by *most* modern compilers.
-
-.. seealso::
-
-   `Include Guards: #pragma once vs Header Guards <https://thamara.dev/posts/pragma-once-vs-header-guards/>`_
-
-.. admonition:: To-Do
-   :class: tip
-
-   1. Move all function declarations to ``week5.hpp``
-   2. Add include guards in ``week5.hpp``
-   3. Move all function definitions to ``week5.cpp``
-   4. Include ``week5.hpp`` at the top of your ``week5.cpp`` file
-   5. Include ``week5.hpp`` at the top of your ``main.cpp`` file
-   6. Update ``CMakeLists.txt`` to generate the executable from ``main.cpp`` and ``week5.cpp``
-   7. Update ``CMakeLists.txt`` to tell the build system where to find your headers using ``target_include_directories(<target> <INTERFACE|PUBLIC|PRIVATE> [items...])``
-   8. Build and run your program to confirm that it still works correctly
-
-.. admonition:: Best Practice
-   :class: important
-
-   ``main.cpp`` should contain only one function: The ``main`` function!
-
-.. warning::
-
-   - ``.cpp`` files are compiled but not included.
-   - ``.hpp`` files are included but not compiled.
-
-
-Function Call
-""""""""""""""
-
-When a function is called, the execution of the program jumps to the function definition, runs the code inside the function, and then returns back to the point from where the function was called, continuing from the next statement.
-
-**Why Defining Functions Is Not Enough**
-
-The compiler reads your code from top to bottom. This can lead to two common problems if you are not careful.
-
-.. grid:: 2
-
-   .. grid-item-card:: Problem 1: Order of Definition
-      :class-card: sd-border-danger
-
-      .. code-block:: cpp
-
-         void print_hello() {
-             print_world(); // ERROR!
-             // Compiler has not seen
-             // print_world() yet.
-         }
-         void print_world() { /* ... */ }
-
-         int main() { print_hello(); }
-
-   .. grid-item-card:: Problem 2: Cyclic Dependency
-      :class-card: sd-border-danger
-
-      .. code-block:: cpp
-
-         void prompt_user() {
-             // ...
-             print_number(num); // ERROR!
-         }
-         void print_number(int n) {
-             if (n <= 0)
-                 prompt_user(); // ERROR!
-         }
-         int main() { prompt_user(); }
-
-**The Solution: Function Declarations**
-
-Function declarations solve both of these problems.
-
-.. grid:: 2
-
-   .. grid-item-card:: Solution 1: Order Fixed
-      :class-card: sd-border-success
-
-      .. code-block:: cpp
-
-         // "Promise" to the compiler
-         void print_world();
-
-         void print_hello() {
-             print_world(); // OK!
-         }
-         void print_world() { /* ... */ }
-
-         int main() { print_hello(); }
-
-   .. grid-item-card:: Solution 2: Cycle Broken
-      :class-card: sd-border-success
-
-      .. code-block:: cpp
-
-         // Make promises for both
-         void print_number(int n);
-         void prompt_user();
-
-         void prompt_user() {
-             print_number(0); // OK!
-         }
-         void print_number(int n) {
-             prompt_user(); // OK!
-         }
-         int main() { prompt_user(); }
-
-**Tracing the Flow of Control**
-
-With declarations in place, the program executes by jumping between functions and always returning to where it was called.
-
-.. code-block:: cpp
-
-   // Declarations
-   void print_world();
-   void print_hello();
-
-   void print_world() {
-       std::cout << "world\n";
-   }
-
-   void print_hello() {
-       std::cout << "hello, ";
-       print_world();
-   }
-
-   int main() {
-       print_hello();
-       std::cout << "exit main\n";
-   }
-
-1. Execution starts in ``main()``.
-2. ``main()`` calls ``print_hello()``.
-3. Control jumps to ``print_hello()``.
-4. ``hello,`` is printed.
-5. ``print_hello()`` calls ``print_world()``.
-6. Control jumps to ``print_world()``, prints ``world``, and returns.
-7. Control returns to ``main()``, prints ``exit main``, and the program ends.
-
-.. admonition:: Best Practice
-   :class: important
-
-   **The Golden Rule of Function Ordering**: Always provide function declarations (prototypes) for all non-trivial functions, typically in header (``.hpp``) files. This completely solves ordering and cyclic dependency issues. It allows you to organize your code based on logic, not compiler limitations.
-
-The ``return`` Keyword
-""""""""""""""""""""""
-
-**Returning from void Functions**
-
-In a ``void`` function, ``return;`` is used to **exit the function early**. No value can be returned. It is optional at the end of a ``void`` function, as it will return automatically when it reaches the closing brace.
-
-.. code-block:: cpp
-
-   void print_number(int number) {
-       if (number < 0) {
-           std::cout << "Error: Negative numbers not allowed.\n";
-           return; // Exit the function immediately
-       }
-       std::cout << "The number is: " << number << "\n";
-   }
-
-   int main() {
-       print_number(10);  // Prints "The number is: 10"
-       print_number(-5);  // Prints error and returns
-   }
-
-**Returning Values from Functions**
-
-For non-``void`` functions, the ``return`` statement sends a value back to the function's caller. The type of the value you return **must match** or be convertible to the function's declared return type.
-
-.. code-block:: cpp
-
-   int calculate_sum(int a, int b) {
-       int result{a + b};
-       return result; // Send the value of 'result' back
-   }
-
-   int main() {
-       // The returned value is used
-       // to initialize the 'sum' variable.
-       int sum{calculate_sum(5, 3)};
-       std::cout << sum << '\n'; // 8
-   }
-
-How it works:
-
-1. ``main()`` calls ``calculate_sum(5, 3)``.
-2. ``calculate_sum`` runs and computes ``result`` (8).
-3. ``return result;`` makes a copy of ``result``'s value.
-4. Control jumps back to ``main()``.
-5. The returned copy of the value (8) is used to initialize ``sum``.
-
-.. warning::
-
-   **The Golden Rule of Returning Values**: Every possible execution path in a non-``void`` function **must** end with a ``return`` statement.
-
-   .. code-block:: cpp
-
-      // DANGEROUS: What if number is 0?
-      int get_sign(int number) {
-          if (number > 0) {
-              return 1;
-          } else if (number < 0) {
-              return -1;
-          }
-          // No return here! If number is 0, this causes UNDEFINED BEHAVIOR.
-      }
-
-**Implicit Return Type Conversion**
-
-If you return a value of a different type, the compiler will try to **implicitly convert** it. This can sometimes lead to a loss of data.
-
-.. code-block:: cpp
-
-   int truncate_double() {
-       double value{99.99};
-       return value; // The double 99.99 is converted to the int 99
-   }
-
-   int main() {
-       int truncated{truncate_double()};
-       std::cout << truncated << '\n'; // Prints 99
-   }
-
-.. admonition:: Best Practice
-   :class: important
-
-   Be explicit to avoid surprises. Prefer ``return static_cast<int>(value);`` to show you intended the conversion.
-
-**Returning Multiple Values (Modern C++)**
-
-You cannot use ``return`` twice, but you can return a single object that contains multiple values, like a ``std::pair``, a ``std::tuple``, or a ``struct``. Since C++17, **structured bindings** make this incredibly clean and easy to use.
-
-.. seealso::
-
-   `F.21: To return multiple "out" values, prefer returning a struct <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f21-to-return-multiple-out-values-prefer-returning-a-struct>`_
-
-Using ``std::pair``:
-
-.. code-block:: cpp
-
-   #include <utility> // For std::pair
-
-   // This function returns both a bool and a string
-   std::pair<bool, std::string> get_user_data() {
-       // ... logic to get data ...
-       bool success{true};
-       std::string name{"Zayd"};
-       return {success, name};
-   }
-
-   int main() {
-       // The returned pair is automatically unpacked
-       // into two new variables: 'success' and 'user_name'.
-       auto [success, user_name] = get_user_data();
-
-       if (success) {
-           std::cout << "Welcome, " << user_name << "!\n";
-       }
-   }
-
-Using ``std::tuple``:
-
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <string>
-   #include <tuple> // Required for std::tuple
-
-   // This function returns three values: status code, success flag, and content.
-   std::tuple<int, bool, std::string> parse_http_response() {
-       // ... imagine parsing a network response ...
-       int status_code{200};
-       bool is_success{true};
-       std::string response_body{"{\"user\":\"Zayd\"}"};
-
-       return {status_code, is_success, response_body};
-   }
-
-   int main() {
-       // Structured bindings work perfectly with std::tuple,
-       // unpacking the elements in the order they are defined.
-       auto [code, success, body] = parse_http_response();
-
-       if (success) {
-           std::cout << "Response OK (Code " << code << "): " << body << '\n';
-       }
-   }
-
-Using a ``struct``:
-
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <string>
-
-   // Define a struct to hold the related data
-   struct UserQueryResult {
-       bool found;
-       std::string user_name;
-   };
-
-   // The function now returns our custom struct
-   UserQueryResult find_user() {
-       // ... logic to find a user in a database ...
-       return {true, "Zayd"}; // C++ aggregate initialization
-   }
-
-   int main() {
-       // Structured bindings work seamlessly with structs.
-       // The members are unpacked in the order they are defined.
-       auto [user_found, name] = find_user();
-
-       if (user_found) {
-           std::cout << "User found: " << name << "!\n";
-       }
-   }
-
-**Return Type Deduction with auto**
-
-Since C++14, you can use the ``auto`` keyword as a function's return type. This instructs the compiler to automatically deduce the return type from the expression in the ``return`` statement.
-
-.. code-block:: cpp
-
-   // The compiler looks at `a + b` and sees that int + double = double.
-   // It deduces that the return type of this function must be `double`.
-   auto add(int a, double b) {
-       return a + b;
-   }
-
-   int main() {
-       // 'result' will correctly be of type 'double'.
-       auto result{add(5, 3.14)};
-   }
-
-.. admonition:: Best Practice
-   :class: important
-
-   Prefer explicit return types for clarity. While powerful, ``auto`` can make code harder to read because the function's signature no longer states what it returns. Use it sparingly, mainly in generic programming (templates) where the return type can be complex.
-
-
-The Function Interface
-^^^^^^^^^^^^^^^^^^^^^^
-
-A function's interface is its public-facing contract, defining how data flows into it (through parameters) and out of it (through return values).
-
-Parameters vs. Arguments
-""""""""""""""""""""""""""
-
-**Parameter**: A placeholder in the function's definition. It defines what **type** of data the function expects.
-
-.. code-block:: cpp
-
-   void make_coffee(std::string cup_size, bool is_hot);
-
-**Argument**: The actual value or variable you provide when you **call** the function.
-
-.. code-block:: cpp
-
-   int main() {
-       make_coffee("large", true);
-   }
-
-Passing Arguments
-""""""""""""""""""
-
-When you pass data to a function, does it receive the **original item** or a **copy**? This is a crucial question in C++. The method you choose affects performance and whether the original data can be modified.
-
-- Pass-by-value (a safe copy)
-- Pass-by-reference (the modifiable original)
-- Pass-by-const-reference (a safe, efficient view)
-- Pass-by-pointer (an optional, modifiable original)
-
-Pass-by-Value: Give a Copy
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is the default method. The function receives a **brand new copy** of the argument.
-
-.. warning::
-
-   Changes made to the copy inside the function do not affect the original.
-
-.. code-block:: cpp
-
-   void add_ten(int x) {
-       // int x{a};
-       x += 10; // Modifies the copy
-   }
-
-   int main() {
-       int a{5};
-       add_ten(a); // A copy of 'a' is sent
-       std::cout << a << '\n'; // 'a' is still 5
-   }
-
-.. figure:: /_static/images/l5/pass-by-value2.jpg
-   :alt: Pass-by-value diagram
-   :align: center
-   :width: 50%
-
-   Pass-by-value: the function works on a copy of the original.
-
-.. admonition:: Best Practice
-   :class: important
-
-   **Use for:** Small data that is cheap to copy (like ``int``, ``double``, ``bool``).
-
-Pass-by-Reference: Give the Original
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The function receives a direct link (an alias) to the original argument. No copy is made.
-
-.. warning::
-
-   Changes made to the parameter inside the function WILL affect the original.
-
-.. code-block:: cpp
-
-   void add_ten(int& x) {
-       // int &x{a}
-       x += 10; // Modifies the original 'a'
-   }
-
-   int main() {
-       int a{5};
-       add_ten(a); // 'a' itself is shared
-       std::cout << a << '\n';  // 'a' is now 15
-   }
-
-.. figure:: /_static/images/l5/pass-by-reference2.jpg
-   :alt: Pass-by-reference diagram
-   :align: center
-   :width: 50%
-
-   Pass-by-reference: the function operates on the original variable.
-
-.. admonition:: Best Practice
-   :class: important
-
-   **Use when:** You **want to modify** the original argument.
-
-Pass-by-const-Reference: Read-Only Access
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This method shares the original data (efficient, no copy) but makes it read-only (``const``), so the function is forbidden from changing it (safe).
-
-.. code-block:: cpp
-
-   void print_vector(const std::vector<int>& v) {
-       // We get the efficiency of pass-by-reference without the risk.
-       for (const int& item : v) {
-           std::cout << item << " ";
-       }
-       // v.push_back(100); // COMPILER ERROR: v is const!
-   }
-
-   int main() {
-       std::vector<int> num_vect{1, 2, 3};
-       print_vector(num_vect); // No expensive copy is made.
-   }
-
-.. admonition:: Best Practice
-   :class: important
-
-   **This should be your default choice** for passing large, read-only objects like vectors or strings.
-
-Pass-by-Pointer: Give an Address
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The function receives the memory address of the original argument. This allows modification (like a reference) but with a key difference: a pointer can be ``nullptr``.
-
-.. code-block:: cpp
-
-   void add_ten(int* p) {
-       if (p != nullptr) {
-           *p += 10; // Modifies original 'a'
-       }
-   }
-
-   int main() {
-       int a{5};
-       add_ten(&a); // Pass the address of 'a'
-       // 'a' is now 15
-       std::cout << a << '\n';
-   }
-
-.. figure:: /_static/images/l5/pass-by-pointer2.jpg
-   :alt: Pass-by-pointer diagram
-   :align: center
-   :width: 50%
-
-   Pass-by-pointer: the function receives a memory address.
-
-.. admonition:: Best Practice
-   :class: important
-
-   **Use when:** You want to modify the argument, AND the argument could be optional (``nullptr``). In modern C++, prefer references when possible.
-
-How to Choose a Passing Method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. figure:: /_static/images/l5/functionchart.pdf
-   :alt: Flowchart for choosing a passing method
-   :align: center
-   :width: 80%
-
-   Decision flowchart for choosing a parameter-passing method.
-
-.. seealso::
-
-   - `F.15: Prefer simple and conventional ways of passing information <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f15-prefer-simple-and-conventional-ways-of-passing-information>`_
-   - `F.16: For "in" parameters, pass cheaply-copied types by value and others by reference to const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f16-for-in-parameters-pass-cheaply-copied-types-by-value-and-others-by-reference-to-const>`_
-   - `F.17: For "in-out" parameters, pass by reference to non-const <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f17-for-in-out-parameters-pass-by-reference-to-non-const>`_
-
-Returning Data from Functions
-""""""""""""""""""""""""""""""
-
-When a function gives a result, is the caller receiving a **brand-new object** or a **link to an existing one**? The return method impacts efficiency and can introduce critical bugs if used incorrectly.
-
-- Return-by-Value (a new copy)
-- Return-by-Reference (a link to an existing object)
-- Return-by-Pointer (an address of an existing object)
-
-Return-by-Value
-~~~~~~~~~~~~~~~~
-
-This is the most common way to return data. The function produces a result, and a **temporary copy** of that result is given back to the caller.
-
-.. code-block:: cpp
-
-   int add_numbers(int a, int b) {
-       return a + b;
-   }
-
-   int main() {
-       auto result{add_numbers(3, 4)};
-   }
-
-- The ``return`` statement's job is to get the value back to the caller (``main``). For an ``int``, the compiled code places the value 7 into a specific CPU register that, by convention, is designated for function return values (e.g., the **EAX** or **RAX** register on x86 processors).
-- The function's memory (its stack frame) is cleaned up, and control returns to ``main``.
-- The ``main`` function knows to look in that specific CPU register for the return value. It reads the value 7 from the register and uses it to initialize the new variable ``result``.
-
-**But isn't copying slow?**
-
-.. code-block:: cpp
-
-   std::vector<int> create_large_vector() {
-       std::vector<int> local_vec = { /* ... 1 million integers ... */ };
-       return local_vec; // Oh no, are we copying 1 million ints?
-   }
-
-   int main() {
-       std::vector<int> my_vec{create_large_vector()};
-   }
-
-In the past, this was a performance concern. But not anymore thanks to **copy elision**.
-
-Copy Elision
-~~~~~~~~~~~~~~
-
-Copy elision is a compiler optimization that eliminates unnecessary copying or moving of objects. Instead of creating a temporary object and then transferring it to its final destination, the compiler constructs the object **directly where it is needed**.
-
-.. grid:: 2
-
-   .. grid-item-card:: Without Copy Elision
-
-      1. Function creates a temporary object.
-      2. The temporary is copied or moved.
-      3. The temporary is destroyed.
-
-   .. grid-item-card:: With Copy Elision
-
-      1. Function constructs the object directly at the destination.
-      2. Done.
-
-**The Compiler's Strategy for Return Values**
-
-A modern C++ compiler follows a hierarchy of strategies when a function returns an object, always choosing the most efficient option available:
-
-1. **Copy Elision (RVO/NRVO):** The best-case scenario. The compiler avoids creating a temporary object altogether. This is a true "zero-cost abstraction".
-2. **Implicit Move:** If elision is not possible, the compiler attempts to **move** the local object. This is highly efficient for objects that manage resources (e.g., ``std::vector``, ``std::unique_ptr``).
-3. **Copy Construction:** The fallback option. If the object cannot be moved, it will be **copied**. This can be expensive for large objects.
-4. **Compilation Error:** If an object is neither movable nor copyable, and copy elision cannot be performed, the code will fail to compile.
-
-**Return Value Optimization (RVO)**
-
-RVO is a form of copy elision that applies when a function returns a temporary, unnamed object (a **prvalue**). The compiler constructs this object directly in the memory of the variable that will receive it.
-
-Since C++17, RVO for temporary return values is **guaranteed** by the language standard. You can rely on it.
-
-.. code-block:: cpp
-
-   std::string create_greeting() {
-       // This temporary is a prvalue.
-       // RVO is guaranteed here.
-       return std::string("Hello");
-   }
-
-   int main() {
-       // No temporary is created; "Hello"
-       // is constructed directly inside `msg`.
-       std::string msg{create_greeting()};
-   }
-
-- **How it works:** The compiler passes a hidden pointer to ``create_greeting``, telling it where ``msg``'s memory is. The ``std::string`` is then constructed at that location.
-- **Key Benefit:** This process is so effective that it works even for objects that are non-copyable and non-movable.
-
-.. admonition:: Definition
-   :class: note
-
-   A **prvalue**, or "pure rvalue", is a type of expression in C++ that represents a **temporary**, **unnamed object** or a value that is not associated with a specific memory location. Think of it as a transient value that exists only for the duration of a single expression.
-
-   - **Literals**: ``42``, ``true``, ``"hello"``
-   - The result of a function call that returns by value.
-   - The result of an arithmetic operation: ``x + y``
-
-**Named Return Value Optimization (NRVO)**
-
-NRVO is a variation of RVO that applies when a function returns a **named local variable**. If certain conditions are met, the compiler can still elide the copy by constructing this named object in the caller's destination.
-
-Unlike RVO, NRVO is **not guaranteed** by the C++ standard. It is a common but optional optimization that depends on the compiler and the function's complexity.
-
-.. code-block:: cpp
-
-   std::vector<int> generate_data() {
-       std::vector<int> local_data;
-       local_data.reserve(100);
-       // ... operations on local_data ...
-       for (int i{0}; i < 100; ++i) {
-           local_data.push_back(i);
-       }
-       // Returning a named object.
-       return local_data;
-   }
-
-   int main() {
-       // NRVO may construct local_data
-       // directly inside `my_data`.
-       auto my_data{generate_data()};
-   }
-
-- **With NRVO:** The ``local_data`` vector is constructed directly in ``my_data``'s memory.
-- **Without NRVO:** ``local_data`` is constructed, and then its contents are **moved** into ``my_data`` upon return.
-
-**When Can NRVO Fail?**
-
-.. grid:: 2
-
-   .. grid-item-card:: Multiple Potential Return Objects
-
-      .. code-block:: cpp
-
-         std::string get_path(bool is_windows) {
-             std::string win_path{"C:\\"};
-             std::string nix_path{"/"};
-
-             // Compiler can't know which
-             // object to construct at the
-             // destination. NRVO fails.
-             // (A move will be used instead.)
-             return is_windows ? win_path : nix_path;
-         }
-
-   .. grid-item-card:: Assignment vs. Initialization
-
-      .. code-block:: cpp
-
-         std::string create_greeting() {
-             return "hello";
-         }
-
-         int main() {
-             std::string msg; // Constructed here
-
-             // Elision is impossible: msg
-             // already exists. A move-assignment
-             // will be used instead.
-             msg = create_greeting();
-         }
-
-.. admonition:: Best Practice
-   :class: important
-
-   To enable copy elision, prefer initializing objects directly from function calls: ``auto result{my_func()};``
-
-Return-by-Reference
-~~~~~~~~~~~~~~~~~~~~
-
-Return-by-reference allows a function to return a direct link to an **existing object**. This is useful for allowing chained function calls or modifying objects.
-
-.. code-block:: cpp
-
-   // This function returns a reference to an element in the vector
-   int& get_element(std::vector<int>& vec, size_t index) {
-       return vec.at(index);
-   }
-
-   int main() {
-       std::vector<int> my_vec = {10, 20, 30};
-       // get_element returns a reference to my_vec[1], not a copy of 20.
-       get_element(my_vec, 1) = 99; // We are modifying the original vector directly!
-       // my_vec is now {10, 99, 30}
-   }
-
-.. danger::
-
-   **CRITICAL DANGER: Dangling References**
-
-   NEVER return a reference to a local variable.
-
-   .. code-block:: cpp
-
-      int& get_value() {
-          int local_value{10};
-          return local_value; // DANGEROUS!
-      } // 'local_value' is destroyed here.
-
-      int main() {
-          int& ref{get_value()};
-          // 'ref' is now a "dangling reference". It refers to memory
-          // that has been freed.
-          std::cout << ref << '\n'; // UNDEFINED BEHAVIOR.
-      }
-
-.. seealso::
-
-   `F.43: Never (directly or indirectly) return a pointer or a reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
-
-Return-by-Pointer
-~~~~~~~~~~~~~~~~~~~
-
-Return-by-pointer allows a function to return the memory address of an **existing object**. A key feature is the ability to return ``nullptr`` to indicate failure or that nothing was found.
-
-.. code-block:: cpp
-
-   // This function returns a pointer to the first element found, or nullptr.
-   int* find_value(std::vector<int>& vec, int value) {
-       for (int& element : vec) {
-           if (element == value) {
-               return &element; // Return the address of the element
-           }
-       }
-       return nullptr; // Return nullptr if nothing was found
-   }
-
-   int main() {
-       std::vector<int> my_vec = {10, 20, 30};
-       int* ptr{find_value(my_vec, 20)};
-
-       // ALWAYS check a returned pointer before using it!
-       if (ptr != nullptr) {
-           *ptr = 99; // Modify the original vector via the pointer
-       }
-       // my_vec is now {10, 99, 30}
-   }
-
-.. danger::
-
-   **CRITICAL DANGER: Dangling Pointers**
-
-   NEVER return a pointer to a local variable.
-
-   .. code-block:: cpp
-
-      int* get_value() {
-          int local_value{10};
-          return &local_value; // DANGEROUS!
-      } // 'local_value' is destroyed here.
-
-      int main() {
-          int* ptr{get_value()};
-          // 'ptr' is now a "dangling pointer". It points to memory
-          // that has been freed.
-          std::cout << *ptr << '\n'; // UNDEFINED BEHAVIOR.
-      }
-
-.. seealso::
-
-   - `F.43: Never (directly or indirectly) return a pointer or a reference to a local object <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f43-never-directly-or-indirectly-return-a-pointer-or-a-reference-to-a-local-object>`_
-   - `F.60: Prefer T* over T& when "no argument" is a valid option <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f60-prefer-t-over-t-when-no-argument-is-a-valid-option>`_
-
-
-Part II: Enhancing Functions
--------------------------------
-
-.. seealso::
-
-   `F.56: Avoid unnecessary condition nesting <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f56-avoid-unnecessary-condition-nesting>`_
-
-Static Variables in Functions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A ``static`` local variable is initialized **only once** and keeps its value between function calls. Think of it like a sticky note on the function's desk that it can read and update each time it is called.
-
-.. grid:: 2
-
-   .. grid-item-card:: Without ``static``
-
-      .. code-block:: cpp
-
-         void counter() {
-             int count{0}; // Re-created every time
-             count++;
-             // Always prints 1
-             std::cout << count << '\n';
-         }
-
-         int main() {
-             counter(); // count is 1
-             counter(); // count is 1
-         }
-
-   .. grid-item-card:: With ``static``
-
-      .. code-block:: cpp
-
-         void static_counter() {
-             static int count{0}; // Created ONCE
-             count++;
-             // Prints 1, then 2
-             std::cout << count << '\n';
-         }
-
-         int main() {
-             static_counter(); // count becomes 1
-             static_counter(); // count becomes 2
-         }
-
-Key Properties of Static Variables
-""""""""""""""""""""""""""""""""""""
-
-- **Single Initialization**: A ``static`` variable is initialized only the **first time** the code flows over its declaration. On all subsequent calls, the declaration is skipped.
-- **Lifetime**: It exists for the **entire lifetime** of the program. It is created on the first call and destroyed only when the program terminates.
-- **Scope**: It is still a **local variable**. Its visibility (scope) is limited to the function in which it is defined. You cannot access it from outside the function.
-- **Storage**: It is stored in a separate memory area (the static or global data segment), not on the call stack like regular local variables.
-- **Use Cases**: Perfect for things like function call counters, caching results of expensive calculations, or ensuring a resource is initialized only once.
-
-Function Overloading
+Learning Objectives
+-------------------
+
+1. Write, declare and call functions, and split them into header and source files.
+2. Choose how to pass arguments and how to return results.
+3. Overload a function and give it default arguments.
+4. Explain static locals, stack frames, and the arguments of ``main``.
+5. Document functions with Doxygen.
+
+Code for This Lecture
 ^^^^^^^^^^^^^^^^^^^^^
 
-Function overloading lets you define multiple functions with the **same name**, as long as they have **different parameter lists**.
+- ``project/week5/playground``: every snippet in ``src/snippets.cpp``, target ``week5_snippets``.
+- ``project/week5/arm_demo``: the finished program in several files, target ``week5_arm_demo``.
+
+These parts use ``arm_demo`` (the slides mark them with a file icon):
+
+- Header Files: The Program So Far, Separate Compilation, Building with CMake, Include Guards, Nested Includes, A Definition in a Header, and Exercise 1.
+- Default Arguments: The Program So Far and Defaults in the Declaration.
+- Documenting Functions: Project Layout, The File Comment, Running Doxygen and The Working Directory.
 
 .. note::
 
-   The compiler chooses the correct function at compile-time based on the **arguments** you provide.
+   The `Further Reading`_ part, after the summary, is the appendix of the slides. It is not presented. Read it on your own.
+
+Functions
+---------
+
+A **function** is a named block of statements that runs when it is called. It can take inputs and can give back one value. See `cppreference: functions <https://en.cppreference.com/w/cpp/language/functions>`__.
+
+The Program We Will Build
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l5/narrative.jpeg
+   :alt: Pencil sketch of the program in three steps. On the left, a robot arm with three joints is drawn twice, (a) before clamping and (b) after clamping, with its joint angles marked. Step 1, Input: a terminal where the user enters the angles 180, 95 and minus 10 degrees. Step 2, Clamp and Convert: each angle is checked against its joint limit and converted to radians. A table shows 180 clamped to 135 (2.356 rad), 95 clamped to 90 (1.571 rad), and minus 10 kept as minus 10 (minus 0.175 rad). Step 3, Compute and Report: a forward kinematics gear produces a report with the tool position (minus 4.5, 3.2) in the base frame, which is also marked at the tip of the arm below.
+   :align: center
+   :width: 90%
+
+   A planar arm with three joints. Read the joint angles in degrees, typed in or from the command line, clamp each one to its joint's limit, convert it to radians, and report where the tool ends up.
+
+To **clamp** an angle is to replace it with the limit when it goes past it. An angle inside the limits is kept as it is.
+
+.. note::
+
+   The program uses the same limits as the sketch: 135 degrees for the shoulder, 90 for the elbow and 45 for the wrist. For the input ``180 95 -10`` it prints the clamped angles 135, 90 and -10, as in the sketch, and the tool position x = -0.882 m, y = -0.101 m. The tool position in the sketch is only illustrative.
+
+The program is split into five files:
+
+.. figure:: /_static/images/l5/narrative_files.png
+   :alt: Five file cards joined by #include arrows. Source files have a blue name strip and header files a grey one. At the top, kinematics.cpp includes kinematics.hpp and joint_limits.hpp and holds the definitions of convert_deg_to_rad, forward_kinematics and print_pose, each with its body written as {...}. At the top right, joint_limits.cpp includes joint_limits.hpp and holds the definition of clamp_joint(double deg, double limit). Below the middle, kinematics.hpp has #pragma once, includes joint_limits.hpp, and declares convert_deg_to_rad, forward_kinematics with double limit = max_deg, and print_pose with int precision = 3 and std::string_view label = "tool". At the bottom left, main.cpp includes kinematics.hpp and holds int main(int argc, char* argv[]) {...}, with an arrow across to kinematics.hpp. An arrow runs from kinematics.hpp across to joint_limits.hpp, which has #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0), and declares clamp_joint(double deg, double limit = max_deg).
+   :align: center
+   :width: 90%
+
+   The five files of the arm program and what each one holds.
+
+- An arrow means ``#include``. Blue files are **compiled** (never included). Grey files are **included** (never compiled).
+- The finished program is in ``project/week5/arm_demo``: headers in ``include``, source files in ``src``.
+
+Project Layout
+^^^^^^^^^^^^^^
+
+.. code-block:: text
+
+   project/week5/
+   ├── CMakeLists.txt
+   ├── playground/
+   │   └── src/snippets.cpp
+   └── arm_demo/
+       ├── include/
+       │   ├── joint_limits.hpp
+       │   └── kinematics.hpp
+       ├── src/
+       │   ├── joint_limits.cpp
+       │   ├── kinematics.cpp
+       │   └── main.cpp
+       └── docs/
+           ├── Doxyfile
+           └── html/   (generated)
+
+- ``playground``: every snippet from the slides, in one file. Target ``week5_snippets``.
+- ``arm_demo``: the program in several files. Target ``week5_arm_demo``, from the Header Files section on.
+- ``include``: headers. ``src``: source files.
+- ``docs``: Doxygen, at the end of the lecture.
+
+In ``snippets.cpp`` each block sits between ``#if 0`` and ``#endif``. Change it to ``#if 1`` to try it.
+
+Why Functions
+^^^^^^^^^^^^^
+
+Two ways to clamp two joints to the arm's limit:
 
 .. code-block:: cpp
 
-   // Three different functions, all named 'print'
-   void print(const std::string& text) { /* ... */ } // Signature: print(string)
-   void print(int number)               { /* ... */ } // Signature: print(int)
-   void print(double value, int precision) { /* ... */ } // Signature: print(double, int)
+   // Without a function
+   constexpr double max_deg{170.0};
 
-   int main() {
-       print("hello");     // Calls the string version
-       print(42);          // Calls the int version
-       print(3.14159, 2);  // Calls the double, int version
+   double q2{-200.0};  // elbow
+   if (q2 > max_deg) { q2 = max_deg; }
+   if (q2 < -max_deg) { q2 = -max_deg; }
+
+   double q3{-250.0};  // wrist, copied
+   if (q3 > max_deg) { q3 = max_deg; }
+   if (q3 < -max_deg) { q2 = -max_deg; }
+
+.. code-block:: cpp
+
+   // With a function
+   constexpr double max_deg{170.0};
+
+   double clamp_joint(double deg) {
+     if (deg > max_deg) { return max_deg; }
+     if (deg < -max_deg) { return -max_deg; }
+     return deg;
    }
 
-What Makes a Function Unique?
-"""""""""""""""""""""""""""""""
+   double q2{clamp_joint(-200.0)};  // elbow
+   double q3{clamp_joint(-250.0)};  // wrist
 
-A function's signature is defined by its **name** and its sequence of **parameter types**. The parameter names and the return type are **NOT** part of the signature for overloading purposes.
+- **Without a function**, the logic is repeated: two tests per joint, twelve for a six-joint arm. **Copies drift.** The wrist block was copied and one ``q2`` was never renamed. It compiles with no warning, and the wrist stays at -250.
+- **With a function**, there is one place to change the rule, one body to edit and one function to test.
 
-.. grid:: 2
+The standard library already has ``std::clamp`` in ``<algorithm>``. ``clamp_joint`` is written out here to show the parts of a function.
 
-   .. grid-item-card:: VALID Overloads
+.. admonition:: Best Practice
+   :class: tip
 
-      .. code-block:: cpp
+   Write each piece of logic **once**, in a function, and call it. This is **DRY**, Don't Repeat Yourself (Hunt and Thomas, *The Pragmatic Programmer*). Rule: `Core Guidelines F.1 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-package>`__.
 
-         // Different number of parameters
-         void func(int a);
-         void func(int a, int b);
+Anatomy of a Function
+^^^^^^^^^^^^^^^^^^^^^
 
-         // Different types of parameters
-         void func(double a);
+A function has four parts: a **return type**, a **name**, a **parameter list** in parentheses, and a **body** in braces.
 
-         // Different order of parameters
-         void func(int a, double b);
-         void func(double a, int b);
+.. code-block:: text
 
-   .. grid-item-card:: INVALID Overload
+   return_type name(parameter_list) {
+     body
+   }
 
-      .. code-block:: cpp
+.. code-block:: cpp
 
-         // The compiler can't distinguish
-         // these based on return type alone.
+   double convert_deg_to_rad(double deg) {
+     return deg * std::numbers::pi / 180.0;  // C++20, <numbers>
+   }
 
-         int get_value() {
-             return 42;
-         }
+- A function that gives nothing back has return type ``void``.
+- No parameters means empty parentheses: ``void stop_motors()``, not ``void stop_motors(void)``.
+- Names are ``snake_case``, the same as variables, and start with a **verb**: a function does something.
 
-         double get_value() { // ERROR!
-             return 3.14;
-         }
+Function Header
+~~~~~~~~~~~~~~~
+
+The **function header** is everything before the body: the return type, the name and the parameter list.
+
+.. code-block:: cpp
+
+   double convert_deg_to_rad(double deg)  // the header
+   {
+     return deg * std::numbers::pi / 180.0;  // the body
+   }
+
+- A header followed by ``;`` is a **declaration**. Followed by a body, it is a **definition**.
+- A function header is **not** a header file: same word, two things.
+
+.. note::
+
+   "Function header" is the textbook name. The C++ standard has no single name for this line.
+
+Function Signature
+~~~~~~~~~~~~~~~~~~
+
+The **signature** is the name, the namespace it is in, and the **types** of the parameters, in order. The return type and the parameter names are not part of it.
+
+.. code-block:: cpp
+
+   namespace robot {
+     constexpr double convert_deg_to_rad(double deg);
+   }
+   // signature: robot::convert_deg_to_rad(double)
+
+The linker names functions by signature: ``undefined reference to `robot::convert_deg_to_rad(double)'``.
+
+.. note::
+
+   C++20, **[defns.signature]**, section 3.20: for a function, the signature is its *name, parameter-type-list, and enclosing namespace (if any)*. Friends, templates and member functions add more (3.21 to 3.27).
+
+Parameters and Arguments
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+A **parameter** is a variable declared in the function's parameter list. It exists only while the function runs.
+
+.. code-block:: cpp
+
+   void print_velocities(double linear, double angular) {  // parameters
+     std::cout << linear << ' ' << angular << '\n';
+   }
+
+An **argument** is the value the caller supplies for a parameter, written in the call.
+
+.. code-block:: cpp
+
+   print_velocities(0.5, 0.1);  // arguments
+
+Each parameter is **initialized from** its argument, in order, when the call starts, by the rules you already know for ``int x{a};``.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Keep a function to **one job**. Start its name with a **verb**, because it does an action: ``print_velocities``. Rule: `Core Guidelines F.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-logical>`__.
+
+Declaration and Definition
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A **declaration** gives the return type, name and parameter types, and ends in a semicolon. A **definition** is a declaration with a body.
+
+.. code-block:: cpp
+
+   double clamp_joint(double deg); // declaration (a prototype)
+
+   double clamp_joint(double deg) {  // definition
+     return std::clamp(deg, -max_deg, max_deg);
+   }
+
+- A declaration is a promise to the compiler: this function exists (**it is defined somewhere**), and here is how to call it.
+- A program may **declare** a function many times but must **define** it exactly once. This is the **one-definition rule**.
+
+Declaration Order
+~~~~~~~~~~~~~~~~~
+
+The compiler reads a file from top to bottom. A name must be declared **above** the line that uses it.
+
+.. code-block:: cpp
+
+   void report_arm() {
+     std::cout << "arm: ";
+     print_limits();  // not seen yet
+   }
+
+   void print_limits() {
+     std::cout << "170 deg\n";
+   }
+
+.. code-block:: text
+
+   order.cpp:4:3: error: 'print_limits' was not declared in this scope
+
+.. code-block:: cpp
+
+   void print_limits();  // the promise
+
+   void report_arm() {
+     std::cout << "arm: ";
+     print_limits();  // OK
+   }
+
+   void print_limits() {
+     std::cout << "170 deg\n";
+   }
+
+- Moving ``print_limits`` above ``report_arm`` also works, until two functions call each other. Then no order works.
+- A declaration fixes both cases, because a declaration can come before either definition.
+
+Two Functions That Call Each Other
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A joint past its limit is clamped and driven again. Each function calls the other, so no order of the two definitions works:
+
+.. code-block:: cpp
+
+   void move_joint(double deg) {
+     if (deg > max_deg) {
+       retry_move(deg);// not seen yet
+       return;
+     }
+     // drive the motor to deg
+   }
+
+   void retry_move(double deg) {
+     move_joint(clamp_joint(deg));
+   }
+
+.. code-block:: text
+
+   retry.cpp:3:5: error: 'retry_move' was not declared in this scope
+
+One declaration fixes it:
+
+.. code-block:: cpp
+
+   void retry_move(double deg);
+
+   void move_joint(double deg) {
+     if (deg > max_deg) {
+       retry_move(deg);  // OK
+       return;
+     }
+     // drive the motor to deg
+   }
+
+   void retry_move(double deg) {
+     move_joint(clamp_joint(deg));
+   }
+
+- Swapping the two definitions moves the error. It does not remove it.
+- The declaration breaks the cycle because it can sit above **both** definitions.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Declare **every** function, not only the one that causes an error. Then the definitions can go in any order.
+
+   .. code-block:: cpp
+
+      double clamp_joint(double deg);
+      void move_joint(double deg);
+      void retry_move(double deg);
+
+      void retry_move(double deg) {
+        move_joint(clamp_joint(deg));
+      }
+
+      void move_joint(double deg) {
+        if (deg > max_deg) {
+          retry_move(deg);
+          return;
+        }
+      }
+
+      double clamp_joint(double deg) {
+        return std::clamp(deg, -max_deg, max_deg);
+      }
+
+A Missing Definition
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double clamp_joint(double deg);  // promised, never delivered
+
+   int main() {
+     std::cout << clamp_joint(200.0) << '\n';
+   }
+
+.. code-block:: bash
+
+   g++ -std=c++20 -c main.cpp -o main.o   # compiles: the promise is enough
+   g++ main.o -o main                     # links: fails
+
+- The **compiler** only checks the call against the declaration. The **linker** looks for the body.
+- An error that mentions ``ld`` or ``undefined reference`` is a link error, not a mistake in the line it names.
+
+Header Files
+^^^^^^^^^^^^
+
+A **header file** (``.hpp``) holds declarations that other files ``#include``. The matching **source file** (``.cpp``) holds the definitions.
+
+- The header is the **interface**: what you can call. The source file is the **implementation**: how it works.
+- A ``.cpp`` file is **compiled**. A ``.hpp`` file is **included**, never compiled on its own.
+
+.. admonition:: Code for this part
+   :class: note
+
+   The code for this part is ``project/week5/arm_demo``. Uncomment the last four lines of ``project/week5/CMakeLists.txt``, then configure and build ``week5_arm_demo`` with CMake in VS Code.
+
+Why Split a Program
+~~~~~~~~~~~~~~~~~~~
+
+- **Faster builds.** Change a body in ``kinematics.cpp`` and only that file is compiled again.
+- **A clear interface.** The header says what you can call. The source file keeps how it works out of sight.
+- **One definition.** Declare a function in as many files as you like, but define it exactly once.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 50 50
+
+   * - Header (``.hpp``): What
+     - Source (``.cpp``): How
+   * - **Declarations:** function signatures
+     - **Definitions:** the function bodies
+   * - **Constants:** ``constexpr`` values such as ``max_deg``
+     - **Helpers:** functions only this file uses
+   * - **Types and templates:** Lecture 6
+     - **Local data:** values only this file uses, such as ``link1_m``
+
+The Program So Far: One Header, Two Source Files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: /_static/images/l5/files_three.png
+   :alt: Three file cards from project/week5/arm_demo. main.cpp and kinematics.cpp, with blue name strips, sit on top, each with an arrow down to kinematics.hpp, with a grey name strip. main.cpp holds #include "kinematics.hpp" and int main(int argc, char* argv[]) {...}. kinematics.hpp holds #pragma once and the declaration double convert_deg_to_rad(double deg);. kinematics.cpp holds #include "kinematics.hpp" and the definition double convert_deg_to_rad(double deg) {...}. In the two kinematics cards a grey ... stands for the lines shown on later slides.
+   :align: center
+   :width: 70%
+
+   One header, two source files. Red marks what each stage adds from here on.
+
+**include/kinematics.hpp**
+
+.. code-block:: cpp
+
+   #pragma once
+   double convert_deg_to_rad(double deg);
+
+**src/kinematics.cpp**
+
+.. code-block:: cpp
+
+   #include "kinematics.hpp"
+   #include <numbers>
+   double convert_deg_to_rad(double deg) {
+     return deg * std::numbers::pi / 180.0;
+   }
+
+**src/main.cpp**
+
+.. code-block:: cpp
+
+   #include "kinematics.hpp"
+   #include <iostream>
+   int main() {
+     std::cout << convert_deg_to_rad(90.0);
+   }
+
+- The header **declares**. The source file **defines**. ``main.cpp`` only **calls**.
+- ``kinematics.cpp`` includes its own header, so a definition whose return type disagrees with the declaration does not compile.
+- Quotes ``"..."`` search your project first. Angle brackets ``<...>`` search the system and the standard library.
+
+Separate Compilation
+~~~~~~~~~~~~~~~~~~~~
+
+``main.cpp`` never sees ``kinematics.cpp``. Each ``.cpp`` is compiled on its own, and the **linker** joins the results.
+
+.. code-block:: bash
+
+   g++ -std=c++20 -Iinclude -c src/main.cpp         -o main.o
+   g++ -std=c++20 -Iinclude -c src/kinematics.cpp   -o kinematics.o
+   g++ -std=c++20 -Iinclude -c src/joint_limits.cpp -o joint_limits.o
+   g++ main.o kinematics.o joint_limits.o -o arm_demo
+
+- The header gives ``main.cpp`` the **signature**. That is enough to check the call, but the function's address is left blank in ``main.o``.
+- The linker finds the body in ``kinematics.o`` and writes its address into the call. Leave ``kinematics.o`` off the last line and you get ``undefined reference``.
+
+The Program So Far: What Is Compiled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: /_static/images/l5/files_cmake.png
+   :alt: Five file cards from project/week5/arm_demo. The three source files are outlined in red and show their contents: main.cpp with int main(int argc, char* argv[]) {...}; kinematics.cpp with its two #include lines and the definition of convert_deg_to_rad, then a grey ...; and joint_limits.cpp with the definition double clamp_joint(double deg, double limit) {...}. The two header files, kinematics.hpp and joint_limits.hpp, are greyed out as names only. Faint arrows run from main.cpp and kinematics.cpp to kinematics.hpp, from kinematics.cpp and kinematics.hpp to joint_limits.hpp, and from joint_limits.cpp up to joint_limits.hpp.
+   :align: center
+   :width: 90%
+
+   Only the ``.cpp`` files, outlined in red, are compiled. The headers are included.
+
+Building with CMake
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cmake
+
+   add_executable(week5_arm_demo
+     arm_demo/src/main.cpp
+     arm_demo/src/kinematics.cpp
+     arm_demo/src/joint_limits.cpp)
+
+   target_include_directories(week5_arm_demo
+     PRIVATE arm_demo/include)
+
+- List **every** ``.cpp`` in ``add_executable``. Leave one out and you get ``undefined reference``.
+- Never list a ``.hpp`` as a source to compile. ``target_include_directories`` tells the compiler where to look for them.
+- ``PRIVATE`` means the directory is only for this target. It matters once one target uses another, in a later lecture.
+
+.. note::
+
+   Without ``target_include_directories``, ``#include "kinematics.hpp"`` fails in ``main.cpp`` with ``No such file or directory``, because the header is not in the same folder as the file that includes it.
+
+These are the last four lines of ``project/week5/CMakeLists.txt``, which build the program in ``project/week5/arm_demo``: ``include/kinematics.hpp``, ``include/joint_limits.hpp``, ``src/main.cpp``, ``src/kinematics.cpp`` and ``src/joint_limits.cpp``. The slide snippets are in ``project/week5/playground/src/snippets.cpp``, built by the target ``week5_snippets``.
+
+Include Guards
+~~~~~~~~~~~~~~
+
+An **include guard** is a pair of preprocessor lines that make the second and later copies of a header empty. Without one, a header included twice, directly or through another header, is pasted twice.
+
+Portable:
+
+.. code-block:: cpp
+
+   #ifndef JOINT_LIMITS_HPP
+   #define JOINT_LIMITS_HPP
+
+   constexpr double max_deg{170.0};
+   double clamp_joint(double deg);
+   #endif  // JOINT_LIMITS_HPP
+
+Shorter:
+
+.. code-block:: cpp
+
+   #pragma once
+
+   constexpr double max_deg{170.0};
+   double clamp_joint(double deg);
+
+``#pragma once`` is not in the standard, but GCC, Clang and MSVC all support it. This course uses it.
+
+.. warning::
+
+   Every guard macro must be unique across the project and every third-party header. Two headers that both pick ``JOINT_LIMITS_HPP`` silently lose the second one. See `the tradeoffs, both ways <https://en.wikipedia.org/wiki/Pragma_once>`__.
+
+The Program So Far: Nested Includes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: /_static/images/l5/files_nested.png
+   :alt: Five file cards from project/week5/arm_demo, with main.cpp and joint_limits.cpp greyed out as names only. kinematics.cpp, at the top, has #include "joint_limits.hpp" and the definition of forward_kinematics in red. kinematics.hpp, below left, has #include "joint_limits.hpp" and the declaration of forward_kinematics ending in double limit = max_deg, both in red. joint_limits.hpp, below right, holds #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0) and the declaration double clamp_joint(double deg, double limit = max_deg);. Red arrows run from kinematics.cpp to kinematics.hpp, from kinematics.cpp to joint_limits.hpp, and from kinematics.hpp to joint_limits.hpp: two routes from kinematics.cpp to joint_limits.hpp.
+   :align: center
+   :width: 90%
+
+   ``joint_limits.hpp`` reaches ``kinematics.cpp`` by two routes.
+
+.. code-block:: cpp
+
+   // kinematics.hpp
+   #pragma once
+   #include "joint_limits.hpp"  // for max_deg
+
+   void forward_kinematics(double q1, double q2,
+     double q3, double& x, double& y, double limit = max_deg);
+
+- ``kinematics.hpp`` needs ``max_deg`` for a default argument, so it includes the header that defines it.
+- ``kinematics.cpp`` includes both headers, so ``joint_limits.hpp`` arrives twice. The guard makes the second copy empty.
+
+.. note::
+
+   A repeated declaration is harmless, but a repeated **definition** is not.
+
+A Definition in a Header
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // kinematics.hpp, included by main.cpp and by planner.cpp
+   #pragma once
+   #include <numbers>
+   double convert_deg_to_rad(double deg) {
+     return deg * std::numbers::pi / 180.0;
+   }
+
+.. code-block:: text
+
+   /usr/bin/ld: planner.o: in function `convert_deg_to_rad(double)':
+   planner.cpp:(.text+0x0): multiple definition of `convert_deg_to_rad(double)';
+   main.o:main.cpp:(.text+0x0): first defined here
+   collect2: error: ld returned 1 exit status
+
+- ``#pragma once`` does not help. It works **within** one source file, and each ``.cpp`` is compiled on its own.
+- Each file gets its own copy of the body, and the linker finds two definitions. That breaks the one-definition rule.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Keep function bodies in the ``.cpp``. A header holds declarations. (Marking the function ``inline`` also works.) Rule: `Core Guidelines SF.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-inline>`__.
+
+Exercise 1: Reading a Split Program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Open ``project/week5/arm_demo``. The target ``week5_arm_demo`` builds it. Undo each change before the next step.
+
+1. Read ``include/kinematics.hpp`` and ``src/kinematics.cpp``. For each function, where is it declared and where is it defined?
+2. ``src/kinematics.cpp`` includes ``joint_limits.hpp`` by two routes. Find both. Why is ``max_deg`` defined only once?
+3. Remove ``src/kinematics.cpp`` from ``week5_arm_demo`` in ``CMakeLists.txt``. Does compiling or linking fail? Why?
+4. Put it back and remove ``src/joint_limits.cpp`` instead. What is missing now?
+5. Move the body of ``convert_deg_to_rad`` into the header. What fails, and why does ``#pragma once`` not help?
+
+Calling and Returning
+^^^^^^^^^^^^^^^^^^^^^
+
+A **call** jumps to the start of the function's body. A ``return`` statement, or the closing brace of a ``void`` function, jumps back to just after the call.
+
+.. code-block:: cpp
+   :linenos:
+
+   void print_limits() {
+     std::cout << "170 deg\n";
+   }
+
+   void report_arm() {
+     std::cout << "arm: ";
+     print_limits();
+   }
+
+   int main() {
+     report_arm();
+     std::cout << "exit main\n";
+   }
+
+.. figure:: /_static/images/l5/call_sequence.png
+   :alt: Sequence diagram with three lifelines, main, report_arm and print_limits, each named at the top and the bottom. A red arrow labelled call runs from main to report_arm. A short arrow looping back onto report_arm is labelled "arm:". A red arrow labelled call runs from report_arm to print_limits. A loop on print_limits is labelled "170 deg". A blue arrow labelled return runs back from print_limits to report_arm, then another from report_arm to main. A final loop on main is labelled "exit main".
+   :align: center
+   :width: 60%
+
+   The order of calls and returns, and what each function prints.
+
+The return Statement
+~~~~~~~~~~~~~~~~~~~~
+
+A ``return`` statement ends the function and sends control back to the caller. With an operand, the operand's value **initializes** the result of the call.
+
+.. code-block:: cpp
+
+   // In a void function
+   void print_range(double m) {
+     if (m < 0.0) {
+       std::cout << "invalid\n";
+       return;  // leave early
+     }
+     std::cout << m << " m\n";
+   }  // returns here otherwise
+
+.. code-block:: cpp
+
+   // With a value
+   int calculate_sum(int a, int b) {
+     int result{a + b};
+     return result;
+   }
+
+   int sum{calculate_sum(5, 3)};  // 8
+
+- In a ``void`` function, ``return`` leaves early. At the end it is optional.
+- The value is converted to the declared return type if it has to be.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   To get a value out, **return it**. Do not fill in a reference parameter instead. Rule: `Core Guidelines F.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out>`__.
+
+Missing Returns
+~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   int get_sign(int number) {
+     if (number > 0) {
+       return 1;
+     } else if (number < 0) {
+       return -1;
+     }
+   }  // number == 0 falls off the end
+
+.. code-block:: text
+
+   noret.cpp:7:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+- It is a **warning**, not an error. The program builds, and ``get_sign(0)`` returns whatever happens to be left over.
+- Treat it as an error with ``-Werror=return-type``. GCC prints it even without ``-Wall``.
+
+.. warning::
+
+   C++20, **[stmt.return]**, section 8.7.3, paragraph 2: *flowing off the end of a function other than* ``main`` *or a coroutine results in undefined behavior*. ``main`` is the one exception, covered in the section on ``main``.
+
+Conversion on Return
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   int truncate_value() {
+     double value{99.99};
+     return value;  // converted to int: 99
+   }
+
+- The ``double`` is **silently** converted to the return type, and the fraction is lost.
+- The course flags, ``-Wall -Wextra -pedantic-errors -Wshadow``, say **nothing**. You need ``-Wconversion``:
+
+.. code-block:: text
+
+   trunc.cpp:3:10: warning: conversion from 'double' to 'int' may change value [-Wfloat-conversion]
+
+.. note::
+
+   If you mean to drop the fraction, say so: ``return static_cast<int>(value);``. The cast is the same one Lecture 2 used, and it tells the reader the loss is on purpose.
+
+[[nodiscard]]
+~~~~~~~~~~~~~
+
+``[[nodiscard]]`` is an attribute (C++17) that asks the compiler to warn when a caller ignores the function's result.
+
+.. code-block:: cpp
+
+   [[nodiscard]] double clamp_joint(double deg) {
+     return std::clamp(deg, -max_deg, max_deg);
+   }
+
+   clamp_joint(200.0);  // result thrown away
+
+.. code-block:: text
+
+   warning: ignoring return value of 'double clamp_joint(double)', declared with attribute 'nodiscard'
+
+- Use it when ignoring the result is always a bug.
+- The standard library uses it too. ``v.empty();`` on its own line warns, because it only **asks**. It does not empty anything.
+
+.. note::
+
+   ``[[nodiscard]]`` is an **attribute**, not a specifier: a note to the compiler in ``[[ ]]`` that does not change what the code does. See `cppreference: attributes <https://en.cppreference.com/w/cpp/language/attributes>`__.
+
+For ``constexpr`` and ``consteval`` functions, see `constexpr and consteval Functions`_ under Further Reading.
+
+Passing Arguments
+-----------------
+
+How a parameter is declared decides whether the function gets a **copy** of the argument or reaches the caller's **object**. Rule: `Core Guidelines F.15 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-conventional>`__.
+
+Four Kinds of Parameter
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A call initializes each parameter from its argument. Each of the four ways is a declaration you have already written:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 30 30 15
+
+   * - Parameter
+     - Works like
+     - The function gets
+     - Taught in
+   * - ``int x``
+     - ``int x{a};``
+     - a copy
+     - Lecture 2
+   * - ``int& x``
+     - ``int& x{a};``
+     - the caller's object
+     - Lecture 3
+   * - ``const int& x``
+     - ``const int& x{a};``
+     - the object, read-only
+     - Lecture 3
+   * - ``int* p``
+     - ``int* p{&a};``
+     - a copy of an address
+     - Lecture 3
+
+- Nothing new happens at a call. Read the parameter as a variable declared with the argument as its initializer.
+- So every rule from Lecture 3 carries over: a reference cannot be null, and a pointer can.
+
+Pass by Value
+^^^^^^^^^^^^^
+
+With **pass by value**, the parameter is a **new object**, copied from the argument. Changes to it stay inside the function.
+
+.. code-block:: cpp
+
+   void nudge_joint(double deg) {  // double deg{q2};
+     deg += 10.0;                  // changes the copy
+   }
+
+   int main() {
+     double q2{5.0};
+     nudge_joint(q2);
+     std::cout << q2;                // 5
+   }
+
+- This is the default. Without ``&`` or ``*``, every parameter is a copy.
+- Use it for small types: ``int``, ``double``, ``bool``, ``char``, and a pointer itself.
+- "Small" means about two or three machine words: 16 to 24 bytes on x86-64. Copying that costs no more than passing an address.
+
+The Cost of a Copy
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double average_angle(std::vector<double> angles) {  // a copy
+     double sum{0.0};
+     for (double a : angles) { sum += a; }
+     return sum / angles.size();
+   }
+
+   std::vector<double> path(1'000'000);
+   average_angle(path);  // 8 MB allocated and copied
+
+- A copy of a ``std::vector`` needs **new memory** for the elements and a copy of every one: 8 MB on every call.
+- Nothing warns you. The code is correct, just slow.
+- The function only **reads** ``angles``, so it has no use for its own copy.
+
+Pass by Reference
+^^^^^^^^^^^^^^^^^
+
+With **pass by reference**, the parameter is a **reference**: another name for the caller's object. No copy is made, and changes are visible to the caller.
+
+.. code-block:: cpp
+
+   void nudge_joint(double& deg) {  // double& deg{q2};
+     deg += 10.0;                   // changes q2
+   }
+
+   double q2{5.0};
+   nudge_joint(q2);
+   std::cout << q2;                 // 15
+
+- Use it when the function must **change** the caller's object: an **in-out** parameter.
+- The call site looks exactly like pass by value. Only the declaration tells you ``q2`` can change.
+- The argument must be a variable. ``nudge_joint(5.0)`` does not compile: there is no object to refer to.
+
+A Swap Function
+~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // By value
+   void swap_deg(double a, double b) {
+     double tmp{a};
+     a = b;
+     b = tmp;
+   }  // swapped two copies
+
+   double q2{1.0};
+   double q3{2.0};
+   swap_deg(q2, q3);  // q2 1, q3 2
+
+.. code-block:: cpp
+
+   // By reference
+   void swap_deg(double& a, double& b) {
+     double tmp{a};
+     a = b;
+     b = tmp;
+   }  // swapped q2 and q3
+
+   double q2{1.0};
+   double q3{2.0};
+   swap_deg(q2, q3);  // q2 2, q3 1
+
+- Same body, same call. One character in each parameter decides whether the caller sees anything.
+- The first version compiles without a warning. It simply does nothing useful.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Pass a parameter the function must change by reference. ``std::swap`` in ``<utility>`` is written this way. Rule: `Core Guidelines F.17 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-inout>`__.
+
+Pass by const Reference
+^^^^^^^^^^^^^^^^^^^^^^^
+
+With **pass by const reference**, the parameter is a **reference to const**: no copy is made, and the function may only read the object.
+
+.. code-block:: cpp
+
+   double average_angle(const std::vector<double>& angles) {
+     double sum{0.0};
+     for (double a : angles) { sum += a; }
+     return sum / angles.size();
+   }
+
+.. code-block:: text
+
+   error: passing 'const std::vector<double>' as 'this' argument discards qualifiers
+
+- That is what ``angles.push_back(0.0)`` would print inside this function. The ``const`` is checked.
+- This is the **default** for anything bigger than a few words that the function only reads.
+- Unlike a plain ``std::vector<double>&``, it also accepts a temporary: ``average_angle({1.0, 2.0})`` compiles.
+
+String Parameters
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   void log_joint(std::string_view name);  // C++17, <string_view>
+
+   std::string joint{"elbow"};
+   log_joint(joint);    // views the string: no copy
+   log_joint("elbow");  // views the literal: no std::string is built
+
+- A ``std::string_view`` is the Lecture 4 view: a pointer and a length, copied by value.
+- It accepts a ``std::string`` or a string literal, and copies neither.
+- A ``const std::string&`` parameter would build a temporary copy of ``"elbow"``.
+- It owns nothing, so it must not outlive the text it looks at.
+
+std::span (C++20)
+~~~~~~~~~~~~~~~~~
+
+A ``std::span`` is a view of a contiguous sequence: a pointer to the first element and a count. It owns nothing.
+
+.. code-block:: cpp
+
+   #include <span>
+
+   double average_angle(std::span<const double> angles) {
+     double sum{0.0};
+     for (double a : angles) { sum += a; }
+     return sum / angles.size();
+   }
+
+- ``angles.size()`` gives the count. A range-based ``for`` walks the elements.
+- ``const double`` makes it read-only. Drop the ``const`` to allow writes.
+- Pass it by value. It is only a pointer and a count, so copying it is cheap.
+- It owns nothing, so it must not outlive the sequence it looks at.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   A span replaces the old pointer and length pair. See `cppreference: std::span <https://en.cppreference.com/w/cpp/container/span>`__. Rule: `Core Guidelines I.13 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-array>`__.
+
+One Parameter, Three Sequences
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double c_array[]{1.0, 2.0, 3.0};
+   std::array<double, 2> arr{4.0, 6.0};
+   std::vector<double> vec{1.5, 2.5, 3.5, 4.5};
+
+   average_angle(c_array);  // 2
+   average_angle(arr);      // 5
+   average_angle(vec);      // 3
+
+- One parameter accepts a C array, a ``std::array`` or a ``std::vector``.
+- The C array keeps its length: ``angles.size()`` is 3 inside the first call.
+- Each call builds a span that points at the caller's elements. Nothing is copied.
+
+A Span in Memory
+~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::array<double, 2> arr{4.0, 6.0};
+   average_angle(arr);  // angles is built from arr
+
+.. figure:: /_static/images/l5/span_memory.png
+   :alt: One row of memory with a blue stack tab on the left. First, arr: two adjoining cells holding 4.0 and 6.0, labelled [0] +0 and [1] +8, with the base address 0x7ffd…a10 marked in red under the first cell. After a gap, angles: two cells, data holding the same address 0x7ffd…a10 in red, and size holding 2. A curved black arrow runs from the data field back to the first cell of arr.
+   :align: center
+   :width: 90%
+
+   The span holds the address of the first element and a count. The elements stay in ``arr``.
+
+``angles`` is 16 bytes whether ``arr`` holds 2 elements or 2 million.
+
+Pass by Pointer
+^^^^^^^^^^^^^^^
+
+With **pass by pointer**, the parameter is a pointer, **copied** from the argument. The function reaches the caller's object through it, and the caller may pass ``nullptr`` to mean "no object".
+
+.. code-block:: cpp
+
+   void nudge_joint(double* p) {  // double* p{&q2};
+     if (p != nullptr) {
+       *p += 10.0;                // changes q2
+     }
+   }
+
+   double q2{5.0};
+   nudge_joint(&q2);              // 15
+   nudge_joint(nullptr);          // does nothing
+
+The call site shows ``&q2``, so the reader sees that ``q2`` may change.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Take a pointer only when ``nullptr``, "no object", is a valid argument. Otherwise take a reference. Rule: `Core Guidelines F.60 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-ptr-ref>`__.
+
+Choosing a Method
+~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 50 25 25
+
+   * - The function...
+     - Parameter
+     - Core Guideline
+   * - only reads a value that is cheap to copy (``int``, ``double``)
+     - ``double x``
+     - `F.16 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in>`__
+   * - only reads text
+     - ``std::string_view s``
+     - `SL.str.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rstr-view>`__
+   * - only reads the elements of an array or a vector
+     - ``std::span<const T> s``
+     - `I.13 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ri-array>`__
+   * - only reads anything else, such as a ``std::map``
+     - ``const T& x``
+     - `F.16 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in>`__
+   * - changes the caller's variable
+     - ``T& x``
+     - `F.17 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-inout>`__
+   * - changes the caller's variable, but may be given none (``nullptr``)
+     - ``T* p``
+     - `F.60 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-ptr-ref>`__
+   * - gives back a result
+     - the return value
+     - `F.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out>`__
+
+- Read the table top to bottom and take the first row that fits.
+- The last row is not a parameter. A function gives back a result through its return value.
+
+Exercise 2: Four Calls
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   void f1(int x) { x = 99; }
+   void f2(int& x) { x = 99; }
+   void f3(int* p) { p = nullptr; }
+   void f4(int* p) { *p = 99; }
+
+   int a{1};
+   int b{1};
+   int c{1};
+   int d{1};
+   f1(a);  f2(b);  f3(&c);  f4(&d);
+   std::cout << a << ' ' << b << ' ' << c << ' ' << d << '\n';
+
+Write your answer before you run it. Then explain ``f3`` in one sentence, using the table from the start of this section.
+
+Returning Values
+----------------
+
+The return type decides whether the caller receives a **new object** or a way to reach an **existing** one. See `cppreference: return statement <https://en.cppreference.com/w/cpp/language/return>`__.
+
+Return by Value
+^^^^^^^^^^^^^^^
+
+With **return by value**, the function's result is a **new object**, initialized from the ``return`` operand. The caller owns it.
+
+.. code-block:: cpp
+
+   double clamp_joint(double deg) {
+     return std::clamp(deg, -max_deg, max_deg);
+   }
+
+   double q2{clamp_joint(200.0)};  // 170
+
+- On x86-64, a small result such as a ``double`` comes back in a CPU **register**, ``xmm0``. The caller reads it from there.
+- The function's own locals are destroyed when it returns. The result survives because it is not one of them.
+- This is the default. Return by value unless you have a reason not to.
+
+A Large Result
+~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<double> plan_path() {
+     std::vector<double> angles(1'000'000);
+     // ... fill it, one step per millisecond ...
+     return angles;  // copy a million doubles?
+   }
+
+   std::vector<double> path{plan_path()};
+
+- A vector does not fit in a register. Taken literally, returning it means building it in the function and copying it to ``path``.
+- It does not. The compiler usually builds ``angles`` **directly in** ``path``'s memory. At worst it is moved, never copied.
+
+Copy Elision
+~~~~~~~~~~~~
+
+**Copy elision**: the compiler builds the returned object **directly in the caller's destination**, so the copy or move from the function's object is never made.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 50 30
+
+   * - Name
+     - The function returns
+     - Elided?
+   * - RVO
+     - a temporary: ``return std::vector<double>(n);``
+     - **always**, since C++17
+   * - NRVO
+     - a named local: ``return v;``
+     - usually, but not required
+   * - Implicit move
+     - a named local, when NRVO is not done
+     - no, the local is **moved**: its elements are handed over
+   * - Copy
+     - anything that is not the plain name of a local: ``return first ? x : y;``
+     - no, every element is **copied**
+
+- **RVO** is Return Value Optimization. The N is for **named**.
+- A **move** hands the vector's elements to the new object without copying them. Only three pointers change.
+- The order is elide, then move, then copy.
+
+Measured Elision
+~~~~~~~~~~~~~~~~
+
+``&v`` is the vector object. ``v.data()`` is where its elements are.
+
+.. code-block:: cpp
+
+   std::vector<double> make_path() {
+     std::vector<double> v(1000);
+     std::cout << &v << ' ' << v.data() << '\n';
+     return v;  // a named local
+   }
+   std::vector<double> path{make_path()};
+   std::cout << &path << ' ' << path.data() << '\n';
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 20 20 20
+
+   * - g++ -std=c++20
+     - Object
+     - Elements
+     - Result
+   * - default (``-O0`` or ``-O2``)
+     - same
+     - same
+     - elided
+   * - ``-fno-elide-constructors``
+     - **new**
+     - same
+     - **moved**
+
+- Same object: elided. New object, same elements: moved. New elements too: copied.
+- GCC elides by default, even at ``-O0``. Turn elision off and NRVO falls back to a move.
+
+Elision is not always done. See `cppreference: copy elision <https://en.cppreference.com/w/cpp/language/copy_elision>`__, and `Cases without Elision`_ under Further Reading.
+
+.. note::
+
+   C++20, **[dcl.init]**, section 9.4, paragraph 17.6.1: a prvalue of the same class *is used to initialize the destination object*. NRVO is only *permitted*, by **[class.copy.elision]**, 11.10.5, paragraph 1.1.
+
+Return by Reference
+^^^^^^^^^^^^^^^^^^^
+
+With **return by reference**, the function returns a reference to an object that **already exists** and that **outlives the call**.
+
+.. code-block:: cpp
+
+   double& get_joint(std::vector<double>& q, std::size_t i) {
+     return q.at(i);
+   }
+
+   std::vector<double> q{0.0, 0.5, 1.0};
+   get_joint(q, 1) = 0.7;  // q is now 0 0.7 1
+
+- The call names ``q[1]`` itself, not a copy of it, so you can assign to it.
+- It returns into the caller's vector, which lives on after ``get_joint`` returns. That is what makes it safe.
+- ``std::vector::at`` and ``operator[]`` from Lecture 4 are functions that return a reference in exactly this way.
+
+Returning a Local
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double& tool_x() {
+     double local_x{0.42};
+     return local_x;
+   }  // local_x is destroyed here
+
+   double& r{tool_x()};
+   std::cout << r;  // undefined behavior
+
+.. code-block:: text
+
+   warning: reference to local variable 'local_x' returned [-Wreturn-local-addr]
+
+The reference outlives the object it names. This is the case Lecture 3 said would come back: a dangling reference.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Never return a reference or pointer to a local. Return it **by value**: copy elision makes that free. Rule: `Core Guidelines F.43 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-dangle>`__.
+
+Returning a Parameter
+~~~~~~~~~~~~~~~~~~~~~
+
+No local in sight, and it still dangles:
+
+.. code-block:: cpp
+
+   const std::string& pick_longer(const std::string& a,
+                                  const std::string& b) {
+     return a.size() >= b.size() ? a : b;
+   }
+
+   const std::string& r{pick_longer("lidar", "camera")};
+   std::cout << r;  // undefined behavior
+
+- ``"camera"`` is not a ``std::string``. The call builds a **temporary** one, and that temporary dies at the end of the line.
+- ``r`` is left naming it. GCC 13 warns: ``possibly dangling reference to a temporary``.
+- ``-fsanitize=address`` (Lecture 3) confirms it: ``stack-use-after-scope``.
+
+.. warning::
+
+   Returning a reference parameter is only safe if the caller keeps the argument alive. A temporary argument does not live past the line.
+
+Return by Pointer
+^^^^^^^^^^^^^^^^^
+
+With **return by pointer**, the function returns the address of an object that **already exists** and that **outlives the call**, or ``nullptr`` for "not found".
+
+.. code-block:: cpp
+
+   double* find_value(std::vector<double>& v, double target) {
+     for (double& x : v) {
+       if (x == target) { return &x; }
+     }
+     return nullptr;  // not found
+   }
+
+   std::vector<double> q{0.0, 0.5, 1.0};
+   double* p{find_value(q, 0.5)};
+   if (p != nullptr) { *p = 0.7; }  // q is now 0 0.7 1
+
+- A pointer can say "nothing" with ``nullptr``. A reference cannot, which is why this one returns a pointer.
+- Check a returned pointer before you dereference it, every time.
+- Lecture 4's invalidation still applies: a ``push_back`` on ``q`` can leave ``p`` dangling.
+
+Returning the Address of a Local
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double* tool_x() {
+     double local_x{0.42};
+     return &local_x;
+   }  // local_x is destroyed here
+
+   double* p{tool_x()};
+   std::cout << *p;  // undefined behavior
+
+.. code-block:: text
+
+   warning: address of local variable 'local_x' returned [-Wreturn-local-addr]
+
+- The same mistake as returning a reference to a local, and the same rule: never do it.
+- With GCC, this program **crashed** with ``SIGSEGV``. GCC returns a null pointer in place of the dead address.
+
+Function Overloading
+--------------------
+
+With **function overloading**, several functions share one name but have different parameter lists. The compiler picks one **at compile time** from the arguments of each call.
+
+One Name, Three Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   void print_pose(double x, double y);              // position
+   void print_pose(double x, double y, double deg);  // with heading
+   void print_pose(std::string_view name,
+                   double x, double y);              // labelled
+
+   print_pose(0.42, 1.17);           // the two-value version
+   print_pose(0.42, 1.17, 30.0);     // the three-value version
+   print_pose("wrist", 0.42, 1.17);  // the labelled version
+
+Without overloading you would write ``print_pose_xy``, ``print_pose_labelled`` and so on. The standard library overloads everywhere: ``std::abs``, and every ``<<`` on ``std::cout``.
+
+Valid Overloads
+^^^^^^^^^^^^^^^
+
+Overloads must have different **signatures**: the name plus the parameter types.
+
+.. code-block:: cpp
+
+   void move_joint(int id);
+   void move_joint(int id, int deg);
+   void move_joint(double deg);
+   void move_joint(int id, double deg);
+   void move_joint(double deg, int id);
+
+Return Type Only
+^^^^^^^^^^^^^^^^
+
+A difference in the return type only does not compile:
+
+.. code-block:: cpp
+
+   int joint_count() { return 3; }
+   double joint_count() { return 3.0; }
+
+.. code-block:: text
+
+   error: ambiguating new declaration of
+          'double joint_count()'
+
+- The five ``move_joint`` overloads differ by parameter **count**, **type** or **order**. Any one of the three is enough.
+- The compiler chooses from the **arguments**, and a call does not say which return type it wants.
+- ``void f(int x)`` and ``void f(int y)`` are the same function declared twice.
 
 Overload Resolution
-""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^
 
-When you call an overloaded function, the compiler follows a strict hierarchy to find the best match. This process is called **overload resolution**.
+For each argument, the compiler ranks how well it matches each candidate. Best first:
 
-1. **Exact Match**: The compiler first looks for a function where the argument types match the parameter types perfectly. (e.g., calling with an ``int`` finds a function expecting an ``int``).
-2. **Match with Promotion**: If no exact match is found, the compiler tries to achieve a match by **promoting** the arguments. These are safe, non-narrowing conversions.
+.. list-table::
+   :header-rows: 1
+   :widths: 25 55 20
 
-   - ``bool`` -> ``int``
-   - ``char`` -> ``int``
-   - ``float`` -> ``double``
+   * - Rank
+     - Examples
+     - From
+   * - 1. Exact match
+     - ``int`` to ``int``; adding ``const``
+     - Lecture 2
+   * - 2. Promotion
+     - ``char``, ``bool`` to ``int``; ``float`` to ``double``
+     - Lecture 2
+   * - 3. Standard conversion
+     - ``int`` to ``double``; ``double`` to ``int``; ``long`` to ``int``
+     - Lecture 2
 
-3. **Match with Standard Conversion**: If promotion does not work, the compiler tries other built-in conversions, even if they might lose information (narrowing).
+- The winner must be **at least as good on every argument** and better on one.
+- No candidate fits: an error. Two candidates tie: an error, ``call of overloaded ... is ambiguous``.
+- A narrowing conversion, such as ``double`` to ``int``, still counts as a match. Overloading does not protect you from it.
 
-   - ``int`` -> ``float``
-   - ``double`` -> ``int``
+.. note::
 
-4. **Ambiguous or No Match**: If the compiler finds multiple equally good matches (ambiguous) or no match at all, it will issue a compilation error.
+   The full rules run to many pages. These three ranks explain every call in this course. See `cppreference: overload resolution <https://en.cppreference.com/w/cpp/language/overload_resolution>`__.
 
-**Exercise: Predict the result.**
+Exercise 3: Overload Resolution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -1266,376 +1318,1013 @@ When you call an overloaded function, the compiler follows a strict hierarchy to
    int add(int a, float b) { return a + b; }
    int add(int a, double b) { return a + b; }
 
-   int main() {
-       std::cout << add(2, 3) << '\n';         // ???
-       std::cout << add(2.5, 3) << '\n';       // ???
-       std::cout << add('h', false) << '\n';   // ???
-       std::cout << add("hello", 3) << '\n';   // ???
-   }
+   float f{3.5};
+   long n{3};
+   unsigned int u{3};
 
+   std::cout << add(2, 3) << '\n';        // 1
+   std::cout << add(2, f) << '\n';        // 2
+   std::cout << add(2.5, 3) << '\n';      // 3
+   std::cout << add('h', false) << '\n';  // 4
+   std::cout << add(2, n) << '\n';        // 5
+   std::cout << add(2, u) << '\n';        // 6
 
-Default Parameters
-^^^^^^^^^^^^^^^^^^^
+For each line, name the version that is called and what it prints, or say why it does not compile. Rank each argument with the table above. ``'h'`` is 104.
 
-Default parameters allow you to provide a **fallback** value for one or more **trailing parameters**, making arguments optional during a function call.
+Default Arguments
+-----------------
 
-.. code-block:: cpp
+A **default argument** is a value written in the declaration that the compiler uses when the caller leaves out a **trailing** argument.
 
-   // 'width' and 'height' are given default values.
-   void create_window(const std::string& title, int width = 800, int height = 600) {
-       // ... function body ...
-   }
-
-   int main() {
-       // All arguments provided.
-       create_window("My App", 1920, 1080);
-       // 'height' is omitted, uses default of 600.
-       create_window("Another App", 1280);
-       // 'width' and 'height' are omitted, use defaults.
-       create_window("Default App");
-   }
-
-.. admonition:: Best Practice
-   :class: important
-
-   Default values should **only be specified in the function declaration** (usually in the ``.hpp`` file), not the definition.
-
-**Exercise: Predict the result for each line.**
+Filling from the Right
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   // Function with default parameters
-   void print_config(int id, bool logging = false, const std::string& mode = "auto") {
-       std::cout << "ID: " << id << ", Logging: " << std::boolalpha
-                 << logging << ", Mode: " << mode << '\n';
-   }
+   void print_pose(double x, double y, int precision = 3,
+                   std::string_view label = "tool");
 
-   int main() {
-       print_config(1, true, "manual"); // ???
-       print_config(2, true);           // ???
-       print_config(3);                 // ???
-       print_config();                  // ???
-   }
+   print_pose(0.42, 1.17, 2, "wrist");  // 2 dp, wrist
+   print_pose(0.42, 1.17, 2);           // 2 dp, tool
+   print_pose(0.42, 1.17);              // 3 dp, tool
+   print_pose(0.42);                    // error: too few arguments
 
-Default Parameters vs. Overloading
-""""""""""""""""""""""""""""""""""""
+- Defaults fill from the **right**. Once a parameter has one, every parameter after it needs one too.
+- You cannot skip a middle one: there is no way to give ``label`` and leave out ``precision``.
 
-Often, you can achieve the same result with either overloading or default parameters. Which should you choose?
-
-.. grid:: 2
-
-   .. grid-item-card:: Overloading
-
-      .. code-block:: cpp
-
-         // Two separate functions
-         void print(std::string s);
-         void print(std::string s, int indent);
-
-   .. grid-item-card:: Default Parameter
-
-      .. code-block:: cpp
-
-         // One flexible function
-         void print(std::string s, int indent = 0);
-
-.. seealso::
-
-   `F.51: Where there is a choice, prefer default arguments over overloading <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f51-where-there-is-a-choice-prefer-default-arguments-over-overloading>`_
-
-Where to Specify Default Values
-"""""""""""""""""""""""""""""""""
-
-The compiler needs a single, authoritative source for a function's default arguments. This source should always be the function's public-facing "contract".
-
-.. admonition:: Best Practice
-   :class: important
-
-   Default parameters belong in the function declaration, not the definition.
-
-.. grid:: 2
-
-   .. grid-item-card:: Correct
-      :class-card: sd-border-success
-
-      .. code-block:: cpp
-
-         // --- In your header file (.hpp) ---
-         // Default value is specified here
-         void print(std::string s, int indent = 0);
-
-         // --- In your source file (.cpp) ---
-         // The definition does NOT repeat the default
-         void print(std::string s, int indent) {
-             // ... function implementation ...
-         }
-
-   .. grid-item-card:: Incorrect
-      :class-card: sd-border-danger
-
-      .. code-block:: cpp
-
-         // --- In your header file (.hpp) ---
-         void print(std::string s, int indent = 0);
-
-         // --- In your source file (.cpp) ---
-         // ERROR: Redefinition of default argument
-         void print(std::string s, int indent = 0) {
-             // ...
-         }
-
-
-Part III: Under the Hood
----------------------------
-
-The Call Stack
-^^^^^^^^^^^^^^
-
-The call stack organizes all active function calls. Think of it as a stack of books: the last book you put on is the first one you take off (**LIFO: Last-In, First-Out**).
-
-.. figure:: /_static/images/l5/books.pdf
-   :alt: Stack of books
-   :align: center
-   :width: 15%
-
-   The call stack works like a stack of books: Last-In, First-Out.
-
-The call stack is the **entire structure**, while a stack frame is just a **single book** in that stack. Each book represents one active function call.
-
-When a function is called, its stack frame is **pushed** onto the top of the call stack. When the function returns, its stack frame is **popped off**.
-
-Visualizing the Call Stack
-"""""""""""""""""""""""""""
-
-As functions call each other, the stack grows. As they return, it shrinks.
-
-.. code-block:: cpp
-
-   void C() { /*...*/ }
-
-   void B() {
-       C();
-   }
-
-   void A() {
-       B();
-   }
-
-   int main() {
-       A();
-   }
-
-.. figure:: /_static/images/l5/callstacks.pdf
-   :alt: Call stack visualization
-   :align: center
-   :width: 70%
-
-   Visualization of the call stack as functions are called and returned.
-
-**Exercise: Trace the call stack activities for the following program (manual and debugger).**
-
-.. code-block:: cpp
-
-   void f(int& x, int y, int z) {
-       x += y + z;
-   }
-
-   int g(int a, int b) {
-       int result{};
-       result = a + b;
-       f(result, a, b);
-       return result;
-   }
-
-   int main() {
-       int x{10};
-       int y{20};
-       int z{};
-       z = g(x, y);
-       std::cout << z << '\n';
-   }
-
-Recursive Functions
-^^^^^^^^^^^^^^^^^^^^
-
-A recursive function is a function that **calls itself**. Understanding the call stack is the key to seeing how this works without getting lost.
-
-Each recursive call gets its **own unique stack frame** with its own set of local variables.
-
-.. warning::
-
-   Every recursive function needs a **base case**: a condition that stops the recursion and prevents an infinite loop (which would cause a **stack overflow**).
-
-**Example: Factorial**
-
-Calculating factorial (:math:`n! = n \times (n-1) \times \dots \times 1`) is a classic example of recursion.
-
-.. code-block:: cpp
-
-   long long factorial(int n) {
-       // Base Case: Stops the recursion
-       if (n <= 1) {
-           return 1;
-       }
-       // Recursive Step
-       return n * factorial(n - 1);
-   }
-
-   int main() {
-       long long result{factorial(4)};
-       // result is 24
-   }
-
-How ``factorial(4)`` is resolved:
-
-- ``factorial(4)`` calls ``factorial(3)``
-
-  - ``factorial(3)`` calls ``factorial(2)``
-
-    - ``factorial(2)`` calls ``factorial(1)``
-
-      - ``factorial(1)`` hits the **base case** and returns ``1``.
-
-    - ``factorial(2)`` gets ``1`` and returns ``2 * 1 = 2``.
-
-  - ``factorial(3)`` gets ``2`` and returns ``3 * 2 = 6``.
-
-- ``factorial(4)`` gets ``6`` and returns ``4 * 6 = 24``.
-
-When to Use (and Avoid) Recursion
-""""""""""""""""""""""""""""""""""
-
-Recursion can be elegant, but often comes with tradeoffs.
-
-.. grid:: 2
-
-   .. grid-item-card:: Niche Use Cases
-
-      - **Naturally Recursive Problems**: When the problem definition itself is recursive.
-
-        - Tree or graph traversals (e.g., searching a folder structure).
-        - Mathematical functions (e.g., factorial, Fibonacci sequences).
-        - Divide and conquer algorithms (e.g., quicksort, mergesort).
-
-      - **Readability**: Sometimes, a recursive solution is much clearer and more concise than an iterative one.
-
-   .. grid-item-card:: General Avoidance
-      :class-card: sd-border-warning
-
-      - **Performance Overhead**: Each function call involves pushing a new stack frame, which takes time and memory. Iterative solutions are often faster.
-      - **Stack Overflow Risk**: Deep recursion consumes a lot of stack space. If the base case is not reached quickly enough, you can run out of stack memory, crashing your program.
-      - **Debugging Complexity**: Tracing the flow of a recursive function can be harder than debugging a simple loop.
-
-Pitfalls and Best Practices
-"""""""""""""""""""""""""""""
-
-When using recursion, be mindful of these common issues:
-
-.. warning::
-
-   - **Missing/Incorrect Base Case**: The most common error. Without a proper base case, the recursion never stops, leading to a stack overflow.
-   - **Infinite Recursion**: If the recursive step does not move closer to the base case, you also get a stack overflow.
-   - **Redundant Calculations**: Naive recursive solutions can re-calculate the same subproblems repeatedly (e.g., a simple Fibonacci implementation). This can be solved with **memoization** (caching results).
-   - **Large Inputs**: Even with a correct base case, very large inputs can still cause a stack overflow due to too many nested calls.
-
-.. admonition:: Best Practice
-   :class: important
-
-   **Always ask yourself:** Can this be done easily and more efficiently with a loop? If yes, prefer iteration. If the recursive solution is significantly clearer for a complex problem, use it cautiously.
-
-
-Part IV: Conventions and Best Practices
-------------------------------------------
-
-Documentation with Doxygen
+The Program So Far: Defaults
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Good code is not just functional, it is also understandable. Documentation explains **what** your function does and **how** to use it, without needing to read the implementation.
+.. figure:: /_static/images/l5/files_defaults.png
+   :alt: Five file cards, with main.cpp, joint_limits.hpp and joint_limits.cpp greyed out as names only. kinematics.hpp adds, in red, the declaration void print_pose(double x, double y, int precision = 3, std::string_view label = "tool");. kinematics.cpp, above it, adds, in red, the definition void print_pose(double x, double y, int precision, std::string_view label) {...}, with no defaults. In both cards a grey ... above it stands for the functions shown on earlier slides.
+   :align: center
+   :width: 80%
 
-In this course, we will use **Doxygen**, a standard tool that generates professional documentation directly from special comments in your code.
+   The defaults are written in the header, and only there.
 
-Where to Write Documentation
-""""""""""""""""""""""""""""""
+Defaults in the Declaration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Documentation belongs on the **function declaration** (in the ``.hpp`` file), not the definition.
-
-**Why?** The header file is the public **interface** or "contract" of your code. Developers should only need to know what a function does and how to use it (``.hpp``), not how it is implemented (``.cpp``).
-
-.. warning::
-
-   Do not document both the declaration and the definition. This leads to duplicated effort and creates a high risk of the two becoming inconsistent over time.
-
-How to Document with Doxygen
-""""""""""""""""""""""""""""""
-
-Doxygen comments start with ``/**`` and use special commands starting with ``@`` or ``\``.
+Correct:
 
 .. code-block:: cpp
 
-   /**
-    * @brief Calculates the area of a rectangle.
-    * @param length The length of the rectangle. Must be a positive value.
-    * @param width The width of the rectangle. Must be a positive value.
-    * @return The calculated area of the rectangle.
-    */
-   int calculate_area(int length, int width);
+   // kinematics.hpp
+   void print_pose(double x, double y,
+                   int precision = 3);
 
-- ``@brief``: A short, one-line summary of what the function does.
-- ``@param <name>``: Describes a specific parameter.
-- ``@return``: Describes what the function returns.
+   // kinematics.cpp
+   void print_pose(double x, double y,
+                   int precision) {
+     // ...
+   }
 
-.. seealso::
+Repeated:
 
-   `Doxygen Overview <https://www.doxygen.nl/manual/index.html>`_
+.. code-block:: cpp
+
+   // kinematics.cpp
+   #include "kinematics.hpp"
+   void print_pose(double x, double y,
+                   int precision = 3) {
+     // ...
+   }
+
+.. code-block:: text
+
+   error: default argument given for
+          parameter 3 of 'void print_pose(
+          double, double, int)'
+
+- The default is part of the **interface**, so it goes in the header, where callers see it.
+- The definition must not repeat it. Keep the value as a comment there if you want it visible: ``int precision /* = 3 */``.
 
 .. note::
 
-   Feel free to use AI as a tool for Doxygen documentation; however, you must always review, edit, and verify the generated comments for accuracy.
+   C++20, **[dcl.fct.default]**, section 9.3.3.6, paragraph 4: *a default argument cannot be redefined by a later declaration (not even to the same value)*.
 
-The main() Function
-^^^^^^^^^^^^^^^^^^^^
+Defaults versus Overloads
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Every C++ executable program has one special function that acts as its entry point: ``main()``. When you run your program, ``main()`` is the first function that gets called.
+Two functions (overloads):
 
-- It must have a return type of ``int``. By convention, ``return 0;`` signals that the program executed successfully.
-- It can optionally take arguments from the command line, allowing you to pass information to your program when you launch it.
+.. code-block:: cpp
 
-.. seealso::
+   void print_pose(double x, double y);
+   void print_pose(double x, double y,
+                   int precision);
 
-   `F.46: int is the return type for main() <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines.html#f46-int-is-the-return-type-for-main>`_
+One function (default argument):
 
-Command-Line Arguments: argc and argv
-"""""""""""""""""""""""""""""""""""""""
+.. code-block:: cpp
 
-The ``main`` function can receive information from the command line through two parameters.
+   void print_pose(double x, double y,
+                   int precision = 3);
 
-- ``int argc`` (**arg**\ ument **c**\ ount): An integer that stores the number of command-line arguments provided. It is **always at least 1**, because the name of the program itself is counted as the first argument.
-- ``char* argv[]`` (**arg**\ ument **v**\ ector): An array of C-style strings. Each string is one of the arguments.
+- When the versions only differ by a missing value, use one function with a default. There is one body to maintain.
+- Overload when the versions do **different work**, such as ``print_pose(x, y)`` against ``print_pose(name, x, y)``, which also prints a label.
 
-  - ``argv[0]`` is always the name of the executable.
-  - ``argv[1]`` is the first actual argument.
+.. admonition:: Best Practice
+   :class: tip
+
+   Prefer a default argument to an overload when both would do the same work. Rule: `Core Guidelines F.51 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-default-args>`__. See `cppreference: default arguments <https://en.cppreference.com/w/cpp/language/default_arguments>`__.
+
+Static Local Variables
+----------------------
+
+A **static local variable** is a local variable declared ``static``. Its name is visible only inside the function, but it lives for the **whole program** and keeps its value between calls. See `cppreference: storage duration <https://en.cppreference.com/w/cpp/language/storage_duration>`__.
+
+Lifetime and Scope
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int next_move_id() {
+     static int id{0};
+     return ++id;
+   }
+
+   next_move_id();  // 1
+   next_move_id();  // 2
+   next_move_id();  // 3
+
+- ``id`` is not on the stack. It sits in ``.bss``, because its initializer is 0.
+- So returning does not destroy it: its lifetime is the program's. Lecture 2 said it: **lifetime is not scope**.
+- A ``static`` with no initializer, such as ``static int count;``, is **zero-initialized** and also sits in ``.bss``.
+
+.. figure:: /_static/images/l5/static_segments.png
+   :alt: A horizontal band of memory segments, low addresses on the left: reserved, .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Three white cells sit inside three of them: scale in .rodata, calls in .data and width in .bss. The heap grows right and the stack grows left, toward the free space between them. A legend underneath gives one row per cell. .rodata, static constexpr int scale{2}: read-only, fixed before the program starts. .data, static int calls{7}: a non-zero initializer, the value is in the file. .bss, static double width: no initializer, so all zeros, 0.0. A final note reads: a global lands in .rodata, .data or .bss by the same test; a local without static is on the stack.
+   :align: center
+   :width: 100%
+
+   Where a static local lives, by how it is initialized.
+
+One-time Initialization
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int count_calls() {
+     static int calls{0};  // once
+     ++calls;
+     return calls;  // 1, 2, 3
+   }
+
+   int count_calls_wrong() {
+     static int calls;
+     calls = 0;  // every call
+     ++calls;
+     return calls;  // always 1
+   }
+
+The **initializer** runs once. An **assignment** is an ordinary statement and runs on every call. See `cppreference: static locals <https://en.cppreference.com/w/cpp/language/storage_duration#Static_local_variables>`__.
+
+For more uses, see `Five Common Uses of static`_ under Further Reading.
+
+The Call Stack
+--------------
+
+The **call stack** is the stack segment from Lecture 2, seen one call at a time: every active call has one **stack frame** on it.
+
+Stack Frames
+^^^^^^^^^^^^
+
+A **stack frame** is the memory for one call: its parameters, its local variables, and the **return address**, where execution goes on when the call ends.
+
+.. code-block:: cpp
+
+   void C() { }
+   void B() { C(); }
+   void A() { B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_frames.png
+   :alt: Six stacks of boxes side by side, labelled underneath start, A(), B(), C(), C returns and B returns. Each stack is built upward from a box reading main(). The stacks read, bottom to top: main(); main(), A(); main(), A(), B(); main(), A(), B(), C(); main(), A(), B(); and main(), A(). In every stack the top box is outlined in red to mark the running function, and the boxes below it are grey.
+   :align: center
+   :width: 90%
+
+   The stack at each call and return.
+
+- A call **pushes** a frame on top. A return **pops** it.
+- Red marks the running frame. Frames leave last in, first out.
+
+For the registers and the addresses of each frame, see `The Call Stack, Step by Step`_ under Further Reading.
+
+Exercise 4: A Stack Trace
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+
+   constexpr int scale{2}; // global
+
+   void f(int& x, int y, int* z) {
+     static int calls{0};
+     ++calls;
+     x += y + *z;
+   }
+
+   int g(int a, int b) {
+     int result{};
+     result = a + b;
+     f(result, a, &b);
+     return result * scale;
+   }
+
+   int main() {
+     int x{10};
+     int y{20};
+     int z{};
+     z = g(x, y);
+     std::cout << z << '\n';
+   }
+
+Draw the stack at line 6. For each frame, write its parameters and locals with their values. Which variable does ``x`` name there? Which variable does ``z`` point at? Where are ``calls`` and ``scale``?
+
+The main Function
+-----------------
+
+``main`` is the function the operating system starts the program with. It returns an ``int``, and it can receive the command-line arguments. See `cppreference: main function <https://en.cppreference.com/w/cpp/language/main_function>`__.
+
+Two Forms of main
+^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int main() { }
+   int main(int argc, char* argv[]) { }
+   // the second form, with argc and argv unused:
+   int main([[maybe_unused]] int argc,
+            [[maybe_unused]] char* argv[]) { }
+
+- The return type is always ``int``. ``0`` means success. Anything else is an error code the shell can read with ``echo $?``.
+- ``main`` is the one function that may fall off its end. That counts as ``return 0;``.
+- You may not call ``main`` yourself, overload it, or make it ``static``.
+- The attribute ``[[maybe_unused]]`` (C++17) silences the ``unused parameter`` warning that ``-Wextra`` gives when ``argc`` and ``argv`` are not used.
+
+.. note::
+
+   C++20, **[basic.start.main]**, section 6.9.3.1: paragraph 2 requires every compiler to accept these two forms, and paragraph 5 says flowing off the end of ``main`` *is equivalent to a return with operand 0*. Rule: `Core Guidelines F.46 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-main>`__.
+
+Command-line Arguments
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
    int main(int argc, char* argv[]) {
-       std::cout << "Number of arguments provided: " << argc << '\n';
-
-       for (int i{0}; i < argc; ++i) {
-           std::cout << "Argument " << i << ": " << argv[i] << '\n';
-       }
+     std::cout << "Number of arguments: " << argc << '\n';
+     for (int i{0}; i < argc; ++i) {
+       std::cout << "argv[" << i << "]: " << argv[i] << '\n';
+     }
    }
 
 .. code-block:: bash
 
-   ./week5_cpp --mode fast --file data.txt
-
-**Output:**
+   ./week5_snippets 30 -45 60
 
 .. code-block:: text
 
-   Number of arguments provided: 5
-   Argument 0: ./week5_cpp
-   Argument 1: --mode
-   Argument 2: fast
-   Argument 3: --file
-   Argument 4: data.txt
+   Number of arguments: 4
+   argv[0]: ./week5_snippets
+   argv[1]: 30
+   argv[2]: -45
+   argv[3]: 60
+
+- ``argc`` counts the arguments, including the program's own name, so it is normally at least 1.
+- ``argv`` is an array of C-strings from Lecture 4. As a parameter it has decayed: its real type is ``char**``.
+- ``argv[argc]`` is always a null pointer.
+
+.. note::
+
+   Copy them into something safer first. Two pointers are an iterator range, as Lecture 4 showed: ``std::vector<std::string_view> args(argv, argv + argc);``
+
+Documenting Functions
+---------------------
+
+**Doxygen** builds reference pages from specially marked comments above each declaration. This course uses it for every function you write. See the `Doxygen manual <https://www.doxygen.nl/manual/index.html>`__.
+
+Other tools: `Sphinx with Breathe <https://breathe.readthedocs.io/>`__, which builds on Doxygen's output, and `MrDocs <https://www.mrdocs.com/>`__ and `clang-doc <https://clang.llvm.org/extra/clang-doc.html>`__, which read the code with the Clang compiler.
+
+.. seealso::
+
+   The reading material :doc:`Documentation with Sphinx and Breathe </reading_material/sphinx_breathe/sb_index>` builds the pages for ``arm_demo`` with Sphinx, from the XML that Doxygen writes.
+
+Setting Up Doxygen
+^^^^^^^^^^^^^^^^^^
+
+Installation
+~~~~~~~~~~~~
+
+.. code-block:: bash
+
+   sudo apt install doxygen doxygen-gui graphviz
+   doxygen --version        # 1.9.8 on Ubuntu 24.04
+   code --install-extension cschlosser.doxdocgen
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 25 55
+
+   * - Package
+     - Gives you
+     - Used for
+   * - ``doxygen``
+     - ``doxygen``
+     - generating the pages, from the command line
+   * - ``doxygen-gui``
+     - ``doxywizard``
+     - writing a ``Doxyfile`` and running Doxygen from a window
+   * - ``graphviz``
+     - ``dot``
+     - optional: the call and include graphs in the pages
+   * - VS Code extension
+     - ``cschlosser.doxdocgen``
+     - optional: types the comment skeleton for you
+
+.. note::
+
+   There is no package called ``doxywizard``. The program of that name comes in ``doxygen-gui``. See `Doxygen: installation <https://www.doxygen.nl/manual/install.html>`__.
+
+Project Layout
+~~~~~~~~~~~~~~
+
+.. code-block:: text
+
+   project/week5/
+   ├── CMakeLists.txt
+   ├── playground/
+   │   └── src/snippets.cpp
+   └── arm_demo/
+       ├── include/
+       │   ├── joint_limits.hpp
+       │   └── kinematics.hpp
+       ├── src/
+       │   ├── joint_limits.cpp
+       │   ├── kinematics.cpp
+       │   └── main.cpp
+       └── docs/
+           ├── Doxyfile
+           └── html/   (generated)
+
+- ``include``: headers, the declarations and their comments.
+- ``src``: source files, the definitions.
+- ``docs``: the ``Doxyfile``, and the pages it generates in ``docs/html``.
+- Commit the ``Doxyfile``, never the pages it generates.
+
+**The one edit.** Done in the Header Files section. If not: uncomment the last four lines of ``project/week5/CMakeLists.txt``, then in VS Code run **CMake: Configure** and build ``week5_arm_demo``.
+
+Doxygen Comments
+^^^^^^^^^^^^^^^^
+
+A **Doxygen comment** is a comment that starts with ``/**``. Doxygen reads it and turns it into the page for the declaration below it.
+
+.. code-block:: cpp
+
+   /**
+    * @brief Convert an angle from degrees to radians.
+    * @param deg The angle in degrees. Any finite value.
+    * @return The same angle in radians.
+    */
+   double convert_deg_to_rad(double deg);
+
+- ``@brief``: one line on what it does. ``@param``: one per parameter, by name. ``@return``: what comes back.
+- Write it on the **declaration**, in the header, and only there. Two copies drift apart.
+- Say what the signature cannot: units, the valid range, what happens on bad input. See `Doxygen: documenting the code <https://www.doxygen.nl/manual/docblocks.html>`__.
+
+The File Comment
+~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   #pragma once
+
+   /**
+    * @file kinematics.hpp
+    * @brief Angle conversions for the robot arm.
+    */
+
+   /**
+    * @brief Convert an angle from degrees to radians.
+    * ...
+
+- Every header starts with a ``@file`` comment: the file's name and one line on what it holds.
+- Without it, the header gets **no page**, and a function documented only there disappears. Doxygen prints no warning.
+
+.. warning::
+
+   This is the most common reason for "I wrote the comments and nothing shows up". A function outside a class belongs to its file, and Doxygen only lists the members of a file that is itself documented. See `Doxygen: @file <https://www.doxygen.nl/manual/commands.html#cmdfile>`__.
+
+The VS Code Extension
+~~~~~~~~~~~~~~~~~~~~~
+
+**Doxygen Documentation Generator**, ID ``cschlosser.doxdocgen``, writes the skeleton for you:
+
+.. code-block:: bash
+
+   code --install-extension cschlosser.doxdocgen
+
+Type ``/**`` on the line above a declaration and press **Enter**:
+
+.. code-block:: cpp
+
+   /**
+    * @brief
+    *
+    * @param deg
+    * @return double
+    */
+   double convert_deg_to_rad(double deg);
+
+- It copies what the signature already says: the parameter names, and the return **type**. You write the meaning.
+- Replace ``@return double`` with what the value is: ``@return The same angle in radians.``
+
+The Doxyfile
+^^^^^^^^^^^^
+
+The **Doxyfile** is the configuration file Doxygen reads: plain text, one ``KEY = value`` per line, such as ``INPUT = ../include ../src``.
+
+.. code-block:: bash
+
+   cd project/week5/arm_demo/docs
+   doxygen -g Doxyfile     # create a new one, every setting at its default
+   doxywizard Doxyfile     # edit an existing one, in the GUI
+   doxygen Doxyfile        # generate the HTML pages, in docs/html
+
+doxywizard, Step by Step
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Follow along in ``doxywizard``, the Doxygen GUI:
+
+1. ``cd project/week5/arm_demo/docs`` and run ``doxywizard &``.
+2. **Step 1** at the top, the working directory: the ``docs`` folder. Reopening ``docs/Doxyfile`` later sets it for you.
+3. **Wizard, Project**: a project name. Leave the destination directory empty.
+4. **Wizard, Mode**: *Documented entities only*, and *Optimize for C++ output*.
+5. **Wizard, Output**: *HTML* with a navigation panel. Untick *LaTeX*.
+6. **Expert, Input**: set ``INPUT`` to ``../include`` and ``../src``, and tick ``RECURSIVE``.
+7. **File, Save as**: ``docs/Doxyfile``.
+
+.. warning::
+
+   Check what was saved: ``grep '^INPUT ' Doxyfile``. The paths must be **relative**. A path the file browser filled in, such as ``/home/you/week5/src``, breaks on every other machine. See `Doxygen: doxywizard <https://www.doxygen.nl/manual/doxywizard_usage.html>`__.
+
+Running Doxygen
+^^^^^^^^^^^^^^^
+
+Doxygen reads the ``Doxyfile``, collects the comments from ``INPUT``, and writes the pages to ``docs/html``.
+
+From the command line:
+
+.. code-block:: bash
+
+   cd project/week5/arm_demo
+   cd docs
+   doxygen Doxyfile
+   xdg-open html/index.html
+
+From ``doxywizard``:
+
+- Open the tab **Run**.
+- Press **Run Doxygen**. It asks you to save first.
+- Press **Show HTML output**.
+
+Run Doxygen again after every change to a comment. The pages do not update themselves.
+
+The Working Directory
+~~~~~~~~~~~~~~~~~~~~~
+
+The paths in a ``Doxyfile`` are relative to the folder Doxygen **runs in**, not the folder the file is in. From ``project/week5/arm_demo``:
+
+.. code-block:: bash
+
+   doxygen docs/Doxyfile
+
+.. code-block:: text
+
+   warning: tag INPUT: input source '../include' does not exist
+   warning: tag INPUT: input source '../src' does not exist
+
+- Doxygen finds no source, and writes an empty ``html`` folder into the project root.
+- Always run it from ``docs``: ``cd docs && doxygen Doxyfile``.
+- ``doxywizard`` gets this right when you open ``docs/Doxyfile``: it sets the working directory to the file's folder.
+
+Summary
+-------
+
+**Declaring and Building**
+
+- Declare in a header with ``#pragma once``. Define once, in a ``.cpp``. A compiler error means the declaration is missing. ``undefined reference`` means the definition is.
+- Every path of a non-``void`` function returns a value. Falling off the end is undefined behavior everywhere except ``main``.
+
+**Passing and Returning**
+
+- A parameter is initialized from its argument. Small and read: by value. Large and read: ``const T&``, ``std::string_view`` or ``std::span``. Changed: ``T&``. Changed or absent: ``T*``.
+- Return results by value. Copy elision makes it free for a temporary, and nearly free for a named local.
+- Never return a reference or pointer to anything that dies when the call ends, including a temporary argument.
+
+**Overloading and Defaults**
+
+- Overloads differ in their parameter types, never only in the return type. The compiler ranks exact, promotion, conversion. A tie does not compile.
+- A default argument goes in the declaration, fills from the right, and is often better than a second overload.
+
+**Under the Hood**
+
+- Every call pushes a frame with its parameters, locals and return address. Every return pops it. A ``static`` local is in no frame.
+- ``main`` receives the command line: ``argc`` counts the program name too, and ``argv[argc]`` is a null pointer.
+
+**Documenting**
+
+- A ``@file`` comment on every header, and ``@brief``, ``@param``, ``@return`` on every declaration. Keep the ``Doxyfile`` in ``docs`` and run Doxygen from there.
+
+Further Reading
+---------------
+
+The sections below come from the appendix of the slides. They are **not presented** in the lecture. Read them on your own.
+
+constexpr and consteval Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A ``constexpr`` function is a function the compiler **can** run while compiling, when its arguments are constants. Given run-time values, it runs like any other function.
+
+.. code-block:: cpp
+
+   constexpr double convert_deg_to_rad(double deg) {
+     return deg * std::numbers::pi / 180.0;
+   }
+
+   constexpr double limit{convert_deg_to_rad(170.0)};  // at compile time
+
+- ``170.0`` is a literal, so the compiler knows the argument.
+- ``limit`` is ``constexpr``, so the compiler **must** run the call while compiling.
+- The program stores the result, 2.967. Nothing is computed at run time.
+- Without ``constexpr`` on the function, this line does not compile.
+
+The same function at run time:
+
+.. code-block:: cpp
+
+   double input{};
+   std::cin >> input;
+   double r{convert_deg_to_rad(input)};  // at run time
+
+   double x{convert_deg_to_rad(170.0)};  // may run early, not required to
+
+- ``input`` is known only when the program runs, so ``r`` gets an ordinary function call.
+- ``constexpr`` on a function **allows** compile time. It does not **require** it.
+- ``x`` is not ``constexpr``, so the compiler may compute it early, but it does not have to.
+- One function, two uses. Without ``constexpr``, ``limit`` needs a hand-typed ``2.967``.
+- A ``constexpr`` function cannot read input, print, or change globals.
+
+Rule: `Core Guidelines F.4 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-constexpr>`__. See `cppreference: constexpr <https://en.cppreference.com/w/cpp/language/constexpr>`__.
+
+A ``consteval`` function (C++20) is a function the compiler **must** run while compiling. Every call needs constant arguments.
+
+.. code-block:: cpp
+
+   consteval int steps_for(int deg) { return deg * 10; }
+
+   std::array<int, steps_for(3)> plan{};  // 30 elements
+
+   int n{3};
+   int bad{steps_for(n)};  // error: n is not a constant
+
+- ``constexpr`` **allows** compile time. ``consteval`` **requires** it.
+- ``n`` holds 3, but it is not ``constexpr``, so the compiler cannot use its value.
+- Use ``consteval`` when a run-time call would be a bug. See `cppreference: consteval <https://en.cppreference.com/w/cpp/language/consteval>`__.
+
+Cases without Elision
+^^^^^^^^^^^^^^^^^^^^^
+
+Two candidates:
+
+.. code-block:: cpp
+
+   std::vector<double> pick(bool first) {
+     std::vector<double> x(1000);
+     std::vector<double> y(1000);
+     return first ? x : y;  // copy
+   }
+
+.. code-block:: cpp
+
+   std::vector<double> pick(bool first) {
+     std::vector<double> x(1000);
+     std::vector<double> y(1000);
+     if (first) { return x; }  // move
+     return y;
+   }
+
+Assignment:
+
+.. code-block:: cpp
+
+   // e exists: move-assign
+   std::vector<double> e;
+   e = make_path();
+
+   // f is new: elided
+   std::vector<double> f{make_path()};
+
+- With two candidates, NRVO is not done. The implicit move then needs a plain name: ``first ? x : y`` is not one, so it is **copied**.
+- An object that already exists cannot be built again. Assigning to it moves.
+
+.. note::
+
+   Return a plain name, and initialize from the call. C++20, **[class.copy.elision]**, 11.10.5, paragraph 3.1, gives the plain-name rule.
+
+Five Common Uses of static
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Use
+     - What you write
+     - Why it is static
+   * - A running count, or the next id
+     - ``static int id{0};``
+     - the number must survive the return
+   * - A table too slow to rebuild
+     - ``static const auto t{load()};``
+     - built on the first call, then reused
+   * - Warn once
+     - ``static bool warned{false};``
+     - later calls stay quiet
+   * - Remember the last answer
+     - ``static double last{};``
+     - the next call can skip the work
+   * - One-time setup
+     - ``static bool ready{setup()};``
+     - the initializer runs exactly once
+
+- All five keep one value between calls. That is the only thing ``static`` buys you.
+- Not for a value the caller should pass in, and not for anything two callers could disagree about.
+
+.. note::
+
+   A **static data member** of a class is the same lifetime rule with a different scope: one object shared by every instance, such as a count of how many exist. Lecture 6. See `cppreference: static <https://en.cppreference.com/w/cpp/language/static>`__.
+
+The Call Stack, Step by Step
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Stack Pointer and the Frame Pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The **stack pointer** (``rsp``) is a CPU register that holds the address of the top of the stack. A push moves it down 8 bytes. A pop moves it back up. The **frame pointer** (``rbp``) is a CPU register that holds a fixed address inside the running frame. Each local is at a fixed distance from it.
+
+.. code-block:: text
+
+   B():
+     push rbp       ; save A's rbp
+     mov  rbp,rsp   ; B's fixed point
+     sub  rsp,0x10  ; 16 bytes for b
+     mov  DWORD PTR [rbp-0x4],0x2  ; b{2}
+     call C()
+     leave          ; rsp = rbp, pop rbp
+     ret            ; pop return address
+
+- ``rsp`` moves on every push, pop, call and return. ``rbp`` stays put while the function runs.
+- That is why locals are found from ``rbp``: ``b`` is always at ``rbp - 4``.
+- ``rbp`` points at the saved ``rbp``, the caller's own. Each frame links to the one that called it.
+- At ``-O2``, GCC does not set ``rbp`` up at all. It finds ``b`` from ``rsp``.
+
+Step 0: Inside main()
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 4
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_0.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(); main() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. rbp and rsp both point at the edge marked …c710.
+   :align: center
+   :width: 50%
+
+- ``main`` has no locals. Its frame is the return address and the saved ``rbp``, so ``rsp`` and ``rbp`` both hold ``…c710``.
+- Each address sits on the **top edge** of its 8-byte slot: the slot's first byte.
+- The stack grows toward **lower** addresses: up, in these drawings.
+
+.. note::
+
+   Measured with ``gdb``: g++ 13, ``-O0``, x86-64 Linux. Each address shows only its last four hex digits.
+
+Step 1: The Call to A()
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 3
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_1.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(); A() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. rbp points at the edge marked …c700, the saved rbp, and rsp at the edge marked …c6f0, the top of the stack.
+   :align: center
+   :width: 50%
+
+- ``call`` pushes the **return address**: the next instruction in ``main``.
+- ``A`` pushes the old ``rbp``, then sets ``rbp`` to ``rsp``.
+- It subtracts 16 from ``rsp`` for ``a``. The 12 unused bytes keep ``rsp`` a multiple of 16.
+
+Step 2: The Call to B()
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 2
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_2.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(), B(); B() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. B(), 32 bytes: padding, b 2, saved rbp …c700, return to A …5167. rbp points at the edge marked …c6e0, the saved rbp, and rsp at the edge marked …c6d0, the top of the stack.
+   :align: center
+   :width: 50%
+
+- The same three steps: return address, saved ``rbp``, 16 bytes for ``b``.
+- Each saved ``rbp`` holds the address of the one before. A debugger follows that chain to list the frames.
+
+Step 3: The Call to C()
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 1
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_3.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(), B(), C(); C() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. B(), 32 bytes: padding, b 2, saved rbp …c700, return to A …5167. C(), 16 bytes: saved rbp …c6e0, return to B …514c. rbp and rsp both point at the edge marked …c6c0.
+   :align: center
+   :width: 50%
+
+- ``C`` has no locals, so ``rsp`` stays equal to ``rbp``.
+- Four frames, 96 bytes in all. Each frame's size is fixed when its function is compiled.
+
+Step 4: The Return from C()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 2
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_4.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(), B(); B() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. B(), 32 bytes: padding, b 2, saved rbp …c700, return to A …5167. Greyed and dashed above them, marked popped but still holding their old values: C(). rbp points at the edge marked …c6e0, the saved rbp, and rsp at the edge marked …c6d0, the top of the stack.
+   :align: center
+   :width: 50%
+
+- ``C`` pops its saved ``rbp``, so ``rbp`` marks ``B``'s frame again.
+- ``ret`` pops the return address and jumps to it: back in ``B``, just after ``C();``.
+- The old slots are **not erased**. The next call writes over them.
+
+Step 5: The Return from B()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 3
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_5.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(); A() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. Greyed and dashed above them, marked popped but still holding their old values: B(), C(). rbp points at the edge marked …c700, the saved rbp, and rsp at the edge marked …c6f0, the top of the stack.
+   :align: center
+   :width: 50%
+
+- ``leave`` sets ``rsp`` to ``rbp`` and pops the saved ``rbp``. That frees ``b`` in one step.
+- ``ret`` jumps back into ``A``.
+- A pointer to ``b`` would still find 2, until a call reuses the slot. A dangling pointer can seem to work.
+
+Step 6: The Return from A()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 4
+
+   void C() { }
+   void B() { int b{2}; C(); }
+   void A() { int a{1}; B(); }
+   int main() { A(); }
+
+.. figure:: /_static/images/l5/stack_call_6.png
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(); main() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. Greyed and dashed above them, marked popped but still holding their old values: A(), B(), C(). rbp and rsp both point at the edge marked …c710.
+   :align: center
+   :width: 50%
+
+- ``rsp`` and ``rbp`` are back where Step 0 left them.
+- A call and a return only move two registers. Nothing is searched for, and nothing is freed.
+
+The Cost of a Call
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   void g(int a) {
+     int b{a + 1};  // b lives in g's frame
+   }                // b destroyed here
+
+   void f() {
+     int x{10};     // x lives in f's frame
+     g(x);          // g's frame stacks on top of f's
+   }                // x destroyed here
+
+- Entering a function **subtracts** a size fixed at compile time from the stack pointer. Returning **adds** it back. One instruction each way.
+- Nothing is searched for. The next frame always starts where the last one ended.
+- Because frames leave in order, the stack **cannot fragment**, unlike the heap.
+
+.. note::
+
+   A local costs almost nothing to create, which is why you should reach for one first. The ``new`` from Lecture 3 has to find free space on the heap, which costs far more than moving one register.
+
+Frame Addresses
+~~~~~~~~~~~~~~~
+
+Print the address of one local per call, and you can watch each new frame land at a **lower** address:
+
+.. code-block:: cpp
+
+   void descend(int depth) {
+     int local{depth};
+     std::cout << "depth " << depth << "  &local = " << &local << '\n';
+     if (depth < 3) { descend(depth + 1); }
+   }
+
+.. code-block:: text
+
+   depth 1  &local = 0x7ffc5ff841a4
+   depth 2  &local = 0x7ffc5ff84174
+   depth 3  &local = 0x7ffc5ff84144
+
+- Each address is ``0x30``, 48 bytes, below the last: the frame the compiler reserved for ``descend``.
+- Every call gets a new ``local`` in a new frame, though they share one name.
+- Printing a pointer with ``<<`` shows the address in hexadecimal, as in Lecture 3.
+
+Recursion
+^^^^^^^^^
+
+A **recursive** function calls itself. Every call gets its own frame, and a **base case** ends the chain of calls.
+
+.. code-block:: cpp
+
+   long long compute_factorial(int n) {
+     if (n <= 1) {        // base case
+       return 1;
+     }
+     return n * compute_factorial(n - 1);
+   }
+
+   long long r{compute_factorial(4)};
+
+Write ``f`` for ``compute_factorial``:
+
+.. code-block:: text
+
+   f(4) calls f(3)
+     f(3) calls f(2)
+       f(2) calls f(1)
+         f(1) returns 1
+       f(2) returns 2 x 1 = 2
+     f(3) returns 3 x 2 = 6
+   f(4) returns 4 x 6 = 24
+
+- Four frames of ``compute_factorial`` are on the stack at once, each with its own ``n``.
+- Every call must move **toward** the base case. Here, ``n`` shrinks by one each time.
+
+Frames of a Recursive Call
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``compute_factorial(4)``, with ``f`` standing for ``compute_factorial``. Each row is the stack after one step, bottom first:
+
+.. code-block:: text
+
+   call f(4)            main(), f(4)
+   call f(3)            main(), f(4), f(3)
+   call f(2)            main(), f(4), f(3), f(2)
+   call f(1), base case main(), f(4), f(3), f(2), f(1)
+   f(1) returns 1       main(), f(4), f(3), f(2)
+   f(2) returns 2       main(), f(4), f(3)
+   f(3) returns 6       main(), f(4)
+
+Stack Overflow
+~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   int depth{0};
+
+   void dig() {
+     ++depth;
+     dig();  // no base case
+   }
+
+- Built at ``-O0`` with the Linux default 8 MiB stack, this crashed with ``Segmentation fault`` after about **520,000** calls.
+- That is the arithmetic: 8 MiB is 8,388,608 bytes, and each frame of ``dig`` is 16 bytes, so 524,288 frames fit.
+- A correct base case is not enough if it is too far away. A bigger frame, or a deeper input, reaches the limit sooner.
+
+.. note::
+
+   A second limit hides in ``compute_factorial``: ``compute_factorial(21)`` does not fit in a ``long long``. It printed ``-4249290049419214848``, which is signed overflow, undefined behavior from Lecture 2.
+
+Recursion versus a Loop
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Good fits for recursion:
+
+- The data is recursive: a tree, a folder of folders, a map split into quadrants.
+- Divide and conquer: merge sort, quicksort.
+- The recursive version is much clearer, and the depth is small and known.
+
+Good fits for a loop:
+
+- A walk along a sequence: a sum, or a search in a vector. The depth is its length.
+- The depth depends on the input, which a user or a sensor controls.
+- Every call costs a frame. A loop reuses one.
+
+.. code-block:: cpp
+
+   double sum_readings(std::span<const double> readings) {
+     double total{0.0};
+     for (double r : readings) {
+       total += r;
+     }
+     return total;
+   }
+
+.. note::
+
+   Ask first: can a loop do this just as clearly? If so, use the loop.
+
+The Costs of Recursion
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   long long compute_fibonacci(int n) {
+     if (n < 2) { return n; }
+     return compute_fibonacci(n - 1) + compute_fibonacci(n - 2);
+   }
+
+- **Memory.** Every call is a frame: 48 bytes for ``compute_factorial`` at ``-O0``. The stack caps the depth, and running out is a crash, not an error you can handle.
+- **Repeated work.** ``compute_fibonacci(40)`` makes **331,160,281** calls and took 0.13 s at ``-O2``. A loop does 40 additions in under a microsecond.
+- **Harder to follow.** The state is spread across many frames. A loop keeps it in a few variables you can watch.
+- **Banned where failure is costly.** Rule 1 of NASA JPL's `Power of Ten <https://spinroot.com/gerard/pdf/P10.pdf>`__ forbids *direct or indirect recursion*.
+
+.. note::
+
+   Use recursion only where the data is recursive, such as a tree or a folder of folders, or for divide and conquer, and only when the depth is small and known. Factorial and Fibonacci are teaching examples. In real code, write them as loops.
+
+A Folder Tree
+~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   namespace fs = std::filesystem;
+
+   void print_tree(const fs::path& dir, int depth) {
+     for (const auto& entry : fs::directory_iterator(dir)) {
+       std::cout << std::string(2 * depth, ' ')
+         << entry.path().filename().string() << '\n';
+       if (entry.is_directory()) {
+         print_tree(entry.path(), depth + 1);
+       }
+     }
+   }
+
+.. code-block:: text
+
+   $ ./tree arm_demo
+   include
+     joint_limits.hpp
+     kinematics.hpp
+   docs
+     Doxyfile
+   src
+     joint_limits.cpp
+     kinematics.cpp
+     main.cpp
+
+- A folder holds files and folders, and each of those folders is the same problem again. The recursion follows the data.
+- Nobody knows the depth in advance. A loop would have to keep its own list of folders still to visit.
+- ``std::filesystem`` (C++17) lists folders. The order is whatever the file system returns, not sorted.
