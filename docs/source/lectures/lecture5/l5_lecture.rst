@@ -491,6 +491,8 @@ Portable:
    double clamp_joint(double deg);
    #endif  // JOINT_LIMITS_HPP
 
+Used by ROS 2: `rclcpp, node.hpp <https://github.com/ros2/rclcpp/blob/eee4b508d4357c81c0847f922617e5f498d1d4b7/rclcpp/include/rclcpp/node.hpp#L15-L16>`__.
+
 Shorter:
 
 .. code-block:: cpp
@@ -499,6 +501,8 @@ Shorter:
 
    constexpr double max_deg{170.0};
    double clamp_joint(double deg);
+
+Used by MoveIt 2: `robot_model.hpp <https://github.com/moveit/moveit2/blob/a9004a43151b7d1fd50d462b8db6d4d280b0cc21/moveit_core/robot_model/include/moveit/robot_model/robot_model.hpp#L38>`__.
 
 ``#pragma once`` is not in the standard, but GCC, Clang and MSVC all support it. This course uses it.
 
@@ -869,7 +873,7 @@ String Parameters
    log_joint(joint);    // views the string: no copy
    log_joint("elbow");  // views the literal: no std::string is built
 
-- A ``std::string_view`` is the Lecture 4 view: a pointer and a length, copied by value.
+- A ``std::string_view`` is a pointer and a length, copied by value.
 - It accepts a ``std::string`` or a string literal, and copies neither.
 - A ``const std::string&`` parameter would build a temporary copy of ``"elbow"``.
 - It owns nothing, so it must not outlive the text it looks at.
@@ -976,8 +980,6 @@ With **pass by pointer**, the parameter is a pointer, **copied** from the argume
    double q2{5.0};
    nudge_joint(&q2);              // 15
    nudge_joint(nullptr);          // does nothing
-
-The call site shows ``&q2``, so the reader sees that ``q2`` may change.
 
 .. admonition:: Best Practice
    :class: tip
@@ -1543,22 +1545,28 @@ Exercise 4: A Stack Trace
 .. code-block:: cpp
    :linenos:
 
-   constexpr int scale{2}; // global
+   constexpr int scale{2};
 
-   void f(int& x, int y, int* z) {
-     static int calls{0};
-     ++calls;
-     x += y + *z;
+   int e() {
+       static int calls{0};
+       ++calls;
+       return calls;
+   }
+
+   void f(int &x, int y, int *z) {
+     int first{e()};
+     int second{e()};
+     x += (y + *z) * (first + second);
    }
 
    int g(int a, int b) {
-     int result{};
-     result = a + b;
-     f(result, a, &b);
-     return result * scale;
+       int result{};
+       result = a + b;
+       f(result, a, &b);
+       return result * scale;
    }
 
-   int main() {
+   int main(){
      int x{10};
      int y{20};
      int z{};
@@ -1566,7 +1574,7 @@ Exercise 4: A Stack Trace
      std::cout << z << '\n';
    }
 
-Draw the stack at line 6. For each frame, write its parameters and locals with their values. Which variable does ``x`` name there? Which variable does ``z`` point at? Where are ``calls`` and ``scale``?
+Draw the stack at line 12, before it runs. For each frame, write its parameters and locals with their values. Which variable does ``x`` name there? Which variable does ``z`` point at? Where are ``calls`` and ``scale``? What does line 27 print?
 
 The main Function
 -----------------
@@ -1584,8 +1592,8 @@ Two Forms of main
    int main([[maybe_unused]] int argc,
             [[maybe_unused]] char* argv[]) { }
 
-- The return type is always ``int``. ``0`` means success. Anything else is an error code the shell can read with ``echo $?``.
-- ``main`` is the one function that may fall off its end. That counts as ``return 0;``.
+- The return type is always ``int``. ``0`` means success.
+- If ``main`` reaches its closing brace, it returns ``0``. In any other non-``void`` function, that is undefined behavior (see Missing Returns).
 - You may not call ``main`` yourself, overload it, or make it ``static``.
 - The attribute ``[[maybe_unused]]`` (C++17) silences the ``unused parameter`` warning that ``-Wextra`` gives when ``argc`` and ``argv`` are not used.
 
@@ -1620,10 +1628,6 @@ Command-line Arguments
 - ``argc`` counts the arguments, including the program's own name, so it is normally at least 1.
 - ``argv`` is an array of C-strings from Lecture 4. As a parameter it has decayed: its real type is ``char**``.
 - ``argv[argc]`` is always a null pointer.
-
-.. note::
-
-   Copy them into something safer first. Two pointers are an iterator range, as Lecture 4 showed: ``std::vector<std::string_view> args(argv, argv + argc);``
 
 Documenting Functions
 ---------------------
@@ -1787,8 +1791,9 @@ Follow along in ``doxywizard``, the Doxygen GUI:
 3. **Wizard, Project**: a project name. Leave the destination directory empty.
 4. **Wizard, Mode**: *Documented entities only*, and *Optimize for C++ output*.
 5. **Wizard, Output**: *HTML* with a navigation panel. Untick *LaTeX*.
-6. **Expert, Input**: set ``INPUT`` to ``../include`` and ``../src``, and tick ``RECURSIVE``.
-7. **File, Save as**: ``docs/Doxyfile``.
+6. **Expert, Project**: set ``STRIP_FROM_PATH`` to ``..``, so pages show ``include/kinematics.hpp``, not a full path.
+7. **Expert, Input**: set ``INPUT`` to ``../include`` and ``../src``, and tick ``RECURSIVE``.
+8. **File, Save as**: ``docs/Doxyfile``.
 
 .. warning::
 
