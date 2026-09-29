@@ -874,6 +874,33 @@ String Parameters
 - A ``const std::string&`` parameter would build a temporary copy of ``"elbow"``.
 - It owns nothing, so it must not outlive the text it looks at.
 
+A String View in Memory
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   log_joint(joint);    // views the string: no copy
+
+.. figure:: /_static/images/l5/string_view1.png
+   :alt: One row of stack memory with a blue stack tab. First, name: a data field holding the address 0x7fff...c790 in red, and a size field holding 5. After a dotted gap, joint: a pointer field holding the same address 0x7fff...c790, a size field holding 5, then six cells holding 'e', 'l', 'b', 'o', 'w' and a null byte, and a dotted cell for the rest of the buffer. A black arrow runs from name's data field to the 'e' cell inside joint.
+   :align: center
+   :width: 100%
+
+   ``name`` holds the address of the characters inside ``joint``, and their count.
+
+.. code-block:: cpp
+
+   log_joint("elbow");  // views the literal: no std::string is built
+
+.. figure:: /_static/images/l5/string_view2.png
+   :alt: Two blocks of memory. On the left, name on the stack, with a blue stack tab: a data field holding the address 0x5555...803a in red, and a size field holding 5. On the right, "elbow" in .rodata, with a purple tab: six cells holding 'e', 'l', 'b', 'o', 'w' and a null byte. A black arrow runs from name's data field to the 'e' cell.
+   :align: center
+   :width: 80%
+
+   ``name`` holds the address of the literal in ``.rodata``, and its count.
+
+``name`` is 16 bytes in both calls. Only the address in ``data`` changes.
+
 std::span (C++20)
 ~~~~~~~~~~~~~~~~~
 
