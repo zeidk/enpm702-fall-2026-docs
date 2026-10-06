@@ -465,7 +465,7 @@ are Lectures 5 and 6.
 
     **Specification**
 
-    A lidar scan is 1080 range values in metres. Readings below 0.1 are
+    A lidar scan is 1080 range values in meters. Readings below 0.1 are
     sensor noise, and readings above 25.0 mean nothing was hit. Write a
     single block that:
 
@@ -492,7 +492,7 @@ are Lectures 5 and 6.
     6. Sorts the scan with ``std::ranges::sort`` and prints the first
        three and the last three readings using ``front()``, ``back()``
        and the subscript.
-    7. Stores the sorted readings by a tenth-of-a-metre bucket in a
+    7. Stores the sorted readings by a tenth-of-a-meter bucket in a
        ``std::map<int, int>`` that counts how many readings fall in each
        bucket, using ``operator[]`` on purpose, and prints the five
        fullest buckets. In a comment, say why ``[]`` is the honest choice

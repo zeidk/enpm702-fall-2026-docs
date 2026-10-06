@@ -301,7 +301,7 @@ html[data-theme="dark"] .assignment {
  *
  * Replaces the old `.. card::` with `:class-header: sd-bg-dark-orange`.
  * Rendered as a timeline entry: accent rail on the left, clock icon,
- * time and title in the accent colour, softly tinted body.
+ * time and title in the accent color, softly tinted body.
  * ============================================================ */
 
 :root,
@@ -357,7 +357,7 @@ div.admonition.vc-stage > .admonition-title > strong,
  * Usage:  .. code-block:: yaml
  *            :emphasize-lines: 8, 12-16
  *
- * Overrides the Pygments default (pale yellow / flat grey) with a
+ * Overrides the Pygments default (pale yellow / flat gray) with a
  * marked band that reads as "this is the line that changed".
  * ============================================================ */
 

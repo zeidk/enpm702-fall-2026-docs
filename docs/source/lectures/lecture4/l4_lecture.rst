@@ -21,7 +21,7 @@ slides. It is not presented. Read it on your own.
 
 The examples come from a small robot: joint angles of an arm, a lidar
 scan, an occupancy grid, sensor names and their sampling periods. Names
-carry their unit as a suffix, as in Lecture 3: ``ranges_m`` is metres,
+carry their unit as a suffix, as in Lecture 3: ``ranges_m`` is meters,
 ``joint_deg`` is degrees.
 
 .. seealso::
@@ -292,7 +292,7 @@ the standard never uses the name. The figure shows where it sits.
 .. figure:: /_static/images/l4/stl_in_stdlib.png
    :width: 90%
    :align: center
-   :alt: One large box headed C++ Standard Library, subtitled everything the ISO C++ standard requires a compiler to ship. Inside it, a dashed olive region labelled from the STL, Stepanov and Lee, HP, adopted into the draft standard in 1994, holds five boxes. Across the top, Algorithms (sort, find, count, min_element, accumulate), Iterators (begin(), end(), *it, ++it, it != end) and Containers (vector, array, unordered_map, map, list, deque, set) sit in a row, joined by an arrow from Algorithms to Iterators and another from Iterators to Containers. Under them a note reads: an algorithm never touches a container directly, it works through iterators, so one sort fits them all. Below that are Function objects (std::less, std::hash, std::greater) and Allocators, which decide where the elements' memory comes from. To the right, still inside the library box but outside the STL region, a column headed the rest of the library, not from the STL, lists seven grey boxes with their headers: strings and string_view, streams, smart pointers with optional and variant, numerics with chrono and random, threads and atomics, filesystem with regex and locale, and ranges, C++20, built on iterators.
+   :alt: One large box headed C++ Standard Library, subtitled everything the ISO C++ standard requires a compiler to ship. Inside it, a dashed olive region labeled from the STL, Stepanov and Lee, HP, adopted into the draft standard in 1994, holds five boxes. Across the top, Algorithms (sort, find, count, min_element, accumulate), Iterators (begin(), end(), *it, ++it, it != end) and Containers (vector, array, unordered_map, map, list, deque, set) sit in a row, joined by an arrow from Algorithms to Iterators and another from Iterators to Containers. Under them a note reads: an algorithm never touches a container directly, it works through iterators, so one sort fits them all. Below that are Function objects (std::less, std::hash, std::greater) and Allocators, which decide where the elements' memory comes from. To the right, still inside the library box but outside the STL region, a column headed the rest of the library, not from the STL, lists seven gray boxes with their headers: strings and string_view, streams, smart pointers with optional and variant, numerics with chrono and random, threads and atomics, filesystem with regex and locale, and ranges, C++20, built on iterators.
 
    The STL inside the Standard Library. Containers, iterators and
    algorithms came from the STL; ``std::string`` took the container
@@ -532,7 +532,7 @@ One Block, Read Two Ways
 .. figure:: /_static/images/l4/array_memory.png
    :width: 90%
    :align: center
-   :alt: Six adjoining cells in a row holding 10, 20, 30, 0, 0, 0, behind a blue tab labelled stack. Each cell is divided into four byte cells, and the first byte of the cells holding 10 and 30 is shaded grey. Below each cell are its index, [0] to [5], and its byte offset from the start, +0, +4, +8, +12, +16 and +20. Dotted lines drop from the first byte of cell 0 to the address 0x7ffd…a10, labelled base, and from the first byte of cell 2 to the address 0x7ffd…a18. An olive arrow points down at the cell holding 30 from the annotation joint_deg[2] == *(joint_deg + 2). A brace under the whole run reads 24 bytes: six ints, four bytes each, no gaps.
+   :alt: Six adjoining cells in a row holding 10, 20, 30, 0, 0, 0, behind a blue tab labeled stack. Each cell is divided into four byte cells, and the first byte of the cells holding 10 and 30 is shaded gray. Below each cell are its index, [0] to [5], and its byte offset from the start, +0, +4, +8, +12, +16 and +20. Dotted lines drop from the first byte of cell 0 to the address 0x7ffd…a10, labeled base, and from the first byte of cell 2 to the address 0x7ffd…a18. An olive arrow points down at the cell holding 30 from the annotation joint_deg[2] == *(joint_deg + 2). A brace under the whole run reads 24 bytes: six ints, four bytes each, no gaps.
 
    The array as bytes. The address of element 2 is the base plus
    2 × 4 bytes, and the value there is 30.
@@ -786,7 +786,7 @@ Multidimensional Arrays
 .. figure:: /_static/images/l4/occupancy_grid.png
    :width: 80%
    :align: center
-   :alt: Two panels joined by an arrow. On the left, a patch of floor as a map of three rows by four cells, with three black obstacle cells, two grey unseen cells and seven white free cells. On the right, the same arrangement as numbers: 0 0 1 -1, then 0 0 1 -1, then 1 0 0 0, with a key reading free 0, blocked 1, unknown -1.
+   :alt: Two panels joined by an arrow. On the left, a patch of floor as a map of three rows by four cells, with three black obstacle cells, two gray unseen cells and seven white free cells. On the right, the same arrangement as numbers: 0 0 1 -1, then 0 0 1 -1, then 1 0 0 0, with a key reading free 0, blocked 1, unknown -1.
 
    From a patch of floor to what you store: one number per cell.
 
@@ -846,7 +846,7 @@ Row-major Order
 .. figure:: /_static/images/l4/row_major.png
    :width: 90%
    :align: center
-   :alt: Two panels for int grid[3][4] holding occupancy values. On the left, headed how you write it, a table of three rows by four columns labelled row 0 to row 2, reading 0, 0, 1, -1 then 0, 0, 1, -1 then 1, 0, 0, 0, with the 1 at row 1 column 2 highlighted in blue. On the right, headed how it is stored, the same twelve values as a single flat strip in the order 0, 0, 1, -1, 0, 0, 1, -1, 1, 0, 0, 0, with the four cells of row 1 shaded grey and the highlighted cell at flat index 6. The flat index 0 to 11 is printed below each cell, labelled flat index, and the rows are braced underneath as row 0, row 1 and row 2. A curved olive arrow joins the highlighted cell in the table to the highlighted cell in the strip. A caption below reads grid[1][2] maps to flat index 1 times 4 plus 2 equals 6.
+   :alt: Two panels for int grid[3][4] holding occupancy values. On the left, headed how you write it, a table of three rows by four columns labeled row 0 to row 2, reading 0, 0, 1, -1 then 0, 0, 1, -1 then 1, 0, 0, 0, with the 1 at row 1 column 2 highlighted in blue. On the right, headed how it is stored, the same twelve values as a single flat strip in the order 0, 0, 1, -1, 0, 0, 1, -1, 1, 0, 0, 0, with the four cells of row 1 shaded gray and the highlighted cell at flat index 6. The flat index 0 to 11 is printed below each cell, labeled flat index, and the rows are braced underneath as row 0, row 1 and row 2. A curved olive arrow joins the highlighted cell in the table to the highlighted cell in the strip. A caption below reads grid[1][2] maps to flat index 1 times 4 plus 2 equals 6.
 
    The grid as it is written, and the grid as it is stored.
 
@@ -865,7 +865,7 @@ the order in memory.
 .. figure:: /_static/images/l4/loop_with_layout.png
    :width: 90%
    :align: center
-   :alt: On the left, the three by four grid as a table with a numbered badge in each cell giving the visit order, 1 to 12 straight across each row. On the right, the same values as one flat strip in memory order with short arcs joining each cell to its neighbour. A caption reads: every step lands on the next value in memory.
+   :alt: On the left, the three by four grid as a table with a numbered badge in each cell giving the visit order, 1 to 12 straight across each row. On the right, the same values as one flat strip in memory order with short arcs joining each cell to its neighbor. A caption reads: every step lands on the next value in memory.
 
    Row by row: every step lands on the next value in memory.
 
@@ -919,7 +919,7 @@ Walk an array with an iterator:
 .. figure:: /_static/images/l4/pointer_iterator.png
    :width: 85%
    :align: center
-   :alt: Two rows showing an iterator before and after ++it. Each row has a blue stack tab, then a cell holding the iterator it, an empty cell, and six adjoining int cells holding 10, 20, 30, 40, 50 and 60. Each int cell is divided into four byte cells and carries its index [0] to [5] and its byte offset +0 to +20 below. Dotted lines drop from the first byte of cells 0 and 1 to their addresses, 0x7ffd…a10 and 0x7ffd…a14. In the top row, it holds 0x7ffd…a10 in red and a curved arrow from it points at the cell holding 10, whose address is also red. A large downward arrow labelled ++it leads to the bottom row. There, it holds 0x7ffd…a14 in blue and its arrow points at the cell holding 20, whose address is also blue.
+   :alt: Two rows showing an iterator before and after ++it. Each row has a blue stack tab, then a cell holding the iterator it, an empty cell, and six adjoining int cells holding 10, 20, 30, 40, 50 and 60. Each int cell is divided into four byte cells and carries its index [0] to [5] and its byte offset +0 to +20 below. Dotted lines drop from the first byte of cells 0 and 1 to their addresses, 0x7ffd…a10 and 0x7ffd…a14. In the top row, it holds 0x7ffd…a10 in red and a curved arrow from it points at the cell holding 10, whose address is also red. A large downward arrow labeled ++it leads to the bottom row. There, it holds 0x7ffd…a14 in blue and its arrow points at the cell holding 20, whose address is also blue.
 
    The pointer names a position; dereferencing it reads the element
    there.
@@ -966,7 +966,7 @@ undefined behavior, just like dereferencing a one-past-the-end pointer.
 .. figure:: /_static/images/l4/half_open_range.png
    :width: 90%
    :align: center
-   :alt: Six solid cells in a row holding 10 through 60, indexed [0] to [5], followed by a seventh cell with a dashed grey outline, left empty. A blue arrow labelled begin() points down at the first cell. A grey arrow labelled end() points down at the dashed cell, which is annotated not an element, never dereference. A brace spanning all seven cells, from the first cell to the dashed one, is labelled end() minus begin() equals 6.
+   :alt: Six solid cells in a row holding 10 through 60, indexed [0] to [5], followed by a seventh cell with a dashed gray outline, left empty. A blue arrow labeled begin() points down at the first cell. A gray arrow labeled end() points down at the dashed cell, which is annotated not an element, never dereference. A brace spanning all seven cells, from the first cell to the dashed one, is labeled end() minus begin() equals 6.
 
    Half-open: the length needs no plus or minus one, and an empty
    container is exactly ``begin() == end()``.
@@ -1059,7 +1059,7 @@ Vector in Memory
 .. figure:: /_static/images/l4/vector_memory.png
    :width: 80%
    :align: center
-   :alt: At the top, a brace labelled ranges_m spans three stack cells labelled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2b0, 0x6311…2bc and 0x6311…2c8. Below, a red heap tab marks a row of six int cells. The first three hold 10, 20 and 30 and are each split into four bytes; the last three are empty. The first byte of the first and fourth cells is shaded grey, and a grey cell follows the block. Three black arrows drop from the fields: begin to the first cell, end to the fourth cell just past the last element, and capacity to the point just past the sixth cell. A brace under the first three cells reads size() == 3, a brace under the other three reads spare room, and a brace under all six reads capacity() == 6.
+   :alt: At the top, a brace labeled ranges_m spans three stack cells labeled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2b0, 0x6311…2bc and 0x6311…2c8. Below, a red heap tab marks a row of six int cells. The first three hold 10, 20 and 30 and are each split into four bytes; the last three are empty. The first byte of the first and fourth cells is shaded gray, and a gray cell follows the block. Three black arrows drop from the fields: begin to the first cell, end to the fourth cell just past the last element, and capacity to the point just past the sixth cell. A brace under the first three cells reads size() == 3, a brace under the other three reads spare room, and a brace under all six reads capacity() == 6.
 
 Who Gives the Memory Back
 -------------------------
@@ -1151,7 +1151,7 @@ The nested form:
 .. figure:: /_static/images/l4/nested_grid.png
    :width: 90%
    :align: center
-   :alt: At the top, a brace labelled nested spans three stack cells labelled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2d0, 0x6311…318 and 0x6311…318. Below, a red heap tab marks an outer block of three cells labelled nested[0], nested[1] and nested[2] in purple, green and gold, each showing its three fields begin, end and cap, annotated 3 objects, 72 bytes. Black arrows run from begin to the first cell and from end and capacity to just past the last. Below that, three separate heap blocks hold four int cells each, split into four bytes. The middle block reads 0 0 7 0 and the others 0 0 0 0, braced as row 0 block, row 1 block and row 2 block. From each object, arrows in its own colour run down to its row block: begin to the first cell, end and cap to just past the fourth cell.
+   :alt: At the top, a brace labeled nested spans three stack cells labeled begin, end and capacity, with a blue stack tab on the left, holding the red addresses 0x6311…2d0, 0x6311…318 and 0x6311…318. Below, a red heap tab marks an outer block of three cells labeled nested[0], nested[1] and nested[2] in purple, green and gold, each showing its three fields begin, end and cap, annotated 3 objects, 72 bytes. Black arrows run from begin to the first cell and from end and capacity to just past the last. Below that, three separate heap blocks hold four int cells each, split into four bytes. The middle block reads 0 0 7 0 and the others 0 0 0 0, braced as row 0 block, row 1 block and row 2 block. From each object, arrows in its own color run down to its row block: begin to the first cell, end and cap to just past the fourth cell.
 
    Four allocations: the outer block, then one block per row.
 
@@ -1194,7 +1194,7 @@ much* bigger.
 .. figure:: /_static/images/l4/bookshelf.png
    :width: 85%
    :align: center
-   :alt: A sketched illustration in two halves joined by an arrow. On the left, a bookshelf labelled original shelf is completely full, with a hand holding a new book beside it and the note move is expensive, carry every book across. A box below reads: the strategy, how much bigger? Buy a shelf with room to spare so future moves are rare. On the right, a much wider shelf, labelled grow by a large factor, e.g. 2X, and new, larger shelf with room to spare, holds the same books with empty space on both shelves. Notes beside it read the move is costly, avoid constant expansions, and, in a box, growth is by factor, not a fixed amount. A line underneath reads a move is expensive, so you want it to happen rarely, not every time.
+   :alt: A sketched illustration in two halves joined by an arrow. On the left, a bookshelf labeled original shelf is completely full, with a hand holding a new book beside it and the note move is expensive, carry every book across. A box below reads: the strategy, how much bigger? Buy a shelf with room to spare so future moves are rare. On the right, a much wider shelf, labeled grow by a large factor, e.g. 2X, and new, larger shelf with room to spare, holds the same books with empty space on both shelves. Notes beside it read the move is costly, avoid constant expansions, and, in a box, growth is by factor, not a fixed amount. A line underneath reads a move is expensive, so you want it to happen rarely, not every time.
 
    Grow by a factor, not a fixed amount: one move buys room for many
    books.
@@ -1362,7 +1362,7 @@ Capacity Given Back
 
 .. note::
 
-   libstdc++ (GCC 13) honours the request. Another library may not.
+   libstdc++ (GCC 13) honors the request. Another library may not.
    Write code that is correct either way. See
    `cppreference: vector::shrink_to_fit <https://en.cppreference.com/w/cpp/container/vector/shrink_to_fit>`_.
 
@@ -1607,7 +1607,7 @@ own:
 .. figure:: /_static/images/l4/c_string.png
    :width: 70%
    :align: center
-   :alt: Eleven cells in a row under a brace labelled radar, holding the characters A, R, S, a space, 4, 0, 8, -, 2, 1 and then a null byte, indexed 0 to 10 below each cell with the index 10 in red. The last cell is annotated the terminator, one byte, not a character.
+   :alt: Eleven cells in a row under a brace labeled radar, holding the characters A, R, S, a space, 4, 0, 8, -, 2, 1 and then a null byte, indexed 0 to 10 below each cell with the index 10 in red. The last cell is annotated the terminator, one byte, not a character.
 
    ``char radar[]{"ARS 408-21"}``: ten characters and the terminator, 11
    bytes. The length is stored nowhere: ``strlen`` walks from the front
@@ -1742,7 +1742,7 @@ and the pointer goes to a heap block:
 .. figure:: /_static/images/l4/sso3.png
    :width: 100%
    :align: center
-   :alt: The string object imu on the stack with four 8-byte fields: a pointer holding 0x62fa...ab00, size 18, capacity 30, and a greyed field marked unused. An arrow from the pointer runs down to a heap block of cells holding X, s, e, n, s, a space, M, T, i, -, 6, 3, 0, a space, A, H, R, S and a null byte, indexed 0 to 29, with the cells after the null byte left empty.
+   :alt: The string object imu on the stack with four 8-byte fields: a pointer holding 0x62fa...ab00, size 18, capacity 30, and a grayed field marked unused. An arrow from the pointer runs down to a heap block of cells holding X, s, e, n, s, a space, M, T, i, -, 6, 3, 0, a space, A, H, R, S and a null byte, indexed 0 to 29, with the cells after the null byte left empty.
 
    ``imu = "Xsens MTi-630 AHRS"``: the third field is the capacity, and
    the characters live on the heap.

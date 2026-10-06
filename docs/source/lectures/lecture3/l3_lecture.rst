@@ -21,7 +21,7 @@ longer than ``a`` and ``p``, and that is on purpose. In code that flies
 something, a pointer called ``p`` is a pointer whose purpose no reviewer
 can check.
 
-Variables also carry their **unit** as a suffix: ``altitude_m`` is metres,
+Variables also carry their **unit** as a suffix: ``altitude_m`` is meters,
 ``voltage_v`` is volts, ``battery_pct`` is percent. The unit belongs in the
 name so a reviewer can catch a wrong assignment by reading the two names
 alone, without hunting for where either value came from. NASA lost the Mars
@@ -157,10 +157,10 @@ on:
    :alt: A horizontal band showing one process's virtual address space from
       low to high addresses: reserved, .text, .rodata, .data, .bss, heap,
       free space, stack and argv/env, each with a one-line note on its
-      contents. The heap is red and labelled grows up, the stack is blue
-      and labelled grows down, and their arrows point at each other into
-      the grey free space between them, annotated: both grow into it, but
-      never meet. A legend below colours the segments by storage duration:
+      contents. The heap is red and labeled grows up, the stack is blue
+      and labeled grows down, and their arrows point at each other into
+      the gray free space between them, annotated: both grow into it, but
+      never meet. A legend below colors the segments by storage duration:
       yellow for static, the whole program; blue for automatic, the
       enclosing block; red for dynamic, the heap.
 
@@ -267,7 +267,7 @@ figure is for.
       is another address. The right box, named altitude_m, holds 120 and
       sits at 0x7ffd...a04, noted: the object being pointed at, it does not
       know about the pointer. A blue arrow runs from altitude_ptr to
-      altitude_m, labelled points to.
+      altitude_m, labeled points to.
 
    ``int altitude_m{120}; int* altitude_ptr{&altitude_m};``. Here
    ``altitude_ptr`` is drawn the same way every other variable was drawn
@@ -418,9 +418,9 @@ directions.
    :align: center
    :alt: The boxes altitude_ptr and altitude_m, the first holding 0x7ffd...a04
       and the second holding 120 at that address. A teal arrow curves
-      through the gap from altitude_m to altitude_ptr, labelled
+      through the gap from altitude_m to altitude_ptr, labeled
       &altitude_m, the address of altitude_m, which is what altitude_ptr
-      stores. A red arrow curves the other way, labelled *altitude_ptr, the
+      stores. A red arrow curves the other way, labeled *altitude_ptr, the
       object at that address, which is altitude_m.
 
    ``&`` goes from an object to its address; ``*`` goes from an address
@@ -886,7 +886,7 @@ one element. That gives exactly two positions you are allowed to name:
 
 .. danger::
 
-   Everything beyond those two is undefined behaviour, and **none of it
+   Everything beyond those two is undefined behavior, and **none of it
    is a compile error**:
 
    .. code-block:: cpp
@@ -1185,8 +1185,8 @@ So losing the address is not an inconvenience. It is final:
 
 .. figure:: /_static/images/l3/png/new2.png
    :align: center
-   :alt: The same two boxes, but the stack box named battery_pct is now greyed
-      out, dashed and labelled freed, while the heap box still holds 88 at
+   :alt: The same two boxes, but the stack box named battery_pct is now grayed
+      out, dashed and labeled freed, while the heap box still holds 88 at
       address 0x5591...2b0 with no arrow reaching it.
 
    The pointer went out of scope; **the object could not**, because it
@@ -1211,7 +1211,7 @@ back. Write the two lines as a pair, and in this order:
    :alt: Three numbered stages. One, int* battery_pct{new int{88}};: a stack
       box named battery_pct holds a heap address and a red arrow points to
       a live heap box holding 88. Two, delete battery_pct;: the heap box is
-      greyed, dashed and labelled freed, the arrow is dashed and labelled
+      grayed, dashed and labeled freed, the arrow is dashed and labeled
       dangling, and the pointer still holds the old address. Three,
       battery_pct = nullptr;: the pointer holds nullptr and no arrow leaves
       it, noted: no arrow, it points nowhere.
@@ -1422,9 +1422,9 @@ pointers and one honest mistake:
    :align: center
    :alt: Two stack boxes, primary and backup, both holding the same heap
       address 0x5591...2b0, with dashed arrows converging on one heap box
-      holding 88 that is greyed, dashed and labelled freed. The left arrow
-      is labelled delete primary; and marked OK in green; the right is
-      labelled delete backup; and marked UB in red. The same block is freed
+      holding 88 that is grayed, dashed and labeled freed. The left arrow
+      is labeled delete primary; and marked OK in green; the right is
+      labeled delete backup; and marked UB in red. The same block is freed
       twice.
 
    Two pointers, one block. Nulling ``primary`` does nothing to

@@ -6,7 +6,7 @@ Ten exercises reinforcing :doc:`Lecture 2 <l2_lecture>`, in the order the
 lecture covers the material. A worked in-class exercise follows them at
 the bottom of the page; it is not one of the ten and is not submitted.
 
-They come in two kinds, and each is labelled:
+They come in two kinds, and each is labeled:
 
 - **Written** exercises ask for short answers. The compiler cannot
   answer these for you: they ask you to name a rule, classify what

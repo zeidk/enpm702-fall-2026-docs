@@ -573,7 +573,7 @@ True or False
    alone. Verified: 10/16 becomes 0/16. It destroys the elements, not
    the block. To give the memory back, follow it with
    ``shrink_to_fit()``, which is a non-binding request that libstdc++
-   honours.
+   honors.
 
 
 ----

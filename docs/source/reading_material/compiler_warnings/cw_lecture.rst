@@ -9,7 +9,7 @@ Lecture
    collected, commented out, in
    `project/reading_material/src/main.cpp <https://github.com/zeidk/enpm702-fall-2026-cpp/blob/main/project/reading_material/src/main.cpp>`_
    in the course repository. Uncomment one block, build, and run it, then
-   comment it back and move on. Blocks are labelled with the section
+   comment it back and move on. Blocks are labeled with the section
    heading they come from, so you can read and run side by side.
 
    The target is not built by default. Uncomment the **last line** of the

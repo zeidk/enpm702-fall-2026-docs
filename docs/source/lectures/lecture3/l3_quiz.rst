@@ -432,7 +432,7 @@ Multiple Choice
    is undefined. C is undefined even though nothing is dereferenced,
    because the position itself does not exist. D is the trap: the
    compiler does accept all three without a warning, which is why
-   undefined behaviour here is found at run time with
+   undefined behavior here is found at run time with
    ``-fsanitize=address``, or not at all.
 
 

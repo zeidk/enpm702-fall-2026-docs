@@ -212,9 +212,9 @@ the vocabulary is worth pinning down.
 .. figure:: /_static/images/l2/memory.png
    :align: center
    :alt: Sixteen bit cells in a row, each holding a 0 or a 1. One cell is
-      highlighted and labelled 1 bit. Two brackets underneath each span
-      eight cells and are labelled 1 byte (8 bits). A single bracket above
-      spans all sixteen and is labelled 1 word (16, 32, or 64 bits).
+      highlighted and labeled 1 bit. Two brackets underneath each span
+      eight cells and are labeled 1 byte (8 bits). A single bracket above
+      spans all sixteen and is labeled 1 word (16, 32, or 64 bits).
 
    Bits, bytes, and words.
 
@@ -267,10 +267,10 @@ behave differently later in this lecture.
    :alt: A single horizontal band titled Virtual address space, noting that
       each segment is a contiguous run of 4 KiB pages. It runs from 0x0 at
       the low addresses on the left to high addresses on the right. Nine
-      coloured segments sit side by side, labelled in order: reserved,
+      colored segments sit side by side, labeled in order: reserved,
       .text, .rodata, .data, .bss, heap, free space, stack, argv/env. Free
-      space has a dashed grey outline; every other segment has a solid
-      coloured outline.
+      space has a dashed gray outline; every other segment has a solid
+      colored outline.
 
    The virtual address space of a process. Each segment is a contiguous
    run of 4 KiB pages. **Free space** is unmapped: the heap and the
@@ -312,12 +312,12 @@ believes it has, not how the hardware is arranged.
    :alt: Top: a contiguous virtual address space running from low to high
       addresses through reserved, .text, .rodata, .data, .bss, heap, free
       space, stack and argv/env, with individual 4 KiB pages numbered
-      inside each segment. Three terms are labelled on the drawing: segment
+      inside each segment. Three terms are labeled on the drawing: segment
       for a band, page for a numbered 4 KiB cell, and frame for a 4 KiB
-      slot of physical RAM. Coloured lines join each page to a frame in the
+      slot of physical RAM. Colored lines join each page to a frame in the
       physical RAM module below, captioned Physical RAM, the same pages,
       scattered and out of order, where the named pages sit out of order
-      among unlabelled grey 4 KiB frames.
+      among unlabeled gray 4 KiB frames.
 
    Every page of the virtual address space is mapped to a frame of
    physical RAM. The order is not preserved.
@@ -330,7 +330,7 @@ believes it has, not how the hardware is arranged.
    * - Term
      - Meaning
    * - **Segment**
-     - One labelled band of the virtual address space (``.text``,
+     - One labeled band of the virtual address space (``.text``,
        ``.data``, the heap, the stack).
    * - **Page**
      - The fixed-size block a segment is cut into. **4 KiB** here.
@@ -342,7 +342,7 @@ believes it has, not how the hardware is arranged.
 
    **Adjacency in the virtual address space means nothing physically.**
    Two pages that sit side by side in your program's view can land
-   anywhere in RAM, in any order, and the grey frames in the diagram
+   anywhere in RAM, in any order, and the gray frames in the diagram
    are free or belong to another process entirely.
 
 Memory Lifetime
@@ -356,10 +356,10 @@ fixed by **how you declare it**, not by where you use it.
    :alt: A horizontal band showing one process's virtual address space from
       low to high addresses: reserved, .text, .rodata, .data, .bss, heap,
       free space, stack and argv/env, each with a one-line note on its
-      contents. The heap is red and labelled grows up, the stack is blue
-      and labelled grows down, and their arrows point at each other into
-      the grey free space between them, annotated: both grow into it, but
-      never meet. A legend below colours the segments by storage duration:
+      contents. The heap is red and labeled grows up, the stack is blue
+      and labeled grows down, and their arrows point at each other into
+      the gray free space between them, annotated: both grow into it, but
+      never meet. A legend below colors the segments by storage duration:
       yellow for static, the whole program; blue for automatic, the
       enclosing block; red for dynamic, the heap.
 
@@ -726,9 +726,9 @@ prints the decimal value.
    :alt: Two halves. Left, headed what is actually in memory: four byte cells
       holding 1100 0100, 0000 1001, 0000 0000 and 0000 0000 at consecutive
       addresses ending aba04 to aba07, annotated 4 bytes, little-endian, 32
-      bits. An arrow labelled we draw it as leads to the right half, headed
+      bits. An arrow labeled we draw it as leads to the right half, headed
       how we will draw it from now on: a single box whose four parts are
-      labelled the segment it lives in (Stack), its name (number), its
+      labeled the segment it lives in (Stack), its name (number), its
       current value (2500) and its address (0x7fff214aba04).
 
    From here on, memory is drawn in this simplified form: a named box,

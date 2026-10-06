@@ -307,7 +307,7 @@ The last two are expanded below. Both recur later in this module.
    Two limitations to expect:
 
    - **Cone mode.** ``sparse-checkout set`` defaults to cone mode, which
-     also materialises files sitting at each directory level along the
+     also materializes files sitting at each directory level along the
      path, such as ``README.md``, ``conf.py`` and ``docs/Makefile``.
      Builds usually need those. ``--no-cone`` takes exact patterns
      instead, but is slower and is being phased out.
@@ -888,7 +888,7 @@ decides how each form of ``git add`` behaves:
 
 .. warning::
 
-   Two behaviours of ``git add .`` surprise people.
+   Two behaviors of ``git add .`` surprise people.
 
    **It stages deletions.** Since Git 2.0, removing a file and running
    ``git add .`` stages the removal:

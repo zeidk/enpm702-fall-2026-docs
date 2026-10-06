@@ -76,7 +76,7 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      not on the pointer.
    - The **unit suffix** convention is now explained where the running
      example is introduced, rather than left for students to infer:
-     ``altitude_m`` is metres, ``voltage_v`` volts, ``battery_pct``
+     ``altitude_m`` is meters, ``voltage_v`` volts, ``battery_pct``
      percent, with the Mars Climate Orbiter as the reason it matters.
    - ``voltage`` renamed to ``voltage_v`` throughout, so the convention
      is applied consistently. It was previously the one unit-bearing
@@ -118,7 +118,7 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
    **Figures**
 
    - ``typed_pointer.png`` redrawn to show each object's bytes as bits,
-     split into nibbles the way Lecture 2 draws them, and relabelled for
+     split into nibbles the way Lecture 2 draws them, and relabeled for
      ``voltage_v``.
    - Two new figures added to match the deck: ``new.png`` on **The new
      Operator**, showing the stack pointer and the unnamed heap object

@@ -119,7 +119,7 @@ Multiple Choice (Questions 1-10)
 
    ``rclcpp::spin()`` blocks and processes incoming callbacks (timer
    callbacks, subscription callbacks, etc.) until the node is shut
-   down or the context is cancelled.
+   down or the context is canceled.
 
 
 .. admonition:: Question 5

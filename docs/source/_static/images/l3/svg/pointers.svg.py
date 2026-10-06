@@ -30,7 +30,7 @@ RED, RED_L = "#c0392b", "#f8d0cc"        # heap
 OLIVE = "#7d8f1c"                        # "this is allowed"
 TEAL = "#1f7a6c"
 INK, DIM, FAINT = "#1b1b1b", "#555555", "#8a8a8a"
-GREY, GREY_L = "#9a9a9a", "#ececec"
+GRAY, GRAY_L = "#9a9a9a", "#ececec"
 
 HDR, BODY, BOXW = 44, 76, 300            # header height, body height, width
 
@@ -85,14 +85,14 @@ def curve(x1, y1, cx, cy, x2, y2, color=BLUE, sw=4.5, dash=None):
 
 
 def check(x, y, color=OLIVE, s=1.0):
-    """A tick mark centred on (x, y)."""
+    """A tick mark centered on (x, y)."""
     return (f'<path d="M {x-16*s},{y} l {11*s},{13*s} l {21*s},{-27*s}" '
             f'fill="none" stroke="{color}" stroke-width="{6*s}" '
             f'stroke-linecap="round" stroke-linejoin="round"/>')
 
 
 def cross(x, y, color=RED, s=1.0):
-    """An X centred on (x, y)."""
+    """An X centered on (x, y)."""
     return (f'<path d="M {x-14*s},{y-14*s} l {28*s},{28*s} '
             f'M {x+14*s},{y-14*s} l {-28*s},{28*s}" fill="none" '
             f'stroke="{color}" stroke-width="{6*s}" stroke-linecap="round"/>')
@@ -103,13 +103,13 @@ def var_box(x, y, seg, value, name=None, addr=None, w=BOXW, mono=False,
             name_above=False):
     """One variable, drawn the way L2 draws variables.
 
-    freed=True greys the whole box out: the storage is no longer ours, but
+    freed=True grays the whole box out: the storage is no longer ours, but
     something is still drawn there because the bits do not disappear.
     """
     color, label = SEG[seg]
     if freed or dead:
         label = f"{label} (freed)" if freed else f"{label} (gone)"
-        color = GREY
+        color = GRAY
     faded = freed or dead
     # One rectangle defines the whole box, header and body together, and
     # carries the outline. The colored header band is then painted over
@@ -124,7 +124,7 @@ def var_box(x, y, seg, value, name=None, addr=None, w=BOXW, mono=False,
     # widths is not enough on a dashed (freed) box, where the gaps in the
     # dash would expose the difference wherever the stroke is absent.
     sw = 2.5
-    o = [rect(x, y, w, HDR + BODY, fill=GREY_L if faded else "#ffffff",
+    o = [rect(x, y, w, HDR + BODY, fill=GRAY_L if faded else "#ffffff",
               stroke=color, sw=sw, dash="10 8" if faded else None),
          rect(x - sw / 2, y - sw / 2, w + sw, HDR, fill=color),
          txt(x + w / 2, y + 31, label, 26, "#ffffff", FS, weight="600")]
@@ -153,7 +153,7 @@ def write(name, w, h, body, title, desc):
         f'<marker id="a-{c[1:]}" viewBox="0 0 10 10" refX="9" refY="5" '
         f'markerWidth="6" markerHeight="6" orient="auto-start-reverse">'
         f'<path d="M 0 0 L 10 5 L 0 10 z" fill="{c}"/></marker>'
-        for c in (BLUE, RED, DIM, OLIVE, TEAL, GREY))
+        for c in (BLUE, RED, DIM, OLIVE, TEAL, GRAY))
     out = [
         '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
@@ -217,7 +217,7 @@ def f_anatomy():
                  "altitude_ptr, holds the address 0x7ffd…a04 and itself sits "
                  "at address 0x7ffd…9f8. The right box, named altitude_m, "
                  "holds the value 120 and sits at address 0x7ffd…a04. A blue "
-                 "arrow runs from altitude_ptr to altitude_m, labelled "
+                 "arrow runs from altitude_ptr to altitude_m, labeled "
                  "points to.")
 
 
@@ -247,10 +247,10 @@ def f_ops():
     return write("address_of_deref", W, 620, o,
                  "The address-of and dereference operators",
                  "The boxes altitude_ptr and altitude_m. A teal arrow curves "
-                 "through the gap from altitude_m to altitude_ptr, labelled "
+                 "through the gap from altitude_m to altitude_ptr, labeled "
                  "&altitude_m, the address of altitude_m, which is what "
                  "altitude_ptr stores. A red arrow curves the other way, "
-                 "labelled *altitude_ptr, the object at that address, which "
+                 "labeled *altitude_ptr, the object at that address, which "
                  "is altitude_m.")
 
 
@@ -264,11 +264,11 @@ def f_typed():
     notes, and the bytes are what GCC really stores for them.
 
     The figure sits directly under "every pointer is 8 bytes", so every
-    row carries BOTH numbers in sizeof() form. A bar labelled "int*" next
+    row carries BOTH numbers in sizeof() form. A bar labeled "int*" next
     to "4 bytes" reads as "an int* is 4 bytes", which is the one thing
     this page must not say.
 
-    Pointer boxes are Stack blue because in this deck colour means
+    Pointer boxes are Stack blue because in this deck color means
     segment, not type. The pointee bytes are tinted teal, which is no
     segment, so they cannot be misread as "this lives on the heap".
     """
@@ -312,7 +312,7 @@ def f_typed():
                           stroke=TEAL, sw=2))
             # A byte is eight bits, so draw eight bits. L2 drew them this
             # way in visualization.svg, grouped in nibbles with the
-            # all-zero bytes greyed out, and that is the only byte
+            # all-zero bytes grayed out, and that is the only byte
             # notation the course has taught. The two nibbles are stacked
             # rather than side by side purely so they fit a 56px cell:
             # same grouping L2 used, turned through ninety degrees, which
@@ -421,7 +421,7 @@ def f_new_delete():
             if state == "live":
                 o.append(arrow(px + bw + 12, mid, hx - 12, mid, color=RED))
             else:
-                o.append(arrow(px + bw + 12, mid, hx - 12, mid, color=GREY,
+                o.append(arrow(px + bw + 12, mid, hx - 12, mid, color=GRAY,
                                dash="12 9"))
                 o.append(txt((px + bw + hx) / 2, mid - 20, "dangling", 22, RED))
         else:
@@ -435,14 +435,14 @@ def f_new_delete():
                  "Three numbered stages. One: int* battery_pct{new int{88}}; "
                  "a stack box named battery_pct holds a heap address and a "
                  "red arrow points to a live heap box holding 88. Two: delete "
-                 "battery_pct; the heap box is greyed and labelled freed, and "
-                 "the arrow is dashed and labelled dangling. Three: "
+                 "battery_pct; the heap box is grayed and labeled freed, and "
+                 "the arrow is dashed and labeled dangling. Three: "
                  "battery_pct = nullptr; the pointer holds nullptr and there "
                  "is no arrow.")
 
 
 def _leak_panel(W, bw=250):
-    """Shared geometry for the three failure figures: one column, centred."""
+    """Shared geometry for the three failure figures: one column, centered."""
     return (W - bw) / 2.0, bw
 
 
@@ -453,14 +453,14 @@ def f_memory_leak():
     o = [txt(W / 2, 60, "} // scope ends here", 24, DIM, FM)]
     o += var_box(bx, 120, "stack", "0x5591…2b0", name="battery_pct", w=bw,
                  mono=True, vsize=22, dead=True, name_above=True)
-    o.append(arrow(W / 2, 250, W / 2, 330, color=GREY, dash="10 8"))
+    o.append(arrow(W / 2, 250, W / 2, 330, color=GRAY, dash="10 8"))
     o.append(cross(W / 2, 288, s=0.9))
     o += var_box(bx, 338, "heap", "88", w=bw)
     o.append(txt(W / 2, 512, "still allocated, and now unreachable for ever",
                  23, RED))
     return write("memory_leak", W, H, o,
                  "A memory leak",
-                 "A greyed-out stack box named battery_pct, labelled Stack "
+                 "A grayed-out stack box named battery_pct, labeled Stack "
                  "(gone) because its scope has ended, with a dashed arrow "
                  "down to a live heap box holding 88. The arrow is crossed "
                  "out: the block is still allocated and nothing points at it "
@@ -477,8 +477,8 @@ def f_double_delete():
                  mono=True, vsize=20, name_above=True)
     o += var_box(W - 90 - pw, 120, "stack", "0x5591…2b0", name="backup",
                  w=pw, mono=True, vsize=20, name_above=True)
-    o.append(arrow(90 + pw / 2, 250, W / 2 - 40, 330, color=GREY, dash="10 8"))
-    o.append(arrow(W - 90 - pw / 2, 250, W / 2 + 40, 330, color=GREY,
+    o.append(arrow(90 + pw / 2, 250, W / 2 - 40, 330, color=GRAY, dash="10 8"))
+    o.append(arrow(W - 90 - pw / 2, 250, W / 2 + 40, 330, color=GRAY,
                    dash="10 8"))
     o += var_box(bx, 338, "heap", "88", w=bw, freed=True)
     o.append(txt(W / 2, 508, "delete primary;   delete backup;", 24, RED, FM))
@@ -487,7 +487,7 @@ def f_double_delete():
                  "A double delete",
                  "Two stack boxes, primary and backup, both holding the same "
                  "heap address 0x5591…2b0, with dashed arrows converging on "
-                 "one greyed heap box labelled Heap (freed). Deleting through "
+                 "one grayed heap box labeled Heap (freed). Deleting through "
                  "primary and then through backup frees the same block "
                  "twice.")
 
@@ -499,9 +499,9 @@ def f_null_deref():
     o = []
     o += var_box(bx, 120, "stack", "nullptr", name="sensor", w=bw, mono=True,
                  vsize=26, name_above=True)
-    o.append(arrow(W / 2, 250, W / 2, 330, color=GREY, dash="10 8"))
+    o.append(arrow(W / 2, 250, W / 2, 330, color=GRAY, dash="10 8"))
     o.append(f'<circle cx="{W / 2}" cy="400" r="62" fill="#ffffff" '
-             f'stroke="{GREY}" stroke-width="3" stroke-dasharray="10 8"/>')
+             f'stroke="{GRAY}" stroke-width="3" stroke-dasharray="10 8"/>')
     o.append(cross(W / 2, 400, s=1.2))
     o.append(txt(W / 2, 508, "*sensor is undefined behavior:", 24, RED, FM))
     o.append(txt(W / 2, 538, "test the pointer before dereferencing it", 23,
@@ -586,9 +586,9 @@ def f_reference_memory():
               "was compiled into a use of altitude_m"])]:
         o.append(txt(790, y + 62, tag, 24, INK, FM, anchor="start"))
         if value is not None:
-            o.append(rect(sx, y, sw_, HDR + BODY, fill=GREY_L, stroke=GREY,
+            o.append(rect(sx, y, sw_, HDR + BODY, fill=GRAY_L, stroke=GRAY,
                           sw=2.5, dash="10 8"))
-            o.append(rect(sx - 1.25, y - 1.25, sw_ + 2.5, HDR, fill=GREY))
+            o.append(rect(sx - 1.25, y - 1.25, sw_ + 2.5, HDR, fill=GRAY))
             o.append(txt(sx + sw_ / 2, y + 31, "Stack (hidden)", 24,
                          "#ffffff", FS, weight="600"))
             o.append(txt(sx + sw_ / 2, y + HDR + BODY / 2 + 9, value, 24,
@@ -607,7 +607,7 @@ def f_reference_memory():
                  "and alt, joined by a brace, and the notes &alt is "
                  "&altitude_m and sizeof(alt) is sizeof(int). On the right, "
                  "what GCC emitted: in a Debug build at -O0 an unnamed "
-                 "greyed-out eight-byte stack slot holds the address "
+                 "grayed-out eight-byte stack slot holds the address "
                  "0x7ffd…00c, exactly like an int* const; in a Release build "
                  "at -O2 there is no slot at all, drawn as an empty dashed "
                  "box with a cross through it.")

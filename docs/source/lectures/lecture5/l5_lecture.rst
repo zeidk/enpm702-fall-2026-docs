@@ -36,7 +36,7 @@ The Program We Will Build
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l5/narrative.jpeg
-   :alt: Pencil sketch of the program in three steps. On the left, a robot arm with three joints is drawn twice, (a) before clamping and (b) after clamping, with its joint angles marked. Step 1, Input: a terminal where the user enters the angles 180, 95 and minus 10 degrees. Step 2, Clamp and Convert: each angle is checked against its joint limit (theta 1 from minus 135 to 135 degrees, theta 2 from minus 90 to 90, theta 3 from minus 45 to 45) and converted to radians by multiplying by pi over 180. A table shows 180 clamped to 135 (2.356 rad), 95 clamped to 90 (1.571 rad), and minus 10 kept as minus 10 (minus 0.175 rad). Step 3, Compute and Report: a forward kinematics gear produces a report with the tool position (minus 0.882, minus 0.101) metres in the base frame, which is also marked at the tip of the arm below.
+   :alt: Pencil sketch of the program in three steps. On the left, a robot arm with three joints is drawn twice, (a) before clamping and (b) after clamping, with its joint angles marked. Step 1, Input: a terminal where the user enters the angles 180, 95 and minus 10 degrees. Step 2, Clamp and Convert: each angle is checked against its joint limit (theta 1 from minus 135 to 135 degrees, theta 2 from minus 90 to 90, theta 3 from minus 45 to 45) and converted to radians by multiplying by pi over 180. A table shows 180 clamped to 135 (2.356 rad), 95 clamped to 90 (1.571 rad), and minus 10 kept as minus 10 (minus 0.175 rad). Step 3, Compute and Report: a forward kinematics gear produces a report with the tool position (minus 0.882, minus 0.101) meters in the base frame, which is also marked at the tip of the arm below.
    :align: center
    :width: 100%
 
@@ -51,13 +51,13 @@ To **clamp** an angle is to replace it with the limit when it goes past it. An a
 The program is split into five files:
 
 .. figure:: /_static/images/l5/narrative_files.png
-   :alt: Five file cards joined by #include arrows. Source files have a blue name strip and header files a grey one. At the top, kinematics.cpp includes kinematics.hpp and joint_limits.hpp and holds the definitions of convert_deg_to_rad, forward_kinematics and print_pose, each with its body written as {...}. At the top right, joint_limits.cpp includes joint_limits.hpp and holds the definition of clamp_joint(double deg, double limit). Below the middle, kinematics.hpp has #pragma once, includes joint_limits.hpp, and declares convert_deg_to_rad, forward_kinematics with double limit = max_deg, and print_pose with int precision = 3 and std::string_view label = "tool". At the bottom left, main.cpp includes kinematics.hpp and holds int main(int argc, char* argv[]) {...}, with an arrow across to kinematics.hpp. An arrow runs from kinematics.hpp across to joint_limits.hpp, which has #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0), and declares clamp_joint(double deg, double limit = max_deg).
+   :alt: Five file cards joined by #include arrows. Source files have a blue name strip and header files a gray one. At the top, kinematics.cpp includes kinematics.hpp and joint_limits.hpp and holds the definitions of convert_deg_to_rad, forward_kinematics and print_pose, each with its body written as {...}. At the top right, joint_limits.cpp includes joint_limits.hpp and holds the definition of clamp_joint(double deg, double limit). Below the middle, kinematics.hpp has #pragma once, includes joint_limits.hpp, and declares convert_deg_to_rad, forward_kinematics with double limit = max_deg, and print_pose with int precision = 3 and std::string_view label = "tool". At the bottom left, main.cpp includes kinematics.hpp and holds int main(int argc, char* argv[]) {...}, with an arrow across to kinematics.hpp. An arrow runs from kinematics.hpp across to joint_limits.hpp, which has #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0), and declares clamp_joint(double deg, double limit = max_deg).
    :align: center
    :width: 100%
 
    The five files of the arm program and what each one holds.
 
-- An arrow means ``#include``. Blue files are **compiled** (never included). Grey files are **included** (never compiled).
+- An arrow means ``#include``. Blue files are **compiled** (never included). Gray files are **included** (never compiled).
 - The finished program is in ``project/week5/arm_demo``: headers in ``include``, source files in ``src``.
 
 Project Layout
@@ -390,7 +390,7 @@ The Program So Far: One Header, Two Source Files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: /_static/images/l5/files_three.png
-   :alt: Three file cards from project/week5/arm_demo. main.cpp and kinematics.cpp, with blue name strips, sit on top, each with an arrow down to kinematics.hpp, with a grey name strip. main.cpp holds #include "kinematics.hpp" and int main(int argc, char* argv[]) {...}. kinematics.hpp holds #pragma once and the declaration double convert_deg_to_rad(double deg);. kinematics.cpp holds #include "kinematics.hpp" and the definition double convert_deg_to_rad(double deg) {...}. In the two kinematics cards a grey ... stands for the lines shown on later slides.
+   :alt: Three file cards from project/week5/arm_demo. main.cpp and kinematics.cpp, with blue name strips, sit on top, each with an arrow down to kinematics.hpp, with a gray name strip. main.cpp holds #include "kinematics.hpp" and int main(int argc, char* argv[]) {...}. kinematics.hpp holds #pragma once and the declaration double convert_deg_to_rad(double deg);. kinematics.cpp holds #include "kinematics.hpp" and the definition double convert_deg_to_rad(double deg) {...}. In the two kinematics cards a gray ... stands for the lines shown on later slides.
    :align: center
    :width: 100%
 
@@ -446,7 +446,7 @@ The Program So Far: What Is Compiled
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: /_static/images/l5/files_cmake.png
-   :alt: Five file cards from project/week5/arm_demo. The three source files are outlined in red and show their contents: main.cpp with int main(int argc, char* argv[]) {...}; kinematics.cpp with its two #include lines and the definition of convert_deg_to_rad, then a grey ...; and joint_limits.cpp with the definition double clamp_joint(double deg, double limit) {...}. The two header files, kinematics.hpp and joint_limits.hpp, are greyed out as names only. Faint arrows run from main.cpp and kinematics.cpp to kinematics.hpp, from kinematics.cpp and kinematics.hpp to joint_limits.hpp, and from joint_limits.cpp up to joint_limits.hpp.
+   :alt: Five file cards from project/week5/arm_demo. The three source files are outlined in red and show their contents: main.cpp with int main(int argc, char* argv[]) {...}; kinematics.cpp with its two #include lines and the definition of convert_deg_to_rad, then a gray ...; and joint_limits.cpp with the definition double clamp_joint(double deg, double limit) {...}. The two header files, kinematics.hpp and joint_limits.hpp, are grayed out as names only. Faint arrows run from main.cpp and kinematics.cpp to kinematics.hpp, from kinematics.cpp and kinematics.hpp to joint_limits.hpp, and from joint_limits.cpp up to joint_limits.hpp.
    :align: center
    :width: 100%
 
@@ -514,7 +514,7 @@ The Program So Far: Nested Includes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: /_static/images/l5/files_nested.png
-   :alt: Five file cards from project/week5/arm_demo, with main.cpp and joint_limits.cpp greyed out as names only. kinematics.cpp, at the top, has #include "joint_limits.hpp" and the definition of forward_kinematics in red. kinematics.hpp, below left, has #include "joint_limits.hpp" and the declaration of forward_kinematics ending in double limit = max_deg, both in red. joint_limits.hpp, below right, holds #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0) and the declaration double clamp_joint(double deg, double limit = max_deg);. Red arrows run from kinematics.cpp to kinematics.hpp, from kinematics.cpp to joint_limits.hpp, and from kinematics.hpp to joint_limits.hpp: two routes from kinematics.cpp to joint_limits.hpp.
+   :alt: Five file cards from project/week5/arm_demo, with main.cpp and joint_limits.cpp grayed out as names only. kinematics.cpp, at the top, has #include "joint_limits.hpp" and the definition of forward_kinematics in red. kinematics.hpp, below left, has #include "joint_limits.hpp" and the declaration of forward_kinematics ending in double limit = max_deg, both in red. joint_limits.hpp, below right, holds #pragma once, constexpr double max_deg{170.0}, one limit per joint (shoulder_max_deg 135.0, elbow_max_deg 90.0, wrist_max_deg 45.0) and the declaration double clamp_joint(double deg, double limit = max_deg);. Red arrows run from kinematics.cpp to kinematics.hpp, from kinematics.cpp to joint_limits.hpp, and from kinematics.hpp to joint_limits.hpp: two routes from kinematics.cpp to joint_limits.hpp.
    :align: center
    :width: 100%
 
@@ -597,7 +597,7 @@ A **call** jumps to the start of the function's body. A ``return`` statement, or
    }
 
 .. figure:: /_static/images/l5/call_sequence.png
-   :alt: Sequence diagram with three lifelines, main, report_arm and print_limits, each named at the top and the bottom. A red arrow labelled call runs from main to report_arm. A short arrow looping back onto report_arm is labelled "arm:". A red arrow labelled call runs from report_arm to print_limits. A loop on print_limits is labelled "170 deg". A blue arrow labelled return runs back from print_limits to report_arm, then another from report_arm to main. A final loop on main is labelled "exit main".
+   :alt: Sequence diagram with three lifelines, main, report_arm and print_limits, each named at the top and the bottom. A red arrow labeled call runs from main to report_arm. A short arrow looping back onto report_arm is labeled "arm:". A red arrow labeled call runs from report_arm to print_limits. A loop on print_limits is labeled "170 deg". A blue arrow labeled return runs back from print_limits to report_arm, then another from report_arm to main. A final loop on main is labeled "exit main".
    :align: center
    :width: 100%
 
@@ -956,7 +956,7 @@ A Span in Memory
    average_angle(arr);  // angles is built from arr
 
 .. figure:: /_static/images/l5/span_memory.png
-   :alt: One row of memory with a blue stack tab on the left. First, arr: two adjoining cells holding 4.0 and 6.0, labelled [0] +0 and [1] +8, with the base address 0x7ffd…a10 marked in red under the first cell. After a gap, angles: two cells, data holding the same address 0x7ffd…a10 in red, and size holding 2. A curved black arrow runs from the data field back to the first cell of arr.
+   :alt: One row of memory with a blue stack tab on the left. First, arr: two adjoining cells holding 4.0 and 6.0, labeled [0] +0 and [1] +8, with the base address 0x7ffd…a10 marked in red under the first cell. After a gap, angles: two cells, data holding the same address 0x7ffd…a10 in red, and size holding 2. A curved black arrow runs from the data field back to the first cell of arr.
    :align: center
    :width: 100%
 
@@ -1268,11 +1268,11 @@ One Name, Three Functions
    void print_pose(double x, double y);              // position
    void print_pose(double x, double y, double deg);  // with heading
    void print_pose(std::string_view name,
-                   double x, double y);              // labelled
+                   double x, double y);              // labeled
 
    print_pose(0.42, 1.17);           // the two-value version
    print_pose(0.42, 1.17, 30.0);     // the three-value version
-   print_pose("wrist", 0.42, 1.17);  // the labelled version
+   print_pose("wrist", 0.42, 1.17);  // the labeled version
 
 Without overloading you would write ``print_pose_xy``, ``print_pose_labelled`` and so on. The standard library overloads everywhere: ``std::abs``, and every ``<<`` on ``std::cout``.
 
@@ -1385,7 +1385,7 @@ The Program So Far: Defaults
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l5/files_defaults.png
-   :alt: Five file cards, with main.cpp, joint_limits.hpp and joint_limits.cpp greyed out as names only. kinematics.hpp adds, in red, the declaration void print_pose(double x, double y, int precision = 3, std::string_view label = "tool");. kinematics.cpp, above it, adds, in red, the definition void print_pose(double x, double y, int precision, std::string_view label) {...}, with no defaults. In both cards a grey ... above it stands for the functions shown on earlier slides.
+   :alt: Five file cards, with main.cpp, joint_limits.hpp and joint_limits.cpp grayed out as names only. kinematics.hpp adds, in red, the declaration void print_pose(double x, double y, int precision = 3, std::string_view label = "tool");. kinematics.cpp, above it, adds, in red, the definition void print_pose(double x, double y, int precision, std::string_view label) {...}, with no defaults. In both cards a gray ... above it stands for the functions shown on earlier slides.
    :align: center
    :width: 100%
 
@@ -1528,7 +1528,7 @@ A **stack frame** is the memory for one call: its parameters, its local variable
    int main() { A(); }
 
 .. figure:: /_static/images/l5/stack_frames.png
-   :alt: Six stacks of boxes side by side, labelled underneath start, A(), B(), C(), C returns and B returns. Each stack is built upward from a box reading main(). The stacks read, bottom to top: main(); main(), A(); main(), A(), B(); main(), A(), B(), C(); main(), A(), B(); and main(), A(). In every stack the top box is outlined in red to mark the running function, and the boxes below it are grey.
+   :alt: Six stacks of boxes side by side, labeled underneath start, A(), B(), C(), C returns and B returns. Each stack is built upward from a box reading main(). The stacks read, bottom to top: main(); main(), A(); main(), A(), B(); main(), A(), B(), C(); main(), A(), B(); and main(), A(). In every stack the top box is outlined in red to mark the running function, and the boxes below it are gray.
    :align: center
    :width: 100%
 
@@ -2119,7 +2119,7 @@ Step 4: The Return from C()
    int main() { A(); }
 
 .. figure:: /_static/images/l5/stack_call_4.png
-   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(), B(); B() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. B(), 32 bytes: padding, b 2, saved rbp …c700, return to A …5167. Greyed and dashed above them, marked popped but still holding their old values: C(). rbp points at the edge marked …c6e0, the saved rbp, and rsp at the edge marked …c6d0, the top of the stack.
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(), B(); B() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. B(), 32 bytes: padding, b 2, saved rbp …c700, return to A …5167. Grayed and dashed above them, marked popped but still holding their old values: C(). rbp points at the edge marked …c6e0, the saved rbp, and rsp at the edge marked …c6d0, the top of the stack.
    :align: center
    :width: 100%
 
@@ -2140,7 +2140,7 @@ Step 5: The Return from B()
    int main() { A(); }
 
 .. figure:: /_static/images/l5/stack_call_5.png
-   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(); A() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. Greyed and dashed above them, marked popped but still holding their old values: B(), C(). rbp points at the edge marked …c700, the saved rbp, and rsp at the edge marked …c6f0, the top of the stack.
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(), A(); A() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. A(), 32 bytes: padding, a 1, saved rbp …c710, return to main …5177. Grayed and dashed above them, marked popped but still holding their old values: B(), C(). rbp points at the edge marked …c700, the saved rbp, and rsp at the edge marked …c6f0, the top of the stack.
    :align: center
    :width: 100%
 
@@ -2161,7 +2161,7 @@ Step 6: The Return from A()
    int main() { A(); }
 
 .. figure:: /_static/images/l5/stack_call_6.png
-   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(); main() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. Greyed and dashed above them, marked popped but still holding their old values: A(), B(), C(). rbp and rsp both point at the edge marked …c710.
+   :alt: Twelve 8-byte stack slots, the lowest address …c6c0 at the top and the highest …c718 at the bottom, so each call stacks a new frame on top of the last. Each address is written on the top edge of its slot, the slot's first byte. Live frames, bottom to top: main(); main() is outlined in red as the running frame. main(), 16 bytes: saved rbp …c7b0, return to startup …a1ca. Grayed and dashed above them, marked popped but still holding their old values: A(), B(), C(). rbp and rsp both point at the edge marked …c710.
    :align: center
    :width: 100%
 
