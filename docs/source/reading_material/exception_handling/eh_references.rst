@@ -29,11 +29,11 @@ References
 
             **cppreference: Exceptions**
 
-        .. grid-item-card:: try-catch
-            :link: https://en.cppreference.com/w/cpp/language/try_catch
+        .. grid-item-card:: try block
+            :link: https://en.cppreference.com/w/cpp/language/try
             :class-card: sd-border-secondary
 
-            **cppreference: try-catch**
+            **cppreference: try block**
 
         .. grid-item-card:: throw expression
             :link: https://en.cppreference.com/w/cpp/language/throw

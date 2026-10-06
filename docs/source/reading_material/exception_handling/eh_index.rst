@@ -6,9 +6,10 @@ Overview
 --------
 
 This reading material covers C++ exception handling using ``try``,
-``catch``, and ``throw``. It is a self-study reading module. Students
-should work through it before starting RWA2, as proper error handling
-is expected in all subsequent assignments.
+``catch``, and ``throw``. It is a self-study reading module. Read it
+before Lecture 7. It explains the two Lecture 6 programs that stopped
+with ``terminate called after throwing an instance of ...``, and how to
+catch those errors.
 
 
 .. admonition:: Learning Objectives
@@ -20,9 +21,9 @@ is expected in all subsequent assignments.
    - Use ``try``, ``catch``, and ``throw`` to handle runtime errors.
    - Catch exceptions by type and by reference.
    - Use standard exception classes (``std::exception``, ``std::runtime_error``, ``std::out_of_range``, etc.).
-   - Create custom exception classes.
+   - Create custom exception types that build on ``std::runtime_error``.
    - Apply the RAII principle to ensure exception-safe resource management.
-   - Understand when to use exceptions vs. return codes.
+   - Decide when to use exceptions and when to use ``std::optional`` or return codes.
 
 
 .. toctree::

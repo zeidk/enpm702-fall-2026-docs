@@ -2,1914 +2,2037 @@
 Lecture
 ====================================================
 
-``struct``
-====================================================
+Learning Objectives
+-------------------
 
-In C, a ``struct`` is a **Plain Old Data** (POD) container. It is a simple, passive way to group related variables together. It has no methods, no privacy, and no complex behaviors.
+1. Group values with a ``struct``, a ``std::pair``, or a ``std::tuple``, and predict a ``struct``'s size.
+2. Return several values, or a value that may be missing, and unpack them with structured bindings.
+3. Write a function template, and constrain it with a concept.
+4. Write lambdas with captures, and pass them to the standard algorithms.
+5. Write higher-order functions: pass, store, and adapt callables with ``std::function`` and ``std::bind``.
 
-When C++ was born, it took the C-style ``struct`` and gave it superpowers. In C++, a ``struct`` is, for all intents and purposes, a ``class``. The C heritage, however, still strongly influences how we use it.
+Code for This Lecture
+^^^^^^^^^^^^^^^^^^^^^
 
-In C++, ``struct`` and ``class`` are nearly identical. The **only** difference is the default access level: by default, members are **public** in ``struct`` and **private** in ``class``.
+.. code-block:: text
 
-.. admonition:: Convention
-   :class: tip
+   project/week6/
+   ├── CMakeLists.txt
+   ├── fleet/
+   │   ├── include/
+   │   ├── src/
+   │   └── docs/
+   ├── snippets/
+   ├── throws/
+   └── undefined/
 
-   Use ``struct`` for simple data containers (POD types). Use ``class`` when you need encapsulation and private data.
+**Run the finished program first**
 
+1. Get the code: ``git pull``, then ``702configure``.
+2. Build it: ``702build week6_fleet``.
+3. Run it: ``702run week6_fleet``. It prints the fleet, a summary, the robot chosen for a task at (5, 5), and three commands.
 
-``struct`` vs ``class``
-------------------------
+**Run a slide's code**
 
-.. grid:: 2
-   :gutter: 3
+- One program per section, ``week6_grouping`` to ``week6_higher_order``. ``702run week6_grouping`` runs all of Section 1, Grouping Values; ``702run week6_grouping 7`` only slide 7.
+- Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   .. grid-item-card:: struct (public by default)
-      :class-card: sd-border-primary
+``fleet`` holds the finished program; its Doxyfile is in ``fleet/docs``. ``throws`` and ``undefined`` hold one program per slide; ``week6_dangling`` is always built with AddressSanitizer.
 
-      .. code-block:: cpp
+.. note::
 
-         struct Robot {
-             // PUBLIC by default
-             std::string name;
-             double speed;
+   The `Further Reading`_ part, after the summary, is the appendix of the slides. It is not presented. Read it on your own.
 
-             // Constructor
-             Robot(std::string n, double s)
-                 : name(n), speed(s) {}
+The Program We Will Build
+-------------------------
 
-             // Method
-             void move(double distance) {
-                 std::cout << name << " moving "
-                     << distance << "m at "
-                     << speed << " m/s\n";
-             }
-         };
+A warehouse runs four robots. Today we write the **fleet manager**, a C++ program that tracks each robot's battery, position and state and picks a robot for each new task. Its **dispatcher**, the part that sends commands, tells a robot to "dock".
 
-         // Usage
-         Robot r{"R2D2", 1.5};
-         r.move(10.0);  // works
-         std::cout << r.name;  // works
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
 
-   .. grid-item-card:: class (private by default)
-      :class-card: sd-border-secondary
+   * - Robot
+     - Battery
+     - Position (m, from the dock)
+     - State
+   * - 1
+     - 82.5 %
+     - (0, 0)
+     - idle
+   * - 2
+     - 35.0 %
+     - (4, 1)
+     - busy
+   * - 3
+     - 64.0 %
+     - (2, 3)
+     - idle
+   * - 4
+     - 18.0 %
+     - (6, 2)
+     - idle
 
-      .. code-block:: cpp
+**States**
 
-         class Robot {
-             // PRIVATE by default
-             std::string name;
-             double speed;
+- **idle**: free to take a task.
+- **busy**: carrying out a task.
 
-         public:  // Must explicitly say public!
-             // Constructor
-             Robot(std::string n, double s)
-                 : name(n), speed(s) {}
+**Commands**
 
-             // Method
-             void move(double distance) {
-                 std::cout << name << " moving "
-                           << distance << "m at "
-                           << speed << " m/s\n";
-             }
-         };
+- **dock**: return to the charging dock.
+- **pause**: stop and hold position.
+- **resume**: continue after a pause.
+- Any other name is refused.
 
-         // Usage
-         Robot r{"R2D2", 1.5};
-         r.move(10.0);  // works
-         // std::cout << r.name;  // ERROR: private!
+.. note::
 
+   The robots are data in the program, not machines. Sending **dock** to robot 4 prints the line ``robot 4: go to dock``. Its position, battery and state do not change.
 
-Aggregate Initialization
---------------------------
+.. figure:: /_static/images/l6/narrative_gemini.jpeg
+   :alt: An illustrated drawing on a parchment background. Left: the warehouse floor seen from above, on a 1 meter grid with x pointing right from 0 to 7 and y pointing up from 0 to 5. The origin is the charging dock, a yellow charging station in the bottom left corner. Four small wheeled robots, each with a numbered disc, stand on the floor, each labeled with its id, its state and a battery bar. Robot 1, idle, 82.5 %, sits in the dock at (0, 0). Robot 2, busy, 35 %, is at (4, 1) and is drawn in amber. Robot 3, idle, 64 %, is at (2, 3). Robot 4, idle, 18 %, is at (6, 2). Idle robots have a green ring. A row of wooden shelves runs along x at y = 4, and above it a blue star marks a new task, pickup at (5, 5). Right: a panel labeled Fleet manager, a C++ program, which tracks each robot's battery, position and state and picks a robot for each new task. Inside it, a panel labeled Dispatcher sends the commands dock, pause and resume, and for dock to robot 4 prints the line robot 4: go to dock. An arrow labeled status runs from the floor to the fleet manager, and an arrow labeled commands runs from the dispatcher back to the floor.
+   :align: center
+   :width: 100%
 
-The most "struct-like" feature is aggregate initialization. An "aggregate" is, broadly, a type (like a ``struct`` or array) with no user-defined constructors, no private or protected non-static data members, and no virtual functions.
+   The warehouse floor, seen from above, with the four robots and the new task at (5, 5). The fleet manager receives each robot's status, and its dispatcher sends the commands.
+
+Grouping Values
+---------------
+
+A ``struct`` is a type you define. It gives one name to a group of variables, called **members**, that belong together. ``std::pair`` and ``std::tuple`` are ready-made groups from the standard library.
+
+See `cppreference: classes <https://en.cppreference.com/w/cpp/language/classes>`__. Rule: `Core Guidelines C.1 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-org>`__.
+
+Three Values, One Status
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+The fleet manager asks robot 3 for its **status**: its battery level and its position x, y. A function that reads the status has three numbers to give back.
+
+**Without a struct**
 
 .. code-block:: cpp
 
-   struct Point {
-       double x;
-       double y;
-       std::string label{"default"}; // C++11 default member initializer
+   void get_status(int id,
+       double& battery_pct,
+       double& x, double& y);
+
+   double battery_pct{};
+   double x{};
+   double y{};
+   get_status(3, battery_pct, x, y);
+
+**With a struct**
+
+.. code-block:: cpp
+
+   struct RobotStatus {
+     double battery_pct;
+     double x;
+     double y;
    };
 
-   int main() {
-       // Aggregate Initialization
-       Point p1 = {10.0, 20.0, "center"}; // Initializes x, y, label
-       Point p2 = {10.0, 20.0};           // Initializes x, y. label uses its default.
+   RobotStatus get_status(int id);
+   RobotStatus status{get_status(3)};
 
-       std::cout << p1.label << '\n'; // "center"
-       std::cout << p2.label << '\n'; // "default"
-   }
+- Lecture 5 had only one way to give back three values: three reference parameters.
+- A ``struct`` puts the three in one object. The function **returns** it, the way Lecture 5 says results should go back. Rule: `Core Guidelines F.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out>`__.
 
+Declaring a ``struct``
+^^^^^^^^^^^^^^^^^^^^^^
 
-Structured Bindings
----------------------
-
-Structured bindings allow you to decompose a ``struct``'s members into distinct local variables. It binds to the non-static data members of the ``struct`` in the order they are declared.
+A ``struct`` is a type made of named members. Every object of the type holds its own copy of each member.
 
 .. code-block:: cpp
 
-   Point get_start_point() { return {1.0, 2.0}; }
-
-   int main() {
-       Point p = get_start_point();
-       auto [x, y, label] = p; // Magic!
-
-       // Variables x, y, and label are created and populated
-       std::cout << "X: " << x << ", Y: " << y << ", Label: " << label << '\n';
-   }
-
-You can also bind by reference to modify the original ``struct``.
+   struct Position {
+     double x;  // meters
+     double y;
+   };
 
 .. code-block:: cpp
 
-   Point p = {10.0, 20.0};
-   auto& [x_ref, y_ref, label_ref] = p;
+   struct RobotStatus {
+     int id;
+     double battery_pct;
+     Position position;  // a struct
+     bool busy;
+   };  // the semicolon is required
 
-   x_ref = 100.0; // This modifies p.x
+- The declaration makes a **type**. No memory is used until you make an object: ``RobotStatus r{};``.
+- A member can be a ``struct``: ``Position`` must be declared first. Leave out a final ``;`` and GCC says ``expected ';' after struct definition``.
+- Type names on these slides start with a capital letter, so a type and a variable never share a name.
 
-   std::cout << p.x << '\n'; // Prints 100.0
-
-
-Templates
-====================================================
-
-A template is a **blueprint** (generic programming) the compiler uses to generate concrete functions or types. You write with type parameters (e.g., ``T``); the compiler *instantiates* actual code for the types you use.
-
-.. admonition:: Generic Programming Essentials
-   :class: note
-
-   1. **Separate algorithms from types**: write logic once.
-   2. **Parameterize over types**: use placeholders (e.g., ``T``).
-   3. **Enforce static correctness**: errors at compile time.
-   4. **Zero-overhead**: optimal code for each instantiation.
-
-
-Without Templates vs With Templates
---------------------------------------
-
-**Without templates**, you must duplicate the same logic for each type:
+Where a ``struct`` Goes
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   int add(int a, int b) {
-       return a + b;
-   }
+   struct RobotStatus;  // declared, not defined
 
-   double add(double a, double b) {
-       return a + b;
-   }
+   RobotStatus robot_status{};  // an object needs the size
 
-   std::string add(const std::string& a, const std::string& b) {
-       return a + b;
-   }
+.. code-block:: text
 
-Same logic written three times. Any bug fix or improvement must be duplicated, violating **DRY**.
+   incomplete_type.cpp:3:13: error: variable 'RobotStatus robot_status' has
+     initializer but incomplete type
 
-**With templates**, you write the logic once:
+- To make an object, the compiler needs the **whole** definition in this ``.cpp``: the size and where each member sits.
+- The linker cannot help. It joins functions by name and never sees types.
+- A function is defined once per program (Lecture 5). A ``struct`` is defined once per ``.cpp``, and all copies must match.
+- So the definition goes in one **header**, ``fleet/include/robot.hpp``, and every ``.cpp`` that uses it includes it.
 
-.. code-block:: cpp
+See `struct or class`_ under Further Reading.
 
-   template<typename T>
-   T add(T a, T b) {
-       return a + b;
-   }
+Initializing a ``struct``
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When called, the compiler generates (instantiates) the needed concrete overloads, e.g., ``int add(int,int)``, ``double add(double,double)``, ``std::string add(const std::string&, const std::string&)``.
-
-
-Syntax
---------
+In **aggregate initialization**, the members take their values from a braced list, in the order they are declared. It works because a plain ``struct`` is an **aggregate** (Lecture 4).
 
 .. code-block:: cpp
 
-   template<typename T>
-   ReturnType function_name(T parameter) {
-       // function body
-   }
+   RobotStatus robot_3{3, 64.0, {2.0, 3.0}, false};  // all four
+   RobotStatus id_only{3};   // the rest are 0 and false
+   RobotStatus all_zero{};   // each member value-initialized: 0 and false
+   RobotStatus no_braces;    // garbage, like int n;
 
-Or equivalently:
+- The inner ``{2.0, 3.0}`` initializes the ``Position`` member the same way.
+- Members the list does not reach are set to zero. ``-Wextra`` warns about ``id_only`` anyway: ``missing initializer for member 'RobotStatus::battery_pct'``.
+- ``no_braces`` holds garbage. Always use braces. Rule: `Core Guidelines ES.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-always>`__.
+
+Default Member Initializers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   template<class T>
-   ReturnType function_name(T parameter) {
-       // function body
+   struct RobotStatus {
+     int id{0};
+     double battery_pct{100.0};  // a new robot starts charged
+     Position position{};        // Position has defaults too
+     bool busy{false};
+   };
+
+   RobotStatus new_robot{};  // 0 100 (0, 0) idle
+   RobotStatus robot_4{4, 18.0};                    // 4 18 (0, 0) idle
+   RobotStatus robot_2{2, 35.0, {4.0, 1.0}, true};  // 2 35 (4, 1) busy
+
+- A member can carry its own initializer. It is used whenever the braced list does not reach that member.
+- The ``struct`` is still an aggregate, so the braced list works as before. This is the version in ``robot.hpp``.
+- A member with a default never holds garbage, even after ``RobotStatus no_braces;``: it printed ``0 100 (0, 0) idle``.
+
+Designated Initializers (C++20)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   RobotStatus robot_1{.id = 1, .battery_pct = 82.5};  // idle at (0, 0)
+   RobotStatus robot_2{.id = 2, .busy = true};         // battery 100
+   RobotStatus robot_5{.battery_pct = 50.0, .id = 5};  // wrong order
+
+.. code-block:: text
+
+   designated_order.cpp:16:51: error: designator order for field 'RobotStatus::id'
+     does not match declaration order in 'RobotStatus'
+
+- Name the members you set, in declaration order. You may skip members, but you may not mix named and unnamed values.
+- The file declares ``Position`` and ``RobotStatus`` above ``main``, so the error is on line 16.
+
+.. note::
+
+   C++20, **[dcl.init.list]**, section 9.4.4, paragraph 3.1: the designators *shall form a subsequence of the ordered identifiers in the direct non-static data members*.
+
+Member Access
+^^^^^^^^^^^^^
+
+**Member access** names one member of an object: ``.`` on the object itself, ``->`` through a pointer to it (Lecture 3).
+
+.. code-block:: cpp
+
+   RobotStatus robot_status{3, 64.0, {2.0, 3.0}, false};
+   std::cout << robot_status.id << ' '
+             << robot_status.position.x << '\n';  // 3 2
+
+   RobotStatus* status_ptr{&robot_status};
+   // the same as (*status_ptr).battery_pct -= 10.0;
+   status_ptr->battery_pct -= 10.0;
+   std::cout << robot_status.battery_pct << '\n';  // 54
+
+- ``robot_status.position.x`` reads two levels down: the ``x`` of the ``position`` of ``robot_status``.
+- ``status_ptr->battery_pct`` is short for ``(*status_ptr).battery_pct``. Without the parentheses, ``*status_ptr.battery_pct`` means ``*(status_ptr.battery_pct)``, which does not compile.
+
+A ``struct`` in Memory
+^^^^^^^^^^^^^^^^^^^^^^
+
+**Padding** is the unused bytes the compiler adds so each member's address is a multiple of its type's **alignment**: a power of 2, such as 4 for ``int`` and 8 for ``double``.
+
+.. code-block:: cpp
+
+   struct RobotStatus {
+     int id;              // 4
+     double battery_pct;  // 8
+     Position position;   // 16
+     bool busy;           // 1
+   };
+   // data: 4 + 8 + 16 + 1 = 29
+   sizeof(RobotStatus);   // 40
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Bytes
+     - Holds
+     - Why
+   * - 0 to 3
+     - ``id``
+     - first member
+   * - 4 to 7
+     - padding
+     - next ``double`` at 8
+   * - 8 to 15
+     - ``battery_pct``
+     - 8 is a multiple of 8
+   * - 16 to 31
+     - ``position``
+     - two ``double``\ s
+   * - 32
+     - ``busy``
+     - 
+   * - 33 to 39
+     - padding
+     - ``sizeof`` goes from 33 to 40
+
+- Offsets measured with ``offsetof``, alignments with ``alignof`` (g++ 13, x86-64). 11 of the 40 bytes hold nothing.
+
+See `offsetof`_ and `alignof`_ under Further Reading.
+
+Byte by Byte
+~~~~~~~~~~~~
+
+.. figure:: /_static/images/l6/struct_memory.png
+   :alt: One row of 40 byte cells with a blue stack tab on the left. The members are outlined in blue and split into byte cells: id in bytes 0 to 3, then 4 gray padding bytes, 4 to 7, then battery_pct in bytes 8 to 15, position.x in bytes 16 to 23, position.y in bytes 24 to 31, busy in byte 32, labeled above the row, and 7 gray padding bytes, 33 to 39. The byte range of each part is printed under it. A brace under the whole row reads 40 bytes: 29 of data, 11 of padding, and a caption reads each double starts at a byte that is a multiple of 8: 8, 16, 24.
+   :align: center
+   :width: 100%
+
+   The 40 bytes of a ``RobotStatus``, member by member. Gray bytes are padding.
+
+- Gray bytes hold nothing. The 4 after ``id`` move ``battery_pct`` to byte 8, a multiple of 8.
+- The 7 after ``busy`` make ``sizeof`` go from 33 to 40.
+
+See `Without End Padding`_ under Further Reading.
+
+Member Order
+~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   struct RobotStatusSorted {
+     double battery_pct;
+     Position position;
+     int id;
+     bool busy;
+   };
+   // sizeof: 32
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Bytes
+     - Holds
+     - Why
+   * - 0 to 7
+     - ``battery_pct``
+     - first member
+   * - 8 to 23
+     - ``position``
+     - 8 is a multiple of 8
+   * - 24 to 27
+     - ``id``
+     - 24 is a multiple of 4
+   * - 28
+     - ``busy``
+     - any address
+   * - 29 to 31
+     - padding
+     - ``sizeof`` goes from 29 to 32
+
+- Same four members, 8 bytes smaller. Putting the largest members first leaves fewer gaps.
+- It adds up: a log of one million status reports takes 40 MB in the first order and 32 MB in this one (10⁶ × 40 bytes against 10⁶ × 32 bytes).
+- The compiler never reorders members for you. Their order in memory is the order you wrote.
+
+Passing a ``struct``
+^^^^^^^^^^^^^^^^^^^^
+
+A copy of a ``struct`` copies every member, in order. Passing one by value copies all of it.
+
+.. code-block:: cpp
+
+   double get_battery(RobotStatus robot_status);  // copies 40 bytes
+   double get_battery(const RobotStatus& robot_status);  // copies nothing
+   RobotStatus make_new_robot(int id);  // returns by value
+
+- Every rule from Lecture 5 applies unchanged. A ``struct`` is passed and returned like an ``int`` or a ``std::string``.
+- ``RobotStatus`` is 40 bytes, more than Lecture 5's "small" (16 to 24 bytes on x86-64), so pass it by ``const&``.
+- Rule: `Core Guidelines F.16 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in>`__.
+
+A Vector of ``RobotStatus``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{{1, 82.5, {0.0, 0.0}, false},
+                                  {2, 35.0, {4.0, 1.0}, true},
+                                  {3, 64.0, {2.0, 3.0}, false},
+                                  {4, 18.0, {6.0, 2.0}, false}};
+
+   for (const auto& robot : fleet) {
+     std::cout << "robot " << robot.id << ": "
+               << robot.battery_pct << " %"
+               << (robot.busy ? ", busy\n" : ", idle\n");
    }
 
-- ``typename`` and ``class`` are interchangeable in parameter lists (historical difference only).
+.. code-block:: text
+
+   robot 1: 82.5 %, idle
+   robot 2: 35 %, busy
+   robot 3: 64 %, idle
+   robot 4: 18 %, idle
+
+- Each inner ``{...}`` initializes one ``RobotStatus``. Every container from Lecture 4 holds a type you wrote, with no change.
+- ``const auto&`` again: read each element without copying its 40 bytes.
+
+``push_back`` and ``emplace_back``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{};
+
+   // push_back takes a whole RobotStatus: build one, then it goes in
+   fleet.push_back(RobotStatus{1, 82.5, {0.0, 0.0}, false});
+
+   // braces build it too: 2 fits int id
+   fleet.push_back({2, 35.0, {4.0, 1.0}, true});
+
+   // emplace_back builds it inside the vector, from the arguments
+   fleet.emplace_back(3, 64.0, Position{2.0, 3.0}, false);
+   fleet.emplace_back(4, 18.0);  // position and busy: defaults
+
+.. code-block:: text
+
+   robot 1: 82.5 % at (0, 0), idle
+   robot 2: 35 % at (4, 1), busy
+   robot 3: 64 % at (2, 3), idle
+   robot 4: 18 % at (0, 0), idle
+
+- ``push_back`` puts a finished ``RobotStatus`` into the vector. ``emplace_back`` passes its arguments on, as ``RobotStatus(3, 64.0, ...)``, and builds the robot in place.
+- Building a ``struct`` from ``( )`` is new in C++20. Under ``-std=c++17``, both ``emplace_back`` lines fail: ``no matching function for call to 'RobotStatus::RobotStatus(int, double)'``.
+
+Braces and ``emplace_back``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{};  // empty
+   fleet.emplace_back({5, 90.0, {1.0, 1.0}, false});        // error
+   fleet.emplace_back(5, 90.0, {1.0, 1.0}, false);          // error
+   fleet.emplace_back(5, 90.0, Position{1.0, 1.0}, false);  // OK
+
+   fleet.emplace_back(4.9, 50.0);  // OK, and the id is 4
+   fleet.push_back({4.9, 50.0});   // error: 4.9 cannot narrow into int id
+
+.. code-block:: text
+
+   error: no matching function for call to
+     'std::vector<RobotStatus>::emplace_back(int, double,
+     <brace-enclosed initializer list>, bool)'
+
+- ``emplace_back`` works out the type of each argument from the call. A braced list has no type, so that fails. Name the type: ``Position{1.0, 1.0}``.
+- Parentheses allow narrowing: 4.9 becomes the id 4, with no warning even under ``-Wconversion``. Braces refuse it, so the ``push_back`` line is a compile error.
+
+``std::pair``
+^^^^^^^^^^^^^
+
+``std::pair`` is a standard ``struct`` with two members, ``first`` and ``second``, of any two types. In ``<utility>``.
+
+.. code-block:: cpp
+
+   std::pair<int, double> reading{3, 64.0};  // robot 3, battery 64 %
+   std::cout << reading.first << ' ' << reading.second << '\n'; // 3 64
+
+   reading.second = 60.0;                    // first and second are public
+   std::cout << reading.second << '\n';      // 60
+
+- ``<int, double>`` gives the type of ``first``, then of ``second``.
+- The braces fill ``first`` from 3 and ``second`` from 64.0, in that order, as for a ``struct``.
+
+``std::tuple``
+^^^^^^^^^^^^^^
+
+``std::tuple`` is a standard type that holds any number of values, of any types, read by position. In ``<tuple>``.
+
+.. code-block:: cpp
+
+   // the id, the battery, busy
+   std::tuple<int, double, bool> status{3, 64.0, false};
+   std::cout << std::get<0>(status) << ' '
+             << std::get<1>(status) << ' '
+             << std::get<2>(status) << '\n';  // 3 64 0
+   std::get<1>(status) = 60.0;
+   std::cout << std::get<1>(status) << '\n';  // 60
+
+- The number in ``std::get<1>`` is a position, counted from 0. It must be a constant.
+- The values have no names: the reader must remember that 1 is the battery.
+- ``std::get<3>(status)`` does not compile: ``tuple index must be in range``.
+- Besides ``std::get``, there are three other ways to read a ``std::tuple``. Structured bindings come in `Structured Bindings`_. For the other two, see cppreference: `std::tie <https://en.cppreference.com/w/cpp/utility/tuple/tie>`__ and `std::apply <https://en.cppreference.com/w/cpp/utility/apply>`__.
+
+Multiple and Optional Results
+-----------------------------
+
+A function returns one object. To give back several values, return one object that holds them. To give back a value that may be missing, return an object that can be **empty**.
+
+Rule: `Core Guidelines F.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out-multi>`__.
+
+Returning Several Values
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returning a ``std::pair``
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // How many full boxes, and how many parts are left over.
+   std::pair<int, int> pack(int parts, int per_box) {
+     // a braced list, as for a struct
+     return {parts / per_box, parts % per_box};
+   }
+
+   std::pair<int, int> packed{pack(17, 5)};
+   std::cout << packed.first << '\n';  // 3
+   std::cout << packed.second << '\n';  // 2
+
+- 17 parts, 5 per box: 17 / 5 = 3 full boxes, and 17 % 5 = 2 parts left over. Integer division drops the remainder; ``%`` gives it.
+- ``first`` holds the boxes, ``second`` the parts left over: the order of the braced list.
+- One function returns two values, with no reference parameters: compare ``get_status`` in `Three Values, One Status`_.
+
+Returning a ``std::tuple``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // full boxes, parts left over, boxes needed
+   std::tuple<int, int, int> pack_as_tuple(int parts, int per_box) {
+     int full_boxes{parts / per_box};
+     int left_over{parts % per_box};
+     int boxes_needed{full_boxes};
+     if (left_over > 0) { ++boxes_needed; }  // one more box for the rest
+     return {full_boxes, left_over, boxes_needed};
+   }
+
+   std::tuple<int, int, int> packed{pack_as_tuple(17, 5)};
+   std::cout << std::get<0>(packed) << '\n'; // 3
+   std::cout << std::get<1>(packed) << '\n'; // 2
+   std::cout << std::get<2>(packed) << '\n'; // 4
+
+- A third value: the boxes needed. 3 full boxes hold 15 parts, and the 2 left over need one more box: 4.
+- The tuple comes back from a braced list, in order, as the pair did.
+- The caller reads by position. ``std::get<2>(packed)`` is the boxes needed, but nothing in the code says so.
+
+Returning a ``struct``
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   struct Packing {
+     int full_boxes;
+     int left_over;
+     int boxes_needed;
+   };
+
+   Packing pack_as_struct(int parts, int per_box) {
+     int full_boxes{parts / per_box};
+     int left_over{parts % per_box};
+     int boxes_needed{full_boxes};
+     if (left_over > 0) { ++boxes_needed; }
+     return {full_boxes, left_over, boxes_needed};
+   }
+
+   Packing packing{pack_as_struct(17, 5)};
+   std::cout << packing.boxes_needed << '\n';  // 4
+
+- The same body and the same braced list: it fills the members in declaration order.
+- The caller reads by name. ``packing.boxes_needed`` says what the value is.
+
+``std::pair``, ``std::tuple``, or ``struct``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Return type
+     - Read with
+     - The caller sees
+   * - ``std::pair``
+     - ``.first``
+     - which value is which? Check the function.
+   * - ``std::tuple``
+     - ``std::get<0>``
+     - any number of values, still unnamed
+   * - a ``struct``
+     - ``.boxes_needed``
+     - the meaning, in the member name
 
 .. admonition:: Best Practice
    :class: tip
 
-   Prefer ``typename`` for clarity in modern code.
+   Prefer a ``struct``: its member names say what comes back. Rule: `Core Guidelines F.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-out-multi>`__.
 
-
-Benefits
-----------
-
-1. **Maintainability**: fix once, apply everywhere.
-2. **Consistency**: identical logic for all types.
-3. **Flexibility**: support new types without new code.
-4. **Less code**: fewer duplicates in sources.
-
-
-Template vs Function Overloading
------------------------------------
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 20 20
-
-   * - Scenario
-     - Use Overloading
-     - Use Templates
-   * - Same logic for all types
-     - No
-     - Yes
-   * - Different logic per type
-     - Yes
-     - No
-   * - Type-specific optimizations
-     - Yes
-     - Yes (specialize later)
-   * - Simple, clear intent
-     - Yes
-     - Depends on complexity
-   * - Avoiding code duplication
-     - No
-     - Yes
-
-
-Instantiation
----------------
-
-A template is stored as a blueprint; the compiler *instantiates* concrete functions only when used.
-
-.. code-block:: cpp
-
-   template<typename T>
-   T multiply(T a, T b) {
-       return a * b;
-   }
-
-   int main() {
-       int result1{multiply(3, 4)};          // instantiates multiply<int>
-       double result2{multiply(2.5, 4.0)};   // instantiates multiply<double>
-       int result3{multiply(5, 6)};          // reuses multiply<int> (no new code)
-   }
-
-
-Definition
-------------
-
-Always define template functions and classes in header files (``.hpp``), **not** in separate ``.cpp`` files.
-
-**Why?** Templates are **not compiled** until they are **instantiated**.
-
-1. **Compilation happens when used**: The compiler generates actual code only when you call the template with specific types.
-2. **Compiler needs full definition**: To instantiate, the compiler must see the complete template definition, not just a declaration.
-3. **Separate compilation breaks**: If the definition is in a ``.cpp`` file, other translation units cannot see it and cannot instantiate.
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Wrong: Separate Files
-      :class-card: sd-border-danger
-
-      .. code-block:: cpp
-
-         // week6.hpp
-         template<typename T>
-         T add(T a, T b);  // Declaration only
-
-         // week6.cpp
-         template<typename T>
-         T add(T a, T b) {  // Definition
-             return a + b;
-         }
-
-         // main.cpp
-         #include "week6.hpp"
-         int main() {
-             add(3, 4);  // Linker error!
-                         // undefined reference ...
-         }
-
-   .. grid-item-card:: Correct: In Header
-      :class-card: sd-border-success
-
-      .. code-block:: cpp
-
-         // week6.hpp
-         template<typename T>
-         // Definition in header
-         T add(T a, T b) {
-             return a + b;
-         }
-
-         // main.cpp
-         #include "week6.hpp"
-         int main() {
-             add(3, 4);  // Works!
-             // Compiler sees definition,
-             // instantiates add<int>
-         }
-
-.. admonition:: Remember
-   :class: note
-
-   Template code is like a blueprint, the compiler needs to see the entire blueprint to build the actual function for each type you use.
-
-
-Template Documentation
-------------------------
-
-Essential Doxygen tags for templates:
-
-- ``@tparam T`` for each template parameter
-- ``@param``, ``@return`` as usual
-- ``@brief``, ``@details`` for summaries
-- ``@note``, ``@warning`` for constraints
-- ``@ingroup``, ``@file``, ``@namespace`` for organization
-
-.. code-block:: cpp
-
-   /// @file math_utils.hpp
-   /// @brief Small numeric utilities.
-
-   #pragma once
-
-   /**
-    * @brief Returns the greater of two values.
-    *
-    * @tparam T A totally ordered type (requires operator>).
-    * @param a First value.
-    * @param b Second value.
-    * @return The larger of @p a and @p b.
-    * @note Use explicit template arguments if deduction is ambiguous.
-    * @code
-    * auto m{max_value<int>(3, 4)};
-    * @endcode
-    */
-   template<typename T>
-   T max_value(T a, T b)
-   {
-       return (a > b) ? a : b;
-   }
-
-
-Multiple Template Parameters
--------------------------------
-
-A template can have multiple independent type parameters.
-
-.. code-block:: cpp
-
-   template<typename T, typename U>
-   auto add_different(T a, U b) {
-       return a + b;  // deduce from operator+
-   }
-
-   int main() {
-       int r1{add_different(3, 4)};        // int
-       double r2{add_different(3, 4.5)};   // double
-       double r3{add_different(3.5, 4)};   // double
-   }
-
-Using ``auto`` as the return type lets the compiler automatically deduce the result type from the ``return`` statement.
-
-
-Explicit Template Arguments
-------------------------------
-
-If deduction fails or you want a different type than deduction would choose, specify template arguments explicitly.
-
-.. code-block:: cpp
-
-   function_name<type1, type2, ...>(arguments);
-
-- Each type in ``<...>`` binds to a template parameter.
-- When you specify them, the compiler skips deduction for those parameters.
-
-.. code-block:: cpp
-
-   template<typename T>
-   void print_twice(T value) {
-       std::cout << value << " " << value << '\n';
-   }
-
-   int main() {
-       print_twice(10);        // T deduced as int
-       print_twice<int>(10);   // explicitly T = int (same result)
-   }
-
-**Partial explicit specification:**
-
-.. code-block:: cpp
-
-   template<typename T, typename U>
-   void display_pair(T a, U b) {
-       std::cout << a << ", " << b << '\n';
-   }
-
-   int main() {
-       display_pair<int>(5, 3.14); // T fixed to int, U deduced as double
-   }
-
-
-Template Type Deduction
--------------------------
-
-The compiler deduces template parameters from the function arguments you pass.
-
-.. code-block:: cpp
-
-   template<typename T>
-   T add(T a, T b) {
-       return a + b;
-   }
-
-   int main() {
-       int result{add(3, 5)};  // deduces T = int
-   }
-
-- Arguments ``3`` and ``5`` are ``int`` => ``T`` is ``int``.
-- Compiler instantiates ``int add(int, int)``.
-
-**Deduction with References**
-
-.. code-block:: cpp
-
-   template<typename T>
-   void modify(T& value) {
-       value *= 2;
-   }
-
-   int main() {
-       int x{10};
-       modify(x);  // T deduced as int; x becomes 20
-   }
-
-The reference is part of the template parameter list (``T&``); the deduced ``T`` is ``int``, not ``int&``.
-
-**Deduction with** ``const``
-
-.. code-block:: cpp
-
-   template<typename T>
-   void print(const T& value) {
-       std::cout << value << '\n';
-   }
-
-   int main() {
-       int x{42};
-       print(x);   // T deduced as int
-
-       const int y{99};
-       print(y);   // T deduced as int (const is applied by the parameter type)
-   }
-
-**Override the Deduced Type**
-
-.. code-block:: cpp
-
-   template<typename T>
-   void process(T value) {
-       std::cout << typeid(T).name() << '\n';
-   }
-
-   int main() {
-       short s{42};
-       process(s);        // T is short
-       process<int>(s);   // force T = int (converts before call)
-   }
-
-
-Deduction Failures
---------------------
-
-**When Deduction Fails**
-
-.. code-block:: cpp
-
-   template<typename T>
-   T create_value() { return T{}; }
-
-   int main() {
-       // create_value();           // ERROR: cannot deduce T
-       auto v{create_value<int>()}; // OK
-   }
-
-**Ambiguity**
-
-.. code-block:: cpp
-
-   template<typename T>
-   T get_value(T a, T b) {
-       return a;
-   }
-
-   int main() {
-       int result{get_value(3, 4.5)}; // ERROR: T = int or T = double?
-   }
-
-During deduction, one consistent ``T`` must satisfy all parameters. Here it cannot.
-
-**Impossibility**
-
-.. code-block:: cpp
-
-   template<typename T>
-   T create_value() {
-       return T{};
-   }
-
-   int main() {
-       auto result{create_value()};  // ERROR: cannot deduce T
-       // Even: int r{create_value()}; // still ERROR
-   }
-
-Deduction uses only function *parameters*. Return types and assignment targets are *not* used for deduction.
-
-**Type Mismatch**
-
-.. code-block:: cpp
-
-   template<typename T>
-   void process(T* ptr) { /* expects a pointer */ }
-
-   int main() {
-       int x{42};
-       process(x);  // ERROR: x is not a pointer
-   }
-
-
-Template Specialization
---------------------------
-
-Templates are generic by default, but some types need different behavior. Specialization customizes a template for specific types.
-
-**Full Specialization**
-
-A full specialization provides a complete, alternative definition for a specific type or type combination.
-
-.. code-block:: cpp
-
-   template<>
-   ReturnType function_name<SpecificType>(parameter_list) {
-       // specialized implementation
-   }
-
-**Special Handling for Strings**
-
-.. code-block:: cpp
-
-   template<typename T> // generic
-   T get_max(T a, T b) {
-       return (a > b) ? a : b;
-   }
-
-   template<> // full specialization for std::string
-   std::string get_max<std::string>(std::string a, std::string b) {
-       std::cout << "Using string specialization!\n";
-       return (a.length() > b.length()) ? a : b;
-   }
-
-   int main() {
-       int max_int{get_max(3, 5)};                               // generic
-       std::string max_str{get_max<std::string>("hi", "hello")}; // specialized
-   }
-
-**Optimized Version for** ``bool``
-
-.. code-block:: cpp
-
-   template<typename T>
-   void process(T value) {
-       std::cout << "Processing generic value: " << value << '\n';
-   }
-
-   template<> // full specialization
-   void process<bool>(bool value) {
-       std::cout << "Processing bool: " << (value ? "true" : "false") << '\n';
-   }
-
-   int main() {
-       process(42);    // generic
-       process(true);  // specialized
-   }
-
-**When to specialize?**
-
-- **Performance**: a type admits a faster implementation.
-- **Semantics**: a type needs different behavior.
-- **Integration**: adapt external/library types.
-
-
-Function Operators, Specifiers, and Attributes
-====================================================
-
-Beyond the function signature, C++ provides several mechanisms to convey extra information about a function's *behavior*, *usage*, and *constraints*.
-
-- **Operators** perform actions or evaluations (e.g., ``+``, ``!``). They produce a result or effect at compile time or runtime.
-- **Specifiers** modify how the compiler interprets a declaration. They affect linkage, optimization, or exception guarantees.
-- **Attributes** provide metadata or hints to the compiler. They do not alter semantics but influence diagnostics and intent.
-
-
-``decltype`` Operator
------------------------
-
-The ``decltype`` operator inspects the *type* of an expression at compile time **without evaluating it**. It allows developers to deduce types automatically based on expressions, ensuring type consistency in templates and generic code.
-
-**Basic Usage**
-
-.. code-block:: cpp
-
-   double average(double a, double b) {
-       return (a + b) / 2.0;
-   }
-
-   int main() {
-       int x{42};
-       decltype(x) y{10}; // y has same type as x (int)
-       decltype(average(1.0, 2.0)) result{0.0}; // deduces double
-   }
-
-``decltype(expr)`` inspects the type of ``expr`` at compile time and returns it as a type. Unlike ``auto``, it does **not evaluate** the expression (only analyzes its declared type).
-
-**Reference and Const Deduction**
-
-.. code-block:: cpp
-
-   int n{10};
-   int& ref{n};
-   const int c{5};
-
-   decltype(n)   a{0};   // int
-   decltype(ref) b{n};   // int&   (reference preserved)
-   decltype(c)   d{7};   // const int (const preserved)
-   decltype((n)) e{n};   // int&   (parentheses -> lvalue expression)
-
-Parentheses are important! ``decltype(expr)`` preserves ``const`` and reference qualifiers depending on the expression form. If ``expr`` is an lvalue, ``decltype(expr)`` yields a ``T&`` type.
-
-**Understanding Value Categories**
-
-Expressions in C++ are classified into three **value categories**:
-
-- **lvalue** ("locator value"): Has an identifiable memory address. Can appear on the left side of ``=``. Examples: variables, array elements, dereferenced pointers, string literals.
-- **prvalue** ("pure rvalue"): Temporary or computed value with no persistent address. It **cannot appear on the left-hand side of** ``=``. Examples: literals (e.g., ``42``, ``3.14``), results of expressions like ``x + y``.
-- **xvalue** ("expiring value"): Represents a resource that can be reused or moved from. Example: ``std::move(x)``.
-
-.. code-block:: cpp
-
-   int x{42};
-   int* ptr{&x};   // OK: x is an lvalue
-   // int* p{&42}; // ERROR: 42 is a prvalue (no address)
-
-   int y{x + 5};   // (x + 5) is a prvalue (temporary)
-
-**decltype and Expression Categories**
-
-The type produced by ``decltype(expr)`` depends on whether ``expr`` is an **identifier**, an **lvalue expression**, or a **prvalue**.
-
-.. code-block:: cpp
-
-   int x{10};
-
-   // decltype with identifiers (no parentheses)
-   decltype(x)     a{0};    // int       (x's declared type)
-
-   // decltype with expressions (parentheses or operations)
-   decltype((x))   b{x};    // int&      (x is an lvalue expression)
-   decltype(x + 0) c{0};    // int       (x + 0 is a prvalue)
-   decltype(*(&x)) d{x};    // int&      (*(&x) is an lvalue)
-
-.. admonition:: Rule of Thumb
-   :class: tip
-
-   - ``decltype(id)`` -> declared type
-   - ``decltype(lvalue-expr)`` -> ``T&``
-   - ``decltype(prvalue-expr)`` -> ``T``
-
-**Practical Examples**
-
-.. code-block:: cpp
-
-   int arr[5]{1, 2, 3, 4, 5};
-   const int c{100};
-
-   decltype(arr[0])     v1{arr[1]};   // int&       (arr[0] is lvalue)
-   decltype(arr[0] + 1) v2{0};        // int        (arithmetic -> prvalue)
-   decltype(c)          v3{50};       // const int  (const preserved)
-   decltype((c))        v4{c};        // const int& (lvalue expression)
-
-   int get_value() { return 42; }
-   decltype(get_value()) v5{0};  // int (function call -> prvalue)
-
-In template or generic code, ``decltype`` allows perfect type deduction, preserving references, constness, and distinguishing between lvalues and prvalues.
-
-**Difference Between** ``auto`` **and** ``decltype``
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 35 35
-
-   * - Feature
-     - ``auto``
-     - ``decltype``
-   * - Evaluates expression
-     - Yes (value-based deduction)
-     - No (type-only inspection)
-   * - Preserves references
-     - Drops them
-     - Preserves them
-   * - Preserves const qualifiers
-     - Removes them
-     - Keeps them
-   * - Common usage
-     - Variable initialization
-     - Type extraction and template return types
-
-``decltype`` provides exact compile-time type information. ``auto`` deduces from evaluated expressions, sometimes dropping qualifiers.
-
-**Using decltype with Variables**
-
-.. code-block:: cpp
-
-   int x{10};
-   int y{20};
-
-   // Declare a variable with the same type as an expression
-   decltype(x + y) sum{x + y};  // sum is int
-
-   // With function calls
-   double calculate(double a, double b) { return a * b; }
-   decltype(calculate(2.0, 3.0)) result{calculate(2.5, 4.0)}; // double
-
-**Common Pitfalls**
-
-.. code-block:: cpp
-
-   // Parentheses change meaning
-   int x{5};
-   decltype(x) a{0};   // int        (declared type)
-   decltype((x)) b{x}; // int&       (lvalue expression)
-
-   // decltype of a temporary
-   decltype(x + 1) c{42}; // int (prvalue expression)
-
-Be mindful of parentheses and expression category. ``decltype((x))`` yields a reference type since ``(x)`` is an lvalue, while ``decltype(x)`` gives the declared type directly.
-
-.. admonition:: Best Practices for ``decltype``
-   :class: tip
-
-   - Use ``decltype`` to replicate another variable's type or an expression's result.
-   - Combine with ``auto`` in templates for precise return-type deduction.
-   - Avoid unnecessary usage when the type is obvious, clarity comes first.
-   - Remember: ``decltype`` never evaluates expressions; it only inspects their static type.
-
-
-Trailing Return Type
-----------------------
-
-Introduced in C++11, the **trailing return type** syntax allows the return type to appear *after* the parameter list.
-
-.. code-block:: cpp
-
-   auto add(int a, int b) -> int {
-       return a + b;
-   }
-
-This syntax is an alternative way to declare return types. It is particularly useful when the function's return type depends on its parameter types, which the compiler only knows after parsing the parameter list.
-
-**Purpose and Motivation**
-
-Traditional function declarations place the return type before the function name:
-
-.. code-block:: cpp
-
-   int add(int a, int b);
-
-However, this becomes problematic in *templates* or complex C++ constructs where the return type depends on the parameter types.
-
-.. code-block:: cpp
-
-   template <typename T, typename U>
-   ??? multiply(const T& a, const U& b) {  // What type goes here?
-       return a * b;
-   }
-
-The compiler needs to know ``T`` and ``U`` before deducing the return type, but in traditional syntax, the return type comes *first*!
-
-**Solution**: use ``auto`` or trailing return type ``-> decltype()``.
-
-**Perfect Return Type Deduction**
-
-.. code-block:: cpp
-
-   template <typename T, typename U>
-   auto multiply(const T& a, const U& b) -> decltype(a * b) {
-       return a * b;
-   }
-
-   int main() {
-       std::cout << multiply(2, 3.5) << '\n';     // 7.0 (double)
-       std::cout << multiply(2.5, 3) << '\n';     // 7.5 (double)
-       std::cout << multiply(2, 3) << '\n';       // 6 (int)
-   }
-
-The trailing return type ``-> decltype(a * b)`` ensures the return type exactly matches the result of the expression, regardless of operand types.
-
-**Generic Arithmetic Operations**
-
-.. code-block:: cpp
-
-   template <typename T>
-   auto square(const T& value) -> decltype(value * value) {
-       return value * value;
-   }
-
-   template <typename T, typename U>
-   auto add(const T& a, const U& b) -> decltype(a + b) {
-       return a + b;
-   }
-
-``decltype`` ensures template functions adapt to any operand type, from built-ins to user-defined types, by deducing the expression's true return type.
-
-**Why This Matters**
-
-- **Type Safety**: Return type automatically matches the actual operation result.
-- **Flexibility**: Works with custom types that overload operators.
-- **Precision**: Preserves const, references, and value categories.
-- **Future-Proof**: Code adapts automatically when types change.
-
-**C++14 Simplification**
-
-In C++14 and later, **simple cases** can use plain ``auto``:
-
-.. code-block:: cpp
-
-   // C++11: Explicit trailing return type
-   template <typename T, typename U>
-   auto add(T a, U b) -> decltype(a + b) {
-       return a + b;
-   }
-
-   // C++14: Automatic deduction (simpler)
-   template <typename T, typename U>
-   auto add(T a, U b) {
-       return a + b;  // compiler figures it out
-   }
-
-**When Are They Different?**
-
-*Case 1: Returning References*
-
-.. code-block:: cpp
-
-   // Plain auto
-   template <typename T>
-   auto get_auto(T& ref) {
-       return ref;  // Returns int (COPY!)
-   }
-
-   // With decltype
-   template <typename T>
-   auto get_decltype(T& ref) -> decltype(ref) {
-       return ref;  // Returns int& (REFERENCE)
-   }
-
-   int main() {
-       int x{42};
-       get_auto(x) = 99;      // ERROR: can't assign to temporary
-       get_decltype(x) = 99;  // OK: x becomes 99
-   }
-
-*Case 2: Returning const-ref*
-
-.. code-block:: cpp
-
-   const int global_value{3};
-   const int& get_const_ref() { return global_value; }
-
-   int main() {
-       auto result1 = get_const_ref();         // int (copy; const & dropped)
-       decltype(get_const_ref()) result2 = get_const_ref(); // const int&
-       decltype(auto) result3 = get_const_ref();            // const int&
-   }
-
-**Takeaway**: ``auto`` copies and drops top-level ``const``/``&``. ``decltype(expr)`` and ``decltype(auto)`` reproduce the exact type of ``expr``.
-
-.. admonition:: Best Practices
-   :class: tip
-
-   1. Use ``auto`` return type for simple template functions (C++14+).
-   2. Use ``-> decltype(expr)`` when you need precise control over return type qualifiers, explicit documentation of the return type, or compatibility with C++11.
-   3. Test template functions with various types, including user-defined types.
-
-
-``constexpr`` Specifier
--------------------------
-
-The ``constexpr`` specifier marks an expression or function as **potentially evaluable at compile time**. When called with constant arguments, the compiler computes the result **during compilation**. When called with runtime values, it executes like a normal function.
-
-**Compile-Time Function Evaluation**
-
-.. code-block:: cpp
-
-   constexpr int square(int x) {
-       return x * x;
-   }
-
-   int main() {
-       constexpr int n{square(5)}; // evaluated at compile time
-       int m{7};
-       int result = square(m);      // evaluated at runtime
-   }
-
-``constexpr`` ensures a function **can** be evaluated at compile time, but does not require it to be. If all arguments are constant expressions, the compiler computes the result during compilation. If any argument is not constant, evaluation occurs at runtime.
-
-**What Happens When Evaluated at Compile Time?**
-
-When a ``constexpr`` function is evaluated at compile time:
-
-- The compiler replaces the call with its computed result, as if it were a literal constant.
-- No machine instructions are generated for that call.
-- The value becomes part of the program's static data segment.
-
-.. code-block:: cpp
-
-   constexpr int cube(int n) { return n * n * n; }
-
-   constexpr int volume{cube(4)}; // compiler computes 64 here
-   int array[volume];              // valid: array size known at compile time
-
-**Compile-time evaluation benefits:**
-
-- Eliminates runtime computation, improves performance.
-- Enables use of results in contexts that require compile-time constants (e.g., array sizes, template arguments, ``switch`` cases).
-- Detects logic errors early, during compilation.
-
-**Requirements for constexpr Functions**
-
-A ``constexpr`` function must:
-
-- Have a definition visible to the compiler (typically in a header file).
-- Contain a single ``return`` statement before C++14 (relaxed in later standards).
-- Operate only on arguments and expressions that can be constant at compile time.
-- Avoid inherently runtime operations (I/O, dynamic memory, exceptions, etc.).
-
-From C++14 onward, ``constexpr`` functions may include variables, loops, and conditionals, as long as their evaluation is deterministic and can be resolved by the compiler.
-
-.. admonition:: Best Practices for ``constexpr``
-   :class: tip
-
-   - Use ``constexpr`` for lightweight, deterministic, side-effect-free computations.
-   - Prefer ``constexpr`` when a result can safely be computed once at compile time.
-   - Combine with ``constexpr`` variables or ``std::array`` bounds for extra safety.
-   - Remember: ``constexpr`` shifts computation from runtime to compile time, improving both *performance* and *reliability*.
-
-
-``inline`` Specifier
------------------------
-
-An ``inline`` function requests that the compiler perform an optimization known as **inlining**. **Inlining** is the process of replacing the function call with the actual body of the function at the spot where it was called (the "call site").
-
-**The Problem with Functions**
-
-Every function call involves several hidden steps. Together, these steps contribute to what is known as **function call overhead**.
-
-- **Save the Context**: The program records its current state by pushing the return address onto the stack.
-- **Push the Arguments**: All function parameters and local variables are placed onto the stack.
-- **Transfer Control**: The instruction pointer moves to a new memory location.
-- **Execute the Function**: The processor carries out the operations.
-- **Store the Return Value**: The result is placed in a designated CPU register.
-- **Restore the Stack**: The function's stack frame is removed.
-- **Return Control**: The program retrieves the saved return address and resumes.
-
-.. code-block:: cpp
-
-   int add(int a, int b) {
-       return a + b;
-   }
-
-   // Called in a loop...
-   int total{0};
-   for (int i{0}; i < 1000000; ++i) {
-       total = add(total, i); // A million function calls!
-   }
-
-In this case, the overhead of calling the function millions of times may exceed the cost of performing the addition itself.
-
-.. code-block:: cpp
-
-   inline int add(int a, int b) { // inline
-       return a + b;
-   }
-
-   // Called in a loop...
-   int total{0};
-   for (int i{0}; i < 1000000; ++i) {
-       total = total + i; // Compiler may use the function body directly
-   }
-
-The output is identical, but the compiler may replace the function call with the function's body, eliminating the call overhead entirely.
-
-**The inline Keyword Is Only a Hint**
-
-``inline`` is a suggestion, not a command. The compiler is free to ignore the request. The compiler typically avoids inlining when a function is:
-
-- **Large**: Expanding a long function would bloat the code.
-- **Recursive**: Fully inlining a self-calling function is not feasible.
-- **Loop-heavy**: Functions containing loops are usually poor inlining candidates.
-- **Virtual**: Because ``virtual`` calls are resolved at runtime, the compiler generally cannot inline them.
-
-Modern compilers may choose to ``inline`` a function even if you never mark it with the ``inline`` keyword.
-
-**The One Definition Rule (ODR)**
-
-If modern compilers can decide on their own when to inline, why does C++ still have the ``inline`` keyword? Because of the **One Definition Rule (ODR)**, not for performance, but for *linkage and consistency across translation units*.
-
-C++ enforces the **One Definition Rule (ODR)**, which states:
-
-   *A function may be declared multiple times (for example, in several header files), but it must be defined exactly once in the entire program.*
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Without ``inline``: ODR Violation
-      :class-card: sd-border-danger
-
-      .. code-block:: cpp
-
-         // utils.hpp
-         #pragma once
-
-         // A non-inline function DEFINITION
-         int add(int a, int b) {
-             return a + b;
-         }
-
-      .. code-block:: cpp
-
-         // main.cpp
-         #include "utils.hpp"
-         #include <iostream>
-
-         int main() {
-             std::cout << add(5, 10) << '\n';
-         }
-
-      .. code-block:: cpp
-
-         // other.cpp
-         #include "utils.hpp"
-
-      Compiling produces a linker error: *multiple definition of 'add(int, int)'*.
-
-   .. grid-item-card:: With ``inline``: Legal
-      :class-card: sd-border-success
-
-      .. code-block:: cpp
-
-         // utils.hpp
-         #pragma once
-
-         // This is now perfectly legal!
-         inline int add(int a, int b) {
-             return a + b;
-         }
-
-      Using the ``inline`` specifier relaxes the ODR. It informs the linker that identical definitions across translation units refer to the same function (keep one and discard the duplicates).
-
-.. admonition:: Best Practices for ``inline``
-   :class: tip
-
-   - The definitions of ``inline`` functions must be placed in header files (``.hpp``).
-   - When a method (class member function) is **defined inside** a class body, it is implicitly ``inline``, so defining it in a header file is perfectly valid.
-   - If you define a function **outside** the class and mark it as ``inline``, that single definition must be visible to every translation unit. Place the definition in the header file, not in the source file.
-
-
-``noexcept`` Specifier/Operator
----------------------------------
-
-The ``noexcept`` specifier is a **compile-time promise** that a function will not throw an exception. The compiler can make aggressive optimizations based on this guarantee.
-
-.. code-block:: cpp
-
-   void safe_operation() noexcept {
-       // This function guarantees it won't throw
-   }
-
-   void risky_operation() {
-       // This function might throw
-   }
-
-If an exception is thrown from a ``noexcept`` function, ``std::terminate()`` is called.
-
-**Exceptions vs Errors**
-
-- **Exceptions** represent *recoverable, unexpected conditions* detected at runtime. They signal that something went wrong, but the program can often handle it and continue safely.
-- **Errors** represent *unrecoverable situations* where program execution cannot proceed safely. They often indicate logic faults, contract violations, or conditions outside the program's control.
-
-**Why noexcept?**
-
-Exceptions introduce runtime overhead and complicate optimization.
-
-- When the compiler cannot guarantee that a function will not throw, it must generate extra code to handle stack unwinding and clean-up.
-- Marking a function ``noexcept`` lets the compiler skip this extra code and optimize more aggressively.
-- It also conveys intent to other developers: "this function is safe and predictable."
-
-Use ``noexcept`` for small, low-level, or performance-critical functions that are not expected to throw.
-
-**The noexcept Operator**
-
-``noexcept`` is also an **operator** that checks whether an expression is ``noexcept`` at compile time.
-
-.. code-block:: cpp
-
-   void might_throw();
-   void never_throw() noexcept;
-
-   bool check1{noexcept(never_throw())};   // true
-   bool check2{noexcept(might_throw())};   // false
-   bool check3{noexcept(1 + 2)};           // true
-
-The ``noexcept(...)`` operator:
-
-- Returns ``true`` if the expression inside is guaranteed not to throw.
-- Returns ``false`` if the expression might throw.
-- Evaluation happens at **compile-time**.
-
-**Dynamic noexcept Conditions**
-
-The ``noexcept`` specifier can take a Boolean expression evaluated at compile time.
-
-.. code-block:: cpp
-
-   void never_throw() noexcept;
-
-   void demo() noexcept(noexcept(never_throw())) {
-               // |     // |- Inner noexcept(...):  OPERATOR
-               // |     // '- "Is never_throw() noexcept?"
-               // |
-               // |- Outer noexcept(...):  SPECIFICATION
-               // '- "Make demo() noexcept IF the condition is true"
-   }
-
-- **Inner**: Evaluates to a boolean at compile time.
-- **Outer**: Specifies whether ``demo()`` should be marked ``noexcept``.
-
-**Practical Example**
-
-.. code-block:: cpp
-
-   void might_throw();
-   void never_throw() noexcept;
-
-   // Will NOT be noexcept
-   void demo1() noexcept(noexcept(might_throw())) {
-       might_throw();  // Might throw
-   }
-
-   // WILL be noexcept
-   void demo2() noexcept(noexcept(never_throw())) {
-       never_throw();  // Never throws
-   }
-
-- ``demo1()`` inherits the exception risk from ``might_throw()``.
-- ``demo2()`` is safe because ``never_throw()`` is safe.
-
-**When NOT to Use noexcept**
-
-- When a function may legitimately throw and the caller should handle it.
-- When working with third-party or legacy functions not marked ``noexcept``.
-- When you are uncertain about whether the function is truly exception-safe.
-
-.. code-block:: cpp
-
-   // GOOD: Clearly might fail
-   int parse_number(const std::string& s) {
-       return std::stoi(s);  // May throw
-   }
-
-   // GOOD: Simple operation
-   void reset_counter() noexcept {
-       counter = 0;  // Can't fail
-   }
-
-.. admonition:: Best Practices for ``noexcept``
-   :class: tip
-
-   - Mark simple, guaranteed-safe operations as ``noexcept``.
-   - Don't lie: if a function might throw, don't mark it ``noexcept``.
-   - Document exception guarantees in comments or with ``noexcept``.
-   - ``noexcept`` expresses **intent** and enables compiler optimizations.
-
-
-Function Attributes
----------------------
-
-Attributes provide the compiler with additional information about functions or variables, influencing warnings, optimizations, or behavior without changing the program's semantics.
-
-
-``[[nodiscard]]``
+Structured Bindings
 ^^^^^^^^^^^^^^^^^^^
 
-The ``[[nodiscard]]`` attribute warns if a function's return value is ignored. It encourages safer, more intentional code by catching overlooked results.
+A **structured binding** is a declaration that gives a new name to each member of a ``struct``, a pair or a tuple, in declaration order. C++17.
 
 .. code-block:: cpp
 
-   [[nodiscard]] int compute_total(int x, int y) {
-       return x + y;
-   }
+   auto [boxes, left_over] = pack(17, 5);
+   std::cout << boxes << ' ' << left_over << '\n'; // 3 2
 
-   int main() {
-       compute_total(2, 3); // Warning: result of 'compute_total' is discarded
-   }
+   auto [full, left, needed] = pack_as_struct(17, 5);
+   std::cout << full << ' ' << left << ' ' << needed << '\n';  // 3 2 4
 
-Use ``[[nodiscard]]`` for functions whose result is important and should not be silently ignored.
+- The names are yours: ``full`` takes the first member, ``full_boxes``, and ``left`` the second, ``left_over``.
+- The declaration always starts with ``auto``. You cannot give each name its own type.
+- See `cppreference: structured binding <https://en.cppreference.com/w/cpp/language/structured_binding>`__.
 
-**Custom Message**
-
-You can provide a message to clarify why ignoring the return value is risky.
-
-.. code-block:: cpp
-
-   [[nodiscard("You should check for success before continuing")]]
-   bool process_data(int id);
-
-   int main() {
-       process_data(42); // Compiler warning with custom message
-   }
-
-.. admonition:: Best Practices for ``[[nodiscard]]``
-   :class: tip
-
-   - Apply to functions returning critical status codes, error flags, or computed values.
-   - Avoid excessive use (reserve it for meaningful results). Some functions return a value for convenience, but their main purpose is to perform an action.
-   - Can also be applied to classes, marking all constructors' return values as significant.
-
-
-``[[maybe_unused]]``
-^^^^^^^^^^^^^^^^^^^^^^
-
-The ``[[maybe_unused]]`` attribute tells the compiler that a variable, parameter, function, or type **might be intentionally unused**. It prevents warnings such as *"unused variable"* or *"unused parameter"*.
+By Value and by Reference
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   // Compile with: -Wall -Wextra -Werror
-   [[maybe_unused]] void debug_print(const std::string& msg) {
-       std::cerr << msg << '\n';
-   }
+   std::pair<int, int> packed{3, 2}; // full boxes, parts left over
+
+   // copies packed
+   auto [boxes, left_over] = packed;
+   left_over = 0;
+   std::cout << packed.second << '\n'; // 2: unchanged
+
+   // refers to packed
+   auto& [ref_boxes, ref_left_over] = packed;
+   ref_left_over = 0;
+   std::cout << packed.second << '\n'; // 0
+
+- With ``auto``, the compiler makes one hidden copy of ``packed``. The names refer to the members of that copy.
+- With ``auto&``, there is no copy. The names refer to the members of ``packed`` itself.
+- The same three choices as a range-based ``for`` (Lecture 4): ``auto``, ``auto&``, ``const auto&``.
+
+See `The Lecture 4 Map Loop`_ under Further Reading.
+
+One Name per Member
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
 
    int main() {
-       [[maybe_unused]] int temp_value{42};   // No warning even with -Wextra -Werror
-
-       bool debug_mode = false;
-       if (debug_mode)
-           debug_print("Diagnostics enabled.");
+     Packing packing{3, 2, 4};
+     auto [full, left] = packing;
    }
 
-Without ``[[maybe_unused]]``, the compiler may emit an error under ``-Wextra -Werror``, which treats all warnings as errors. This attribute explicitly documents that the unused state is intentional.
+.. code-block:: text
 
-**Common Use Cases**
+   binding_count.cpp:9:8: error: only 2 names provided for structured binding
+   binding_count.cpp:9:8: note: while 'Packing' decomposes into 3 elements
 
-- **Template Parameters**: Some template parameters may not be used in every specialization.
+- ``Packing`` has three members, so a binding needs three names. There is no way to skip one.
 
-  .. code-block:: cpp
+.. note::
 
-     template <typename T, typename U>
-     void process(const T& a, [[maybe_unused]] const U& b) {
-         std::cout << a << '\n'; // OK: 'b' may not be used
+   C++20, **[dcl.struct.bind]**, section 9.6, paragraph 5: *the number of elements in the identifier-list shall be equal to the number of non-static data members*.
+
+``std::optional``
+^^^^^^^^^^^^^^^^^
+
+``std::optional<T>`` is a standard type that holds either one value of type ``T`` or nothing. In ``<optional>``, C++17.
+
+**Without** ``std::optional``
+
+.. code-block:: cpp
+
+   int find_age(const std::string& name) {
+     if (name == "Ana") { return 31; }
+     if (name == "Ben") { return 24; }
+     return -1;  // -1 means "no age"
+   }
+
+**With** ``std::optional``
+
+.. code-block:: cpp
+
+   std::optional<int> find_age(const std::string& name) {
+     if (name == "Ana") { return 31; }
+     if (name == "Ben") { return 24; }
+     return std::nullopt;  // no age
+   }
+
+- Without: -1 is an ``int`` like any other. Nothing in the type says it means "missing", so a caller that forgets computes with it: ``find_age("Cy") + 1`` is 0, with no warning.
+- With: the return type says the answer can be missing. ``return 31;`` fills the optional; ``return std::nullopt;`` returns it empty.
+
+Finding an Idle Robot
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // Id of the first idle robot with enough battery, if there is one.
+   std::optional<int> find_idle_robot(
+       const std::vector<RobotStatus>& fleet, double min_battery_pct) {
+     for (const auto& robot : fleet) {
+       if (!robot.busy && robot.battery_pct >= min_battery_pct) {
+         return robot.id;
+       }
      }
-
-- **Platform or Context Variants**: Functions may include parameters required on some systems but not others.
-
-  .. code-block:: cpp
-
-     void initialize([[maybe_unused]] int device_id) {
-         std::cout << "Initialization complete.\n";
-         // Some environments do not need 'device_id'
-     }
-
-- **Debug or Logging Helpers**: Useful when diagnostic code can be toggled on/off without changing function signatures.
-
-  .. code-block:: cpp
-
-     void log_info([[maybe_unused]] const std::string& message) {
-         // Logging disabled in production builds
-     }
-
-**When to Use vs When to Avoid**
-
-Use ``[[maybe_unused]]`` when a variable, parameter, or function exists for clarity, documentation, or future expansion, and might not be referenced in every configuration.
-
-Avoid using it to silence warnings created by actual mistakes.
-
-.. code-block:: cpp
-
-   // Misuse: hides a bug under -Wextra -Werror
-   int compute_sum(int a, int b) {
-       [[maybe_unused]] int result = a + b; // Suppresses warning
-       return 0; // Bug: forgot to return result
+     return std::nullopt;  // the empty value
    }
 
-.. admonition:: Best Practices for ``[[maybe_unused]]``
-   :class: tip
+- When no robot qualifies, there is no id to give back. The return type says that the answer can be missing.
+- ``return robot.id;`` fills the optional. ``return std::nullopt;`` returns it empty.
 
-   - Use when a symbol may legitimately remain unused in certain builds or code paths.
-   - Combine with compiler flags such as ``-Wall -Wextra -Werror`` to maintain strict code hygiene.
-   - Document why it is unused, e.g., performance testing, logging, or template flexibility.
-   - Do **not** use as a blanket fix for warnings; prefer removing unnecessary variables.
-
-
-``[[deprecated]]``
-^^^^^^^^^^^^^^^^^^^^^
-
-The ``[[deprecated]]`` attribute marks a function, variable, or type as obsolete. It triggers a compiler warning when used, signaling that newer alternatives exist.
+Reading an Optional
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   [[deprecated("Use compute_area() instead")]]
-   double calc_area(double r) {
-       return 3.14159 * r * r;
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   std::optional<int> idle{find_idle_robot(fleet, 50.0)};
+   if (idle) {                                 // or idle.has_value()
+     std::cout << "robot " << *idle << '\n';   // robot 1
    }
 
-   double compute_area(double r) { return 3.14159 * r * r; }
+- Robot 1 is idle with 82.5 %, the first robot that qualifies, so ``idle`` holds 1.
+- ``if (idle)`` is true when the optional holds a value. ``idle.has_value()`` says the same.
+- ``*idle`` gives the value inside. ``idle`` is not a pointer: ``std::optional`` defines ``*`` and ``->`` so it reads like one.
 
-   int main() {
-       double a = calc_area(2.0); // Warning: 'calc_area' is deprecated
-   }
-
-.. admonition:: Best Practices for ``[[deprecated]]``
-   :class: tip
-
-   - Use when phasing out old APIs, functions, or constants.
-   - Always include a message pointing to the preferred alternative.
-   - Avoid removing deprecated code abruptly; deprecation helps maintain backward compatibility.
-
-**Summary**: Attributes like ``[[nodiscard]]``, ``[[maybe_unused]]``, and ``[[deprecated]]`` improve code safety, clarity, and maintainability. They do not change program semantics, they help the compiler help you.
-
-
-Callables
-====================================================
-
-The term **callable** is a broad concept that refers to anything that can be invoked using the function-call syntax. If you can write ``f(arg1, arg2)``, then ``f`` is a callable.
-
-There are six main "things" in C++ that satisfy this definition:
-
-1. Functions (and Function Pointers)
-2. Functors (Function Objects)
-3. Lambdas
-4. Member Functions (and Pointers to Member Functions)
-5. Bound Functions (from ``std::bind``)
-6. Standard Tools: ``std::function`` and ``std::invoke``
-
-
-Function Pointers
--------------------
-
-A function pointer is a variable that stores the address of a function, allowing you to call that function indirectly through the pointer. It behaves similarly to pointers to data, except that it points to code rather than data.
-
-**Syntax**
-
-Given a function ``int add(int a, int b);``, a pointer to this function would be declared as: ``int (*ptr)(int, int);``
-
-Where:
-
-- ``int``: the return type of the function that ``ptr`` can point to.
-- ``(*ptr)``: the pointer variable itself. The parentheses are mandatory. They bind ``*`` to the name ``ptr``, signifying "``ptr`` is a pointer."
-- ``(int, int)``: the parameter list of the function that ``ptr`` can point to.
-
-.. admonition:: Important
-   :class: warning
-
-   If you write ``int *ptr(int, int)`` instead of ``int (*ptr)(int, int)``, you are declaring a function named ``ptr`` that takes two ``int``\s and returns an ``int*`` (a pointer to an integer). The parentheses make all the difference.
-
-**Declaring and Initializing**
-
-You initialize a function pointer by assigning it the name of a **compatible function**. The ``&`` (address-of) operator is optional, as the name of a function automatically *decays* to a pointer to that function.
+A Fallback Value
+~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   // 1. A compatible function we want to point to
-   int multiply(int a, int b) { return a * b; }
-   // Another compatible function
-   int add(int a, int b) { return a + b; }
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   std::optional<int> none{find_idle_robot(fleet, 90.0)};
+   // prints 0 -1
+   std::cout << none.has_value() << ' ' << none.value_or(-1) << '\n';
 
-   int main() {
-       // 2. Declare a function pointer
-       int (*func_ptr)(int, int);
-       // 3. Initialize it (the & is optional)
-       func_ptr = &multiply; // or func_ptr = multiply;
-       // It's a variable, so it can be changed
-       func_ptr = add;
-   }
+- No robot has 90 %, so ``none`` is empty: ``has_value()`` is false, printed as 0.
+- ``value_or(-1)`` gives the value inside, or -1 when there is none.
+- Here the caller chooses -1, to print something. ``find_idle_robot`` itself never returns -1: its type says the answer can be missing.
 
-**Calling Through a Function Pointer**
+Three Ways to Read
+~~~~~~~~~~~~~~~~~~
 
-Once you have a pointer, you can use it to call the function it points to. C and C++ provide two syntaxes:
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
 
-- **Explicit Dereference (C-style):** ``(*func_ptr)(arg1, arg2)``
-- **Implicit Dereference (C++ style):** ``func_ptr(arg1, arg2)``
+   * - Read with
+     - If the optional is empty
+   * - ``*idle``
+     - undefined behavior: check first
+   * - ``idle.value()``
+     - **throws** ``std::bad_optional_access``
+   * - ``idle.value_or(fallback)``
+     - gives ``fallback``
 
-We can call a function through a pointer because a function pointer is a **callable**.
+- Check with ``if (idle)`` before ``*idle``, or use ``value()`` or ``value_or()``.
 
-.. code-block:: cpp
-
-   int multiply(int a, int b) { return a * b; }
-
-   int main() {
-       int (*func_ptr)(int, int){&multiply};
-
-       // Call using explicit dereference
-       int result1{(*func_ptr)(5, 10)}; // result1 is 50
-       std::cout << "Result 1: " << result1 << '\n';
-
-       // Change what it points to
-       func_ptr = &add; // or func_ptr = add;
-
-       // Call using implicit dereference
-       int result2{func_ptr(5, 10)}; // result2 is 15
-       std::cout << "Result 2: " << result2 << '\n';
-   }
-
-**Use Cases**
-
-Function pointers allow you to pass behavior as an argument.
-
-- **State Machines**: An array of function pointers where each function implements the logic for a different state.
-- **Plugin Systems**: A main application loads a dynamic library, finds a function by name, stores its address in a function pointer, and calls it.
-- **Callbacks**: A function you pass to another function, which the receiving function "calls back" at an appropriate time.
+An Empty Optional
+~~~~~~~~~~~~~~~~~
 
 .. code-block:: cpp
 
-   // This function takes a callback: void (*operation)(int)
-   void process_list(int* arr, int size, void (*operation)(int)) {
-       for (int i{0}; i < size; ++i) {
-           operation(arr[i]); // "Calling back" the operation
-       }
-   }
+   std::optional<int> idle;
+   std::cout << idle.value();
 
-   void print_number(int n) { std::cout << "Value: " << n << '\n'; }
-   void double_number(int n) { std::cout << "Double: " << n * 2 << '\n'; }
+.. code-block:: text
 
-   int main() {
-       constexpr size_t array_size{3};
-       int my_list[array_size] = {1, 2, 3};
-       std::cout << "--- Printing ---\n";
-       process_list(my_list, array_size, print_number);
-
-       std::cout << "--- Doubling ---\n";
-       process_list(my_list, array_size, double_number);
-   }
-
-In C++, the name of a function **automatically decays** to a *function pointer* when passed as an argument, just like an array name decays to a pointer to its first element.
-
-**Dangers and Limitations**
-
-- **Type mismatch risk**, if the pointer's signature does not exactly match the function's, undefined behavior occurs.
-- **No state retention**, function pointers cannot capture variables or maintain context like lambdas or functors.
-- **Null or invalid pointer calls**, calling through an uninitialized or dangling pointer leads to crashes.
-- **Poor readability and maintenance**, the syntax is verbose and less intuitive for large systems.
-- **Overload ambiguity**, overloaded functions require explicit casting to resolve which overload to use.
-- **No exception safety or lifetime management**, no automatic handling of destroyed or unloaded code.
-- **Incompatible with member functions**, require special syntax and cannot be used directly with objects.
-- **Obsolete for many tasks**, modern alternatives like ``std::function``, lambdas, and ``std::invoke`` provide safer and more flexible mechanisms.
-
-
-Functors
-----------
-
-A functor (or function object) is an object of a ``class`` or ``struct`` that overloads the function call operator (``operator()``). This allows you to create an object that can be called as if it were a regular function (callable), but with a key advantage: a functor can hold state.
-
-**Why Not Just Use a Function?**
-
-A regular C++ function does not typically maintain state between calls (unless you use ``static`` variables, which has different implications).
-
-- A function takes inputs and produces an output. It is stateless.
-- A functor is an object. It can have member variables (state) that persist across calls.
-
-**A Simple Stateful Counter**
-
-A "function" that counts how many times it has been called.
+   terminate called after throwing
+     an instance of
+     'std::bad_optional_access'
+     what():  bad optional access
 
 .. code-block:: cpp
 
-   struct Counter {
-       int count = 0; // 1. The State
-       // 2. The Overloaded Call Operator
-       // This is what makes it a functor.
-       void operator()() {
-           ++count;
-           std::cout << "Called " << count << " times.\n";
-       }
-   };
+   std::optional<int> idle;
+   std::cout << *idle;
 
-   int main() {
-       Counter my_counter; // Create an instance of our functor
+.. code-block:: text
 
-       // Call the object as if it's a function
-       my_counter(); // Output: Called 1 times.
-       my_counter(); // Output: Called 2 times.
+   0
 
-       // We can still access its state directly
-       std::cout << "Final count: " << my_counter.count << '\n'; // Output: 2
-   }
+- ``value()`` **throws**: it reports the problem in a way the program can catch. Nothing catches it here, so the program stops with exit status 134. Lecture 4's ``at()`` behaves the same way.
+- ``*`` does no check. It printed ``0``, with no warning and no error. That is undefined behavior: the next build may print anything.
+- How to catch a thrown exception is in the **exceptions reading**.
 
-**STL Algorithms**
+``std::optional``, Pointer, or Special Value
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The most powerful and common use for functors is with C++ STL algorithms like ``std::transform``, ``std::for_each``, or ``std::count_if``. These algorithms often need a "predicate" or "operation" (a function to apply to each element in a container). A functor allows you to pass in an operation that is configurable.
+``find_idle_robot`` looks for a robot and may find none. Here are three separate ways to write it, one version at a time.
 
+1. **A special value.** It returns the robot's id as an ``int``, and -1 means "none". That works only because ids are never negative. Nothing makes the caller check: one who forgets uses -1 as an id.
+2. **A null pointer** (Lecture 3). It returns ``const RobotStatus*``, the address of the robot inside the vector, and ``nullptr`` means "none". When the vector grows, ``push_back`` moves every robot to new memory (Lecture 4), and the pointer then points where the robot used to be.
+3. **An empty ``std::optional``.** It returns ``std::optional<int>``, which holds its own copy of the id. "None" is its own state, empty, instead of a number that only looks like an id.
 
-Lambdas
----------
+.. note::
 
-A lambda function (or lambda) is an anonymous, inline function defined right at the location where it is used.
+   Pick the pointer when the caller must change the robot itself, for example to mark it busy: a copy would change only the copy. Pick ``std::optional`` when the answer is a value, such as an id. The empty state costs memory: with g++ 13, ``std::optional<int>`` takes 8 bytes and an ``int`` takes 4. See `cppreference: std::optional <https://en.cppreference.com/w/cpp/utility/optional>`__.
 
-- **Anonymous**: It does not have a name in the traditional sense.
-- **Inline**: You define its body directly within another expression, such as a function call.
-
-Think of it as a quick, throwaway function. You need a simple operation (like comparing two numbers or adding 1 to a value) for a single purpose, like sorting a vector. Instead of defining a whole separate function, you just write the operation right there.
-
-.. admonition:: Under the Hood
-   :class: note
-
-   The compiler translates a lambda into a unique, unnamed functor (a ``struct`` or ``class`` with an overloaded ``operator()``). So, lambdas are mostly syntactic sugar for creating function objects, but they are incredibly convenient.
-
-**Syntax**
-
-.. code-block:: cpp
-
-   [captures](parameters) mutable exception_spec -> return_type { body }
-
-Don't be intimidated! We usually only use ``captures``, ``parameters``, and ``body``.
-
-.. code-block:: cpp
-
-   int main() {
-       std::vector<int> numbers = {5, 2, 8, 3, 1};
-
-       // Use a lambda for custom sorting
-       std::sort(numbers.begin(), numbers.end(), [](int a, int b) {
-           return a > b; // Sort in descending order
-       });
-
-       for (int n : numbers) {
-           std::cout << n << " ";
-       }
-       // Output: 8 5 3 2 1
-       std::cout << '\n';
-   }
-
-**Use Cases**
-
-- **Algorithms**: As a comparator for ``std::sort``, ``std::stable_sort``, ``std::max_element``, etc.
-- **Functional Programming**: With algorithms like ``std::transform`` (map), ``std::copy_if`` (filter), or ``std::accumulate`` (reduce).
-- **Callbacks**: In asynchronous programming or GUI development, where you need to provide a function to be "called back" later.
-
-**The Capture Clause [...]**
-
-This is the most important part of a lambda. It defines how the lambda accesses variables from its surrounding scope.
-
-- **No capture** ``[]``: The lambda cannot see or use any variables from the outside.
-- **Capture by Value** ``[=]``: The lambda gets a copy of all outside variables it uses. These copies are ``const`` inside the lambda by default.
-- **Capture by Reference** ``[&]``: The lambda gets a reference to all outside variables it uses. This is fast but can be dangerous.
-- **Specific Capture (Value)** ``[x, y]``: Only captures ``x`` and ``y`` by value.
-- **Specific Capture (Reference)** ``[&x, &y]``: Only captures ``x`` and ``y`` by reference.
-- **Mixed Capture** ``[x, &y]``: Captures ``x`` by value and ``y`` by reference. You can mix ``[=]`` and ``[&]`` defaults with specific captures (e.g., ``[=, &y]`` captures ``y`` by reference and all other variables by value).
-
-.. code-block:: cpp
-
-   int x{10};
-   int y{20};
-
-   // Captures x by value (a copy) and y by reference (the original)
-   auto my_lambda = [x, &y]() {
-       // std::cout << "x = " << x << '\n'; // x is 10
-       // x = 15; // ERROR! x is const (captured by value)
-       y = 30; // OK! y is a reference
-   };
-
-   my_lambda();
-   // std::cout << y << '\n'; // Output: 30
-
-**The Parameter List**
-
-The parameter list defines what arguments the lambda expects. It behaves exactly like a regular function's parameter list.
-
-.. code-block:: cpp
-
-   // No parameters
-   [] { std::cout << "Hello!\n"; };
-
-   // Single parameter
-   [](int x) { std::cout << x << '\n'; };
-
-   // Multiple parameters
-   [](int a, int b) { return a + b; };
-
-If your lambda takes no parameters, you may omit the parentheses ``()``.
-
-**The Body**
-
-The body defines the code executed when the lambda is invoked. It can contain a single expression or multiple statements enclosed in braces.
-
-.. code-block:: cpp
-
-   // Single-expression body
-   [](int a, int b) { return a + b; };
-
-   // Multi-statement body
-   [](int x) {
-       std::cout << "Value: " << x << '\n';
-       return x * x;
-   };
-
-In C++11/C++14/C++17, lambdas must use ``return`` to produce a value explicitly.
-
-**Return Type Deduction**
-
-The compiler automatically deduces the lambda's return type from the return statements in its body (just like an ``auto`` function).
-
-.. code-block:: cpp
-
-   [](int x) { return x * 2.0; } // Return type is deduced as double
-
-If the body is complex or you need to be explicit (e.g., returning an ``int`` from a ``double`` calculation), you can use the trailing return type syntax:
-
-.. code-block:: cpp
-
-   [](double d) -> int {
-       if (d > 10.0) {
-           return static_cast<int>(d);
-       }
-       return 0; // Multiple return statements might confuse the compiler
-   };
-
-**The mutable Keyword**
-
-By default, variables captured by value are ``const``. You cannot modify your copy of them. The ``mutable`` keyword removes this restriction, allowing you to modify the copied data (which exists only inside the lambda).
-
-.. code-block:: cpp
-
-   int counter{0};
-
-   auto my_counter = [counter]() mutable {
-       counter++; // Modifies the lambda's internal copy
-       return counter;
-   };
-
-   std::cout << my_counter() << '\n'; // Output: 1
-   std::cout << my_counter() << '\n'; // Output: 2
-   std::cout << counter << '\n';     // Output: 0 (original is unchanged)
-
-The capture ``[counter]`` means capture by value. The lambda gets its own internal copy of ``counter``. Think of it as:
-
-.. code-block:: cpp
-
-   struct __Lambda {
-       int counter;  // copy of outer counter
-       int operator()() mutable {
-           counter++;
-           return counter;
-       }
-   };
-
-**Functional Programming Patterns**
-
-Lambdas are the key to using ``<algorithm>`` functions in a functional style.
-
-- **Map** (``std::transform``): Applies an operation to every element in a range and stores the result.
-- **Filter** (``std::copy_if`` or ``std::remove_copy_if``): Copies elements that match a predicate.
-
-
-``std::function`` and Type Erasure
--------------------------------------
-
-We have a problem: all callables have **different, unique types**.
-
-- A function pointer is ``int(*)(int)``.
-- A functor is ``MyFunctor``.
-- A lambda has an **unnamable type** generated by the compiler.
-
-How can we store these different things in a single variable or pass them to a function that accepts *any* of them?
-
-**The Solution: std::function**
-
-``std::function`` (header ``<functional>``) is a general-purpose, polymorphic function wrapper. It can store, copy, and invoke **any** callable object (function pointer, lambda, functor) as long as it has a compatible function signature.
-
-This is a powerful concept called **Type Erasure**. ``std::function`` "erases" the specific type of the callable and stores it behind a common interface.
-
-**Syntax**
-
-It is a template that takes the function *signature* as its parameter.
-
-.. code-block:: cpp
-
-   // A std::function that can hold any callable
-   // that takes an int and a double, and returns a std::string
-   std::function<std::string(int, double)> my_callable;
-
-**Storing Different Callables**
-
-.. code-block:: cpp
-
-   // 1. A free function
-   int double_value(int a) { return a * 2; }
-   // 2. A functor
-   struct Multiplier {
-       int factor;
-       Multiplier(int f) : factor(f) {}
-       int operator()(int x) const { return x * factor; }
-   };
-
-   int main() {
-       // A std::function that needs an "int(int)" signature
-       std::function<int(int)> operation;
-       // 1. Store a lambda
-       operation = [](int x) { return x + 10; };
-       std::cout << operation(5) << '\n'; // Output: 15
-       // 2. Store a functor
-       Multiplier times_5(5);
-       operation = times_5;
-       std::cout << operation(5) << '\n'; // Output: 25
-       // 3. Store a (compatible) free function
-       operation = double_value;  // assign the function itself
-       std::cout << operation(5) << '\n'; // Output: 10
-   }
-
-**Gotchas and Performance**
-
-``std::function`` is powerful, but not "free."
-
-- **Performance Cost**: Type erasure has overhead. A ``std::function`` call can be slower than a direct lambda or function pointer call because it may involve virtual dispatch.
-- **Heap Allocation**: If the callable is "small" (like a simple lambda with no captures), it may be stored inside the ``std::function`` object itself (Small Object Optimization). If the callable is "large," ``std::function`` may allocate memory on the heap.
-- **Empty State**: A default-constructed ``std::function`` is "empty." Calling it will throw a ``std::bad_function_call`` exception.
-
-.. code-block:: cpp
-
-   std::function<void()> empty_func;
-
-   // empty_func(); // CRASH: throws std::bad_function_call
-
-   // Always check before calling if it might be empty
-   if (empty_func) {
-       empty_func(); // Safe
-   }
-
-
-``std::variant`` (C++17)
-====================================================
-
-``std::variant`` is a **type-safe union** introduced in C++17. It can hold a value of one of several alternative types at any given time, but unlike a C-style ``union``, it always knows which type it currently holds and enforces safe access.
-
-.. code-block:: cpp
-
-   #include <variant>
-
-Why std::variant?
--------------------
-
-C-style unions are **unsafe**: they do not track which member is active, and reading the wrong member is undefined behavior. ``std::variant`` eliminates this problem by tracking the active type at runtime and providing checked access.
-
-.. admonition:: Convention
-   :class: tip
-
-   Use ``std::variant`` instead of C-style unions whenever you need a variable that can hold one of several types.
-
-
-Declaration and Assignment
-----------------------------
-
-A ``std::variant`` is declared with its possible types as template arguments. You can assign any of those types to it at any time.
-
-.. code-block:: cpp
-
-   #include <variant>
-   #include <string>
-
-   std::variant<int, double, std::string> data;
-   data = 42;          // holds int
-   data = 3.14;        // now holds double
-   data = "hello";     // now holds std::string
-
-
-Accessing Values
+Function Templates
 ------------------
 
-There are several ways to retrieve the stored value:
+A **function template** is a pattern for a family of functions. The compiler writes one function from it for each set of types you call it with.
+
+See `cppreference: function template <https://en.cppreference.com/w/cpp/language/function_template>`__.
+
+One Body, Several Overloads
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   std::variant<int, double, std::string> data{42};
-
-   // std::get<type> -- throws std::bad_variant_access if wrong type
-   int val = std::get<int>(data);
-
-   // std::get<index> -- access by index (0-based)
-   int val2 = std::get<0>(data);  // same as std::get<int>
-
-   // std::holds_alternative<type> -- check which type is active
-   if (std::holds_alternative<int>(data)) {
-       std::cout << "Holds an int: " << std::get<int>(data) << '\n';
+   // a speed command, in percent
+   int clamp_value(int value, int low, int high) {
+     if (value < low) { return low; }
+     if (value > high) { return high; }
+     return value;
    }
 
+   // a battery reading, in percent
+   double clamp_value(double value, double low, double high) {
+     if (value < low) { return low; }
+     if (value > high) { return high; }
+     return value;
+   }
 
-``std::visit`` for Pattern Matching
---------------------------------------
+- Lecture 5's overloads, one per type. A speed command of 130 % becomes 100; a faulty battery reading of 104.2 % becomes 100.0.
+- The bodies are **identical**. Only the type changes. A fix to one must be copied into every other.
+- Overloads are right when each type needs **different** code. Here the code is the same, so the type should be a parameter.
 
-``std::visit`` applies a callable (typically a lambda) to the value currently held by the variant. This is the idiomatic way to handle all possible types.
+See `Overload or Specialize`_ under Further Reading.
+
+Declaring a Template
+^^^^^^^^^^^^^^^^^^^^
+
+A **template parameter** is a name, here ``T``, that stands for a type in a function template. The line ``template <typename T>`` introduces it.
 
 .. code-block:: cpp
 
-   std::variant<int, double, std::string> sensor_value{42};
+   template <typename T>
+   T clamp_value(T value, T low, T high) {
+     if (value < low) { return low; }
+     if (value > high) { return high; }
+     return value;
+   }
 
-   std::visit([](auto&& val) {
-       std::cout << "Value: " << val << '\n';
-   }, sensor_value);
+- Read it as: "for any type ``T``, here is a function that takes three ``T``\ s and returns a ``T``".
+- ``typename`` and ``class`` mean the same thing in this line. These slides use ``typename``.
+- The body needs ``<`` and ``>`` on ``T``. A type without them cannot be used here.
 
-The ``auto&&`` parameter lets the lambda accept any of the variant's types. The compiler generates a separate instantiation for each possible type.
+Instantiation
+~~~~~~~~~~~~~
 
-Use Cases in Robotics
------------------------
+**Instantiation** is the compiler writing a real function from a template, for the types of one call.
 
-``std::variant`` is useful in robotics for:
+.. code-block:: cpp
 
-- **Heterogeneous sensor data**: A single variable that can hold an ``int`` error code, a ``double`` measurement, or a ``std::string`` status message.
-- **Command variants**: Different command types (move, rotate, stop) stored in a single variant.
-- **Configuration values**: Parameters that can be ``int``, ``double``, or ``std::string``.
+   int speed_pct{clamp_value(130, 0, 100)};               // 100
+   double battery_pct{clamp_value(104.2, 0.0, 100.0)};    // 100
+   int other_pct{clamp_value(50, 0, 100)};                // 50
 
-Example: Sensor Data Processing
+.. code-block:: bash
+
+   nm -C week6_templates | grep 'clamp_value<'
+   ... W double clamp_value<double>(double, double, double)
+   ... W int clamp_value<int>(int, int, int)
+
+- Two functions in the program, one per type. The third call reuses ``clamp_value<int>``.
+- ``nm`` lists the functions in a compiled program; ``-C`` shows their C++ names. ``702bin`` takes you to the folder that holds ``week6_templates``.
+
+Templates Go in Headers
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // Split like a normal function (Lecture 5): does NOT link
+   // stats.hpp: the declaration only
+   template <typename T> T clamp_value(T value, T low, T high);
+   // stats.cpp: includes stats.hpp, then the definition
+   template <typename T> T clamp_value(T value, T low, T high) { ... }
+   // main.cpp: includes stats.hpp, then
+   double pct{clamp_value(104.2, 0.0, 100.0)};
+
+.. code-block:: text
+
+   main.cpp:(.text+0x29): undefined reference to
+     `double clamp_value<double>(double, double, double)'
+
+.. code-block:: cpp
+
+   // The fix: the whole template in stats.hpp, and no stats.cpp
+   template <typename T> T clamp_value(T value, T low, T high) { ... }
+
+- The same three files with a regular function link and run (Lecture 5). With a template, the linker finds nothing.
+- The fix is what ``fleet/include/stats.hpp`` does: the exception to Lecture 5's rule.
+
+Why a Regular Function Links
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The same split, compiled twice. ``nm -C`` lists what an object file **defines** (``T``) and what it **needs** from another file (``U``).
+
+**Regular function**, with ``double`` in place of ``T``:
+
+.. code-block:: text
+
+   stats.o:  T clamp_value(double, double, double)
+   main.o:   U clamp_value(double, double, double)
+
+**Template**, as in `Templates Go in Headers`_:
+
+.. code-block:: text
+
+   stats.o:  (nothing)
+   main.o:   U double clamp_value<double>(double, double, double)
+
+- Regular function: ``stats.cpp`` compiles the body once. The linker matches the ``U`` in ``main.o`` with the ``T`` in ``stats.o``, and the program prints 100.
+- Template: a version is compiled only where a call needs it. ``stats.cpp`` has the body but no call; ``main.cpp`` has the call but no body. No ``T`` anywhere.
+- So the body goes in the header, where every call can see it.
+
+Template Argument Deduction
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In **template argument deduction**, the compiler works out ``T`` from the types of the arguments in the call.
+
+.. code-block:: cpp
+
+   clamp_value(130, 0, 100);          // three ints:    T is int
+   clamp_value(104.2, 0.0, 100.0);    // three doubles: T is double
+
+- You call a template the way you call any function. The ``<int>`` is filled in for you.
+- Each argument is compared with its parameter. Here all three parameters are ``T``, so all three arguments must give the **same** ``T``.
+
+One T for Every Argument
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   template <typename T>
+   T clamp_value(T value, T low, T high) {
+     if (value < low) { return low; }
+     if (value > high) { return high; }
+     return value;
+   }
+
+   int main() {
+     double pct{clamp_value(104, 0.0, 100.0)};
+     return pct > 50.0;
+   }
+
+.. code-block:: text
+
+   deduce_conflict.cpp:9:25: error: no matching function for call to
+     'clamp_value(int, double, double)'
+   deduce_conflict.cpp:9:25: note:   deduced conflicting types for parameter 'T'
+     ('int' and 'double')
+
+- ``104`` says ``T`` is ``int``; ``0.0`` says ``double``. Deduction does not pick one: it fails.
+- An ordinary function would have converted ``104`` to ``104.0``. Deduction looks at the types exactly as written, with no conversions.
+
+Explicit Template Arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   template <typename T>
+   T make_zero() { return T{}; }
+
+   int speed_reading{104};  // from a sensor, an int
+   double pct{clamp_value<double>(speed_reading, 0.0, 100.0)};  // 100
+   double zero{make_zero<double>()};                            // 0
+
+- ``<double>`` sets ``T`` yourself, so there is nothing to deduce. ``speed_reading`` then converts from ``int`` to ``double`` like any argument.
+- Why not write ``104.0``? That works only for a number you type in. Without ``<double>``, ``clamp_value(speed_reading, 0.0, 100.0)`` fails with ``deduced conflicting types``.
+- No argument of ``make_zero`` mentions ``T``, and the variable that receives the result is not used for deduction. So ``<double>`` is the only way: ``make_zero()`` fails with ``couldn't deduce template parameter 'T'``.
+
+.. note::
+
+   C++20, **[temp.arg.explicit]**, section 13.10.1, paragraph 7: *Template parameters do not participate in template argument deduction if they are explicitly specified*, so the argument is converted to the parameter's type.
+
+Two Template Parameters
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   template <typename T, typename U>
+   auto add_offset(T value, U offset) {
+     return value + offset;
+   }
+
+   add_offset(80, 15);     // T int,   U int:    returns int 95
+   add_offset(80, 2.5);    // T int,   U double: returns double 82.5
+   add_offset(80.5f, 2);   // T float, U int:    returns float 82.5
+
+- Two parameters, deduced separately, so the arguments may differ in type.
+- What is the return type? It depends on ``T`` and ``U``. ``auto`` lets the compiler take it from the ``return`` statement, by the arithmetic conversions of Lecture 2.
+- The three return types are checked with ``static_assert`` in ``templates.cpp``.
+
+See `decltype and Trailing Return Types`_ under Further Reading.
+
+Abbreviated Templates
+^^^^^^^^^^^^^^^^^^^^^
+
+An **abbreviated function template** is a function with ``auto`` as a parameter type. It is a template, written without the ``template`` line. C++20.
+
+.. code-block:: cpp
+
+   void print_all(const auto& values) {
+     for (const auto& value : values) {
+       std::cout << value << ' ';
+     }
+     std::cout << '\n';
+   }
+
+   print_all(std::vector<int>{1, 2, 3, 4});
+   print_all(std::vector<double>{82.5, 35.0});
+
+.. code-block:: text
+
+   1 2 3 4
+   82.5 35
+
+- It means ``template <typename T> void print_all(const T& values)``.
+- Each ``auto`` parameter gets its **own** template parameter. Two ``auto``\ s can be two different types.
+- It is still a template, so it still goes in the header.
+
+Concepts
+^^^^^^^^
+
+A **concept** is a named test on a template parameter. The compiler runs it at each call, before it writes the function. If the test fails, the call does not compile. C++20, header ``<concepts>``.
+
+**Without a concept**
+
+.. code-block:: cpp
+
+   template <typename T>
+   T average_of(
+       const std::vector<T>& values);
+
+**With a concept**
+
+.. code-block:: cpp
+
+   template <std::floating_point T>
+   T average_of(
+       const std::vector<T>& values);
+
+- The two are the same function with the same body. Only the first line differs.
+- Left: ``T`` can be any type, ``int`` included. Right: ``T`` must pass ``std::floating_point``, a standard concept that ``float``, ``double`` and ``long double`` pass, and ``int`` does not.
+- Why it matters: the body divides the sum by the count. With ``int``, that is integer division, and the average loses its fraction (see `A Call That Compiles and Is Wrong`_).
+- See `cppreference: constraints and concepts <https://en.cppreference.com/w/cpp/language/constraints>`__.
+
+A Call That Compiles and Is Wrong
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. dropdown:: Full Example
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
+.. code-block:: cpp
+
+   // with template <typename T>: no concept
+   average_of(std::vector<double>{82.5, 35.0, 64.0, 18.0});  // 49.875
+   average_of(std::vector<int>{80, 35, 64, 18});  // 49, not 49.25
+
+   // with template <std::floating_point T>
+   average_of(std::vector<int>{80, 35, 64, 18});  // rejected
+
+.. code-block:: text
+
+   average_int.cpp:5:3: note: constraints not satisfied
+
+- Some robots report their battery as a whole-number percent. Without the concept, ``T`` is ``int``: 80 + 35 + 64 + 18 = 197, and 197 / 4 is integer division, 49.
+- No warning, even under ``-Wall -Wextra``. The concept turns that silent wrong answer into a compile error.
+- The requirement is part of the declaration, where the caller reads it. Rule: `Core Guidelines T.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-concepts>`__.
+
+Form 1: In Place of ``typename``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   template <std::integral T>   // T must be an integral type
+   bool is_valid_id(T id) { return id > 0; }
+
+   is_valid_id(3);      // true
+   is_valid_id(-2L);    // false: -2L is a long, also integral
+   is_valid_id(true);   // true: bool is integral too
+   is_valid_id(2.5);    // does not compile: double is not integral
+
+- Read the first line as: ``T`` is any type that passes ``std::integral``. The concept takes the place of ``typename``.
+- The rejected call stops with ``constraints not satisfied``.
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Standard concept
+     - Accepts
+   * - ``std::integral``
+     - ``bool``, the ``char`` types, and the signed and unsigned integer types (``int``, ``long``, ...)
+   * - ``std::floating_point``
+     - ``float``, ``double``, ``long double``
+   * - ``std::totally_ordered``
+     - types whose values compare with ``==``, ``<``, ``>``, ``<=``, ``>=`` in one consistent order
+
+See `std::totally_ordered`_ under Further Reading.
+
+Form 2: A ``requires`` Clause
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   template <typename T>
+     requires std::integral<T> && (!std::same_as<T, bool>)
+   bool is_valid_id(T id) { return id > 0; }
+
+   is_valid_id(3);      // true
+   is_valid_id(true);   // does not compile now: T is bool
+
+- ``requires`` is followed by a condition that the compiler checks at each call. Here: ``T`` is integral, and ``T`` is not ``bool``.
+- ``std::integral<T>`` is true or false for one type. So is ``std::same_as<T, bool>``, a standard concept that is true when the two types are the same.
+- Why exclude ``bool``: in form 1, ``is_valid_id(true)`` compiles and returns true, but a ``bool`` is not an id.
+- Only this form can join tests with ``&&`` and ``||``. A test that starts with ``!`` needs parentheses. Without them, g++ stops with ``expression must be enclosed in parentheses``.
+
+Form 3: Before ``auto``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+**Form 1: the type has a name**
+
+.. code-block:: cpp
+
+   template <std::integral T>
+   bool same_id(T first, T second) {
+     return first == second;
+   }
+   same_id(3, 3);   // true
+   same_id(3, 3L);  // does not compile
+
+**Form 3: no name**
+
+.. code-block:: cpp
+
+   bool same_id(
+       std::integral auto first,
+       std::integral auto second) {
+     return first == second;
+   }
+   same_id(3, 3);   // true
+   same_id(3, 3L);  // true
+
+- With one parameter the two forms accept the same calls: ``is_valid_id(std::integral auto id)`` behaves like form 1.
+- With two, they differ. Form 1 names the type ``T``, and both parameters are ``T``, so they must be one type: ``3`` is an ``int``, ``3L`` a ``long``, and the call fails (see `One T for Every Argument`_).
+- Form 3 has no name. Each ``auto`` is its own type, so ``int`` and ``long`` are both accepted.
+
+See `Documenting a Template`_ under Further Reading.
+
+Which Form to Use
+~~~~~~~~~~~~~~~~~
+
+1. **Form 3 by default:** each parameter has its own simple requirement, and the types may differ.
 
    .. code-block:: cpp
 
-      #include <variant>
-      #include <string>
-      #include <iostream>
+      bool same_id(std::integral auto first, std::integral auto second);
 
-      using SensorData = std::variant<int, double, std::string>;
+2. **Form 1** when two parameters must be one type, or the body or return type needs the name ``T``.
 
-      void process_reading(const SensorData& data) {
-          std::visit([](const auto& val) {
-              std::cout << "Reading: " << val << '\n';
-          }, data);
-      }
+   .. code-block:: cpp
 
-      int main() {
-          SensorData temperature{23.5};
-          SensorData error_code{404};
-          SensorData status{std::string{"active"}};
+      template <std::integral T>
+      bool same_id(T first, T second);
 
-          process_reading(temperature);
-          process_reading(error_code);
-          process_reading(status);
+3. **Form 2** when the condition joins tests with ``&&``, ``||`` or ``!``.
 
-          // Check type
-          if (std::holds_alternative<double>(temperature)) {
-              std::cout << "Temperature is a double: "
-                        << std::get<double>(temperature) << '\n';
-          }
+   .. code-block:: cpp
 
-          return 0;
-      }
+      template <typename T>
+        requires std::integral<T> && (!std::same_as<T, bool>)
+      bool is_valid_id(T id);
 
+.. admonition:: Best Practice
+   :class: tip
 
-``if constexpr`` (C++17)
-====================================================
+   Constrain every template parameter; a bare ``typename T`` only when any type works (`T.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-concepts>`__). For a simple concept, the shorter form: `Core Guidelines T.13 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-shorthand>`__ ranks ``requires`` "correct but verbose", form 1 "better" and form 3 "best".
 
-``if constexpr`` is a compile-time conditional introduced in C++17. Unlike a regular ``if`` statement, the condition is evaluated **at compile time**, and the branch that is not taken is **discarded entirely**, it does not even need to compile for the given type.
+Higher-Order Functions
+----------------------
+
+A **callable** is anything you can call with parentheses: a function, a lambda, a pointer to a function, or an object that holds one of them. A **higher-order function** takes a callable as a parameter, or returns one.
+
+See `cppreference: Callable <https://en.cppreference.com/w/cpp/named_req/Callable>`__.
+
+A Condition instead of a Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   #include <type_traits>
+   bool is_low(double pct) { return pct < 40.0; }  // outside main
 
-This feature is especially powerful in templates, where different branches may only be valid for certain types.
+   std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+
+   std::count(battery_pct.begin(), battery_pct.end(), 35.0);       // 1
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low);  // 2
+
+A **predicate** is a function that answers yes or no: it returns a ``bool``. ``std::count_if`` wants one that takes one value; some algorithms want one that takes two.
+
+- ``std::count`` (Lecture 4) asks: how many levels **equal** 35.0? One does, so it returns 1.
+- ``std::count_if`` asks: for how many levels does ``is_low`` say yes? It calls ``is_low`` on 82.5, 35.0, 64.0 and 18.0 and gets false, true, false, true. Two yeses, so it returns 2.
+- ``std::count_if`` is a higher-order function. Pass the name ``is_low``, with no parentheses: ``std::count_if`` makes the calls. ``is_low()`` would call it right there, with no argument, and fails with ``too few arguments to function``.
+- The catch: ``is_low`` sits outside ``main``, far from the one line that uses it, and 40 is fixed inside it. Counting levels below 50 would need a second function.
+
+Lambdas
+-------
+
+The callable in `A Condition instead of a Value`_, ``is_low``, is a function defined far from its one use. A **lambda** is a callable written right where it is used.
+
+See `cppreference: lambda expressions <https://en.cppreference.com/w/cpp/language/lambda>`__. Rule: `Core Guidelines F.50 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-capture-vs-overload>`__.
+
+Lambda Expressions
+^^^^^^^^^^^^^^^^^^
+
+A **lambda expression** is an expression that creates a function object. It has three parts: captures in ``[ ]``, parameters in ``( )``, and a body in ``{ }``.
 
 .. code-block:: cpp
 
-   template<typename T>
-   void process(T value) {
-       if constexpr (std::is_integral_v<T>) {
-           std::cout << "Integer: " << value << '\n';
-       } else if constexpr (std::is_floating_point_v<T>) {
-           std::cout << "Float: " << value << '\n';
-       } else {
-           std::cout << "Other: " << value << '\n';
-       }
+   [captures](parameters) { body }
+
+.. code-block:: cpp
+
+   // create it and call it at once: true
+   [](double pct) { return pct < 40.0; }(35.0);
+   // create it and store it
+   auto is_low = [](double pct) { return pct < 40.0; };
+   is_low(35.0);  // true: call it like a function
+   is_low(64.0);  // false
+
+- The test of the function ``is_low``: ``(double pct)`` is the parameter, the body returns a ``bool``. ``[]`` is empty: it uses nothing around it.
+- ``(35.0)`` right after the closing brace calls the lambda once, where it is made: a lambda is a callable.
+- To call it again, store it in ``is_low``. Its type has no name you can write, so ``auto``.
+
+Passing a Lambda
+~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+   auto is_low = [](double pct) { return pct < 40.0; };
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low);  // 2
+
+   // the same lambda, written directly in the call
+   std::count_if(battery_pct.begin(), battery_pct.end(),
+                 [](double pct) { return pct < 40.0; });  // 2
+
+- ``std::count_if`` takes the lambda where `A Condition instead of a Value`_ passed the function ``is_low``. Both are callables, and both answer the same test.
+- Written in the call, the lambda needs no name: it is used once, on the line that defines it. The test sits next to the one line that uses it, which fixes half of the catch in `A Condition instead of a Value`_.
+
+``std::find_if`` with a Lambda
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   auto is_busy = [](const RobotStatus& robot) { return robot.busy; };
+   auto first_busy = std::find_if(fleet.begin(), fleet.end(), is_busy);
+   first_busy->id;  // 2
+
+- ``std::find_if`` searches a range for the **first** element for which a predicate returns ``true``, and returns an iterator to it.
+- ``is_busy`` is that predicate: a lambda kept in a variable, written next to the line that uses it.
+- ``std::find_if`` calls ``is_busy`` on each robot, in order, and stops at the first ``true``. Robot 1 is idle, robot 2 is busy: two calls, and it stops at robot 2.
+- It returns an iterator to that robot, so ``first_busy->id`` is 2. If no robot is busy, it returns ``fleet.end()``, which must not be dereferenced (Lecture 4).
+
+``std::sort`` with a Lambda
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   // true when left must come before right: more battery first
+   auto higher_battery = [](const RobotStatus& left,
+                            const RobotStatus& right) {
+     return left.battery_pct > right.battery_pct;
+   };
+   std::sort(fleet.begin(), fleet.end(), higher_battery);
+   // ids in order: 1 3 2 4
+
+- ``std::sort`` puts the elements of a range in order, in place: the vector itself is rearranged. With no rule, it compares with ``<``.
+- ``RobotStatus`` has no ``<``, so the sort needs a rule that says which of two robots comes first. The lambda takes two robots and returns ``true`` when ``left`` must come before ``right``.
+- With ``>``, more battery comes first: 82.5, 64, 35 and 18 % put the robots in the order 1, 3, 2, 4.
+
+See `std::transform`_ under Further Reading.
+
+Projections (C++20)
+~~~~~~~~~~~~~~~~~~~
+
+A **projection** is a function that a ``std::ranges`` algorithm calls on each element before it compares. It turns an element into the value to compare.
+
+.. code-block:: cpp
+
+   std::vector<std::string> zones{"charging bay", "dock", "aisle 4"};
+   // the projection turns each zone into its length
+   std::ranges::sort(zones, {}, [](const std::string& zone) {
+     return zone.size();
+   });
+   // zones is now {"dock", "aisle 4", "charging bay"}: lengths 4, 7, 12
+
+- The purpose: you say **what** to compare, here the length, instead of **how** to compare two elements. Without a projection, the sort needs a lambda with two parameters (see `std::sort with a Lambda`_).
+- To compare two zones, the algorithm calls the projection on each one and compares the two results with ``<``: 4 < 7, so ``"dock"`` comes before ``"aisle 4"``.
+- The arguments: the whole vector, with no ``begin()`` or ``end()``; then ``{}``, the comparison, where empty braces mean the default, ``<``; then the projection.
+
+Projections with ``RobotStatus``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   std::ranges::sort(fleet, {}, [](const RobotStatus& robot) {
+     return robot.battery_pct;
+   });  // ids in order: 4 2 3 1
+   auto closest = std::ranges::min_element(
+       fleet, {}, [](const RobotStatus& robot) {
+         return std::hypot(robot.position.x - 5.0, robot.position.y - 5.0);
+       });  // closest->id is 4
+
+- Sort: the projection gives each robot's battery, 82.5, 35, 64 and 18 %. Smallest first gives ids 4, 2, 3, 1.
+- ``min_element``: the projection gives each robot's distance to a task at (5, 5). ``std::hypot(dx, dy)`` is the square root of dx² + dy²: robot 4 is 3.16 m away, robot 3 3.61 m, robot 2 4.12 m, robot 1 7.07 m.
+- But robot 4 has 18 %. Choosing well needs the battery limit too: the next subsection.
+
+Captures
+^^^^^^^^
+
+A **capture** is a local variable of the enclosing function that the lambda keeps and uses. You list it in the ``[ ]``.
+
+.. code-block:: cpp
+
+   std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+   double limit_pct{40.0};  // a local variable of main
+   auto is_low = [limit_pct](double pct) { return pct < limit_pct; };
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low);  // 2
+
+- ``[limit_pct]`` captures ``limit_pct``: the lambda keeps its own copy, made when the lambda is created.
+- In the body, ``pct`` comes from each call and ``limit_pct`` from the capture. A lambda body sees only its parameters and its captures.
+- The limit is no longer written inside the test, the catch in `A Condition instead of a Value`_: the code around the lambda chooses it.
+
+By Value and by Reference
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+   double limit_pct{40.0};
+   auto is_low = [limit_pct](double pct) { return pct < limit_pct; };
+   auto is_low_ref = [&limit_pct](double pct) { return pct < limit_pct; };
+
+   limit_pct = 70.0;
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low);      // 2
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low_ref);  // 3
+   limit_pct = 20.0;
+   std::count_if(battery_pct.begin(), battery_pct.end(), is_low_ref);  // 1
+
+- ``[limit_pct]`` copies 40 **when the lambda is created**. It counts levels under 40 on every call: 35 and 18, so 2.
+- ``[&limit_pct]`` stores a reference. Each call reads ``limit_pct`` **at that moment**: under 70 gives 3, under 20 gives 1.
+- The same choice as a parameter in Lecture 5: by value or by reference.
+
+Capture Lists
+~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Capture list
+     - The lambda gets
+   * - ``[]``
+     - nothing
+   * - ``[limit_pct]``
+     - a copy of ``limit_pct``
+   * - ``[&limit_pct]``
+     - a reference to ``limit_pct``
+   * - ``[limit_pct, &fleet]``
+     - a copy of ``limit_pct`` and a reference to ``fleet``
+   * - ``[=]``
+     - a copy of every local the body uses
+   * - ``[&]``
+     - a reference to every local the body uses
+
+- ``[=]`` and ``[&]`` are **capture defaults**. Naming each variable shows the reader exactly what the lambda depends on.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   By reference is fine for a lambda used here and now, such as one passed to an algorithm (`F.52 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-reference-capture>`__). Capture by value for a lambda that is returned or stored (`F.53 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-value-capture>`__).
+
+See `mutable and Init-capture`_ under Further Reading.
+
+What the Compiler Writes
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   double limit_pct{40.0};
+   auto is_low =
+       [limit_pct](double pct) {
+         return pct < limit_pct;
+       };
+
+.. code-block:: cpp
+
+   struct IsLow {
+     double limit_pct;  // the capture
+     bool operator()(double pct) const {
+       return pct < limit_pct;
+     }
+   };
+   IsLow is_low_struct{limit_pct};
+
+- The lambda is an object of an unnamed ``struct``. Each capture is a **member**; the body becomes a member function named ``operator()``, which runs when you write ``a(30.0)``. Member functions are Lecture 8.
+- Both count 2 levels, and both are 8 bytes: one ``double``. A lambda with no capture measured 1 byte, one with two references 16.
+- The ``const`` on ``operator()`` is why a capture copied by value is read-only inside the body.
+
+.. note::
+
+   C++20, **[expr.prim.lambda.closure]**, section 7.5.5.1, paragraph 1: the type of a lambda-expression *is a unique, unnamed non-union class type, called the closure type*.
+
+A Dangling Capture
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   auto make_filter(double limit_pct) {
+     return [&limit_pct](double pct) { return pct < limit_pct; };
    }
 
-When ``process<int>`` is instantiated, only the first branch is compiled. The ``else`` branches are completely discarded. This differs from a regular ``if``, where all branches must be valid C++ for the instantiated type.
+   int main() {
+     auto is_low = make_filter(40.0);
+     std::cout << is_low(30.0) << '\n';  // should be 1
+   }
 
-.. admonition:: Key Point
-   :class: note
+.. code-block:: text
 
-   ``if constexpr`` requires ``<type_traits>`` for type-checking utilities like ``std::is_integral_v``, ``std::is_floating_point_v``, ``std::is_same_v``, etc. The discarded branches do not need to be valid for the given template parameter, they are removed before semantic analysis.
+   702run week6_dangling                 # always built with AddressSanitizer
+   ERROR: AddressSanitizer: stack-use-after-return on address 0x...
+       #0 0x... in operator() dangling_capture.cpp:4
+
+- ``limit_pct`` is a parameter. It dies when ``make_filter`` returns, and the lambda keeps a reference to it: Lecture 5's dangling reference, hidden in a capture list.
+- Built without the sanitizer, it printed ``0`` with no warning. At ``-O2`` GCC warns, under a misleading name: ``'limit_pct' is used uninitialized``.
+- The fix is ``[limit_pct]``. A lambda that leaves the function captures by value (F.53).
+
+Generic Lambdas
+^^^^^^^^^^^^^^^
+
+A **generic lambda** is a lambda with ``auto`` as a parameter type. Like an abbreviated function template, it works for any types that the body accepts.
+
+.. code-block:: cpp
+
+   auto larger = [](const auto& left, const auto& right) {
+     return left > right ? left : right;
+   };
+
+   larger(3, 7);                                          // 7
+   larger(82.5, 64.0);                                    // 82.5
+   larger(std::string{"dock"}, std::string{"aisle 4"});   // dock
+
+- One lambda, three calls, three types. The compiler instantiates its call for each, as for a template.
+- Each ``auto`` is separate, so ``larger(3, 7.5)`` also compiles and returns ``7.5``.
+
+See `The Return Type of a Lambda`_ under Further Reading.
+
+Storing and Adapting Callables
+------------------------------
+
+``std::count_if`` calls ``is_low`` right away (see `A Condition instead of a Value`_). To keep a callable for later, store it in a ``std::function``. To fix some of its arguments, make a new callable with ``std::bind``.
+
+See `cppreference: function objects <https://en.cppreference.com/w/cpp/utility/functional>`__.
+
+``std::function``
+^^^^^^^^^^^^^^^^^
+
+``std::function`` is a standard type that can hold any callable with a given signature, captures included. In ``<functional>``.
+
+.. code-block:: cpp
+
+   std::function<double(double)> convert{to_fraction};
+   std::cout << convert(64.0) << '\n';  // 0.64
+
+   double scale{2.0};
+   convert = [scale](double pct) { return scale * pct; };
+   std::cout << convert(64.0) << '\n';  // 128
+
+- ``double(double)`` in the brackets is the signature: one ``double`` in, one ``double`` out.
+- The same variable held a function, then a capturing lambda. Their types differ; the signature is what they share.
+
+A Table of Commands
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::map<std::string, std::function<void(int)>> on_command;
+
+   on_command["dock"] = [](int id) {
+     std::cout << "robot " << id << ": go to dock\n";
+   };
+   on_command["pause"] = [](int id) {
+     std::cout << "robot " << id << ": paused\n";
+   };
+
+   on_command["dock"](4);   // robot 4: go to dock
+   on_command["pause"](2);  // robot 2: paused
+
+- A **callback** is a function you hand over now, for other code to call later. Each command name maps to its callback.
+- The dispatcher only has to look up the command and call what it finds. A new command means a new entry, not a new ``if``. The full version is ``fleet/src/dispatcher.cpp``.
+
+An Empty std::function
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   std::map<std::string, std::function<void(int)>> on_command;
+   on_command["reboot"](2);   // no handler was ever stored
+
+.. code-block:: text
+
+   terminate called after throwing an instance of 'std::bad_function_call'
+     what():  bad_function_call
+
+- Lecture 4's trap: ``operator[]`` on a map **inserts** a missing key. Here it inserts an empty ``std::function``.
+- Calling an empty ``std::function`` **throws**. Nothing catches it, so the program stops with exit status 134, as an empty optional's ``value()`` did.
+- Look first, without inserting: ``auto handler{on_command.find("reboot")};`` then call ``handler->second(2)`` only if ``handler != on_command.end()``. ``fleet/src/dispatcher.cpp`` does exactly that.
+
+See `std::source_location`_ under Further Reading.
+
+Choosing a Parameter Type
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Parameter
+     - Accepts
+     - Use it when
+   * - ``double (*convert)(double)``
+     - functions, lambdas with no capture
+     - a C library asks for one
+   * - ``auto convert``
+     - any callable
+     - the function calls ``convert`` before it returns
+   * - ``std::function<double(double)>``
+     - any callable with that signature
+     - ``convert`` is stored to be called later
+
+- The standard algorithms take the second form: the callable is a template parameter, passed by value, so each call is instantiated for the exact lambda type.
+- ``std::function`` pays for holding any callable: its ``sizeof`` measured 32 bytes, against 8 for a function pointer.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Pass an operation as a lambda, not a function pointer. To store one, use ``std::function``. Rule: `Core Guidelines T.40 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-fo>`__.
+
+See `Function Pointers`_ under Further Reading.
+
+``std::bind``
+^^^^^^^^^^^^^
+
+``std::bind`` is a standard function that makes a new callable from an existing one, with some arguments fixed. In ``<functional>``.
+
+.. code-block:: cpp
+
+   double charge_time_h(double missing_pct, double rate_pct_per_h) {
+     return missing_pct / rate_pct_per_h;
+   }
+   using namespace std::placeholders;  // _1, _2, ...
+   auto at_fast_dock = std::bind(charge_time_h, _1, 40.0);  // (x, 40.0)
+   auto to_half = std::bind(charge_time_h, 50.0, _1);       // (50.0, x)
+   auto swapped = std::bind(charge_time_h, _2, _1);         // (y, x)
+   at_fast_dock(60.0);   // 1.5
+   to_half(25.0);        // 2
+   swapped(20.0, 60.0);  // 3
+
+- ``_1`` is "the first argument of the new call", ``_2`` the second. A plain value is fixed. Each comment shows the arguments ``charge_time_h`` receives.
+
+Reading ROS 2 Code
+~~~~~~~~~~~~~~~~~~
+
+.. code-block:: cpp
+
+   // ros2/examples, line 34 of
+   // rclcpp/topics/minimal_subscriber/member_function.cpp
+   subscription_ = this->create_subscription<std_msgs::msg::String>(
+     "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+
+- ``create_subscription`` wants a callback with one parameter, the message. ROS 2 calls it each time a message arrives.
+- ``std::bind`` builds that callback: ``_1`` is the message. ``this`` and ``&MinimalSubscriber::topic_callback`` name a member function of an object, which is Lecture 8.
+- The same repository has ``lambda.cpp``, which writes the callback as a lambda capturing ``[this]`` instead.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Write a lambda. Learn ``std::bind`` to **read** it: older code and many ROS 2 examples use it.
+
+See `bind_front and Lambdas`_ under Further Reading.
+
+Summary
+-------
+
+**Grouping Values**
+
+- A ``struct`` groups members. Initialize it with braces, by position or by name in declaration order. Give members defaults.
+- The compiler pads between members for alignment, and at the end so that arrays work. Largest members first wastes the fewest bytes.
+- ``std::pair`` has ``first`` and ``second``; ``std::tuple`` is read by position with ``std::get<0>``.
+
+**Multiple and Optional Results**
+
+- Return several values as a ``struct``; unpack with ``auto [a, b]``, or ``auto&`` to change the original.
+- Return ``std::optional`` when the answer may be missing. ``*`` on an empty one is undefined behavior; ``value()`` throws.
+
+**Function Templates**
+
+- One template, one function per set of types used. Deduction needs one consistent ``T`` and ignores the return type. The template goes in the header.
+- A concept states what ``T`` must be, and rejects calls that would compile with a wrong result. Form 3 by default; form 1 to share one type; form 2 to join tests.
+
+**Lambdas**
+
+- ``[captures](parameters) { body }`` makes an object of an unnamed ``struct``. Captures are its members.
+- By value copies at creation; by reference reads at each call. A lambda that outlives its scope captures by value.
+
+**Storing and Adapting Callables**
+
+- Take a callable you call right away as ``auto``. ``std::function`` holds any callable with one signature, to store it, at a cost.
+- Prefer a lambda to ``std::bind``; learn ``std::bind`` to read ROS 2 code.
+
+Further Reading
+---------------
+
+The sections below come from the appendix of the slides. They are **not presented** in the lecture. Read them on your own.
+
+``struct`` or ``class``
+^^^^^^^^^^^^^^^^^^^^^^^
+
+- C++ has a second keyword, ``class``. The two make the same kind of type. They differ only in default access, which matters once a type has private members (Lecture 8).
+- This lecture uses ``struct`` for plain data: members that can each take any value, independently of the others.
+- When the members have to agree with each other, for example a battery level that must stay between 0 and 100, you want a ``class`` that checks every change. Lecture 8 covers classes.
+
+.. admonition:: Best Practice
+   :class: tip
+
+   Use ``class`` if the class has an invariant; use ``struct`` if the data members can vary independently. Rule: `Core Guidelines C.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-struct>`__.
+
+``offsetof``
+^^^^^^^^^^^^
+
+``offsetof`` is a macro from ``<cstddef>``. ``offsetof(Type, member)`` is the number of bytes from the start of the object to that member.
+
+.. code-block:: cpp
+
+   std::cout << offsetof(RobotStatus, id) << ' '
+             << offsetof(RobotStatus, battery_pct) << ' '
+             << offsetof(RobotStatus, position) << ' '
+             << offsetof(RobotStatus, busy) << '\n';  // 0 8 16 32
+
+- A macro, not a function: a function cannot take a type and a member name as its arguments.
+- ``id`` is bytes 0 to 3, and ``battery_pct`` starts at byte 8. So bytes 4 to 7 are padding: 4 bytes.
+
+.. note::
+
+   C++20, **[support.types.layout]**, section 17.2.4, paragraph 1: *Use of the offsetof macro with a type other than a standard-layout class is conditionally-supported*. A plain ``struct`` such as ``RobotStatus`` is standard-layout.
+
+``alignof``
+^^^^^^^^^^^
+
+``alignof`` is an operator that gives a type's alignment in bytes: every object of that type starts at an address that is a multiple of it. C++11.
+
+.. code-block:: cpp
+
+   std::cout << alignof(bool) << ' ' << alignof(int) << ' '
+             << alignof(double) << ' ' << alignof(Position) << ' '
+             << alignof(RobotStatus) << '\n';  // 1 4 8 8 8
+   std::cout << sizeof(RobotStatus) << ' '
+             << sizeof(RobotStatus[2]) << '\n';  // 40 80
+   struct IdFlag { int id; bool busy; };
+   std::cout << sizeof(IdFlag) << ' ' << alignof(IdFlag) << '\n';  // 8 4
+
+- Here a ``struct`` takes the largest alignment of its members: 8 for ``RobotStatus``, from its ``double``\ s, but 4 for ``IdFlag``, from its ``int``. ``IdFlag`` holds 5 bytes of data and rounds up to 8, a multiple of 4.
+- ``busy`` is byte 32, so the data is bytes 0 to 32: 33 bytes. The next multiple of 8 is 40, so the second ``RobotStatus`` of an array starts at byte 40.
+
+.. note::
+
+   C++20, **[expr.sizeof]**, section 7.6.2.4, paragraph 2: for a class, ``sizeof`` counts *any padding required for placing objects of that type in an array*.
+
+Without End Padding
+^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   struct StatusReport {
+     RobotStatus status;  // bytes 0 to 39
+     int sequence;        // bytes 40 to 43
+   };
+   sizeof(StatusReport);  // 48
+
+- Suppose ``RobotStatus`` had no end padding: 33 bytes, bytes 0 to 32. Two separate cases follow.
+
+1. **An ``int`` after it.** The compiler chooses where ``sequence`` goes. It adds bytes 33 to 35 as padding and puts ``sequence`` at byte 36, a multiple of 4. Nothing breaks.
+2. **A second ``RobotStatus`` in an array.** The compiler cannot choose: elements sit exactly ``sizeof`` bytes apart. The second one starts at byte 33, and its ``battery_pct`` at byte 33 + 8 = 41, not a multiple of 8.
+
+.. note::
+
+   End padding exists for case 2, so it is part of the type. C++20, **[basic.align]**, section 6.7.6, paragraph 1: alignment requirements *place restrictions on the addresses at which an object of that type may be allocated*.
+
+The Lecture 4 Map Loop
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::map<int, std::string> zone_of{
+     {1, "dock"}, {2, "aisle 4"}, {3, "aisle 7"}};
+   for (const auto& [id, zone] : zone_of) {
+     std::cout << "robot " << id << ": " << zone << '\n';
+   }
+
+.. code-block:: text
+
+   robot 1: dock
+   robot 2: aisle 4
+   robot 3: aisle 7
+
+- Each element of a ``std::map<K, V>`` is a ``std::pair<const K, V>``. The binding names its two members.
+- ``const auto&`` reads each pair in place, with no copy of the string.
+- Lecture 4 asked you to read this form as "a way to avoid ``.first`` and ``.second``". That is what it does.
+
+Overload or Specialize
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   template <typename T>
+   T larger_of(T left, T right) { return left > right ? left : right; }
+
+   const char* imu_name{"imu"};
+   const char* gps_name{"gps"};
+   larger_of(imu_name, gps_name);  // "gps": compares the two addresses
+
+   // an overload for C-strings compares the text
+   const char* larger_of(const char* left, const char* right) {
+     return std::strcmp(left, right) > 0 ? left : right;
+   }
+   larger_of(imu_name, gps_name);  // "imu"
+
+- ``T`` is ``const char*``, so ``>`` compares addresses, and ``"imu"`` sat lower.
+- A **specialization**, ``template <> const char* larger_of<const char*>(...)``, also works here.
+
+.. note::
+
+   Prefer the overload. Specializations *don't participate in overloading, they don't act as you probably wanted*. Rule: `Core Guidelines T.144 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-specialize-function>`__.
+
+decltype and Trailing Return Types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``decltype`` is an operator that gives the type of a name or an expression, without evaluating it.
+
+.. code-block:: cpp
+
+   const double limit_pct{40.0};
+   decltype(limit_pct) other{20.0};  // const double
+   std::vector<double> battery_pct{82.5, 35.0};
+   decltype(battery_pct[0]) first{battery_pct[0]};  // double&
+   first = 9.0;  // battery_pct[0] is now 9
+
+   template <typename T, typename U>
+   auto add_offset(T value, U offset) -> decltype(value + offset) {
+     return value + offset;
+   }
+
+- ``-> type`` after the parameters is a **trailing return type**. It can name the parameters, which the front of the line cannot.
+- ``operator[]`` returns a reference, so its ``decltype`` is ``double&``. Before C++14, this was the only way to write ``add_offset``.
+
+``std::totally_ordered``
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   template <std::totally_ordered T>
+   T largest_of(const std::vector<T>& values) {
+     T largest{values.front()};
+     for (const T& value : values) {
+       if (value > largest) { largest = value; }
+     }
+     return largest;
+   }
+   std::vector<int> ids{3, 1, 4, 2};
+   std::vector<std::string> zones{"dock", "aisle 4", "aisle 7"};
+   std::vector<RobotStatus> fleet{{1, 82.5}, {2, 35.0}};
+   largest_of(ids);    // 4
+   largest_of(zones);  // "dock"
+   largest_of(fleet);  // does not compile
+
+- ``int`` and ``std::string`` pass. Strings compare character by character.
+- ``RobotStatus`` fails: it has no ``==`` or ``<``, so two robots cannot be compared.
+
+.. note::
+
+   C++20, **[concept.totallyordered]**, section 18.5.4, paragraph 1.1: *Exactly one of bool(a < b), bool(a > b), or bool(a == b) is true.*
+
+Documenting a Template
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   /**
+    * @brief Average of a list of values.
+    *
+    * @tparam T A floating-point type, so the division is not integer division.
+    * @param values The values to average.
+    * @return Their average, or 0 for an empty list.
+    */
+   template <std::floating_point T>
+   T average_of(const std::vector<T>& values);
+
+- ``@tparam`` documents a template parameter, the way ``@param`` documents a function parameter (Lecture 5).
+- Say **why** the requirement is there. The concept already says **what** it is.
+- This is the comment in ``fleet/include/stats.hpp``.
+
+See `Three Attributes`_.
+
+Three Attributes
+^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   [[nodiscard("the result is the clamped value")]]
+   double clamp_battery(double pct);
+
+   [[deprecated("use clamp_battery")]]
+   double limit_battery(double pct);
+
+   void log_reading([[maybe_unused]] int robot_id, double battery_pct);
+
+.. code-block:: text
+
+   warning: ignoring return value of 'double clamp_battery(double)', declared with
+     attribute 'nodiscard': 'the result is the clamped value'
+   warning: 'double limit_battery(double)' is deprecated: use clamp_battery
+
+- ``[[nodiscard]]`` is Lecture 5's. Since C++20 it takes a reason, which appears in the warning.
+- ``[[deprecated]]`` warns at every call: keep an old name working while callers move to the new one.
+- ``[[maybe_unused]]`` silences ``-Wunused-parameter`` for one parameter on purpose.
+
+``std::transform``
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+   std::vector<double> fraction(battery_pct.size());  // 4 elements, all 0
+   std::transform(battery_pct.begin(), battery_pct.end(), fraction.begin(),
+                  [](double pct) { return pct / 100.0; });
+   // fraction is now {0.825, 0.35, 0.64, 0.18}
+
+- ``std::transform`` calls the lambda on each element and writes the result into the destination, one element at a time.
+- It writes over elements that already exist; it never adds any. So ``fraction`` is built with 4 elements first, with ``( )``, not ``{ }`` (Lecture 4).
+
+mutable and Init-capture
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int assigned{0};
+   auto assign = [assigned]() { ++assigned; };
+
+.. code-block:: text
+
+   capture_const.cpp:3:34: error: increment of read-only variable 'assigned'
+
+.. code-block:: cpp
+
+   auto next_task_id = [id = 100]() mutable { return ++id; };
+   std::cout << next_task_id() << ' ' << next_task_id() << ' '
+             << next_task_id() << '\n';  // 101 102 103
+
+   auto copy = next_task_id;  // copies the lambda, with id at 103
+   std::cout << copy() << ' ' << next_task_id() << '\n';  // 104 104
+
+- A copy captured by value is read-only inside the body. ``mutable`` lets the body change it.
+- ``[id = 100]`` is an **init-capture**: it makes a new variable that only the lambda has, here a task counter.
+- The counter lives **inside the lambda object**. Copy the lambda and the copy counts on its own.
+
+The Return Type of a Lambda
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto speed_for = [](double battery_pct) {
+     if (battery_pct < 20.0) { return 0; }
+     return 0.01 * battery_pct;
+   };
+
+.. code-block:: text
+
+   lambda_return.cpp:4:17: error: inconsistent types 'int' and 'double' deduced
+     for lambda return type
+
+.. code-block:: cpp
+
+   auto speed_for = [](double battery_pct) -> double {
+     if (battery_pct < 20.0) { return 0; }   // 0 converts to 0.0
+     return 0.01 * battery_pct;              // m/s
+   };
+   speed_for(15.0);  // 0
+   speed_for(80.0);  // 0.8
+
+- Every ``return`` must give the same type, or the compiler cannot choose. ``0`` is an ``int``.
+- ``-> double`` after the parameters states the return type. Each ``return`` then converts to it.
+
+Template Lambdas (C++20)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int main() {
+     auto larger = [](const auto& left, const auto& right) {
+       return left > right ? left : right;
+     };
+     auto larger_same = []<typename T>(const T& left, const T& right) {
+       return left > right ? left : right;
+     };
+     larger(3, 7.5);       // 7.5
+     larger_same(3, 7.5);  // rejected
+   }
+
+.. code-block:: text
+
+   template_lambda.cpp:9:14: note:   deduced conflicting types for parameter
+     'const T' ('int' and 'double')
+
+- ``<typename T>`` after the ``[]`` gives the lambda a named template parameter.
+- Using ``T`` twice forces both arguments to one type, with the same deduction rule as ``clamp_value``. Two ``auto``\ s cannot say that.
+
+Function Pointers
+^^^^^^^^^^^^^^^^^
+
+A **function pointer** is a pointer that holds the address of a function. Calling through it calls that function.
+
+.. code-block:: cpp
+
+   return_type (*name)(parameter_types)
+
+.. code-block:: cpp
+
+   double to_fraction(double pct) {
+     return pct / 100.0;
+   }
+   double to_pct(double fraction) { return fraction * 100.0; }
+
+   double (*convert)(double){to_fraction};
+   std::cout << convert(82.5) << '\n';  // 0.825
+   convert = to_pct;
+   std::cout << convert(0.35) << '\n';  // 35
+
+- ``convert`` points to any function that takes a ``double`` and returns a ``double``. The parentheses around ``*convert`` are required.
+
+Passing a Function
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   void convert_all(double* values, int count, double (*convert)(double)) {
+     for (int i{0}; i < count; ++i) { values[i] = convert(values[i]); }
+   }
+
+   int main() {
+     double battery[]{82.5, 35.0};
+     double scale{2.0};
+     convert_all(battery, 2, [](double pct) { return pct / 100.0; });
+     convert_all(battery, 2, [scale](double pct) { return scale * pct; });
+   }
+
+.. code-block:: text
+
+   fnptr_capture.cpp:9:27: error: cannot convert 'main()::<lambda(double)>' to
+     'double (*)(double)'
+
+- ``convert_all(battery, 2, to_pct)`` works too: a function name turns into a pointer to the function, the way an array name turns into a pointer (Lecture 4).
+- A lambda with **no** capture converts. One that captures carries data, and a function pointer cannot.
+
+Function Pointer Syntax
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   double (*convert)(double){&to_fraction};  // & is optional
+   (*convert)(82.5);   // 0.825: explicit dereference
+   convert(82.5);      // 0.825: the same call
+
+   // NOT a pointer: a function returning double*
+   double* make_buffer(double);
+
+   using Conversion = double (*)(double);     // an alias (Lecture 2)
+   Conversion table[]{to_fraction, to_pct};
+   table[1](0.35);                            // 35
+
+   Conversion from_lambda{[](double value) { return 2 * value; }};
+   from_lambda(1.5);                          // 3
+
+- Without the parentheses, ``*`` binds to the return type. GCC's message for assigning ``make_buffer`` to ``convert`` shows both types: ``invalid conversion from 'double* (*)(double)' to 'double (*)(double)'``.
+- An alias makes the type readable, and an array of function pointers is a lookup table.
+
+``std::source_location``
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+``std::source_location`` is a standard type that records a file, a line and a function name. C++20.
+
+.. code-block:: cpp
+
+   void log_message(
+     std::string_view text,
+     std::source_location at = std::source_location::current()) {
+     std::string_view file{at.file_name()};
+     file.remove_prefix(file.rfind('/') + 1);  // the name only
+     std::cout << file << ':' << at.line() << ' '
+               << at.function_name() << ": " << text << '\n';
+   }
+
+.. code-block:: text
+
+   higher_order.cpp:150 void assign_task(int, int): task 17 to robot 3
+   higher_order.cpp:154 void end_shift(): shift over
+
+- A default argument is evaluated **at the call** (Lecture 5), so ``current()`` records the caller's line, not ``log_message``'s.
+
+bind_front and Lambdas
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto to_half = std::bind_front(charge_time_h, 50.0);  // C++20
+   to_half(25.0);                                         // 2
+   auto fast_l = [](double missing_pct) {
+     return charge_time_h(missing_pct, 40.0);
+   };
+   auto swap_l = [](double rate_pct_per_h, double missing_pct) {
+     return charge_time_h(missing_pct, rate_pct_per_h);
+   };
+   fast_l(60.0);        // 1.5
+   swap_l(20.0, 60.0);  // 3
+   at_fast_dock(60.0, 99.0);   // compiles, returns 1.5: 99.0 is dropped
+
+- ``std::bind_front`` fixes arguments from the left, with no placeholders.
+- A lambda does everything ``std::bind`` does, in plain C++. And ``fast_l(60.0, 99.0)`` does not compile, which is what you want.

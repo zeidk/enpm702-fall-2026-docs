@@ -58,71 +58,88 @@ C++ Exercises
    Use separate ``catch`` blocks for each exception type, plus a
    catch-all ``catch (...)`` as a safety net.
 
-.. dropdown:: Exercise 4: Custom Exception Class
+.. dropdown:: Exercise 4: Custom Exception Types
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   Create a small exception hierarchy for a robot system:
+   Create a small family of exception types for a robot, each in the short
+   form from the reading (``struct ... : base { using base::base; };``):
 
-   1. ``RobotError``, base class inheriting from ``std::runtime_error``.
-      Stores a ``robot_id`` (``std::string``).
-   2. ``MotorError``, derived from ``RobotError``. Stores which motor
-      failed (``std::string motor_name``).
-   3. ``SensorError``, derived from ``RobotError``. Stores which
-      sensor failed (``std::string sensor_name``).
+   1. ``RobotError``: builds on ``std::runtime_error``.
+   2. ``MotorError``: builds on ``RobotError``.
+   3. ``SensorError``: builds on ``RobotError``.
+
+   Put the robot id and the failed part in the message, for example
+   ``"robot 7: left wheel motor stalled"``.
 
    Write a function ``run_diagnostics(int test_case)`` that throws
    ``MotorError`` when ``test_case == 1`` and ``SensorError`` when
-   ``test_case == 2``. In ``main()``, catch each type separately and
-   print the details.
+   ``test_case == 2``. In ``main()``, call it with ``1`` and ``2``, and
+   catch ``MotorError``, ``SensorError`` and ``RobotError`` in separate
+   handlers. Which order must the three handlers be in, and why?
 
 .. dropdown:: Exercise 5: Exception-Safe Resource Management
    :icon: gear
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   Write two functions that allocate an ``int`` array and then throw an
+   Write two functions that allocate 100 ``int`` values and then throw an
    exception:
 
-   1. ``unsafe_allocation()``, Uses ``new`` to allocate an array,
-      throws an exception **before** calling ``delete[]``. This leaks
-      memory.
-   2. ``safe_allocation()``, Uses ``std::unique_ptr`` to manage the
-      array. Even when an exception is thrown, the memory is
-      automatically released.
+   1. ``unsafe_allocation()``: uses ``new int[100]``, then throws
+      **before** the ``delete[]``. This leaks memory.
+   2. ``safe_allocation()``: uses a ``std::vector<int>`` of 100 elements,
+      then throws. The vector is destroyed during unwinding, so its memory
+      is released.
 
-   Call both from ``main()`` inside try-catch blocks. Add print
-   statements in appropriate places to show when memory is (or is not)
-   cleaned up.
+   Call both from ``main()``, each inside its own ``try``/``catch``.
+   Build with ``-fsanitize=address`` (Lecture 3) and run the program.
+   AddressSanitizer reports the leak, and names the function and line of
+   the ``new``:
+
+   .. code-block:: text
+
+      Direct leak of 400 byte(s) in 1 object(s) allocated from:
+
+   There is no report for ``safe_allocation``.
 
 .. dropdown:: Exercise 6: Exception-Safe Config Parser (Challenge)
    :icon: gear
    :class-container: sd-border-warning
    :class-title: sd-font-weight-bold
 
-   Write an exception-safe configuration file parser. The parser reads a
-   text file containing key-value pairs (one per line, separated by
-   ``=``) and stores them in a ``std::map<std::string, std::string>``.
+   Write an exception-safe configuration parser. It reads the lines of a
+   configuration, given as a ``std::vector<std::string>``. Each line holds
+   a key and a value separated by ``=``. The parser stores them in a
+   ``std::map<std::string, std::string>``.
 
    Requirements:
 
-   1. Create three custom exception classes derived from
+   1. Create two exception types in the short form, each building on
       ``std::runtime_error``:
 
-      - ``FileError``, thrown when the file cannot be opened.
-      - ``ParseError``, thrown when a line has invalid format (no ``=``
-        sign). Store the line number.
-      - ``MissingKeyError``, thrown when a required key is not found
-        in the config. Store the key name.
+      - ``ParseError``: thrown when a line has no ``=`` sign. Put the line
+        number, counted from 1, in the message.
+      - ``MissingKeyError``: thrown when a required key is not found in
+        the configuration. Put the key name in the message.
 
-   2. Write a function ``parse_config(const std::string& filename)``
-      that returns a ``std::map<std::string, std::string>``.
+   2. Write a function
+      ``parse_config(const std::vector<std::string>& lines)`` that returns
+      a ``std::map<std::string, std::string>``. Skip blank lines.
 
-   3. Write a function ``get_required(const std::map<...>& config,
-      const std::string& key)`` that throws ``MissingKeyError`` if the
-      key is absent.
+   3. Write a function ``get_required(const std::map<std::string,
+      std::string>& config, const std::string& key)`` that returns the
+      value, and throws ``MissingKeyError`` if the key is absent. Look the
+      key up without adding it to the map.
 
-   4. In ``main()``, parse a config file and retrieve required keys
-      ``"robot_name"``, ``"max_speed"``, and ``"sensor_topic"``,
-      handling each exception type.
+   4. In ``main()``, parse this configuration and retrieve the required
+      keys ``"robot_name"``, ``"max_speed"`` and ``"sensor_topic"``,
+      handling each exception type:
+
+      .. code-block:: cpp
+
+         std::vector<std::string> lines{"robot_name=scout", "",
+                                        "max_speed=1.5"};
+
+      Then add a line ``"sensor_topic"`` with no ``=``, and run it again.

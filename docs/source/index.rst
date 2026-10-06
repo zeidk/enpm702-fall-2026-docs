@@ -23,7 +23,7 @@ Key topics covered include:
 - Pointers, references, and dynamic memory management
 - STL containers: strings, arrays, vectors, and iterators
 - Functions: declarations, overloading, recursion, and default parameters
-- Templates, lambdas, functors, and ``std::function``
+- Structs, ``std::optional``, templates and concepts, lambdas, and ``std::function``
 - Smart pointers (``unique_ptr``, ``shared_ptr``, ``weak_ptr``) and move semantics
 - Object-oriented programming: classes, encapsulation, inheritance, and polymorphism
 - Version control with Git and GitHub

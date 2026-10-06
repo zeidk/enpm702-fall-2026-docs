@@ -32,7 +32,7 @@ Exception Handling: Quiz
 
       try {
           std::cout << "A\n";
-          throw std::runtime_error("error");
+          throw std::runtime_error{"error"};
           std::cout << "B\n";
       } catch (const std::runtime_error& e) {
           std::cout << "C\n";
@@ -89,9 +89,10 @@ Exception Handling: Quiz
 
       **b) It prevents slicing and avoids unnecessary copies.**
 
-      Catching by value can slice a derived exception object, losing
-      type-specific information. Catching by reference preserves the
-      full object. The ``const`` avoids unnecessary mutation and copies.
+      Catching by value copies the exception, and a handler for a base
+      class keeps only the base part of a derived exception (slicing).
+      The reference avoids both. The ``const`` stops the handler from
+      changing the exception object.
 
 
 .. admonition:: Question 5
@@ -109,9 +110,12 @@ Exception Handling: Quiz
 
       **c) std::terminate is called.**
 
-      If a function marked ``noexcept`` throws an exception, the
-      runtime calls ``std::terminate``, which by default aborts the
-      program. The compiler does not prevent this at compile time.
+      If an exception leaves a function marked ``noexcept``, the
+      program calls ``std::terminate``, which by default aborts it. The
+      compiler does not reject the code; for a ``throw`` written directly
+      in a ``noexcept`` function, g++ only warns: ``'throw' will always
+      call 'terminate'``. An exception that is thrown and caught inside
+      the function is fine.
 
 
 .. admonition:: Question 6
@@ -130,8 +134,9 @@ Exception Handling: Quiz
       **b) <stdexcept>**
 
       The ``<stdexcept>`` header declares ``std::runtime_error``,
-      ``std::logic_error``, ``std::out_of_range``,
-      ``std::invalid_argument``, and other standard exception classes.
+      ``std::logic_error``, ``std::out_of_range`` and
+      ``std::invalid_argument``, among others. ``std::exception`` itself
+      is declared in ``<exception>``.
 
 
 .. admonition:: Question 7
@@ -160,9 +165,11 @@ Exception Handling: Quiz
       **b) Option B is correct.**
 
       Catch blocks are matched in order. Since ``std::out_of_range``
-      derives from ``std::exception``, Option A would catch all
-      exceptions in the first block, making the second block
-      unreachable. Derived types must come before base types.
+      derives from ``std::exception``, Option A catches every exception
+      derived from ``std::exception``, including ``std::out_of_range``,
+      in the first block, so the second block never runs. g++ warns
+      about Option A with ``-Wexceptions``. Derived types must come
+      before base types.
 
 
 .. admonition:: Question 8
@@ -180,9 +187,9 @@ Exception Handling: Quiz
 
       **b) A const char* describing the error.**
 
-      The virtual ``what()`` method in ``std::exception`` returns a
-      ``const char*`` that describes the error. Derived classes
-      override this to provide specific messages.
+      ``what()``, a member function of ``std::exception``, returns a
+      ``const char*`` that describes the error. Each standard exception
+      returns its own message.
 
 
 .. admonition:: Question 9
@@ -222,8 +229,8 @@ Exception Handling: Quiz
       **b) Catches any exception of any type.**
 
       The catch-all handler ``catch (...)`` matches any thrown
-      exception, regardless of type. It is typically placed as the
-      last catch block to handle unexpected exceptions.
+      exception, regardless of type. It must be the last handler of its
+      ``try`` block; anywhere else, the compiler rejects it.
 
 
 .. admonition:: Question 11
@@ -237,7 +244,7 @@ Exception Handling: Quiz
 
       **False.**
 
-      Exceptions should be reserved for truly exceptional conditions.
+      Exceptions are for errors that a function cannot handle itself.
       Using them for normal control flow is bad practice because
       throwing and catching exceptions is expensive and makes code
       harder to understand.
@@ -253,9 +260,9 @@ Exception Handling: Quiz
 
       **False.**
 
-      Throwing from a destructor during stack unwinding (triggered by
-      another exception) calls ``std::terminate``. Destructors should
-      be ``noexcept`` by default and should never throw.
+      Destructors are ``noexcept`` by default, so an exception that
+      leaves a destructor calls ``std::terminate``, even when no other
+      exception is in flight.
 
 
 .. admonition:: Question 13
@@ -272,7 +279,9 @@ Exception Handling: Quiz
       RAII ties resource lifetime to object lifetime. When an exception
       causes stack unwinding, local objects are destroyed and their
       destructors run, releasing any managed resources (file handles,
-      memory, locks, etc.).
+      memory, locks, etc.). Unwinding needs a handler: if nothing catches
+      the exception, g++ calls ``std::terminate`` without running the
+      destructors.
 
 
 .. admonition:: Question 14
@@ -301,8 +310,7 @@ Exception Handling: Quiz
 
       **False.**
 
-      Modern C++ uses zero-cost exceptions *when no exception is
-      thrown*. When an exception is actually thrown, the runtime must
-      perform stack unwinding, which involves finding the correct
-      handler, destroying local objects, and transferring control. This
-      process is relatively expensive.
+      With g++ on x86-64, a ``try`` block adds no instructions to the
+      path where nothing is thrown. When an exception is thrown, the
+      runtime must unwind the stack: find the matching handler, destroy
+      local objects, and transfer control. That process is slow.

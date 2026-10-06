@@ -2,121 +2,91 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 6: Functions,
-Advanced. Work through them in order, as each exercise builds on the
-skills from the previous one.
+This exercise covers Lecture 6: Functions, Advanced. There is one exercise
+this week, because the reading on
+:doc:`exception handling </reading_material/exception_handling/eh_index>`
+is due before Lecture 7 as well.
+
+The exercise writes software for a charging station that looks after four
+delivery drones. Each drone reports its battery level and whether it is in
+the air. The station finds the next drone to land and summarizes the
+batteries.
 
 .. note::
 
-   Compile all programs with warnings enabled:
+   Build the exercise from VS Code with CMake, as in the lecture. Add a
+   target for it to ``project/week6/CMakeLists.txt``. The course project
+   already turns on the warnings, so fix every warning before you submit.
 
-   .. code-block:: bash
-
-      g++ -std=c++20 -Wall -Wextra -o program program.cpp
+   Format the output as in the **Example Output**: a title between two lines
+   of ``=``, and each part under a heading underlined with ``-``, with the
+   numbers in aligned columns.
 
 
 ----
 
 
-.. dropdown:: Exercise 1: Struct Usage
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
+.. dropdown:: Exercise 1: The Drone Charging Station
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
 
-   **Goal**
+    **Goal**
 
-   Demonstrate ``struct`` with aggregate initialization and structured bindings.
+    Use the four main tools of Lecture 6 in one short program: a
+    ``struct``, a result that may be missing, a function template with a
+    concept, and a lambda.
 
-   **Specification**
+    **Specification**
 
-   1. Define a ``struct Sensor`` with fields: ``std::string name``, ``double reading``, and ``bool is_active`` (with a default value of ``true``).
-   2. Create three ``Sensor`` instances using aggregate initialization.
-   3. Write a function ``print_sensor`` that takes a ``const Sensor&`` and prints all fields.
-   4. Use structured bindings (``auto [name, reading, active] = ...``) to decompose one sensor and print its fields individually.
-   5. Use a reference structured binding (``auto& [...]``) to modify a sensor's reading and verify the change.
+    Write one program, ``project/week6/exercises/drones.cpp``, with the
+    target ``week6_drones``.
 
-.. dropdown:: Exercise 2: Function Templates
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
+    1. Declare a ``struct Drone`` with three members: ``id`` (an
+       ``int``), ``battery_pct`` (a ``double``, in percent) and
+       ``airborne`` (a ``bool``). Give each member a default: ``0``,
+       ``100.0`` and ``false``. Print the fleet below.
+    2. Write ``first_low_battery``. It takes the fleet and a limit in
+       percent, and returns the id of the first airborne drone whose battery
+       is below the limit, as a ``std::optional<int>``. It returns an empty
+       optional when there is none. Call it with ``30.0`` and with
+       ``20.0``, and print the id, or ``none``.
+    3. Write a function template ``average_of`` that returns the average of
+       a ``std::vector<T>``, and ``0`` for an empty one. Constrain ``T``
+       with the concept ``std::floating_point``. Use it to print the
+       average battery level.
+    4. Count the drones whose battery is below ``30.0`` percent, with
+       ``std::count_if`` and a lambda that captures the limit by value.
 
-   **Goal**
+    Start from this fleet:
 
-   Write a set of function templates that perform common operations.
+    .. code-block:: cpp
 
-   **Specification**
+       std::vector<Drone> fleet{{1, 76.0, true}, {2, 22.5, true}, {3, 91.0}, {4, 28.0, true}};
 
-   1. Write a function template ``clamp(T value, T low, T high)`` that returns ``value`` constrained to the range ``[low, high]``.
-   2. Write a function template ``swap_values(T& a, T& b)`` that swaps two values using a temporary.
-   3. Write a function template with two type parameters ``auto convert_and_add(T a, U b)`` that adds two values of possibly different types.
-   4. Test all three templates with ``int``, ``double``, and (for ``clamp`` and ``swap_values``) ``char``.
+    **Example Output**
 
-.. dropdown:: Exercise 3: Template Specialization
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
+    Use two digits after the decimal point.
 
-   **Goal**
+    .. code-block:: text
 
-   Write a function template ``to_string_pretty(T value)`` that converts a value to a formatted string, with specializations for ``bool`` and ``double``.
+       ====================================
+         Drone Charging Station
+       ====================================
 
-   **Specification**
+       Fleet
+       ------------------------------------
+         drone 1 :  76.00 %  airborne
+         drone 2 :  22.50 %  airborne
+         drone 3 :  91.00 %  landed
+         drone 4 :  28.00 %  airborne
 
-   1. Write the **generic** version that uses ``std::to_string``.
-   2. Write a **full specialization** for ``bool`` that returns ``"true"`` or ``"false"`` (instead of ``"1"`` or ``"0"``).
-   3. Write a **full specialization** for ``double`` that formats the number to exactly 2 decimal places using ``std::ostringstream`` with ``std::fixed`` and ``std::setprecision(2)``.
-   4. Test with ``int``, ``bool``, and ``double`` values.
+       Next to Land
+       ------------------------------------
+         below 30.00 % : drone 2
+         below 20.00 % : none
 
-.. dropdown:: Exercise 4: Lambda Expressions
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
-
-   **Goal**
-
-   Use lambda expressions with STL algorithms.
-
-   **Specification**
-
-   1. Create a ``std::vector<int>`` with values ``{5, -3, 8, -1, 7, 2, -4, 6}``.
-   2. Use ``std::sort`` with a lambda to sort the vector by **absolute value** (ascending).
-   3. Use ``std::count_if`` with a lambda to count negative numbers.
-   4. Use ``std::transform`` with a lambda to create a new vector where each element is squared.
-   5. Use ``std::for_each`` with a lambda that captures a running total by reference to compute the sum.
-   6. Use a lambda with the ``mutable`` keyword that captures a counter by value and increments it on each call. Call it 3 times and verify the original variable is unchanged.
-
-.. dropdown:: Exercise 5 std::function Callbacks
-   :icon: gear
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
-
-   **Goal**
-
-   Demonstrate ``std::function`` as a flexible callback mechanism.
-
-   **Specification**
-
-   1. Write a function ``apply_operation(const std::vector<int>& data, std::function<int(int)> op)`` that applies an operation to each element and returns a new vector.
-   2. Define a free function ``negate_value`` that negates an integer.
-   3. Define a functor ``ScaleBy`` that multiplies by a configurable factor.
-   4. Call ``apply_operation`` three times using: a lambda (double each value), the free function, and the functor.
-   5. Demonstrate checking an empty ``std::function`` before calling it.
-
-.. dropdown:: Challenge: Generic Sorting with Templates and Lambdas
-   :icon: gear
-   :class-container: sd-border-warning
-   :class-title: sd-font-weight-bold
-
-   **Goal**
-
-   Write a generic sorting utility that combines templates and lambdas.
-
-   **Specification**
-
-   1. Write a function template ``sort_by(std::vector<T>& data, Comparator comp)`` where ``Comparator`` is also a template parameter. It should implement selection sort (do not use ``std::sort``).
-   2. Define a ``struct Student`` with fields: ``std::string name``, ``double gpa``, ``int credits``.
-   3. Create a vector of 5 students.
-   4. Sort by GPA (descending) using a lambda comparator.
-   5. Sort by name (alphabetical) using a lambda comparator.
-   6. Sort by credits (ascending) using a lambda comparator.
-   7. Print the sorted results after each sort.
+       Battery
+       ------------------------------------
+         average battery :  54.38 %
+         below 30 %      :      2

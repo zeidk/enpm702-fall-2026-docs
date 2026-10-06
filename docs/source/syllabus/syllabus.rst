@@ -92,7 +92,7 @@ Tuesday lectures meet as scheduled.
    * - Week 6
      - Oct 6
      -
-     - | Functions, Advanced (Templates, Lambdas, Functors, ``std::function``)
+     - | Functions, Advanced (Structs, ``std::optional``, Templates and Concepts, Lambdas, ``std::function``)
        | :quiz:`Quiz 2`
      - Submit Lecture 6 exercises
    * - Week 7
