@@ -59,7 +59,7 @@ headers and source files. Exercise 4 extends ``arm_demo``.
     4. ``print_reading``: prints a value followed by its unit, such as
        ``12.5 ppm``. When the caller gives no unit, only the value is
        printed.
-    5. ``plan_drill_depths``: takes a count ``n`` and a step in metres, and
+    5. ``plan_drill_depths``: takes a count ``n`` and a step in meters, and
        returns a ``std::vector<double>`` of ``n`` depths: ``0``, ``step``,
        ``2 * step``, and so on.
     6. ``richest_sample``: returns a reference to the largest ore grade in a
@@ -155,7 +155,7 @@ headers and source files. Exercise 4 extends ``arm_demo``.
        - ``log_sample(std::string_view drift, double grade)`` prints
          ``drift B4: grade 3.2 %``
 
-    2. Write ``clamp_speed``, which clamps the rover's speed, in metres per
+    2. Write ``clamp_speed``, which clamps the rover's speed, in meters per
        second, to the range from ``0.0`` to a limit. The limit is a default
        argument of ``1.5``.
     3. Write ``next_cart_id``, which returns ``1`` on its first call, ``2``
@@ -163,10 +163,20 @@ headers and source files. Exercise 4 extends ``arm_demo``.
     4. Write ``warn_gas``, which takes a methane reading in percent. The
        first time a reading is above ``1.0``, it prints
        ``WARNING: methane 1.3 %``. Every later call prints nothing.
-    5. Write ``deg_to_rad_table``, which converts a whole number of degrees,
-       from ``0`` to ``360``, to radians by looking it up in a table. Build
-       the table in a separate function that prints ``building table``. The
-       table must be built on the first call only.
+    5. Write ``deg_to_rad_table``, which takes a whole number of degrees,
+       from ``0`` to ``360``, and returns it in radians. It does not compute
+       the answer on each call: it reads it from a **lookup table**, a
+       ``std::array<double, 361>`` in which element ``i`` holds ``i`` degrees
+       in radians, ``i * std::numbers::pi / 180``. For example, element
+       ``90`` holds ``1.5708``.
+
+       - Write ``build_deg_to_rad_table``, which fills the 361 elements,
+         prints ``building table``, and returns the array.
+       - Keep the table between calls in a static local of
+         ``deg_to_rad_table``, initialized by ``build_deg_to_rad_table()``.
+         A static local is initialized on the first call only, so
+         ``building table`` is printed once, however many times
+         ``deg_to_rad_table`` is called.
 
     In ``main``:
 
@@ -346,10 +356,10 @@ headers and source files. Exercise 4 extends ``arm_demo``.
        ``include/kinematics.hpp``, the definition in ``src/kinematics.cpp``.
     2. Add ``tool_distance``, marked ``[[nodiscard]]``, in the same two
        files. It takes the tool's ``x`` and ``y`` and returns the distance
-       from the arm's base to the tool, in metres. ``forward_kinematics``
+       from the arm's base to the tool, in meters. ``forward_kinematics``
        measures ``x`` and ``y`` from the base, so the base is at ``(0, 0)``.
     3. Add ``can_reach``, which takes the tool distance and the distance to
-       a rock face, in metres, and returns ``true`` when the two differ by
+       a rock face, in meters, and returns ``true`` when the two differ by
        at most a tolerance, on either side. Make the tolerance a default
        argument of ``0.05`` m.
     4. In ``src/main.cpp``:
@@ -362,7 +372,7 @@ headers and source files. Exercise 4 extends ``arm_demo``.
          ``<cmath>`` gives it in radians; use ``convert_rad_to_deg`` for the
          rest.
        - Accept an optional fourth command-line argument: the distance to
-         the rock face, in metres. Check it the same way as the angles. When
+         the rock face, in meters. Check it the same way as the angles. When
          it is given, print it followed by ``in reach`` or ``out of reach``.
          When the program asks for the angles, it does not ask for the rock
          face.
