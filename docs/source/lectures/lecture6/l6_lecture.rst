@@ -704,7 +704,9 @@ Reading an Optional
    std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
        {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
        {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+
    std::optional<int> idle{find_idle_robot(fleet, 50.0)};
+
    if (idle) {                                 // or idle.has_value()
      std::cout << "robot " << *idle << '\n';   // robot 1
    }
@@ -721,7 +723,9 @@ A Fallback Value
    std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
        {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
        {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+
    std::optional<int> none{find_idle_robot(fleet, 90.0)};
+
    // prints 0 -1
    std::cout << none.has_value() << ' ' << none.value_or(-1) << '\n';
 
@@ -845,9 +849,9 @@ Instantiation
 
 .. code-block:: cpp
 
-   int speed_pct{clamp_value(130, 0, 100)};               // 100
-   double battery_pct{clamp_value(104.2, 0.0, 100.0)};    // 100
-   int other_pct{clamp_value(50, 0, 100)};                // 50
+   int speed_pct{clamp_value(130, 0, 100)};            // 100
+   double battery_pct{clamp_value(104.2, 0.0, 100.0)}; // 100
+   int other_pct{clamp_value(50, 0, 100)};             // 50
 
 .. code-block:: bash
 
@@ -1276,45 +1280,7 @@ Passing a Lambda
 - ``RobotStatus`` has no ``<``, so the sort needs a rule that says which of two robots comes first. The lambda takes two robots and returns ``true`` when ``left`` must come before ``right``.
 - With ``>``, more battery comes first: 82.5, 64, 35 and 18 % put the robots in the order 1, 3, 2, 4.
 
-See `std::transform`_ under Further Reading.
-
-Projections (C++20)
-~~~~~~~~~~~~~~~~~~~
-
-A **projection** is a function that a ``std::ranges`` algorithm calls on each element before it compares. It turns an element into the value to compare.
-
-.. code-block:: cpp
-
-   std::vector<std::string> zones{"charging bay", "dock", "aisle 4"};
-   // the projection turns each zone into its length
-   std::ranges::sort(zones, {}, [](const std::string& zone) {
-     return zone.size();
-   });
-   // zones is now {"dock", "aisle 4", "charging bay"}: lengths 4, 7, 12
-
-- The purpose: you say **what** to compare, here the length, instead of **how** to compare two elements. Without a projection, the sort needs a lambda with two parameters (see `std::sort with a Lambda`_).
-- To compare two zones, the algorithm calls the projection on each one and compares the two results with ``<``: 4 < 7, so ``"dock"`` comes before ``"aisle 4"``.
-- The arguments: the whole vector, with no ``begin()`` or ``end()``; then ``{}``, the comparison, where empty braces mean the default, ``<``; then the projection.
-
-Projections with ``RobotStatus``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: cpp
-
-   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
-       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
-       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
-   std::ranges::sort(fleet, {}, [](const RobotStatus& robot) {
-     return robot.battery_pct;
-   });  // ids in order: 4 2 3 1
-   auto closest = std::ranges::min_element(
-       fleet, {}, [](const RobotStatus& robot) {
-         return std::hypot(robot.position.x - 5.0, robot.position.y - 5.0);
-       });  // closest->id is 4
-
-- Sort: the projection gives each robot's battery, 82.5, 35, 64 and 18 %. Smallest first gives ids 4, 2, 3, 1.
-- ``min_element``: the projection gives each robot's distance to a task at (5, 5). ``std::hypot(dx, dy)`` is the square root of dx² + dy²: robot 4 is 3.16 m away, robot 3 3.61 m, robot 2 4.12 m, robot 1 7.07 m.
-- But robot 4 has 18 %. Choosing well needs the battery limit too: the next subsection.
+See `std::transform`_ and `Projections (C++20)`_ under Further Reading.
 
 Captures
 ^^^^^^^^
@@ -1848,6 +1814,44 @@ Three Attributes
 
 - ``std::transform`` calls the lambda on each element and writes the result into the destination, one element at a time.
 - It writes over elements that already exist; it never adds any. So ``fraction`` is built with 4 elements first, with ``( )``, not ``{ }`` (Lecture 4).
+
+Projections (C++20)
+^^^^^^^^^^^^^^^^^^^
+
+A **projection** is a function that a ``std::ranges`` algorithm calls on each element before it compares. It turns an element into the value to compare.
+
+.. code-block:: cpp
+
+   std::vector<std::string> zones{"charging bay", "dock", "aisle 4"};
+   // the projection turns each zone into its length
+   std::ranges::sort(zones, {}, [](const std::string& zone) {
+     return zone.size();
+   });
+   // zones is now {"dock", "aisle 4", "charging bay"}: lengths 4, 7, 12
+
+- The purpose: you say **what** to compare, here the length, instead of **how** to compare two elements. Without a projection, the sort needs a lambda with two parameters (see `std::sort with a Lambda`_).
+- To compare two zones, the algorithm calls the projection on each one and compares the two results with ``<``: 4 < 7, so ``"dock"`` comes before ``"aisle 4"``.
+- The arguments: the whole vector, with no ``begin()`` or ``end()``; then ``{}``, the comparison, where empty braces mean the default, ``<``; then the projection.
+
+Projections with ``RobotStatus``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<RobotStatus> fleet{  // id, battery_pct, position, busy
+       {1, 82.5, {0.0, 0.0}, false}, {2, 35.0, {4.0, 1.0}, true},
+       {3, 64.0, {2.0, 3.0}, false}, {4, 18.0, {6.0, 2.0}, false}};
+   std::ranges::sort(fleet, {}, [](const RobotStatus& robot) {
+     return robot.battery_pct;
+   });  // ids in order: 4 2 3 1
+   auto closest = std::ranges::min_element(
+       fleet, {}, [](const RobotStatus& robot) {
+         return std::hypot(robot.position.x - 5.0, robot.position.y - 5.0);
+       });  // closest->id is 4
+
+- Sort: the projection gives each robot's battery, 82.5, 35, 64 and 18 %. Smallest first gives ids 4, 2, 3, 1.
+- ``min_element``: the projection gives each robot's distance to a task at (5, 5). ``std::hypot(dx, dy)`` is the square root of dx² + dy²: robot 4 is 3.16 m away, robot 3 3.61 m, robot 2 4.12 m, robot 1 7.07 m.
+- But robot 4 has 18 %. Choosing well needs the battery limit too, which a capture gives the lambda: see `Captures`_.
 
 mutable and Init-capture
 ^^^^^^^^^^^^^^^^^^^^^^^^
