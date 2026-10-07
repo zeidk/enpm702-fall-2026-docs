@@ -332,7 +332,7 @@ Multiple Choice
 .. admonition:: Question 18
    :class: hint
 
-   The program is run as ``./week5_snippets 30 -45 60``. What is ``argc``?
+   The program is run as ``./week5_arguments 30 -45 60``. What is ``argc``?
 
    A. 3
    B. 4
@@ -344,7 +344,7 @@ Multiple Choice
 
       **B. 4**
 
-      ``argc`` counts the program name too, so ``argv[0]`` is ``./week5_snippets`` and ``argv[1]`` to ``argv[3]`` are the three angles, as text. ``argv[argc]`` is always a null pointer.
+      ``argc`` counts the program name too, so ``argv[0]`` is ``./week5_arguments`` and ``argv[1]`` to ``argv[3]`` are the three angles, as text. ``argv[argc]`` is always a null pointer.
 
 .. admonition:: Question 19
    :class: hint

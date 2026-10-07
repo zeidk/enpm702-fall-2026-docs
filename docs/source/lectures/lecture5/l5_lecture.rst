@@ -14,8 +14,58 @@ Learning Objectives
 Code for This Lecture
 ^^^^^^^^^^^^^^^^^^^^^
 
-- ``project/week5/playground``: every snippet in ``src/snippets.cpp``, target ``week5_snippets``.
+- ``project/week5/playground``: the code of every slide, target ``week5_playground``. ``702run week5_playground 12`` runs slide 12.
+- ``project/week5/appendix``: the code of the appendix frames, target ``week5_appendix``. ``702run week5_appendix iv`` runs appendix frame iv.
 - ``project/week5/arm_demo``: the finished program in several files, target ``week5_arm_demo``.
+
+.. dropdown:: How to Run the Code
+   :icon: terminal
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   The ``702`` commands come from ``enpm702-cpp.sh`` in the repository. Its top comment shows how to load them in every new terminal. Then:
+
+   .. code-block:: bash
+
+      enpm702                            # go to the repository, load the 702 commands
+      git pull                           # get this week's code
+      702rebuild                         # once after you pull: a fresh build/
+      702run week5_playground            # the code of every slide, in order
+      702run week5_playground 12         # only the code of slide 12
+      702run week5_appendix              # the code of every appendix frame
+      702run week5_appendix iv           # only appendix frame iv (4 works too)
+      702run week5_arguments 30 -45 60   # Command-line Arguments, with its own arguments
+
+   After you edit a file, build again before you run: ``702build week5_playground`` builds one program, ``702build`` builds all of them.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 70
+
+      * - Command
+        - What it does
+      * - ``enpm702``
+        - Goes to the repository and loads the other ``702`` commands.
+      * - ``702configure``
+        - Runs CMake to create ``build/``. Run it again after a ``CMakeLists.txt`` changes.
+      * - ``702build [program]``
+        - Compiles every program, or only the one you name.
+      * - ``702run <program> [arguments]``
+        - Runs a program from any folder, and passes it the arguments.
+      * - ``702exe``
+        - Lists the programs that were built.
+      * - ``702bin``
+        - Goes to ``build/``. The week 5 programs are in ``build/project/week5``.
+      * - ``702clean``
+        - Deletes ``build/``.
+      * - ``702rebuild``
+        - Runs ``702clean``, then ``702configure``, then ``702build``.
+      * - ``702help``
+        - Prints the list of commands.
+
+   **Why 702rebuild after you pull.** CMake never deletes a program whose target was removed. If you built this week's code before, an old program such as ``week5_snippets`` stays in ``build/`` and still runs the old code. ``702rebuild`` starts from an empty ``build/``.
+
+   A slide whose code has undefined behavior, such as slide 55, runs only when you ask for it by number: ``702run week5_playground 55``. A full run skips it. ``week5_arm_demo`` is not built until you uncomment the last four lines of ``project/week5/CMakeLists.txt``, in the Header Files section.
 
 These parts use ``arm_demo`` (the slides mark them with a file icon):
 
@@ -68,7 +118,12 @@ Project Layout
    project/week5/
    ├── CMakeLists.txt
    ├── playground/
-   │   └── src/snippets.cpp
+   │   └── src/playground.cpp
+   ├── appendix/
+   │   └── src/appendix.cpp
+   ├── common/
+   ├── undefined/
+   ├── arguments/
    └── arm_demo/
        ├── include/
        │   ├── joint_limits.hpp
@@ -81,12 +136,16 @@ Project Layout
            ├── Doxyfile
            └── html/   (generated)
 
-- ``playground``: every snippet from the slides, in one file. Target ``week5_snippets``.
+- ``playground``: the code of every slide, in one program. Target ``week5_playground``.
+- ``appendix``: the code of the appendix frames, in one program. Target ``week5_appendix``.
+- ``common``: the code both programs use to pick a slide by its number.
+- ``undefined``: the code of the slides with undefined behavior. Both programs include it, and it is always built with AddressSanitizer and UndefinedBehaviorSanitizer.
+- ``arguments``: Command-line Arguments, a program of its own.
 - ``arm_demo``: the program in several files. Target ``week5_arm_demo``, from the Header Files section on.
 - ``include``: headers. ``src``: source files.
 - ``docs``: Doxygen, at the end of the lecture.
 
-In ``snippets.cpp`` each block sits between ``#if 0`` and ``#endif``. Change it to ``#if 1`` to try it.
+Run one slide's code with ``702run week5_playground N``, where ``N`` is the number in the slide's top-left corner; ``702run week5_playground`` runs every slide. The appendix frames are numbered i, ii, iii, and so on: ``702run week5_appendix iv`` runs frame iv, and ``702run week5_appendix 4`` does the same. Code that does not compile is in the programs, commented out: uncomment it to see the slide's error. A slide whose code has undefined behavior runs only when you ask for it by number, for example ``702run week5_playground 55``; a full run skips it. Command-line Arguments reads its own command line, so it is a program of its own: ``702run week5_arguments 30 -45 60``.
 
 Why Functions
 ^^^^^^^^^^^^^
@@ -473,7 +532,7 @@ Building with CMake
 
    Without ``target_include_directories``, ``#include "kinematics.hpp"`` fails in ``main.cpp`` with ``No such file or directory``, because the header is not in the same folder as the file that includes it.
 
-These are the last four lines of ``project/week5/CMakeLists.txt``, which build the program in ``project/week5/arm_demo``: ``include/kinematics.hpp``, ``include/joint_limits.hpp``, ``src/main.cpp``, ``src/kinematics.cpp`` and ``src/joint_limits.cpp``. The slide snippets are in ``project/week5/playground/src/snippets.cpp``, built by the target ``week5_snippets``.
+These are the last four lines of ``project/week5/CMakeLists.txt``, which build the program in ``project/week5/arm_demo``: ``include/kinematics.hpp``, ``include/joint_limits.hpp``, ``src/main.cpp``, ``src/kinematics.cpp`` and ``src/joint_limits.cpp``. The code of the other slides is in ``project/week5/playground/src/playground.cpp``, built by the target ``week5_playground``.
 
 Include Guards
 ~~~~~~~~~~~~~~
@@ -1615,12 +1674,12 @@ Command-line Arguments
 
 .. code-block:: bash
 
-   ./week5_snippets 30 -45 60
+   ./week5_arguments 30 -45 60
 
 .. code-block:: text
 
    Number of arguments: 4
-   argv[0]: ./week5_snippets
+   argv[0]: ./week5_arguments
    argv[1]: 30
    argv[2]: -45
    argv[3]: 60
@@ -1684,7 +1743,12 @@ Project Layout
    project/week5/
    ├── CMakeLists.txt
    ├── playground/
-   │   └── src/snippets.cpp
+   │   └── src/playground.cpp
+   ├── appendix/
+   │   └── src/appendix.cpp
+   ├── common/
+   ├── undefined/
+   ├── arguments/
    └── arm_demo/
        ├── include/
        │   ├── joint_limits.hpp

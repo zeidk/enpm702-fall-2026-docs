@@ -5,6 +5,29 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
+.. dropdown:: v1.7.0: One Program per Part of the Deck, Weeks 5 and 6 (2026-10-07)
+   :icon: tag
+   :class-container: sd-border-success
+   :open:
+
+   - **Lectures 5 and 6:** the code of every slide is one program,
+     ``week5_playground`` and ``week6_playground``. Pass a slide number to
+     run one slide: ``702run week6_playground 7``.
+   - The appendix frames are a second program, ``week5_appendix`` and
+     ``week6_appendix``. Pass the frame number as it appears on the
+     frame: ``702run week5_appendix iv``.
+   - The undefined behavior programs (``week5_returning_local``,
+     ``week6_dangling`` and the others) and the two throw programs are
+     gone. Their code runs from the playground when you ask for its
+     slide by number, for example ``702run week6_playground 64``.
+   - ``week5_snippets`` and the five ``week6`` section programs, such as
+     ``week6_grouping``, are replaced by the two playground programs.
+     Run ``702rebuild`` once after you pull, so the old programs leave
+     ``build/``.
+   - **How to Run the Code:** a new dropdown under Code for This Lecture,
+     in Lectures 5 and 6, lists the ``702`` commands and what each does.
+
+
 .. dropdown:: v1.6.0: Lecture 4 Synced with the L4 Slides v2.0 (2026-09-28)
    :icon: tag
    :class-container: sd-border-success

@@ -22,8 +22,9 @@ Code for This Lecture
    │   ├── include/
    │   ├── src/
    │   └── docs/
-   ├── snippets/
-   ├── throws/
+   ├── playground/
+   ├── appendix/
+   ├── common/
    └── undefined/
 
 **Run the finished program first**
@@ -34,10 +35,60 @@ Code for This Lecture
 
 **Run a slide's code**
 
-- One program per section, ``week6_grouping`` to ``week6_higher_order``. ``702run week6_grouping`` runs all of Section 1, Grouping Values; ``702run week6_grouping 7`` only slide 7.
+- One program for every slide: ``702run week6_playground`` runs them all; ``702run week6_playground 7`` only slide 7.
+- One program for the appendix frames, numbered i, ii, iii, and so on: ``702run week6_appendix xiii`` runs frame xiii, and ``702run week6_appendix 13`` does the same.
 - Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-``fleet`` holds the finished program; its Doxyfile is in ``fleet/docs``. ``throws`` and ``undefined`` hold one program per slide; ``week6_dangling`` is always built with AddressSanitizer.
+``fleet`` holds the finished program; its Doxyfile is in ``fleet/docs``. Code that throws, or has undefined behavior, runs only when you ask for its slide by number; a full run skips it. ``undefined`` holds the code with undefined behavior, always built with AddressSanitizer.
+
+.. dropdown:: How to Run the Code
+   :icon: terminal
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   The ``702`` commands come from ``enpm702-cpp.sh`` in the repository. Its top comment shows how to load them in every new terminal. Then:
+
+   .. code-block:: bash
+
+      enpm702                            # go to the repository, load the 702 commands
+      git pull                           # get this week's code
+      702rebuild                         # once after you pull: a fresh build/
+      702run week6_fleet                 # the finished program
+      702run week6_playground            # the code of every slide, in order
+      702run week6_playground 7          # only the code of slide 7
+      702run week6_appendix              # the code of every appendix frame
+      702run week6_appendix xiii         # only appendix frame xiii (13 works too)
+
+   After you edit a file, build again before you run: ``702build week6_playground`` builds one program, ``702build`` builds all of them.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 30 70
+
+      * - Command
+        - What it does
+      * - ``enpm702``
+        - Goes to the repository and loads the other ``702`` commands.
+      * - ``702configure``
+        - Runs CMake to create ``build/``. Run it again after a ``CMakeLists.txt`` changes.
+      * - ``702build [program]``
+        - Compiles every program, or only the one you name.
+      * - ``702run <program> [arguments]``
+        - Runs a program from any folder, and passes it the arguments.
+      * - ``702exe``
+        - Lists the programs that were built.
+      * - ``702bin``
+        - Goes to ``build/``. The week 6 programs are in ``build/project/week6``.
+      * - ``702clean``
+        - Deletes ``build/``.
+      * - ``702rebuild``
+        - Runs ``702clean``, then ``702configure``, then ``702build``.
+      * - ``702help``
+        - Prints the list of commands.
+
+   **Why 702rebuild after you pull.** CMake never deletes a program whose target was removed. If you built this week's code before, an old program such as ``week6_grouping`` stays in ``build/`` and still runs the old code. ``702rebuild`` starts from an empty ``build/``.
+
+   A slide whose code throws or has undefined behavior, such as slide 64, runs only when you ask for it by number: ``702run week6_playground 64``. A full run skips it.
 
 .. note::
 
@@ -855,12 +906,12 @@ Instantiation
 
 .. code-block:: bash
 
-   nm -C week6_templates | grep 'clamp_value<'
-   ... W double clamp_value<double>(double, double, double)
-   ... W int clamp_value<int>(int, int, int)
+   nm -C week6_playground | grep 'clamp_value<'
+   ... W double templates::clamp_value<double>(double, double, double)
+   ... W int templates::clamp_value<int>(int, int, int)
 
 - Two functions in the program, one per type. The third call reuses ``clamp_value<int>``.
-- ``nm`` lists the functions in a compiled program; ``-C`` shows their C++ names. ``702bin`` takes you to the folder that holds ``week6_templates``.
+- ``nm`` lists the functions in a compiled program; ``-C`` shows their C++ names. ``702bin`` takes you to the folder that holds ``week6_playground``. In that program, ``clamp_value`` sits in the namespace ``templates``, the namespace of its section file.
 
 Templates Go in Headers
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -1394,9 +1445,9 @@ A Dangling Capture
 
 .. code-block:: text
 
-   702run week6_dangling                 # always built with AddressSanitizer
+   702run week6_playground 64           # always built with AddressSanitizer
    ERROR: AddressSanitizer: stack-use-after-return on address 0x...
-       #0 0x... in operator() dangling_capture.cpp:4
+       #0 0x... in operator() undefined.cpp:49
 
 - ``limit_pct`` is a parameter. It dies when ``make_filter`` returns, and the lambda keeps a reference to it: Lecture 5's dangling reference, hidden in a capture list.
 - Built without the sanitizer, it printed ``0`` with no warning. At ``-O2`` GCC warns, under a misleading name: ``'limit_pct' is used uninitialized``.
@@ -2016,8 +2067,8 @@ Function Pointer Syntax
 
 .. code-block:: text
 
-   higher_order.cpp:150 void assign_task(int, int): task 17 to robot 3
-   higher_order.cpp:154 void end_shift(): shift over
+   appendix.cpp:211 void assign_task(int, int): task 17 to robot 3
+   appendix.cpp:215 void end_shift(): shift over
 
 - A default argument is evaluated **at the call** (Lecture 5), so ``current()`` records the caller's line, not ``log_message``'s.
 
