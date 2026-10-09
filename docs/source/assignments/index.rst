@@ -25,9 +25,9 @@ demonstrating why each new C++ feature improves the codebase.
 
 .. note::
 
-   Only **RWA1** is published so far. The other rows here, and the group
-   projects below, are the plan for the semester. Each one becomes a link
-   when that assignment is released.
+   Only **RWA1** and **RWA2** are published so far. The other rows here,
+   and the group projects below, are the plan for the semester. Each one
+   becomes a link when that assignment is released.
 
 .. list-table::
    :header-rows: 1
@@ -44,7 +44,7 @@ demonstrating why each new C++ feature improves the codebase.
      - Sep 15
      - Oct 1
      - 2 weeks
-   * - RWA2
+   * - :doc:`RWA2 <rwa2>`
      - STL Containers and Functions
      - Oct 9
      - Oct 23
@@ -90,12 +90,12 @@ in Gazebo. GP2 extends the GP1 deliverable.
    :titlesonly:
 
    rwa1
+   rwa2
 
 ..
    Hidden for now. Uncomment an entry when that assignment is rewritten,
    and restore its row in the table above.
 
-   rwa2
    rwa3
    gp1
    gp2
