@@ -7,9 +7,10 @@ Learning Objectives
 
 1. Group values with a ``struct``, a ``std::pair``, or a ``std::tuple``, and predict a ``struct``'s size.
 2. Return several values, or a value that may be missing, and unpack them with structured bindings.
-3. Write a function template, and constrain it with a concept.
-4. Write lambdas with captures, and pass them to the standard algorithms.
-5. Write higher-order functions: pass, store, and adapt callables with ``std::function`` and ``std::bind``.
+3. Let the compiler deduce a return type with ``auto``, and know when to write the type instead.
+4. Write a function template, and constrain it with a concept.
+5. Write lambdas with captures, and pass them to the standard algorithms.
+6. Write higher-order functions: pass, store, and adapt callables with ``std::function`` and ``std::bind``.
 
 Code for This Lecture
 ^^^^^^^^^^^^^^^^^^^^^
@@ -36,7 +37,7 @@ Code for This Lecture
 **Run a slide's code**
 
 - One program for every slide: ``702run week6_playground`` runs them all; ``702run week6_playground 7`` only slide 7.
-- One program for the appendix frames, numbered i, ii, iii, and so on: ``702run week6_appendix xvi`` runs frame xvi, and ``702run week6_appendix 16`` does the same.
+- One program for the appendix frames, numbered i, ii, iii, and so on: ``702run week6_appendix xvii`` runs frame xvii, and ``702run week6_appendix 17`` does the same.
 - Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
 ``fleet`` holds the finished program; its Doxyfile is in ``fleet/docs``. Code that throws, or has undefined behavior, runs only when you ask for its slide by number; a full run skips it. ``undefined`` holds the code with undefined behavior, always built with AddressSanitizer.
@@ -57,7 +58,7 @@ Code for This Lecture
       702run week6_playground            # the code of every slide, in order
       702run week6_playground 7          # only the code of slide 7
       702run week6_appendix              # the code of every appendix frame
-      702run week6_appendix xvi          # only appendix frame xvi (16 works too)
+      702run week6_appendix xvii         # only appendix frame xvii (17 works too)
 
    After you edit a file, build again before you run: ``702build week6_playground`` builds one program, ``702build`` builds all of them.
 
@@ -88,7 +89,7 @@ Code for This Lecture
 
    **Why 702rebuild after you pull.** CMake never deletes a program whose target was removed. If you built this week's code before, an old program such as ``week6_grouping`` stays in ``build/`` and still runs the old code. ``702rebuild`` starts from an empty ``build/``.
 
-   A slide whose code throws or has undefined behavior, such as slide 61, runs only when you ask for it by number: ``702run week6_playground 61``. A full run skips it.
+   A slide whose code throws or has undefined behavior, such as slide 64, runs only when you ask for it by number: ``702run week6_playground 64``. A full run skips it.
 
 .. note::
 
@@ -850,6 +851,65 @@ An Empty Optional
 
    Pick the pointer when the caller must change the robot itself, for example to mark it busy: a copy would change only the copy. Pick ``std::optional`` when the answer is a value, such as an id. The empty state costs memory: with g++ 13, ``std::optional<int>`` takes 8 bytes and an ``int`` takes 4. See `cppreference: std::optional <https://en.cppreference.com/w/cpp/utility/optional>`__.
 
+Deduced Return Types
+--------------------
+
+With ``auto`` as its **return type**, a function lets the compiler work out that type from its ``return`` statements. C++14.
+
+See `cppreference: return type deduction <https://en.cppreference.com/w/cpp/language/function#Return_type_deduction>`__.
+
+One Type for Every ``return``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto battery_fraction(double pct) {  // the return type is double
+     return pct / 100.0;
+   }
+   double fraction{battery_fraction(64.0)};  // 0.64
+
+- The compiler reads the ``return`` statement: ``pct / 100.0`` is a ``double``, so the function returns a ``double``.
+- With two ``return`` statements, each one must give the same type:
+
+.. code-block:: cpp
+
+   auto battery_fraction(double pct) {
+     if (pct < 0.0) { return 0; }  // int
+     return pct / 100.0;           // double
+   }
+
+.. code-block:: text
+
+   error: inconsistent deduction for auto return type: 'int' and then 'double'
+
+- No conversion is tried. Return ``0.0`` instead of ``0``, or write the type, ``double battery_fraction(double pct)``, and each ``return`` converts to it (Lecture 5).
+
+The Body before the Call
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // stats.hpp: the declaration only
+   auto battery_fraction(double pct);
+   // stats.cpp: the body
+   auto battery_fraction(double pct) { return pct / 100.0; }
+   // main.cpp: includes stats.hpp, then
+   double fraction{battery_fraction(64.0)};
+
+.. code-block:: text
+
+   error: use of 'auto battery_fraction(double)' before deduction of 'auto'
+
+- The compiler needs the body to know the return type. ``main.cpp`` sees only the header, so the call does not compile. An ``auto`` function goes in the header, body included.
+- ``auto`` is needed when the type is hard or impossible to write: it depends on template parameters (see `Two Template Parameters`_), or it is a lambda, whose type has no name (see `A Dangling Capture`_).
+
+.. admonition:: Best Practice
+   :class: tip
+
+   For an ordinary function, write the return type. The declaration in the header is what a caller reads, and ``auto`` there tells the caller nothing.
+
+See ```auto`` Returns a Copy <#auto-returns-a-copy>`__ under Further Reading.
+
 Function Templates
 ------------------
 
@@ -976,7 +1036,7 @@ Two Template Parameters
    add_offset(80.5f, 2);   // T float, U int:    returns float 82.5
 
 - Two parameters, deduced separately, so the arguments may differ in type.
-- What is the return type? It depends on ``T`` and ``U``. ``auto`` lets the compiler take it from the ``return`` statement, by the arithmetic conversions of Lecture 2.
+- The return type depends on ``T`` and ``U``, so it is ``auto`` (see `Deduced Return Types`_): the compiler takes it from ``value + offset``, by the arithmetic conversions of Lecture 2.
 - The three return types are checked with ``static_assert`` in ``templates.cpp``.
 
 See `decltype and Trailing Return Types`_ under Further Reading.
@@ -1167,14 +1227,15 @@ Which Form to Use
 
    .. code-block:: cpp
 
-      bool same_id(std::integral auto first, std::integral auto second);
+      bool same_id(std::integral auto first,
+                   std::integral auto second) { ... }
 
 2. **Form 1** when two parameters must be one type, or the body or return type needs the name ``T``.
 
    .. code-block:: cpp
 
       template <std::integral T>
-      bool same_id(T first, T second);
+      bool same_id(T first, T second) { ... }
 
 3. **Form 2** when the condition joins tests with ``&&``, ``||`` or ``!``.
 
@@ -1182,7 +1243,7 @@ Which Form to Use
 
       template <typename T>
         requires std::integral<T> && (!std::same_as<T, bool>)
-      bool is_valid_id(T id);
+      bool is_valid_id(T id) { ... }
 
 .. admonition:: Best Practice
    :class: tip
@@ -1388,7 +1449,7 @@ A Dangling Capture
 
 .. code-block:: text
 
-   702run week6_playground 61           # always built with AddressSanitizer
+   702run week6_playground 64           # always built with AddressSanitizer
    ERROR: AddressSanitizer: stack-use-after-return on address 0x...
        #0 0x... in operator() undefined.cpp:49
 
@@ -1583,6 +1644,11 @@ Summary
 - Return several values as a ``struct``; unpack with ``auto [a, b]``, or ``auto&`` to change the original.
 - Return ``std::optional`` when the answer may be missing. ``*`` on an empty one is undefined behavior; ``value()`` throws.
 
+**Deduced Return Types**
+
+- With ``auto``, the return type comes from the ``return`` statements, and they must all give one type.
+- The body must be seen before any call, so it goes in the header. Write the type for an ordinary function.
+
 **Function Templates**
 
 - One template, one function per set of types used. Deduction needs one consistent ``T`` and ignores the return type. The template goes in the header.
@@ -1696,6 +1762,31 @@ The Lecture 4 Map Loop
 - Each element of a ``std::map<K, V>`` is a ``std::pair<const K, V>``. The binding names its two members.
 - ``const auto&`` reads each pair in place, with no copy of the string.
 - Lecture 4 asked you to read this form as "a way to avoid ``.first`` and ``.second``". That is what it does.
+
+``auto`` Returns a Copy
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto first_copy(const std::vector<std::string>& names) {
+     return names[0];  // std::string: a copy
+   }
+   const auto& first_ref(const std::vector<std::string>& names) {
+     return names[0];  // const std::string&: the element itself
+   }
+
+   std::vector<std::string> sensors{"imu", "gps"};
+   std::string copy{first_copy(sensors)};
+   const std::string& ref{first_ref(sensors)};
+   sensors[0] = "lidar";  // copy is still "imu"; ref reads "lidar"
+
+- ``auto`` follows the rules of template argument deduction: it drops the ``&`` and the ``const``, so ``first_copy`` returns a new ``std::string``.
+- ``const auto&`` keeps the reference, as a return by reference did in Lecture 5. ``sensors`` must outlive ``ref``.
+- ``decltype(auto)`` keeps the exact type of the ``return`` expression, ``&`` included (see `decltype and Trailing Return Types`_).
+
+.. note::
+
+   C++20, **[dcl.type.auto.deduct]**, section 9.2.8.5.1, paragraph 4: the type is determined *using the rules for template argument deduction*.
 
 Overload or Specialize
 ^^^^^^^^^^^^^^^^^^^^^^
