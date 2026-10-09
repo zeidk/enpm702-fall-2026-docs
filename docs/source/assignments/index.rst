@@ -11,8 +11,8 @@ Assignments
    up-to-date version of each assignment.
 
 This course includes three individual **Real-World Applications (RWAs)**
-focused on core C++ and three team-based **Group Projects (GPs)** focused
-on ROS 2 development. Both RWAs and GPs are **cumulative**, each
+focused on core C++ and two team-based **Group Projects (GPs)** focused
+on ROS 2 development. Both RWAs and GPs are **cumulative**: each
 deliverable builds on the previous one.
 
 
@@ -46,13 +46,13 @@ demonstrating why each new C++ feature improves the codebase.
      - 2 weeks
    * - RWA2
      - STL Containers and Functions
-     - Sep 29
-     - Oct 13
+     - Oct 9
+     - Oct 23
      - 2 weeks
    * - RWA3
      - Smart Pointers and OOP
-     - Oct 27
-     - Nov 10
+     - Nov 3
+     - Nov 17
      - 2 weeks
 
 
@@ -60,7 +60,7 @@ Group Projects (GPs)
 ---------------------
 
 The GPs progressively build a ROS 2 application with a mobile robot
-in Gazebo. Each GP extends the previous deliverable.
+in Gazebo. GP2 extends the GP1 deliverable.
 
 .. list-table::
    :header-rows: 1
@@ -74,19 +74,14 @@ in Gazebo. Each GP extends the previous deliverable.
      - Duration
    * - GP1
      - ROS 2 Pub/Sub with Gazebo
-     - Nov 10
      - Nov 17
+     - Nov 24
      - 1 week
    * - GP2
-     - Services, Actions, and Robot Inheritance
-     - Nov 17
-     - Dec 1
-     - 2 weeks
-   * - GP3
-     - Autonomy, Frames, Lifecycle, and a Decision Layer
-     - Dec 1
+     - Services, Actions, Frames, and a Decision Layer
+     - Nov 24
      - Dec 11
-     - ~1.5 weeks
+     - About 2.5 weeks
 
 
 .. toctree::
@@ -104,4 +99,3 @@ in Gazebo. Each GP extends the previous deliverable.
    rwa3
    gp1
    gp2
-   gp3

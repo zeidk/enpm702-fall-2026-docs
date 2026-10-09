@@ -171,7 +171,7 @@ receiving them. Press ``Ctrl + C`` in both terminals to stop.
 Gazebo (Simulation)
 -------------------
 
-Gazebo is required for the Group Projects (GP1-GP3). Install it with:
+Gazebo is required for the Group Projects (GP1 and GP2). Install it with:
 
 .. code-block:: bash
 

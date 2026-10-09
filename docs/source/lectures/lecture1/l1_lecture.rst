@@ -35,7 +35,7 @@ with ROS 2 and Gazebo.
 .. grid:: 1 2 2 2
     :gutter: 3
 
-    .. grid-item-card:: Part 1: C++ Foundations (Weeks 1 to 9)
+    .. grid-item-card:: Part 1: C++ Foundations (Weeks 1 to 10)
         :class-card: sd-border-info sd-shadow-sm
 
         - Types, pointers, memory management, STL containers
@@ -45,12 +45,12 @@ with ROS 2 and Gazebo.
         - Practiced through cumulative **Real-World Application (RWA)**
           assignments
 
-    .. grid-item-card:: Part 2: ROS 2 and Gazebo (Weeks 10 to 15)
+    .. grid-item-card:: Part 2: ROS 2 and Gazebo (Weeks 11 to 15)
         :class-card: sd-border-info sd-shadow-sm
 
         - Publishers, subscribers, custom interfaces, parameters,
           launch files
-        - Services, actions, coordinate frames (TF2), lifecycle nodes
+        - Services, actions, coordinate frames (TF2), autonomy architecture
         - Cumulative **Group Projects (GPs)**: a multi-node system
           driving a mobile robot in simulation
 
@@ -71,7 +71,7 @@ After successfully completing this course, students will be able to:
 #. Develop ROS 2 applications using publishers, subscribers, services,
    actions, custom interfaces, parameters, launch files, and executors.
 #. Build and simulate robotic systems in Gazebo, including coordinate
-   frame management (TF2) and lifecycle node orchestration.
+   frame management (TF2) and a Sense-Plan-Act autonomy architecture.
 
 
 Operating System and Software
@@ -198,7 +198,7 @@ learned by doing than by watching. All of it is in the
    * - Flow control and operations
      - Before Sep 15
    * - Exception handling
-     - Before Oct 13
+     - Before Oct 20
 
 .. warning::
 
@@ -250,7 +250,7 @@ Install Advice
 - Native or dual-boot is strongly recommended.
 - A VM works for the first half, but Gazebo in the second half is
   graphics-intensive and will suffer.
-- ROS 2 and Gazebo are required from Week 10, but install them now so
+- ROS 2 and Gazebo are required from Week 11, but install them now so
   problems surface early.
 
 Free References
@@ -281,7 +281,7 @@ Assessments
    * - RWA1 to RWA3
      - 140
      - 35%
-   * - GP1 to GP3
+   * - GP1 and GP2
      - 140
      - 35%
    * - Quizzes (5)
@@ -297,10 +297,10 @@ Assessments
 Two Phases
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Weeks 1 to 9**: individual work in C++, assessed through three RWAs
-  and five quizzes.
-- **Weeks 10 to 15**: teamwork in ROS 2, assessed through three Group
-  Projects.
+- **Weeks 1 to 10**: individual work in C++, assessed through three RWAs
+  and Quizzes 1 to 3. Week 7 (Oct 13) is Fall Break, with no class.
+- **Weeks 11 to 15**: teamwork in ROS 2, assessed through two Group
+  Projects and Quizzes 4 and 5.
 
 Both sequences are **cumulative**. Each assignment extends the code
 written for the previous one, so a weak RWA1 is not a closed chapter,
@@ -308,7 +308,7 @@ it is the starting point for RWA2.
 
 .. note::
 
-   **No final exam.** GP3 is the capstone assessment.
+   **No final exam.** GP2 is the capstone assessment.
 
 
 Assignment Milestones
@@ -333,29 +333,25 @@ Two cumulative chains: one individual in C++, one in teams in ROS 2.
      - 44
    * - RWA2
      - STL containers and functions
-     - Sep 29
-     - Oct 13
+     - Oct 9
+     - Oct 23
      - 48
    * - RWA3
      - Smart pointers and object-oriented design
-     - Oct 27
-     - Nov 10
+     - Nov 3
+     - Nov 17
      - 48
    * - GP1
      - Publishers, subscribers, simulation
-     - Nov 10
      - Nov 17
+     - Nov 24
      - 44
    * - GP2
-     - Services, actions, robot class hierarchies
-     - Nov 17
-     - Dec 1
-     - 48
-   * - GP3
-     - Coordinate frames, lifecycle nodes, autonomy layer
-     - Dec 1
+     - Services, actions, robot class hierarchies, coordinate frames,
+       autonomy layer
+     - Nov 24
      - Dec 11
-     - 48
+     - 96
 
 - **RWAs are individual.** Discussing concepts with classmates is fine;
   submitted code must be your own.
@@ -382,14 +378,14 @@ Quizzes
      - 6
      - Oct 6
    * - Quiz 3
-     - 8
-     - Oct 20
+     - 9
+     - Oct 27
    * - Quiz 4
-     - 10
-     - Nov 3
+     - 11
+     - Nov 10
    * - Quiz 5
-     - 12
-     - Nov 17
+     - 13
+     - Nov 24
 
 - They check that concepts are absorbed before the next assignment
   depends on them.
@@ -408,8 +404,9 @@ Participation and Engagement
 - The exercise route exists deliberately, so that students for whom
   speaking up in a large lecture is not the best way to learn are not
   disadvantaged.
-- **Score**: :math:`20 \times (\text{weeks credited} / 15)`, about 1.33
-  points per week.
+- **Score**: :math:`20 \times (\text{weeks credited} / 14)`, about 1.43
+  points per week. There are 14 lecture weeks, since Week 7 is Fall
+  Break.
 - Solutions count only when submitted **before the start of the
   following lecture**. Week 15 solutions are due December 11.
 
@@ -595,16 +592,14 @@ autonomous robot in simulation.
 
 - **RWA1** (Weeks 3 to 5): C++ fundamentals. Variables, types,
   pointers, memory.
-- **RWA2** (Weeks 5 to 7): STL containers and functions added to the
+- **RWA2** (Weeks 6 to 8): STL containers and functions added to the
   RWA1 code.
-- **RWA3** (Weeks 9 to 11): smart pointers and object-oriented design
+- **RWA3** (Weeks 10 to 12): smart pointers and object-oriented design
   added to the RWA2 code.
-- **GP1** (Weeks 11 to 12): the design moves into ROS 2 with
+- **GP1** (Weeks 12 to 13): the design moves into ROS 2 with
   publishers, subscribers, and Gazebo.
-- **GP2** (Weeks 12 to 14): services, actions, and robot class
-  hierarchies added to GP1.
-- **GP3** (Weeks 14 to 15): coordinate frames, lifecycle nodes, and an
-  autonomy decision layer added to GP2.
+- **GP2** (Weeks 13 to 15): services, actions, robot class hierarchies,
+  coordinate frames, and an autonomy decision layer added to GP1.
 
 .. note::
 
@@ -639,50 +634,50 @@ autonomous robot in simulation.
    * - 5 (Sep 29)
      - L5: Functions, basics (overloading, recursion)
      -
-     - RWA1 due, RWA2 posted
+     - RWA1 due
    * - 6 (Oct 6)
      - L6: Functions, advanced (templates, lambdas, functors)
      - Quiz 2
-     -
+     - RWA2 posted Fri, Oct 9
    * - 7 (Oct 13)
+     - No class (Fall Break)
+     -
+     -
+   * - 8 (Oct 20)
      - L7: Smart pointers and move semantics
      -
-     - RWA2 due
-   * - 8 (Oct 20)
+     - RWA2 due Fri, Oct 23
+   * - 9 (Oct 27)
      - L8: OOP basics (classes, encapsulation, constructors)
      - Quiz 3
      -
-   * - 9 (Oct 27)
+   * - 10 (Nov 3)
      - L9: OOP advanced (inheritance, polymorphism, abstraction)
      -
      - RWA3 posted
-   * - 10 (Nov 3)
+   * - 11 (Nov 10)
      - L10: ROS 2 foundations (nodes, publishers, subscribers)
      - Quiz 4
      -
-   * - 11 (Nov 10)
+   * - 12 (Nov 17)
      - L11: ROS 2 configuration (parameters, launch, executors)
      -
      - RWA3 due, GP1 posted
-   * - 12 (Nov 17)
+   * - 13 (Nov 24)
      - L12: ROS 2 communication (services, actions)
      - Quiz 5
      - GP1 due, GP2 posted
-   * - 13 (Nov 24)
+   * - 14 (Dec 1)
      - L13: ROS 2 coordinate frames and transforms
      -
      -
-   * - 14 (Dec 1)
-     - L14: ROS 2 lifecycle nodes
-     -
-     - GP2 due, GP3 posted
    * - 15 (Dec 8)
-     - L15: Robot autonomy architecture (sense-plan-act)
+     - L14: Robot autonomy architecture (sense-plan-act)
      -
-     - GP3 due Fri, Dec 11
+     - GP2 due Fri, Dec 11
 
 Lecture exercises are due every week. Self-study reading is completed
-before Sep 1, Sep 15, and Oct 13.
+before Sep 1, Sep 15, and Oct 20.
 
 
 Succeeding in This Course

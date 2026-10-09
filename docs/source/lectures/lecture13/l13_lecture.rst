@@ -17,9 +17,6 @@ It covers:
 - Listening for and looking up transforms
 - TF2 debugging tools
 
-Lifecycle (managed) nodes are covered in the next lecture
-(:doc:`Lecture 14 <../lecture14/l14_index>`).
-
 
 ----
 

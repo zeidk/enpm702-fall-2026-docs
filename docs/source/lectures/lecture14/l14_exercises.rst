@@ -2,14 +2,16 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 14: Lifecycle
-Nodes. Work through them in order. The final challenge also uses the TF2
-material from :doc:`Lecture 13 <../lecture13/l13_index>`. Build and run
-each program in a ROS 2 workspace to verify your understanding.
+These exercises reinforce the autonomy-architecture concepts from
+Lecture 14. They combine **design exercises** (decomposing a system into
+Sense-Plan-Act and mapping it onto ROS 2) with **coding exercises**
+(implementing the layers as ROS 2 nodes). Work through them in order.
 
 .. note::
 
-   All exercises require a ROS 2 Jazzy workspace. Build with:
+   The coding exercises require a ROS 2 Jazzy workspace and assume a
+   TurtleBot3-style robot (or Gazebo simulation) exposing ``/scan`` and
+   ``/cmd_vel``. Build with:
 
    .. code-block:: bash
 
@@ -21,140 +23,107 @@ each program in a ROS 2 workspace to verify your understanding.
 ----
 
 
-.. dropdown:: Exercise 1: Basic Lifecycle Node
+.. dropdown:: Exercise 1: Decompose a Task (Design)
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Create a lifecycle node with logging in each transition callback.
+    Practice decomposing a robotics task into the Sense-Plan-Act
+    layers and mapping each data flow onto a ROS 2 communication pattern.
 
     **Specification**
 
-    1. Create a lifecycle node called ``basic_lifecycle_node``.
-    2. Inherit from ``rclcpp_lifecycle::LifecycleNode``.
-    3. Implement all five transition callbacks:
+    A warehouse robot must patrol between two shelves and stop if a
+    person steps in front of it. For this task:
 
-       - ``on_configure``, log "Configuring..." and return SUCCESS.
-       - ``on_activate``, log "Activating..." and return SUCCESS.
-       - ``on_deactivate``, log "Deactivating..." and return SUCCESS.
-       - ``on_cleanup``, log "Cleaning up..." and return SUCCESS.
-       - ``on_shutdown``, log "Shutting down..." and return SUCCESS.
+    1. Identify what belongs in the **perception**, **decision**, and
+       **control** layers.
+    2. For each arrow between layers, state which ROS 2 primitive
+       (topic, service, or action) you would use and why.
+    3. Identify one place where a **parameter** would be useful.
 
-    4. Test using the CLI:
-
-       .. code-block:: bash
-
-          ros2 lifecycle set /basic_lifecycle_node configure
-          ros2 lifecycle set /basic_lifecycle_node activate
-          ros2 lifecycle set /basic_lifecycle_node deactivate
-          ros2 lifecycle set /basic_lifecycle_node cleanup
-          ros2 lifecycle set /basic_lifecycle_node shutdown
-
-.. dropdown:: Exercise 2: Lifecycle Sensor Node
+.. dropdown:: Exercise 2: Reactive Controller (Front Sector)
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Create a lifecycle sensor node that only publishes data when in the
-    Active state.
+    Implement a reactive decision/control node that only reacts to
+    obstacles **directly ahead**, instead of anywhere in the scan.
 
     **Specification**
 
-    1. Create a lifecycle node called ``lifecycle_temperature_sensor``.
-    2. In ``on_configure``:
+    1. Create a node ``front_reactive_controller``.
+    2. Subscribe to ``/scan`` (``sensor_msgs::msg::LaserScan``) and
+       publish to ``/cmd_vel`` (``geometry_msgs::msg::Twist``).
+    3. Examine only the readings in a **front sector**, the first and
+       last 15 readings of ``ranges`` (which straddle straight ahead).
+    4. If the nearest reading in the front sector is closer than a
+       ``safe_distance`` parameter (default 0.5 m), turn in place;
+       otherwise drive forward.
 
-       - Create a ``LifecyclePublisher`` for ``std_msgs::msg::Float64``
-         on topic ``/temperature``.
-       - Create a timer that fires every 1 second.
-       - Initialize a temperature value to 20.0.
+.. dropdown:: Exercise 3: Separate Perception from Decision
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
 
-    3. In ``on_activate``:
+    **Goal**
 
-       - Log that the sensor is active and publishing.
+    Split the monolithic reactive controller into a **perception node**
+    and a **decision node** connected by a topic, a true two-layer
+    architecture.
 
-    4. In ``on_deactivate``:
+    **Specification**
 
-       - Log that the sensor has stopped publishing.
+    1. **Perception node** ``obstacle_perception``: subscribe to
+       ``/scan``, compute whether an obstacle is within 0.5 m anywhere in
+       the scan, and publish a ``std_msgs::msg::Bool`` on
+       ``/obstacle_ahead``.
+    2. **Decision node** ``obstacle_decision``: subscribe to
+       ``/obstacle_ahead`` and publish ``/cmd_vel``, turn if ``true``,
+       drive forward if ``false``.
+    3. Run both nodes together and confirm the robot behaves as before.
 
-    5. In ``on_cleanup``:
-
-       - Reset the publisher and timer.
-
-    6. In ``on_shutdown``:
-
-       - Reset the publisher and timer.
-
-    7. In the timer callback:
-
-       - Check if the node is in the Active state before publishing.
-       - Publish the temperature value with a small random fluctuation.
-       - Log the published value.
-
-    8. Test: configure, activate, observe data, deactivate, verify data
-       stops, re-activate, observe data resumes.
-
-.. dropdown:: Exercise 3 Challenge: Multi-Frame Robot with Lifecycle Management
+.. dropdown:: Exercise 4: Where Does the Model Go? (Design)
     :icon: gear
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Build a complete system that combines TF2 frame management with
-    lifecycle node control. This exercise integrates all concepts from
-    the lecture.
+    Reason about integrating a trained ML model into the architecture.
 
     **Specification**
 
-    1. Create a **lifecycle node** called ``robot_system_node`` that
-       manages a robot with sensors.
+    Suppose you train a neural network that takes a camera image and
+    outputs whether the path ahead is "blocked" or "clear".
 
-    2. In ``on_configure``:
+    1. Which layer and which node hosts the model?
+    2. What is the node's input topic and output topic?
+    3. If you later retrain the model to be more accurate, which other
+       nodes in the system must change?
+    4. Name one C++ library you could use to run the model for inference.
 
-       - Create a ``tf2_ros::StaticTransformBroadcaster`` and publish
-         two static transforms:
+.. dropdown:: Exercise 5: Choose an Architecture Style (Design)
+    :icon: gear
+    :class-container: sd-border-warning
+    :class-title: sd-font-weight-bold
 
-         - ``base_link`` -> ``camera_link`` (0.15 m forward, 0.4 m up)
-         - ``base_link`` -> ``lidar_link`` (0.0 m forward, 0.3 m up)
+    **Goal**
 
-       - Create a ``tf2_ros::TransformBroadcaster`` for the robot's
-         dynamic motion.
-       - Create a ``LifecyclePublisher`` for ``std_msgs::msg::String``
-         on topic ``/sensor_status``.
-       - Create a timer at 10 Hz.
+    Match architecture styles (reactive, deliberative, hybrid) to
+    scenarios.
 
-    3. In ``on_activate``:
+    **Specification**
 
-       - Log that the robot system is active.
-       - Set a flag ``active_`` to true.
+    For each scenario, choose the most appropriate style and justify it:
 
-    4. In ``on_deactivate``:
-
-       - Set ``active_`` to false.
-       - Log that the robot system is paused.
-
-    5. In the timer callback:
-
-       - If not active, return immediately.
-       - Broadcast a dynamic transform from ``world`` to ``base_link``
-         (robot moves in a figure-eight pattern):
-
-         - ``x = 3.0 * sin(angle)``
-         - ``y = 3.0 * sin(angle) * cos(angle)``
-
-       - Publish a sensor status message with the current position.
-       - Increment the angle.
-
-    6. In ``on_cleanup`` and ``on_shutdown``:
-
-       - Reset all publishers, broadcasters, and the timer.
-
-    7. Test the full lifecycle: configure -> activate -> observe frames
-       and messages -> deactivate -> verify publishing stops -> activate
-       again -> shutdown.
-
-    8. Use ``ros2 run tf2_tools view_frames`` to verify the frame tree.
+    1. An emergency bumper that stops the robot the instant it touches
+       something.
+    2. A delivery robot that must find the shortest route across a known
+       building map.
+    3. A warehouse robot that plans efficient routes but must also avoid
+       people who suddenly appear.

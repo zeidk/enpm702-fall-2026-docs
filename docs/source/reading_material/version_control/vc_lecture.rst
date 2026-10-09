@@ -4441,7 +4441,7 @@ Individual Assignments (RWA1 to RWA3)
   <vc-commit-well>`.
 
 
-Group Projects (GP1 to GP3)
+Group Projects (GP1 and GP2)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 

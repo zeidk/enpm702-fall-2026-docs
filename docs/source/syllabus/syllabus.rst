@@ -16,7 +16,7 @@ Grade Breakdown
    * - Component
      - Percentage
      - Points
-   * - RWAs (3) + GPs (3)
+   * - RWAs (3) + GPs (2)
      - 70%
      - 280
    * - Quizzes (5)
@@ -44,9 +44,12 @@ Course Schedule
 ---------------
 
 Lectures meet on **Tuesdays**. The first lecture is **September 1, 2026**
-and the last day of class is **Friday, December 11, 2026**. The
-Thanksgiving recess (**Nov 25-29**) does not fall on a Tuesday, so all
-Tuesday lectures meet as scheduled.
+and the last day of class is **Friday, December 11, 2026**. There is
+**no class on Tuesday, October 13** (Fall Break), so every lecture from
+Smart Pointers on meets one week later than first planned, and the
+course has 14 lectures instead of 15. The Thanksgiving recess (**Nov 25
+to 29**) does not fall on a Tuesday, so the Nov 24 lecture meets as
+scheduled.
 
 **Color key:** :reading:`reading material`; :quiz:`quizzes`;
 :assignment:`assignments (RWAs and GPs) posted/due`.
@@ -88,67 +91,67 @@ Tuesday lectures meet as scheduled.
      -
      - Functions, Basics (Declarations, Parameters, Overloading, Recursion)
      - | Submit Lecture 5 exercises
-       | :assignment:`RWA1 due, RWA2 posted`
+       | :assignment:`RWA1 due`
    * - Week 6
      - Oct 6
      -
      - | Functions, Advanced (Structs, ``std::optional``, Templates and Concepts, Lambdas, ``std::function``)
        | :quiz:`Quiz 2`
-     - Submit Lecture 6 exercises
+     - | Submit Lecture 6 exercises
+       | :assignment:`RWA2 posted (Fri, Oct 9)`
    * - Week 7
      - Oct 13
+     -
+     - **No class (Fall Break)**
+     -
+   * - Week 8
+     - Oct 20
      - :reading:`Read: Exception Handling`
      - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
      - | Submit Lecture 7 exercises
-       | :assignment:`RWA2 due`
-   * - Week 8
-     - Oct 20
+       | :assignment:`RWA2 due (Fri, Oct 23)`
+   * - Week 9
+     - Oct 27
      -
      - | OOP Basics (Classes, Objects, Encapsulation, Constructors)
        | :quiz:`Quiz 3`
      - Submit Lecture 8 exercises
-   * - Week 9
-     - Oct 27
+   * - Week 10
+     - Nov 3
      -
      - OOP Advanced (Inheritance, Polymorphism, Abstraction)
      - | Submit Lecture 9 exercises
        | :assignment:`RWA3 posted`
-   * - Week 10
-     - Nov 3
+   * - Week 11
+     - Nov 10
      -
      - | ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
        | :quiz:`Quiz 4`
      - Submit Lecture 10 exercises
-   * - Week 11
-     - Nov 10
+   * - Week 12
+     - Nov 17
      -
      - ROS 2, Configuration and Orchestration (Parameters, Launch Files, Executors)
      - | Submit Lecture 11 exercises
        | :assignment:`RWA3 due, GP1 posted`
-   * - Week 12
-     - Nov 17
+   * - Week 13
+     - Nov 24
      -
      - | ROS 2, Communication Patterns (Services, Actions)
        | :quiz:`Quiz 5`
      - | Submit Lecture 12 exercises
        | :assignment:`GP1 due, GP2 posted`
-   * - Week 13
-     - Nov 24
-     -
-     - ROS 2, Coordinate Frames and Transforms
-     - Submit Lecture 13 exercises
    * - Week 14
      - Dec 1
      -
-     - ROS 2, Lifecycle Nodes
-     - | Submit Lecture 14 exercises
-       | :assignment:`GP2 due, GP3 posted`
+     - ROS 2, Coordinate Frames and Transforms
+     - Submit Lecture 13 exercises
    * - Week 15
      - Dec 8
      -
      - ROS 2, Robot Autonomy Architecture (Sense-Plan-Act, where AI/ML fits)
-     - | Submit Lecture 15 exercises
-       | :assignment:`GP3 due (Dec 11)`
+     - | Submit Lecture 14 exercises
+       | :assignment:`GP2 due (Dec 11)`
 
 .. note::
 
@@ -180,13 +183,13 @@ improves the codebase:
      - 2 weeks
      - 44
    * - RWA2: STL Containers and Functions
-     - Sep 29
-     - Oct 13
+     - Oct 9
+     - Oct 23
      - 2 weeks
      - 48
    * - RWA3: Smart Pointers and OOP
-     - Oct 27
-     - Nov 10
+     - Nov 3
+     - Nov 17
      - 2 weeks
      - 48
 
@@ -194,9 +197,9 @@ improves the codebase:
 Group Projects (GPs)
 --------------------
 
-The three GPs are **cumulative** team-based projects that progressively
-build a ROS 2 application with a mobile robot in Gazebo. Each GP extends
-the previous deliverable:
+The two GPs are **cumulative** team-based projects that progressively
+build a ROS 2 application with a mobile robot in Gazebo. GP2 extends the
+GP1 deliverable:
 
 .. list-table::
    :header-rows: 1
@@ -209,20 +212,15 @@ the previous deliverable:
      - Duration
      - Points
    * - GP1: ROS 2 Pub/Sub with Gazebo
-     - Nov 10
      - Nov 17
+     - Nov 24
      - 1 week
      - 44
-   * - GP2: Services, Actions, and Robot Inheritance
-     - Nov 17
-     - Dec 1
-     - 2 weeks (incl. Thanksgiving recess)
-     - 48
-   * - GP3: Autonomy, Frames, Lifecycle, and a Decision Layer
-     - Dec 1
+   * - GP2: Services, Actions, Frames, and a Decision Layer
+     - Nov 24
      - Dec 11
-     - ~1.5 weeks
-     - 48
+     - About 2.5 weeks (incl. Thanksgiving recess)
+     - 96
 
 .. tip::
 
@@ -254,16 +252,16 @@ comprehension checks given in class on the dates below:
      - Oct 6
      - 20
    * - Quiz 3
-     - Week 8
-     - Oct 20
+     - Week 9
+     - Oct 27
      - 20
    * - Quiz 4
-     - Week 10
-     - Nov 3
+     - Week 11
+     - Nov 10
      - 20
    * - Quiz 5
-     - Week 12
-     - Nov 17
+     - Week 13
+     - Nov 24
      - 20
 
 
@@ -296,4 +294,4 @@ deadline:
      - **Before Sep 15** (before Lecture 3)
    * - Exception Handling
      - Exception handling with ``try``, ``catch``, ``throw``, standard and custom exception classes, and RAII.
-     - **Before Oct 13** (before Smart Pointers)
+     - **Before Oct 20** (before Smart Pointers)

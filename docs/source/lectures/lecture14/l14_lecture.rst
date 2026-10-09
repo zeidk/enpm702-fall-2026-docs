@@ -3,330 +3,357 @@ Lecture
 ====================================================
 
 
-Lifecycle Nodes
+Robot Autonomy Architecture
 ====================================================
 
-This lecture builds on the coordinate-frame material from
-:doc:`Lecture 13 <../lecture13/l13_index>` and covers **lifecycle
-(managed) nodes** in detail.
+Throughout the ROS 2 lectures you have learned the individual building
+blocks of a robotic system: **nodes**, **topics**, **services**,
+**actions**, **parameters**, **launch files**, **executors**, and, in
+Lecture 13, **coordinate frames (TF2)**.
+Each of these was introduced in isolation.
 
-A standard ROS 2 node begins executing as soon as it is started. This
-can be problematic in complex systems where nodes depend on each other
-or where you need deterministic startup and shutdown behavior.
+This final lecture answers a different question: *how do these pieces
+fit together to make a robot behave intelligently?* The answer is an
+**autonomy architecture**, a standard way of organizing perception,
+decision-making, and control into cooperating nodes. This is also where
+**Artificial Intelligence (AI)** and **Machine Learning (ML)** enter a
+robotic system.
 
-**Lifecycle nodes** (also called managed nodes) address this by
-introducing a **state machine** that controls the node's execution.
-This enables:
+.. admonition:: The key idea
+   :class: important
 
-- **Deterministic startup**, configure resources before activating.
-- **Coordinated bringup**, bring up nodes in a specific order.
-- **Error handling**, transition to error states and recover.
-- **Clean shutdown**, release resources in a controlled manner.
-
-
-The Lifecycle State Machine
-----------------------------------------------------
-
-A lifecycle node can be in one of four **primary states**:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 75
-
-   * - State
-     - Description
-   * - **Unconfigured**
-     - Initial state. The node has been created but not yet configured.
-   * - **Inactive**
-     - Configured but not processing. Publishers, subscribers, and
-       timers are created but not active.
-   * - **Active**
-     - Fully operational. The node processes data and executes callbacks.
-   * - **Finalized**
-     - Terminal state. The node has been shut down and cannot be restarted.
-
-There are also **transition states** (Configuring, Activating,
-Deactivating, CleaningUp, ShuttingDown, ErrorProcessing) that exist
-while a transition is in progress.
-
-
-Lifecycle Transitions
-----------------------------------------------------
-
-The transitions between primary states are:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 25 25 25 25
-
-   * - Transition
-     - From
-     - To
-     - Callback
-   * - ``configure``
-     - Unconfigured
-     - Inactive
-     - ``on_configure()``
-   * - ``activate``
-     - Inactive
-     - Active
-     - ``on_activate()``
-   * - ``deactivate``
-     - Active
-     - Inactive
-     - ``on_deactivate()``
-   * - ``cleanup``
-     - Inactive
-     - Unconfigured
-     - ``on_cleanup()``
-   * - ``shutdown``
-     - Any (except Finalized)
-     - Finalized
-     - ``on_shutdown()``
-
-.. note::
-
-   Each transition callback returns a ``CallbackReturn`` value:
-
-   - ``CallbackReturn::SUCCESS``, transition completes successfully.
-   - ``CallbackReturn::FAILURE``, transition fails, node stays in or
-     returns to the previous primary state.
-   - ``CallbackReturn::ERROR``, a critical error occurred, the node
-     transitions to the ErrorProcessing state.
+   An autonomy architecture is not a new ROS 2 feature, it is a *way
+   of composing the features you already know*. Every box in the
+   architecture is a **node**, and every arrow between boxes is a
+   **communication primitive** (a topic, service, or action) you have
+   already used.
 
 
 ----
 
 
-Implementing Lifecycle Nodes
+The Sense-Plan-Act Paradigm
 ====================================================
 
-To create a lifecycle node, inherit from
-``rclcpp_lifecycle::LifecycleNode`` instead of ``rclcpp::Node``.
+The classical and most widely used way to structure an autonomous robot
+is the **Sense-Plan-Act** (SPA) paradigm. It divides the robot's
+software into three responsibilities:
+
+- **Sense (Perception)**, read raw sensor data and turn it into a
+  meaningful description of the world (e.g., "there is an obstacle 0.4 m
+  ahead", "the robot is at pose (x, y, θ)").
+- **Plan (Decision)**, decide *what to do* given the current
+  understanding of the world (e.g., "turn left", "navigate to the
+  charging station"). **This is the layer we usually call the robot's
+  "intelligence."**
+- **Act (Control)**, translate the decision into commands the robot's
+  actuators can execute (e.g., velocity commands to the wheels).
+
+.. code-block:: text
+
+   ┌───────────┐      ┌───────────┐      ┌───────────┐
+   │  PERCEIVE │────► │   PLAN    │────► │    ACT    │
+   │ (sensing) │      │ (decision)│      │ (control) │
+   └───────────┘      └───────────┘      └───────────┘
+        ▲                                      │
+        │                                      ▼
+        └─────────────  the robot  ◄───────────┘
+                    (sensors / actuators)
+
+The cycle repeats continuously: the robot senses the world, plans an
+action, acts on it, and the action changes the world, which the robot
+senses again. This loop is the heart of every autonomous system, from a
+search-and-rescue robot to a self-driving car.
 
 
-Complete Example: Lifecycle Sensor Node
-----------------------------------------------------
+----
+
+
+Mapping the Architecture to ROS 2
+====================================================
+
+The reason Sense-Plan-Act maps so cleanly onto ROS 2 is that each
+stage is naturally a **node**, and the data flowing between stages uses
+the **communication patterns** you already learned. Nothing here is new.
+It is the same toolbox, organized into a system.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+   :class: compact-table
+
+   * - Architecture element
+     - ROS 2 concept
+     - Where you learned it
+   * - Raw sensor streams (lidar, camera, odometry)
+     - **Topics** (publish/subscribe)
+     - Lecture 10
+   * - Velocity / actuator commands
+     - **Topics** (publish/subscribe)
+     - Lecture 10
+   * - Custom "world state" or "decision" messages
+     - **Custom interfaces** (``.msg``)
+     - Lecture 10
+   * - One-shot queries ("is the path clear?")
+     - **Services** (request/response)
+     - Lecture 12
+   * - Long-running goals ("navigate to waypoint")
+     - **Actions** (goal/feedback/result)
+     - Lecture 12
+   * - Tuning behavior (speeds, thresholds)
+     - **Parameters**
+     - Lecture 11
+   * - Bringing the whole system up
+     - **Launch files** + **executors**
+     - Lecture 11
+   * - Spatial relationships between frames
+     - **TF2** (coordinate frames)
+     - Lecture 13
+
+
+----
+
+
+The Three Layers as ROS 2 Nodes
+====================================================
+
+A minimal autonomy stack is three nodes connected by topics. Consider
+the search-and-rescue **TurtleBot3** from the Group Projects, which
+exposes ``/scan`` (lidar), ``/odom`` (odometry), and ``/cmd_vel``
+(velocity command):
+
+.. code-block:: text
+
+           /scan, /odom                /world_state               /cmd_vel
+   robot ──────────────► ┌────────────┐ ──────────► ┌──────────┐ ──────────► ┌─────────┐ ──────► robot
+   sensors  (topics)     │ PERCEPTION │  (topic,     │ DECISION │  (topic)    │ CONTROL │ (topic)
+                         │   node     │   custom msg)│   node   │             │  node   │
+                         └────────────┘              └──────────┘             └─────────┘
+                                                          ▲
+                                                  parameters (tuning)
+
+- **Perception node**, subscribes to ``/scan`` and ``/odom``, fuses
+  them into a compact description of the world, and publishes it on a
+  custom topic (e.g., ``/world_state``).
+- **Decision node**, subscribes to ``/world_state`` and decides on an
+  action, which it publishes (e.g., a desired velocity or a higher-level
+  command). **This is the node that contains the robot's intelligence.**
+- **Control node**, subscribes to the decision and publishes the final
+  ``/cmd_vel`` (``geometry_msgs::msg::Twist``) that drives the robot.
+
+.. note::
+
+   In small systems the perception and decision layers are often
+   combined into a single node, and the control layer is sometimes
+   provided by an off-the-shelf driver. The number of nodes is a design
+   choice; the **separation of responsibilities** is what matters.
+
+
+----
+
+
+Where AI and Machine Learning Fit
+====================================================
+
+The **decision (and perception) layer is where AI lives**. There are two
+broad ways to implement it, and, this is the central lesson of the
+lecture, **both expose the same ROS 2 interface**:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 40 40
+   :class: compact-table
+
+   * - Approach
+     - Examples
+     - Characteristics
+   * - **Classical AI**
+     - Rule-based logic, finite state machines, search/path planning
+       (A*, Dijkstra), behavior trees
+     - Deterministic, easy to inspect and debug, no training data
+   * - **Learned (ML)**
+     - Image classifiers, object detectors, reinforcement-learning
+       policies, learned controllers
+     - Handle high-dimensional input (images, point clouds), require
+       training data, harder to interpret
+
+The crucial architectural insight:
+
+.. admonition:: Swapping the brain does not change the wiring
+   :class: important
+
+   Whether the decision node runs a hand-written ``if`` statement or a
+   trained neural network, it is **still just a ROS 2 node** that
+   subscribes to the same input topic and publishes to the same output
+   topic. You can replace a rule-based policy with a learned model
+   **without changing any other node in the system**. This is what makes
+   the architecture so powerful: intelligence is modular.
+
+In production robotics, the learned models in the perception/decision
+layer are typically run in C++ for performance. The model itself is
+trained offline (often in Python), exported, and then loaded for
+**inference** inside a ROS 2 node using one of:
+
+- **OpenCV DNN**, run common vision models directly from OpenCV.
+- **ONNX Runtime**, a portable C++ inference engine for models
+  exported to the ONNX format.
+- **LibTorch**, the C++ API of PyTorch.
+
+.. note::
+
+   Integrating these inference libraries is beyond the scope of this
+   course, they are mentioned so you know *where* a trained model
+   plugs into the architecture. The take-away is conceptual: the ML
+   model occupies the **decision/perception box**, behind the same ROS 2
+   topic interface as any other implementation.
+
+
+----
+
+
+A Concrete Example: A Reactive Decision Node
+====================================================
+
+The smallest useful autonomy example is a **reactive** decision node:
+it maps the latest sensor reading directly to an action, with no
+internal world model. The node below performs simple obstacle avoidance
+on the TurtleBot3, it drives forward, and turns when the lidar reports
+an obstacle ahead.
 
 .. code-block:: cpp
 
    #include <rclcpp/rclcpp.hpp>
-   #include <rclcpp_lifecycle/lifecycle_node.hpp>
-   #include <std_msgs/msg/float64.hpp>
-   #include <string>
+   #include <sensor_msgs/msg/laser_scan.hpp>
+   #include <geometry_msgs/msg/twist.hpp>
+   #include <algorithm>
 
-   using CallbackReturn =
-       rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
-
-   class LifecycleSensorNode
-       : public rclcpp_lifecycle::LifecycleNode {
+   class ReactiveController : public rclcpp::Node {
     public:
-     LifecycleSensorNode()
-         : LifecycleNode{"lifecycle_sensor_node"} {
-       RCLCPP_INFO(this->get_logger(), "Node created (Unconfigured)");
-     }
+     ReactiveController()
+         : Node{"reactive_controller"} {
+       // Tunable behavior via parameters (see Lecture 11)
+       safe_distance_ = this->declare_parameter<double>("safe_distance", 0.5);
+       forward_speed_ = this->declare_parameter<double>("forward_speed", 0.2);
+       turn_speed_ = this->declare_parameter<double>("turn_speed", 0.5);
 
-     // Called during the configure transition
-     CallbackReturn on_configure(
-         const rclcpp_lifecycle::State& /*previous_state*/) override {
-       RCLCPP_INFO(this->get_logger(), "Configuring...");
+       // ACT: publish velocity commands to the robot
+       cmd_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
+           "/cmd_vel", 10);
 
-       // Create publisher (inactive until activated)
-       publisher_ = this->create_publisher<std_msgs::msg::Float64>(
-           "sensor_data", 10);
-
-       // Create timer (inactive until activated)
-       timer_ = this->create_wall_timer(
-           std::chrono::milliseconds{500},
-           std::bind(&LifecycleSensorNode::publish_data, this));
-
-       // Initialize sensor value
-       sensor_value_ = 0.0;
-
-       RCLCPP_INFO(this->get_logger(), "Configured successfully");
-       return CallbackReturn::SUCCESS;
-     }
-
-     // Called during the activate transition
-     CallbackReturn on_activate(
-         const rclcpp_lifecycle::State& /*previous_state*/) override {
-       RCLCPP_INFO(this->get_logger(), "Activating...");
-       // The publisher is now active and can send messages
-       RCLCPP_INFO(this->get_logger(), "Activated -- publishing data");
-       return CallbackReturn::SUCCESS;
-     }
-
-     // Called during the deactivate transition
-     CallbackReturn on_deactivate(
-         const rclcpp_lifecycle::State& /*previous_state*/) override {
-       RCLCPP_INFO(this->get_logger(), "Deactivating...");
-       // The publisher stops sending messages
-       RCLCPP_INFO(this->get_logger(), "Deactivated -- stopped publishing");
-       return CallbackReturn::SUCCESS;
-     }
-
-     // Called during the cleanup transition
-     CallbackReturn on_cleanup(
-         const rclcpp_lifecycle::State& /*previous_state*/) override {
-       RCLCPP_INFO(this->get_logger(), "Cleaning up...");
-       // Release resources
-       publisher_.reset();
-       timer_.reset();
-       RCLCPP_INFO(this->get_logger(), "Cleaned up");
-       return CallbackReturn::SUCCESS;
-     }
-
-     // Called during the shutdown transition
-     CallbackReturn on_shutdown(
-         const rclcpp_lifecycle::State& /*previous_state*/) override {
-       RCLCPP_INFO(this->get_logger(), "Shutting down...");
-       publisher_.reset();
-       timer_.reset();
-       RCLCPP_INFO(this->get_logger(), "Shut down complete");
-       return CallbackReturn::SUCCESS;
+       // SENSE: subscribe to the lidar
+       scan_sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+           "/scan", 10,
+           std::bind(&ReactiveController::decide, this, std::placeholders::_1));
      }
 
     private:
-     void publish_data() {
-       // Only publish if the node is in the Active state
-       if (this->get_current_state().id() !=
-           lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
-         return;
-       }
+     // PLAN: the decision layer -- this is where the "intelligence" lives
+     void decide(const sensor_msgs::msg::LaserScan::SharedPtr scan) {
+       // Closest obstacle anywhere in the scan
+       double nearest = *std::min_element(scan->ranges.begin(),
+                                          scan->ranges.end());
 
-       auto msg = std_msgs::msg::Float64{};
-       msg.data = sensor_value_;
-       publisher_->publish(msg);
-       RCLCPP_INFO(this->get_logger(), "Published: %.2f", sensor_value_);
-       sensor_value_ += 0.1;
+       auto cmd = geometry_msgs::msg::Twist{};
+       if (nearest < safe_distance_) {
+         cmd.angular.z = turn_speed_;  // obstacle ahead -> turn in place
+       } else {
+         cmd.linear.x = forward_speed_;  // clear -> drive forward
+       }
+       cmd_pub_->publish(cmd);
      }
 
-     rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Float64>::SharedPtr
-         publisher_;
-     rclcpp::TimerBase::SharedPtr timer_;
-     double sensor_value_;
+     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
+     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
+     double safe_distance_;
+     double forward_speed_;
+     double turn_speed_;
    };
 
    int main(int argc, char* argv[]) {
      rclcpp::init(argc, argv);
-     rclcpp::spin(
-         std::make_shared<LifecycleSensorNode>()->get_node_base_interface());
+     rclcpp::spin(std::make_shared<ReactiveController>());
      rclcpp::shutdown();
      return 0;
    }
 
-.. important::
-
-   Lifecycle publishers (``LifecyclePublisher``) only transmit messages
-   when the node is in the **Active** state. Messages published in any
-   other state are silently dropped.
-
-
-CMakeLists.txt Additions
-----------------------------------------------------
-
-Add the ``rclcpp_lifecycle`` and ``lifecycle_msgs`` dependencies:
-
-.. code-block:: cmake
-
-   find_package(rclcpp_lifecycle REQUIRED)
-   find_package(lifecycle_msgs REQUIRED)
-
-   ament_target_dependencies(my_lifecycle_node
-     rclcpp
-     rclcpp_lifecycle
-     lifecycle_msgs
-     std_msgs
-   )
-
-Also add to ``package.xml``:
-
-.. code-block:: xml
-
-   <depend>rclcpp_lifecycle</depend>
-   <depend>lifecycle_msgs</depend>
+The decision logic here is a single hand-coded rule inside ``decide()``.
+That method is exactly the **decision box** of the architecture. To make
+this robot "smarter", you would replace the body of ``decide()`` with a
+planner, a behavior tree, or a learned policy, **the subscription, the
+publisher, and every other node would stay the same**.
 
 
 ----
 
 
-Managing Lifecycle Nodes
+Architectural Styles
 ====================================================
 
-Once a lifecycle node is running, you can control its state using the
-``ros2 lifecycle`` CLI or programmatically.
+The example above is a **reactive** architecture: sense directly drives
+act, with no internal model or memory. Robotics distinguishes three
+broad styles:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 78
+   :class: compact-table
+
+   * - Style
+     - Description
+   * - **Reactive**
+     - Sensor data maps directly to actions. Fast and robust, but
+       cannot reason about goals (e.g., simple obstacle avoidance).
+   * - **Deliberative**
+     - Build a world model, then plan a sequence of actions to reach a
+       goal (e.g., compute a path with A* and follow it). Powerful, but
+       slower and dependent on an accurate model.
+   * - **Hybrid (three-layer)**
+     - Combine a fast reactive layer with a slower deliberative planner
+       and an executive that mediates between them. This is the
+       architecture used by most real robots.
+
+Modern ROS 2 systems rarely build these from scratch. Two widely used
+frameworks implement the decision layer for you:
+
+- **Nav2**, the ROS 2 navigation stack, a complete hybrid architecture
+  for autonomous mobile-robot navigation (planning, control, recovery).
+- **BehaviorTree.CPP**, a C++ library for structuring complex
+  decision-making as behavior trees, used heavily inside Nav2.
 
 
-CLI Commands
-----------------------------------------------------
-
-.. code-block:: bash
-
-   # List all lifecycle nodes
-   ros2 lifecycle nodes
-
-   # Get the current state of a lifecycle node
-   ros2 lifecycle get /lifecycle_sensor_node
-
-   # List available transitions from the current state
-   ros2 lifecycle list /lifecycle_sensor_node
-
-   # Trigger a transition
-   ros2 lifecycle set /lifecycle_sensor_node configure
-   ros2 lifecycle set /lifecycle_sensor_node activate
-   ros2 lifecycle set /lifecycle_sensor_node deactivate
-   ros2 lifecycle set /lifecycle_sensor_node cleanup
-   ros2 lifecycle set /lifecycle_sensor_node shutdown
+----
 
 
-Typical Startup Sequence
-----------------------------------------------------
+Coordinating the System
+====================================================
 
-.. code-block:: bash
+Once the architecture spans several nodes, the ROS 2 features from the
+earlier lectures become the glue that holds it together:
 
-   # 1. Start the node (enters Unconfigured state)
-   ros2 run my_package lifecycle_sensor_node
-
-   # 2. Configure the node (Unconfigured -> Inactive)
-   ros2 lifecycle set /lifecycle_sensor_node configure
-
-   # 3. Activate the node (Inactive -> Active)
-   ros2 lifecycle set /lifecycle_sensor_node activate
-
-   # Node is now publishing data
-
-   # 4. Deactivate when done (Active -> Inactive)
-   ros2 lifecycle set /lifecycle_sensor_node deactivate
-
-   # 5. Clean up (Inactive -> Unconfigured) or shutdown
-   ros2 lifecycle set /lifecycle_sensor_node shutdown
+- **Launch files** (Lecture 11) start the perception, decision, and
+  control nodes together as one system.
+- **Parameters** (Lecture 11) tune the behavior of each layer (speeds,
+  thresholds, model paths) without recompiling.
+- **TF2** (Lecture 13) lets the perception and decision layers
+  reason about *where* things are, by transforming sensor detections
+  into a common frame.
 
 
-Programmatic Transitions
-----------------------------------------------------
+----
 
-You can also trigger transitions programmatically from another node
-using the lifecycle service interfaces:
 
-.. code-block:: cpp
+Summary
+====================================================
 
-   #include <lifecycle_msgs/srv/change_state.hpp>
-   #include <lifecycle_msgs/msg/transition.hpp>
-
-   // Create a client for the change_state service
-   auto client = this->create_client<lifecycle_msgs::srv::ChangeState>(
-       "/lifecycle_sensor_node/change_state");
-
-   // Create a request to configure the node
-   auto request =
-       std::make_shared<lifecycle_msgs::srv::ChangeState::Request>();
-   request->transition.id =
-       lifecycle_msgs::msg::Transition::TRANSITION_CONFIGURE;
-
-   // Send the request asynchronously
-   auto future = client->async_send_request(request);
-
-This approach is useful for building **lifecycle managers** that
-coordinate the startup and shutdown of multiple lifecycle nodes in
-a specific order.
-
+- An **autonomy architecture** composes the ROS 2 building blocks you
+  already know into a system that senses, decides, and acts.
+- The **Sense-Plan-Act** paradigm maps each stage onto a **node**, and
+  each data flow onto a **topic, service, or action**.
+- The **decision/perception layer is where AI and ML live**. Classical
+  and learned approaches expose the **same ROS 2 interface**, so the
+  "brain" can be swapped without rewiring the rest of the system.
+- Trained models are integrated for **inference** in C++ via libraries
+  such as OpenCV DNN, ONNX Runtime, or LibTorch, they sit behind the
+  decision node's topic interface like any other implementation.
+- Real systems use **hybrid** architectures, often built on frameworks
+  like **Nav2** and **BehaviorTree.CPP**.

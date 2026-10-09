@@ -17,8 +17,8 @@ References
         message, and debugging tools (``view_frames``, ``tf2_echo``,
         RViz2).
 
-        These topics support **GP3**. Complete the C++ exercises on TF2
-        and take the quiz before starting GP3.
+        These topics support **GP2**. Complete the C++ exercises on TF2
+        and take the quiz before you start GP2's TF2 requirements.
 
 
 .. dropdown:: ROS 2 TF2 Documentation

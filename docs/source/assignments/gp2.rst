@@ -2,14 +2,24 @@
 
 .. _gp2:
 
-=============================================
-GP2: Services, Actions, and Robot Inheritance
-=============================================
+=====================================================
+GP2: Services, Actions, Frames, and a Decision Layer
+=====================================================
 
 Overview
 --------
 
-This assignment extends your GP1 system by adding request-response communication through **services** and long-running task management through **actions**. You will also introduce a robot type hierarchy using C++ inheritance, a base ``RobotNode`` class with derived types that have different ROS parameters and behaviors. By the end, your search-and-rescue simulation will support multiple robot types that can be dispatched via services and sent on search/navigation tasks via actions alongside the existing pub/sub architecture.
+This assignment extends your GP1 system and is your team's capstone. You add request-response communication through **services**, long-running tasks through **actions**, and a robot type hierarchy using C++ inheritance: a base ``RobotNode`` class with derived types that have different ROS parameters and behaviors. You then organize the nodes into a **robot autonomy architecture**, the Sense-Plan-Act stack from **Lecture 14**, with coordinate frame management through **TF2** for spatial reasoning. The heart of the assignment is a **decision layer**: the node that turns perception into action, and the place where Artificial Intelligence fits in a robot. By the end, your team has a multi-node ROS 2 search-and-rescue system with publishers, subscribers, services, actions, coordinate frames, and an autonomy decision layer.
+
+.. important::
+
+   **Posted Nov 24, due Dec 11, worth 96 points.** GP2 is the course's
+   last group project, so it is larger than GP1 and runs about two and a
+   half weeks. Two of the lectures it needs happen while it is open:
+   coordinate frames on Dec 1 (Lecture 13) and the autonomy architecture
+   on Dec 8 (Lecture 14). The requirements are in that order. Start with
+   inheritance (Lecture 9), then the service and the action (Lecture 12,
+   on the day GP2 is posted).
 
 -------------------
 Learning Objectives
@@ -21,7 +31,10 @@ By the end of this assignment you will be able to:
 #. Implement ROS 2 actions for long-running tasks with periodic feedback.
 #. Design a class hierarchy for robot nodes using C++ inheritance.
 #. Apply polymorphism to differentiate robot behaviors at runtime.
-#. Integrate services and actions with the existing pub/sub system from GP1.
+#. Broadcast static and dynamic transforms using TF2 and use them for spatial reasoning.
+#. Organize a ROS 2 system into perception, decision, and control layers (Sense-Plan-Act).
+#. Implement a decision node that maps perception to action, the layer where AI/ML fits.
+#. Integrate all of these with the existing pub/sub system from GP1.
 
 ------------
 Requirements
@@ -236,17 +249,227 @@ Requirements
       // TODO: implement handle_cancel(...) and handle_accepted(...), plus the
       //       execution loop that publishes feedback and sets the result.
 
+.. dropdown:: Static Transforms
+   :open:
+   :color: primary
+
+   Static transforms describe spatial relationships that never change at
+   runtime, such as where a sensor is bolted onto the robot body. You
+   will publish these once at startup.
+
+   **Steps:**
+
+   #. Choose the fixed sensor mounts on your rescue robot and broadcast a
+      static transform for each one. Each transform's parent is the
+      robot body frame and its child is the sensor frame, for example:
+
+      - ``base_link`` → ``thermal_camera_link`` (the thermal camera used
+        to detect victims by heat signature).
+      - ``base_link`` → ``gas_sensor_link`` (the gas sensor used to
+        detect hazardous atmospheres).
+
+   #. Create a ``tf2_ros::StaticTransformBroadcaster`` and, for each
+      mount, fill in a ``geometry_msgs::msg::TransformStamped`` with the
+      parent frame, child frame, and the measured offset (translation
+      and rotation) of the sensor relative to ``base_link``.
+   #. Broadcast each static transform once during node setup.
+
+   The skeleton below shows the API to use. Replace the ``// TODO``
+   comments with your implementation.
+
+   .. code-block:: cpp
+      :caption: Static transform broadcast (skeleton)
+
+      // TODO: create a StaticTransformBroadcaster member, e.g.
+      //       std::make_shared<tf2_ros::StaticTransformBroadcaster>(this)
+
+      geometry_msgs::msg::TransformStamped t;
+      // TODO: set t.header.stamp to the current time
+      // TODO: set t.header.frame_id to the parent frame (e.g. "base_link")
+      // TODO: set t.child_frame_id to the sensor frame (e.g. "thermal_camera_link")
+      // TODO: set t.transform.translation (x, y, z) to the measured sensor offset
+      // TODO: set t.transform.rotation (from a quaternion) to the sensor orientation
+
+      // TODO: broadcast the transform once with sendTransform(t)
+
+   **Acceptance criteria:**
+
+   - At least two static transforms appear in the TF tree (verified with
+     ``view_frames``), each connecting ``base_link`` to a sensor frame.
+
+.. dropdown:: Dynamic Transforms
+   :open:
+   :color: primary
+
+   Dynamic transforms describe relationships that change as the robot
+   moves. The key one is the robot's pose in the world.
+
+   **Steps:**
+
+   #. Broadcast the robot's pose as a dynamic transform from the fixed
+      world frame to the robot body frame
+      (``world`` → ``robot_base_link``). This places the moving robot
+      inside the static map.
+   #. Update the transform continuously from the robot's motion. Drive it
+      either from an odometry subscription (an ``/odom`` callback) or
+      from commanded motion on a timer.
+   #. Use a ``tf2_ros::TransformBroadcaster`` and call ``sendTransform``
+      each time you have a new pose, stamping each transform with the
+      time of the source data.
+
+   The skeleton below shows the API to use. Replace the ``// TODO``
+   comments with your implementation.
+
+   .. code-block:: cpp
+      :caption: Dynamic transform broadcast (skeleton)
+
+      // TODO: create a TransformBroadcaster member, e.g.
+      //       std::make_unique<tf2_ros::TransformBroadcaster>(*this)
+
+      void odom_callback(const nav_msgs::msg::Odometry::SharedPtr msg)
+      {
+        geometry_msgs::msg::TransformStamped t;
+        // TODO: set t.header.stamp from msg->header.stamp
+        // TODO: set t.header.frame_id to "world" (parent)
+        // TODO: set t.child_frame_id to "robot_base_link" (child)
+        // TODO: copy the robot position from msg->pose.pose.position into t.transform.translation
+        // TODO: copy the robot orientation from msg->pose.pose.orientation into t.transform.rotation
+
+        // TODO: broadcast the updated transform with sendTransform(t)
+      }
+
+   **Acceptance criteria:**
+
+   - The ``world`` → ``robot_base_link`` edge updates over time, and the
+     robot frame visibly moves in RViz2 as the robot drives.
+
+.. dropdown:: Transform Listener
+   :open:
+   :color: primary
+
+   The decision layer needs to compare positions that arrive in
+   different frames. A transform listener lets you ask TF2 for the
+   relationship between any two connected frames.
+
+   **Steps:**
+
+   #. In the node that feeds the decision layer (perception or the
+      decision node itself), create a ``tf2_ros::Buffer`` and a
+      ``tf2_ros::TransformListener`` that fills it.
+   #. Look up the transform you need with ``lookupTransform``, for
+      example ``world`` to ``robot_base_link`` to obtain the robot's
+      pose in the world frame, or ``world`` to a reported victim frame.
+   #. Compute the spatial relationship the decision layer consumes, for
+      example the straight-line distance from the robot to a reported
+      victim, expressed in the ``world`` frame, so the decision node can
+      pick the closest victim.
+   #. Wrap every lookup in a try/catch for ``tf2::TransformException``.
+      A transform may not be available yet (frames not connected, data
+      not arrived), so a failed lookup must log a warning and skip that
+      cycle rather than crash the node.
+
+   The skeleton below shows the API to use. Replace the ``// TODO``
+   comments with your implementation.
+
+   .. code-block:: cpp
+      :caption: Transform lookup (skeleton)
+
+      // TODO: declare a tf2_ros::Buffer (constructed with this->get_clock())
+      // TODO: declare a tf2_ros::TransformListener bound to that buffer
+
+      try {
+        // TODO: look up the transform you need, e.g.
+        //       tf_buffer_.lookupTransform("world", "robot_base_link", tf2::TimePointZero)
+        // TODO: use the translation/rotation to compute a distance or goal
+        //       for the decision layer
+      } catch (const tf2::TransformException& ex) {
+        // TODO: log a warning with ex.what() and skip this cycle
+      }
+
+   **Acceptance criteria:**
+
+   - The decision layer uses a value derived from a TF2 lookup (for
+     example a robot-to-victim distance in the ``world`` frame).
+   - A missing or temporarily unavailable transform is handled
+     gracefully (logged warning, no crash).
+
+.. dropdown:: Autonomy Architecture and Decision Layer
+   :open:
+   :color: primary
+
+   Organize your system into the **Sense-Plan-Act** layers from
+   :doc:`Lecture 14 </lectures/lecture14/l14_index>`. Your GP1 nodes and
+   the nodes from the requirements above should be reorganized (renamed
+   or regrouped) so that every node clearly belongs to exactly one of the
+   three layers below.
+
+   - **Perception (Sense)**: a node (or nodes) that turns raw sensor
+     data (``/scan``, ``/odom``, victim reports) into a compact,
+     higher-level description of the world. Concretely, perception
+     should publish a world-state message on a dedicated topic (for
+     example ``/world_state``), containing items such as the nearest
+     obstacle distance, the list of detected/reported victims, and the
+     robot's current pose.
+   - **Decision (Plan)**: a node that consumes the world-state output
+     and decides what to do next (the robot's "intelligence"). It does
+     not read raw sensors directly; it reasons over the perception
+     summary plus spatial information from TF2.
+   - **Control (Act)**: a node that turns the decision into motion by
+     publishing the resulting command (for example ``/cmd_vel``) or by
+     sending an action goal (for example a ``NavigateToVictim`` goal from
+     the Custom Action requirement) to drive the robot.
+
+   Implement a **decision node** that:
+
+   - **Consumes** perception output. Subscribe to the world-state topic
+     (and/or ``/scan``) so the decision is based on the perception
+     summary rather than raw sensor noise.
+   - **Publishes** a command. Output either a velocity command on
+     ``/cmd_vel`` or an action goal on the control layer's interface.
+     The decision node must publish on every decision cycle (for
+     example on a timer or on each new world-state message).
+   - Uses a **rule-based policy** (required). Implement at least one
+     clearly documented rule, for example: select the next unsearched
+     waypoint, react to a close obstacle by turning away, or choose
+     which reported victim to navigate to next (such as the closest
+     one).
+   - Uses **TF2** to reason spatially before deciding. For example,
+     transform a detected victim's position into the ``world`` frame so
+     that distances and goals are computed in one consistent frame (see
+     the Transform Listener requirement).
+
+   **Acceptance criteria:**
+
+   - The README clearly maps each node to perception, decision, or
+     control.
+   - The decision node subscribes to perception output (not raw
+     sensors) and publishes a command on a control interface.
+   - At least one rule-based decision rule is documented and observable
+     in the running system (for example, the robot visibly reacts to an
+     obstacle or selects a victim).
+
+   .. admonition:: Optional bonus: a learned decision policy
+      :class: tip
+
+      For extra credit, replace the rule-based policy with a **learned
+      model** loaded for inference in C++ (OpenCV DNN, ONNX Runtime, or
+      LibTorch), for example, a small classifier that labels a scan or
+      image patch as "victim / no victim". Keep the **same topic
+      interface** so no other node changes. This is intentionally
+      optional; a rule-based decision earns full marks.
+
+
 .. dropdown:: Integration
    :open:
    :color: primary
 
-   **Goal:** combine the new services and actions with your GP1 pub/sub system
-   into one cohesive multi-robot search-and-rescue simulation.
+   **Goal:** combine everything into one search-and-rescue system: the GP1
+   pub/sub pipeline, the services and actions, several robot types, TF2,
+   and the autonomy layers.
 
    **Step 1: Preserve the GP1 pipeline.** The publishers and subscribers from
    GP1 (for example, victim reports flowing from sensing to reporting) must keep
-   working unchanged. The service and action capabilities are additions, not
-   replacements.
+   working. The new capabilities are additions, not replacements.
 
    **Step 2: Connect the new pieces to the existing data flow.** For example, a
    victim location detected and published by the GP1 pub/sub system can become
@@ -259,9 +482,22 @@ Requirements
    parameters and without topic, service, or action name collisions (use
    namespaces or remapping as needed).
 
-   **Step 4: Provide a single launch file** that starts every component: Gazebo,
-   each robot node, and the service and action servers. Launching this one file
-   must bring up the complete system.
+   **Step 4: Provide a single launch file** that starts every component:
+   Gazebo, each robot node, the service and action servers, the TF2
+   broadcasters, and the perception, decision, and control nodes. Launching
+   this one file must bring up the complete system.
+
+   **Step 5: Verify the TF tree.** Generate the frame tree and confirm that the
+   static sensor frames, the dynamic ``world`` → ``robot_base_link`` edge, and
+   any victim frames all connect into a single tree with no disconnected
+   frames:
+
+   .. code-block:: bash
+
+      ros2 run tf2_tools view_frames
+
+   **Step 6: Visualize the frames in RViz2** (add a TF display) and confirm the
+   robot frame moves as the robot drives.
 
    **Acceptance criteria:**
 
@@ -270,16 +506,21 @@ Requirements
      ``ros2 service list`` and ``ros2 action list``).
    - Both robot types appear as separate nodes and operate without name
      conflicts.
+   - ``view_frames`` produces a single connected tree containing the
+     static, dynamic, and victim frames.
+   - The TF display in RViz2 shows the moving robot frame.
 
 ------------
 Deliverables
 ------------
 
-- Updated ROS 2 package(s) with all source code.
+- Updated ROS 2 package(s) with all source code, building on GP1.
 - Custom service (``.srv``) and action (``.action``) definitions.
-- Updated launch file that starts all components.
-- ``README.md`` with build and run instructions.
-- Short video demo showing services being called and actions executing with feedback.
+- One launch file that starts all components.
+- A short **architecture description** in the README mapping your nodes to the perception / decision / control layers.
+- TF2 frame tree diagram (generated with ``view_frames``).
+- ``README.md`` with complete build, run, and usage documentation.
+- Video demo (2 to 3 minutes) showing a service call, an action running with feedback, and the decision layer driving the robot.
 
 --------------
 Grading Rubric
@@ -291,13 +532,33 @@ Grading Rubric
 
    * - Criterion
      - Weight
-   * - Services (custom ``.srv``, server implementation, client implementation)
-     - 25%
-   * - Actions (custom ``.action``, server with feedback, client)
-     - 25%
    * - Robot Inheritance (base class, derived types, polymorphism)
-     - 25%
-   * - Integration (pub/sub still functional, multi-robot, launch file)
      - 15%
-   * - Documentation and Demo (README, video)
+   * - Services (custom ``.srv``, server implementation, client implementation)
+     - 15%
+   * - Actions (custom ``.action``, server with feedback, client)
+     - 15%
+   * - TF2 Frames (static broadcasts, dynamic broadcasts, transform listener)
+     - 15%
+   * - Autonomy Architecture and Decision Layer (Sense-Plan-Act organization, decision node)
+     - 15%
+   * - Integration (GP1 features functional, multi-robot, one launch file, RViz2 visualization)
      - 10%
+   * - Code Quality (naming conventions, uniform initialization, ``'\n'`` usage, structure)
+     - 5%
+   * - Documentation and Demo (README, video, frame tree diagram)
+     - 10%
+
+.. note::
+
+   The optional learned decision policy is **extra credit**; a complete
+   rule-based decision layer earns full marks on the autonomy criterion.
+
+----------
+Final Note
+----------
+
+.. admonition:: Congratulations
+   :class: tip
+
+   This assignment is the culmination of the entire ENPM702 course, from basic C++ variables and control flow in RWA1 to a full ROS 2 search-and-rescue robot organized as a Sense-Plan-Act autonomy architecture, with services, actions, coordinate frames, and a decision layer. Your final submission should demonstrate mastery of modern C++ programming, object-oriented design, and the ROS 2 framework for building real robotic systems.

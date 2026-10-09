@@ -42,12 +42,10 @@ appropriate choice.
 Next Steps
 ----------
 
-- In the next lecture (**L13: Frames, Lifecycle Nodes**), we will cover:
+- In the next lecture (**L13: Coordinate Frames and Transforms**), we will cover:
 
   - The TF2 transform library and coordinate frames.
   - Broadcasting and listening to transforms.
-  - Lifecycle (managed) nodes and their state machine.
-  - Designing robust systems with managed transitions.
 
 - Before next class: complete the C++ exercises on services and
   actions, and the quiz.

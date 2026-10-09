@@ -1,30 +1,31 @@
 ====================================================
-L14: ROS 2 Lifecycle Nodes
+L14: Robot Autonomy Architecture
 ====================================================
 
 Overview
 --------
 
-This lecture covers **managed (lifecycle) nodes**, ROS 2 nodes whose
-execution is governed by a state machine, giving you deterministic
-startup, shutdown, and error recovery. Lifecycle nodes let you bring up a
-complex system in a controlled order and are widely used in
-production-grade ROS 2 software. The lecture builds on the coordinate
-frame material from :doc:`Lecture 13 <../lecture13/l13_index>`.
-
+This is the final lecture in the course. It is a **capstone** that ties
+together everything you learned in the ROS 2 lectures. Rather than
+introducing a new ROS 2 feature, it shows how nodes, topics, services,
+actions, parameters, launch files, and TF2 **compose
+into an autonomy architecture**, a standard way of organizing
+perception, decision-making, and control. This lecture also shows
+**where Artificial Intelligence and Machine Learning fit** into a robotic
+system: in the decision and perception layers, behind the same ROS 2
+interfaces you already use.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
 
    By the end of this lecture, you will be able to:
 
-   - Explain why managed nodes exist and when to use them.
-   - Describe the lifecycle state machine and its primary states (Unconfigured, Inactive, Active, Finalized).
-   - Implement a lifecycle node by inheriting from ``rclcpp_lifecycle::LifecycleNode``.
-   - Use the transition callbacks (``on_configure``, ``on_activate``, ``on_deactivate``, ``on_cleanup``, ``on_shutdown``).
-   - Understand ``LifecyclePublisher`` behavior across states.
-   - Manage lifecycle nodes using ``ros2 lifecycle`` CLI commands and programmatic transitions.
-
+   - Describe the **Sense-Plan-Act** paradigm and the autonomy cycle.
+   - Map an autonomy architecture onto ROS 2 nodes and communication patterns.
+   - Identify the perception, decision, and control layers in a robotic system.
+   - Explain **where AI and ML fit** in the architecture and why the decision layer's implementation is interchangeable.
+   - Recognize how trained models are integrated for inference in C++ (OpenCV DNN, ONNX Runtime, LibTorch), at a conceptual level.
+   - Distinguish reactive, deliberative, and hybrid architectures, and name common ROS 2 frameworks (Nav2, BehaviorTree.CPP).
 
 .. toctree::
    :hidden:
@@ -39,9 +40,17 @@ frame material from :doc:`Lecture 13 <../lecture13/l13_index>`.
 Next Steps
 ----------
 
-- Lifecycle nodes (together with TF2 from :doc:`Lecture 13
-  <../lecture13/l13_index>`) are used extensively in **GP3**. Complete the
-  exercises and quiz before starting the project.
+- This is the **final lecture** in the course. You now have all the tools
+  and knowledge needed for the remaining assignments.
 
-- :doc:`Lecture 15 <../lecture15/l15_index>` (Robot Autonomy Architecture)
-  shows how lifecycle nodes fit into a complete robot autonomy stack.
+- The autonomy architecture in this lecture is the conceptual frame for
+  the **Group Projects**: the TurtleBot3 system you build *is* a
+  Sense-Plan-Act stack.
+
+- The ROS 2 capability that supports this architecture most directly,
+  **TF2 (coordinate frames)**, is covered in
+  :doc:`Lecture 13 <../lecture13/l13_index>`. Review it alongside this
+  lecture, especially before you finish **GP2**.
+
+- Work through the exercises and take the quiz to solidify your
+  understanding of how the pieces fit together.
