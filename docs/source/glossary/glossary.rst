@@ -490,6 +490,12 @@ D
       makes the output of ``typeid(...).name()`` legible.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Dependent Name
+      A name inside a template whose meaning depends on a template
+      parameter, such as ``Container::value_type``. The compiler assumes
+      it names a value; write ``typename`` in front when it names a type.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Dereference Operator
       The unary ``*`` operator used to access the value stored at the
       memory address held by a pointer. Also called the indirection

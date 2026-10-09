@@ -36,7 +36,7 @@ Code for This Lecture
 **Run a slide's code**
 
 - One program for every slide: ``702run week6_playground`` runs them all; ``702run week6_playground 7`` only slide 7.
-- One program for the appendix frames, numbered i, ii, iii, and so on: ``702run week6_appendix xiii`` runs frame xiii, and ``702run week6_appendix 13`` does the same.
+- One program for the appendix frames, numbered i, ii, iii, and so on: ``702run week6_appendix xvi`` runs frame xvi, and ``702run week6_appendix 16`` does the same.
 - Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
 ``fleet`` holds the finished program; its Doxyfile is in ``fleet/docs``. Code that throws, or has undefined behavior, runs only when you ask for its slide by number; a full run skips it. ``undefined`` holds the code with undefined behavior, always built with AddressSanitizer.
@@ -57,7 +57,7 @@ Code for This Lecture
       702run week6_playground            # the code of every slide, in order
       702run week6_playground 7          # only the code of slide 7
       702run week6_appendix              # the code of every appendix frame
-      702run week6_appendix xiii         # only appendix frame xiii (13 works too)
+      702run week6_appendix xvi          # only appendix frame xvi (16 works too)
 
    After you edit a file, build again before you run: ``702build week6_playground`` builds one program, ``702build`` builds all of them.
 
@@ -88,7 +88,7 @@ Code for This Lecture
 
    **Why 702rebuild after you pull.** CMake never deletes a program whose target was removed. If you built this week's code before, an old program such as ``week6_grouping`` stays in ``build/`` and still runs the old code. ``702rebuild`` starts from an empty ``build/``.
 
-   A slide whose code throws or has undefined behavior, such as slide 64, runs only when you ask for it by number: ``702run week6_playground 64``. A full run skips it.
+   A slide whose code throws or has undefined behavior, such as slide 61, runs only when you ask for it by number: ``702run week6_playground 61``. A full run skips it.
 
 .. note::
 
@@ -499,7 +499,11 @@ Braces and ``emplace_back``
      <brace-enclosed initializer list>, bool)'
 
 - ``emplace_back`` works out the type of each argument from the call. A braced list has no type, so that fails. Name the type: ``Position{1.0, 1.0}``.
-- Parentheses allow narrowing: 4.9 becomes the id 4, with no warning even under ``-Wconversion``. Braces refuse it, so the ``push_back`` line is a compile error.
+
+.. admonition:: Narrowing through ``emplace_back``
+   :class: warning
+
+   Parentheses allow narrowing: 4.9 becomes the id 4, with no warning even under ``-Wconversion``. Braces refuse it, so the ``push_back`` line is a compile error.
 
 ``std::pair``
 ^^^^^^^^^^^^^
@@ -800,7 +804,10 @@ Three Ways to Read
    * - ``idle.value_or(fallback)``
      - gives ``fallback``
 
-- Check with ``if (idle)`` before ``*idle``, or use ``value()`` or ``value_or()``.
+.. admonition:: ``*`` on an Empty Optional
+   :class: warning
+
+   Undefined behavior. Check with ``if (idle)`` before ``*idle``, or use ``value()`` or ``value_or()``.
 
 An Empty Optional
 ~~~~~~~~~~~~~~~~~
@@ -891,7 +898,9 @@ A **template parameter** is a name, here ``T``, that stands for a type in a func
 
 - Read it as: "for any type ``T``, here is a function that takes three ``T``\ s and returns a ``T``".
 - ``typename`` and ``class`` mean the same thing in this line. These slides use ``typename``.
-- The body needs ``<`` and ``>`` on ``T``. A type without them cannot be used here.
+- The body uses ``<`` and ``>``, so ``T`` must have both.
+
+See `typename or class`_ under Further Reading.
 
 Instantiation
 ~~~~~~~~~~~~~
@@ -900,9 +909,9 @@ Instantiation
 
 .. code-block:: cpp
 
-   int speed_pct{clamp_value(130, 0, 100)};            // 100
-   double battery_pct{clamp_value(104.2, 0.0, 100.0)}; // 100
-   int other_pct{clamp_value(50, 0, 100)};             // 50
+   int speed_pct{clamp_value(130, 0, 100)};            // T = int
+   double battery_pct{clamp_value(104.2, 0.0, 100.0)}; // T = double
+   int other_pct{clamp_value(50, 0, 100)};             // T = int
 
 .. code-block:: bash
 
@@ -913,94 +922,24 @@ Instantiation
 - Two functions in the program, one per type. The third call reuses ``clamp_value<int>``.
 - ``nm`` lists the functions in a compiled program; ``-C`` shows their C++ names. ``702bin`` takes you to the folder that holds ``week6_playground``. In that program, ``clamp_value`` sits in the namespace ``templates``, the namespace of its section file.
 
-Templates Go in Headers
-~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: cpp
-
-   // Split like a normal function (Lecture 5): does NOT link
-   // stats.hpp: the declaration only
-   template <typename T> T clamp_value(T value, T low, T high);
-   // stats.cpp: includes stats.hpp, then the definition
-   template <typename T> T clamp_value(T value, T low, T high) { ... }
-   // main.cpp: includes stats.hpp, then
-   double pct{clamp_value(104.2, 0.0, 100.0)};
-
-.. code-block:: text
-
-   main.cpp:(.text+0x29): undefined reference to
-     `double clamp_value<double>(double, double, double)'
-
-.. code-block:: cpp
-
-   // The fix: the whole template in stats.hpp, and no stats.cpp
-   template <typename T> T clamp_value(T value, T low, T high) { ... }
-
-- The same three files with a regular function link and run (Lecture 5). With a template, the linker finds nothing.
-- The fix is what ``fleet/include/stats.hpp`` does: the exception to Lecture 5's rule.
-
-Why a Regular Function Links
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The same split, compiled twice. ``nm -C`` lists what an object file **defines** (``T``) and what it **needs** from another file (``U``).
-
-**Regular function**, with ``double`` in place of ``T``:
-
-.. code-block:: text
-
-   stats.o:  T clamp_value(double, double, double)
-   main.o:   U clamp_value(double, double, double)
-
-**Template**, as in `Templates Go in Headers`_:
-
-.. code-block:: text
-
-   stats.o:  (nothing)
-   main.o:   U double clamp_value<double>(double, double, double)
-
-- Regular function: ``stats.cpp`` compiles the body once. The linker matches the ``U`` in ``main.o`` with the ``T`` in ``stats.o``, and the program prints 100.
-- Template: a version is compiled only where a call needs it. ``stats.cpp`` has the body but no call; ``main.cpp`` has the call but no body. No ``T`` anywhere.
-- So the body goes in the header, where every call can see it.
-
 Template Argument Deduction
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In **template argument deduction**, the compiler works out ``T`` from the types of the arguments in the call.
 
 .. code-block:: cpp
 
-   clamp_value(130, 0, 100);          // three ints:    T is int
-   clamp_value(104.2, 0.0, 100.0);    // three doubles: T is double
-
-- You call a template the way you call any function. The ``<int>`` is filled in for you.
-- Each argument is compared with its parameter. Here all three parameters are ``T``, so all three arguments must give the **same** ``T``.
-
-One T for Every Argument
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: cpp
-
-   template <typename T>
-   T clamp_value(T value, T low, T high) {
-     if (value < low) { return low; }
-     if (value > high) { return high; }
-     return value;
-   }
-
-   int main() {
-     double pct{clamp_value(104, 0.0, 100.0)};
-     return pct > 50.0;
-   }
+   clamp_value(130, 0, 100);      // three ints: T is int
+   clamp_value(104, 0.0, 100.0);  // an int, then two doubles
 
 .. code-block:: text
 
-   deduce_conflict.cpp:9:25: error: no matching function for call to
-     'clamp_value(int, double, double)'
-   deduce_conflict.cpp:9:25: note:   deduced conflicting types for parameter 'T'
-     ('int' and 'double')
+   error: no matching function for call to 'clamp_value(int, double, double)'
+   note:   deduced conflicting types for parameter 'T' ('int' and 'double')
 
-- ``104`` says ``T`` is ``int``; ``0.0`` says ``double``. Deduction does not pick one: it fails.
-- An ordinary function would have converted ``104`` to ``104.0``. Deduction looks at the types exactly as written, with no conversions.
+- The calls in `Instantiation`_ already used it: nobody wrote ``<int>``.
+- All three parameters are ``T``, so all three arguments must give the same ``T``. ``104`` says ``int``, ``0.0`` says ``double``, and deduction fails.
+- An ordinary function would convert ``104`` to ``104.0``. Deduction takes the types as written, with no conversions.
 
 Explicit Template Arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1042,6 +981,31 @@ Two Template Parameters
 
 See `decltype and Trailing Return Types`_ under Further Reading.
 
+Templates Go in Headers
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. admonition:: Templates Go in Headers
+   :class: warning
+
+   The whole template goes in the header, as in ``fleet/include/stats.hpp``. This is the exception to Lecture 5's rule.
+
+.. code-block:: cpp
+   :linenos:
+
+   // stats.hpp: the whole template, body included. No stats.cpp.
+   template <typename T> T clamp_value(T value, T low, T high) { ... }
+
+   // main.cpp
+   #include "stats.hpp"
+   double pct{clamp_value(104.2, 0.0, 100.0)};  // 100
+
+1. A template is not a function yet. The compiler writes ``clamp_value<double>`` when it compiles a call that needs it (line 6).
+2. The compiler works on one ``.cpp`` file at a time. While it compiles ``main.cpp``, it sees that file and the headers it includes, nothing else.
+3. So the body has to be visible where the call is. In the header, it is: every file that includes ``stats.hpp`` can write the version it needs.
+4. A body in ``stats.cpp`` is out of sight of ``main.cpp``, and ``stats.cpp`` has no call, so no version is written.
+
+See `Where the Body Ends Up`_ under Further Reading.
+
 Abbreviated Templates
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -1064,9 +1028,10 @@ An **abbreviated function template** is a function with ``auto`` as a parameter 
    1 2 3 4
    82.5 35
 
-- It means ``template <typename T> void print_all(const T& values)``.
-- Each ``auto`` parameter gets its **own** template parameter. Two ``auto``\ s can be two different types.
-- It is still a template, so it still goes in the header.
+- It reads as ``template <typename T>``, with the parameter ``const T& values``.
+- Each ``auto`` is its own template parameter, so ``(auto a, auto b)`` takes two types. One ``T`` cannot (see `Template Argument Deduction`_).
+- It is a template, so it goes in the header (see `Templates Go in Headers`_).
+- The ``auto`` in the loop is Lecture 4's ``const auto&``: a variable, not a template.
 
 Concepts
 ^^^^^^^^
@@ -1078,20 +1043,22 @@ A **concept** is a named test on a template parameter. The compiler runs it at e
 .. code-block:: cpp
 
    template <typename T>
-   T average_of(
-       const std::vector<T>& values);
+   T half(T value) {
+     return value / 2;
+   }
 
 **With a concept**
 
 .. code-block:: cpp
 
    template <std::floating_point T>
-   T average_of(
-       const std::vector<T>& values);
+   T half(T value) {
+     return value / 2;
+   }
 
 - The two are the same function with the same body. Only the first line differs.
 - Left: ``T`` can be any type, ``int`` included. Right: ``T`` must pass ``std::floating_point``, a standard concept that ``float``, ``double`` and ``long double`` pass, and ``int`` does not.
-- Why it matters: the body divides the sum by the count. With ``int``, that is integer division, and the average loses its fraction (see `A Call That Compiles and Is Wrong`_).
+- Why it matters: the body divides by 2. With ``int``, that is integer division, and the result loses its fraction (see `A Call That Compiles and Is Wrong`_).
 - See `cppreference: constraints and concepts <https://en.cppreference.com/w/cpp/language/constraints>`__.
 
 A Call That Compiles and Is Wrong
@@ -1100,17 +1067,17 @@ A Call That Compiles and Is Wrong
 .. code-block:: cpp
 
    // with template <typename T>: no concept
-   average_of(std::vector<double>{82.5, 35.0, 64.0, 18.0});  // 49.875
-   average_of(std::vector<int>{80, 35, 64, 18});  // 49, not 49.25
+   half(35.0);  // 17.5
+   half(35);    // 17, not 17.5
 
    // with template <std::floating_point T>
-   average_of(std::vector<int>{80, 35, 64, 18});  // rejected
+   half(35);    // rejected
 
 .. code-block:: text
 
-   average_int.cpp:5:3: note: constraints not satisfied
+   half_int.cpp:3:3: note: constraints not satisfied
 
-- Some robots report their battery as a whole-number percent. Without the concept, ``T`` is ``int``: 80 + 35 + 64 + 18 = 197, and 197 / 4 is integer division, 49.
+- Some robots report their battery as a whole-number percent, such as 35. Without the concept, ``T`` is ``int``, and 35 / 2 is integer division: 17.
 - No warning, even under ``-Wall -Wextra``. The concept turns that silent wrong answer into a compile error.
 - The requirement is part of the declaration, where the caller reads it. Rule: `Core Guidelines T.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-concepts>`__.
 
@@ -1123,7 +1090,6 @@ Form 1: In Place of ``typename``
    bool is_valid_id(T id) { return id > 0; }
 
    is_valid_id(3);      // true
-   is_valid_id(-2L);    // false: -2L is a long, also integral
    is_valid_id(true);   // true: bool is integral too
    is_valid_id(2.5);    // does not compile: double is not integral
 
@@ -1189,7 +1155,7 @@ Form 3: Before ``auto``
    same_id(3, 3L);  // true
 
 - With one parameter the two forms accept the same calls: ``is_valid_id(std::integral auto id)`` behaves like form 1.
-- With two, they differ. Form 1 names the type ``T``, and both parameters are ``T``, so they must be one type: ``3`` is an ``int``, ``3L`` a ``long``, and the call fails (see `One T for Every Argument`_).
+- With two, they differ. Form 1 names the type ``T``, and both parameters are ``T``, so they must be one type: ``3`` is an ``int``, ``3L`` a ``long``, and the call fails (see `Template Argument Deduction`_).
 - Form 3 has no name. Each ``auto`` is its own type, so ``int`` and ``long`` are both accepted.
 
 See `Documenting a Template`_ under Further Reading.
@@ -1228,6 +1194,8 @@ Higher-Order Functions
 
 A **callable** is anything you can call with parentheses: a function, a lambda, a pointer to a function, or an object that holds one of them. A **higher-order function** takes a callable as a parameter, or returns one.
 
+The standard algorithms, such as ``std::find_if`` and ``std::count_if``, are higher-order functions: `cppreference: Algorithms library <https://en.cppreference.com/w/cpp/algorithm>`__.
+
 See `cppreference: Callable <https://en.cppreference.com/w/cpp/named_req/Callable>`__.
 
 A Condition instead of a Value
@@ -1245,14 +1213,16 @@ A Condition instead of a Value
 A **predicate** is a function that answers yes or no: it returns a ``bool``. ``std::count_if`` wants one that takes one value; some algorithms want one that takes two.
 
 - ``std::count`` (Lecture 4) asks: how many levels **equal** 35.0? One does, so it returns 1.
-- ``std::count_if`` asks: for how many levels does ``is_low`` say yes? It calls ``is_low`` on 82.5, 35.0, 64.0 and 18.0 and gets false, true, false, true. Two yeses, so it returns 2.
+- ``std::count_if`` asks: how many levels make ``is_low`` return ``true``? It calls ``is_low`` once per level. Only 35.0 and 18.0 give ``true``, so it returns 2.
 - ``std::count_if`` is a higher-order function. Pass the name ``is_low``, with no parentheses: ``std::count_if`` makes the calls. ``is_low()`` would call it right there, with no argument, and fails with ``too few arguments to function``.
 - The catch: ``is_low`` sits outside ``main``, far from the one line that uses it, and 40 is fixed inside it. Counting levels below 50 would need a second function.
 
 Lambdas
 -------
 
-The callable in `A Condition instead of a Value`_, ``is_low``, is a function defined far from its one use. A **lambda** is a callable written right where it is used.
+A **lambda** is an expression that creates a callable, right where the callable is used.
+
+Its main use is as the argument of a higher-order function: ``std::count_if`` in `A Condition instead of a Value`_ can take a lambda in place of ``is_low``, a function defined far from its one use.
 
 See `cppreference: lambda expressions <https://en.cppreference.com/w/cpp/language/lambda>`__. Rule: `Core Guidelines F.50 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-capture-vs-overload>`__.
 
@@ -1360,9 +1330,11 @@ By Value and by Reference
    auto is_low_ref = [&limit_pct](double pct) { return pct < limit_pct; };
 
    limit_pct = 70.0;
+   // is_low uses its copy, 40; is_low_ref reads limit_pct, now 70
    std::count_if(battery_pct.begin(), battery_pct.end(), is_low);      // 2
    std::count_if(battery_pct.begin(), battery_pct.end(), is_low_ref);  // 3
    limit_pct = 20.0;
+   // is_low_ref reads limit_pct, now 20
    std::count_if(battery_pct.begin(), battery_pct.end(), is_low_ref);  // 1
 
 - ``[limit_pct]`` copies 40 **when the lambda is created**. It counts levels under 40 on every call: 35 and 18, so 2.
@@ -1400,35 +1372,6 @@ Capture Lists
 
 See `mutable and Init-capture`_ under Further Reading.
 
-What the Compiler Writes
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: cpp
-
-   double limit_pct{40.0};
-   auto is_low =
-       [limit_pct](double pct) {
-         return pct < limit_pct;
-       };
-
-.. code-block:: cpp
-
-   struct IsLow {
-     double limit_pct;  // the capture
-     bool operator()(double pct) const {
-       return pct < limit_pct;
-     }
-   };
-   IsLow is_low_struct{limit_pct};
-
-- The lambda is an object of an unnamed ``struct``. Each capture is a **member**; the body becomes a member function named ``operator()``, which runs when you write ``a(30.0)``. Member functions are Lecture 8.
-- Both count 2 levels, and both are 8 bytes: one ``double``. A lambda with no capture measured 1 byte, one with two references 16.
-- The ``const`` on ``operator()`` is why a capture copied by value is read-only inside the body.
-
-.. note::
-
-   C++20, **[expr.prim.lambda.closure]**, section 7.5.5.1, paragraph 1: the type of a lambda-expression *is a unique, unnamed non-union class type, called the closure type*.
-
 A Dangling Capture
 ~~~~~~~~~~~~~~~~~~
 
@@ -1445,12 +1388,17 @@ A Dangling Capture
 
 .. code-block:: text
 
-   702run week6_playground 64           # always built with AddressSanitizer
+   702run week6_playground 61           # always built with AddressSanitizer
    ERROR: AddressSanitizer: stack-use-after-return on address 0x...
        #0 0x... in operator() undefined.cpp:49
 
 - ``limit_pct`` is a parameter. It dies when ``make_filter`` returns, and the lambda keeps a reference to it: Lecture 5's dangling reference, hidden in a capture list.
-- Built without the sanitizer, it printed ``0`` with no warning. At ``-O2`` GCC warns, under a misleading name: ``'limit_pct' is used uninitialized``.
+
+.. admonition:: A Wrong Answer with No Warning
+   :class: warning
+
+   Built without the sanitizer, it printed ``0`` with no warning. At ``-O2`` GCC warns, under a misleading name: ``'limit_pct' is used uninitialized``.
+
 - The fix is ``[limit_pct]``. A lambda that leaves the function captures by value (F.53).
 
 Generic Lambdas
@@ -1486,6 +1434,9 @@ See `cppreference: function objects <https://en.cppreference.com/w/cpp/utility/f
 ``std::function`` is a standard type that can hold any callable with a given signature, captures included. In ``<functional>``.
 
 .. code-block:: cpp
+
+   // outside main
+   double to_fraction(double pct) { return pct / 100.0; }
 
    std::function<double(double)> convert{to_fraction};
    std::cout << convert(64.0) << '\n';  // 0.64
@@ -1530,9 +1481,14 @@ An Empty std::function
    terminate called after throwing an instance of 'std::bad_function_call'
      what():  bad_function_call
 
-- Lecture 4's trap: ``operator[]`` on a map **inserts** a missing key. Here it inserts an empty ``std::function``.
-- Calling an empty ``std::function`` **throws**. Nothing catches it, so the program stops with exit status 134, as an empty optional's ``value()`` did.
-- Look first, without inserting: ``auto handler{on_command.find("reboot")};`` then call ``handler->second(2)`` only if ``handler != on_command.end()``. ``fleet/src/dispatcher.cpp`` does exactly that.
+- ``"reboot"`` is not in the map, so ``[]`` adds it, with an empty ``std::function`` (Lecture 4).
+- Calling an empty ``std::function`` **throws**, and the program stops.
+- The fix: ``find`` adds nothing. Call the handler only if ``find`` found one:
+
+.. code-block:: cpp
+
+   auto handler{on_command.find("reboot")};
+   if (handler != on_command.end()) { handler->second(2); }
 
 See `std::source_location`_ under Further Reading.
 
@@ -1547,12 +1503,18 @@ Choosing a Parameter Type
      - Accepts
      - Use it when
    * - ``double (*convert)(double)``
+
+       `Function Pointers`_ (Further Reading)
      - functions, lambdas with no capture
      - a C library asks for one
    * - ``auto convert``
+
+       `Abbreviated Templates`_
      - any callable
      - the function calls ``convert`` before it returns
    * - ``std::function<double(double)>``
+
+       `std::function <#std-function>`__
      - any callable with that signature
      - ``convert`` is stored to be called later
 
@@ -1759,6 +1721,70 @@ Overload or Specialize
 .. note::
 
    Prefer the overload. Specializations *don't participate in overloading, they don't act as you probably wanted*. Rule: `Core Guidelines T.144 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rt-specialize-function>`__.
+
+``typename`` or ``class``
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // Two declarations of the same template
+   template <class T>    T clamp_value(T value, T low, T high);
+   template <typename T> T clamp_value(T value, T low, T high);
+
+1. The first C++ templates used ``class`` for a type parameter. Stroustrup reused that keyword because a new one could break programs that already used the word as a name.
+2. The word misled people: ``class`` seemed to allow only class types, but ``int`` and ``double*`` work too.
+3. While writing the first ISO standard (C++98), the committee needed a keyword that says "this name is a type" (see `Dependent Name`_). It added ``typename``.
+4. It then allowed ``typename`` in ``template <...>`` as well, since that word does not suggest class types. ``class`` stayed, so old code still compiles.
+
+.. note::
+
+   C++20 [temp.param] para 2: "There is no semantic difference between ``class`` and ``typename``" in a template parameter. Use ``typename``. See `cppreference: Template parameters <https://en.cppreference.com/w/cpp/language/template_parameters>`__.
+
+Dependent Name
+^^^^^^^^^^^^^^
+
+A **dependent name** is a name inside a template whose meaning depends on a template parameter, such as ``Container::value_type``.
+
+.. code-block:: cpp
+
+   template <typename Container>
+   void print_first(const Container& values) {
+     typename Container::value_type first{values.front()};
+     std::cout << first << '\n';
+   }
+
+   std::vector<double> readings{12.5, 13.1};
+   print_first(readings);  // 12.5
+
+- ``value_type`` is the type of the elements. For ``std::vector<double>``, it is ``double``.
+- The compiler reads the template before it knows ``Container``, so it cannot tell whether ``Container::value_type`` is a type or a value. It assumes a value.
+- ``typename`` in front says it is a type. Without it, g++ stops with ``need 'typename' before 'Container::value_type'``.
+- ``class Container::value_type`` works only when the elements are a class type. For ``double``, g++ rejects it.
+
+Where the Body Ends Up
+^^^^^^^^^^^^^^^^^^^^^^
+
+``nm -C`` lists the functions in an object file, with C++ names. ``T``: the file has the compiled body. ``U``: the file calls the function and needs the body from another file.
+
+The Lecture 5 split, compiled twice: declaration in ``stats.hpp``, body in ``stats.cpp``, call in ``main.cpp``.
+
+**Regular function**, written for ``double`` only:
+
+.. code-block:: text
+
+   stats.o:  T clamp_value(double, double, double)
+   main.o:   U clamp_value(double, double, double)
+
+**Template**, split the same way:
+
+.. code-block:: text
+
+   stats.o:  (nothing)
+   main.o:   U double clamp_value<double>(double, double, double)
+
+- The ``T`` in this output is a letter from ``nm``, not the template parameter.
+- Regular function: the linker matches the ``U`` in ``main.o`` with the ``T`` in ``stats.o``, and the program prints 100.
+- Template: ``stats.o`` holds nothing, so the ``U`` in ``main.o`` has no match and the link fails.
 
 decltype and Trailing Return Types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
