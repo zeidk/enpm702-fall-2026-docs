@@ -494,3 +494,45 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   --no-class-bg: #3B3117;
 }
+
+/* ============================================================
+ * Read the Docs version menu (the "flyout", bottom right)
+ *
+ * The menu lives in a shadow DOM, so only the custom properties
+ * below reach it (list from readthedocs/addons src/flyout.css).
+ * Its own defaults sit in `@layer defaults`, so these unlayered
+ * rules win. Shape, border and its logo cannot be changed.
+ *
+ * Dark in both themes: with no border or shadow available, a
+ * light menu would not stand out from the sand page. Gold marks
+ * the current version and links. UMD red is not used for text:
+ * it measures 3.15:1 on #2B2620 and 4.41:1 on black, under the
+ * 4.5:1 minimum. Measured ratios on the background:
+ *   light: #DDD3C2 10.1, #A89C8A 5.6, #FFFDF8 14.8, #ffd200 10.3
+ *   dark:  #e6e6e6 16.8, #7f7f7f 5.2, #ffffff 21.0, #ffd200 14.5
+ * ============================================================ */
+
+html[data-theme="light"] {
+  --readthedocs-flyout-background-color: #2B2620;      /* sand ink */
+  --readthedocs-flyout-color: #DDD3C2;                 /* sand rule */
+  --readthedocs-flyout-section-heading-color: #A89C8A;
+  --readthedocs-flyout-item-link-color: #FFFDF8;       /* sand sheet */
+  --readthedocs-flyout-current-version-color: #ffd200; /* UMD gold */
+  --readthedocs-flyout-link-color: #ffd200;
+  --readthedocs-flyout-divider-color: #4A4238;
+}
+
+html[data-theme="dark"] {
+  --readthedocs-flyout-background-color: #000000;      /* UMD black */
+  --readthedocs-flyout-color: #e6e6e6;                 /* UMD light gray */
+  --readthedocs-flyout-section-heading-color: #7f7f7f; /* UMD medium gray */
+  --readthedocs-flyout-item-link-color: #ffffff;
+  --readthedocs-flyout-current-version-color: #ffd200; /* UMD gold */
+  --readthedocs-flyout-link-color: #ffd200;
+  --readthedocs-flyout-divider-color: #454545;         /* UMD dark gray */
+}
+
+/* the site's own font instead of the menu's default */
+html {
+  --readthedocs-flyout-font-family: var(--pst-font-family-base);
+}
