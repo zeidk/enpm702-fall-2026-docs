@@ -71,5 +71,7 @@ have one.
 
 .. tip::
 
-   Work through the **Version Control** reading module for a
+   Work through the
+   :doc:`Version Control </reading_material/version_control/vc_index>`
+   reading module for a
    full walkthrough of Git and GitHub workflows used in this course.

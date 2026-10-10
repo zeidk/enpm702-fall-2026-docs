@@ -31,7 +31,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.6.0: Lecture 4 Synced with the L4 Slides v2.0 (2026-09-28)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    - **Lecture 4** matches the L4 slides v2.0: Strings reworked, three
      frames removed, and a new **Further Reading** part with the slide
@@ -47,7 +46,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.5.0: Lecture 5 Synced with the L5 Slide Deck (2026-09-27)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    - **Lecture 5** matches the ``ENPM702-L5-v1.0`` deck, built around the
      ``arm_demo`` program, with the deck's figures.
@@ -60,7 +58,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.4.0: Lecture 3 Synced with the L3 Slide Deck (2026-09-15)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    Lecture 3 brought into **one-to-one correspondence** with the
    ``ENPM702-L3-v1.0`` slide deck: everything the deck teaches is on the
@@ -188,7 +185,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.3.0: Lecture 2 and Reading Material Updates (2026-09-07)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    **Lecture 2**
 
@@ -226,7 +222,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.2.0: Lecture 2 Rebuilt, and C++20 Applied Site-wide (2026-09-04)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    Lecture 2 rewritten from the ``ENPM702_L2_CPPIntroduction`` slide
    deck, and the C++20 language standard applied across every page.
@@ -378,7 +373,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.1.0: Lecture 1 Rebuilt from the L1 Slides (2026-08-30)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    Lecture 1 rewritten to match the ``ENPM702-L1-v1.0`` slide deck.
 
@@ -429,7 +423,6 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 .. dropdown:: v1.0.1: VSCode/CMake Reading Material Fixes (2026-08-30)
    :icon: tag
    :class-container: sd-border-success
-   :open:
 
    Corrections to the *VSCode and CMake* reading material and its
    downloadable configuration files.

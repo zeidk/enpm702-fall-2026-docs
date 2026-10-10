@@ -4,6 +4,7 @@ Syllabus
 .. role:: reading
 .. role:: quiz
 .. role:: assignment
+.. role:: no-class
 
 Grade Breakdown
 ---------------
@@ -52,7 +53,8 @@ to 29**) does not fall on a Tuesday, so the Nov 24 lecture meets as
 scheduled.
 
 **Color key:** :reading:`reading material`; :quiz:`quizzes`;
-:assignment:`assignments (RWAs and GPs) posted/due`.
+:assignment:`assignments (RWAs and GPs) posted/due`;
+:no-class:`no class`.
 
 .. list-table::
    :header-rows: 1
@@ -102,7 +104,7 @@ scheduled.
    * - Week 7
      - Oct 13
      -
-     - **No class (Fall Break)**
+     - :no-class:`No class (Fall Break)`
      -
    * - Week 8
      - Oct 20

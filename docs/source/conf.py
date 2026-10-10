@@ -52,9 +52,10 @@ html_last_updated_fmt = "%b %d, %Y"
 html_theme_options = {
     # Logo (place files in _static/images/)
     "logo": {
-        "text": "ENPM702 Fall 2026",
-        "image_light": "_static/images/enpm702_logo_light.png",
-        "image_dark": "_static/images/enpm702_logo_dark.png",
+        # No text: the logo already says ENPM702, and both linked to the home page.
+        "alt_text": "ENPM702 Fall 2026, home",
+        "image_light": "_static/images/enpm702_logo_light.svg",
+        "image_dark": "_static/images/enpm702_logo_dark.svg",
     },
     # Header / navbar icon links
     "icon_links": [

@@ -136,6 +136,13 @@ A
 
 .. glossary::
 
+   Abbreviated Function Template
+      A function with ``auto`` as a parameter type, such as
+      ``void print_all(const auto& values)``. It is a template written
+      without the ``template`` line, and each ``auto`` is its own template
+      parameter. C++20.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Abstract Class
       A class with at least one pure virtual function. Cannot be instantiated directly; serves as an interface for derived classes.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
@@ -156,6 +163,13 @@ A
       a plain ``struct``. Nothing runs when one is declared, so its
       members hold garbage until braces zero or fill them.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Aggregate Initialization
+      Giving the members of an aggregate their values from a braced list,
+      in the order they are declared:
+      ``RobotStatus robot_3{3, 64.0, {2.0, 3.0}, false};``. A member the
+      list does not reach takes its default member initializer, or zero.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Aggregation
       A "has-a" relationship where the part can exist independently of the whole. Represented by an empty diamond in UML.
@@ -178,8 +192,15 @@ A
       The requirement that an object's address be a multiple of a certain
       number of bytes, usually its own size. An ``int`` sits at a multiple
       of 4 and a ``double`` at a multiple of 8, which is why addresses in
-      these notes end in ``0``, ``4``, ``8`` or ``c``.
-      :doc:`L3 </lectures/lecture3/l3_lecture>`
+      these notes end in ``0``, ``4``, ``8`` or ``c``. A ``struct`` takes
+      the largest alignment of its members.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`,
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   alignof
+      An operator that gives a type's alignment in bytes. With g++ 13 on
+      x86-64, ``alignof(int)`` is 4 and ``alignof(double)`` is 8. C++11.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Amortized O(1)
       Constant cost per operation on average over a long run, even
@@ -257,6 +278,15 @@ B
       count.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   std::bind
+      A standard function from ``<functional>`` that makes a new callable
+      from an existing one, with some arguments fixed:
+      ``std::bind(charge_time_h, _1, 40.0)``. The placeholders ``_1``,
+      ``_2`` stand for the arguments of the new call. ``std::bind_front``
+      (C++20) fixes arguments from the left, with no placeholders. Prefer a
+      lambda; learn ``std::bind`` to read older code and ROS 2 examples.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Bit
       Binary digit. The smallest unit of data, holding either ``0`` or
       ``1``.
@@ -317,6 +347,16 @@ C
       order lets one fetch serve the next 16 reads.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   Callable
+      Anything you can call with parentheses: a function, a lambda, a
+      pointer to a function, or an object that holds one of them.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Callback
+      A callable you hand over now, for other code to call later. ROS 2
+      calls a subscription's callback each time a message arrives.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Capacity
       How many elements a ``std::vector`` or ``std::string`` could hold
       before the block has to be replaced. Never smaller than
@@ -325,7 +365,12 @@ C
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
    Capture Clause
-      The ``[]`` part of a lambda expression that specifies which variables from the enclosing scope are available inside the lambda body.
+      The ``[ ]`` at the start of a lambda, which lists the local variables
+      the lambda keeps. ``[limit_pct]`` copies the variable when the lambda
+      is created; ``[&limit_pct]`` stores a reference and reads the variable
+      at each call. ``[=]`` and ``[&]`` capture every local the body uses.
+      A lambda that is returned or stored should capture by value, or its
+      references can dangle.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    char
@@ -401,6 +446,15 @@ C
       Also called a block. No semicolon needed after the closing brace.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   Concept
+      A named test on a template parameter. The compiler runs it at each
+      call, before it writes the function, and rejects the call if the test
+      fails. Examples: ``std::integral``, ``std::floating_point``. You write
+      it in place of ``typename`` (``template <std::integral T>``), in a
+      ``requires`` clause, or before ``auto`` (``std::integral auto id``).
+      C++20, header ``<concepts>``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Configuration File (Shell)
       A script that runs automatically each time a new shell session
       starts. Used to define aliases, functions, and environment
@@ -473,6 +527,25 @@ D
       later use. ``int number;`` is a declaration.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   decltype
+      An operator that gives the type of a name or an expression, without
+      evaluating it. ``decltype(battery_pct[0])`` is ``double&``, because
+      ``operator[]`` returns a reference.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Deduced Return Type
+      A return type written as ``auto``: the compiler works it out from the
+      ``return`` statements, which must all give the same type. The body
+      must be visible before any call, so the function goes in the header.
+      C++14.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Default Member Initializer
+      A value written next to a member in a ``struct``, such as
+      ``double battery_pct{100.0};``. It is used whenever the braced list
+      does not reach that member, so the member never holds garbage.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Default Parameter
       A value provided in a function declaration that is used when no argument is supplied for that parameter. Must be specified from right to left.
       :doc:`L5 </lectures/lecture5/l5_lecture>`
@@ -501,6 +574,12 @@ D
       memory address held by a pointer. Also called the indirection
       operator.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Designated Initializer
+      Aggregate initialization that names each member it sets:
+      ``RobotStatus robot_1{.id = 1, .battery_pct = 82.5};``. The names must
+      follow declaration order, and you may skip members. C++20.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Detached HEAD
       The state where ``.git/HEAD`` holds a commit hash instead of a branch
@@ -632,11 +711,24 @@ F
       :doc:`L5 </lectures/lecture5/l5_lecture>`
 
    Function Pointer
-      A variable that stores the address of a function. Used for callbacks and dynamic dispatch. Syntax: ``return_type (*name)(param_types)``.
+      A pointer that holds the address of a function:
+      ``double (*convert)(double){to_fraction};``. Calling through it calls
+      that function. A lambda with no capture converts to one; a lambda
+      that captures does not.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Function Template
+      A pattern for a family of functions, introduced by
+      ``template <typename T>``. The compiler writes one function from it
+      for each set of types you call it with. The whole template, body
+      included, goes in a header.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Functor
-      An object that can be called like a function by overloading the ``operator()``. Can maintain state between calls.
+      Also called a function object. An object that can be called like a
+      function, because its type defines ``operator()``. A lambda
+      expression creates one: an object of an unnamed ``struct`` whose
+      members are the captures.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
 
@@ -646,6 +738,13 @@ G
 =
 
 .. glossary::
+
+   Generic Lambda
+      A lambda with ``auto`` as a parameter type:
+      ``[](const auto& left, const auto& right) { ... }``. Like an
+      abbreviated function template, it works for any types the body
+      accepts, and each ``auto`` is a separate type.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Global Scope
       File scope: the region from a declaration made outside every
@@ -681,6 +780,12 @@ H
       Memory on the heap persists until explicitly deallocated. Flexible
       in size but requires manual management (or smart pointers).
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Higher-Order Function
+      A function that takes a callable as a parameter, or returns one. The
+      standard algorithms ``std::count_if``, ``std::find_if`` and
+      ``std::sort`` are higher-order functions.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Hunk
       One contiguous block of changed lines in a diff, with a few unchanged
@@ -728,6 +833,11 @@ I
       An OOP mechanism where a derived class acquires the properties and behaviors of a base class. Supports code reuse and hierarchical relationships.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Init-capture
+      A capture that makes a new variable only the lambda has, with its own
+      initializer: ``[id = 100]() mutable { return ++id; }``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Initialization
       Declaring a variable and giving it a value in a single step. C++
       offers three forms: copy (``int a = 1;``), direct (``int a(1);``),
@@ -741,14 +851,22 @@ I
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    inline
-      A specifier suggesting the compiler replace a function call with the function body. Required for functions defined in header files to satisfy the One Definition Rule.
-      :doc:`L6 </lectures/lecture6/l6_lecture>`
+      A specifier that lets a function be defined in a header that several
+      ``.cpp`` files include. Without it, each file gets its own copy of
+      the body and the linker reports ``multiple definition``.
+      :doc:`L5 </lectures/lecture5/l5_lecture>`
 
    Insertion Operator
       The ``<<`` operator, which sends a value into an output stream:
       ``std::cout << value;``. Each insertion returns the stream, which
       is why insertions can be chained.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Instantiation
+      The compiler writing a real function from a template, for the types of
+      one call. ``clamp_value(130, 0, 100)`` instantiates
+      ``clamp_value<int>``; later calls with ``int`` arguments reuse it.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Integer Overflow
       What happens when an arithmetic result falls outside the range its
@@ -779,19 +897,18 @@ I
       invalidates.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+.. _g-k:
+
+K
+=
+
+.. glossary::
+
    Ksh
       Korn Shell. A Unix shell with advanced scripting features,
       sometimes used in enterprise environments. Uses ``.kshrc`` as its
       configuration file.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
-
-
-   std::size_t
-      The one unsigned type every size in the standard library uses,
-      from ``<cstddef>``: what ``sizeof`` and every ``size()`` return.
-      Subtracting past zero wraps to the top of the range, and ``i >=
-      0`` is always true.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
 
 .. _g-l:
 
@@ -801,7 +918,11 @@ L
 .. glossary::
 
    Lambda
-      An anonymous function object defined inline. Syntax: ``[capture](params) -> return_type { body }``. Can capture variables from the enclosing scope.
+      An expression that creates a callable right where it is used:
+      ``[captures](parameters) { body }``. It makes an object of an unnamed
+      ``struct`` whose members are the captures. Its main use is as the
+      argument of a higher-order function such as ``std::count_if``. Its
+      type has no name, so you store one with ``auto``.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Lifetime
@@ -900,6 +1021,13 @@ M
       order.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   mutable (Lambda)
+      A keyword after a lambda's parameter list that lets the body change
+      its by-value captures, which are read-only without it. The changed
+      value lives inside the lambda object, so a copy of the lambda counts
+      on its own.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
 .. _g-n:
 
 N
@@ -950,8 +1078,11 @@ N
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
    noexcept
-      A specifier declaring that a function does not throw exceptions. Enables compiler optimizations and is checked at compile time for ``std::move`` operations.
-      :doc:`L6 </lectures/lecture6/l6_lecture>`
+      A specifier that promises no exception leaves the function. The
+      compiler does not check the promise. If an exception does leave, the
+      program calls ``std::terminate`` and stops.
+      :doc:`EH </reading_material/exception_handling/eh_lecture>`,
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    nullptr
       A keyword representing a null pointer literal. Preferred over
@@ -990,11 +1121,42 @@ O
       the map becomes a two-dimensional array in row-major order.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   offsetof
+      A macro from ``<cstddef>``. ``offsetof(Type, member)`` is the number
+      of bytes from the start of an object to that member, so it shows
+      where the compiler put padding.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   std::optional
+      A standard type, ``std::optional<T>``, that holds one value of type
+      ``T`` or nothing. ``return std::nullopt;`` returns it empty. Read it
+      with ``*`` after checking ``if (opt)``, with ``value()``, which throws
+      ``std::bad_optional_access`` when it is empty, or with
+      ``value_or(fallback)``. ``*`` on an empty optional is undefined
+      behavior. In ``<optional>``, C++17.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Origin
       The conventional name for the remote a repository was cloned from.
       Nothing about the name is special; it is set by ``git clone`` or by
       ``git remote add origin``.
       :doc:`VC </reading_material/version_control/vc_lecture>`
+
+.. _g-p:
+
+P
+=
+
+.. glossary::
+
+   Padding
+      Unused bytes the compiler adds inside a ``struct`` so that each
+      member's address is a multiple of its alignment, and at the end so
+      that the elements of an array stay aligned. With g++ 13 on x86-64,
+      ``RobotStatus`` holds 29 bytes of data and its ``sizeof`` is 40.
+      Putting the largest members first leaves fewer gaps; the compiler
+      never reorders members.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Page
       The fixed-size block a memory segment is divided into, typically
@@ -1003,6 +1165,12 @@ O
       side by side in the virtual address space need not be adjacent, or
       in order, in physical memory.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::pair
+      A standard ``struct`` with two members, ``first`` and ``second``, of
+      any two types: ``std::pair<int, double> reading{3, 64.0};``. Each
+      element of a ``std::map`` is a ``std::pair``. In ``<utility>``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Pointer
       A variable that holds a memory address as its value. The address
@@ -1016,16 +1184,26 @@ O
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Predicate
-      A function that answers yes or no about one element. Algorithms
-      such as ``count_if``, ``find_if`` and ``std::erase_if`` call it once
-      per element; you pass the function's name without parentheses.
-      :doc:`L4 </lectures/lecture4/l4_lecture>`
+      A function or lambda that answers yes or no: it returns a ``bool``.
+      ``count_if``, ``find_if`` and ``std::erase_if`` call one with one
+      element at a time; ``std::sort`` takes one with two parameters that
+      says which element comes first. You pass a function's name without
+      parentheses.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`,
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Preprocessor
       The first stage of the C++ build process. Modifies source code
       before compilation by processing directives (``#include``,
       ``#define``, etc.), removing comments, and adjusting whitespace.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Projection
+      A function that a ``std::ranges`` algorithm calls on each element
+      before it compares, turning the element into the value to compare.
+      ``std::ranges::sort(fleet, {}, [](const RobotStatus& robot) { return
+      robot.battery_pct; })`` sorts the robots by battery. C++20.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Pull
       ``fetch`` followed by ``merge``, in one command. Downloads commits from
@@ -1117,6 +1295,14 @@ R
       A project plus its complete history, stored in the hidden ``.git``
       directory at the project root.
       :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   requires Clause
+      A condition on template parameters, written after the ``template``
+      line, that the compiler checks at each call:
+      ``requires std::integral<T> && (!std::same_as<T, bool>)``. Of the
+      three ways to apply a concept, it is the only one that joins tests
+      with ``&&``, ``||`` and ``!``. C++20.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    reserve
       ``vector::reserve(n)`` allocates a block for at least ``n``
@@ -1237,6 +1423,13 @@ S
       variable. The result is platform-dependent.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   std::size_t
+      The one unsigned type every size in the standard library uses,
+      from ``<cstddef>``: what ``sizeof`` and every ``size()`` return.
+      Subtracting past zero wraps to the top of the range, and ``i >=
+      0`` is always true.
+      :doc:`L4 </lectures/lecture4/l4_lecture>`
+
    Small String Optimization (SSO)
       A small buffer kept inside the ``std::string`` object and used
       whenever the text fits, so short strings never touch the heap. The
@@ -1327,7 +1520,10 @@ S
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
    std::function
-      A general-purpose polymorphic function wrapper from ``<functional>``. Can store any callable (function, lambda, functor, function pointer) with a matching signature.
+      A standard type from ``<functional>`` that holds any callable with a
+      given signature, captures included: ``std::function<double(double)>``.
+      Use it to store a callable and call it later. Calling an empty one
+      throws ``std::bad_function_call``.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    std::numbers
@@ -1407,8 +1603,18 @@ S
       ``#define PI 3.14159``. Avoid in modern C++; use ``constexpr``.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   struct
+      A type you define that gives one name to a group of variables, its
+      members. The definition goes in a header and ends with a semicolon.
+      A ``struct`` and a ``class`` differ only in default access.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Structured Binding
-      A C++17 feature that allows unpacking a struct, pair, or tuple into individual named variables. Syntax: ``auto [x, y] = my_pair;``.
+      A declaration that gives a new name to each member of a ``struct``, a
+      pair or a tuple, in declaration order:
+      ``auto [boxes, left_over] = pack(17, 5);``. It needs one name per
+      member. ``auto`` binds to a copy; ``auto&`` binds to the original.
+      C++17.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
 
@@ -1429,8 +1635,26 @@ T
       A mechanism for writing generic code that works with any data type. The compiler generates specific versions (instantiations) for each type used.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Template Argument Deduction
+      The compiler working out a template parameter from the types of the
+      arguments in a call. It takes the types as written, with no
+      conversions, so ``clamp_value(104, 0.0, 100.0)`` fails: ``T`` cannot
+      be both ``int`` and ``double``. Write ``clamp_value<double>`` to set
+      ``T`` yourself. The type of the variable that receives the result is
+      not used.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   Template Parameter
+      A name, such as ``T`` in ``template <typename T>``, that stands for a
+      type in a template. ``typename`` and ``class`` mean the same thing in
+      that line; the course uses ``typename``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
    Template Specialization
-      A mechanism to provide a custom implementation of a template for a specific type. Full specialization handles one specific type.
+      A version of a template written for one specific type:
+      ``template <> const char* larger_of<const char*>(...)``. For a
+      function template, prefer an overload: specializations do not take
+      part in overloading.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Text Segment
@@ -1455,6 +1679,19 @@ T
       introduced it. Git watches tracked files for changes and reports them;
       untracked files it ignores until added.
       :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   Trailing Return Type
+      A return type written after the parameters with ``->``:
+      ``auto add_offset(T value, U offset) -> decltype(value + offset)``.
+      It can name the parameters, which the front of the line cannot. A
+      lambda uses it too: ``[](double pct) -> double { ... }``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   std::tuple
+      A standard type that holds any number of values, of any types, read by
+      position with ``std::get<0>``, ``std::get<1>`` and so on. The values
+      have no names. In ``<tuple>``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`
 
    Type Conversion
       Producing a value of one type from a value of another. Implicit
