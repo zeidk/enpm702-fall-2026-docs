@@ -114,6 +114,8 @@ master_doc = "index"
 # first paint; see _static/sidebar-persist.js.
 html_js_files = [
     ("sidebar-persist.js", {"defer": None}),
+    # Shape of the Read the Docs version menu; see the file's header.
+    ("flyout-style.js", {"defer": "defer"}),
 ]
 
 html_css_files = [
