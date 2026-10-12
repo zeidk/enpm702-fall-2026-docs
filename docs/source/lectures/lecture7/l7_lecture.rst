@@ -257,7 +257,24 @@ Handing a Route to a Robot
 - The copy allocates a new block, 1000 × 16 bytes = 16000 bytes, and copies every ``Position``. ``route`` is unchanged.
 - The move allocates nothing. ``moved`` holds the block ``route`` had, at the same address, and ``route`` is left empty.
 
-See `make_route`_ under Further Reading.
+.. dropdown:: The Definition of ``make_route``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      std::vector<Position> make_route(int n) {
+        std::vector<Position> route;
+        for (int i{0}; i < n; ++i) {
+          route.push_back({static_cast<double>(i), 0.0});
+        }
+        return route;
+      }
+
+   - It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (Lecture 6's ``Position``).
+   - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
+   - It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
 Inside a Copy
 ^^^^^^^^^^^^^
@@ -1418,23 +1435,6 @@ Dangling Read, Measured
 
 - ``702run week7_appendix iii``. The read is on line 64; the ``delete`` that freed the robot is on line 63.
 - "8 bytes inside": ``battery_pct`` starts at byte 8 of a ``RobotStatus``, as ``offsetof`` showed in Lecture 6.
-
-``make_route``
-^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   std::vector<Position> make_route(int n) {
-     std::vector<Position> route;
-     for (int i{0}; i < n; ++i) {
-       route.push_back({static_cast<double>(i), 0.0});
-     }
-     return route;
-   }
-
-- It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (Lecture 6's ``Position``).
-- ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
-- It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
 The Moved-from ``std::string``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
