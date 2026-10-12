@@ -52,7 +52,7 @@ Code for This Lecture
       702run week7_playground 12         # only the code of slide 12
       702run week7_appendix              # the code of every appendix frame
       702run week7_appendix iv           # only appendix frame iv (4 works too)
-      702run week7_allocations           # appendix frame xiii: counts make_shared's allocations
+      702run week7_allocations           # appendix frame xiv: counts make_shared's allocations
 
    After you edit a file, build again before you run: ``702build week7_playground`` builds one program, ``702build`` builds all of them.
 
@@ -256,6 +256,8 @@ Handing a Route to a Robot
 
 - The copy allocates a new block, 1000 × 16 bytes = 16000 bytes, and copies every ``Position``. ``route`` is unchanged.
 - The move allocates nothing. ``moved`` holds the block ``route`` had, at the same address, and ``route`` is left empty.
+
+See `make_route`_ under Further Reading.
 
 Inside a Copy
 ^^^^^^^^^^^^^
@@ -1416,6 +1418,24 @@ Dangling Read, Measured
 
 - ``702run week7_appendix iii``. The read is on line 64; the ``delete`` that freed the robot is on line 63.
 - "8 bytes inside": ``battery_pct`` starts at byte 8 of a ``RobotStatus``, as ``offsetof`` showed in Lecture 6.
+
+``make_route``
+^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // A route of n waypoints, one meter apart along an aisle.
+   std::vector<Position> make_route(int n) {
+     std::vector<Position> route;
+     for (int i{0}; i < n; ++i) {
+       route.push_back({static_cast<double>(i), 0.0});
+     }
+     return route;
+   }
+
+- Waypoint ``i`` is at x = ``i`` meters along the aisle and y = 0 (Lecture 6's ``Position``).
+- ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
+- It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
 The Moved-from ``std::string``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
