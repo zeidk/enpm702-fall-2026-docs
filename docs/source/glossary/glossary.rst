@@ -11,7 +11,7 @@ that section.
 :ref:`K <g-k>` · :ref:`L <g-l>` · :ref:`M <g-m>` · :ref:`N <g-n>` ·
 :ref:`O <g-o>` · :ref:`P <g-p>` · :ref:`R <g-r>` · :ref:`S <g-s>` ·
 :ref:`T <g-t>` · :ref:`U <g-u>` · :ref:`V <g-v>` · :ref:`W <g-w>` ·
-:ref:`Z <g-z>`
+:ref:`X <g-x>` · :ref:`Z <g-z>`
 
 .. only:: html
 
@@ -473,6 +473,15 @@ C
       ``std::string`` are contiguous; the maps are not.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   Control Block
+      The part of a ``std::shared_ptr``'s heap memory that holds the count
+      of owners and the count of ``std::weak_ptr``\ s. A ``std::shared_ptr`` is
+      two pointers, 16 bytes: one to the object and one to the control block.
+      ``std::make_shared`` puts the object and the control block in one
+      allocation (56 bytes for a ``RobotStatus``); with ``new`` there are two
+      (40 and 24 bytes). Measured with g++ 13.3 and libstdc++.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Copy Elision
       A compiler optimization that eliminates unnecessary copy/move operations when returning objects from functions. Guaranteed in C++17 for certain cases (RVO).
       :doc:`L5 </lectures/lecture5/l5_lecture>`
@@ -556,6 +565,20 @@ D
       ``delete`` on a ``nullptr`` is safe. Only ``delete`` what you
       ``new``.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
+
+   Deleted Function
+      A function that is declared so that calling it is a compile error, and
+      is never defined. The copy constructor of ``std::unique_ptr`` is deleted,
+      so ``std::unique_ptr<RobotStatus> copy{robot};`` does not compile: g++
+      reports "use of deleted function".
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   Deleter
+      What a smart pointer calls to give the memory back. For
+      ``std::unique_ptr<T>`` the default is ``std::default_delete<T>``, which
+      calls ``delete``. A ``std::unique_ptr`` takes another deleter as its
+      second template argument, for example a lambda.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Demangling
       Turning a compiler-generated (mangled) symbol or type name back
@@ -754,6 +777,12 @@ G
       modify them.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   glvalue
+      An expression whose evaluation determines the identity of an object,
+      bit-field or function. In plain words, it names something with an
+      address. A glvalue is an lvalue or an xvalue. C++20 [basic.lval].
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
 
 .. _g-h:
 
@@ -828,6 +857,12 @@ I
       one data type is required but a different type is supplied.
       Does not change the original value or type.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   Indirect Leak
+      A leaked heap block that LeakSanitizer finds reachable only from another
+      leaked block. Two robots that own each other through
+      ``std::shared_ptr``\ s are reported as two indirect leaks.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Inheritance
       An OOP mechanism where a derived class acquires the properties and behaviors of a base class. Supports code reuse and hierarchical relationships.
@@ -925,6 +960,13 @@ L
       type has no name, so you store one with ``auto``.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   LeakSanitizer
+      The leak checker that comes with ``-fsanitize=address``. When the
+      program ends, it reports each heap block that was never freed, with its
+      size and the line that allocated it. AddressSanitizer "integrates
+      LeakSanitizer and enables it by default on supported platforms".
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Lifetime
       The span of program execution during which a variable exists in
       memory. A local variable's lifetime ends at the closing brace of
@@ -956,6 +998,13 @@ L
       block.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   lvalue
+      A glvalue that is not an xvalue: an object that stays after the
+      expression, so you must not take from it. A named variable, ``*ptr``,
+      ``fleet[0]``, a call that returns ``T&``, and a string literal are
+      lvalues. You can take an lvalue's address.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
 
 .. _g-m:
 
@@ -977,6 +1026,20 @@ M
       to be safe to change. Replace it with a named constant or, for a
       fixed set of alternatives, a :term:`Scoped Enumeration`.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::make_shared
+      A function from ``<memory>`` that creates an object on the heap and
+      returns the ``std::shared_ptr`` that owns it. Its arguments go to the
+      object. It puts the object and the control block in one allocation.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   std::make_unique
+      A function from ``<memory>`` that creates an object on the heap and
+      returns the ``std::unique_ptr`` that owns it:
+      ``std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)``.
+      Its arguments go to the object. With it, you write no ``new`` and no
+      ``delete``.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Mangling
       The compiler's encoding of C++ names and types into the unique
@@ -1021,6 +1084,30 @@ M
       order.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
 
+   Move
+      Handing what one object owns to another. A move of a ``std::vector``
+      gives its three pointers (24 bytes) to the new vector and copies no
+      element. A **copy** makes a second object with its own memory: a new
+      block, every element copied. The source of a move still exists, as a
+      moved-from object.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   std::move
+      A cast to an rvalue reference, from ``<utility>``. ``std::move(route)``
+      is an xvalue that marks ``route`` as an object you may take from. It
+      moves nothing by itself: the move happens if a move constructor or a
+      ``&&`` overload takes the result. On a ``const`` object the compiler
+      copies instead, and on a returned local it blocks copy elision.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   Moved-from Object
+      The source of a move. It still exists, and it is destroyed at the end
+      of its scope as usual. The standard leaves moved-from library objects "in
+      a valid but unspecified state" unless it says otherwise, so destroy it or
+      assign it a new value before you use it again. A moved-from
+      ``std::unique_ptr`` is guaranteed to be empty.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    mutable (Lambda)
       A keyword after a lambda's parameter list that lets the body change
       its by-value captures, which are read-only without it. The changed
@@ -1060,16 +1147,6 @@ N
       18446744073709551615. Always compare a ``find`` result against
       ``npos``.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
-
-   Ownership
-      The responsibility for releasing a resource. A raw pointer records
-      no ownership: ``T*`` looks identical whether it owns a heap block,
-      merely observes one, or points at storage that has already been
-      freed. Leaks, double deletes and dangling pointers are all
-      ownership mistakes, which is why C++ expresses ownership in the
-      type instead --- ``std::unique_ptr``, ``std::shared_ptr``, or a
-      container.
-      :doc:`L3 </lectures/lecture3/l3_lecture>`
 
    new
       An operator that dynamically allocates memory on the heap at
@@ -1142,6 +1219,17 @@ O
       ``git remote add origin``.
       :doc:`VC </reading_material/version_control/vc_lecture>`
 
+   Ownership
+      The responsibility for releasing a resource. A raw pointer records
+      no ownership: ``T*`` looks identical whether it owns a heap block,
+      merely observes one, or points at storage that has already been
+      freed. Leaks, double deletes and dangling pointers are all
+      ownership mistakes, which is why C++ expresses ownership in the
+      type instead: ``std::unique_ptr``, ``std::shared_ptr``, or a
+      container. The **owner** of a heap object is the code that deletes it.
+      :doc:`L3 </lectures/lecture3/l3_lecture>`,
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
 .. _g-p:
 
 P
@@ -1204,6 +1292,13 @@ P
       ``std::ranges::sort(fleet, {}, [](const RobotStatus& robot) { return
       robot.battery_pct; })`` sorts the robots by battery. C++20.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
+
+   prvalue
+      An expression whose evaluation initializes an object or computes a
+      value: a value that will fill an object, not an object yet. A literal
+      such as ``42``, ``a + b``, and a call that returns by value are
+      prvalues. You cannot take a prvalue's address.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Pull
       ``fetch`` followed by ``merge``, in one command. Downloads commits from
@@ -1274,6 +1369,13 @@ R
       ``type& identifier{existing_variable};``
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Reference Cycle
+      Objects that own each other through ``std::shared_ptr``\ s. When the
+      outside owners are gone, each count stays at 1, never 0, so no object is
+      deleted and the memory leaks. Make one link a ``std::weak_ptr`` to break
+      the cycle.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Reflog
       A local record of every position ``HEAD`` has held, including commits
       no branch points at any more. The way to recover work after a deleted
@@ -1304,6 +1406,12 @@ R
       with ``&&``, ``||`` and ``!``. C++20.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Reseat
+      To make a pointer own a different object. A function that takes a
+      ``std::unique_ptr<T>&`` may reseat the caller's pointer: the caller keeps
+      ownership, and only what it owns changes.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    reserve
       ``vector::reserve(n)`` allocates a block for at least ``n``
       elements now. Capacity becomes at least ``n``, size does not
@@ -1330,6 +1438,18 @@ R
       width but not the number of rows, and the last index belongs in
       the inner loop.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   rvalue
+      A prvalue or an xvalue: something you may move from. An rvalue
+      reference binds only to rvalues.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
+   rvalue Reference
+      A reference declared with ``&&``, such as ``std::vector<Position>&&``.
+      It binds only to rvalues, and says that whatever it refers to may be
+      taken. A named rvalue reference is an lvalue, so a function must write
+      ``std::move`` again to move from its ``T&&`` parameter.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    std::string
       A class from ``<string>`` that owns its characters and stores its
@@ -1377,6 +1497,14 @@ S
       the outer object still exists and, if it is global, can still be
       reached through ``::name``. Compile with ``-Wshadow`` to be warned.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
+
+   std::shared_ptr
+      A smart pointer that is one of several owners of an object on the
+      heap. The owners share a count in a control block. A copy adds an owner,
+      a move hands one owner's place to another, and the last owner to let go
+      deletes the object. It is two pointers, 16 bytes. Make one with
+      ``std::make_shared``.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Shell
       A program that provides a command-line interface for users to
@@ -1436,6 +1564,13 @@ S
       object is 32 bytes on libstdc++ and holds up to 15 characters in
       place; the number belongs to the implementation.
       :doc:`L4 </lectures/lecture4/l4_lecture>`
+
+   Smart Pointer
+      An object that owns one heap object and deletes it when the smart
+      pointer is destroyed. Its type says it owns, which a raw pointer cannot.
+      Lecture 7 covers ``std::unique_ptr`` (one owner), ``std::shared_ptr``
+      (several owners) and ``std::weak_ptr``, an observer that owns nothing.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Sparse checkout
       Checking out only part of a repository's tree. Combined with a partial
@@ -1657,6 +1792,14 @@ T
       part in overloading.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
+   Temporary Materialization
+      Creating a temporary object from a prvalue when the code needs an
+      object, for example to read a member. In ``make_robot(3).id``, the
+      compiler creates a temporary robot, and the expression becomes an xvalue
+      that names it. The temporary is destroyed at the end of the full
+      expression. C++20 [conv.rval].
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Text Segment
       The region of a process image holding the program's **machine
       code**. Read-only, and shared between processes running the same
@@ -1745,11 +1888,25 @@ U
       segment.
       :doc:`L2 </lectures/lecture2/l2_lecture>`
 
+   std::unique_ptr
+      A smart pointer that is the only owner of one object on the heap. It
+      cannot be copied, only moved, and when it is destroyed it deletes the
+      object. It is 8 bytes with g++ 13.3 and libstdc++, the same as a raw
+      pointer. Make one with ``std::make_unique``.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Upstream
       The remote pointing at the original repository you forked from, by
       convention named ``upstream``. Fetching from it is how a fork is kept
       in sync.
       :doc:`VC </reading_material/version_control/vc_lecture>`
+
+   use_count
+      A member of ``std::shared_ptr`` and ``std::weak_ptr`` that returns how
+      many ``std::shared_ptr``\ s own the object. A copy adds 1, a move leaves
+      it unchanged, and ``reset()`` or destroying an owner subtracts 1. The
+      object is deleted when the count reaches 0.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    using Declaration
       Imports a **single** name from a namespace into the current scope:
@@ -1791,6 +1948,14 @@ V
       memory errors. Essential for C++ development with raw pointers.
       :doc:`L3 </lectures/lecture3/l3_lecture>`
 
+   Value Category
+      The property of an expression that says whether it names an object,
+      and whether that object's resources may be taken. Every expression is
+      exactly one of lvalue, xvalue or prvalue, and ``decltype((e))`` tells
+      which: ``T&``, ``T&&`` or ``T``. The **type** of an expression is a
+      separate property.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Variable
       A symbolic name for a storage location that holds data. Has five
       characteristics: type, name (identifier), scope, lifetime, and
@@ -1825,6 +1990,14 @@ W
 
 .. glossary::
 
+   std::weak_ptr
+      A smart pointer that watches an object that ``std::shared_ptr``\ s own.
+      It does not add to the count, so it never keeps the object alive. It has
+      no ``->`` and no ``*``: ``lock()`` returns a ``std::shared_ptr`` to the
+      object, or an empty one if the object is gone, and ``expired()`` is
+      ``true`` when the count is 0. It breaks reference cycles.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
+
    Wild Pointer
       A pointer that has not been initialized to a known memory
       address. Holds a garbage value pointing to an unknown location.
@@ -1846,6 +2019,21 @@ W
       files. Workspace-specific settings are stored in the ``.vscode``
       folder and take precedence over user settings.
       :doc:`L1 </lectures/lecture1/l1_lecture>`
+
+
+.. _g-x:
+
+X
+=
+
+.. glossary::
+
+   xvalue
+      A glvalue that denotes an object whose resources can be reused, usually
+      because it is near the end of its lifetime: an object you may take from.
+      ``std::move(route)``, a cast to ``T&&``, and a member of an xvalue are
+      xvalues. Naming an xvalue moves nothing.
+      :doc:`L7 </lectures/lecture7/l7_lecture>`
 
 
 .. _g-z:

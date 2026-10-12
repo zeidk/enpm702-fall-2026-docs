@@ -1,15 +1,12 @@
 .. _l7_quiz:
 
-====================================================
-Quiz
-====================================================
+================
+Lecture 7 Quiz
+================
 
-This quiz covers the key concepts from Lecture 7: Smart Pointers and Move
-Semantics. Topics include value categories (lvalues, prvalues, xvalues),
-rvalue references, ``std::move``, ``std::unique_ptr`` (exclusive ownership,
-methods, move semantics), ``std::shared_ptr`` (reference counting, control
-blocks), ``std::weak_ptr`` (non-owning observation, ``lock()``, ``expired()``),
-``std::make_unique``, ``std::make_shared``, and RAII.
+This quiz covers the key concepts from Lecture 7: Smart Pointers and Move Semantics. Topics include the owner of a heap object and the leak LeakSanitizer reports, moves, value categories, rvalue references, ``std::move``, ``std::unique_ptr``, ``std::shared_ptr``, ``std::weak_ptr``, and reference cycles. Question 15 comes from the Further Reading part of the lecture.
+
+The code uses the fleet types ``Position`` and ``RobotStatus`` from ``project/week7/common/fleet.hpp``, and ``make_route(n)`` returns a ``std::vector<Position>`` of ``n`` waypoints, as in the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3 and libstdc++, with ``-std=c++20 -Wall -Wextra -fsanitize=address,undefined``.
 
 .. note::
 
@@ -24,352 +21,465 @@ blocks), ``std::weak_ptr`` (non-owning observation, ``lock()``, ``expired()``),
 ----
 
 
-Multiple Choice (Questions 1-10)
-==================================
+Multiple Choice (Questions 1 to 10)
+=====================================
 
 .. admonition:: Question 1
    :class: hint
 
-   Which value category does the expression ``std::move(x)`` produce, where
-   ``x`` is a named variable?
+   In Lecture 7, what makes a piece of code the **owner** of a heap object?
 
-   A. lvalue
+   A. It holds a pointer to the object.
+   B. It is the code that deletes the object.
+   C. It called the function that created the object.
+   D. It reads the object more often than any other code.
 
-   B. prvalue
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   C. xvalue
+      **B. It is the code that deletes the object.**
 
-   D. glvalue (but not lvalue or xvalue)
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **C**, xvalue
-
-   ``std::move(x)`` performs a ``static_cast<T&&>`` on ``x``, converting the
-   lvalue into an xvalue. An xvalue has identity (it still refers to ``x``)
-   but can be moved from.
-
+      The owner of a heap object is the code that deletes it, and each object needs exactly one owner. Holding a pointer is not enough: a ``RobotStatus*`` looks the same whether it owns the robot or only points at it. The Core Guidelines say so in R.3: "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns, and a smart pointer is that type.
 
 .. admonition:: Question 2
    :class: hint
 
-   What does ``std::move`` actually do at runtime?
+   ``make_robot`` creates a robot with ``new``:
 
-   A. It transfers ownership of the object's resources to a new location.
+   .. code-block:: cpp
 
-   B. It calls the move constructor of the object.
+      RobotStatus* make_robot(int id, double battery_pct) {
+        return new RobotStatus{id, battery_pct, {0.0, 0.0}, false};
+      }
 
-   C. It performs a ``static_cast`` to an rvalue reference, no data is moved.
+      bool needs_charge(int id) {
+        RobotStatus* robot{make_robot(id, 64.0)};
+        if (robot->battery_pct > 20.0) {
+          return false;  // leaves without delete
+        }
+        delete robot;
+        return true;
+      }
 
-   D. It swaps the contents of two objects.
+   You compile with ``-fsanitize=address`` and call ``needs_charge(3)``. What happens?
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   A. The code does not compile, because one path has no ``delete``.
+   B. The program crashes at ``return false;``.
+   C. The call returns ``false``. When the program ends, LeakSanitizer reports a leak of 40 bytes and names the line that called ``new``.
+   D. Nothing is reported, because the program ends and the memory goes back to the system.
 
-   **C**, It performs a ``static_cast`` to an rvalue reference, no data is moved.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   ``std::move`` does not move anything. It simply casts an lvalue to an
-   xvalue (type ``T&&``), which allows the compiler to select move
-   constructors or move assignment operators. The actual transfer of
-   resources happens in those constructors/operators.
+      **C. The call returns false. When the program ends, LeakSanitizer reports a leak of 40 bytes and names the line that called new.**
 
+      The robot has 64.0 % battery, which is more than 20.0, so the function returns ``false`` before it reaches ``delete``. The compiler does not check that every path deletes. A ``main`` that prints the result gives this output, with the stack trace shortened:
+
+      .. code-block:: text
+
+         needs_charge(3): false
+
+         =================================================================
+         ==1850352==ERROR: LeakSanitizer: detected memory leaks
+
+         Direct leak of 40 byte(s) in 1 object(s) allocated from:
+             #0 0x7cb7f1afe548 in operator new(unsigned long) ...
+
+         SUMMARY: AddressSanitizer: 40 byte(s) leaked in 1 allocation(s).
+
+      40 bytes is one ``RobotStatus``, the size measured in Lecture 6. You do not need a separate flag: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms".
 
 .. admonition:: Question 3
    :class: hint
 
-   Given the following code, what happens at the line marked ``// ???``?
+   Given these declarations:
 
    .. code-block:: cpp
 
-      auto u = std::make_unique<int>(42);
-      auto v{u};  // ???
+      std::vector<Position> route{make_route(3)};
+      std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
+      int a{2};
+      int b{3};
 
-   A. ``v`` is initialized with a copy of ``u``, and both manage the same resource.
+   Here ``make_robot(int)`` returns a ``RobotStatus`` by value. Which expression is a **prvalue**?
 
-   B. Compilation error: ``std::unique_ptr`` is non-copyable.
+   A. ``route``
+   B. ``fleet[0]``
+   C. ``"dock"``
+   D. ``a + b``
 
-   C. ``u`` is moved into ``v``, and ``u`` becomes ``nullptr``.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   D. Undefined behavior.
+      **D. a + b**
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+      A prvalue is a value that will initialize an object. No object exists yet. ``a + b`` is a built-in arithmetic result, so it is a prvalue. ``route`` and ``fleet[0]`` name objects that live on after the expression: they are lvalues. A string literal such as ``"dock"`` is an array with an address, so it is an lvalue too.
 
-   **B**, Compilation error: ``std::unique_ptr`` is non-copyable.
+      The program prints each category with the ``decltype((e))`` test from the lecture:
 
-   ``std::unique_ptr`` enforces exclusive ownership by deleting its copy
-   constructor. To transfer ownership, you must use ``std::move``:
-   ``auto v{std::move(u)};``.
+      .. code-block:: text
 
+         route: lvalue
+         fleet[0]: lvalue
+         "dock": lvalue
+         a + b: prvalue
+
+      You can also try to take the address. ``&fleet[0]`` compiles, but ``&(a + b)`` does not:
+
+      .. code-block:: text
+
+         error: lvalue required as unary ‘&’ operand
 
 .. admonition:: Question 4
    :class: hint
 
-   What is the correct way to initialize a ``std::unique_ptr``?
+   What is ``decltype((r))`` here?
 
-   A. ``std::unique_ptr<int> u = new int(10);``
+   .. code-block:: cpp
 
-   B. ``auto u = std::make_unique<int>(10);``
+      std::vector<Position>&& r{make_route(10)};
 
-   C. ``std::unique_ptr<int> u{10};``
+   A. ``std::vector<Position>``
+   B. ``std::vector<Position>&``
+   C. ``std::vector<Position>&&``
+   D. ``const std::vector<Position>&``
 
-   D. ``auto u = std::unique_ptr<int>::create(10);``
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+      **B. std::vector<Position>&**
 
-   **B**, ``auto u = std::make_unique<int>(10);``
+      The **type** of ``r`` is an rvalue reference, ``std::vector<Position>&&``. That is what ``decltype(r)`` gives, with one pair of parentheses. The **expression** ``r`` is an lvalue: it has a name, and you can use it again on the next line. ``decltype((e))`` gives ``T&`` for an lvalue, so ``decltype((r))`` is ``std::vector<Position>&``. Both of these compile:
 
-   ``std::make_unique`` is the preferred way to create a ``std::unique_ptr``.
-   It is exception-safe and avoids the need to use ``new`` directly
-   (C++ Core Guideline R.23).
+      .. code-block:: cpp
 
+         static_assert(std::is_same_v<decltype(r), std::vector<Position>&&>);
+         static_assert(std::is_same_v<decltype((r)), std::vector<Position>&>);
+
+      So a function with a ``T&&`` parameter must write ``std::move`` again to move from it.
 
 .. admonition:: Question 5
    :class: hint
 
-   What happens when you call ``release()`` on a ``std::unique_ptr``?
+   ``route`` holds 1000 waypoints, and each ``Position`` is 16 bytes.
 
-   A. The managed resource is deleted and the pointer is set to ``nullptr``.
+   .. code-block:: cpp
 
-   B. The ``unique_ptr`` gives up ownership and returns a raw pointer; the
-      caller is responsible for calling ``delete``.
+      std::vector<Position> route{make_route(1000)};
+      const Position* where{route.data()};
+      std::vector<Position> moved{std::move(route)};
 
-   C. The ``unique_ptr`` is reset to manage a new resource.
+   How many bytes does the move hand from ``route`` to ``moved``?
 
-   D. The ``unique_ptr`` shares ownership with another smart pointer.
+   A. 16000
+   B. 1000
+   C. 24
+   D. 0
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **B**, The ``unique_ptr`` gives up ownership and returns a raw pointer;
-   the caller is responsible for calling ``delete``.
+      **C. 24**
 
-   After ``release()``, the ``unique_ptr`` is set to ``nullptr`` and no
-   longer manages any resource. The returned raw pointer must be explicitly
-   deleted to avoid a memory leak.
+      ``route`` owns its heap block through three pointers: begin, end and capacity. The move gives those three pointers to ``moved`` and sets ``route``'s to null (libstdc++). No element is copied and nothing is allocated. Only the ``std::vector`` object itself changes hands, and it is 24 bytes, whatever the vector holds. The program prints:
 
+      .. code-block:: text
+
+         moved.data() == where: true
+         sizeof(std::vector<Position>): 24
+         sizeof(Position): 16
+
+      ``moved.data() == where`` shows that ``moved`` holds the same block. A copy would allocate a new block and copy every element: 1000 times 16 bytes, which is 16000 bytes.
 
 .. admonition:: Question 6
    :class: hint
 
-   What is a control block in the context of ``std::shared_ptr``?
+   What happens here?
 
-   A. A compiler-generated structure that tracks all smart pointers in a program.
+   .. code-block:: cpp
 
-   B. A heap-allocated data structure that holds reference counts (strong and
-      weak), a managed pointer, a deleter, and allocator information.
+      const std::vector<Position> route{make_route(1000)};
+      std::vector<Position> robot_route{std::move(route)};
 
-   C. A stack-allocated structure that stores the managed object.
+   A. It does not compile, because a ``const`` object cannot be moved.
+   B. It moves: ``robot_route`` takes the block, and ``route`` is left empty.
+   C. It compiles with no warning, and it copies: ``route`` still holds 1000 waypoints.
+   D. It is undefined behavior.
 
-   D. A thread-local structure that prevents data races on smart pointers.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+      **C. It compiles with no warning, and it copies: route still holds 1000 waypoints.**
 
-   **B**, A heap-allocated data structure that holds reference counts
-   (strong and weak), a managed pointer, a deleter, and allocator information.
+      ``std::move(route)`` has type ``const std::vector<Position>&&``. It cannot bind to the move constructor's ``std::vector<Position>&&``, which would change ``route``. It does bind to the copy constructor's ``const std::vector<Position>&``, so the compiler copies. With ``-Wall -Wextra``, g++ prints no warning. The program prints:
 
-   The control block is created when the first ``std::shared_ptr`` is
-   constructed. All copies of that ``shared_ptr`` share the same control
-   block. The managed resource is destroyed when the strong count reaches
-   zero, and the control block itself is destroyed when both strong and weak
-   counts reach zero.
+      .. code-block:: text
 
+         robot_route.data() == route.data(): false, route.size(): 1000
+
+      A ``const`` object cannot be moved from. Declare an object ``const`` only if you will not hand it on.
 
 .. admonition:: Question 7
    :class: hint
 
-   Given the following code, what is the value of ``s2.use_count()`` on the
-   last line?
+   You compile this with ``-Wall -Wextra``:
 
    .. code-block:: cpp
 
-      auto s1 = std::make_shared<int>(10);
-      auto s2{s1};
-      auto s3 = s2;
-      s1.reset();
+      std::vector<Position> plan_route(int n) {
+        std::vector<Position> route{make_route(n)};
+        return std::move(route);
+      }
 
-   A. 1
+      std::vector<Position> path{plan_route(1000)};
 
-   B. 2
+   What does g++ say?
 
-   C. 3
+   A. Nothing. The ``std::move`` makes the return faster.
+   B. It warns that moving a local object in a return statement prevents copy elision.
+   C. It stops with an error: ``std::move`` cannot be used in a ``return``.
+   D. It warns that ``route`` is copied into ``path``.
 
-   D. 0
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+      **B. It warns that moving a local object in a return statement prevents copy elision.**
 
-   **B**, 2
+      .. code-block:: text
 
-   After creation, ``s1``, ``s2``, and ``s3`` all share ownership (strong
-   count = 3). When ``s1.reset()`` is called, ``s1`` releases its ownership,
-   decrementing the strong count to 2. Both ``s2`` and ``s3`` still share
-   ownership of the resource.
+         q07.cpp:17:19: warning: moving a local object in a return statement prevents copy elision [-Wpessimizing-move]
+            17 |   return std::move(route);
+               |          ~~~~~~~~~^~~~~~~
+         q07.cpp:17:19: note: remove ‘std::move’ call
 
+      Lecture 5: a local returned by value is constructed in place, or moved if it cannot be. It is never copied. ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place. The program still runs (``path.size()`` is 1000), but you lost the in-place construction. Write ``return route;``. The Core Guidelines rule is F.48: "Don't ``return std::move(local)``".
 
 .. admonition:: Question 8
    :class: hint
 
-   Which smart pointer should you use to break circular references?
+   ``retire`` takes ownership of a robot:
 
-   A. ``std::unique_ptr``
+   .. code-block:: cpp
 
-   B. ``std::shared_ptr``
+      std::vector<std::unique_ptr<RobotStatus>> retired;
 
-   C. ``std::weak_ptr``
+      void retire(std::unique_ptr<RobotStatus> robot) {  // takes ownership
+        retired.push_back(std::move(robot));
+      }
 
-   D. ``std::auto_ptr``
+      auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)};
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   Which call compiles?
 
-   **C**, ``std::weak_ptr``
+   A. ``retire(robot);``
+   B. ``retire(std::move(robot));``
+   C. ``retire(robot.get());``
+   D. ``retire(*robot);``
 
-   ``std::weak_ptr`` provides non-owning observation of a resource managed
-   by ``std::shared_ptr``. It does not increment the strong reference count,
-   which breaks circular dependency chains that would otherwise prevent
-   resources from being deallocated.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
+      **B. retire(std::move(robot));**
+
+      The parameter is taken by value, so it is a new owner. The caller must hand the robot over with ``std::move``, and the call shows that ownership moves. After it, the program prints:
+
+      .. code-block:: text
+
+         robot == nullptr: true, retired.size(): 1
+
+      The other three do not compile. A would copy a ``std::unique_ptr``, and its copy constructor is deleted:
+
+      .. code-block:: text
+
+         error: use of deleted function ‘std::unique_ptr<_Tp, _Dp>::unique_ptr(const std::unique_ptr<_Tp, _Dp>&) [with _Tp = RobotStatus; _Dp = std::default_delete<RobotStatus>]’
+
+      C passes a plain ``RobotStatus*``, and D passes a ``RobotStatus``. g++ rejects both with "could not convert ... to ‘std::unique_ptr<RobotStatus>’". The Core Guidelines rule is R.32: "Take a ``unique_ptr<widget>`` parameter to express that a function assumes ownership of a ``widget``".
 
 .. admonition:: Question 9
    :class: hint
 
-   What does the ``lock()`` method of ``std::weak_ptr`` return?
+   What does ``robot.use_count()`` return after the last line?
 
-   A. A raw pointer to the managed resource.
+   .. code-block:: cpp
 
-   B. A ``bool`` indicating whether the resource is still valid.
+      auto robot{std::make_shared<RobotStatus>(3, 14.0, Position{2.0, 3.0}, false)};
+      std::shared_ptr<RobotStatus> in_fleet{robot};
+      std::shared_ptr<RobotStatus> in_queue{robot};
+      std::shared_ptr<RobotStatus> moved{std::move(in_queue)};
+      in_fleet.reset();
 
-   C. A ``std::shared_ptr`` that shares ownership if the resource is still
-      alive, or an empty ``std::shared_ptr`` if it has expired.
+   A. 1
+   B. 2
+   C. 3
+   D. 4
 
-   D. A reference to the managed object.
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+      **B. 2**
 
-   **C**, A ``std::shared_ptr`` that shares ownership if the resource is
-   still alive, or an empty ``std::shared_ptr`` if it has expired.
+      Count the owners line by line:
 
-   ``lock()`` atomically checks whether the strong count is greater than
-   zero. If so, it increments the strong count and returns a new
-   ``std::shared_ptr``. If the object has already been destroyed, it returns
-   an empty ``std::shared_ptr``.
+      1. ``std::make_shared`` creates the robot with one owner, ``robot``: 1.
+      2. ``in_fleet`` is a copy, one more owner: 2.
+      3. ``in_queue`` is a copy, one more owner: 3.
+      4. ``moved`` takes ``in_queue``'s place. A move hands one owner's place to another, so the count stays at 3, and ``in_queue`` is left empty.
+      5. ``in_fleet.reset()`` gives up this owner's place: 2.
 
+      The two owners left are ``robot`` and ``moved``. The program prints ``robot.use_count(): 2``.
 
 .. admonition:: Question 10
    :class: hint
 
-   Which expression is an lvalue?
+   Two robots are partners, and each holds the other in a ``std::shared_ptr``:
 
-   A. ``42``
+   .. code-block:: cpp
 
-   B. ``x + y``
+      struct Robot {
+        RobotStatus status;
+        std::shared_ptr<Robot> partner;
+      };
 
-   C. ``std::move(v)``
+      {
+        auto a{std::make_shared<Robot>(RobotStatus{1, 82.5})};
+        auto b{std::make_shared<Robot>(RobotStatus{2, 35.0})};
+        a->partner = b;  // a owns b
+        b->partner = a;  // b owns a
+        std::cout << "a.use_count(): " << a.use_count() << ", b.use_count(): " << b.use_count()
+                  << '\n';
+      }  // a and b are destroyed here
+      std::cout << "end of main\n";
 
-   D. ``arr[3]``
+   What happens to the two robots at the closing brace?
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   A. Both robots are deleted, because ``a`` and ``b`` are destroyed.
+   B. Only robot 1 is deleted, because ``a`` was created first.
+   C. Neither is deleted. Each count drops from 2 to 1, never to 0, and LeakSanitizer reports both robots at exit.
+   D. The code does not compile, because a ``struct`` cannot hold a ``std::shared_ptr`` to its own type.
 
-   **D**, ``arr[3]``
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   ``arr[3]`` names a specific memory location and has identity, you can
-   take its address with ``&arr[3]``. The literal ``42`` and the expression
-   ``x + y`` are prvalues (temporaries). ``std::move(v)`` is an xvalue.
+      **C. Neither is deleted. Each count drops from 2 to 1, never to 0, and LeakSanitizer reports both robots at exit.**
+
+      Inside the block, each robot has two owners: its own variable and the other robot's ``partner``. When ``a`` and ``b`` are destroyed, each count drops to 1. Each robot keeps the other alive, and nothing outside can reach either. The output, with the stack traces left out:
+
+      .. code-block:: text
+
+         a.use_count(): 2, b.use_count(): 2
+         end of main
+
+         =================================================================
+         ==1850356==ERROR: LeakSanitizer: detected memory leaks
+
+         Indirect leak of 72 byte(s) in 1 object(s) allocated from:
+
+         Indirect leak of 72 byte(s) in 1 object(s) allocated from:
+
+         SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
+
+      Each allocation is 72 bytes: a ``Robot`` (40 bytes for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation. **Indirect** means each robot is reachable only from the other leaked robot. The fix is a ``std::weak_ptr<Robot> partner``, which does not add to the count. The Core Guidelines rule is R.24: "Use ``std::weak_ptr`` to break cycles of ``shared_ptr``\ s".
 
 
-----
-
-
-True/False (Questions 11-15)
-==============================
+True/False (Questions 11 to 15)
+=================================
 
 .. admonition:: Question 11
    :class: hint
 
-   **True or False:** An rvalue reference variable (e.g., ``int&& rref{10 + 20};``)
-   is itself an lvalue.
+   **True or False**: The statement ``std::move(route);`` on a line of its own moves the 1000 waypoints out of ``route``, so ``route.size()`` is 0 afterwards.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **True**
+      **False.**
 
-   Although ``rref``'s type is ``int&&`` (rvalue reference), the expression
-   ``rref`` itself is an lvalue because it has a name, persists across
-   statements, and you can take its address.
+      ``std::move(route)`` is a cast to ``std::vector<Position>&&``. Its result is an xvalue: it marks ``route`` as "may be taken". The move happens later, if a move constructor or a ``&&`` overload takes the result. Here nothing does, so ``route.size()`` is still 1000. g++ warns, because the result is unused:
 
+      .. code-block:: text
+
+         q11.cpp:17:12: warning: ignoring return value of ‘constexpr typename std::remove_reference<_Tp>::type&& std::move(_Tp&&) [with _Tp = vector<Position>&; typename remove_reference<_Tp>::type = vector<Position>]’, declared with attribute ‘nodiscard’ [-Wunused-result]
 
 .. admonition:: Question 12
    :class: hint
 
-   **True or False:** After calling ``std::move(v)`` on a ``std::vector``,
-   the vector ``v`` is immediately destroyed.
+   **True or False**: After ``std::unique_ptr<RobotStatus> other{std::move(robot)};``, the C++ standard guarantees that ``robot`` is empty. After you move a ``std::vector``, the standard does not guarantee that the source vector is empty.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **False**
+      **True.**
 
-   ``std::move`` does not destroy the object. It casts ``v`` to an xvalue,
-   giving permission to move from it. After a move, ``v`` remains a valid
-   object in an unspecified (but typically empty) state. It is not destroyed
-   until it goes out of scope.
+      For the move constructor of ``std::unique_ptr``, C++20 [unique.ptr.single.ctor] states the postcondition ``u.get() == nullptr``. The program prints:
 
+      .. code-block:: text
+
+         robot == nullptr: true, other->id: 3
+
+      For other library types, C++20 [lib.types.movedfrom] says only that moved-from objects are left "in a valid but unspecified state". libstdc++ leaves a moved-from ``std::vector`` empty, but another library may not. With a moved-from vector, you may destroy it or assign it a new value, and then use it as before.
 
 .. admonition:: Question 13
    :class: hint
 
-   **True or False:** ``std::make_shared`` is preferred over using ``new``
-   with ``std::shared_ptr`` because it performs a single allocation for both
-   the managed object and the control block.
+   **True or False**: Making a ``std::weak_ptr`` from a ``std::shared_ptr`` adds 1 to ``use_count()``.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **True**
+      **False.**
 
-   ``std::make_shared`` typically allocates the control block and the managed
-   object in a single memory allocation, which is more efficient and
-   exception-safe compared to ``std::shared_ptr<T>(new T(...))`` which
-   requires two separate allocations (C++ Core Guideline R.22).
+      A ``std::weak_ptr`` watches the robot without owning it, so the count does not change. In this program, ``robot`` is the only owner:
 
+      .. code-block:: cpp
+
+         auto robot{std::make_shared<RobotStatus>(3, 14.0, Position{2.0, 3.0}, false)};
+         std::weak_ptr<RobotStatus> watch{robot};
+         std::cout << std::boolalpha;
+         std::cout << "robot.use_count(): " << robot.use_count() << ", watch.expired(): " << watch.expired()
+                   << '\n';
+         robot.reset();  // the only owner lets go
+         std::cout << "watch.use_count(): " << watch.use_count() << ", watch.expired(): " << watch.expired()
+                   << '\n';
+
+      .. code-block:: text
+
+         robot.use_count(): 1, watch.expired(): false
+         watch.use_count(): 0, watch.expired(): true
+
+      The count stays at 1 while ``watch`` exists, and the robot is deleted as soon as ``robot`` lets go. This is why a ``std::weak_ptr`` can break a reference cycle.
 
 .. admonition:: Question 14
    :class: hint
 
-   **True or False:** You can directly dereference a ``std::weak_ptr`` using
-   the ``*`` operator to access the managed resource.
+   **True or False**: A ``std::unique_ptr`` converts to a ``std::shared_ptr``, and a ``std::shared_ptr`` converts back to a ``std::unique_ptr``.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **False**
+      **False.**
 
-   ``std::weak_ptr`` does not provide ``operator*`` or ``get()``. It is a
-   non-owning observer that requires promotion to ``std::shared_ptr`` via
-   ``lock()`` before the managed resource can be accessed.
+      Only the first direction works. ``std::shared_ptr<RobotStatus> robot{make_robot(5)};`` compiles when ``make_robot`` returns a ``std::unique_ptr``: one owner becomes the first of several. The other direction does not compile:
 
+      .. code-block:: text
+
+         error: no matching function for call to ‘std::unique_ptr<RobotStatus>::unique_ptr(<brace-enclosed initializer list>)’
+
+      Other owners may exist, and a ``std::unique_ptr`` must be the only one. So a function that creates a robot returns a ``std::unique_ptr``, and the caller turns it into a ``std::shared_ptr`` if it needs to share.
 
 .. admonition:: Question 15
    :class: hint
 
-   **True or False:** When all ``std::shared_ptr`` instances managing a
-   resource are destroyed, the control block is also immediately destroyed,
-   even if ``std::weak_ptr`` instances still reference it.
+   **True or False**: ``other`` is a ``std::unique_ptr<RobotStatus>``. The line ``bool has_robot = other;`` compiles, because a ``std::unique_ptr`` converts to ``bool``.
 
-.. dropdown:: Answer
-   :class-container: sd-border-success
+   .. dropdown:: Answer
+      :class-container: sd-border-success
 
-   **False**
+      **False.**
 
-   When the strong count reaches zero, the managed resource (object) is
-   destroyed. However, the control block persists as long as any
-   ``std::weak_ptr`` instances reference it (weak count > 0). The control
-   block is only destroyed when both the strong count and weak count reach
-   zero.
+      The conversion to ``bool`` is ``explicit``. A condition may use it, so ``if (other)`` and ``!other`` work. The initialization with ``=`` does not:
+
+      .. code-block:: text
+
+         error: cannot convert ‘std::unique_ptr<RobotStatus, std::default_delete<RobotStatus> >’ to ‘bool’ in initialization
+
+      Write ``bool has_robot{other != nullptr};`` instead. ``if (other)``, ``!other`` and ``other == nullptr`` all test for empty, and the same works for ``std::shared_ptr``.
