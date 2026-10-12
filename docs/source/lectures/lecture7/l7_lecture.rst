@@ -1424,7 +1424,6 @@ Dangling Read, Measured
 
 .. code-block:: cpp
 
-   // A route of n waypoints, one meter apart along an aisle.
    std::vector<Position> make_route(int n) {
      std::vector<Position> route;
      for (int i{0}; i < n; ++i) {
@@ -1433,7 +1432,7 @@ Dangling Read, Measured
      return route;
    }
 
-- Waypoint ``i`` is at x = ``i`` meters along the aisle and y = 0 (Lecture 6's ``Position``).
+- It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (Lecture 6's ``Position``).
 - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
 - It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
