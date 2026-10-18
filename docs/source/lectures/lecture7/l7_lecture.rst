@@ -195,6 +195,20 @@ The Leak, Measured
      return true;
    }
 
+.. dropdown:: The Definition of ``make_robot`` with a Battery Level
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      RobotStatus* make_robot(int id, double battery_pct) {
+        return new RobotStatus{id, battery_pct, {0.0, 0.0}, false};
+      }
+
+   - `A Robot on the Heap`_'s ``make_robot``, with the battery level as a second parameter. The caller must ``delete`` the robot.
+   - `The Leak, Fixed`_ and Further Reading's `Double Delete, Measured`_ and `Dangling Read, Measured`_ call it too.
+
 .. code-block:: text
 
    ==1714457==ERROR: LeakSanitizer: detected memory leaks
@@ -397,6 +411,24 @@ An **lvalue** names an object that lives on after the expression. Test: you can 
 - ``"dock"``: a string literal, an array with an address.
 
 ``702run week7_playground 18`` prints ``lvalue`` for all five.
+
+.. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      RobotStatus make_robot(int id) {
+        return {id, 100.0, {0.0, 0.0}, false};
+      }
+
+      RobotStatus& first_robot(std::vector<RobotStatus>& fleet) {
+        return fleet[0];
+      }
+
+   - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 1: Value Categories`_ use it.
+   - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
 
 prvalues
 ^^^^^^^^
