@@ -403,8 +403,8 @@ The Five Definitions
 
    Paragraph 3: "Despite their names, these terms classify expressions, not values." The same variable can appear in an lvalue and in an xvalue.
 
-lvalues, Step 1: A Name for an Object
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue, Step 1: A Named Object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An **lvalue** is an expression that refers to an object that already exists, and does not mark the object as one you may take from.
 
@@ -421,11 +421,11 @@ An **lvalue** is an expression that refers to an object that already exists, and
    count: 4, where == &count: true
 
 - An **object** is a piece of memory that holds a value. Line 1 makes one and names it ``count``.
-- In line 2, ``count`` is an lvalue. Check 1: it refers to the object from line 1, which already exists. Check 2: it is a plain name, so nothing marks the object as one you may take from (only ``std::move`` and a few others do, `xvalues, Step 1: Marked for Taking`_).
+- In line 2, ``count`` is an lvalue. Check 1: it refers to the object from line 1, which already exists. Check 2: it is a plain name, so nothing marks the object as one you may take from (only ``std::move`` and a few others do, `xvalue, Step 1: std::move`_).
 - In line 3, ``count`` in ``&count`` is an lvalue for the same two reasons. It reaches the same object, at the same address.
 
-lvalues, Step 2: The ``&`` Test
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue, Step 2: The ``&`` Test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -441,11 +441,11 @@ lvalues, Step 2: The ``&`` Test
 
 - ``&`` asks for the address of an object. So it needs an object that stays in memory.
 - In line 2, ``count`` is an lvalue: it refers to the object from line 1 (Step 1). So ``&count`` compiles.
-- In line 3, ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalues, Step 1: A Value, Not an Object`_ says what it is.
+- In line 3, ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalue, Step 1: A Computed Value`_ says what it is.
 - For an expression of a built-in type such as ``int``: if ``&`` compiles on it, it is an lvalue.
 
-lvalues, Step 3: Three More, with Why
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue, Step 3: Three More
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -462,8 +462,8 @@ With the declarations above, each expression below passes both checks of the def
 
 ``702run week7_playground 22`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
-lvalues, Step 4: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue, Step 4: The Fleet
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An **lvalue** refers to an object that already exists and does not mark it as one you may take from (Step 1). Test: ``&`` compiles on it.
 
@@ -503,8 +503,8 @@ With the declarations above, each expression below refers to an object that alre
    - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 1: Value Categories`_ use it.
    - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
 
-prvalues, Step 1: A Value, Not an Object
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue, Step 1: A Computed Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A **prvalue** is an expression that does not refer to an object that already exists. It computes a value, and that value can initialize a new object.
 
@@ -521,10 +521,10 @@ A **prvalue** is an expression that does not refer to an object that already exi
 
 - Check 1 of the lvalue definition: does ``count + 1`` refer to an object that already exists? No. It computes 4, and no object held that 4 before line 2.
 - The 4 initializes ``next``, a new object. ``count`` is unchanged.
-- Check 1 fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalues, Step 2: The & Test`_).
+- Check 1 fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalue, Step 2: The & Test`_).
 
-prvalues, Step 2: Three More, with Why
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue, Step 2: Three More
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -545,8 +545,8 @@ With the declarations above, each expression below computes a value and refers t
 
 ``702run week7_playground 26`` prints ``prvalue`` for all three.
 
-prvalues, Step 3: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue, Step 3: The Fleet
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A **prvalue** refers to no object that already exists; it computes a value (Step 1). Test: ``&`` does not compile on it.
 
@@ -570,8 +570,8 @@ With the declarations above, each expression below is a prvalue:
 
 ``702run week7_playground 27`` prints ``prvalue`` for all five.
 
-xvalues, Step 1: Marked for Taking
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue, Step 1: std::move
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An **xvalue** is an expression that refers to an object that already exists, and marks the object as one you may take from.
 
@@ -590,8 +590,8 @@ An **xvalue** is an expression that refers to an object that already exists, and
 - Check 2: ``std::move`` marks that object as one you may take from.
 - Both hold, so in line 3, ``std::move(name)`` is an xvalue. ``other`` then takes the characters: same address, and ``name`` is left empty (libstdc++, measured).
 
-xvalues, Step 2: Three Ways to Mark
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue, Step 2: Ways to Mark
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -607,8 +607,8 @@ xvalues, Step 2: Three Ways to Mark
 
 ``702run week7_playground 30`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
 
-xvalues, Step 3: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue, Step 3: The Fleet
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 An **xvalue** refers to an object that already exists and marks it as one you may take from (Step 1). Marking it moves nothing.
 
