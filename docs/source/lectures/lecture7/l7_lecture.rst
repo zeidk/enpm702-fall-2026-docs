@@ -460,7 +460,7 @@ With the declarations above, each expression below passes both checks of the def
 - ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does. Nothing marks it, so ``numbers[2]`` is an lvalue.
 - ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]``. Nothing marks it, so ``*p`` is an lvalue.
 
-``702run week7_playground 21`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
+``702run week7_playground 22`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
 lvalues, Step 4: In the Fleet Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -483,7 +483,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
 - ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 22`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 23`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
    :icon: code
@@ -543,7 +543,7 @@ With the declarations above, each expression below computes a value and refers t
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 24`` prints ``prvalue`` for all three.
+``702run week7_playground 26`` prints ``prvalue`` for all three.
 
 prvalues, Step 3: In the Fleet Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -568,7 +568,7 @@ With the declarations above, each expression below is a prvalue:
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 25`` prints ``prvalue`` for all five.
+``702run week7_playground 27`` prints ``prvalue`` for all five.
 
 xvalues, Step 1: Marked for Taking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -605,7 +605,7 @@ xvalues, Step 2: Three Ways to Mark
 - ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
 - ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
 
-``702run week7_playground 27`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+``702run week7_playground 30`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
 
 xvalues, Step 3: In the Fleet Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -624,7 +624,7 @@ An **xvalue** refers to an object that already exists and marks it as one you ma
 - ``static_cast<std::vector<Position>&&>(route)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(robot).route``: ``std::move`` marks ``robot``, so its member ``route`` is marked too. Its ``decltype((e))`` is ``T&&`` as well (`The decltype Test`_).
 
-``702run week7_playground 28`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 31`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -720,7 +720,7 @@ Exercise 1: Value Categories
    make_robot(n).battery_pct   // 9
    ++n                         // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 32``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 36``.
 
 rvalue References
 ^^^^^^^^^^^^^^^^^
@@ -1007,7 +1007,7 @@ The Leak, Fixed
      return true;     // and here
    }
 
-- ``702run week7_playground 45`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
+- ``702run week7_playground 50`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
 - Every path out of the function destroys ``robot``, and ``robot``'s destructor deletes the ``RobotStatus``. There is no ``delete`` to forget.
 
 One Owner Only
@@ -1230,7 +1230,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 55`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 60`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1257,7 +1257,7 @@ Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet.
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 48, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 53, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1356,7 +1356,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 61``.
+- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 66``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
    :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
@@ -1386,7 +1386,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 63`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 68`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1461,7 +1461,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 54
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 59
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1532,7 +1532,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 70``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 75``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - **Indirect**: each robot is reachable only from the other leaked robot.
 
@@ -1553,7 +1553,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 71``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 76``: no LeakSanitizer report.
 
 .. note::
 
@@ -1579,7 +1579,7 @@ Reading a ``weak_ptr``
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
 - While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 72``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 77``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1620,7 +1620,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 74``.
+- Check: ``702run week7_playground 79``.
 
 Choosing a Pointer
 ------------------
