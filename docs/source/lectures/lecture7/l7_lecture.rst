@@ -105,11 +105,11 @@ The **fleet manager** of Lecture 6, with its robots now on the heap. The structs
    Three kinds of ownership: one owner, several owners, and an observer that owns nothing. Each one gets its own smart pointer today.
 
 .. figure:: /_static/images/l7/owner_map.png
-   :alt: A UML object diagram of six objects, each a box with its name underlined, joined by lines with nothing written on them. On the left, a tall box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Blue lines with a filled blue diamond at the fleet end join the fleet to robot1 and to robot2. Green lines with an open green diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A gray line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
+   :alt: A UML object diagram in black and white: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
    :align: center
    :width: 100%
 
-   Who owns each robot, as a UML object diagram (Lecture 9): each box is one object, its name underlined. **Filled blue diamond**: the only owner. **Open green diamond**: one of several owners. **Gray arrow, no diamond**: looks, does not own.
+   Who owns each robot, as a UML object diagram (Lecture 9): each box is one object. **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks, does not own.
 
 Who Owns This Robot
 -------------------
@@ -380,21 +380,23 @@ The Five Definitions
 lvalues
 ^^^^^^^
 
+An **lvalue** names an object that lives on after the expression. Test: you can take its address with ``&``.
+
 .. code-block:: cpp
 
    RobotStatus make_robot(int id);  // by value from here on
+   RobotStatus& first_robot(std::vector<RobotStatus>& fleet);
    std::vector<Position> route{make_route(3)};
    std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
    RobotStatus* robot_ptr{&fleet[1]};
 
-   route               // a named variable
-   *robot_ptr          // what a pointer points at
-   fleet[0]            // an element
-   first_robot(fleet)  // a call that returns RobotStatus&
-   "dock"              // a string literal: an array with an address
+- ``route``: a named variable.
+- ``*robot_ptr``: what a pointer points at.
+- ``fleet[0]``: an element. ``&fleet[0]`` compiles.
+- ``first_robot(fleet)``: a call that returns ``RobotStatus&``.
+- ``"dock"``: a string literal, an array with an address.
 
-- ``702run week7_playground 18`` prints ``lvalue`` for all five. Each one names an object that lives on after the expression.
-- Test: you can take its address. ``&fleet[0]`` compiles.
+``702run week7_playground 18`` prints ``lvalue`` for all five.
 
 prvalues
 ^^^^^^^^
@@ -1356,11 +1358,11 @@ Back to the Fleet
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/owner_map.png
-   :alt: A UML object diagram of six objects, each a box with its name underlined, joined by lines with nothing written on them. On the left, a tall box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Blue lines with a filled blue diamond at the fleet end join the fleet to robot1 and to robot2. Green lines with an open green diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A gray line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
+   :alt: A UML object diagram in black and white: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
    :align: center
    :width: 100%
 
-   The fleet with its smart pointers. **Filled blue diamond**: ``std::unique_ptr``. **Open green diamond**: ``std::shared_ptr``. **Gray arrow, no diamond**: ``std::weak_ptr``.
+   The fleet with its smart pointers. **Filled diamond**: ``std::unique_ptr``. **Open diamond**: ``std::shared_ptr``. **Arrow, no diamond**: ``std::weak_ptr``.
 
 - One ``std::vector`` holds one type: once robot 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
 - Robots 1 and 2 still have one owner each, through that ``std::shared_ptr``.
