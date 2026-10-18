@@ -1609,8 +1609,8 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    prvalue
-      An expression whose evaluation initializes an object or computes a
-      value: a value that will fill an object, not an object yet. A literal
+      An expression that does not refer to an object that already exists. It
+      computes a value, and that value can initialize a new object. A literal
       such as ``42``, ``a + b``, and a call that returns by value are
       prvalues. You cannot take a prvalue's address.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
@@ -1717,8 +1717,9 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    xvalue
-      A glvalue that denotes an object whose resources can be reused, usually
-      because it is near the end of its lifetime: an object you may take from.
+      An expression that refers to an object that already exists, and marks
+      the object as one you may take from. C++20 calls it a glvalue whose
+      object's resources can be reused.
       ``std::move(route)``, a cast to ``T&&``, and a member of an xvalue are
       xvalues. Naming an xvalue moves nothing.
       :doc:`L7 </lectures/lecture7/l7_lecture>`

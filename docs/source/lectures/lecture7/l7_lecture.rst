@@ -206,10 +206,9 @@ RAII for One Object
 
 **The Same for One Object**
 
-A **smart pointer** is an object that points at one heap object and says, in its type, how that object is owned. The owning ones delete the object when its last owner lets go.
-
+- A **smart pointer** holds one heap object and, when it owns it, deletes it for you, as ``std::vector`` does for its elements. `Smart Pointers`_ defines it.
 - Today: ``std::unique_ptr``, the only owner; ``std::shared_ptr``, one of several owners; ``std::weak_ptr``, an observer that owns nothing.
-- A ``RobotStatus*`` cannot say any of this in its type.
+- A ``RobotStatus*`` cannot say in its type who owns the object.
 
 .. note::
 
@@ -411,6 +410,8 @@ An **lvalue** is an expression that refers to an object that already exists, and
 
 .. code-block:: cpp
 
+   :linenos:
+
    int count{3};        // makes an int object that holds 3
    count = 4;           // the same object now holds 4
    int* where{&count};  // where holds that object's address
@@ -420,14 +421,15 @@ An **lvalue** is an expression that refers to an object that already exists, and
    count: 4, where == &count: true
 
 - An **object** is a piece of memory that holds a value. Line 1 makes one and names it ``count``.
-- Check 1, it refers to an object that already exists: the expression ``count`` refers to that object. Lines 2 and 3 reach the same object, at the same address.
-- Check 2, nothing marks the object as one you may take from: ``count`` is a plain name. Only ``std::move`` and a few others mark it (`xvalues`_).
-- Both checks pass, so ``count`` is an lvalue.
+- In line 2, ``count`` is an lvalue. Check 1: it refers to the object from line 1, which already exists. Check 2: it is a plain name, so nothing marks the object as one you may take from (only ``std::move`` and a few others do, `xvalues, Step 1: Marked for Taking`_).
+- In line 3, ``count`` in ``&count`` is an lvalue for the same two reasons. It reaches the same object, at the same address.
 
 lvalues, Step 2: The ``&`` Test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
+
+   :linenos:
 
    int count{3};
    int* a{&count};        // compiles
@@ -438,8 +440,8 @@ lvalues, Step 2: The ``&`` Test
    error: lvalue required as unary '&' operand
 
 - ``&`` asks for the address of an object. So it needs an object that stays in memory.
-- ``&count`` compiles: ``count`` refers to the object from line 1 (check 1 of Step 1).
-- ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalues`_ says what it is.
+- In line 2, ``count`` is an lvalue: it refers to the object from line 1 (Step 1). So ``&count`` compiles.
+- In line 3, ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalues, Step 1: A Value, Not an Object`_ says what it is.
 - For an expression of a built-in type such as ``int``: if ``&`` compiles on it, it is an lvalue.
 
 lvalues, Step 3: Three More, with Why
@@ -454,9 +456,9 @@ lvalues, Step 3: Three More, with Why
 
 With the declarations above, each expression below passes both checks of the definition:
 
-- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count``. Nothing marks it.
-- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does. Nothing marks it.
-- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]``. Nothing marks it.
+- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count``. Nothing marks it, so ``alias`` is an lvalue.
+- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does. Nothing marks it, so ``numbers[2]`` is an lvalue.
+- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]``. Nothing marks it, so ``*p`` is an lvalue.
 
 ``702run week7_playground 21`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
@@ -481,7 +483,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
 - ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
 
-The test passes for all five: ``&`` compiles on each. ``702run week7_playground 22`` prints ``lvalue`` for all five.
+``&`` compiles on all five. ``702run week7_playground 22`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
    :icon: code
@@ -501,10 +503,52 @@ The test passes for all five: ``&`` compiles on each. ``702run week7_playground 
    - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 1: Value Categories`_ use it.
    - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
 
-prvalues
-^^^^^^^^
+prvalues, Step 1: A Value, Not an Object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A **prvalue** is an expression whose value will initialize an object: no object exists yet. Test: you cannot take its address.
+A **prvalue** is an expression that does not refer to an object that already exists. It computes a value, and that value can initialize a new object.
+
+.. code-block:: cpp
+   :linenos:
+
+   int count{3};
+   int next{count + 1};  // the 4 initializes next
+
+.. code-block:: text
+
+   next: 4, count: 3
+   count + 1: prvalue
+
+- Check 1 of the lvalue definition: does ``count + 1`` refer to an object that already exists? No. It computes 4, and no object held that 4 before line 2.
+- The 4 initializes ``next``, a new object. ``count`` is unchanged.
+- Check 1 fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalues, Step 2: The & Test`_).
+
+prvalues, Step 2: Three More, with Why
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int twice(int n) { return 2 * n; }  // returns an int by value
+   int count{3};
+
+With the declarations above, each expression below computes a value and refers to no object that already exists:
+
+- ``42``: a number written in the code. No object holds it until one is initialized with it: ``int answer{42};``. ``42`` is a prvalue.
+- ``count * 2``: computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
+- ``twice(count)``: the call returns an ``int`` by value, so it gives a value, not an object that already exists. ``twice(count)`` is a prvalue.
+
+``&`` on any of them gives:
+
+.. code-block:: text
+
+   error: lvalue required as unary '&' operand
+
+``702run week7_playground 24`` prints ``prvalue`` for all three.
+
+prvalues, Step 3: In the Fleet Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A **prvalue** refers to no object that already exists; it computes a value (Step 1). Test: ``&`` does not compile on it.
 
 .. code-block:: cpp
 
@@ -524,12 +568,49 @@ With the declarations above, each expression below is a prvalue:
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 23`` prints ``prvalue`` for all five.
+``702run week7_playground 25`` prints ``prvalue`` for all five.
 
-xvalues
-^^^^^^^
+xvalues, Step 1: Marked for Taking
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An **xvalue** is an expression that names an object you have marked as "you may take from this". Naming one moves nothing.
+An **xvalue** is an expression that refers to an object that already exists, and marks the object as one you may take from.
+
+.. code-block:: cpp
+   :linenos:
+
+   std::string name{"charging dock, aisle 4"};  // 22 chars: on the heap
+   const char* chars{name.data()};              // their address
+   std::string other{std::move(name)};
+
+.. code-block:: text
+
+   other: charging dock, aisle 4, name.size(): 0, other.data() == chars: true
+
+- Check 1: ``std::move(name)`` refers to the object ``name`` names, which already exists.
+- Check 2: ``std::move`` marks that object as one you may take from.
+- Both hold, so in line 3, ``std::move(name)`` is an xvalue. ``other`` then takes the characters: same address, and ``name`` is left empty (libstdc++, measured).
+
+xvalues, Step 2: Three Ways to Mark
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   struct Point { int x; int y; };
+   int count{3};
+   Point pt{1, 2};
+
+``int&&`` reads "rvalue reference to ``int``": a reference whose object may be taken (`rvalue References`_). Each expression below refers to an object that already exists and marks it:
+
+- ``std::move(count)``: a call to a function that returns ``int&&``. It refers to ``count``. ``std::move(count)`` is an xvalue.
+- ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
+- ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
+
+``702run week7_playground 27`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+
+xvalues, Step 3: In the Fleet Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An **xvalue** refers to an object that already exists and marks it as one you may take from (Step 1). Marking it moves nothing.
 
 .. code-block:: cpp
 
@@ -543,7 +624,7 @@ An **xvalue** is an expression that names an object you have marked as "you may 
 - ``static_cast<std::vector<Position>&&>(route)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(robot).route``: ``std::move`` marks ``robot``, so its member ``route`` is marked too. Its ``decltype((e))`` is ``T&&`` as well (`The decltype Test`_).
 
-``702run week7_playground 24`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 28`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -639,7 +720,7 @@ Exercise 1: Value Categories
    make_robot(n).battery_pct   // 9
    ++n                         // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 28``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 32``.
 
 rvalue References
 ^^^^^^^^^^^^^^^^^
@@ -807,6 +888,8 @@ Return by Value, Again
 Smart Pointers
 --------------
 
+A **smart pointer** is an object that points at one heap object and says, in its type, how that object is owned. The owning ones delete the object when its last owner lets go.
+
 Three class templates in ``<memory>``, one for each kind of ownership in `The Program We Will Build`_. C++20 lists all three under smart pointers (20.11).
 
 .. figure:: /_static/images/l7/owner_map.png
@@ -924,7 +1007,7 @@ The Leak, Fixed
      return true;     // and here
    }
 
-- ``702run week7_playground 41`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
+- ``702run week7_playground 45`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
 - Every path out of the function destroys ``robot``, and ``robot``'s destructor deletes the ``RobotStatus``. There is no ``delete`` to forget.
 
 One Owner Only
@@ -1147,7 +1230,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 51`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 55`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1174,7 +1257,7 @@ Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet.
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 44, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 48, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1273,7 +1356,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 57``.
+- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 61``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
    :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
@@ -1303,7 +1386,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 59`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 63`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1378,7 +1461,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 50
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 54
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1449,7 +1532,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 66``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 70``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - **Indirect**: each robot is reachable only from the other leaked robot.
 
@@ -1470,7 +1553,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 67``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 71``: no LeakSanitizer report.
 
 .. note::
 
@@ -1496,7 +1579,7 @@ Reading a ``weak_ptr``
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
 - While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 68``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 72``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1537,7 +1620,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 70``.
+- Check: ``702run week7_playground 74``.
 
 Choosing a Pointer
 ------------------
