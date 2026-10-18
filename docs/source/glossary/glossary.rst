@@ -1640,10 +1640,11 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Smart Pointer
-      An object that owns one heap object and deletes it when the smart
-      pointer is destroyed. Its type says it owns, which a raw pointer cannot.
-      Lecture 7 covers ``std::unique_ptr`` (one owner), ``std::shared_ptr``
-      (several owners) and ``std::weak_ptr``, an observer that owns nothing.
+      An object that points at one heap object and says, in its type, how
+      that object is owned. The owning ones delete the object when its last
+      owner lets go. Lecture 7 covers ``std::unique_ptr`` (the only owner),
+      ``std::shared_ptr`` (one of several owners) and ``std::weak_ptr``, an
+      observer that owns nothing. A raw pointer cannot say any of this.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    std::make_shared
