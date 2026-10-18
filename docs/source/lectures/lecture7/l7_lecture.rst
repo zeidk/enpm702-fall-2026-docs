@@ -318,18 +318,36 @@ Value Categories
 
             expression
            /          \
-       glvalue       rvalue
+       glvalue        rvalue
+   (has identity) (may be taken)
        /     \      /     \
    lvalue    xvalue      prvalue
 
 - Every expression has a **type** and a **value category**.
-- The value category says whether the expression names an object, and whether that object's resources may be taken.
-- The three categories: **lvalue**, **xvalue**, **prvalue**. A **glvalue** is an lvalue or an xvalue; an **rvalue** is an xvalue or a prvalue.
+- The category answers two questions: does the expression name an object (**identity**)? May that object's resources be **taken**?
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Category
+     - Identity
+     - May be taken
+   * - lvalue
+     - yes
+     - with ``std::move``
+   * - xvalue
+     - yes
+     - yes
+   * - prvalue
+     - no
+     - yes
+
 - Names (paragraph 3 of **[basic.lval]**): **l**, **r** once meant the left and right side of an assignment; **gl** "generalized", **pr** "pure", **x** "eXpiring".
 
 .. note::
 
-   The tree is Figure 1 of C++20 **[basic.lval]** (7.2.1). Paragraph 2: "Every expression belongs to exactly one of the fundamental classifications in this taxonomy: lvalue, xvalue, or prvalue."
+   The tree is Figure 1 of C++20 **[basic.lval]** (7.2.1); the labels under glvalue and rvalue are ours. Paragraph 2: "Every expression belongs to exactly one of the fundamental classifications in this taxonomy: lvalue, xvalue, or prvalue."
 
 The Five Definitions
 ^^^^^^^^^^^^^^^^^^^^
@@ -540,8 +558,11 @@ rvalue References
    of type 'std::vector<Position>'
 
 - ``T&&`` is an **rvalue reference**. It binds only to rvalues: prvalues and xvalues.
+- Bound to the prvalue ``make_route(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
 - ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
 - A ``T&&`` says: whatever this refers to may be taken.
+
+See `Category, Type and Lifetime`_ under Further Reading.
 
 Named rvalue References
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -581,6 +602,8 @@ Overloads for Copy and Move
 - The compiler picks the overload from the argument's value category: an lvalue gets ``const&``, an rvalue gets ``&&``.
 - ``std::vector`` itself has both: a copy constructor and a move constructor. That is how the compiler chose between the copy and the move in `Handing a Route to a Robot`_.
 
+See `Inside std::vector's Move and Copy`_ under Further Reading.
+
 ``std::move``, a Cast
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -596,6 +619,7 @@ Overloads for Copy and Move
    [with _Tp = vector<Position>&; ...]', declared with attribute 'nodiscard'
    [-Wunused-result]
 
+- ``std::move`` moves nothing: it gives permission to move.
 - ``std::move(route)`` is a cast to ``std::vector<Position>&&``. Its result is an xvalue: it marks ``route`` as "may be taken".
 - The move happens later, if a move constructor or a ``&&`` overload takes the result. Here nothing does.
 
@@ -1714,3 +1738,66 @@ More Core Guidelines
 
 - R.5 comes first in practice: a ``RobotStatus`` that lives only inside one function is a local variable, not a heap object.
 - R.37: when you pass ``*robot`` or ``robot.get()`` to a function, make sure an owner outlives the call.
+
+Category, Type and Lifetime
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<Position> route{make_route(3)};
+   std::vector<Position>&& r{make_route(10)};
+
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - Expression
+     - Category
+     - ``decltype((e))``
+     - The object
+   * - ``make_route(3)``
+     - prvalue
+     - ``V``
+     - none yet: a value that will initialize one
+   * - ``r``
+     - lvalue
+     - ``V&``
+     - a temporary that lives as long as ``r``
+   * - ``route``
+     - lvalue
+     - ``V&``
+     - lives until the end of its scope
+   * - ``std::move(route)``
+     - xvalue
+     - ``V&&``
+     - the same object as ``route``, marked "may be taken"
+
+- ``V`` is ``std::vector<Position>``. The type of the variable ``r`` is ``V&&``; the expression ``r`` is an lvalue (`Named rvalue References`_).
+- Binding a prvalue to a reference extends the temporary's life. ``std::move`` creates nothing: it marks an object that already exists.
+
+.. note::
+
+   C++20 **[class.temporary]** (6.7.7) paragraph 6: the temporary object to which the reference is bound "persists for the lifetime of the reference".
+
+Inside ``std::vector``'s Move and Copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   class Route {  // a sketch of std::vector<Position>
+     Position* begin_; Position* end_; Position* cap_;
+    public:
+     Route(Route&& other) noexcept      // move: take the three pointers
+         : begin_{other.begin_}, end_{other.end_}, cap_{other.cap_} {
+       other.begin_ = other.end_ = other.cap_ = nullptr;
+     }
+     Route(const Route& other)          // copy: a new block, every element
+         : begin_{new Position[other.end_ - other.begin_]},
+           end_{begin_ + (other.end_ - other.begin_)}, cap_{end_} {
+       std::copy(other.begin_, other.end_, begin_);
+     }
+   };
+
+- The move takes the pointers and leaves the source null: nothing is allocated and no element is copied (`Inside a Move`_).
+- The copy allocates a block for the elements in use and copies each one, so its capacity equals its size (`Inside a Copy`_).
+- Constructors are L8. For an rvalue, the ``Route&&`` one is chosen (`Overloads for Copy and Move`_).
