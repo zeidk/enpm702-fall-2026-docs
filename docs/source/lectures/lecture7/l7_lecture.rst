@@ -374,15 +374,15 @@ An **lvalue** is an expression that names an object, and the object lives on aft
    std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
    RobotStatus* robot_ptr{&fleet[1]};
 
-With the declarations above, each expression below is an lvalue:
+With the declarations above, each expression below names an object that already exists, so each is an lvalue:
 
-- ``route``: a named variable.
-- ``*robot_ptr``: what a pointer points at.
-- ``fleet[0]``: an element. ``&fleet[0]`` compiles.
-- ``first_robot(fleet)``: a call that returns ``RobotStatus&``.
-- ``"dock"``: a string literal, an array with an address.
+- ``route``: the variable ``route`` itself.
+- ``*robot_ptr``: the robot ``robot_ptr`` points at, ``fleet[1]``.
+- ``fleet[0]``: the first robot stored in ``fleet``.
+- ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
+- ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``702run week7_playground 18`` prints ``lvalue`` for all five.
+The test passes for all five: ``&`` compiles on each. ``702run week7_playground 18`` prints ``lvalue`` for all five.
 
 .. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
    :icon: code
@@ -1203,7 +1203,7 @@ A Cycle
    b->partner = a;  // b owns a
 
 .. figure:: /_static/images/l7/cycle.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side, each with three rows: use_count, status, and partner. A green arrow runs from the partner row of robot 1 straight across to robot 2, and another from the bottom of robot 2, under both boxes, up into robot 1. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots, with green arrows down to robot 1 and robot 2; both robots read use_count: 2. Panel 2: no stack boxes; both robots read use_count: 1.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side. Each box is one allocation: at the top a dashed part labeled control block that holds use_count, then two rows, status and partner. A green arrow runs from the partner row of robot 1 straight across to robot 2, and another from the bottom of robot 2, under both boxes, up into robot 1. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots, with green arrows down to robot 1 and robot 2; both control blocks read use_count: 2. Panel 2: no stack boxes; both control blocks read use_count: 1.
    :align: center
    :width: 100%
 
