@@ -1579,7 +1579,8 @@ L7: Smart Pointers and Move Semantics
 
    lvalue
       An expression that refers to an object that already exists, and does
-      not mark the object as one you may take from. C++20 calls it a glvalue
+      not let another object take its contents: an object made from it is a
+      copy. C++20 calls it a glvalue
       that is not an xvalue. A named variable, ``*ptr``, ``fleet[0]``, a call
       that returns ``T&``, and a string literal are lvalues. You can take an
       lvalue's address.
@@ -1717,8 +1718,9 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    xvalue
-      An expression that refers to an object that already exists, and marks
-      the object as one you may take from. C++20 calls it a glvalue whose
+      An expression that refers to an object that already exists, and lets
+      another object take its contents: the object may be moved from. C++20
+      calls it a glvalue whose
       object's resources can be reused.
       ``std::move(route)``, a cast to ``T&&``, and a member of an xvalue are
       xvalues. Naming an xvalue moves nothing.

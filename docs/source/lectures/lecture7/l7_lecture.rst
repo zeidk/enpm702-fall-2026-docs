@@ -139,7 +139,7 @@ A Robot on the Heap
 
 .. note::
 
-   The Core Guidelines settle it: "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns. Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
+   "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns. Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
 Three Ways to Get It Wrong
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -196,19 +196,15 @@ The Leak, Measured
 
    LeakSanitizer comes with L3's ``-fsanitize=address``: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms". See `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`__.
 
-RAII for One Object
-^^^^^^^^^^^^^^^^^^^
+RAII
+^^^^
 
-**RAII in std::vector**
+**RAII**, resource acquisition is initialization: the object that holds a resource, such as memory, gives it back in its destructor.
 
-- A ``std::vector`` gives its memory back by itself when it goes out of scope. That is RAII: the object that holds the memory frees it in its destructor.
+- A ``std::vector`` is RAII: it frees its heap block when it goes out of scope.
 - No path can forget: leaving a scope always destroys its objects, after a ``return``, at the end of a loop, or by an exception that is caught.
-
-**The Same for One Object**
-
-- A **smart pointer** holds one heap object and, when it owns it, deletes it for you, as ``std::vector`` does for its elements. `Smart Pointers`_ defines it.
-- Today: ``std::unique_ptr``, the only owner; ``std::shared_ptr``, one of several owners; ``std::weak_ptr``, an observer that owns nothing.
-- A ``RobotStatus*`` cannot say in its type who owns the object.
+- A ``RobotStatus*`` is not: nothing frees what ``new`` made (`The Leak, Measured`_), and its type cannot say who owns the object.
+- A **smart pointer** is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr``, the only owner; ``std::shared_ptr``, one of several; ``std::weak_ptr``, an observer that owns nothing.
 
 .. note::
 
@@ -241,7 +237,7 @@ Handing a Route to a Robot
    move: moved.data() == where: true, route.size(): 0
    bytes the copy allocated: 16000
 
-- The copy allocates a new block, 1000 × 16 bytes = 16000 bytes, and copies every ``Position``. ``route`` is unchanged.
+- The copy allocates a new block, 1000 × 16 bytes (``sizeof(Position)``: two ``double``\ s) = 16000 bytes, and copies every ``Position``. ``route`` is unchanged.
 - The move allocates nothing. ``moved`` holds the block ``route`` had, at the same address, and ``route`` is left empty.
 
 .. dropdown:: The Definition of ``make_route``
@@ -261,7 +257,7 @@ Handing a Route to a Robot
 
    - It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (L6's ``Position``).
    - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
-   - It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
+   - It returns the local ``route`` by value: no copy is made (`Returning a Local`_).
 
 An Implicit Move
 ^^^^^^^^^^^^^^^^
@@ -283,7 +279,7 @@ An Implicit Move
    plans[0].data() == made: true, plans[0].size(): 500
 
 - No ``std::move``, and still no copy: the block made inside ``plan`` is the block in ``plans[0]``.
-- ``return route;`` moves the local out of the function, or builds it in place (`Return by Value, Again`_).
+- ``return route;`` moves the local out of the function, or builds it in place (`Returning a Local`_).
 - ``push_back`` gets a temporary, so it takes the overload that moves (`Overloads for Copy and Move`_).
 - ``702run week7_playground 13`` prints the line above.
 
@@ -298,7 +294,7 @@ Inside a Copy
    A ``std::vector`` and its copy: each one owns its own block. Gray: unused slots of ``route``'s capacity.
 
 - After ``std::vector<Position> copied{route}``, each vector holds three pointers into its own block, and frees it when it goes out of scope.
-- ``push_back`` grew ``route`` to capacity 1024: 1024 × 16 = 16384 bytes, 24 unused (gray).
+- ``push_back`` grew ``route`` to capacity 1024 (libstdc++ doubles it: 1, 2, 4, ..., 1024, measured): 1024 × 16 = 16384 bytes, 24 unused (gray).
 - The copy allocates 1000 × 16 = 16000 bytes. Total: 16384 + 16000 = 32384 bytes.
 - No spare slots: the standard asks only for equal elements (C++20 **[container.requirements.general]**, Table 73: a copy ``u`` of ``a`` has ``u == a``, and ``==`` compares the elements); libstdc++'s copy constructor allocates exactly ``size()`` elements.
 
@@ -314,7 +310,7 @@ Inside a Move
 
 - **1**: ``route`` owns the block through its three pointers (L4). Gray: 24 unused slots.
 - **2**: after ``std::vector<Position> moved{std::move(route)}``, ``moved`` holds the same three pointers and ``route``'s are null (libstdc++, measured).
-- Only 24 bytes change hands: one ``std::vector`` object, whatever it holds.
+- Only 24 bytes change hands: the three 8-byte pointers, whatever the vector holds.
 
 The Moved-from Object
 ^^^^^^^^^^^^^^^^^^^^^
@@ -337,6 +333,22 @@ The Moved-from Object
 
 See `The Moved-from std::string`_, `Move Assignment`_ and `std::exchange`_ under Further Reading.
 
+Whiteboard 1: Copy and Move
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :linenos:
+
+   std::vector<Position> a{make_route(3)};
+   std::vector<Position> b{a};
+   std::vector<Position> c{std::move(a)};
+   a = std::move(b);
+
+- At the board, after each line: draw ``a``, ``b`` and ``c`` on the stack, each with its ``begin``, ``end`` and ``capacity`` pointers (`Inside a Copy`_), and every block on the heap they point at.
+- Line 4 is a move into a vector that already exists. What does ``a`` hold before it, and after?
+- After line 4: how many blocks are on the heap? Which variable owns each one? Was any block freed?
+- Check: ``702run week7_playground 17`` prints each vector's size, capacity and block after every line.
+
 Value Categories
 ^^^^^^^^^^^^^^^^
 
@@ -348,7 +360,7 @@ Value Categories
    The value categories.
 
 - Every expression has a **type** and a **value category**.
-- The category answers two questions: does the expression name an object (**identity**)? May that object's resources be **taken**?
+- The category answers two questions: does it refer to an object that already exists (**identity**)? May another object **take** its contents?
 
 .. list-table::
    :header-rows: 1
@@ -359,7 +371,7 @@ Value Categories
      - May be taken
    * - lvalue
      - yes
-     - with ``std::move``
+     - no
    * - xvalue
      - yes
      - yes
@@ -403,10 +415,10 @@ The Five Definitions
 
    Paragraph 3: "Despite their names, these terms classify expressions, not values." The same variable can appear in an lvalue and in an xvalue.
 
-lvalue, Step 1: A Named Object
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue: A Named Object
+^^^^^^^^^^^^^^^^^^^^^^
 
-An **lvalue** is an expression that refers to an object that already exists, and does not mark the object as one you may take from.
+An **lvalue** is an expression that (1) refers to an object that already exists, and (2) does not let another object take its contents: an object made from it is a copy.
 
 .. code-block:: cpp
 
@@ -421,11 +433,31 @@ An **lvalue** is an expression that refers to an object that already exists, and
    count: 4, where == &count: true
 
 - An **object** is a piece of memory that holds a value. Line 1 makes one and names it ``count``.
-- In line 2, ``count`` is an lvalue. Check 1: it refers to the object from line 1, which already exists. Check 2: it is a plain name, so nothing marks the object as one you may take from (only ``std::move`` and a few others do, `xvalue, Step 1: std::move`_).
-- In line 3, ``count`` in ``&count`` is an lvalue for the same two reasons. It reaches the same object, at the same address.
+- In line 2, ``count`` is an lvalue. Part (1) of the definition holds: it refers to the object from line 1, which already exists. Part (2) holds: ``count`` is a plain name, with no ``std::move``, so nothing takes its contents. `lvalue: Copied, Not Taken`_ shows what taking looks like.
+- In line 3, ``count`` in ``&count`` is an lvalue for the same two reasons.
 
-lvalue, Step 2: The ``&`` Test
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue: Copied, Not Taken
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :linenos:
+
+   std::string name{"charging dock, aisle 4"};
+   std::string copied{name};
+   std::string taken{std::move(name)};
+
+.. code-block:: text
+
+   after line 2: name: charging dock, aisle 4, copied: charging dock, aisle 4
+   after line 3: name.size(): 0, taken: charging dock, aisle 4
+
+- To **take** an object's contents is to move them into another object: here, the 22 characters ``name`` keeps on the heap (more than the 15 that fit inside a libstdc++ ``std::string``, measured).
+- In line 2, ``name`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``name`` keeps its characters.
+- In line 3, ``std::move(name)`` **marks** ``name``: it says another object may take its contents. ``taken`` takes them, and ``name`` is left empty (libstdc++, measured). Part (2) fails, so ``std::move(name)`` is not an lvalue: `xvalue: Marked by std::move`_ says what it is.
+- One exception: ``return route;`` may move from a local variable even though ``route`` is an lvalue (`An Implicit Move`_).
+
+lvalue: Checking with ``&``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -439,13 +471,12 @@ lvalue, Step 2: The ``&`` Test
 
    error: lvalue required as unary '&' operand
 
-- ``&`` asks for the address of an object. So it needs an object that stays in memory.
-- In line 2, ``count`` is an lvalue: it refers to the object from line 1 (Step 1). So ``&count`` compiles.
-- In line 3, ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalue, Step 1: A Computed Value`_ says what it is.
-- For an expression of a built-in type such as ``int``: if ``&`` compiles on it, it is an lvalue.
+- The built-in ``&`` compiles only on an lvalue: parts (1) and (2) of the definition must both hold. It fails when part (1) fails, as in line 3, and when part (2) fails (`xvalue: Ways to Mark`_).
+- In line 2, ``count`` is an lvalue: parts (1) and (2) hold (`lvalue: A Named Object`_). So ``&count`` compiles.
+- In line 3, ``count + 1`` computes 4, but no object that already exists holds that 4. Part (1) fails: ``count + 1`` is not an lvalue, and ``&(count + 1)`` does not compile. `prvalue: A Computed Value`_ says what it is.
 
-lvalue, Step 3: Three More
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue: A Reference, an Element, ``*p``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -454,18 +485,16 @@ lvalue, Step 3: Three More
    int numbers[3]{10, 20, 30};
    int* p{&numbers[1]};         // p holds the address of numbers[1]
 
-With the declarations above, each expression below passes both checks of the definition:
+- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count`` (part 1). Nothing marks it (part 2), so ``alias`` is an lvalue.
+- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does (part 1). Nothing marks it (part 2), so ``numbers[2]`` is an lvalue.
+- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]`` (part 1). Nothing marks it (part 2), so ``*p`` is an lvalue.
 
-- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count``. Nothing marks it, so ``alias`` is an lvalue.
-- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does. Nothing marks it, so ``numbers[2]`` is an lvalue.
-- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]``. Nothing marks it, so ``*p`` is an lvalue.
+``702run week7_playground 24`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
-``702run week7_playground 22`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
+lvalue: In the Fleet Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-lvalue, Step 4: The Fleet
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-An **lvalue** refers to an object that already exists and does not mark it as one you may take from (Step 1). Test: ``&`` compiles on it.
+An **lvalue** refers to an object that already exists and does not let another object take its contents (`lvalue: A Named Object`_). Test: ``&`` compiles on it.
 
 .. code-block:: cpp
 
@@ -483,7 +512,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
 - ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 23`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 25`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
    :icon: code
@@ -503,8 +532,8 @@ With the declarations above, each expression below refers to an object that alre
    - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 1: Value Categories`_ use it.
    - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
 
-prvalue, Step 1: A Computed Value
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue: A Computed Value
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A **prvalue** is an expression that does not refer to an object that already exists. It computes a value, and that value can initialize a new object.
 
@@ -519,19 +548,17 @@ A **prvalue** is an expression that does not refer to an object that already exi
    next: 4, count: 3
    count + 1: prvalue
 
-- Check 1 of the lvalue definition: does ``count + 1`` refer to an object that already exists? No. It computes 4, and no object held that 4 before line 2.
+- Part (1) of the lvalue definition: does ``count + 1`` refer to an object that already exists? No. It computes 4, and no object held that 4 before line 2.
 - The 4 initializes ``next``, a new object. ``count`` is unchanged.
-- Check 1 fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalue, Step 2: The & Test`_).
+- Part (1) fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalue: Checking with &`_).
 
-prvalue, Step 2: Three More
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue: Literals, Results, Calls
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
    int twice(int n) { return 2 * n; }  // returns an int by value
    int count{3};
-
-With the declarations above, each expression below computes a value and refers to no object that already exists:
 
 - ``42``: a number written in the code. No object holds it until one is initialized with it: ``int answer{42};``. ``42`` is a prvalue.
 - ``count * 2``: computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
@@ -543,12 +570,12 @@ With the declarations above, each expression below computes a value and refers t
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 26`` prints ``prvalue`` for all three.
+``702run week7_playground 28`` prints ``prvalue`` for all three.
 
-prvalue, Step 3: The Fleet
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue: In the Fleet Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A **prvalue** refers to no object that already exists; it computes a value (Step 1). Test: ``&`` does not compile on it.
+A **prvalue** refers to no object that already exists; it computes a value (`prvalue: A Computed Value`_). Test: ``&`` does not compile on it.
 
 .. code-block:: cpp
 
@@ -561,24 +588,25 @@ With the declarations above, each expression below is a prvalue:
 - ``42``: a literal (not a string literal).
 - ``a + b``: a built-in arithmetic result. ``&(a + b)`` does not compile.
 - ``make_route(3)``: a call that returns by value.
-- ``RobotStatus{}``: a temporary of a class type.
+- ``RobotStatus{}``: a value of a class type, made with braces.
 - ``[] { return 1; }``: a lambda expression.
 
 .. code-block:: text
 
-   error: lvalue required as unary '&' operand
+   &(a + b):       error: lvalue required as unary '&' operand
+   &make_route(3): error: taking address of rvalue
 
-``702run week7_playground 27`` prints ``prvalue`` for all five.
+``702run week7_playground 29`` prints ``prvalue`` for all five.
 
-xvalue, Step 1: std::move
-^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue: Marked by ``std::move``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An **xvalue** is an expression that refers to an object that already exists, and marks the object as one you may take from.
+An **xvalue** is an expression that (1) refers to an object that already exists, and (2) lets another object take its contents: the object may be moved from.
 
 .. code-block:: cpp
    :linenos:
 
-   std::string name{"charging dock, aisle 4"};  // 22 chars: on the heap
+   std::string name{"charging dock, aisle 4"};  // characters on the heap
    const char* chars{name.data()};              // their address
    std::string other{std::move(name)};
 
@@ -586,12 +614,12 @@ An **xvalue** is an expression that refers to an object that already exists, and
 
    other: charging dock, aisle 4, name.size(): 0, other.data() == chars: true
 
-- Check 1: ``std::move(name)`` refers to the object ``name`` names, which already exists.
-- Check 2: ``std::move`` marks that object as one you may take from.
+- Part (1): ``std::move(name)`` refers to the object ``name`` names, which already exists.
+- Part (2): ``std::move`` marks ``name``, so another object may take its contents (`lvalue: Copied, Not Taken`_).
 - Both hold, so in line 3, ``std::move(name)`` is an xvalue. ``other`` then takes the characters: same address, and ``name`` is left empty (libstdc++, measured).
 
-xvalue, Step 2: Ways to Mark
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue: Ways to Mark
+^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -599,18 +627,18 @@ xvalue, Step 2: Ways to Mark
    int count{3};
    Point pt{1, 2};
 
-``int&&`` reads "rvalue reference to ``int``": a reference whose object may be taken (`rvalue References`_). Each expression below refers to an object that already exists and marks it:
+``int&&`` reads "rvalue reference to ``int``": a reference whose object may be taken (`Binding to rvalues`_). Each expression below refers to an object that already exists and marks it:
 
 - ``std::move(count)``: a call to a function that returns ``int&&``. It refers to ``count``. ``std::move(count)`` is an xvalue.
 - ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
 - ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
 
-``702run week7_playground 30`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+``702run week7_playground 32`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
 
-xvalue, Step 3: The Fleet
-^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue: In the Fleet Manager
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An **xvalue** refers to an object that already exists and marks it as one you may take from (Step 1). Marking it moves nothing.
+An **xvalue** refers to an object that already exists and lets another object take its contents (`xvalue: Marked by std::move`_). Marking it moves nothing.
 
 .. code-block:: cpp
 
@@ -618,18 +646,18 @@ An **xvalue** refers to an object that already exists and marks it as one you ma
    std::vector<Position> route{make_route(3)};
    Robot robot{make_robot(1), make_route(3)};
 
-``T&&`` reads "rvalue reference to ``T``": a reference whose object may be taken (`rvalue References`_). Here ``T`` is ``std::vector<Position>``. Each expression below is an xvalue:
+``T&&`` reads "rvalue reference to ``T``": a reference whose object may be taken (`Binding to rvalues`_). Here ``T`` is ``std::vector<Position>``. Each expression below is an xvalue:
 
-- ``std::move(route)``: a call to a function whose return type is ``T&&``. It names ``route``, now marked.
+- ``std::move(route)``: a call to a function whose return type is ``T&&``. It refers to ``route``, now marked.
 - ``static_cast<std::vector<Position>&&>(route)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(robot).route``: ``std::move`` marks ``robot``, so its member ``route`` is marked too. Its ``decltype((e))`` is ``T&&`` as well (`The decltype Test`_).
 
-``702run week7_playground 31`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 33`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To read a member, there must be an object. So the compiler creates a **temporary** object from the prvalue, and the expression becomes an xvalue that names it.
+To read a member, there must be an object. So the compiler creates a **temporary** object from the prvalue, and the expression becomes an xvalue that refers to it.
 
 .. code-block:: cpp
 
@@ -638,7 +666,7 @@ To read a member, there must be an object. So the compiler creates a **temporary
 With the declaration above:
 
 - ``make_robot(3)``: a prvalue. No object exists yet.
-- ``make_robot(3).id``: an xvalue. ``.id`` needs an object, so a temporary is made.
+- ``make_robot(3).id``: an xvalue. ``.id`` needs an object, so a temporary is made; it exists before ``.id`` reads it, so part (1) holds.
 - ``int id{make_robot(3).id}``: the temporary is created, read, and destroyed at the end of the full expression, after ``id`` has its value: 3.
 
 .. note::
@@ -720,10 +748,10 @@ Exercise 1: Value Categories
    make_robot(n).battery_pct   // 9
    ++n                         // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 36``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 38``.
 
-rvalue References
-^^^^^^^^^^^^^^^^^
+Binding to rvalues
+^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -744,8 +772,8 @@ rvalue References
 
 See `Category, Type and Lifetime`_ under Further Reading.
 
-Named rvalue References
-^^^^^^^^^^^^^^^^^^^^^^^
+Giving It a Name
+^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -784,8 +812,8 @@ Overloads for Copy and Move
 
 See `Inside std::vector's Move and Copy`_ under Further Reading.
 
-``std::move``, a Cast
-^^^^^^^^^^^^^^^^^^^^^
+What ``std::move`` Does
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -822,7 +850,7 @@ See `The Definition of std::move`_ under Further Reading.
    robot_route.data() == route.data(): false, route.size(): 1000
 
 - No warning, and no move: a new block, and ``route`` still holds 1000 waypoints.
-- ``std::move(route)`` has type ``const std::vector<Position>&&``. It cannot bind to the move constructor's ``std::vector<Position>&&``, which would change ``route``.
+- ``std::move(route)`` returns ``const std::vector<Position>&&``. It cannot bind to the move constructor's ``std::vector<Position>&&``, which would change ``route``.
 - It does bind to the copy constructor's ``const std::vector<Position>&``, so the compiler copies.
 
 .. note::
@@ -859,8 +887,8 @@ A Parameter the Function Moves From
 
    "For 'will-move-from' parameters, pass by ``X&&`` and ``std::move`` the parameter". Rule: `Core Guidelines F.18 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-consume>`__.
 
-Return by Value, Again
-^^^^^^^^^^^^^^^^^^^^^^
+Returning a Local
+^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -1007,7 +1035,7 @@ The Leak, Fixed
      return true;     // and here
    }
 
-- ``702run week7_playground 50`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
+- ``702run week7_playground 52`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
 - Every path out of the function destroys ``robot``, and ``robot``'s destructor deletes the ``RobotStatus``. There is no ``delete`` to forget.
 
 One Owner Only
@@ -1025,9 +1053,9 @@ One Owner Only
    std::unique_ptr<_Tp, _Dp>&) [with _Tp = RobotStatus;
    _Dp = std::default_delete<RobotStatus>]'
 
-- The copy constructor is **deleted**: declared, so that a copy is an error, and never defined.
+- A **deleted function** is declared with ``= delete``: any call to it is a compile error. The copy constructor is deleted, so a copy does not compile.
 - Two owners of one robot would both delete it: the double ``delete`` of `Three Ways to Get It Wrong`_. The type rules it out at compile time.
-- ``_Dp = std::default_delete<RobotStatus>`` is the **deleter**: what a ``std::unique_ptr`` calls to give the memory back. By default, ``delete``.
+- A **deleter** is what a ``std::unique_ptr`` calls to give its object back. Here it is ``_Dp = std::default_delete<RobotStatus>``, which calls ``delete``.
 
 See `std::auto_ptr`_ under Further Reading.
 
@@ -1055,8 +1083,23 @@ Moving Ownership
 
 See `Testing for Empty`_ under Further Reading.
 
-A Fleet of ``unique_ptr``
-"""""""""""""""""""""""""
+Whiteboard 2: Handing Over a Robot
+""""""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+   :linenos:
+
+   auto p{std::make_unique<RobotStatus>(1)};
+   auto q{std::move(p)};
+   p = std::make_unique<RobotStatus>(2);
+   q = std::move(p);
+
+- At the board, after each line: draw ``p`` and ``q`` on the stack, every robot on the heap, and an arrow from each pointer to the robot it owns.
+- On which line is robot 1 deleted, and what deletes it? Nothing in the code says ``delete``.
+- Check: ``702run week7_playground 55``.
+
+A Fleet of Owners
+"""""""""""""""""
 
 .. code-block:: cpp
 
@@ -1094,7 +1137,7 @@ See `unique_ptr to an Array`_ under Further Reading.
 
 - ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
 - ``reset()`` deletes the robot now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
-- Assigning a new ``std::unique_ptr`` deletes the old robot first, as ``reset`` would.
+- Assigning a new ``std::unique_ptr`` stores the new robot, then deletes the old one, as ``reset`` does.
 
 .. note::
 
@@ -1157,6 +1200,7 @@ Passing: Sink
      retired.push_back(std::move(robot));
    }
 
+   auto robot{std::make_unique<RobotStatus>(3)};
    retire(robot);             // does not compile: a copy
    retire(std::move(robot));  // robot == nullptr, retired.size() == 1
 
@@ -1181,7 +1225,7 @@ Passing: Reseat
        3, 4.0, Position{2.0, 3.0}, false)};
    replace_robot(robot, 7);  // robot->id: 7, robot->battery_pct: 100
 
-- By reference to the ``std::unique_ptr``: the function may make the caller's pointer own a different robot. To **reseat** means exactly that.
+- To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.
 - The caller keeps ownership. Only what it owns changes.
 
 .. note::
@@ -1205,7 +1249,7 @@ Returning
    std::unique_ptr<RobotStatus> robot{make_robot(5)};  // robot->id: 5
 
 - A factory returns the ``std::unique_ptr`` by value. The caller becomes the owner.
-- ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Return by Value, Again`_).
+- ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
 - Compare `A Robot on the Heap`_: there, a ``RobotStatus*`` came back, and nothing said who must delete it. Here the type says it.
 
 Exercise 2: Lines That Compile
@@ -1230,7 +1274,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 60`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 63`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1249,7 +1293,7 @@ See `cppreference: std::shared_ptr <https://en.cppreference.com/w/cpp/memory/sha
 A Robot in Two Lists
 """"""""""""""""""""
 
-Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet. Three ways to hold it in the queue, all wrong:
+Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, and it stays in the fleet. Three ways to hold it in the queue, all wrong:
 
 1. **A second** ``std::unique_ptr``: does not compile. One owner only (`One Owner Only`_).
 2. **A copy of the robot**: now there are two robots. Charging one leaves the other at 14 %.
@@ -1257,12 +1301,12 @@ Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet.
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 53, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 56, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
 
-The ``fleet`` here is the one from `A Fleet of unique_ptr`_.
+The ``fleet`` here is the one from `A Fleet of Owners`_.
 
 .. note::
 
@@ -1305,14 +1349,14 @@ The Control Block
 
    Two ``std::shared_ptr``\ s to one robot. Both point at the robot and at the control block that ``std::make_shared`` put in the same allocation.
 
-- A ``std::shared_ptr`` is two pointers, 16 bytes: to the robot, and to the **control block** that holds the count.
+- A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners. A ``std::shared_ptr`` is two pointers, 16 bytes: to the robot and to its control block.
 - ``std::make_shared``: one allocation of 56 bytes for both, measured. With ``new``: two, 40 and 24 bytes.
 - A copy adds 1 to the count; destroying a ``std::shared_ptr`` subtracts 1.
 
 See `One Allocation with make_shared`_ under Further Reading.
 
-``use_count``, Step by Step
-"""""""""""""""""""""""""""
+``use_count``
+"""""""""""""
 
 .. code-block:: cpp
 
@@ -1356,7 +1400,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 66``.
+- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 69``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
    :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
@@ -1386,7 +1430,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 68`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 71`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1461,7 +1505,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 59
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 62
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1532,9 +1576,9 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 75``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 78``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
-- **Indirect**: each robot is reachable only from the other leaked robot.
+- An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory. Both leaks here are indirect: each robot is reachable only from the other.
 
 Breaking It
 """""""""""
@@ -1553,14 +1597,14 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 76``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 79``: no LeakSanitizer report.
 
 .. note::
 
    "Use ``std::weak_ptr`` to break cycles of ``shared_ptr``\ s". Rule: `Core Guidelines R.24 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-weak_ptr>`__.
 
-Reading a ``weak_ptr``
-""""""""""""""""""""""
+``lock``
+""""""""
 
 .. code-block:: cpp
 
@@ -1579,7 +1623,7 @@ Reading a ``weak_ptr``
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
 - While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 77``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 80``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1620,7 +1664,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 79``.
+- Check: ``702run week7_playground 82``.
 
 Choosing a Pointer
 ------------------
@@ -1674,7 +1718,7 @@ Back to the Fleet
    :align: center
    :width: 100%
 
-   The fleet with its smart pointers. **Filled diamond**: ``std::unique_ptr``. **Open diamond**: ``std::shared_ptr``. **Arrow, no diamond**: ``std::weak_ptr``.
+   The fleet with its smart pointers. **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks without owning.
 
 - One ``std::vector`` holds one type: once robot 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
 - Robots 1 and 2 still have one owner each, through that ``std::shared_ptr``.
@@ -1851,7 +1895,7 @@ A ``unique_ptr`` with Its Own Deleter
      // sizeof(robot): 8
    }  // prints: deleting robot 3
 
-- The second template argument is the **deleter**: what the pointer calls instead of ``delete``. Here a lambda (L6) that prints first.
+- The second template argument is the deleter (`One Owner Only`_). Here a lambda (L6) that prints first.
 - ``std::make_unique`` cannot take a deleter, so the code calls ``new`` and hands the result to the ``std::unique_ptr`` in the same statement.
 - A lambda with no captures adds no bytes: 8. A function pointer as the deleter makes it 16 (measured).
 
@@ -2049,7 +2093,7 @@ Category, Type and Lifetime
      - ``V&&``
      - the same object as ``route``, marked "may be taken"
 
-- ``V`` is ``std::vector<Position>``. The type of the variable ``r`` is ``V&&``; the expression ``r`` is an lvalue (`Named rvalue References`_).
+- ``V`` is ``std::vector<Position>``. The type of the variable ``r`` is ``V&&``; the expression ``r`` is an lvalue (`Giving It a Name`_).
 - Binding a prvalue to a reference extends the temporary's life. ``std::move`` creates nothing: it marks an object that already exists.
 
 .. note::
