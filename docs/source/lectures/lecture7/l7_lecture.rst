@@ -261,26 +261,50 @@ Handing a Route to a Robot
    - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
    - It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
+An Implicit Move
+^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   const Position* made{nullptr};         // where plan's block is made
+   std::vector<Position> plan(int n) {    // a custom function
+     std::vector<Position> route{make_route(n)};
+     made = route.data();
+     return route;                        // no std::move
+   }
+
+   std::vector<std::vector<Position>> plans;
+   plans.push_back(plan(500));            // no std::move
+
+.. code-block:: text
+
+   plans[0].data() == made: true, plans[0].size(): 500
+
+- No ``std::move``, and still no copy: the block made inside ``plan`` is the block in ``plans[0]``.
+- ``return route;`` moves the local out of the function, or builds it in place (`Return by Value, Again`_).
+- ``push_back`` gets a temporary, so it takes the overload that moves (`Overloads for Copy and Move`_).
+- ``702run week7_playground 13`` prints the line above.
+
 Inside a Copy
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_copy.png
-   :alt: Two panels side by side, one per vector, each under a rounded name tag: route on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to it. Under route, the strip ends in a gray part marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Under copied, the strip has no gray part: begin points to the first cell, and end and capacity both to the end of the last cell. Its measuring line reads 1000 Position, 16000 bytes. No arrow joins the two panels.
+   :alt: Two panels side by side, one per vector, each under a rounded name tag: route on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip. Under route, the strip ends in a gray part marked 24 free: the begin arrow ends at the left end of the first cell, the end arrow at the start of the gray part, and the capacity arrow at the right end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Under copied, the strip has no gray part: the begin arrow ends at the left end of the first cell, and the end and capacity arrows both at the right end of the last cell. Its measuring line reads 1000 Position, 16000 bytes. No arrow joins the two panels.
    :align: center
    :width: 100%
 
    A ``std::vector`` and its copy: each one owns its own block. Gray: unused slots of ``route``'s capacity.
 
-- After ``std::vector<Position> copied{route}``, each vector holds three pointers into its own block (`Handing a Route to a Robot`_: the two ``data()`` differ).
-- ``push_back`` grew ``route`` to capacity 1024 (measured): 1024 × 16 = 16384 bytes, 24 unused (gray).
+- After ``std::vector<Position> copied{route}``, each vector holds three pointers into its own block, and frees it when it goes out of scope.
+- ``push_back`` grew ``route`` to capacity 1024: 1024 × 16 = 16384 bytes, 24 unused (gray).
 - The copy allocates 1000 × 16 = 16000 bytes. Total: 16384 + 16000 = 32384 bytes.
-- Each vector frees its own block when it goes out of scope.
+- No spare slots: the standard asks only for equal elements (C++20 **[container.requirements.general]**, Table 73: a copy ``u`` of ``a`` has ``u == a``, and ``==`` compares the elements); libstdc++'s copy constructor allocates exactly ``size()`` elements.
 
 Inside a Move
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading route over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Three blue arrows run down to a red box with a heap icon and the word Heap, holding a strip of cells that ends in a gray part marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Panel 2: a name tag reading route over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to a Heap box like the one in panel 1, pointing the same way, with the same gray part and the same measuring line, 1024 Position, 16384 bytes.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading route over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells that ends in a gray part marked 24 free, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, end at the start of the gray part, and capacity at the right end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Panel 2: a name tag reading route over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same three places, with the same gray part and the same measuring line, 1024 Position, 16384 bytes.
    :align: center
    :width: 100%
 
@@ -400,7 +424,7 @@ With the declarations above, each expression below names an object that already 
 - ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
 - ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
 
-The test passes for all five: ``&`` compiles on each. ``702run week7_playground 18`` prints ``lvalue`` for all five.
+The test passes for all five: ``&`` compiles on each. ``702run week7_playground 19`` prints ``lvalue`` for all five.
 
 .. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
    :icon: code
@@ -443,7 +467,7 @@ With the declarations above, each expression below is a prvalue:
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 19`` prints ``prvalue`` for all five.
+``702run week7_playground 20`` prints ``prvalue`` for all five.
 
 xvalues
 ^^^^^^^
@@ -452,42 +476,60 @@ An **xvalue** is an expression that names an object you have marked as "you may 
 
 .. code-block:: cpp
 
-   struct Robot {
-     RobotStatus status;
-     std::vector<Position> route;
-   };
+   struct Robot { RobotStatus status; std::vector<Position> route; };
    std::vector<Position> route{make_route(3)};
    Robot robot{make_robot(1), make_route(3)};
 
-With the declarations above, each expression below is an xvalue:
+``T&&`` reads "rvalue reference to ``T``": a reference whose object may be taken (`rvalue References`_). Here ``T`` is ``std::vector<Position>``. Each expression below is an xvalue:
 
-- ``std::move(route)``: a call that returns ``T&&``.
-- ``static_cast<std::vector<Position>&&>(route)``: a cast to ``T&&``.
-- ``std::move(robot).route``: a member of an xvalue.
+- ``std::move(route)``: a call to a function whose return type is ``T&&``. It names ``route``, now marked.
+- ``static_cast<std::vector<Position>&&>(route)``: the same marking, written as a cast to ``T&&``.
+- ``std::move(robot).route``: ``std::move`` marks ``robot``, so its member ``route`` is marked too. Its ``decltype((e))`` is ``T&&`` as well (`The decltype Test`_).
 
-``702run week7_playground 20`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3.
-
-.. note::
-
-   Three of the five cases in the note to **[basic.lval]** paragraph 4: a call "whose return type is an rvalue reference to object type", "a cast to an rvalue reference to object type", and a member access "in which the object expression is an xvalue".
+``702run week7_playground 21`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To read a member, there must be an object. So the compiler creates a **temporary** object from the prvalue, and the expression becomes an xvalue that names it.
 
 .. code-block:: cpp
 
    RobotStatus make_robot(int id);   // returns by value
 
-   make_robot(3)        // prvalue: no object yet
-   make_robot(3).id     // xvalue: .id needs an object, so one is made
-   int id{make_robot(3).id};  // the robot is created, read, and destroyed
+With the declaration above:
 
-- To read a member, there must be an object. The compiler creates a **temporary** from the prvalue, and the expression becomes an xvalue that names it.
-- The temporary is destroyed at the end of the full expression, after ``id`` has its value: 3.
+- ``make_robot(3)``: a prvalue. No object exists yet.
+- ``make_robot(3).id``: an xvalue. ``.id`` needs an object, so a temporary is made.
+- ``int id{make_robot(3).id}``: the temporary is created, read, and destroyed at the end of the full expression, after ``id`` has its value: 3.
 
 .. note::
 
    C++20 **[conv.rval]** (7.3.4): "A prvalue of type T can be converted to an xvalue of type T." The standard's own example: ``int k = X().n``, "X() prvalue is converted to xvalue".
+
+``decltype``
+^^^^^^^^^^^^
+
+``decltype(e)`` names a type: the type of ``e``, worked out by the compiler without running ``e``. You can use it wherever you would write a type.
+
+.. code-block:: cpp
+
+   int count{3};
+   const double limit{40.0};
+   std::vector<Position> route{make_route(3)};
+   Position& first{route[0]};
+   auto copy{limit};            // double: auto drops const
+
+With the declarations above:
+
+- ``decltype(count)`` is ``int``, so ``decltype(count) other{5};`` declares an ``int``.
+- ``decltype(limit)`` is ``const double``: unlike ``auto``, ``decltype`` keeps ``const``.
+- ``decltype(first)`` is ``Position&``: it keeps the ``&`` too.
+- ``decltype(route.size())`` is ``std::size_t``, the type the call returns. ``size()`` is not called.
+
+.. note::
+
+   C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: for a plain name, "decltype(E) is the type of the entity named by E". "The operand of the decltype specifier is an unevaluated operand".
 
 The ``decltype`` Test
 ^^^^^^^^^^^^^^^^^^^^^
@@ -540,7 +582,7 @@ Exercise 1: Value Categories
    make_robot(n).battery_pct   // 9
    ++n                         // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 23``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 25``.
 
 rvalue References
 ^^^^^^^^^^^^^^^^^
@@ -737,7 +779,7 @@ In Memory
 ^^^^^^^^^
 
 .. figure:: /_static/images/l7/unique_ptr_memory.png
-   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. A blue arrow runs from the field to a red box on the right, under a name tag reading RobotStatus, with a heap icon and the word Heap. It holds four rows: id 3, battery_pct 64.0, position {2.0, 3.0}, and busy false. A measuring line under it reads 40 bytes.
+   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds a block of four rows: id 3, battery_pct 64.0, position {2.0, 3.0}, and busy false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 40 bytes.
    :align: center
    :width: 100%
 
@@ -780,7 +822,7 @@ The Leak, Fixed
      return true;     // and here
    }
 
-- ``702run week7_playground 34`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
+- ``702run week7_playground 36`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
 - Every path out of the function destroys ``robot``, and ``robot``'s destructor deletes the ``RobotStatus``. There is no ``delete`` to forget.
 
 One Owner Only
@@ -1003,7 +1045,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 44`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 46`` and its comments.
 
 ``std::shared_ptr``
 -------------------
@@ -1023,7 +1065,7 @@ Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet.
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 37, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 39, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1065,7 +1107,7 @@ The Control Block
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/shared_ptr_memory.png
-   :alt: On the left, two blue boxes, one above the other, each with a stack icon and the word Stack, under name tags reading robot and in_queue. Each holds two fields, object and control, each marked ptr, and a measuring line under each box reads 16 bytes. On the right, one red box with a heap icon and the word Heap holds two parts: a RobotStatus labeled 40 bytes, and below it a control block reading use_count: 2 and weak_ptrs: 0. A measuring line under it reads one allocation, 56 bytes. From each Stack box, a blue arrow runs from the object field to the RobotStatus and from the control field to the control block.
+   :alt: On the left, two blue boxes, one above the other, each with a stack icon and the word Stack, under name tags reading robot and in_queue. Each holds two fields, object and control, each marked ptr, and a measuring line under each box reads 16 bytes. On the right, one red box with a heap icon and the word Heap holds two blocks: a RobotStatus labeled 40 bytes, and below it a control block reading use_count: 2 and weak_ptrs: 0. A measuring line under it reads one allocation, 56 bytes. From each Stack box, a blue arrow runs from the object field to the left edge of the RobotStatus block, and another from the control field to the left edge of the control block.
    :align: center
    :width: 100%
 
@@ -1098,6 +1140,43 @@ See `One Allocation with make_shared`_ under Further Reading.
 - A copy adds an owner. A move hands one owner's place to another: the count stays at 2, and ``in_queue`` is left empty.
 - ``reset()`` gives up this owner's place. The robot is deleted only when the count reaches 0.
 
+Three Ways to Let Go
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto robot{std::make_shared<RobotStatus>(
+       3, 14.0, Position{2.0, 3.0}, false)};
+   {
+     std::shared_ptr<RobotStatus> in_queue{robot};  // 1
+   }                                                // 2
+   // three separate runs, each from 2:
+   robot = std::make_shared<RobotStatus>(
+       4, 100.0, Position{0.0, 0.0}, false);        // 3a
+   robot.reset();                                   // 3b
+                                    // 3c: robot's scope ends
+
+.. code-block:: text
+
+   1: 2
+   2: 1
+   3a: robot->id: 4, use_count: 1
+   3b: robot == nullptr: true
+
+- An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
+- In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
+- Robot 4's values are chosen for this example. Run it: ``702run week7_playground 52``.
+
+.. figure:: /_static/images/l7/shared_ptr_let_go.png
+   :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
+   :align: center
+   :width: 100%
+
+   The three ways to let go, in memory. Gray and dashed: gone.
+
+- 1: ``in_queue`` copies ``robot``: two owners. 2: ``in_queue``'s scope ends: one owner left.
+- 3a, 3b and 3c are three separate runs, each from 2.
+
 Deletion by the Last Owner
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1116,7 +1195,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 50`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 54`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1191,7 +1270,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 43
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 45
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1227,7 +1306,7 @@ A Cycle
    b->partner = a;  // b owns a
 
 .. figure:: /_static/images/l7/cycle.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side. Each box is one allocation: at the top a dashed part labeled control block that holds use_count, then two rows, status and partner. A green arrow runs from the partner row of robot 1 straight across to robot 2, and another from the bottom of robot 2, under both boxes, up into robot 1. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots, with green arrows down to robot 1 and robot 2; both control blocks read use_count: 2. Panel 2: no stack boxes; both control blocks read use_count: 1.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side. Each box is one allocation: at the top a dashed part labeled control block that holds use_count, then the Robot object, a solid outline around two rows, status and partner. A green arrow runs from robot 1's partner row across the gap and into the left edge of robot 2's object, at its status row; another runs from robot 2's partner row down, under both boxes, and up into the bottom edge of robot 1's object. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots. A green arrow from a goes around the left side of robot 1 into the left edge of its object, and one from b goes around the right side of robot 2 into the right edge of its object. Both control blocks read use_count: 2. Panel 2: no stack boxes; both control blocks read use_count: 1.
    :align: center
    :width: 100%
 
@@ -1255,7 +1334,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 57``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 61``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - **Indirect**: each robot is reachable only from the other leaked robot.
 
@@ -1276,7 +1355,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 58``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 62``: no LeakSanitizer report.
 
 .. note::
 
@@ -1302,7 +1381,7 @@ Reading a ``weak_ptr``
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
 - While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 59``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 63``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1343,7 +1422,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 61``.
+- Check: ``702run week7_playground 65``.
 
 Choosing a Pointer
 ------------------
