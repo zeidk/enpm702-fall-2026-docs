@@ -96,7 +96,7 @@ Code for This Lecture
 The Program We Will Build
 -------------------------
 
-The **fleet manager** of Lecture 6, with its robots now on the heap. The structs ``Position`` and ``RobotStatus`` do not change.
+The **fleet manager** of L6, with its robots now on the heap. The structs ``Position`` and ``RobotStatus`` do not change.
 
 - The **fleet** is a list of robots. It creates each robot, and gives the memory back when the robot leaves.
 - The **charging queue** holds robots waiting to charge. A queued robot is still in the fleet: it has two owners, and lives until both let go.
@@ -111,7 +111,7 @@ The **fleet manager** of Lecture 6, with its robots now on the heap. The structs
    :align: center
    :width: 100%
 
-   Who owns each robot, as a UML object diagram (Lecture 9): one box per object; a diamond marks the owner. **Filled diamond**, the only owner: ``fleet`` alone owns ``robot1`` and ``robot2``. **Open diamond**, one of several owners: ``fleet`` and ``charging_queue`` both own ``robot3``. **Arrow, no diamond**, looks without owning: ``dashboard`` looks at ``robot3``.
+   Who owns each robot, as a UML object diagram (L9): one box per object; a diamond marks the owner. **Filled diamond**, the only owner: ``fleet`` alone owns ``robot1`` and ``robot2``. **Open diamond**, one of several owners: ``fleet`` and ``charging_queue`` both own ``robot3``. **Arrow, no diamond**, looks without owning: ``dashboard`` looks at ``robot3``.
 
 Ownership
 ---------
@@ -134,7 +134,7 @@ A Robot on the Heap
    delete robot;  // the caller must remember this
    robot = nullptr;
 
-- ``make_robot`` creates the robot with Lecture 3's ``new``. The caller must ``delete`` it.
+- ``make_robot`` creates the robot with L3's ``new``. The caller must ``delete`` it.
 - Nothing in the type says so: ``RobotStatus*`` looks the same whether it owns the robot or only points at it.
 
 .. note::
@@ -145,7 +145,7 @@ Three Ways to Get It Wrong
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - **Leak**: a function returns early and skips its ``delete``. The robot's memory is never given back.
-- **Double** ``delete``: the same robot is in two lists, and each list deletes it. It breaks Lecture 3's rule, "``delete`` exactly once", and is undefined behavior.
+- **Double** ``delete``: the same robot is in two lists, and each list deletes it. It breaks L3's rule, "``delete`` exactly once", and is undefined behavior.
 - **Dangling read**: one list deletes the robot, and the other list still reads it. Undefined behavior.
 - The cause is the same in all three: two lists, or two paths, and no code marked as the owner.
 
@@ -190,11 +190,11 @@ The Leak, Measured
    SUMMARY: AddressSanitizer: 40 byte(s) leaked in 1 allocation(s).
 
 - ``702run week7_playground 9``. At exit, it names the line that called ``new``.
-- 40 bytes is one ``RobotStatus``, the size measured in Lecture 6.
+- 40 bytes is one ``RobotStatus``, the size measured in L6.
 
 .. note::
 
-   LeakSanitizer comes with Lecture 3's ``-fsanitize=address``: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms". See `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`__.
+   LeakSanitizer comes with L3's ``-fsanitize=address``: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms". See `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`__.
 
 RAII for One Object
 ^^^^^^^^^^^^^^^^^^^
@@ -257,7 +257,7 @@ Handing a Route to a Robot
         return route;
       }
 
-   - It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (Lecture 6's ``Position``).
+   - It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (L6's ``Position``).
    - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
    - It returns the local ``route`` by value: no copy is made (`Return by Value, Again`_).
 
@@ -265,7 +265,7 @@ Inside a Copy
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_copy.png
-   :alt: Two blue Stack boxes side by side, named route and copied, each with three fields, begin, end and capacity. Below each one is its own red Heap block, and three blue arrows drop from each box's fields to its own block. Under route, the block is labeled 1024 Position, 16384 bytes, and its last part is shaded gray and marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the block. Under copied, the block is labeled 1000 Position, 16000 bytes, with no gray part: begin points to the first cell, and end and capacity both to the end of the last cell. No arrow joins the two sides.
+   :alt: Two panels side by side, one per vector, each under a rounded name tag: route on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to it. Under route, the strip ends in a gray part marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Under copied, the strip has no gray part: begin points to the first cell, and end and capacity both to the end of the last cell. Its measuring line reads 1000 Position, 16000 bytes. No arrow joins the two panels.
    :align: center
    :width: 100%
 
@@ -280,13 +280,13 @@ Inside a Move
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a blue Stack box named route with three fields, begin, end and capacity. Three blue arrows drop from the fields to a red Heap block below, labeled 1024 Position, 16384 bytes, its last part shaded gray and marked 24 free: begin to its first cell, end to the start of the gray part, and capacity to the end of the block. Panel 2: the same Stack box named route, its three fields now reading nullptr, with no arrows. Below it a second Stack box named moved, with the same three fields, and three blue arrows from them to a red Heap block labeled 1024 Position, 16384 bytes, with the same gray part, pointing the same way as in panel 1.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading route over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Three blue arrows run down to a red box with a heap icon and the word Heap, holding a strip of cells that ends in a gray part marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Panel 2: a name tag reading route over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to a Heap box like the one in panel 1, pointing the same way, with the same gray part and the same measuring line, 1024 Position, 16384 bytes.
    :align: center
    :width: 100%
 
    A ``std::vector`` before and after a move. **1**: ``route`` owns the block. **2**: after the move, ``moved`` owns the block and ``route``'s three pointers are null.
 
-- **1**: ``route`` owns the block through its three pointers (Lecture 4). Gray: 24 unused slots.
+- **1**: ``route`` owns the block through its three pointers (L4). Gray: 24 unused slots.
 - **2**: after ``std::vector<Position> moved{std::move(route)}``, ``moved`` holds the same three pointers and ``route``'s are null (libstdc++, measured).
 - Only 24 bytes change hands: one ``std::vector`` object, whatever it holds.
 
@@ -364,15 +364,17 @@ The Five Definitions
 lvalues
 ^^^^^^^
 
-An **lvalue** names an object that lives on after the expression. Test: you can take its address with ``&``.
+An **lvalue** is an expression that names an object, and the object lives on after the expression. Test: you can take its address with ``&``.
 
 .. code-block:: cpp
 
-   RobotStatus make_robot(int id);  // by value from here on
+   RobotStatus make_robot(int id);
    RobotStatus& first_robot(std::vector<RobotStatus>& fleet);
    std::vector<Position> route{make_route(3)};
    std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
    RobotStatus* robot_ptr{&fleet[1]};
+
+With the declarations above, each expression below is an lvalue:
 
 - ``route``: a named variable.
 - ``*robot_ptr``: what a pointer points at.
@@ -403,26 +405,32 @@ An **lvalue** names an object that lives on after the expression. Test: you can 
 prvalues
 ^^^^^^^^
 
+A **prvalue** is an expression whose value will initialize an object: no object exists yet. Test: you cannot take its address.
+
 .. code-block:: cpp
 
+   std::vector<Position> make_route(int n);
    int a{2};
    int b{3};
 
-   42                // a literal (not a string literal)
-   a + b             // a built-in arithmetic result
-   make_route(3)     // a call that returns by value
-   RobotStatus{}     // a temporary of a class type
-   [] { return 1; }  // a lambda expression
+With the declarations above, each expression below is a prvalue:
+
+- ``42``: a literal (not a string literal).
+- ``a + b``: a built-in arithmetic result. ``&(a + b)`` does not compile.
+- ``make_route(3)``: a call that returns by value.
+- ``RobotStatus{}``: a temporary of a class type.
+- ``[] { return 1; }``: a lambda expression.
 
 .. code-block:: text
 
    error: lvalue required as unary '&' operand
 
-- No object exists yet: a prvalue is the value that will initialize one. All five print ``prvalue``.
-- So you cannot take its address: ``&(a + b)`` gives the error above.
+``702run week7_playground 19`` prints ``prvalue`` for all five.
 
 xvalues
 ^^^^^^^
+
+An **xvalue** is an expression that names an object you have marked as "you may take from this". Naming one moves nothing.
 
 .. code-block:: cpp
 
@@ -433,12 +441,13 @@ xvalues
    std::vector<Position> route{make_route(3)};
    Robot robot{make_robot(1), make_route(3)};
 
-   std::move(route)                              // a call that returns T&&
-   static_cast<std::vector<Position>&&>(route)   // a cast to T&&
-   std::move(robot).route                        // a member of an xvalue
+With the declarations above, each expression below is an xvalue:
 
-- An object you have marked as "you may take from this". All three print ``xvalue``.
-- Naming an xvalue moves nothing: afterwards ``route.size()`` is still 3.
+- ``std::move(route)``: a call that returns ``T&&``.
+- ``static_cast<std::vector<Position>&&>(route)``: a cast to ``T&&``.
+- ``std::move(robot).route``: a member of an xvalue.
+
+``702run week7_playground 20`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3.
 
 .. note::
 
@@ -531,7 +540,7 @@ rvalue References
    of type 'std::vector<Position>'
 
 - ``T&&`` is an **rvalue reference**. It binds only to rvalues: prvalues and xvalues.
-- ``const T&`` binds to both (Lecture 5), but through it you cannot change the object, so you cannot take from it.
+- ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
 - A ``T&&`` says: whatever this refers to may be taken.
 
 Named rvalue References
@@ -659,7 +668,7 @@ Return by Value, Again
    warning: moving a local object in a return statement prevents copy elision
    [-Wpessimizing-move]
 
-- Lecture 5: a local returned by value is constructed in place, or moved if it cannot be. Same address, measured.
+- L5: a local returned by value is constructed in place, or moved if it cannot be. Same address, measured.
 - ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place.
 
 .. note::
@@ -690,7 +699,7 @@ Creating One
    std::cout << other->battery_pct << '\n';      // 100
 
 - ``std::make_unique<T>(args)`` creates the object on the heap and returns the ``std::unique_ptr`` that owns it.
-- The arguments go to the object, as with Lecture 6's ``emplace_back(3, 64.0, ...)``.
+- The arguments go to the object, as with L6's ``emplace_back(3, 64.0, ...)``.
 - ``->`` and ``*`` work as they do on a ``RobotStatus*``.
 - No ``new``, and no ``delete``: ``robot`` deletes its robot when it goes out of scope.
 
@@ -704,7 +713,7 @@ In Memory
 ^^^^^^^^^
 
 .. figure:: /_static/images/l7/unique_ptr_memory.png
-   :alt: On the left, a blue Stack box named robot with one field, pointer, labeled 8 bytes. A blue arrow runs from it to a red Heap box on the right named RobotStatus, with four rows: id 3, battery_pct 64.0, position {2.0, 3.0}, and busy false, labeled 40 bytes.
+   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. A blue arrow runs from the field to a red box on the right, under a name tag reading RobotStatus, with a heap icon and the word Heap. It holds four rows: id 3, battery_pct 64.0, position {2.0, 3.0}, and busy false. A measuring line under it reads 40 bytes.
    :align: center
    :width: 100%
 
@@ -879,7 +888,7 @@ Passing: Borrow
    charge(robot.get());
    print_status(*robot);   // 100 %: the caller still owns it
 
-- A function that only uses the robot takes the robot, by reference or plain pointer, not the smart pointer. Lecture 5's rules for parameters apply.
+- A function that only uses the robot takes the robot, by reference or plain pointer, not the smart pointer. L5's rules for parameters apply.
 - It then works for any robot: on the heap, on the stack, or in a vector.
 
 .. note::
@@ -939,13 +948,13 @@ Returning
      auto robot{std::make_unique<RobotStatus>(
          id, 100.0, Position{0.0, 0.0}, false)};
      robot->busy = false;
-     return robot;  // no std::move: Lecture 5's implicit move
+     return robot;  // no std::move: L5's implicit move
    }
 
    std::unique_ptr<RobotStatus> robot{make_robot(5)};  // robot->id: 5
 
 - A factory returns the ``std::unique_ptr`` by value. The caller becomes the owner.
-- ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (Lecture 5, and `Return by Value, Again`_).
+- ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Return by Value, Again`_).
 - Compare `A Robot on the Heap`_: there, a ``RobotStatus*`` came back, and nothing said who must delete it. Here the type says it.
 
 Exercise 2: Lines That Compile
@@ -1032,7 +1041,7 @@ The Control Block
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/shared_ptr_memory.png
-   :alt: On the left, two blue Stack boxes, named robot and in_queue, one above the other. Each has two rows, object and control, and is labeled 16 bytes. On the right, one red box headed Heap: one allocation, 56 bytes, holding two parts: a RobotStatus labeled 40 bytes, and below it a control block reading use_count: 2 and weak_ptrs: 0. From each stack box, a blue arrow runs from the object row to the RobotStatus and from the control row to the control block.
+   :alt: On the left, two blue boxes, one above the other, each with a stack icon and the word Stack, under name tags reading robot and in_queue. Each holds two fields, object and control, each marked ptr, and a measuring line under each box reads 16 bytes. On the right, one red box with a heap icon and the word Heap holds two parts: a RobotStatus labeled 40 bytes, and below it a control block reading use_count: 2 and weak_ptrs: 0. A measuring line under it reads one allocation, 56 bytes. From each Stack box, a blue arrow runs from the object field to the RobotStatus and from the control field to the control block.
    :align: center
    :width: 100%
 
@@ -1121,7 +1130,7 @@ Passing: Share
    std::cout << robot.use_count() << '\n';  // 2
 
 - By value: the parameter is one more owner. The function moves it into the queue, so the queue keeps that owner's place.
-- ``using Fleet = ...;`` is a type alias (Lecture 2): a shorter name for the long type.
+- ``using Fleet = ...;`` is a type alias (L2): a shorter name for the long type.
 
 .. note::
 
@@ -1194,7 +1203,7 @@ A Cycle
    b->partner = a;  // b owns a
 
 .. figure:: /_static/images/l7/cycle.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes, robot 1 and robot 2, side by side, each with three rows: use_count, status, and partner. A green arrow runs from the partner row of robot 1 straight across to the partner row of robot 2, and another from the bottom of robot 2, under both boxes, up into robot 1. Panel 1: two blue-outlined boxes, a and b, above the robots, with green arrows down to robot 1 and robot 2; both robots read use_count: 2. Panel 2: no a and b boxes; both robots read use_count: 1.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side, each with three rows: use_count, status, and partner. A green arrow runs from the partner row of robot 1 straight across to robot 2, and another from the bottom of robot 2, under both boxes, up into robot 1. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots, with green arrows down to robot 1 and robot 2; both robots read use_count: 2. Panel 2: no stack boxes; both robots read use_count: 1.
    :align: center
    :width: 100%
 
@@ -1444,7 +1453,7 @@ Dangling Read, Measured
    SUMMARY: AddressSanitizer: heap-use-after-free .../undefined.cpp:64
 
 - ``702run week7_appendix iii``. The read is on line 64; the ``delete`` that freed the robot is on line 63.
-- "8 bytes inside": ``battery_pct`` starts at byte 8 of a ``RobotStatus``, as ``offsetof`` showed in Lecture 6.
+- "8 bytes inside": ``battery_pct`` starts at byte 8 of a ``RobotStatus``, as ``offsetof`` showed in L6.
 
 The Moved-from ``std::string``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1541,7 +1550,7 @@ A ``unique_ptr`` with Its Own Deleter
      // sizeof(robot): 8
    }  // prints: deleting robot 3
 
-- The second template argument is the **deleter**: what the pointer calls instead of ``delete``. Here a lambda (Lecture 6) that prints first.
+- The second template argument is the **deleter**: what the pointer calls instead of ``delete``. Here a lambda (L6) that prints first.
 - ``std::make_unique`` cannot take a deleter, so the code calls ``new`` and hands the result to the ``std::unique_ptr`` in the same statement.
 - A lambda with no captures adds no bytes: 8. A function pointer as the deleter makes it 16 (measured).
 
@@ -1607,7 +1616,7 @@ Testing for Empty
 
 - ``std::unique_ptr<double[]>`` calls ``delete[]``, not ``delete``, and has ``[]`` instead of ``->``.
 - It is 8 bytes because it does not keep the length. No ``size()``, no ``push_back``, no range-based ``for``: the 5 is yours to remember.
-- A ``std::vector<double>`` (Lecture 4) keeps the length and grows. Use it unless an interface needs a plain array.
+- A ``std::vector<double>`` (L4) keeps the length and grows. Use it unless an interface needs a plain array.
 
 .. note::
 
@@ -1679,7 +1688,7 @@ A Dashboard of ``weak_ptr``
    });
 
 - Output: ``robot 1: 82.5 %``, ``(gone)``, ``robot 3: 14 %``, then ``shown.size()`` is 2.
-- The dashboard never keeps a robot alive. Lecture 4's ``std::erase_if`` with a lambda (Lecture 6) drops the entries whose robot is gone.
+- The dashboard never keeps a robot alive. L4's ``std::erase_if`` with a lambda (L6) drops the entries whose robot is gone.
 
 More Core Guidelines
 ^^^^^^^^^^^^^^^^^^^^

@@ -4,7 +4,7 @@ C++ Exercises
 
 This exercise covers Lecture 7: Smart Pointers and Move Semantics. There is
 one exercise this week, and it is graded: hand it in on Canvas before
-Lecture 8.
+L8.
 
 The exercise works on the fleet manager from the lecture. Four robots are on
 the heap. The fleet owns every robot, the charging queue shares the robots
@@ -43,7 +43,7 @@ alive.
 
     **Goal**
 
-    Use the three smart pointers of Lecture 7 in one short program: a
+    Use the three smart pointers of L7 in one short program: a
     factory that returns a ``std::unique_ptr``, a fleet and a charging queue
     that share robots through ``std::shared_ptr``, and a dashboard that
     watches a robot through a ``std::weak_ptr``.

@@ -23,7 +23,7 @@ Lecture 7 References
 .. dropdown:: Lecture 7 Bibliography
    :class-container: sd-border-success
 
-   The References frame of the Lecture 7 slides lists these four sources.
+   The References frame of the L7 slides lists these four sources.
 
    - Bjarne Stroustrup. *The C++ Programming Language*. 4th edition. Addison-Wesley, 2013. ISBN 978-0321563842.
    - ISO/IEC. *ISO/IEC 14882:2020: Programming languages, C++*. International Organization for Standardization, Geneva, Switzerland, 2020. Working draft N4861 is freely available from the ISO C++ committee. The slides quote this standard by section name, for example [basic.lval] and [unique.ptr.single.ctor].

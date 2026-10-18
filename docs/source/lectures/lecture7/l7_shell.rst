@@ -8,7 +8,7 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1 to 6 and introduce tools
+These exercises build on the shell skills from L1 to L6 and introduce tools
 for remote access, file transfer, terminal multiplexing, build automation, and
 environment setup.
 

@@ -27,7 +27,7 @@ Multiple Choice (Questions 1 to 10)
 .. admonition:: Question 1
    :class: hint
 
-   In Lecture 7, what makes a piece of code the **owner** of a heap object?
+   In L7, what makes a piece of code the **owner** of a heap object?
 
    A. It holds a pointer to the object.
    B. It keeps the object alive, and the last owner to let go deletes it.
@@ -87,7 +87,7 @@ Multiple Choice (Questions 1 to 10)
 
          SUMMARY: AddressSanitizer: 40 byte(s) leaked in 1 allocation(s).
 
-      40 bytes is one ``RobotStatus``, the size measured in Lecture 6. You do not need a separate flag: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms".
+      40 bytes is one ``RobotStatus``, the size measured in L6. You do not need a separate flag: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms".
 
 .. admonition:: Question 3
    :class: hint
@@ -252,7 +252,7 @@ Multiple Choice (Questions 1 to 10)
                |          ~~~~~~~~~^~~~~~~
          q07.cpp:17:19: note: remove ‘std::move’ call
 
-      Lecture 5: a local returned by value is constructed in place, or moved if it cannot be. It is never copied. ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place. The program still runs (``path.size()`` is 1000), but you lost the in-place construction. Write ``return route;``. The Core Guidelines rule is F.48: "Don't ``return std::move(local)``".
+      L5: a local returned by value is constructed in place, or moved if it cannot be. It is never copied. ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place. The program still runs (``path.size()`` is 1000), but you lost the in-place construction. Write ``return route;``. The Core Guidelines rule is F.48: "Don't ``return std::move(local)``".
 
 .. admonition:: Question 8
    :class: hint
