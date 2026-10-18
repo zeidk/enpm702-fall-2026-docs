@@ -27,14 +27,16 @@ Code for This Lecture
 
 **Run a Slide's Code**
 
-1. Get the code: ``git pull``, then ``702configure``.
-2. Build it: ``702build week7_playground``.
-3. Run every slide: ``702run week7_playground``. Run only slide 12: ``702run week7_playground 12``.
+1. Get the code: ``git pull``.
+2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week7)`` is not commented out.
+3. Configure: ``702configure``.
+4. Build it: ``702build week7_playground``.
+5. Run every slide: ``702run week7_playground``. Run only slide X: ``702run week7_playground X``.
 
 **Code That Leaks or Breaks**
 
-- It is in ``undefined``, built with AddressSanitizer. It runs only when you ask for its slide by number.
-- The appendix frames are in ``week7_appendix``.
+- The code that leaks or breaks is in the **undefined** folder, built with AddressSanitizer. It runs only when you ask for its slide by number.
+- The code of the appendix is in the **appendix** folder. Run appendix frame ii with ``702run week7_appendix ii``.
 
 .. dropdown:: How to Run the Code
    :icon: terminal
@@ -109,7 +111,7 @@ The **fleet manager** of Lecture 6, with its robots now on the heap. The structs
    :align: center
    :width: 100%
 
-   Who owns each robot, as a UML object diagram (Lecture 9): each box is one object. **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks, does not own.
+   Who owns each robot, as a UML object diagram (Lecture 9): one box per object; a diamond marks the owner. **Filled diamond**, the only owner: ``fleet`` alone owns ``robot1`` and ``robot2``. **Open diamond**, one of several owners: ``fleet`` and ``charging_queue`` both own ``robot3``. **Arrow, no diamond**, looks without owning: ``dashboard`` looks at ``robot3``.
 
 Who Owns This Robot
 -------------------
