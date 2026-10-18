@@ -451,7 +451,7 @@ lvalue: Copied, Not Taken
    after line 2: name: charging dock, aisle 4, copied: charging dock, aisle 4
    after line 3: name.size(): 0, taken: charging dock, aisle 4
 
-- To **take** an object's contents is to move them into another object: here, the 22 characters ``name`` keeps on the heap (more than the 15 that fit inside a libstdc++ ``std::string``, measured).
+- To **take** an object's contents is to move them into another object. To **mark** an object, with ``std::move``, is to say another object may take them. Line 3 takes the 22 characters ``name`` keeps on the heap (more than the 15 that fit inside a libstdc++ ``std::string``, measured).
 - In line 2, ``name`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``name`` keeps its characters.
 - In line 3, ``std::move(name)`` **marks** ``name``: it says another object may take its contents. ``taken`` takes them, and ``name`` is left empty (libstdc++, measured). Part (2) fails, so ``std::move(name)`` is not an lvalue: `xvalue: Marked by std::move`_ says what it is.
 - One exception: ``return route;`` may move from a local variable even though ``route`` is an lvalue (`An Implicit Move`_).
