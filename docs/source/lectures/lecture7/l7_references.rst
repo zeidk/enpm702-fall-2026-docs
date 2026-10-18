@@ -9,9 +9,9 @@ Lecture 7 References
 
    This lecture covered who owns an object on the heap, move semantics, and the three smart pointers of ``<memory>``:
 
-   - **Who Owns This Robot**: The owner of a heap object is the code that must give it back. A ``T*`` cannot say it owns. A leak, a double ``delete`` and a dangling read all come from that. LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
+   - **Who Owns This Robot**: The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read. LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
 
-   - **Move Semantics**: A move hands over what an object owns: a ``std::vector`` moves 24 bytes, not its elements. The source is left valid but unspecified: assign it before you use it again. Every expression is an lvalue, an xvalue or a prvalue, and ``decltype((e))`` tells which. ``T&&`` binds to rvalues only, and a named ``T&&`` is an lvalue. ``std::move`` is a cast, and the move happens where the result is taken. Do not use it on a ``const`` object, and do not use it on a ``return``.
+   - **Move Semantics**: A move hands over what an object owns: 24 bytes for a ``std::vector``, not its elements. The source is valid but unspecified: assign it before reuse. Every expression is an lvalue, an xvalue or a prvalue, and ``decltype((e))`` tells which. ``T&&`` binds to rvalues only, and a named ``T&&`` is an lvalue. ``std::move`` is a cast, and the move happens where the result is taken. Do not use it on a ``const`` object, and do not use it on a returned local.
 
    - **std::unique_ptr**: One owner, 8 bytes, from ``std::make_unique``. It is moved, never copied, and a moved-from one is null. Pass the object to use it, the ``std::unique_ptr`` by value to hand it over, and by reference to reseat it. Return it by value.
 

@@ -6,7 +6,7 @@ Learning Objectives
 -------------------
 
 1. Say who owns an object on the heap, and find a leak with the sanitizers.
-2. Move a ``std::vector`` or a ``std::string`` instead of copying it, and say what is left in the source.
+2. Move a ``std::vector`` instead of copying it, and say what is left in the source.
 3. Name the value category of an expression (lvalue, prvalue, xvalue) and test it with ``decltype``.
 4. Use rvalue references and ``std::move``, and write a function that takes a parameter it moves from.
 5. Own a heap object with ``std::unique_ptr``, and pass it to and return it from functions.
@@ -97,7 +97,7 @@ The Program We Will Build
 The **fleet manager** of Lecture 6, with its robots now on the heap. The structs ``Position`` and ``RobotStatus`` do not change.
 
 - The **fleet** is a list of robots. It creates each robot, and gives the memory back when the robot leaves.
-- The **charging queue** holds the robots waiting to charge. A robot in the queue is still in the fleet: it has two owners, and it must live until both let go.
+- The **charging queue** holds robots waiting to charge. A queued robot is still in the fleet: it has two owners, and lives until both let go.
 - A **dashboard** shows one robot. It must notice when that robot is gone, but it must not keep the robot alive.
 
 .. note::
@@ -105,16 +105,16 @@ The **fleet manager** of Lecture 6, with its robots now on the heap. The structs
    Three kinds of ownership: one owner, several owners, and an observer that owns nothing. Each one gets its own smart pointer today.
 
 .. figure:: /_static/images/l7/owner_map.png
-   :alt: Six rounded boxes joined by arrows, with nothing written on the arrows. On the left, a box labeled Fleet. In the middle, three boxes labeled Robot 1, Robot 2 and Robot 3, one above the other. On the right, a box labeled Charging queue and, below it, a box labeled Dashboard. Solid blue arrows run from the Fleet to Robot 1 and to Robot 2. A solid green arrow runs from the Fleet to Robot 3, and another from the Charging queue to Robot 3. A dashed gray arrow runs from the Dashboard to Robot 3.
+   :alt: A UML object diagram of six objects, each a box with its name underlined, joined by lines with nothing written on them. On the left, a tall box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Blue lines with a filled blue diamond at the fleet end join the fleet to robot1 and to robot2. Green lines with an open green diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A gray line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
    :align: center
    :width: 100%
 
-   Who owns each robot. **Solid blue arrow**: the only owner. **Solid green arrow**: one of several owners. **Dashed gray arrow**: looks, does not own.
+   Who owns each robot, as a UML object diagram (Lecture 9): each box is one object, its name underlined. **Filled blue diamond**: the only owner. **Open green diamond**: one of several owners. **Gray arrow, no diamond**: looks, does not own.
 
 Who Owns This Robot
 -------------------
 
-The **owner** of a heap object is the code that deletes it. Each object needs exactly one owner.
+An **owner** of a heap object is code that keeps it alive. An object can have one owner or several: the last owner to let go deletes it.
 
 Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
@@ -179,7 +179,7 @@ Three Ways to Get It Wrong
 - **Dangling read**: reads an object that was already deleted. Undefined behavior.
 - The cause is the same in all three: two lists, or two paths, and no one is marked as the owner.
 
-See `Double Delete, Measured`_ under Further Reading.
+See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
 
 The Leak, Measured
 ^^^^^^^^^^^^^^^^^^
@@ -187,7 +187,7 @@ The Leak, Measured
 .. code-block:: cpp
 
    bool needs_charge(int id) {
-     RobotStatus* robot{make_robot(id, 64.0)};
+     RobotStatus* robot{make_robot(id, 64.0)};  // 64.0: battery_pct
      if (robot->battery_pct > 20.0) {
        return false;  // leaves without delete
      }
@@ -218,12 +218,13 @@ RAII for One Object
 **Lecture 4, Again**
 
 - A ``std::vector`` gives its memory back by itself when it goes out of scope. That is RAII: the object that holds the memory frees it in its destructor.
-- No path can forget, because leaving a scope always destroys the objects in it: a ``return`` in the middle, the end of a loop, or an exception.
+- No path can forget: leaving a scope always destroys its objects, after a ``return``, at the end of a loop, or by an exception that is caught.
 
 **The Same for One Object**
 
 - A **smart pointer** is an object that owns one heap object and deletes it when the smart pointer is destroyed.
-- Its type says it owns, which a ``RobotStatus*`` cannot. The rest of this lecture: one owner (``std::unique_ptr``), several owners (``std::shared_ptr``), and an observer (``std::weak_ptr``).
+- Its type says it owns, which a ``RobotStatus*`` cannot.
+- Today: ``std::unique_ptr`` for one owner, ``std::shared_ptr`` for several, ``std::weak_ptr`` for an observer.
 
 .. note::
 
@@ -280,29 +281,30 @@ Inside a Copy
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_copy.png
-   :alt: Two blue Stack boxes side by side, named route and copied, each with three fields, begin, end and capacity. Below each one is its own red Heap block labeled 1000 Position, 16000 bytes. Three blue arrows drop from each box's fields to its own block: begin to the first cell, end and capacity both to the end of the last cell. No arrow joins the two sides.
+   :alt: Two blue Stack boxes side by side, named route and copied, each with three fields, begin, end and capacity. Below each one is its own red Heap block, and three blue arrows drop from each box's fields to its own block. Under route, the block is labeled 1024 Position, 16384 bytes, and its last part is shaded gray and marked 24 free: begin points to the first cell, end to the start of the gray part, and capacity to the end of the block. Under copied, the block is labeled 1000 Position, 16000 bytes, with no gray part: begin points to the first cell, and end and capacity both to the end of the last cell. No arrow joins the two sides.
    :align: center
    :width: 100%
 
-   A ``std::vector`` and its copy: each one owns its own block.
+   A ``std::vector`` and its copy: each one owns its own block. Gray: unused slots of ``route``'s capacity.
 
 - After ``std::vector<Position> copied{route}``, each vector holds three pointers into its own block (`Handing a Route to a Robot`_: the two ``data()`` differ).
-- Two blocks of 16000 bytes now hold the same 1000 waypoints: 2 × 16000 = 32000 bytes.
+- ``push_back`` grew ``route`` to capacity 1024 (measured): 1024 × 16 = 16384 bytes, 24 unused (gray).
+- The copy allocates 1000 × 16 = 16000 bytes. Total: 16384 + 16000 = 32384 bytes.
 - Each vector frees its own block when it goes out of scope.
 
 Inside a Move
 ^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a blue Stack box named route with three fields, begin, end and capacity. Three blue arrows drop from the fields to a red Heap block below, labeled 1000 Position, 16000 bytes: begin to the left end of its first cell, end and capacity both to the right end of its last cell. Panel 2: the same Stack box named route, its three fields now reading nullptr, with no arrows. Below it a second Stack box named moved, with the same three fields, and three blue arrows from them to a red Heap block labeled 1000 Position, 16000 bytes, pointing the same way as in panel 1.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a blue Stack box named route with three fields, begin, end and capacity. Three blue arrows drop from the fields to a red Heap block below, labeled 1024 Position, 16384 bytes, its last part shaded gray and marked 24 free: begin to its first cell, end to the start of the gray part, and capacity to the end of the block. Panel 2: the same Stack box named route, its three fields now reading nullptr, with no arrows. Below it a second Stack box named moved, with the same three fields, and three blue arrows from them to a red Heap block labeled 1024 Position, 16384 bytes, with the same gray part, pointing the same way as in panel 1.
    :align: center
    :width: 100%
 
    A ``std::vector`` before and after a move. **1**: ``route`` owns the block. **2**: after the move, ``moved`` owns the block and ``route``'s three pointers are null.
 
-- **1**: ``route`` owns the block through its three pointers (Lecture 4).
+- **1**: ``route`` owns the block through its three pointers (Lecture 4). Gray: 24 unused slots.
 - **2**: after ``std::vector<Position> moved{std::move(route)}``, ``moved`` holds the same three pointers and ``route``'s are null (libstdc++, measured).
-- Only 24 bytes change hands, the size of a ``std::vector`` object, whatever the vector holds.
+- Only 24 bytes change hands: one ``std::vector`` object, whatever it holds.
 
 The Moved-from Object
 ^^^^^^^^^^^^^^^^^^^^^
@@ -323,7 +325,7 @@ The Moved-from Object
 
    C++20 **[lib.types.movedfrom]** (16.5.5.16): "Unless otherwise specified, such moved-from objects shall be placed in a valid but unspecified state."
 
-See `The Moved-from std::string`_ under Further Reading.
+See `The Moved-from std::string`_, `Move Assignment`_ and `std::exchange`_ under Further Reading.
 
 Value Categories
 ^^^^^^^^^^^^^^^^
@@ -336,9 +338,10 @@ Value Categories
        /     \      /     \
    lvalue    xvalue      prvalue
 
-- A **type** says what kind of value an expression has.
-- Its **value category** says whether it names an object, and whether that object's resources may be taken.
-- Every expression is exactly one of **lvalue**, **xvalue**, **prvalue**. A **glvalue** is an lvalue or an xvalue; an **rvalue** is an xvalue or a prvalue.
+- Every expression has a **type** and a **value category**.
+- The value category says whether the expression names an object, and whether that object's resources may be taken.
+- The three categories: **lvalue**, **xvalue**, **prvalue**. A **glvalue** is an lvalue or an xvalue; an **rvalue** is an xvalue or a prvalue.
+- Names (paragraph 3 of **[basic.lval]**): **l**, **r** once meant the left and right side of an assignment; **gl** "generalized", **pr** "pure", **x** "eXpiring".
 
 .. note::
 
@@ -379,6 +382,7 @@ lvalues
 
 .. code-block:: cpp
 
+   RobotStatus make_robot(int id);  // by value from here on
    std::vector<Position> route{make_route(3)};
    std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
    RobotStatus* robot_ptr{&fleet[1]};
@@ -389,7 +393,7 @@ lvalues
    first_robot(fleet)  // a call that returns RobotStatus&
    "dock"              // a string literal: an array with an address
 
-- Each one names an object that lives on after the expression. ``702run week7_playground 18`` prints ``lvalue`` for all five.
+- ``702run week7_playground 18`` prints ``lvalue`` for all five. Each one names an object that lives on after the expression.
 - Test: you can take its address. ``&fleet[0]`` compiles.
 
 prvalues
@@ -434,7 +438,7 @@ xvalues
 
 .. note::
 
-   The three cases are in the note to **[basic.lval]** paragraph 4: a call "whose return type is an rvalue reference to object type", "a cast to an rvalue reference to object type", and a member access "in which the object expression is an xvalue".
+   Three of the five cases in the note to **[basic.lval]** paragraph 4: a call "whose return type is an rvalue reference to object type", "a cast to an rvalue reference to object type", and a member access "in which the object expression is an xvalue".
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -475,7 +479,7 @@ The ``decltype`` Test
 
    C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: "if E is an xvalue, decltype(E) is T&&", "if E is an lvalue, decltype(E) is T&", "otherwise, decltype(E) is the type of E".
 
-Exercise 1: Name the Category
+Exercise 1: Value Categories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -586,7 +590,7 @@ Overloads for Copy and Move
 
    Write ``std::move`` only where the object is handed on, and do not use the source again until you assign it. Rule: `Core Guidelines ES.56 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-move>`__.
 
-See `How std::move Is Written`_ under Further Reading.
+See `The Definition of std::move`_ under Further Reading.
 
 ``std::move`` on a ``const`` Object
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -681,7 +685,8 @@ Creating One
    auto other{std::make_unique<RobotStatus>()};  // members take defaults
    std::cout << other->battery_pct << '\n';      // 100
 
-- ``std::make_unique<T>(args)`` creates the object on the heap and returns the ``std::unique_ptr`` that owns it. The arguments go to the object: Lecture 6's ``emplace_back(3, 64.0, ...)`` works the same way.
+- ``std::make_unique<T>(args)`` creates the object on the heap and returns the ``std::unique_ptr`` that owns it.
+- The arguments go to the object, as with Lecture 6's ``emplace_back(3, 64.0, ...)``.
 - ``->`` and ``*`` work as they do on a ``RobotStatus*``.
 - No ``new``, and no ``delete``: ``robot`` deletes its robot when it goes out of scope.
 
@@ -939,7 +944,7 @@ Returning
 - ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (Lecture 5, and `Return by Value, Again`_).
 - Compare `A Robot on the Heap`_: there, a ``RobotStatus*`` came back, and nothing said who must delete it. Here the type says it.
 
-Exercise 2: Which Lines Compile
+Exercise 2: Lines That Compile
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -981,7 +986,7 @@ Robot 3 is down to 14 %. It joins the charging queue, and it stays in the fleet.
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 37
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 37, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1033,7 +1038,7 @@ The Control Block
 - ``std::make_shared``: one allocation of 56 bytes for both, measured. With ``new``: two, 40 and 24 bytes.
 - A copy adds 1 to the count; destroying a ``std::shared_ptr`` subtracts 1.
 
-See `make_shared Allocates Once`_ under Further Reading.
+See `One Allocation with make_shared`_ under Further Reading.
 
 ``use_count``, Step by Step
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1056,8 +1061,8 @@ See `make_shared Allocates Once`_ under Further Reading.
 - A copy adds an owner. A move hands one owner's place to another: the count stays at 2, and ``in_queue`` is left empty.
 - ``reset()`` gives up this owner's place. The robot is deleted only when the count reaches 0.
 
-The Last Owner Frees It
-^^^^^^^^^^^^^^^^^^^^^^^
+Deletion by the Last Owner
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -1286,7 +1291,7 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 
    C++20 **[util.smartptr.weak.obs]** (20.11.4.5): ``expired()`` "Returns: use_count() == 0." ``lock()`` "Returns: expired() ? shared_ptr<T>() : shared_ptr<T>(\*this), executed atomically."
 
-Exercise 3: Predict the Counts
+Exercise 3: Use Counts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -1351,27 +1356,28 @@ Back to the Fleet
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/owner_map.png
-   :alt: Six rounded boxes joined by arrows, with nothing written on the arrows. On the left, a box labeled Fleet. In the middle, three boxes labeled Robot 1, Robot 2 and Robot 3, one above the other. On the right, a box labeled Charging queue and, below it, a box labeled Dashboard. Solid blue arrows run from the Fleet to Robot 1 and to Robot 2. A solid green arrow runs from the Fleet to Robot 3, and another from the Charging queue to Robot 3. A dashed gray arrow runs from the Dashboard to Robot 3.
+   :alt: A UML object diagram of six objects, each a box with its name underlined, joined by lines with nothing written on them. On the left, a tall box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Blue lines with a filled blue diamond at the fleet end join the fleet to robot1 and to robot2. Green lines with an open green diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A gray line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
    :align: center
    :width: 100%
 
-   The fleet with its smart pointers. **Solid blue arrow**: ``std::unique_ptr``. **Solid green arrow**: ``std::shared_ptr``. **Dashed gray arrow**: ``std::weak_ptr``.
+   The fleet with its smart pointers. **Filled blue diamond**: ``std::unique_ptr``. **Open green diamond**: ``std::shared_ptr``. **Gray arrow, no diamond**: ``std::weak_ptr``.
 
-- One ``std::vector`` holds one type. Once robot 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`), and robots 1 and 2 simply have one owner each.
+- One ``std::vector`` holds one type: once robot 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
+- Robots 1 and 2 still have one owner each, through that ``std::shared_ptr``.
 
 Summary
 -------
 
 **Who Owns This Robot**
 
-- The owner of a heap object is the code that must give it back. A ``T*`` cannot say it owns. A leak, a double ``delete`` and a dangling read all come from that.
+- The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read.
 - LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
 
 **Move Semantics**
 
-- A move hands over what an object owns: a ``std::vector`` moves 24 bytes, not its elements. The source is left valid but unspecified: assign it before you use it again.
+- A move hands over what an object owns: 24 bytes for a ``std::vector``, not its elements. The source is valid but unspecified: assign it before reuse.
 - Every expression is an lvalue, an xvalue or a prvalue; ``decltype((e))`` tells which. ``T&&`` binds to rvalues only, and a named ``T&&`` is an lvalue.
-- ``std::move`` is a cast; the move happens where the result is taken. Not on a ``const`` object, and not on a ``return``.
+- ``std::move`` is a cast; the move happens where the result is taken. Not on a ``const`` object, and not on a returned local.
 
 **std::unique_ptr**
 
@@ -1397,7 +1403,7 @@ Double Delete, Measured
 
 .. code-block:: cpp
 
-   RobotStatus* robot{make_robot(3, 64.0)};
+   RobotStatus* robot{make_robot(3, 64.0)};  // make_robot(id, battery_pct)
    std::vector<RobotStatus*> fleet{robot};
    std::vector<RobotStatus*> idle{robot};  // the same robot
    for (RobotStatus* r : fleet) { delete r; }
@@ -1419,7 +1425,7 @@ Dangling Read, Measured
 
 .. code-block:: cpp
 
-   RobotStatus* robot{make_robot(3, 64.0)};
+   RobotStatus* robot{make_robot(3, 64.0)};  // make_robot(id, battery_pct)
    std::vector<RobotStatus*> fleet{robot};
    std::vector<RobotStatus*> idle{robot};
    for (RobotStatus* r : fleet) { delete r; }
@@ -1494,8 +1500,8 @@ Move Assignment
 
    C++20 **[utility.exchange]** (20.2.3) paragraph 1: "Effects: Equivalent to: ``T old_val = std::move(obj);`` ``obj = std::forward<U>(new_val);`` ``return old_val;``". See `cppreference: std::exchange <https://en.cppreference.com/w/cpp/utility/exchange>`__.
 
-How ``std::move`` Is Written
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The Definition of ``std::move``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
@@ -1578,8 +1584,7 @@ Testing for Empty
 
 .. code-block:: text
 
-   error: cannot convert 'std::unique_ptr<RobotStatus,
-          std::default_delete<RobotStatus> >' to 'bool' in initialization
+   error: cannot convert 'std::unique_ptr<RobotStatus>' to 'bool' in initialization
 
 - ``if (robot)``, ``!robot`` and ``robot == nullptr`` all test for empty. The same works for ``std::shared_ptr``.
 - The conversion to ``bool`` is ``explicit``: a condition and ``bool has_robot{other};`` use it, but the ``=`` form does not compile.
@@ -1624,8 +1629,8 @@ Testing for Empty
 
    C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraph 7, ``swap(u)``: "Invokes swap on the stored pointers and on the stored deleters of \*this and u."
 
-``make_shared`` Allocates Once
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+One Allocation with ``make_shared``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 

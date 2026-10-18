@@ -7,7 +7,7 @@ L7: Smart Pointers and Move Semantics
 Overview
 --------
 
-This lecture is about who owns an object on the heap. The **owner** is the code that deletes the object, and each object needs exactly one owner. A raw pointer such as ``RobotStatus*`` cannot say that it owns, and three bugs come from that: a leak, a double ``delete``, and a dangling read. LeakSanitizer, part of ``-fsanitize=address``, finds the leak and names the line that allocated it. The lecture then covers move semantics. A move hands what one object owns to another, so a ``std::vector`` moves 24 bytes instead of copying its elements. The value category of an expression (lvalue, xvalue or prvalue) decides whether a move may happen, ``T&&`` binds only to rvalues, and ``std::move`` is a cast that marks an object as one you may take from. With moves in place, the lecture owns heap objects with smart pointers: ``std::unique_ptr`` for one owner, ``std::shared_ptr`` for several owners that share a count, and ``std::weak_ptr`` for an observer that owns nothing and breaks a reference cycle. It ends with one table for choosing a pointer. The running example is the fleet manager of Lecture 6, with its robots now on the heap: the fleet owns each robot, a robot in the charging queue has two owners, and a dashboard watches one robot without keeping it alive.
+This lecture is about who owns an object on the heap. An **owner** keeps the object alive, and an object can have one owner or several: the last owner to let go deletes it. A raw pointer such as ``RobotStatus*`` cannot say that it owns, and three bugs come from that: a leak, a double ``delete``, and a dangling read. LeakSanitizer, part of ``-fsanitize=address``, finds the leak and names the line that allocated it. The lecture then covers move semantics. A move hands what one object owns to another, so a ``std::vector`` moves 24 bytes instead of copying its elements. The value category of an expression (lvalue, xvalue or prvalue) decides whether a move may happen, ``T&&`` binds only to rvalues, and ``std::move`` is a cast that marks an object as one you may take from. With moves in place, the lecture owns heap objects with smart pointers: ``std::unique_ptr`` for one owner, ``std::shared_ptr`` for several owners that share a count, and ``std::weak_ptr`` for an observer that owns nothing and breaks a reference cycle. It ends with one table for choosing a pointer. The running example is the fleet manager of Lecture 6, with its robots now on the heap: the fleet owns each robot, a robot in the charging queue has two owners, and a dashboard watches one robot without keeping it alive.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
@@ -15,7 +15,7 @@ This lecture is about who owns an object on the heap. The **owner** is the code 
    By the end of this lecture, you will be able to:
 
    1. **Say** who owns an object on the heap, and find a leak with the sanitizers.
-   2. **Move** a ``std::vector`` or a ``std::string`` instead of copying it, and say what is left in the source.
+   2. **Move** a ``std::vector`` instead of copying it, and say what is left in the source.
    3. **Name** the value category of an expression (lvalue, prvalue, xvalue) and test it with ``decltype``.
    4. **Use** rvalue references and ``std::move``, and write a function that takes a parameter it moves from.
    5. **Own** a heap object with ``std::unique_ptr``, and pass it to and return it from functions.

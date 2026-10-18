@@ -30,16 +30,16 @@ Multiple Choice (Questions 1 to 10)
    In Lecture 7, what makes a piece of code the **owner** of a heap object?
 
    A. It holds a pointer to the object.
-   B. It is the code that deletes the object.
+   B. It keeps the object alive, and the last owner to let go deletes it.
    C. It called the function that created the object.
    D. It reads the object more often than any other code.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B. It is the code that deletes the object.**
+      **B. It keeps the object alive, and the last owner to let go deletes it.**
 
-      The owner of a heap object is the code that deletes it, and each object needs exactly one owner. Holding a pointer is not enough: a ``RobotStatus*`` looks the same whether it owns the robot or only points at it. The Core Guidelines say so in R.3: "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns, and a smart pointer is that type.
+      An owner of a heap object is code that keeps it alive. An object can have one owner or several: the last owner to let go deletes it. Holding a pointer is not enough: a ``RobotStatus*`` looks the same whether it owns the robot or only points at it. The Core Guidelines say so in R.3: "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns, and a smart pointer is that type.
 
 .. admonition:: Question 2
    :class: hint
@@ -480,6 +480,6 @@ True/False (Questions 11 to 15)
 
       .. code-block:: text
 
-         error: cannot convert ‘std::unique_ptr<RobotStatus, std::default_delete<RobotStatus> >’ to ‘bool’ in initialization
+         error: cannot convert ‘std::unique_ptr<RobotStatus>’ to ‘bool’ in initialization
 
       Write ``bool has_robot{other != nullptr};`` instead. ``if (other)``, ``!other`` and ``other == nullptr`` all test for empty, and the same works for ``std::shared_ptr``.

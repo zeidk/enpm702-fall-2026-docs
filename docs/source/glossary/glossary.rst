@@ -1226,7 +1226,8 @@ O
       freed. Leaks, double deletes and dangling pointers are all
       ownership mistakes, which is why C++ expresses ownership in the
       type instead: ``std::unique_ptr``, ``std::shared_ptr``, or a
-      container. The **owner** of a heap object is the code that deletes it.
+      container. An **owner** of a heap object keeps it alive; with several
+      owners, the last one to let go deletes it.
       :doc:`L3 </lectures/lecture3/l3_lecture>`,
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
