@@ -9,7 +9,7 @@ Lecture 7 References
 
    This lecture covered who owns an object on the heap, move semantics, and the three smart pointers of ``<memory>``:
 
-   - **Who Owns This Robot**: The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read. LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
+   - **Ownership**: The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read. LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
 
    - **Move Semantics**: A move hands over what an object owns: 24 bytes for a ``std::vector``, not its elements. The source is valid but unspecified: assign it before reuse. Every expression is an lvalue, an xvalue or a prvalue, and ``decltype((e))`` tells which. ``T&&`` binds to rvalues only, and a named ``T&&`` is an lvalue. ``std::move`` is a cast, and the move happens where the result is taken. Do not use it on a ``const`` object, and do not use it on a returned local.
 

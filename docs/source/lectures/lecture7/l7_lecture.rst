@@ -113,8 +113,8 @@ The **fleet manager** of Lecture 6, with its robots now on the heap. The structs
 
    Who owns each robot, as a UML object diagram (Lecture 9): one box per object; a diamond marks the owner. **Filled diamond**, the only owner: ``fleet`` alone owns ``robot1`` and ``robot2``. **Open diamond**, one of several owners: ``fleet`` and ``charging_queue`` both own ``robot3``. **Arrow, no diamond**, looks without owning: ``dashboard`` looks at ``robot3``.
 
-Who Owns This Robot
--------------------
+Ownership
+---------
 
 An **owner** of a heap object is code that keeps it alive. An object can have one owner or several: the last owner to let go deletes it.
 
@@ -144,42 +144,10 @@ A Robot on the Heap
 Three Ways to Get It Wrong
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**1. Leak**
-
-.. code-block:: cpp
-
-   auto* r{make_robot(3)};
-   if (r->busy) {
-     return;  // no delete
-   }
-   delete r;
-
-**2. Double** ``delete``
-
-.. code-block:: cpp
-
-   // same robot in both
-   for (auto r : fleet) {
-     delete r;
-   }
-   for (auto r : idle) {
-     delete r;  // again
-   }
-
-**3. Dangling Read**
-
-.. code-block:: cpp
-
-   for (auto r : fleet) {
-     delete r;
-   }
-   // idle[0]: freed memory
-   std::cout << idle[0]->id;
-
-- **Leak**: one path leaves without ``delete``. The memory is never given back.
-- **Double** ``delete``: breaks Lecture 3's rule "``delete`` exactly once". Undefined behavior.
-- **Dangling read**: reads an object that was already deleted. Undefined behavior.
-- The cause is the same in all three: two lists, or two paths, and no one is marked as the owner.
+- **Leak**: a function returns early and skips its ``delete``. The robot's memory is never given back.
+- **Double** ``delete``: the same robot is in two lists, and each list deletes it. It breaks Lecture 3's rule, "``delete`` exactly once", and is undefined behavior.
+- **Dangling read**: one list deletes the robot, and the other list still reads it. Undefined behavior.
+- The cause is the same in all three: two lists, or two paths, and no code marked as the owner.
 
 See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
 
@@ -231,7 +199,7 @@ The Leak, Measured
 RAII for One Object
 ^^^^^^^^^^^^^^^^^^^
 
-**Lecture 4, Again**
+**RAII in std::vector**
 
 - A ``std::vector`` gives its memory back by itself when it goes out of scope. That is RAII: the object that holds the memory frees it in its destructor.
 - No path can forget: leaving a scope always destroys its objects, after a ``return``, at the end of a loop, or by an exception that is caught.
@@ -1404,7 +1372,7 @@ Back to the Fleet
 Summary
 -------
 
-**Who Owns This Robot**
+**Ownership**
 
 - The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read.
 - LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
