@@ -556,13 +556,16 @@ prvalue: Literals, Results, Calls
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
+   :linenos:
 
    int twice(int n) { return 2 * n; }  // returns an int by value
    int count{3};
+   int doubled{count * 2};
+   int again{twice(count)};
 
-- ``42``: a number written in the code. No object holds it until one is initialized with it: ``int answer{42};``. ``42`` is a prvalue.
-- ``count * 2``: computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
-- ``twice(count)``: the call returns an ``int`` by value, so it gives a value, not an object that already exists. ``twice(count)`` is a prvalue.
+- In line 2, ``3`` is a number written in the code: no object holds it until it initializes ``count``. ``3`` is a prvalue.
+- In line 3, ``count * 2`` computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
+- In line 4, ``twice(count)`` returns an ``int`` by value: a value, not an object that already exists. ``twice(count)`` is a prvalue.
 
 ``&`` on any of them gives:
 
