@@ -1578,10 +1578,11 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    lvalue
-      A glvalue that is not an xvalue: an object that stays after the
-      expression, so you must not take from it. A named variable, ``*ptr``,
-      ``fleet[0]``, a call that returns ``T&``, and a string literal are
-      lvalues. You can take an lvalue's address.
+      An expression that refers to an object that already exists, and does
+      not mark the object as one you may take from. C++20 calls it a glvalue
+      that is not an xvalue. A named variable, ``*ptr``, ``fleet[0]``, a call
+      that returns ``T&``, and a string literal are lvalues. You can take an
+      lvalue's address.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Move

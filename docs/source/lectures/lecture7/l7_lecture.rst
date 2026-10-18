@@ -407,6 +407,8 @@ The Five Definitions
 lvalues, Step 1: A Name for an Object
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+An **lvalue** is an expression that refers to an object that already exists, and does not mark the object as one you may take from.
+
 .. code-block:: cpp
 
    int count{3};        // makes an int object that holds 3
@@ -418,10 +420,9 @@ lvalues, Step 1: A Name for an Object
    count: 4, where == &count: true
 
 - An **object** is a piece of memory that holds a value. Line 1 makes one and names it ``count``.
-- The expression ``count`` names that object. Lines 2 and 3 write ``count`` again and reach the same object, at the same address.
-- The object does not go away when a line ends. It lives until ``count`` goes out of scope.
-
-An **lvalue** is an expression that names an object, and the object lives on after the expression. ``count`` is an lvalue.
+- Check 1, it refers to an object that already exists: the expression ``count`` refers to that object. Lines 2 and 3 reach the same object, at the same address.
+- Check 2, nothing marks the object as one you may take from: ``count`` is a plain name. Only ``std::move`` and a few others mark it (`xvalues`_).
+- Both checks pass, so ``count`` is an lvalue.
 
 lvalues, Step 2: The ``&`` Test
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -437,8 +438,8 @@ lvalues, Step 2: The ``&`` Test
    error: lvalue required as unary '&' operand
 
 - ``&`` asks for the address of an object. So it needs an object that stays in memory.
-- ``&count`` compiles: ``count`` names the object from line 1.
-- ``&(count + 1)`` fails. ``count + 1`` computes 4, but no named object holds that 4, and the 4 is gone after the line. So ``count + 1`` is not an lvalue. `prvalues`_ says what it is.
+- ``&count`` compiles: ``count`` refers to the object from line 1 (check 1 of Step 1).
+- ``&(count + 1)`` fails. ``count + 1`` computes 4, but no object that already exists holds that 4. Check 1 fails, so ``count + 1`` is not an lvalue. `prvalues`_ says what it is.
 - For an expression of a built-in type such as ``int``: if ``&`` compiles on it, it is an lvalue.
 
 lvalues, Step 3: Three More, with Why
@@ -451,18 +452,18 @@ lvalues, Step 3: Three More, with Why
    int numbers[3]{10, 20, 30};
    int* p{&numbers[1]};         // p holds the address of numbers[1]
 
-With the declarations above, each expression below is an lvalue:
+With the declarations above, each expression below passes both checks of the definition:
 
-- ``alias``: a reference is another name for an object. ``alias`` names the object ``count`` names, so ``&alias == &count``.
-- ``numbers[2]``: names the third ``int`` inside ``numbers``. That ``int`` lives as long as ``numbers`` does.
-- ``*p``: names the object ``p`` points at, ``numbers[1]``. That object existed before ``p``, and stays after it: ``&*p == &numbers[1]``.
+- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count``. Nothing marks it.
+- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does. Nothing marks it.
+- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]``. Nothing marks it.
 
-``702run week7_playground 21`` prints ``lvalue`` for all three, and ``true`` for both checks.
+``702run week7_playground 21`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
 lvalues, Step 4: In the Fleet Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An **lvalue** is an expression that names an object, and the object lives on after the expression. Test: you can take its address with ``&``.
+An **lvalue** refers to an object that already exists and does not mark it as one you may take from (Step 1). Test: ``&`` compiles on it.
 
 .. code-block:: cpp
 
@@ -472,7 +473,7 @@ An **lvalue** is an expression that names an object, and the object lives on aft
    std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
    RobotStatus* robot_ptr{&fleet[1]};
 
-With the declarations above, each expression below names an object that already exists, so each is an lvalue:
+With the declarations above, each expression below refers to an object that already exists, and none marks it, so each is an lvalue:
 
 - ``route``: the variable ``route`` itself.
 - ``*robot_ptr``: the robot ``robot_ptr`` points at, ``fleet[1]``.
