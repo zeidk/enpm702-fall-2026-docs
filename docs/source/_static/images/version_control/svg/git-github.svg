@@ -9,7 +9,8 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   xmlns:svg="http://www.w3.org/2000/svg">
+<rect id="white-background" x="-5.0" y="-10.0" width="110.0" height="135.0" fill="#ffffff" sodipodi:insensitive="true"/><defs
      id="defs2"><marker
        style="overflow:visible"
        id="Triangle"

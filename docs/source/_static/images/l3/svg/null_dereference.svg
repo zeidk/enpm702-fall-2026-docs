@@ -11,6 +11,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+<rect id="white-background" x="0" y="0" width="760" height="560" fill="#ffffff" sodipodi:insensitive="true"/>
   <sodipodi:namedview
      id="namedview12"
      pagecolor="#ffffff"
