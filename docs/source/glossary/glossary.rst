@@ -11,7 +11,7 @@ listed at the end of that lecture's section.
 
    .. raw:: html
 
-      <div id="glossary-search-wrap" style="margin: 1.2em 0 1.4em 0;">
+      <div id="glossary-search-wrap" style="margin: 1.2em 0 0.6em 0;">
         <input
           id="glossary-search"
           type="search"
@@ -33,80 +33,109 @@ listed at the end of that lecture's section.
           style="margin-left: 0.8em; font-size: 0.88em; color: #666;"
         ></span>
       </div>
+      <div id="glossary-letters" aria-label="Show the terms that start with a letter"
+           style="display: flex; flex-wrap: wrap; gap: 0.3em; margin: 0 0 1.4em 0;"></div>
+
+      <style>
+        #glossary-letters button {
+          min-width: 2em;
+          padding: 0.15em 0.45em;
+          font: inherit;
+          font-size: 0.95em;
+          color: var(--pst-color-primary, #2f6fb5);
+          background: transparent;
+          border: 1px solid var(--pst-color-border, #ccc);
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        #glossary-letters button.active {
+          color: var(--pst-color-background, #fff);
+          background: var(--pst-color-primary, #2f6fb5);
+          border-color: var(--pst-color-primary, #2f6fb5);
+        }
+      </style>
 
       <script>
       (function () {
-        /* Run after the DOM is ready. */
+        /* The search box filters by text; a letter button shows the terms
+           that start with that letter, across all lectures. Both apply
+           together. A lecture section with no matching term is hidden. */
         function initGlossarySearch() {
-          var input  = document.getElementById('glossary-search');
-          var count  = document.getElementById('glossary-search-count');
+          var input   = document.getElementById('glossary-search');
+          var count   = document.getElementById('glossary-search-count');
+          var letters = document.getElementById('glossary-letters');
           if (!input) return;
+          var letter = '';
 
-          function getLetterSection(el) {
-            var node = el;
-            while (node && node !== document.body) {
-              if (node.id && /^glossary-[a-z]$/i.test(node.id)) return node;
-              node = node.parentElement;
-            }
-            return null;
+          function firstLetter(dt) {
+            var m = dt.textContent.trim().match(/[a-z]/i);
+            return m ? m[0].toUpperCase() : '';
           }
+
+          /* One button per letter that starts a term, plus "All". */
+          var present = {};
+          document.querySelectorAll('dl.glossary dt').forEach(function (dt) {
+            var c = firstLetter(dt);
+            if (c) present[c] = true;
+          });
+          function addButton(label, value) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = label;
+            btn.dataset.letter = value;
+            if (value === '') btn.classList.add('active');
+            btn.addEventListener('click', function () {
+              letter = value;
+              letters.querySelectorAll('button').forEach(function (b) {
+                b.classList.toggle('active', b.dataset.letter === letter);
+              });
+              run();
+            });
+            letters.appendChild(btn);
+          }
+          addButton('All', '');
+          Object.keys(present).sort().forEach(function (c) { addButton(c, c); });
 
           function run() {
             var query = input.value.trim().toLowerCase();
-
-            var allDt = document.querySelectorAll('dl.glossary dt');
+            var filtering = query !== '' || letter !== '';
             var visible = 0;
 
-            allDt.forEach(function (dt) {
-              var siblings = [];
+            document.querySelectorAll('dl.glossary dt').forEach(function (dt) {
+              var match = (!query || dt.textContent.toLowerCase().indexOf(query) !== -1)
+                       && (!letter || firstLetter(dt) === letter);
+              dt.style.display = match ? '' : 'none';
               var node = dt.nextElementSibling;
               while (node && node.tagName === 'DD') {
-                siblings.push(node);
+                node.style.display = match ? '' : 'none';
                 node = node.nextElementSibling;
               }
-
-              var text = dt.textContent.toLowerCase();
-              var match = !query || text.indexOf(query) !== -1;
-
-              dt.style.display = match ? '' : 'none';
-              siblings.forEach(function (dd) { dd.style.display = match ? '' : 'none'; });
               if (match) visible++;
             });
 
-            var allDl = document.querySelectorAll('dl.glossary');
-            allDl.forEach(function (dl) {
-              var anyVisible = Array.prototype.some.call(
-                dl.querySelectorAll('dt'),
-                function (dt) { return dt.style.display !== 'none'; }
-              );
-              dl.style.display = anyVisible ? '' : 'none';
-
-              var section = getLetterSection(dl);
-              if (section) {
-                section.style.display = anyVisible ? '' : 'none';
-              } else {
-                var prev = dl.previousElementSibling;
-                while (prev) {
-                  if (prev.tagName === 'H2' || prev.tagName === 'H1') {
-                    prev.style.display = anyVisible ? '' : 'none';
-                    break;
-                  }
-                  prev = prev.previousElementSibling;
-                }
-              }
+            /* Each lecture section: hide it when nothing in it matches, and
+               hide its "Also used here" line while a filter is on. */
+            document.querySelectorAll('section > h2').forEach(function (h2) {
+              var section = h2.parentElement;
+              var dts = section.querySelectorAll('dl.glossary dt');
+              var any = Array.prototype.some.call(dts, function (dt) {
+                return dt.style.display !== 'none';
+              });
+              section.style.display = (!filtering || any) ? '' : 'none';
+              section.querySelectorAll('dl.glossary').forEach(function (dl) {
+                dl.style.display = (!filtering || any) ? '' : 'none';
+              });
+              section.querySelectorAll('p.glossary-also').forEach(function (p) {
+                p.style.display = filtering ? 'none' : '';
+              });
             });
 
-            if (query) {
-              count.textContent = visible === 1
-                ? '1 term found'
-                : visible + ' terms found';
-            } else {
-              count.textContent = '';
-            }
+            count.textContent = filtering
+              ? (visible === 1 ? '1 term found' : visible + ' terms found')
+              : '';
           }
 
           input.addEventListener('input', run);
-
           input.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') { input.value = ''; run(); input.blur(); }
           });
@@ -1494,7 +1523,9 @@ L6: Functions Advanced
       lambda uses it too: ``[](double pct) -> double { ... }``.
       :doc:`L6 </lectures/lecture6/l6_lecture>`
 
-Also used here: :term:`Alignment` (L3), :term:`Predicate` (L4).
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Alignment" target="_blank" rel="noopener">Alignment</a> (L3), <a href="#term-Predicate" target="_blank" rel="noopener">Predicate</a> (L4).</p>
 
 
 .. _g-l7:
@@ -1690,7 +1721,9 @@ L7: Smart Pointers and Move Semantics
       xvalues. Naming an xvalue moves nothing.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
-Also used here: :term:`Ownership` (L3), :term:`RAII` (L4).
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Ownership" target="_blank" rel="noopener">Ownership</a> (L3), <a href="#term-RAII" target="_blank" rel="noopener">RAII</a> (L4).</p>
 
 
 .. _g-l8:
@@ -1961,4 +1994,6 @@ Reading: Version Control
 Reading: Exception Handling
 ===========================
 
-Also used here: :term:`noexcept` (L7).
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-noexcept" target="_blank" rel="noopener">noexcept</a> (L7).</p>
