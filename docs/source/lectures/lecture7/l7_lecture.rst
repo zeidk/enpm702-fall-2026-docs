@@ -338,14 +338,12 @@ See `The Moved-from std::string`_, `Move Assignment`_ and `std::exchange`_ under
 Value Categories
 ^^^^^^^^^^^^^^^^
 
-.. code-block:: text
+.. figure:: /_static/images/l7/value_categories.png
+   :alt: A tree of rounded boxes. At the top, expression. Below it, two boxes joined to it: glvalue on the left, with the label has identity, and rvalue on the right, with the label may be taken. On the bottom row, three boxes: lvalue on the left, joined to glvalue; xvalue in the middle, joined to both glvalue and rvalue; and prvalue on the right, joined to rvalue. The drawing is symmetric about the middle line through expression and xvalue.
+   :align: center
+   :width: 60%
 
-            expression
-           /          \
-       glvalue        rvalue
-   (has identity) (may be taken)
-       /     \      /     \
-   lvalue    xvalue      prvalue
+   The value categories.
 
 - Every expression has a **type** and a **value category**.
 - The category answers two questions: does the expression name an object (**identity**)? May that object's resources be **taken**?
