@@ -1061,7 +1061,7 @@ Moving Ownership
 .. code-block:: cpp
    :linenos:
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{}, false)};
    RobotStatus* where{robot.get()};
    std::unique_ptr<RobotStatus> other{std::move(robot)};
 
@@ -1069,8 +1069,8 @@ Moving Ownership
 
    robot == nullptr: true, other.get() == where: true, other->id: 3
 
-- Line 2: ``robot.get()`` returns the address ``robot`` holds, as a plain ``RobotStatus*``. ``robot`` still owns the robot; ``where`` only points at it.
-- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``robot`` is left empty. ``other.get() == where``: the robot did not move.
+- Line 2: ``robot.get()`` returns the address of the ``RobotStatus`` object that ``robot`` owns, as a plain ``RobotStatus*``. The owner does not change: ``where`` only points at the object.
+- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``robot`` is left empty. ``other.get() == where``: the ``RobotStatus`` object did not move.
 - There is still exactly one owner, at every moment.
 - Unlike a moved-from ``std::vector``, a moved-from ``std::unique_ptr`` is guaranteed to be empty.
 
@@ -1090,8 +1090,8 @@ The Move in Memory
 
    Moving Ownership, traced. Solid arrow: an owner. Dashed arrow: ``where``, which looks and owns nothing.
 
-- **1**: after line 2 of `Moving Ownership`_, ``robot`` owns robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
-- **2**: after line 3, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the robot did not move, only its owner changed.
+- **1**: after line 2 of `Moving Ownership`_, ``robot`` owns the ``RobotStatus`` object, robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
+- **2**: after line 3, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the object did not move, only its owner changed.
 
 Whiteboard 2: Handing Over a Robot
 """"""""""""""""""""""""""""""""""
@@ -1342,7 +1342,7 @@ Creating One
    robot.use_count(): 3
    fleet[0] == charging_queue[0]: true
 
-- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same robot, and ``use_count()`` counts them: ``robot``, ``fleet[0]``, ``charging_queue[0]``.
+- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same ``RobotStatus`` object, and ``use_count()`` counts them: ``robot``, ``fleet[0]``, ``charging_queue[0]``.
 - All three point at one robot: charging it through the queue shows in the fleet.
 
 .. note::
@@ -1409,7 +1409,7 @@ Three Ways to Let Go
    3b: robot == nullptr: true
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
-- In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
+- In all three, ``robot`` is the last owner, so its ``RobotStatus`` object is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
 - Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 70``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
@@ -1631,8 +1631,8 @@ Breaking It
      }
    }
 
-- A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
-- While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
+- A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
+- While ``robot`` exists, it is one more owner, so the ``RobotStatus`` object cannot be deleted in the middle of ``show``.
 - ``702run week7_playground 81``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
