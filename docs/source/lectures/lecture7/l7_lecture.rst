@@ -985,7 +985,7 @@ In Memory
    sizeof(robot): 8, sizeof(RobotStatus*): 8, sizeof(RobotStatus): 40
 
 - The ``std::unique_ptr`` is one pointer on the stack, the same 8 bytes as a ``RobotStatus*``. The robot itself is on the heap.
-- Owning costs no memory. The difference is in the type: only a ``std::unique_ptr`` deletes, and only one can point at the robot as its owner.
+- Using a ``std::unique_ptr`` instead of a ``RobotStatus*`` adds no bytes (8 bytes either way). It adds two rules: it deletes the robot when it is destroyed, and no other ``std::unique_ptr`` can own that robot.
 
 The Leak, Fixed
 """""""""""""""
