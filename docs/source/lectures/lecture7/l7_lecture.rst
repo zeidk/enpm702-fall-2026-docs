@@ -87,11 +87,40 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 9, runs only when you ask for it by number: ``702run week7_playground 9``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
 
 .. note::
 
    The `Further Reading`_ part, after the summary, is the appendix of the slides. It is not presented. Read it on your own.
+
+Reminder: Returning by Value
+----------------------------
+
+From L5. **Copy elision**: the compiler builds the returned object **directly in the caller's destination**, so the copy or move from the function's object is never made.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 50 30
+
+   * - Name
+     - The function returns
+     - Elided?
+   * - RVO
+     - a temporary: ``return std::vector<double>(n);``
+     - **always**, since C++17
+   * - NRVO
+     - a named local: ``return v;``
+     - usually, but not required
+   * - Implicit move
+     - a named local, when NRVO is not done
+     - no, the local is **moved**: its elements are handed over
+   * - Copy
+     - anything that is not the plain name of a local: ``return first ? x : y;``
+     - no, every element is **copied**
+
+- **RVO** is Return Value Optimization. The N is for **named**.
+- The order is elide, then move, then copy.
+- This lecture shows what a move does inside a ``std::vector`` (`Inside a Move`_).
 
 The Program We Will Build
 -------------------------
@@ -151,59 +180,12 @@ Three Ways to Get It Wrong
 
 See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
 
-The Leak, Measured
-^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   bool needs_charge(int id) {
-     RobotStatus* robot{make_robot(id, 64.0)};  // 64.0: battery_pct
-     if (robot->battery_pct > 20.0) {
-       return false;  // leaves without delete
-     }
-     delete robot;
-     return true;
-   }
-
-.. dropdown:: The Definition of ``make_robot`` with a Battery Level
-   :icon: code
-   :class-container: sd-border-primary
-   :class-title: sd-font-weight-bold
-
-   .. code-block:: cpp
-
-      RobotStatus* make_robot(int id, double battery_pct) {
-        return new RobotStatus{id, battery_pct, {0.0, 0.0}, false};
-      }
-
-   - `A Robot on the Heap`_'s ``make_robot``, with the battery level as a second parameter. The caller must ``delete`` the robot.
-   - `The Leak, Fixed`_ and Further Reading's `Double Delete, Measured`_ and `Dangling Read, Measured`_ call it too.
-
-.. code-block:: text
-
-   ==1714457==ERROR: LeakSanitizer: detected memory leaks
-
-   Direct leak of 40 byte(s) in 1 object(s) allocated from:
-       #0 0x77aa348fe548 in operator new(unsigned long)
-       #1 0x5c7541766020 in make_robot .../week7/undefined/undefined.cpp:25
-       #2 0x5c7541766277 in undefined::early_return_leak::needs_charge(int) ...
-   SUMMARY: AddressSanitizer: 40 byte(s) leaked in 1 allocation(s).
-
-- ``702run week7_playground 9``. At exit, it names the line that called ``new``.
-- 40 bytes is one ``RobotStatus``, the size measured in L6.
-
-.. note::
-
-   LeakSanitizer comes with L3's ``-fsanitize=address``: AddressSanitizer "integrates LeakSanitizer and enables it by default on supported platforms". See `LeakSanitizer <https://clang.llvm.org/docs/LeakSanitizer.html>`__.
-
 RAII
 ^^^^
 
 **RAII**, resource acquisition is initialization: the object that holds a resource, such as memory, gives it back in its destructor.
 
 - A ``std::vector`` is RAII: it frees its heap block when it goes out of scope.
-- No path can forget: leaving a scope always destroys its objects, after a ``return``, at the end of a loop, or by an exception that is caught.
-- A ``RobotStatus*`` is not: nothing frees what ``new`` made (`The Leak, Measured`_), and its type cannot say who owns the object.
 - A **smart pointer** is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr``, the only owner; ``std::shared_ptr``, one of several; ``std::weak_ptr``, an observer that owns nothing.
 
 .. note::
@@ -421,7 +403,6 @@ lvalue: A Named Object
 An **lvalue** is an expression that (1) refers to an object that already exists, and (2) does not let another object take its contents: an object made from it is a copy.
 
 .. code-block:: cpp
-
    :linenos:
 
    int count{3};        // makes an int object that holds 3
@@ -442,25 +423,24 @@ lvalue: Copied, Not Taken
 .. code-block:: cpp
    :linenos:
 
-   std::string name{"charging dock, aisle 4"};
-   std::string copied{name};
-   std::string taken{std::move(name)};
+   std::vector<int> scores{90, 75, 82};
+   std::vector<int> copied{scores};
+   std::vector<int> best{std::move(scores)};
 
 .. code-block:: text
 
-   after line 2: name: charging dock, aisle 4, copied: charging dock, aisle 4
-   after line 3: name.size(): 0, taken: charging dock, aisle 4
+   after line 2: scores.size(): 3, copied.size(): 3
+   after line 3: scores.size(): 0, best.size(): 3
 
-- To **take** an object's contents is to move them into another object. To **mark** an object, with ``std::move``, is to say another object may take them. Line 3 takes the 22 characters ``name`` keeps on the heap (more than the 15 that fit inside a libstdc++ ``std::string``, measured).
-- In line 2, ``name`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``name`` keeps its characters.
-- In line 3, ``std::move(name)`` **marks** ``name``: it says another object may take its contents. ``taken`` takes them, and ``name`` is left empty (libstdc++, measured). Part (2) fails, so ``std::move(name)`` is not an lvalue: `xvalue: Marked by std::move`_ says what it is.
+- To **take** an object's contents is to move them into another object. To **mark** an object, with ``std::move``, is to say another object may take them. Line 3 takes the three numbers that ``scores`` keeps on the heap.
+- In line 2, ``scores`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``scores`` keeps its three numbers.
+- In line 3, ``std::move(scores)`` **marks** ``scores``: it says another object may take its contents. ``best`` takes them, and ``scores`` is left empty (libstdc++, measured). Part (2) fails, so ``std::move(scores)`` is not an lvalue: `xvalue: Marked by std::move`_ says what it is.
 - One exception: ``return route;`` may move from a local variable even though ``route`` is an lvalue (`An Implicit Move`_).
 
 lvalue: Checking with ``&``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
-
    :linenos:
 
    int count{3};
@@ -609,17 +589,16 @@ An **xvalue** is an expression that (1) refers to an object that already exists,
 .. code-block:: cpp
    :linenos:
 
-   std::string name{"charging dock, aisle 4"};  // characters on the heap
-   const char* chars{name.data()};              // their address
-   std::string other{std::move(name)};
+   std::vector<int> scores{90, 75, 82};
+   std::vector<int> best{std::move(scores)};
 
 .. code-block:: text
 
-   other: charging dock, aisle 4, name.size(): 0, other.data() == chars: true
+   best.size(): 3, scores.size(): 0
 
-- Part (1): ``std::move(name)`` refers to the object ``name`` names, which already exists.
-- Part (2): ``std::move`` marks ``name``, so another object may take its contents (`lvalue: Copied, Not Taken`_).
-- Both hold, so in line 3, ``std::move(name)`` is an xvalue. ``other`` then takes the characters: same address, and ``name`` is left empty (libstdc++, measured).
+- Part (1): ``std::move(scores)`` refers to ``scores``, made in line 1.
+- Part (2): ``std::move`` marks ``scores``, so another object may take its contents (`lvalue: Copied, Not Taken`_).
+- Both hold, so in line 2, ``std::move(scores)`` is an xvalue. ``best`` takes the three numbers, and ``scores`` is left empty (libstdc++, measured).
 
 xvalue: Ways to Mark
 ^^^^^^^^^^^^^^^^^^^^
@@ -909,7 +888,7 @@ Returning a Local
    warning: moving a local object in a return statement prevents copy elision
    [-Wpessimizing-move]
 
-- L5: a local returned by value is constructed in place, or moved if it cannot be. Same address, measured.
+- L5 (`Reminder: Returning by Value`_): a local returned by value is constructed in place, or moved if it cannot be. Same address, measured.
 - ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place.
 
 .. note::
@@ -1011,7 +990,7 @@ In Memory
 The Leak, Fixed
 """""""""""""""
 
-**From** `The Leak, Measured`_
+**With a regular pointer**
 
 .. code-block:: cpp
 
@@ -1024,6 +1003,20 @@ The Leak, Fixed
      delete robot;
      return true;
    }
+
+.. dropdown:: The Definition of ``make_robot`` with a Battery Level
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      RobotStatus* make_robot(int id, double battery_pct) {
+        return new RobotStatus{id, battery_pct, {0.0, 0.0}, false};
+      }
+
+   - `A Robot on the Heap`_'s ``make_robot``, with the battery level as a second parameter. The caller must ``delete`` the robot.
+   - `The Leak, Fixed`_ and Further Reading's `Double Delete, Measured`_ and `Dangling Read, Measured`_ call it.
 
 **With** ``std::unique_ptr``
 
@@ -1066,6 +1059,7 @@ Moving Ownership
 """"""""""""""""
 
 .. code-block:: cpp
+   :linenos:
 
    auto robot{std::make_unique<RobotStatus>(
        3, 64.0, Position{2.0, 3.0}, false)};
@@ -1086,6 +1080,19 @@ Moving Ownership
 
 See `Testing for Empty`_ under Further Reading.
 
+The Move in Memory
+""""""""""""""""""
+
+.. figure:: /_static/images/l7/unique_ptr_move.png
+   :alt: Two panels separated by a dashed line, tagged 1 and 2. Each shows a blue Stack box beside a red Heap box that holds one block, robot 3, a RobotStatus. Panel 1: the Stack holds robot and where; a solid arrow runs from robot to robot 3, and a dashed arrow from where to robot 3. Panel 2: the Stack holds robot, now marked null, where and other; a dashed arrow runs from where to robot 3 and a solid arrow from other to robot 3. Robot 3 is the same block in both panels.
+   :align: center
+   :width: 100%
+
+   Moving Ownership, traced. Solid arrow: an owner. Dashed arrow: ``where``, which looks and owns nothing.
+
+- **1**: after line 3 of `Moving Ownership`_, ``robot`` owns robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
+- **2**: after line 4, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the robot did not move, only its owner changed.
+
 Whiteboard 2: Handing Over a Robot
 """"""""""""""""""""""""""""""""""
 
@@ -1099,7 +1106,7 @@ Whiteboard 2: Handing Over a Robot
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every robot on the heap, and an arrow from each pointer to the robot it owns.
 - On which line is robot 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 55``.
+- Check: ``702run week7_playground 56``.
 
 A Fleet of Owners
 """""""""""""""""
@@ -1277,7 +1284,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 63`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 64`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1304,7 +1311,7 @@ Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, 
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 56, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 57, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1403,7 +1410,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In 3a, 3b and 3c, ``robot`` is the last owner, so robot 3 is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 69``.
+- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 70``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
    :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
@@ -1433,7 +1440,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 71`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 72`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1508,7 +1515,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 62
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 63
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1579,7 +1586,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 78``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 79``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory. Both leaks here are indirect: each robot is reachable only from the other.
 
@@ -1600,7 +1607,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 79``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
 
 .. note::
 
@@ -1626,7 +1633,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns a ``std::shared_ptr``: the robot, or an empty one if it is gone.
 - While ``robot`` exists, it is one more owner, so the robot cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 80``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 81``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1667,7 +1674,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 82``.
+- Check: ``702run week7_playground 83``.
 
 Choosing a Pointer
 ------------------
@@ -1705,7 +1712,7 @@ One Table
      - R.24
    * - calls ``new`` and ``delete`` itself
      - nothing: do not write it
-     - `A Robot on the Heap`_ to `The Leak, Measured`_
+     - `A Robot on the Heap`_ and `Three Ways to Get It Wrong`_
      - R.11
 
 - Start with ``std::unique_ptr``. Change to ``std::shared_ptr`` only when a second owner appears: it costs a control block and a count.
