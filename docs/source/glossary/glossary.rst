@@ -1658,7 +1658,7 @@ L7: Smart Pointers and Move Semantics
    std::make_unique
       A function from ``<memory>`` that creates an object on the heap and
       returns the ``std::unique_ptr`` that owns it:
-      ``std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)``.
+      ``std::make_unique<RobotStatus>(3, 64.0)``.
       Its arguments go to the object. With it, you write no ``new`` and no
       ``delete``.
       :doc:`L7 </lectures/lecture7/l7_lecture>`

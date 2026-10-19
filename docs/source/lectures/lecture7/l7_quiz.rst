@@ -267,7 +267,7 @@ Multiple Choice (Questions 1 to 10)
         retired.push_back(std::move(robot));
       }
 
-      auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)};
+      auto robot{std::make_unique<RobotStatus>(3, 64.0)};
 
    Which call compiles?
 
@@ -302,7 +302,7 @@ Multiple Choice (Questions 1 to 10)
 
    .. code-block:: cpp
 
-      auto robot{std::make_shared<RobotStatus>(3, 14.0, Position{2.0, 3.0}, false)};
+      auto robot{std::make_shared<RobotStatus>(3, 14.0)};
       std::shared_ptr<RobotStatus> in_fleet{robot};
       std::shared_ptr<RobotStatus> in_queue{robot};
       std::shared_ptr<RobotStatus> moved{std::move(in_queue)};
@@ -432,7 +432,7 @@ True/False (Questions 11 to 15)
 
       .. code-block:: cpp
 
-         auto robot{std::make_shared<RobotStatus>(3, 14.0, Position{2.0, 3.0}, false)};
+         auto robot{std::make_shared<RobotStatus>(3, 14.0)};
          std::weak_ptr<RobotStatus> watch{robot};
          std::cout << std::boolalpha;
          std::cout << "robot.use_count(): " << robot.use_count() << ", watch.expired(): " << watch.expired()

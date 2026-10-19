@@ -952,8 +952,7 @@ Creating One
 
    #include <memory>
 
-   std::unique_ptr<RobotStatus> robot{
-       std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)};
+   std::unique_ptr<RobotStatus> robot{std::make_unique<RobotStatus>(3, 64.0)};
    std::cout << robot->id << ' ' << (*robot).battery_pct << '\n';  // 3 64
 
    auto other{std::make_unique<RobotStatus>()};  // members take defaults
@@ -974,7 +973,7 @@ In Memory
 """""""""
 
 .. figure:: /_static/images/l7/unique_ptr_memory.png
-   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds a block of four rows: id 3, battery_pct 64.0, position {2.0, 3.0}, and busy false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 40 bytes.
+   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds a block of four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 40 bytes.
    :align: center
    :width: 100%
 
@@ -1023,8 +1022,7 @@ The Leak, Fixed
 .. code-block:: cpp
 
    bool needs_charge(int id) {
-     auto robot{std::make_unique<RobotStatus>(
-         id, 64.0, Position{}, false)};
+     auto robot{std::make_unique<RobotStatus>(id, 64.0)};
      if (robot->battery_pct > 20.0) {
        return false;  // deleted here
      }
@@ -1039,8 +1037,7 @@ One Owner Only
 
 .. code-block:: cpp
 
-   auto robot{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
    std::unique_ptr<RobotStatus> copy{robot};  // does not compile
 
 .. code-block:: text
@@ -1055,13 +1052,46 @@ One Owner Only
 
 See `std::auto_ptr`_ under Further Reading.
 
+``get`` and ``reset``
+"""""""""""""""""""""
+
+.. code-block:: cpp
+
+   void print_status(const RobotStatus* robot);  // only looks
+
+   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
+   print_status(robot.get());  // robot still owns it
+   robot.reset();              // deletes it now: robot == nullptr
+   robot = std::make_unique<RobotStatus>(4, 18.0);
+
+.. dropdown:: The Definition of ``print_status``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      void print_status(const RobotStatus* robot) {  // only looks
+        std::cout << "  robot " << robot->id << ": " << robot->battery_pct << " %\n";
+      }
+
+- ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
+- ``reset()`` deletes the ``RobotStatus`` object now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
+- Assigning a new ``std::unique_ptr`` stores the new object's address, then deletes the old object, as ``reset`` does.
+
+.. note::
+
+   C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraph 4, ``reset(p)``: "Assigns p to the stored pointer, and then if and only if the old value of the stored pointer, old_p, was not equal to nullptr, calls get_deleter()(old_p)."
+
+See `swap`_ under Further Reading.
+
 Moving Ownership
 """"""""""""""""
 
 .. code-block:: cpp
    :linenos:
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
    RobotStatus* where{robot.get()};
    std::unique_ptr<RobotStatus> other{std::move(robot)};
 
@@ -1117,7 +1147,7 @@ Exercise 3: Handing Over a Robot
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``RobotStatus`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``RobotStatus`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 57``.
+- Check: ``702run week7_playground 58``.
 
 A Fleet of Owners
 """""""""""""""""
@@ -1125,10 +1155,8 @@ A Fleet of Owners
 .. code-block:: cpp
 
    std::vector<std::unique_ptr<RobotStatus>> fleet;
-   fleet.push_back(std::make_unique<RobotStatus>(
-       1, 82.5, Position{0.0, 0.0}, false));
-   auto robot{std::make_unique<RobotStatus>(
-       2, 35.0, Position{4.0, 1.0}, true)};
+   fleet.push_back(std::make_unique<RobotStatus>(1, 82.5));
+   auto robot{std::make_unique<RobotStatus>(2, 35.0)};
    fleet.push_back(std::move(robot));  // robot is now empty
    // fleet.push_back(robot);          // does not compile: a copy
 
@@ -1142,37 +1170,12 @@ A Fleet of Owners
 
 See `unique_ptr to an Array`_ under Further Reading.
 
-``get`` and ``reset``
-"""""""""""""""""""""
-
-.. code-block:: cpp
-
-   void print_status(const RobotStatus* robot);  // only looks
-
-   auto robot{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
-   print_status(robot.get());  // robot still owns it
-   robot.reset();              // deletes it now: robot == nullptr
-   robot = std::make_unique<RobotStatus>(
-       4, 18.0, Position{6.0, 2.0}, false);
-
-- ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
-- ``reset()`` deletes the robot now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
-- Assigning a new ``std::unique_ptr`` stores the new robot, then deletes the old one, as ``reset`` does.
-
-.. note::
-
-   C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraph 4, ``reset(p)``: "Assigns p to the stored pointer, and then if and only if the old value of the stored pointer, old_p, was not equal to nullptr, calls get_deleter()(old_p)."
-
-See `swap`_ under Further Reading.
-
 ``release``
 """""""""""
 
 .. code-block:: cpp
 
-   auto robot{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
    RobotStatus* raw{robot.release()};  // gives up ownership
    // robot == nullptr: true, raw->id: 3
    delete raw;  // you are the owner now: leave this out and it leaks
@@ -1197,11 +1200,21 @@ Passing: Borrow
      if (robot != nullptr) { robot->battery_pct = 100.0; }
    }
 
-   auto robot{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
    print_status(*robot);   // 64 %
    charge(robot.get());
    print_status(*robot);   // 100 %: the caller still owns it
+
+.. dropdown:: The Definition of ``print_status``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      void print_status(const RobotStatus& robot) {  // only reads the robot
+        std::cout << "  robot " << robot.id << ": " << robot.battery_pct << " %\n";
+      }
 
 - A function that only uses the robot takes the robot, by reference or plain pointer, not the smart pointer. L5's rules for parameters apply.
 - It then works for any robot: on the heap, on the stack, or in a vector.
@@ -1238,12 +1251,10 @@ Passing: Reseat
 .. code-block:: cpp
 
    void replace_robot(std::unique_ptr<RobotStatus>& robot, int new_id) {
-     robot = std::make_unique<RobotStatus>(
-         new_id, 100.0, Position{0.0, 0.0}, false);
+     robot = std::make_unique<RobotStatus>(new_id);
    }  // the assignment deleted the old robot
 
-   auto robot{std::make_unique<RobotStatus>(
-       3, 4.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 4.0)};
    replace_robot(robot, 7);  // robot->id: 7, robot->battery_pct: 100
 
 - To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.
@@ -1261,8 +1272,7 @@ Returning
 .. code-block:: cpp
 
    std::unique_ptr<RobotStatus> make_robot(int id) {
-     auto robot{std::make_unique<RobotStatus>(
-         id, 100.0, Position{0.0, 0.0}, false)};
+     auto robot{std::make_unique<RobotStatus>(id)};
      robot->busy = false;
      return robot;  // no std::move: L5's implicit move
    }
@@ -1281,10 +1291,8 @@ Exercise 4: Lines That Compile
    void inspect(const RobotStatus& robot);
    void adopt(std::unique_ptr<RobotStatus> robot);
 
-   auto a{std::make_unique<RobotStatus>(
-       1, 50.0, Position{0.0, 0.0}, false)};
-   auto b{std::make_unique<RobotStatus>(
-       2, 60.0, Position{0.0, 0.0}, false)};
+   auto a{std::make_unique<RobotStatus>(1, 50.0)};
+   auto b{std::make_unique<RobotStatus>(2, 60.0)};
 
    auto c{a};                                          // 1
    auto d{std::move(a)};                               // 2
@@ -1322,7 +1330,7 @@ Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, 
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 58, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 59, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1343,8 +1351,7 @@ Creating One
    std::vector<std::shared_ptr<RobotStatus>> fleet;
    std::vector<std::shared_ptr<RobotStatus>> charging_queue;
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
    fleet.push_back(robot);           // a copy: one more owner
    charging_queue.push_back(robot);  // a copy: one more owner
 
@@ -1364,8 +1371,7 @@ The Control Block
 """""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_memory.png
-   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
-          "On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
@@ -1382,8 +1388,7 @@ See `One Allocation with make_shared`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};                // 1
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};      // 1
    std::shared_ptr<RobotStatus> in_queue{robot};            // 2: a copy
    std::shared_ptr<RobotStatus> moved{std::move(in_queue)}; // 2: a move
    moved.reset();                                           // 1
@@ -1403,8 +1408,7 @@ Three Ways to Let Go
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
    {
      std::shared_ptr<RobotStatus> in_queue{robot};  // 1
    }                                                // 2
@@ -1428,8 +1432,7 @@ Step 1: Two Owners
 """"""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_let_go_1.png
-   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
-     "On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
@@ -1440,8 +1443,7 @@ Step 2: One Owner
 """""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_let_go_2.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
-     "On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
    :align: center
    :width: 100%
 
@@ -1452,7 +1454,7 @@ Step 3a: A New Object
 """""""""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_let_go_3.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds at the top a gray dashed block marked freed, 56 bytes: the first control block and object. Below it, a new allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then a RobotStatus object with id 4, battery_pct 100.0, position {0.0, 0.0} and busy false. Green arrows run from robot's object field to the new object's first row, id, and from its control field to the new control block's first row.
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds a new allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then a RobotStatus object with id 4, battery_pct 100.0, position {0.0, 0.0} and busy false. To its right, a gray dashed block marked freed: 56 bytes, the first control block and object. Green arrows run from robot's object field to the new object's first row, id, and from its control field to the new control block's first row.
    :align: center
    :width: 100%
 
@@ -1464,7 +1466,7 @@ Step 3b: reset()
 """"""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_let_go_4.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked nullptr, with no arrows. Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds one gray dashed block marked freed, 56 bytes: the control block and object.
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked nullptr, with no arrows. Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds one gray dashed block marked freed: 56 bytes, the control block and object.
    :align: center
    :width: 100%
 
@@ -1475,7 +1477,7 @@ Step 3c: The Scope Ends
 """""""""""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_let_go_5.png
-   :alt: On the left, robot and in_queue are both gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one gray dashed block marked freed, 56 bytes: the control block and object.
+   :alt: On the left, robot and in_queue are both gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one gray dashed block marked freed: 56 bytes, the control block and object.
    :align: center
    :width: 100%
 
@@ -1487,8 +1489,7 @@ Deletion by the Last Owner
 
 .. code-block:: cpp
 
-   fleet.push_back(std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false));
+   fleet.push_back(std::make_shared<RobotStatus>(3, 14.0));
    charging_queue.push_back(fleet[0]);
    fleet.clear();           // the fleet lets go; the queue still owns it
    charging_queue.clear();  // the last owner deletes the RobotStatus
@@ -1511,10 +1512,20 @@ Passing: Borrow
 
    void print_status(const RobotStatus& robot);  // only reads the robot
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
    print_status(*robot);
    std::cout << robot.use_count() << '\n';       // 1: no owner added
+
+.. dropdown:: The Definition of ``print_status``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+
+      void print_status(const RobotStatus& robot) {  // only reads the robot
+        std::cout << "  robot " << robot.id << ": " << robot.battery_pct << " %\n";
+      }
 
 - The same rule as for ``std::unique_ptr`` (:ref:`l7-unique-borrow`): a function that only uses the robot takes the robot, not the smart pointer.
 - A ``std::shared_ptr`` passed by value would add an owner and remove it again: two changes to the count for nothing.
@@ -1623,7 +1634,7 @@ Step 1: Two Owners Each
 """""""""""""""""""""""
 
 .. figure:: /_static/images/l7/cycle_1.png
-   :alt: Two blue Stack boxes at the top, under name tags a and b, each holding two fields, object and control, each marked (ptr). Below, one red Heap box holds two allocations side by side, each measured as 72 bytes: a control block with use_count 2 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. Green arrows run from a's fields to the left allocation, entering from the left: object to the Robot's first row, control to the control block's first row. Green arrows run from b's fields to the right allocation, entering from the right. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so the arrows cross between the two allocations.
+   :alt: Two blue Stack boxes at the top, under name tags a and b, each holding two fields, object and control, each marked (ptr). Below, one red Heap box holds two allocations side by side, each one allocation: a control block with use_count 2 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. Green arrows run from a's fields to the left allocation, entering from the left: object to the Robot's first row, control to the control block's first row. Green arrows run from b's fields to the right allocation, entering from the right. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so the arrows cross between the two allocations.
    :align: center
    :width: 100%
 
@@ -1633,7 +1644,7 @@ Step 2: Neither Is Deleted
 """"""""""""""""""""""""""
 
 .. figure:: /_static/images/l7/cycle_2.png
-   :alt: At the top, a and b are gray and dashed, marked scope ended, with no arrows. Below, one red Heap box holds two allocations side by side, each measured as 72 bytes: a control block with use_count 1 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so each allocation is still owned by the other.
+   :alt: At the top, a and b are gray and dashed, marked scope ended, with no arrows. Below, one red Heap box holds two allocations side by side, each one allocation: a control block with use_count 1 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so each allocation is still owned by the other.
    :align: center
    :width: 100%
 
@@ -1715,8 +1726,7 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
    std::weak_ptr<RobotStatus> watch{robot};
    robot.reset();  // the only owner lets go
 
@@ -1737,8 +1747,7 @@ Exercise 5: Use Counts
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
    std::weak_ptr<RobotStatus> watch{robot};  // 1
    auto a{robot};                            // 2
    auto b{std::move(a)};                     // 3
@@ -1974,7 +1983,7 @@ A ``unique_ptr`` with Its Own Deleter
    }};
    {
      std::unique_ptr<RobotStatus, decltype(say_and_delete)> robot{
-         new RobotStatus{3, 64.0, {2.0, 3.0}, false}, say_and_delete};
+         new RobotStatus{3, 64.0}, say_and_delete};
      // sizeof(robot): 8
    }  // prints: deleting robot 3
 
@@ -2015,8 +2024,7 @@ Testing for Empty
 
    std::unique_ptr<RobotStatus> robot;  // empty
    // robot == nullptr: true
-   robot = std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false);
+   robot = std::make_unique<RobotStatus>(3, 64.0);
    if (robot) {
      std::cout << "robot " << robot->id << '\n';  // robot 3
    }
@@ -2055,10 +2063,8 @@ Testing for Empty
 
 .. code-block:: cpp
 
-   auto first{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
-   auto second{std::make_unique<RobotStatus>(
-       4, 90.0, Position{6.0, 2.0}, false)};
+   auto first{std::make_unique<RobotStatus>(3, 64.0)};
+   auto second{std::make_unique<RobotStatus>(4, 90.0)};
    const RobotStatus* robot_3{first.get()};
    first.swap(second);  // the same as std::swap(first, second)
    // first->id: 4, second->id: 3, second.get() == robot_3: true
@@ -2075,10 +2081,8 @@ One Allocation with ``make_shared``
 
 .. code-block:: cpp
 
-   auto made{std::make_shared<RobotStatus>(
-       3, 14.0, Position{2.0, 3.0}, false)};
-   std::shared_ptr<RobotStatus> from_new{
-       new RobotStatus{3, 14.0, {2.0, 3.0}, false}};
+   auto made{std::make_shared<RobotStatus>(3, 14.0)};
+   std::shared_ptr<RobotStatus> from_new{new RobotStatus{3, 14.0}};
 
 .. code-block:: text
 
