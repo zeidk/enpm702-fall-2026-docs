@@ -1540,14 +1540,14 @@ L7: Smart Pointers and Move Semantics
       of owners and the count of ``std::weak_ptr``\ s. A ``std::shared_ptr`` is
       two pointers, 16 bytes: one to the object and one to the control block.
       ``std::make_shared`` puts the object and the control block in one
-      allocation (56 bytes for a ``RobotStatus``); with ``new`` there are two
-      (40 and 24 bytes). Measured with g++ 13.3 and libstdc++.
+      allocation (64 bytes for an ``Obstacle``); with ``new`` there are two
+      (48 and 24 bytes). Measured with g++ 13.3 and libstdc++.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    Deleted Function
       A function that is declared so that calling it is a compile error, and
       is never defined. The copy constructor of ``std::unique_ptr`` is deleted,
-      so ``std::unique_ptr<RobotStatus> copy{robot};`` does not compile: g++
+      so ``std::unique_ptr<Obstacle> copy{track};`` does not compile: g++
       reports "use of deleted function".
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
@@ -1566,8 +1566,9 @@ L7: Smart Pointers and Move Semantics
 
    Indirect Leak
       A leaked heap block that LeakSanitizer finds reachable only from another
-      leaked block. Two robots that own each other through
-      ``std::shared_ptr``\ s are reported as two indirect leaks.
+      leaked block. A tractor and its trailer whose ``Towing`` objects own
+      each other through ``std::shared_ptr``\ s are reported as two indirect
+      leaks.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    LeakSanitizer
@@ -1581,7 +1582,7 @@ L7: Smart Pointers and Move Semantics
       An expression that refers to an object that already exists, and does
       not let another object take its contents: an object made from it is a
       copy. C++20 calls it a glvalue
-      that is not an xvalue. A named variable, ``*ptr``, ``fleet[0]``, a call
+      that is not an xvalue. A named variable, ``*ptr``, ``seen[0]``, a call
       that returns ``T&``, and a string literal are lvalues. You can take an
       lvalue's address.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
@@ -1635,7 +1636,7 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    rvalue Reference
-      A reference declared with ``&&``, such as ``std::vector<Position>&&``.
+      A reference declared with ``&&``, such as ``std::vector<Pose>&&``.
       It binds only to rvalues, and says that whatever it refers to may be
       taken. A named rvalue reference is an lvalue, so a function must write
       ``std::move`` again to move from its ``T&&`` parameter.
@@ -1658,14 +1659,14 @@ L7: Smart Pointers and Move Semantics
    std::make_unique
       A function from ``<memory>`` that creates an object on the heap and
       returns the ``std::unique_ptr`` that owns it:
-      ``std::make_unique<RobotStatus>(3, 64.0)``.
+      ``std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)``.
       Its arguments go to the object. With it, you write no ``new`` and no
       ``delete``.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    std::move
-      A cast to an rvalue reference, from ``<utility>``. ``std::move(route)``
-      is an xvalue that marks ``route`` as an object you may take from. It
+      A cast to an rvalue reference, from ``<utility>``. ``std::move(path)``
+      is an xvalue that marks ``path`` as an object you may take from. It
       moves nothing by itself: the move happens if a move constructor or a
       ``&&`` overload takes the result. On a ``const`` object the compiler
       copies instead, and on a returned local it blocks copy elision.
@@ -1696,8 +1697,8 @@ L7: Smart Pointers and Move Semantics
 
    Temporary Materialization
       Creating a temporary object from a prvalue when the code needs an
-      object, for example to read a member. In ``make_robot(3).id``, the
-      compiler creates a temporary robot, and the expression becomes an xvalue
+      object, for example to read a member. In ``make_obstacle(3).id``, the
+      compiler creates a temporary ``Obstacle``, and the expression becomes an xvalue
       that names it. The temporary is destroyed at the end of the full
       expression. C++20 [conv.rval].
       :doc:`L7 </lectures/lecture7/l7_lecture>`
@@ -1722,7 +1723,7 @@ L7: Smart Pointers and Move Semantics
       another object take its contents: the object may be moved from. C++20
       calls it a glvalue whose
       object's resources can be reused.
-      ``std::move(route)``, a cast to ``T&&``, and a member of an xvalue are
+      ``std::move(path)``, a cast to ``T&&``, and a member of an xvalue are
       xvalues. Naming an xvalue moves nothing.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 

@@ -31,7 +31,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week7)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week7_playground``.
-5. Run every slide: ``702run week7_playground``. Run only slide X: ``702run week7_playground X``.
+5. Run every slide: ``702run week7_playground``. Run only one slide, for example `Handing a Path to the Controller`_: ``702run week7_playground 14``.
 
 **Code That Leaks or Breaks**
 
@@ -51,7 +51,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week7_playground            # the code of every slide, in order
-      702run week7_playground 12         # only the code of slide 12
+      702run week7_playground 14         # only the code of slide 14
       702run week7_appendix              # the code of every appendix frame
       702run week7_appendix iv           # only appendix frame iv (4 works too)
       702run week7_allocations           # appendix frame xiv: counts make_shared's allocations
@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 86, runs only when you ask for it by number: ``702run week7_playground 86``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 88, runs only when you ask for it by number: ``702run week7_playground 88``. A full run skips it.
 
 .. note::
 
@@ -98,25 +98,12 @@ Reminder: Returning by Value
 
 From L5. **Copy elision**: the compiler builds the returned object **directly in the caller's destination**, so the copy or move from the function's object is never made.
 
-.. list-table::
-   :header-rows: 1
-   :widths: 20 50 30
+.. figure:: /_static/images/l7/return_by_value.png
+   :alt: A UML activity diagram in black and white. From a start dot, an arrow leads to a decision: a function returns an object by value: what does it return? Four arrows leave it, one to each of four boxes, left to right, and each box ends in its own end node. Box 1, RVO: a temporary, return std::vector<double>(n); built in the caller's destination, always, since C++17. Box 2, NRVO: a named local, return v; built in the caller's destination, usually, but not required. Box 3, Implicit move: a named local, when NRVO is not done, return v; the local is moved: its elements are handed over. Box 4, Copy: anything that is not the plain name of a local, return first ? x : y; every element is copied.
+   :align: center
+   :width: 100%
 
-   * - Name
-     - The function returns
-     - Elided?
-   * - RVO
-     - a temporary: ``return std::vector<double>(n);``
-     - **always**, since C++17
-   * - NRVO
-     - a named local: ``return v;``
-     - usually, but not required
-   * - Implicit move
-     - a named local, when NRVO is not done
-     - no, the local is **moved**: its elements are handed over
-   * - Copy
-     - anything that is not the plain name of a local: ``return first ? x : y;``
-     - no, every element is **copied**
+   What the compiler does with a return by value, as a UML activity diagram: one branch for each kind of returned expression.
 
 - **RVO** is Return Value Optimization. The N is for **named**.
 - The order is elide, then move, then copy.
@@ -125,22 +112,110 @@ From L5. **Copy elision**: the compiler builds the returned object **directly in
 The Program We Will Build
 -------------------------
 
-The **fleet manager** of L6, with its robots now on the heap. The structs ``Position`` and ``RobotStatus`` do not change.
+An autonomous car, the **ego vehicle**, drives along a two-lane road. The ego vehicle has a **tracker**, which sees four obstacles. In this lecture we write the tracker and two other parts of its software: the **planner** and the **dashboard**.
 
-- The **fleet** is a list of robots. It creates each robot, and gives the memory back when the robot leaves.
-- The **charging queue** holds robots waiting to charge. A queued robot is still in the fleet: it has two owners, and lives until both let go.
-- A **dashboard** shows one robot. It must notice when that robot is gone, but it must not keep the robot alive.
+.. list-table::
+   :header-rows: 1
+   :class: compact-table
+
+   * - id
+     - What it is
+     - x (m)
+     - y (m)
+     - heading (rad)
+     - speed (m/s)
+     - static
+   * - 1
+     - parked car
+     - 20.0
+     - -3.0
+     - 0.00
+     - 0.0
+     - yes
+   * - 2
+     - cyclist
+     - 12.0
+     - -1.0
+     - 0.00
+     - 4.0
+     - no
+   * - 3
+     - pedestrian crossing
+     - 30.0
+     - 2.5
+     - 1.57
+     - 1.4
+     - no
+   * - 4
+     - oncoming car
+     - 38.0
+     - 3.5
+     - 3.14
+     - 13.4
+     - no
+
+**Who Holds an Obstacle**
+
+- **tracker**: one record per obstacle it sees; deletes it when the track is lost.
+- **planner**: shares the obstacles near its path, the **hazards**.
+- **dashboard**: shows one obstacle; only looks.
+
+**The Road**
+
+- x: along the road, from where the ego vehicle starts.
+- y: to the left of the center of its lane. Lanes are 3.5 m wide.
+- heading: 0 along the road, counterclockwise.
 
 .. note::
 
-   Three kinds of ownership: one owner, several owners, and an observer that owns nothing. Each one gets its own smart pointer today.
+   The values are chosen for this example. The obstacles are data in the program, not cars on a street: losing track of the cyclist deletes an ``Obstacle`` object, and nothing on the road moves.
 
-.. figure:: /_static/images/l7/owner_map.png
-   :alt: A UML object diagram in black and white: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
+.. figure:: /_static/images/l7/av_road.png
+   :alt: A top view of a straight two-lane road, drawn to scale, with an x axis along the bottom marked 0, 10, 20, 30 and 40 meters and a y axis on the left marked 0.0 and 3.5 meters at the two lane centers. From the bottom up: a lighter parking strip, the lane of the ego vehicle, a dashed yellow center line, and the oncoming lane. The ego vehicle, a blue car seen from above and tagged E, sits at x 0 in the center of its lane, facing plus x, with a white arrow pointing in plus x. Tag 1: an amber car of another shape, parked in the parking strip at x 20, facing plus x. Tag 2: a green cyclist seen from above, at x 12 near the right edge of the ego lane, facing plus x, with an arrow in plus x. Tag 3: a gray circle, the pedestrian, at x 30 in the oncoming lane, with an arrow pointing up, toward plus y. Tag 4: a coral red car of a third shape, at x 38 in the oncoming lane, facing minus x, with an arrow pointing in minus x.
    :align: center
    :width: 100%
 
-   Who owns each robot, as a UML object diagram (L9): one box per object; a diamond marks the owner. **Filled diamond**, the only owner: ``fleet`` alone owns ``robot1`` and ``robot2``. **Open diamond**, one of several owners: ``fleet`` and ``charging_queue`` both own ``robot3``. **Arrow, no diamond**, looks without owning: ``dashboard`` looks at ``robot3``.
+   The table, drawn to scale.
+
+- Tags 1 to 4: the obstacles of the table, by id. Tag E: the ego vehicle.
+- Arrows: the direction of travel of what moves. Their length is not to scale.
+
+One Row, One Obstacle
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   struct Pose {
+     double x{0.0};       // m
+     double y{0.0};       // m
+     double heading{0.0}; // rad
+   };
+
+   struct Obstacle {
+     int id{0};
+     Pose pose{};
+     double speed{0.0}; // m/s
+     bool is_static{false};
+   };
+
+- The tracker keeps one ``Obstacle`` object for each row of the table.
+- The cyclist, id 2: ``Obstacle{2, {12.0, -1.0, 0.0}, 4.0}``. ``is_static`` is not given, so it takes its default, ``false``.
+- ``sizeof(Pose)`` is 24 bytes, ``sizeof(Obstacle)`` 48: 4 bytes of padding after ``id`` and 7 after ``is_static`` (L6).
+
+Who Owns Each Obstacle
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l7/av_owner_map.png
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
+   :align: center
+   :width: 80%
+
+   Who owns each ``Obstacle`` object, as a UML object diagram.
+
+- A UML object diagram (L9): one box per object; a diamond marks the owner. ``: Obstacle``: an ``Obstacle`` object on the heap, with no name.
+- **Filled diamond**, the only owner: ``tracker`` alone owns the ``Obstacle`` objects with ids 1, 3 and 4.
+- **Open diamond**, one of several owners: ``tracker`` and ``planner`` both own the one with id 2, the cyclist.
+- **Arrow, no diamond**, looks without owning: ``dashboard`` looks at id 2.
 
 Ownership
 ---------
@@ -149,34 +224,37 @@ An **owner** of a heap object is code that keeps it alive. An object can have on
 
 Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
-A Robot on the Heap
-^^^^^^^^^^^^^^^^^^^
+An Obstacle on the Heap
+^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   RobotStatus* make_robot(int id) {
-     return new RobotStatus{id, 100.0, {0.0, 0.0}, false};
+   Obstacle* make_track(int id, Pose pose, double speed) {
+     return new Obstacle{id, pose, speed};
    }
 
-   RobotStatus* robot{make_robot(3)};
-   std::cout << robot->id << ' ' << robot->battery_pct << '\n';  // 3 100
-   delete robot;  // the caller must remember this
-   robot = nullptr;
+   Obstacle* track{make_track(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   std::cout << track->id << ' ' << track->speed << '\n';  // 2 4
+   delete track;  // the caller must remember this
+   track = nullptr;
 
-- ``make_robot`` creates the robot with L3's ``new``. The caller must ``delete`` it.
-- Nothing in the type says so: ``RobotStatus*`` looks the same whether it owns the robot or only points at it.
+- ``make_track`` creates the ``Obstacle`` object with ``new``. The caller must ``delete`` it.
+- Nothing in the type says so: ``Obstacle*`` looks the same whether it owns the ``Obstacle`` object or only points at it.
 
 .. note::
 
    "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns. Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
-Three Ways to Get It Wrong
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Reminder: Three Ways to Get It Wrong
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- **Leak**: a function returns early and skips its ``delete``. The robot's memory is never given back.
-- **Double** ``delete``: the same robot is in two lists, and each list deletes it. It breaks L3's rule, "``delete`` exactly once", and is undefined behavior.
-- **Dangling read**: one list deletes the robot, and the other list still reads it. Undefined behavior.
-- The cause is the same in all three: two lists, or two paths, and no code marked as the owner.
+1. **Leak**: a function returns early and skips its ``delete``. The ``Obstacle`` object's memory is never given back.
+2. **Double** ``delete``: the same ``Obstacle`` object is in the tracker's list and the planner's hazard list, and each list deletes it. It breaks the rule "``delete`` exactly once" and is undefined behavior.
+3. **Dangling read**: the tracker deletes the ``Obstacle`` object when the track is lost, and the planner still reads it. Undefined behavior.
+
+.. note::
+
+   The cause is the same in all three: two lists, or two paths, and no code marked as the owner.
 
 See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
 
@@ -185,8 +263,8 @@ RAII
 
 **RAII**, resource acquisition is initialization: the object that holds a resource, such as memory, gives it back in its destructor.
 
-- A ``std::vector`` is RAII: it frees its heap block when it goes out of scope.
-- A **smart pointer** is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr``, the only owner; ``std::shared_ptr``, one of several; ``std::weak_ptr``, an observer that owns nothing.
+- A ``std::vector`` is RAII: the planner's path, a ``std::vector<Pose>``, frees its heap block when it goes out of scope.
+- A **smart pointer** is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr`` (the only owner), ``std::shared_ptr`` (one of several owners), and ``std::weak_ptr`` (an observer that owns nothing).
 
 .. note::
 
@@ -201,59 +279,61 @@ A **copy** makes a second object with its own memory: a new block, every element
 
 See `cppreference: std::move <https://en.cppreference.com/w/cpp/utility/move>`__.
 
-Handing a Route to a Robot
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Handing a Path to the Controller
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   std::vector<Position> make_route(int n);  // n points, 1 m apart
-   std::vector<Position> route{make_route(1000)};  // 1000 waypoints
-   const Position* where{route.data()};
+   std::vector<Pose> make_path(int n);        // n poses, 1 m apart
+   std::vector<Pose> path{make_path(1000)};   // pose i at x = i m
+   const Pose* where{path.data()};
 
-   std::vector<Position> copied{route};             // a copy
-   std::vector<Position> moved{std::move(route)};   // a move
+   std::vector<Pose> copied{path};            // a copy
+   std::vector<Pose> moved{std::move(path)};  // a move
 
 .. code-block:: text
 
-   copy: copied.data() == route.data(): false, route.size(): 1000
-   move: moved.data() == where: true, route.size(): 0
-   bytes the copy allocated: 16000
+   copy: copied.data() == path.data(): false, path.size(): 1000
+   move: moved.data() == where: true, path.size(): 0
+   bytes the copy allocated: 24000
 
-- The copy allocates a new block, 1000 × 16 bytes (``sizeof(Position)``: two ``double``\ s) = 16000 bytes, and copies every ``Position``. ``route`` is unchanged.
-- The move allocates nothing. ``moved`` holds the block ``route`` had, at the same address, and ``route`` is left empty.
+- The copy allocates a new block, 1000 × 24 bytes (``sizeof(Pose)``: three ``double``\ s) = 24000 bytes, and copies every ``Pose``. ``path`` is unchanged.
+- The move allocates nothing. ``moved`` holds the block ``path`` had, at the same address, and ``path`` is left empty.
 
-.. dropdown:: The Definition of ``make_route``
+.. dropdown:: The Definition of ``make_path``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      std::vector<Position> make_route(int n) {
-        std::vector<Position> route;
+      std::vector<Pose> make_path(int n) {
+        std::vector<Pose> path;
+        path.reserve(n);  // room for n poses: one allocation
         for (int i{0}; i < n; ++i) {
-          route.push_back({static_cast<double>(i), 0.0});
+          path.push_back({static_cast<double>(i), 0.0, 0.0});
         }
-        return route;
+        return path;
       }
 
-   - It builds a route of ``n`` waypoints, one meter apart along an aisle: waypoint ``i`` is at x = ``i`` meters and y = 0 (L6's ``Position``).
-   - ``702run week7_appendix iv`` prints the three waypoints of ``make_route(3)``: (0, 0) (1, 0) (2, 0).
-   - It returns the local ``route`` by value: no copy is made (`Returning a Local`_).
+   - It builds a path of ``n`` poses, one meter apart along the road: pose ``i`` is at x = ``i`` meters, y = 0, heading 0.
+   - ``reserve(n)`` allocates room for ``n`` poses before the loop. Without it, ``push_back`` allocates 11 times for 1000 poses, and ends with room for 1024.
+   - ``702run week7_appendix iv`` prints the three poses of ``make_path(3)``: (0, 0, 0) (1, 0, 0) (2, 0, 0).
+   - It returns the local ``path`` by value: no copy is made (`Returning a Local`_).
 
 An Implicit Move
 ^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   const Position* made{nullptr};         // where plan's block is made
-   std::vector<Position> plan(int n) {    // a custom function
-     std::vector<Position> route{make_route(n)};
-     made = route.data();
-     return route;                        // no std::move
+   const Pose* made{nullptr};             // where plan's block is made
+   std::vector<Pose> plan(int n) {        // a custom function
+     std::vector<Pose> path{make_path(n)};
+     made = path.data();
+     return path;                         // no std::move
    }
 
-   std::vector<std::vector<Position>> plans;
+   std::vector<std::vector<Pose>> plans;
    plans.push_back(plan(500));            // no std::move
 
 .. code-block:: text
@@ -261,37 +341,36 @@ An Implicit Move
    plans[0].data() == made: true, plans[0].size(): 500
 
 - No ``std::move``, and still no copy: the block made inside ``plan`` is the block in ``plans[0]``.
-- ``return route;`` moves the local out of the function, or builds it in place (`Returning a Local`_).
+- ``return path;`` moves the local out of the function, or builds it in place (`Returning a Local`_).
 - ``push_back`` gets a temporary, so it takes the overload that moves (`Overloads for Copy and Move`_).
-- ``702run week7_playground 13`` prints the line above.
+- ``702run week7_playground 15`` prints the line above.
 
 Inside a Copy
 ^^^^^^^^^^^^^
 
-.. figure:: /_static/images/l7/vector_copy.png
-   :alt: Two panels side by side, one per vector, each under a rounded name tag: route on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip. Under route, the strip ends in a gray part marked 24 free: the begin arrow ends at the left end of the first cell, the end arrow at the start of the gray part, and the capacity arrow at the right end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Under copied, the strip has no gray part: the begin arrow ends at the left end of the first cell, and the end and capacity arrows both at the right end of the last cell. Its measuring line reads 1000 Position, 16000 bytes. No arrow joins the two panels.
+.. figure:: /_static/images/l7/av_vector_copy.png
+   :alt: Two panels side by side, one per vector, each under a rounded name tag: path on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip. The two panels are drawn the same way: the begin arrow ends at the left end of the first cell, and the end and capacity arrows both at the right end of the last cell. Each measuring line reads 1000 Pose, 24000 bytes. No arrow joins the two panels.
    :align: center
    :width: 100%
 
-   A ``std::vector`` and its copy: each one owns its own block. Gray: unused slots of ``route``'s capacity.
+   A ``std::vector`` and its copy: each one owns its own block.
 
-- After ``std::vector<Position> copied{route}``, each vector holds three pointers into its own block, and frees it when it goes out of scope.
-- ``push_back`` grew ``route`` to capacity 1024 (libstdc++ doubles it: 1, 2, 4, ..., 1024, measured): 1024 × 16 = 16384 bytes, 24 unused (gray).
-- The copy allocates 1000 × 16 = 16000 bytes. Total: 16384 + 16000 = 32384 bytes.
-- No spare slots: the standard asks only for equal elements (C++20 **[container.requirements.general]**, Table 73: a copy ``u`` of ``a`` has ``u == a``, and ``==`` compares the elements); libstdc++'s copy constructor allocates exactly ``size()`` elements.
+- After ``std::vector<Pose> copied{path}``, each vector has its own block and frees it at the end of its scope.
+- ``begin`` points at the first ``Pose``. ``end`` points one past the last one: the right edge of the last cell. ``capacity`` points one past the last slot.
+- ``make_path`` reserved 1000 slots, so ``end`` and ``capacity`` are equal. Each block: 1000 × 24 = 24000 bytes. Total: 48000 bytes.
 
 Inside a Move
 ^^^^^^^^^^^^^
 
-.. figure:: /_static/images/l7/vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading route over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells that ends in a gray part marked 24 free, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, end at the start of the gray part, and capacity at the right end of the strip. A measuring line under it reads 1024 Position, 16384 bytes. Panel 2: a name tag reading route over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same three places, with the same gray part and the same measuring line, 1024 Position, 16384 bytes.
+.. figure:: /_static/images/l7/av_vector_move.png
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, and end and capacity both at the right end of the last cell. A measuring line under it reads 1000 Pose, 24000 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same places, with the same measuring line, 1000 Pose, 24000 bytes.
    :align: center
    :width: 100%
 
-   A ``std::vector`` before and after a move. **1**: ``route`` owns the block. **2**: after the move, ``moved`` owns the block and ``route``'s three pointers are null.
+   A ``std::vector`` before and after a move. **1**: ``path`` owns the block. **2**: after the move, ``moved`` owns the block and ``path``'s three pointers are null.
 
-- **1**: ``route`` owns the block through its three pointers (L4). Gray: 24 unused slots.
-- **2**: after ``std::vector<Position> moved{std::move(route)}``, ``moved`` holds the same three pointers and ``route``'s are null (libstdc++, measured).
+- **1**: ``path`` owns the block through its three pointers (L4).
+- **2**: after ``std::vector<Pose> moved{std::move(path)}``, ``moved`` holds the same three pointers and ``path``'s are null (libstdc++, measured).
 - Only 24 bytes change hands: the three 8-byte pointers, whatever the vector holds.
 
 The Moved-from Object
@@ -299,11 +378,11 @@ The Moved-from Object
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(1000)};
-   std::vector<Position> robot_route{std::move(route)};
-   std::cout << route.empty() << '\n';  // 1 (true) with libstdc++
-   route = make_route(5);                // assign before you use it again
-   std::cout << route.size() << ' ' << robot_route.size();  // 5 1000
+   std::vector<Pose> path{make_path(1000)};
+   std::vector<Pose> controller_path{std::move(path)};
+   std::cout << path.empty() << '\n';  // 1 (true) with libstdc++
+   path = make_path(5);                // assign before you use it again
+   std::cout << path.size() << ' ' << controller_path.size();  // 5 1000
 
 - After a move, the source still exists. It is destroyed at the end of its scope, as usual.
 - What it holds is not promised by the standard. libstdc++ leaves a moved-from ``std::vector`` empty; another library may not.
@@ -321,15 +400,15 @@ Exercise 1: Copy and Move
 .. code-block:: cpp
    :linenos:
 
-   std::vector<Position> a{make_route(3)};
-   std::vector<Position> b{a};
-   std::vector<Position> c{std::move(a)};
+   std::vector<Pose> a{make_path(3)};
+   std::vector<Pose> b{a};
+   std::vector<Pose> c{std::move(a)};
    a = std::move(b);
 
 - At the board, after each line: draw ``a``, ``b`` and ``c`` on the stack, each with its ``begin``, ``end`` and ``capacity`` pointers (`Inside a Copy`_), and every block on the heap they point at.
 - Line 4 is a move into a vector that already exists. What does ``a`` hold before it, and after?
 - After line 4: how many blocks are on the heap? Which variable owns each one? Was any block freed?
-- Check: ``702run week7_playground 17`` prints each vector's size, capacity and block after every line.
+- Check: ``702run week7_playground 19`` prints each vector's size, capacity and block after every line.
 
 Value Categories
 ^^^^^^^^^^^^^^^^
@@ -434,8 +513,8 @@ lvalue: Copied, Not Taken
 
 - To **take** an object's contents is to move them into another object. To **mark** an object, with ``std::move``, is to say another object may take them. Line 3 takes the three numbers that ``scores`` keeps on the heap.
 - In line 2, ``scores`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``scores`` keeps its three numbers.
-- In line 3, ``std::move(scores)`` **marks** ``scores``: it says another object may take its contents. ``best`` takes them, and ``scores`` is left empty (libstdc++, measured). Part (2) fails, so ``std::move(scores)`` is not an lvalue: `xvalue: Marked by std::move`_ says what it is.
-- One exception: ``return route;`` may move from a local variable even though ``route`` is an lvalue (`An Implicit Move`_).
+- In line 3, ``std::move(scores)`` **marks** ``scores``. ``best`` takes its contents, and ``scores`` is left empty (libstdc++, measured). Part (2) fails: ``std::move(scores)`` is not an lvalue (`xvalue: Marked by std::move`_).
+- One exception: ``return path;`` may move from a local variable even though ``path`` is an lvalue (`An Implicit Move`_).
 
 lvalue: Checking with ``&``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -469,48 +548,48 @@ lvalue: A Reference, an Element, ``*p``
 - ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does (part 1). Nothing marks it (part 2), so ``numbers[2]`` is an lvalue.
 - ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]`` (part 1). Nothing marks it (part 2), so ``*p`` is an lvalue.
 
-``702run week7_playground 24`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
+``702run week7_playground 26`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
 
-lvalue: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+lvalue: In the Tracker
+^^^^^^^^^^^^^^^^^^^^^^
 
 An **lvalue** refers to an object that already exists and does not let another object take its contents (`lvalue: A Named Object`_). Test: ``&`` compiles on it.
 
 .. code-block:: cpp
 
-   RobotStatus make_robot(int id);
-   RobotStatus& first_robot(std::vector<RobotStatus>& fleet);
-   std::vector<Position> route{make_route(3)};
-   std::vector<RobotStatus> fleet{make_robot(1), make_robot(2)};
-   RobotStatus* robot_ptr{&fleet[1]};
+   Obstacle make_obstacle(int id);
+   Obstacle& first_obstacle(std::vector<Obstacle>& seen);
+   std::vector<Pose> path{make_path(3)};
+   std::vector<Obstacle> seen{make_obstacle(1), make_obstacle(2)};
+   Obstacle* last{&seen[1]};
 
 With the declarations above, each expression below refers to an object that already exists, and none marks it, so each is an lvalue:
 
-- ``route``: the variable ``route`` itself.
-- ``*robot_ptr``: the robot ``robot_ptr`` points at, ``fleet[1]``.
-- ``fleet[0]``: the first robot stored in ``fleet``.
-- ``first_robot(fleet)``: the robot the returned ``RobotStatus&`` refers to, ``fleet[0]``.
-- ``"dock"``: a ``const char[5]`` array that the program keeps until it ends.
+- ``path``: the variable ``path`` itself.
+- ``*last``: the ``Obstacle`` object ``last`` points at, ``seen[1]``.
+- ``seen[0]``: the first ``Obstacle`` object stored in ``seen``.
+- ``first_obstacle(seen)``: the ``Obstacle`` object the returned ``Obstacle&`` refers to, ``seen[0]``.
+- ``"stop"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 25`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 27`` prints ``lvalue`` for each.
 
-.. dropdown:: The Definitions of ``make_robot`` by Value and ``first_robot``
+.. dropdown:: The Definitions of ``make_obstacle`` by Value and ``first_obstacle``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      RobotStatus make_robot(int id) {
-        return {id, 100.0, {0.0, 0.0}, false};
+      Obstacle make_obstacle(int id) {
+        return Obstacle{id};  // the other members take their defaults
       }
 
-      RobotStatus& first_robot(std::vector<RobotStatus>& fleet) {
-        return fleet[0];
+      Obstacle& first_obstacle(std::vector<Obstacle>& seen) {
+        return seen[0];
       }
 
-   - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 2: Value Categories`_ use it.
-   - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
+   - ``make_obstacle`` returns a new ``Obstacle`` by value. `lvalue: In the Tracker`_, `xvalue: In the Tracker`_, `Temporary Materialization`_ and `Exercise 2: Value Categories`_ use it.
+   - ``first_obstacle`` returns a reference to the first ``Obstacle``, so a call to it is an lvalue.
 
 prvalue: A Computed Value
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -553,16 +632,16 @@ prvalue: Literals, Results, Calls
 
    error: lvalue required as unary '&' operand
 
-``702run week7_playground 28`` prints ``prvalue`` for all three.
+``702run week7_playground 30`` prints ``prvalue`` for all three.
 
-prvalue: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+prvalue: In the Tracker
+^^^^^^^^^^^^^^^^^^^^^^^
 
 A **prvalue** refers to no object that already exists; it computes a value (`prvalue: A Computed Value`_). Test: ``&`` does not compile on it.
 
 .. code-block:: cpp
 
-   std::vector<Position> make_route(int n);
+   std::vector<Pose> make_path(int n);
    int a{2};
    int b{3};
 
@@ -570,16 +649,16 @@ With the declarations above, each expression below is a prvalue:
 
 - ``42``: a literal (not a string literal).
 - ``a + b``: a built-in arithmetic result. ``&(a + b)`` does not compile.
-- ``make_route(3)``: a call that returns by value.
-- ``RobotStatus{}``: a value of a class type, made with braces.
+- ``make_path(3)``: a call that returns by value.
+- ``Obstacle{}``: a value of a class type, made with braces.
 - ``[] { return 1; }``: a lambda expression.
 
 .. code-block:: text
 
-   &(a + b):       error: lvalue required as unary '&' operand
-   &make_route(3): error: taking address of rvalue
+   &(a + b):      error: lvalue required as unary '&' operand
+   &make_path(3): error: taking address of rvalue
 
-``702run week7_playground 29`` prints ``prvalue`` for all five.
+``702run week7_playground 31`` prints ``prvalue`` for all five.
 
 xvalue: Marked by ``std::move``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -615,26 +694,25 @@ xvalue: Ways to Mark
 - ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
 - ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
 
-``702run week7_playground 32`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+``702run week7_playground 34`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
 
-xvalue: In the Fleet Manager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+xvalue: In the Tracker
+^^^^^^^^^^^^^^^^^^^^^^
 
 An **xvalue** refers to an object that already exists and lets another object take its contents (`xvalue: Marked by std::move`_). Marking it moves nothing.
 
 .. code-block:: cpp
 
-   struct Robot { RobotStatus status; std::vector<Position> route; };
-   std::vector<Position> route{make_route(3)};
-   Robot robot{make_robot(1), make_route(3)};
+   std::vector<Pose> path{make_path(3)};
+   Obstacle cyclist{make_obstacle(2)};
 
-``T&&`` reads "rvalue reference to ``T``": a reference whose object may be taken (`Binding to rvalues`_). Here ``T`` is ``std::vector<Position>``. Each expression below is an xvalue:
+``T&&`` reads "rvalue reference to ``T``": a reference whose object may be taken (`Binding to rvalues`_). Here ``T`` is ``std::vector<Pose>``. Each expression below is an xvalue:
 
-- ``std::move(route)``: a call to a function whose return type is ``T&&``. It refers to ``route``, now marked.
-- ``static_cast<std::vector<Position>&&>(route)``: the same marking, written as a cast to ``T&&``.
-- ``std::move(robot).route``: ``std::move`` marks ``robot``, so its member ``route`` is marked too. Its ``decltype((e))`` is ``T&&`` as well (`The decltype Test`_).
+- ``std::move(path)``: a call to a function whose return type is ``T&&``. It refers to ``path``, now marked.
+- ``static_cast<std::vector<Pose>&&>(path)``: the same marking, written as a cast to ``T&&``.
+- ``std::move(cyclist).pose``: ``std::move`` marks ``cyclist``, so its member ``pose`` is marked too. Its ``decltype((e))`` is ``Pose&&``, the same form with ``T`` = ``Pose`` (`The decltype Test`_).
 
-``702run week7_playground 33`` prints ``xvalue`` for all three. Afterwards ``route.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 35`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -643,13 +721,13 @@ To read a member, there must be an object. So the compiler creates a **temporary
 
 .. code-block:: cpp
 
-   RobotStatus make_robot(int id);   // returns by value
+   Obstacle make_obstacle(int id);   // returns by value
 
 With the declaration above:
 
-- ``make_robot(3)``: a prvalue. No object exists yet.
-- ``make_robot(3).id``: an xvalue. ``.id`` needs an object, so a temporary is made; it exists before ``.id`` reads it, so part (1) holds.
-- ``int id{make_robot(3).id}``: the temporary is created, read, and destroyed at the end of the full expression, after ``id`` has its value: 3.
+- ``make_obstacle(3)``: a prvalue. No object exists yet.
+- ``make_obstacle(3).id``: an xvalue. ``.id`` needs an object, so a temporary is made; it exists before ``.id`` reads it, so part (1) holds.
+- ``int id{make_obstacle(3).id}``: the temporary is created, read, and destroyed at the end of the full expression, after ``id`` has its value: 3.
 
 .. note::
 
@@ -664,16 +742,16 @@ With the declaration above:
 
    int count{3};
    const double limit{40.0};
-   std::vector<Position> route{make_route(3)};
-   Position& first{route[0]};
+   std::vector<Pose> path{make_path(3)};
+   Pose& first{path[0]};
    auto copy{limit};            // double: auto drops const
 
 With the declarations above:
 
 - ``decltype(count)`` is ``int``, so ``decltype(count) other{5};`` declares an ``int``.
 - ``decltype(limit)`` is ``const double``: unlike ``auto``, ``decltype`` keeps ``const``.
-- ``decltype(first)`` is ``Position&``: it keeps the ``&`` too.
-- ``decltype(route.size())`` is ``std::size_t``, the type the call returns. ``size()`` is not called.
+- ``decltype(first)`` is ``Pose&``: it keeps the ``&`` too.
+- ``decltype(path.size())`` is ``std::size_t``, the type the call returns. ``size()`` is not called.
 
 .. note::
 
@@ -684,16 +762,16 @@ The ``decltype`` Test
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(3)};
-   static_assert(std::is_same_v<decltype((route)),
-                                std::vector<Position>&>);   // lvalue
-   static_assert(std::is_same_v<decltype((std::move(route))),
-                                std::vector<Position>&&>);  // xvalue
-   static_assert(std::is_same_v<decltype((make_route(3))),
-                                std::vector<Position>>);    // prvalue
+   std::vector<Pose> path{make_path(3)};
+   static_assert(std::is_same_v<decltype((path)),
+                                std::vector<Pose>&>);       // lvalue
+   static_assert(std::is_same_v<decltype((std::move(path))),
+                                std::vector<Pose>&&>);      // xvalue
+   static_assert(std::is_same_v<decltype((make_path(3))),
+                                std::vector<Pose>>);        // prvalue
 
 - ``decltype((e))`` gives ``T&`` for an lvalue, ``T&&`` for an xvalue, and ``T`` for a prvalue. The three ``static_assert``\ s compile.
-- The second pair of parentheses matters: ``decltype(route)`` gives the declared type of the variable, ``std::vector<Position>``, not its category.
+- The second pair of parentheses matters: ``decltype(path)`` gives the declared type of the variable, ``std::vector<Pose>``, not its category.
 - The playground prints each category with this test.
 
 .. note::
@@ -705,50 +783,46 @@ Exercise 2: Value Categories
 
 .. code-block:: cpp
 
-   struct Robot {
-     RobotStatus status;
-     std::vector<Position> route;
-   };
-   Robot& lookup(
-       std::vector<Robot>& robots,
-       int i);
+   Obstacle& lookup(
+       std::vector<Obstacle>& seen,
+       int id);
 
-   std::vector<Robot> robots{...};
-   Robot* p{&robots[0]};
+   std::vector<Obstacle> seen{...};
+   Obstacle* p{&seen[0]};
    int n{4};
 
 .. code-block:: cpp
 
-   robots                      // 1
-   robots[1].route             // 2
-   p->status.id                // 3
-   n * 2                       // 4
-   lookup(robots, 1)           // 5
-   make_route(n)               // 6
-   std::move(robots[0])        // 7
-   std::move(robots[0]).route  // 8
-   make_robot(n).battery_pct   // 9
-   ++n                         // 10
+   seen                      // 1
+   seen[1].pose              // 2
+   p->pose.x                 // 3
+   n * 2                     // 4
+   lookup(seen, 1)           // 5
+   make_path(n)              // 6
+   std::move(seen[0])        // 7
+   std::move(seen[0]).pose   // 8
+   make_obstacle(n).speed    // 9
+   ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 38``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 40``.
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(1000)};
-   std::vector<Position>&& temp_ref{make_route(10)};  // OK: an rvalue
-   const std::vector<Position>& any_ref{route};       // binds to both
-   std::vector<Position>&& lvalue_ref{route};         // does not compile
+   std::vector<Pose> path{make_path(1000)};
+   std::vector<Pose>&& temp_ref{make_path(10)};       // OK: an rvalue
+   const std::vector<Pose>& any_ref{path};            // binds to both
+   std::vector<Pose>&& lvalue_ref{path};              // does not compile
 
 .. code-block:: text
 
-   error: cannot bind rvalue reference of type 'std::vector<Position>&&' to lvalue
-   of type 'std::vector<Position>'
+   error: cannot bind rvalue reference of type 'std::vector<Pose>&&' to lvalue
+   of type 'std::vector<Pose>'
 
 - ``T&&`` is an **rvalue reference**. It binds only to rvalues: prvalues and xvalues.
-- Bound to the prvalue ``make_route(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
+- Bound to the prvalue ``make_path(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
 - ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
 - A ``T&&`` says: whatever this refers to may be taken.
 
@@ -759,9 +833,9 @@ Giving It a Name
 
 .. code-block:: cpp
 
-   std::vector<Position>&& r{make_route(10)};
-   decltype(r)     // std::vector<Position>&&: the type of r
-   decltype((r))   // std::vector<Position>&: the expression r is an lvalue
+   std::vector<Pose>&& r{make_path(10)};
+   decltype(r)     // std::vector<Pose>&&: the type of r
+   decltype((r))   // std::vector<Pose>&: the expression r is an lvalue
 
 - The **type** of ``r`` is an rvalue reference. The **expression** ``r`` is an lvalue: it has a name, and you can use it again on the next line.
 - So a function that receives a ``T&&`` parameter cannot move from it just by using its name. It has to mark it again with ``std::move``.
@@ -775,22 +849,22 @@ Overloads for Copy and Move
 
 .. code-block:: cpp
 
-   void assign_route(const std::vector<Position>& route) {  // 1
-     robot_route = route;             // copy
+   void assign_path(const std::vector<Pose>& path) {        // 1
+     controller_path = path;             // copy
    }
-   void assign_route(std::vector<Position>&& route) {       // 2
-     robot_route = std::move(route);  // move
+   void assign_path(std::vector<Pose>&& path) {             // 2
+     controller_path = std::move(path);  // move
    }
 
-   std::vector<Position> route{make_route(1000)};
-   std::vector<Position>&& r{make_route(10)};
-   assign_route(route);             // lvalue: 1, a copy
-   assign_route(make_route(5));     // prvalue: 2, a move
-   assign_route(r);                 // named T&&, an lvalue: 1, a copy
-   assign_route(std::move(route));  // xvalue: 2, a move
+   std::vector<Pose> path{make_path(1000)};
+   std::vector<Pose>&& r{make_path(10)};
+   assign_path(path);               // lvalue: 1, a copy
+   assign_path(make_path(5));       // prvalue: 2, a move
+   assign_path(r);                  // named T&&, an lvalue: 1, a copy
+   assign_path(std::move(path));    // xvalue: 2, a move
 
 - The compiler picks the overload from the argument's value category: an lvalue gets ``const&``, an rvalue gets ``&&``.
-- ``std::vector`` itself has both: a copy constructor and a move constructor. That is how the compiler chose between the copy and the move in `Handing a Route to a Robot`_.
+- ``std::vector`` itself has both: a copy constructor and a move constructor. That is how the compiler chose between the copy and the move in `Handing a Path to the Controller`_.
 
 See `Inside std::vector's Move and Copy`_ under Further Reading.
 
@@ -799,18 +873,18 @@ What ``std::move`` Does
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(1000)};
-   std::move(route);                      // warns: result unused
-   std::cout << route.size() << '\n';     // 1000: nothing moved
+   std::vector<Pose> path{make_path(1000)};
+   std::move(path);                       // warns: result unused
+   std::cout << path.size() << '\n';      // 1000: nothing moved
 
 .. code-block:: text
 
    warning: ignoring return value of '... std::move(_Tp&&)
-   [with _Tp = vector<Position>&; ...]', declared with attribute 'nodiscard'
+   [with _Tp = vector<Pose>&; ...]', declared with attribute 'nodiscard'
    [-Wunused-result]
 
 - ``std::move`` moves nothing: it gives permission to move.
-- ``std::move(route)`` is a cast to ``std::vector<Position>&&``. Its result is an xvalue: it marks ``route`` as "may be taken".
+- ``std::move(path)`` is a cast to ``std::vector<Pose>&&``. Its result is an xvalue: it marks ``path`` as "may be taken".
 - The move happens later, if a move constructor or a ``&&`` overload takes the result. Here nothing does.
 
 .. note::
@@ -824,16 +898,16 @@ See `The Definition of std::move`_ under Further Reading.
 
 .. code-block:: cpp
 
-   const std::vector<Position> route{make_route(1000)};
-   std::vector<Position> robot_route{std::move(route)};  // compiles
+   const std::vector<Pose> path{make_path(1000)};
+   std::vector<Pose> controller_path{std::move(path)};   // compiles
 
 .. code-block:: text
 
-   robot_route.data() == route.data(): false, route.size(): 1000
+   controller_path.data() == path.data(): false, path.size(): 1000
 
-- No warning, and no move: a new block, and ``route`` still holds 1000 waypoints.
-- ``std::move(route)`` returns ``const std::vector<Position>&&``. It cannot bind to the move constructor's ``std::vector<Position>&&``, which would change ``route``.
-- It does bind to the copy constructor's ``const std::vector<Position>&``, so the compiler copies.
+- No warning, and no move: a new block, and ``path`` still holds 1000 poses.
+- ``std::move(path)`` returns ``const std::vector<Pose>&&``. It cannot bind to the move constructor's ``std::vector<Pose>&&``, which would change ``path``.
+- It does bind to the copy constructor's ``const std::vector<Pose>&``, so the compiler copies.
 
 .. note::
 
@@ -844,26 +918,24 @@ A Parameter the Function Moves From
 
 .. code-block:: cpp
 
-   struct Robot { RobotStatus status; std::vector<Position> route; };
-   void set_route(Robot& robot, std::vector<Position>&& route) {
-     robot.route = std::move(route);  // route has a name: move it again
+   struct Controller { std::vector<Pose> path; };  // the part that steers
+   void set_path(Controller& controller, std::vector<Pose>&& path) {
+     controller.path = std::move(path);  // path is named: move it again
    }
+   Controller controller{};
+   std::vector<Pose> path{make_path(1000)};
+   const Pose* where{path.data()};         // where path's block is
 
-   Robot robot{make_robot(3), {}};
-   std::vector<Position> route{make_route(1000)};
-   const Position* where{route.data()};  // where route's block is
-
-   set_route(robot, route);             // error: route is an lvalue
-   set_route(robot, std::move(route));  // the caller says: take it
-   set_route(robot, make_route(5));     // a prvalue: no std::move
+   set_path(controller, path);             // error: path is an lvalue
+   set_path(controller, std::move(path));  // the caller says: take it
+   set_path(controller, make_path(5));     // a prvalue: no std::move
 
 .. code-block:: text
 
-   robot.route.data() == where: true, route.size(): 0
-   robot.route.size(): 5
+   controller.path.data() == where: true, path.size(): 0
+   controller.path.size(): 5
 
-- ``&&`` makes the caller write ``std::move`` for a named object: no copy by accident.
-- Inside, ``route`` is a named rvalue reference: an lvalue. Without the second ``std::move``, the assignment would copy.
+- ``&&`` makes the caller write ``std::move`` for a named object. Inside, ``path`` has a name, so it is an lvalue: without the second ``std::move``, the assignment copies.
 
 .. note::
 
@@ -874,17 +946,17 @@ Returning a Local
 
 .. code-block:: cpp
 
-   std::vector<Position> plan_route(int n) {
-     std::vector<Position> route{make_route(n)};
-     return route;               // elided or moved, never copied
-     // return std::move(route); // warns, and blocks the elision
+   std::vector<Pose> plan_path(int n) {
+     std::vector<Pose> path{make_path(n)};
+     return path;                // elided or moved, never copied
+     // return std::move(path);  // warns, and blocks the elision
    }
-   std::vector<Position> path{plan_route(1000)};
+   std::vector<Pose> path{plan_path(1000)};
 
 .. code-block:: text
 
-     inside plan_route, route.data(): 0x529000000200
-     in the caller, path.data(): 0x529000000200
+     inside plan_path, path.data(): 0x52a000000200
+     in the caller, path.data(): 0x52a000000200
    warning: moving a local object in a return statement prevents copy elision
    [-Wpessimizing-move]
 
@@ -900,10 +972,10 @@ Smart Pointers
 
 A **smart pointer** is an object that points at one heap object and says, in its type, how that object is owned. The owning ones delete the object when its last owner lets go.
 
-Three class templates in ``<memory>``, one for each kind of ownership in `The Program We Will Build`_. C++20 lists all three under smart pointers (20.11).
+Three class templates in ``<memory>``, one for each kind of ownership in `Who Owns Each Obstacle`_. C++20 lists all three under smart pointers (20.11).
 
-.. figure:: /_static/images/l7/owner_map.png
-   :alt: A UML object diagram in black and white: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
+.. figure:: /_static/images/l7/av_owner_map.png
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
    :align: center
    :width: 80%
 
@@ -914,12 +986,12 @@ Three class templates in ``<memory>``, one for each kind of ownership in `The Pr
 
 A ``std::unique_ptr`` is the only owner of one object on the heap. It cannot be copied, only moved, and when it is destroyed it deletes the object.
 
-.. figure:: /_static/images/l7/owner_map_unique.png
-   :alt: A UML object diagram: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3. Highlighted in orange, with thick borders and lines: fleet, robot1 and robot2, and the two lines with a filled diamond. The rest is black.
+.. figure:: /_static/images/l7/av_owner_map_unique.png
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the boxes with id 1, 3 and 4, and the three lines with filled diamonds.
    :align: center
    :width: 80%
 
-   Orange, from the map in `The Program We Will Build`_: the filled diamonds, one owner.
+   Orange, from the map in `Who Owns Each Obstacle`_: the filled diamonds, one owner.
 
 See `cppreference: std::unique_ptr <https://en.cppreference.com/w/cpp/memory/unique_ptr>`__. Rule: `Core Guidelines R.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-owner>`__.
 
@@ -952,16 +1024,16 @@ Creating One
 
    #include <memory>
 
-   std::unique_ptr<RobotStatus> robot{std::make_unique<RobotStatus>(3, 64.0)};
-   std::cout << robot->id << ' ' << (*robot).battery_pct << '\n';  // 3 64
-
-   auto other{std::make_unique<RobotStatus>()};  // members take defaults
-   std::cout << other->battery_pct << '\n';      // 100
+   Pose at{12.0, -1.0, 0.0};  // the cyclist's pose, from the table
+   std::unique_ptr<Obstacle> track{std::make_unique<Obstacle>(2, at, 4.0)};
+   std::cout << track->id << ' ' << (*track).speed << '\n';  // 2 4
+   auto empty{std::make_unique<Obstacle>()};  // members take defaults
+   std::cout << empty->id << ' ' << empty->speed << '\n';    // 0 0
 
 - ``std::make_unique<T>(args)`` creates the object on the heap and returns the ``std::unique_ptr`` that owns it.
-- The arguments go to the object, as with L6's ``emplace_back(3, 64.0, ...)``.
-- ``->`` and ``*`` work as they do on a ``RobotStatus*``.
-- No ``new``, and no ``delete``: ``robot`` deletes its robot when it goes out of scope.
+- The arguments go to the object, as with L6's ``emplace_back``.
+- ``->`` and ``*`` work as they do on an ``Obstacle*``.
+- No ``new``, and no ``delete``: ``track`` deletes the ``Obstacle`` object when it goes out of scope.
 
 .. note::
 
@@ -972,19 +1044,19 @@ See `A unique_ptr with Its Own Deleter`_ under Further Reading.
 In Memory
 """""""""
 
-.. figure:: /_static/images/l7/unique_ptr_memory.png
-   :alt: On the left, a name tag reading robot over a blue box with a stack icon and the word Stack, holding one field, pointer, marked a RobotStatus*. A measuring line under it reads 8 bytes. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds a block of four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 40 bytes.
+.. figure:: /_static/images/l7/av_unique_ptr_memory.png
+   :alt: On the left, a name tag reading track over a blue box with a stack icon and the word Stack, holding one field, pointer, marked an Obstacle*. A measuring line under it reads 8 bytes. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds a block of four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 48 bytes.
    :align: center
    :width: 100%
 
-   A ``std::unique_ptr`` on the stack and the ``RobotStatus`` it owns on the heap.
+   A ``std::unique_ptr`` on the stack and the ``Obstacle`` object it owns on the heap.
 
 .. code-block:: text
 
-   sizeof(robot): 8, sizeof(RobotStatus*): 8, sizeof(RobotStatus): 40
+   sizeof(track): 8, sizeof(Obstacle*): 8, sizeof(Obstacle): 48
 
-- The ``std::unique_ptr`` is one pointer on the stack, the same 8 bytes as a ``RobotStatus*``. The robot itself is on the heap.
-- Using a ``std::unique_ptr`` instead of a ``RobotStatus*`` adds no bytes (8 bytes either way). It adds two rules: it deletes the robot when it is destroyed, and no other ``std::unique_ptr`` can own that robot.
+- The ``std::unique_ptr`` is one pointer on the stack, the same 8 bytes as an ``Obstacle*``. The resource, the ``Obstacle`` object, is on the heap.
+- Using a ``std::unique_ptr`` instead of an ``Obstacle*`` adds no bytes (8 bytes either way). It adds two rules: it deletes the ``Obstacle`` object when it is destroyed, and no other ``std::unique_ptr`` can own that object.
 
 The Leak, Fixed
 """""""""""""""
@@ -993,62 +1065,65 @@ The Leak, Fixed
 
 .. code-block:: cpp
 
-   bool needs_charge(int id) {
-     RobotStatus* robot{
-         make_robot(id, 64.0)};
-     if (robot->battery_pct > 20.0) {
+   bool needs_braking(int id) {
+     Obstacle* track{make_track(
+         id, Pose{12.0, -1.0}, 4.0)};
+     if (track->pose.x > 10.0) {
        return false;  // leaks
      }
-     delete robot;
+     delete track;
      return true;
    }
 
-.. dropdown:: The Definition of ``make_robot`` with a Battery Level
+.. dropdown:: The Definition of ``make_track``, with ``new``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      RobotStatus* make_robot(int id, double battery_pct) {
-        return new RobotStatus{id, battery_pct, {0.0, 0.0}, false};
+      Obstacle* make_track(int id, Pose pose, double speed) {
+        return new Obstacle{id, pose, speed};
       }
 
-   - `A Robot on the Heap`_'s ``make_robot``, with the battery level as a second parameter. The caller must ``delete`` the robot.
+   - `An Obstacle on the Heap`_'s ``make_track``: it creates the ``Obstacle`` object with ``new``, and the caller must ``delete`` it.
    - `The Leak, Fixed`_ and Further Reading's `Double Delete, Measured`_ and `Dangling Read, Measured`_ call it.
 
 **With** ``std::unique_ptr``
 
 .. code-block:: cpp
 
-   bool needs_charge(int id) {
-     auto robot{std::make_unique<RobotStatus>(id, 64.0)};
-     if (robot->battery_pct > 20.0) {
+   bool needs_braking(int id) {
+     auto track{std::make_unique<Obstacle>(
+         id, Pose{12.0, -1.0}, 4.0)};
+     if (track->pose.x > 10.0) {
        return false;  // deleted here
      }
      return true;     // and here
    }
 
-- ``702run week7_playground 52`` prints ``needs_charge(3): false`` and no LeakSanitizer report.
-- Every path out of the function destroys ``robot``, and ``robot``'s destructor deletes the ``RobotStatus``. There is no ``delete`` to forget.
+- The first one leaks 48 bytes: the cyclist is 12 m ahead, so the early return skips the ``delete``.
+- ``702run week7_playground 54`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object. There is no ``delete`` to forget.
 
 One Owner Only
 """"""""""""""
 
 .. code-block:: cpp
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
-   std::unique_ptr<RobotStatus> copy{robot};  // does not compile
+   auto track{std::make_unique<Obstacle>()};
+   std::unique_ptr<Obstacle> copy{track};  // does not compile
 
 .. code-block:: text
 
    error: use of deleted function 'std::unique_ptr<_Tp, _Dp>::unique_ptr(const
-   std::unique_ptr<_Tp, _Dp>&) [with _Tp = RobotStatus;
-   _Dp = std::default_delete<RobotStatus>]'
+   std::unique_ptr<_Tp, _Dp>&) [with _Tp = Obstacle;
+   _Dp = std::default_delete<Obstacle>]'
 
-- A **deleted function** is declared with ``= delete``: any call to it is a compile error. The copy constructor is deleted, so a copy does not compile.
-- Two owners of one robot would both delete it: the double ``delete`` of `Three Ways to Get It Wrong`_. The type rules it out at compile time.
-- A **deleter** is what a ``std::unique_ptr`` calls to give its object back. Here it is ``_Dp = std::default_delete<RobotStatus>``, which calls ``delete``.
+- A **deleted function** is declared with ``= delete``: any call to it is a compile error. A **deleter** is what a ``std::unique_ptr`` calls to give its object back.
+- The copy constructor is deleted, so a copy does not compile.
+- Two owners of one ``Obstacle`` object would both delete it: the double ``delete`` of `Reminder: Three Ways to Get It Wrong`_. The type rules it out at compile time.
+- ``_Dp = std::default_delete<Obstacle>`` is the deleter; it calls ``delete``.
 
 See `std::auto_ptr`_ under Further Reading.
 
@@ -1057,26 +1132,26 @@ See `std::auto_ptr`_ under Further Reading.
 
 .. code-block:: cpp
 
-   void print_status(const RobotStatus* robot);  // only looks
+   void print_obstacle(const Obstacle* target);  // only looks
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
-   print_status(robot.get());  // robot still owns it
-   robot.reset();              // deletes it now: robot == nullptr
-   robot = std::make_unique<RobotStatus>(4, 18.0);
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   print_obstacle(track.get());  // track still owns it
+   track.reset();                // deletes it now: track == nullptr
+   track = std::make_unique<Obstacle>(3, Pose{30.0, 2.5, 1.57}, 1.4);
 
-.. dropdown:: The Definition of ``print_status``
+.. dropdown:: The Definition of ``print_obstacle``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      void print_status(const RobotStatus* robot) {  // only looks
-        std::cout << "  robot " << robot->id << ": " << robot->battery_pct << " %\n";
+      void print_obstacle(const Obstacle* target) {  // only looks
+        std::cout << "  obstacle " << target->id << ": " << target->speed << " m/s\n";
       }
 
 - ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
-- ``reset()`` deletes the ``RobotStatus`` object now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
+- ``reset()`` deletes the ``Obstacle`` object now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
 - Assigning a new ``std::unique_ptr`` stores the new object's address, then deletes the old object, as ``reset`` does.
 
 .. note::
@@ -1091,16 +1166,16 @@ Moving Ownership
 .. code-block:: cpp
    :linenos:
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
-   RobotStatus* where{robot.get()};
-   std::unique_ptr<RobotStatus> other{std::move(robot)};
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   Obstacle* where{track.get()};
+   std::unique_ptr<Obstacle> other{std::move(track)};
 
 .. code-block:: text
 
-   robot == nullptr: true, other.get() == where: true, other->id: 3
+   track == nullptr: true, other.get() == where: true, other->id: 2
 
-- Line 2: ``robot.get()`` returns a plain ``RobotStatus*`` to the heap resource ``robot`` owns, the ``RobotStatus`` object. The owner does not change: ``where`` only points at the object.
-- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``robot`` is left empty. ``other.get() == where``: the ``RobotStatus`` object did not move.
+- Line 2: ``track.get()`` returns a plain ``Obstacle*`` to the heap resource ``track`` owns, the ``Obstacle`` object. The owner does not change: ``where`` only points at the object.
+- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``track`` is left empty. ``other.get() == where``: the ``Obstacle`` object did not move.
 - There is still exactly one owner, at every moment.
 - Unlike a moved-from ``std::vector``, a moved-from ``std::unique_ptr`` is guaranteed to be empty.
 
@@ -1113,59 +1188,58 @@ See `Testing for Empty`_ under Further Reading.
 Step 1: Before the Move
 """""""""""""""""""""""
 
-.. figure:: /_static/images/l7/unique_ptr_move_1.png
-   :alt: A blue box with a stack icon and the word Stack holds two fields: robot, of type std::unique_ptr, and where, of type RobotStatus*. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds one object of four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A solid blue arrow runs from robot to the left edge of the object, at its first row, id. A dashed blue arrow runs from where to the same row, just below the solid arrow.
+.. figure:: /_static/images/l7/av_unique_ptr_move_1.png
+   :alt: A blue box with a stack icon and the word Stack holds two fields: track, of type std::unique_ptr, and where, of type Obstacle*. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds one object of four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A solid blue arrow runs from track to the left edge of the object, at its first row, id. A dashed blue arrow runs from where to the same row, just below the solid arrow.
    :align: center
    :width: 100%
 
-- After line 2 of `Moving Ownership`_: ``robot`` owns the ``RobotStatus`` object (solid arrow).
-- ``where`` holds the same address (dashed arrow), but a ``RobotStatus*`` owns nothing: it never deletes the object.
+- After line 2 of `Moving Ownership`_: ``track`` owns the ``Obstacle`` object (solid arrow).
+- ``where`` holds the same address (dashed arrow), but an ``Obstacle*`` owns nothing: it never deletes the object.
 - Both arrows end at ``id``: the object's address is where it starts, at its first member.
 
 Step 2: After the Move
 """"""""""""""""""""""
 
-.. figure:: /_static/images/l7/unique_ptr_move_2.png
-   :alt: A blue box with a stack icon and the word Stack holds three fields: robot, of type std::unique_ptr, marked nullptr, with no arrow; where, of type RobotStatus*; and other, of type std::unique_ptr. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds the same object as before, four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A dashed blue arrow runs from where to the left edge of the object, at its first row, id. A solid blue arrow runs from other to the same row, just below the dashed arrow.
+.. figure:: /_static/images/l7/av_unique_ptr_move_2.png
+   :alt: A blue box with a stack icon and the word Stack holds three fields: track, of type std::unique_ptr, marked nullptr, with no arrow; where, of type Obstacle*; and other, of type std::unique_ptr. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds the same object as before, four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A dashed blue arrow runs from where to the left edge of the object, at its first row, id. A solid blue arrow runs from other to the same row, just below the dashed arrow.
    :align: center
    :width: 100%
 
-- After line 3: ``other`` owns the ``RobotStatus`` object, and ``robot`` holds ``nullptr``.
+- After line 3: ``other`` owns the ``Obstacle`` object, and ``track`` holds ``nullptr``.
 - ``where`` still holds the same address: the object did not move. Only its owner changed.
-- ``robot`` points at nothing, so it deletes nothing when it goes out of scope.
+- ``track`` points at nothing, so it deletes nothing when it goes out of scope.
 
-Exercise 3: Handing Over a Robot
+Exercise 3: Handing Over a Track
 """"""""""""""""""""""""""""""""
 
 .. code-block:: cpp
    :linenos:
 
-   auto p{std::make_unique<RobotStatus>(1)};
+   auto p{std::make_unique<Obstacle>(1)};
    auto q{std::move(p)};
-   p = std::make_unique<RobotStatus>(2);
+   p = std::make_unique<Obstacle>(2);
    q = std::move(p);
 
-- At the board, after each line: draw ``p`` and ``q`` on the stack, every ``RobotStatus`` object on the heap, and an arrow from each pointer to the object it owns.
-- On which line is the ``RobotStatus`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 58``.
+- At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
+- On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
+- Check: ``702run week7_playground 60``.
 
-A Fleet of Owners
-"""""""""""""""""
+The Tracker's List
+""""""""""""""""""
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;
-   fleet.push_back(std::make_unique<RobotStatus>(1, 82.5));
-   auto robot{std::make_unique<RobotStatus>(2, 35.0)};
-   fleet.push_back(std::move(robot));  // robot is now empty
-   // fleet.push_back(robot);          // does not compile: a copy
-
-   for (const auto& r : fleet) {       // a copy would not compile
-     std::cout << "robot " << r->id << ": " << r->battery_pct << " %\n";
+   std::vector<std::unique_ptr<Obstacle>> tracker;
+   tracker.push_back(std::make_unique<Obstacle>(2, Pose{12.0, -1.0}, 4.0));
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
+   tracker.push_back(std::move(track));  // track is now empty
+   // tracker.push_back(track);          // does not compile: a copy
+   for (const auto& t : tracker) {       // a copy would not compile
+     std::cout << "obstacle " << t->id << ": " << t->speed << " m/s\n";
    }
 
-- The fleet: the vector owns the pointers, and each pointer owns its robot. When ``fleet`` is destroyed, every robot is deleted.
-- A temporary from ``std::make_unique`` moves in by itself. A named ``robot`` needs ``std::move``.
+- The tracker: the vector owns the pointers, and each pointer owns its ``Obstacle`` object. When ``tracker`` is destroyed, every ``Obstacle`` object is deleted.
+- A temporary from ``std::make_unique`` moves in by itself. A named ``track`` needs ``std::move``. ``Pose{20.0, -3.0}``: ``heading`` takes its default, 0.
 - Copying the whole vector does not compile either: it would copy every ``std::unique_ptr``.
 
 See `unique_ptr to an Array`_ under Further Reading.
@@ -1175,14 +1249,14 @@ See `unique_ptr to an Array`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
-   RobotStatus* raw{robot.release()};  // gives up ownership
-   // robot == nullptr: true, raw->id: 3
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   Obstacle* raw{track.release()};  // gives up ownership
+   // track == nullptr: true, raw->id: 2
    delete raw;  // you are the owner now: leave this out and it leaks
 
-- ``release()`` hands the robot back as a plain pointer and forgets it. Nothing owns the robot except your code.
-- You are back where `A Robot on the Heap`_ started: a ``RobotStatus*`` that must be deleted exactly once.
-- Use it only to hand the robot to code that takes ownership of a plain pointer. Otherwise, move the ``std::unique_ptr``.
+- ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it. Nothing owns the object except your code.
+- You are back where `An Obstacle on the Heap`_ started: an ``Obstacle*`` that must be deleted exactly once.
+- Use it only to hand the object to code that takes ownership of a plain pointer. Otherwise, move the ``std::unique_ptr``.
 
 .. note::
 
@@ -1195,29 +1269,29 @@ Passing: Borrow
 
 .. code-block:: cpp
 
-   void print_status(const RobotStatus& robot);  // only reads the robot
-   void charge(RobotStatus* robot) {              // may get nullptr
-     if (robot != nullptr) { robot->battery_pct = 100.0; }
+   void print_obstacle(const Obstacle& target);  // only reads it
+   void set_speed(Obstacle* target, double speed) {      // may get nullptr
+     if (target != nullptr) { target->speed = speed; }
    }
 
-   auto robot{std::make_unique<RobotStatus>(3, 64.0)};
-   print_status(*robot);   // 64 %
-   charge(robot.get());
-   print_status(*robot);   // 100 %: the caller still owns it
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   print_obstacle(*track);       // 4 m/s
+   set_speed(track.get(), 2.0);
+   print_obstacle(*track);       // 2 m/s: the caller still owns it
 
-.. dropdown:: The Definition of ``print_status``
+.. dropdown:: The Definition of ``print_obstacle``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      void print_status(const RobotStatus& robot) {  // only reads the robot
-        std::cout << "  robot " << robot.id << ": " << robot.battery_pct << " %\n";
+      void print_obstacle(const Obstacle& target) {  // only reads it
+        std::cout << "  obstacle " << target.id << ": " << target.speed << " m/s\n";
       }
 
-- A function that only uses the robot takes the robot, by reference or plain pointer, not the smart pointer. L5's rules for parameters apply.
-- It then works for any robot: on the heap, on the stack, or in a vector.
+- A function that only uses the ``Obstacle`` object takes it by reference or plain pointer, not the smart pointer. L5's rules for parameters apply.
+- It then works for any ``Obstacle``: on the heap, on the stack, or in a vector.
 
 .. note::
 
@@ -1228,17 +1302,16 @@ Passing: Sink
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> retired;
-
-   void retire(std::unique_ptr<RobotStatus> robot) {  // takes ownership
-     retired.push_back(std::move(robot));
+   std::vector<std::unique_ptr<Obstacle>> lost;      // lost tracks, kept
+   void keep_lost(std::unique_ptr<Obstacle> track) {  // takes ownership
+     lost.push_back(std::move(track));
    }
 
-   auto robot{std::make_unique<RobotStatus>(3)};
-   retire(robot);             // does not compile: a copy
-   retire(std::move(robot));  // robot == nullptr, retired.size() == 1
+   auto track{std::make_unique<Obstacle>(2)};
+   keep_lost(track);             // does not compile: a copy
+   keep_lost(std::move(track));  // track == nullptr, lost.size() == 1
 
-- By value: the parameter is a new owner, so the caller must hand the robot over with ``std::move``. The call says that ownership moves.
+- By value: the parameter is a new owner, so the caller must hand the ``Obstacle`` object over with ``std::move``. The call says that ownership moves.
 - F.18, from `A Parameter the Function Moves From`_, asks for ``&&`` here. Its own exception: a move-only type that is cheap to move, such as ``std::unique_ptr``, can be passed by value.
 
 .. note::
@@ -1250,12 +1323,12 @@ Passing: Reseat
 
 .. code-block:: cpp
 
-   void replace_robot(std::unique_ptr<RobotStatus>& robot, int new_id) {
-     robot = std::make_unique<RobotStatus>(new_id);
-   }  // the assignment deleted the old robot
+   void replace_track(std::unique_ptr<Obstacle>& track, int new_id) {
+     track = std::make_unique<Obstacle>(new_id);
+   }  // the assignment deleted the old Obstacle object
 
-   auto robot{std::make_unique<RobotStatus>(3, 4.0)};
-   replace_robot(robot, 7);  // robot->id: 7, robot->battery_pct: 100
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   replace_track(track, 7);  // track->id: 7, track->speed: 0
 
 - To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.
 - The caller keeps ownership. Only what it owns changes.
@@ -1271,75 +1344,73 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id) {
-     auto robot{std::make_unique<RobotStatus>(id)};
-     robot->busy = false;
-     return robot;  // no std::move: L5's implicit move
+   std::unique_ptr<Obstacle> make_track(int id) {
+     auto track{std::make_unique<Obstacle>(id)};
+     return track;  // no std::move: L5's implicit move
    }
 
-   std::unique_ptr<RobotStatus> robot{make_robot(5)};  // robot->id: 5
+   std::unique_ptr<Obstacle> track{make_track(5)};  // track->id: 5
 
 - A factory returns the ``std::unique_ptr`` by value. The caller becomes the owner.
-- ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
-- Compare `A Robot on the Heap`_: there, a ``RobotStatus*`` came back, and nothing said who must delete it. Here the type says it.
+- ``return track;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
+- Compare `An Obstacle on the Heap`_: there, ``make_track`` returned an ``Obstacle*``, and nothing said who must delete it. Here the type says it.
 
 Exercise 4: Lines That Compile
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   void inspect(const RobotStatus& robot);
-   void adopt(std::unique_ptr<RobotStatus> robot);
+   void inspect(const Obstacle& target);
+   void adopt(std::unique_ptr<Obstacle> track);
 
-   auto a{std::make_unique<RobotStatus>(1, 50.0)};
-   auto b{std::make_unique<RobotStatus>(2, 60.0)};
+   auto a{std::make_unique<Obstacle>(1)};
+   auto b{std::make_unique<Obstacle>(2)};
+   auto c{a};                                    // 1
+   auto d{std::move(a)};                         // 2
+   inspect(*d);                                  // 3
+   adopt(b);                                     // 4
+   adopt(std::move(b));                          // 5
+   std::unique_ptr<Obstacle> e{new Obstacle{}};  // 6
+   Obstacle* f{d.get()};                         // 7
+   std::unique_ptr<Obstacle> g{f};               // 8
 
-   auto c{a};                                          // 1
-   auto d{std::move(a)};                               // 2
-   inspect(*d);                                        // 3
-   adopt(b);                                           // 4
-   adopt(std::move(b));                                // 5
-   std::unique_ptr<RobotStatus> e{new RobotStatus{}};  // 6
-   RobotStatus* f{d.get()};                            // 7
-   std::unique_ptr<RobotStatus> g{f};                  // 8
-
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 65`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 67`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
 
 A ``std::shared_ptr`` is one of several owners of an object on the heap. The owners share a count, and the last one to let go deletes the object.
 
-.. figure:: /_static/images/l7/owner_map_shared.png
-   :alt: A UML object diagram: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3. Highlighted in orange, with thick borders and lines: fleet, robot3 and charging_queue, and the two lines with an open diamond. The rest is black.
+.. figure:: /_static/images/l7/av_owner_map_shared.png
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the box with id 2, planner, and the two lines with open diamonds.
    :align: center
    :width: 80%
 
-   Orange, from the map in `The Program We Will Build`_: the open diamonds, several owners.
+   Orange, from the map in `Who Owns Each Obstacle`_: the open diamonds, several owners.
 
 See `cppreference: std::shared_ptr <https://en.cppreference.com/w/cpp/memory/shared_ptr>`__. Rule: `Core Guidelines R.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-unique>`__.
 
-A Robot in Two Lists
-""""""""""""""""""""
+A Hazard in Two Lists
+"""""""""""""""""""""
 
-Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, and it stays in the fleet. Three ways to hold it in the queue, all wrong:
+The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too. Three ways to hold it, all wrong:
 
 1. **A second** ``std::unique_ptr``: does not compile. One owner only (`One Owner Only`_).
-2. **A copy of the robot**: now there are two robots. Charging one leaves the other at 14 %.
-3. **A** ``RobotStatus*`` **from** ``get()``: the queue does not own it. If the fleet deletes the ``RobotStatus`` object with id 3, the queue points at freed memory (`Three Ways to Get It Wrong`_).
+2. **A copy of the** ``Obstacle``: two objects. The tracker's speed updates never reach the planner's copy.
+3. **An** ``Obstacle*`` **from** ``get()``: the hazard list does not own it. When the track is lost, it points at freed memory (`Reminder: Three Ways to Get It Wrong`_).
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 59, 3 robots
-   std::vector<RobotStatus*> charging_queue;
-   charging_queue.push_back(fleet[2].get());         // looks, does not own
-   fleet.erase(fleet.begin() + 2);                   // the queue dangles
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 61
+   std::vector<Obstacle*> hazards;
+   hazards.push_back(tracker[1].get());  // id 2: looks, does not own
+   tracker.erase(tracker.begin() + 1);   // the track is lost: it dangles
 
-The ``fleet`` here is the one from `A Fleet of Owners`_.
+The ``tracker`` here is the one from `The Tracker's List`_.
 
 .. note::
 
-   Both lists must own the ``RobotStatus`` object with id 3, and it must be deleted when the last of them lets go.
+   Both lists must own the ``Obstacle`` object with id 2, and it must be deleted when the last of them lets go.
 
 .. _l7-shared-creating-one:
 
@@ -1348,20 +1419,19 @@ Creating One
 
 .. code-block:: cpp
 
-   std::vector<std::shared_ptr<RobotStatus>> fleet;
-   std::vector<std::shared_ptr<RobotStatus>> charging_queue;
-
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
-   fleet.push_back(robot);           // a copy: one more owner
-   charging_queue.push_back(robot);  // a copy: one more owner
+   std::vector<std::shared_ptr<Obstacle>> tracker;
+   std::vector<std::shared_ptr<Obstacle>> hazards;
+   auto hazard{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   tracker.push_back(hazard);  // a copy: one more owner
+   hazards.push_back(hazard);  // a copy: one more owner
 
 .. code-block:: text
 
-   robot.use_count(): 3
-   fleet[0] == charging_queue[0]: true
+   hazard.use_count(): 3
+   tracker[0] == hazards[0]: true
 
-- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same ``RobotStatus`` object, and ``use_count()`` counts them: ``robot``, ``fleet[0]``, ``charging_queue[0]``.
-- All three point at one robot: charging it through the queue shows in the fleet.
+- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same ``Obstacle`` object, and ``use_count()`` counts them: ``hazard``, ``tracker[0]``, ``hazards[0]``.
+- All three point at one ``Obstacle`` object: when the tracker updates its speed, the planner reads the new speed.
 
 .. note::
 
@@ -1370,15 +1440,15 @@ Creating One
 The Control Block
 """""""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_memory.png
-   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+.. figure:: /_static/images/l7/av_shared_ptr_memory.png
+   :alt: On the left, two blue Stack boxes under name tags track and hazard, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 64 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the Obstacle object with id 2, pose {12.0, -1.0, 0.0}, speed 4.0 and is_static false. Green arrows run from each object field to the first row of the Obstacle object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
-   Two ``std::shared_ptr``\ s, one allocation: the control block first, then the ``RobotStatus`` object.
+   Two ``std::shared_ptr``\ s, one allocation: the control block first, then the ``Obstacle`` object.
 
-- A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners. A ``std::shared_ptr`` is two pointers, 16 bytes: to the ``RobotStatus`` object and to its control block. ``std::make_shared`` puts both in one allocation, the control block first (libstdc++, measured).
-- ``std::make_shared``: one allocation of 56 bytes for both, measured. With ``new``: two, 40 and 24 bytes.
+- A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners.
+- A ``std::shared_ptr`` is two pointers, 16 bytes: ``object`` and ``control``.
 - A copy adds 1 to the count; destroying a ``std::shared_ptr`` subtracts 1.
 
 See `One Allocation with make_shared`_ under Further Reading.
@@ -1388,120 +1458,120 @@ See `One Allocation with make_shared`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};      // 1
-   std::shared_ptr<RobotStatus> in_queue{robot};            // 2: a copy
-   std::shared_ptr<RobotStatus> moved{std::move(in_queue)}; // 2: a move
-   moved.reset();                                           // 1
+   auto track{std::make_shared<Obstacle>(2)};            // 1
+   std::shared_ptr<Obstacle> hazard{track};              // 2: a copy
+   std::shared_ptr<Obstacle> moved{std::move(hazard)};   // 2: a move
+   moved.reset();                                        // 1
 
 .. code-block:: text
 
    created: 1
    copied: 2
-   moved: 2, in_queue == nullptr: true
+   moved: 2, hazard == nullptr: true
    reset: 1
 
-- A copy adds an owner. A move hands one owner's place to another: the count stays at 2, and ``in_queue`` is left empty.
-- ``reset()`` gives up this owner's place. The robot is deleted only when the count reaches 0.
+- A copy adds an owner. A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
+- ``reset()`` gives up this owner's place. The ``Obstacle`` object is deleted only when the count reaches 0.
 
 Three Ways to Let Go
 """"""""""""""""""""
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
+   auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
    {
-     std::shared_ptr<RobotStatus> in_queue{robot};  // 1
-   }                                                // 2
+     std::shared_ptr<Obstacle> hazard{track};  // 1
+   }                                           // 2
    // three separate runs, each from 2:
-   robot = std::make_shared<RobotStatus>(4);        // 3a
-   robot.reset();                                   // 3b
-                                    // 3c: robot's scope ends
+   track = std::make_shared<Obstacle>(4);      // 3a
+   track.reset();                              // 3b
+                                    // 3c: track's scope ends
 
 .. code-block:: text
 
    1: 2
    2: 1
-   3a: robot->id: 4, use_count: 1
-   3b: robot == nullptr: true
+   3a: track->id: 4, use_count: 1
+   3b: track == nullptr: true
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
-- In all three, ``robot`` is the last owner, so its ``RobotStatus`` object is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- In 3a, id 4 is chosen; the other members take their defaults. Run it: ``702run week7_playground 71``.
+- In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 73``.
 
 Step 1: Two Owners
 """"""""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_let_go_1.png
-   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_1.png
+   :alt: On the left, two blue Stack boxes under name tags track and hazard, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 64 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it an Obstacle object with id 2, pose {12.0, -1.0, 0.0}, speed 4.0 and is_static false. Green arrows run from each object field to the first row of the Obstacle object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
-- After line 1 of `Three Ways to Let Go`_: ``in_queue`` copies ``robot``. Both hold the same two pointers, so ``use_count`` is 2.
+- After line 1 of `Three Ways to Let Go`_: ``hazard`` copies ``track``. Both hold the same two pointers, so ``use_count`` is 2.
 - Each green arrow is one pointer of a ``std::shared_ptr``: ``object`` ends at the object's first member, ``control`` at the control block.
 
 Step 2: One Owner
 """""""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_let_go_2.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {0.0, 0.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_2.png
+   :alt: On the left, a blue Stack box under the name tag track holds two fields, object and control, each marked (ptr). Below it, hazard is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 64 bytes: a control block with use_count 1 and weak_ptrs 0, then the Obstacle object with id 2, pose {12.0, -1.0, 0.0}, speed 4.0 and is_static false. Green arrows run from track's object field to the object's first row, id, and from its control field to the control block's first row.
    :align: center
    :width: 100%
 
-- Line 2: ``in_queue``'s scope ends. Its destructor subtracts 1, so ``use_count`` is 1.
-- ``robot`` still owns the ``RobotStatus`` object, so nothing is freed.
+- Line 2: ``hazard``'s scope ends. Its destructor subtracts 1, so ``use_count`` is 1.
+- ``track`` still owns the ``Obstacle`` object, so nothing is freed.
 
 Step 3a: A New Object
 """""""""""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_let_go_3.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds a new allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then a RobotStatus object with id 4, battery_pct 100.0, position {0.0, 0.0} and busy false. To its right, a gray dashed block marked freed: 56 bytes, the first control block and object. Green arrows run from robot's object field to the new object's first row, id, and from its control field to the new control block's first row.
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_3.png
+   :alt: On the left, a blue Stack box under the name tag track holds two fields, object and control, each marked (ptr). Below it, hazard is gray and dashed, marked scope ended. On the right, a red Heap box holds a new allocation, measured as 64 bytes: a control block with use_count 1 and weak_ptrs 0, then an Obstacle object with id 4, pose {0.0, 0.0, 0.0}, speed 0.0 and is_static false. To its right, a gray dashed block marked freed: 64 bytes, the first control block and object. Green arrows run from track's object field to the new object's first row, id, and from its control field to the new control block's first row.
    :align: center
    :width: 100%
 
 - 3a, 3b and 3c are separate runs, each from step 2.
-- 3a: ``std::make_shared<RobotStatus>(4)`` makes a second allocation. ``robot`` lets go of the first: its count drops to 0, so its object is destroyed and its 56 bytes freed.
+- 3a: ``std::make_shared<Obstacle>(4)`` makes a second allocation. ``track`` lets go of the first: its count drops to 0, so its object is destroyed and its 64 bytes freed.
 - The new object has id 4; its other members take their defaults.
 
 Step 3b: reset()
 """"""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_let_go_4.png
-   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked nullptr, with no arrows. Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds one gray dashed block marked freed: 56 bytes, the control block and object.
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_4.png
+   :alt: On the left, a blue Stack box under the name tag track holds two fields, object and control, each marked nullptr, with no arrows. Below it, hazard is gray and dashed, marked scope ended. On the right, a red Heap box holds one gray dashed block marked freed: 64 bytes, the control block and object.
    :align: center
    :width: 100%
 
-- 3b: ``robot.reset()`` leaves both of ``robot``'s pointers ``nullptr``.
-- ``robot`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
+- 3b: ``track.reset()`` leaves both of ``track``'s pointers ``nullptr``.
+- ``track`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
 
 Step 3c: The Scope Ends
 """""""""""""""""""""""
 
-.. figure:: /_static/images/l7/shared_ptr_let_go_5.png
-   :alt: On the left, robot and in_queue are both gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one gray dashed block marked freed: 56 bytes, the control block and object.
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_5.png
+   :alt: On the left, track and hazard are both gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one gray dashed block marked freed: 64 bytes, the control block and object.
    :align: center
    :width: 100%
 
-- 3c: ``robot``'s scope ends, and its destructor runs.
-- ``robot`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
+- 3c: ``track``'s scope ends, and its destructor runs.
+- ``track`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
 
 Deletion by the Last Owner
 """"""""""""""""""""""""""
 
 .. code-block:: cpp
 
-   fleet.push_back(std::make_shared<RobotStatus>(3, 14.0));
-   charging_queue.push_back(fleet[0]);
-   fleet.clear();           // the fleet lets go; the queue still owns it
-   charging_queue.clear();  // the last owner deletes the RobotStatus
+   tracker.push_back(std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0));
+   hazards.push_back(tracker[0]);
+   tracker.clear();  // the track is lost; the planner still owns it
+   hazards.clear();  // the last owner deletes the Obstacle
 
 .. code-block:: text
 
    both lists: 2
-   after fleet.clear(): 1, robot 3 still there
-   after charging_queue.clear(): no owner left
+   after tracker.clear(): 1, hazards[0]->id: 2
+   after hazards.clear(): no owner left
 
-- The queue keeps the ``RobotStatus`` object alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the ``RobotStatus`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 77`` ends with no LeakSanitizer report.
+- The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
+- Neither list deletes the ``Obstacle`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 79`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1510,24 +1580,24 @@ Passing: Borrow
 
 .. code-block:: cpp
 
-   void print_status(const RobotStatus& robot);  // only reads the robot
+   void print_obstacle(const Obstacle& target);  // only reads it
 
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
-   print_status(*robot);
-   std::cout << robot.use_count() << '\n';       // 1: no owner added
+   auto hazard{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   print_obstacle(*hazard);
+   std::cout << hazard.use_count() << '\n';  // 1: no owner added
 
-.. dropdown:: The Definition of ``print_status``
+.. dropdown:: The Definition of ``print_obstacle``
    :icon: code
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
    .. code-block:: cpp
 
-      void print_status(const RobotStatus& robot) {  // only reads the robot
-        std::cout << "  robot " << robot.id << ": " << robot.battery_pct << " %\n";
+      void print_obstacle(const Obstacle& target) {  // only reads it
+        std::cout << "  obstacle " << target.id << ": " << target.speed << " m/s\n";
       }
 
-- The same rule as for ``std::unique_ptr`` (:ref:`l7-unique-borrow`): a function that only uses the robot takes the robot, not the smart pointer.
+- The same rule as for ``std::unique_ptr`` (:ref:`l7-unique-borrow`): a function that only uses the ``Obstacle`` object takes it, not the smart pointer.
 - A ``std::shared_ptr`` passed by value would add an owner and remove it again: two changes to the count for nothing.
 
 .. note::
@@ -1539,17 +1609,16 @@ Passing: Share
 
 .. code-block:: cpp
 
-   using Fleet = std::vector<std::shared_ptr<RobotStatus>>;
-
-   void add_to_queue(Fleet& queue, std::shared_ptr<RobotStatus> robot) {
-     queue.push_back(std::move(robot));  // keeps it: the queue is an owner
+   using Hazards = std::vector<std::shared_ptr<Obstacle>>;
+   void add_hazard(Hazards& hazards, std::shared_ptr<Obstacle> hazard) {
+     hazards.push_back(std::move(hazard));  // the list keeps this owner
    }
 
-   add_to_queue(charging_queue, robot);
-   std::cout << robot.use_count() << '\n';  // 2
+   add_hazard(hazards, track);
+   std::cout << track.use_count() << '\n';  // 2
 
-- By value: the parameter is one more owner. The function moves it into the queue, so the queue keeps that owner's place.
-- ``using Fleet = ...;`` is a type alias (L2): a shorter name for the long type.
+- By value: the parameter is one more owner. The function moves it into the list, so the list keeps that owner's place.
+- ``using Hazards = ...;`` is a type alias (L2): a shorter name for the long type.
 
 .. note::
 
@@ -1560,20 +1629,22 @@ Passing: ``const shared_ptr&``
 
 .. code-block:: cpp
 
-   void queue_if_low(Fleet& queue,
-                     const std::shared_ptr<RobotStatus>& robot) {
-     if (robot->battery_pct < 20.0) {
-       queue.push_back(robot);  // copies only when it keeps it
+   void add_if_close(Hazards& hazards,
+                     const std::shared_ptr<Obstacle>& track) {
+     if (track->pose.x < 25.0) {
+       hazards.push_back(track);  // copies only when it keeps it
      }
    }
-   queue_if_low(charging_queue, low);   // 14 %: queued
-   queue_if_low(charging_queue, full);  // 90 %: not queued
+
+   add_if_close(hazards, near);  // x = 12 m: a hazard
+   add_if_close(hazards, far);   // x = 38 m: not a hazard
 
 .. code-block:: text
 
-   low.use_count(): 2, full.use_count(): 1, charging_queue.size(): 1
+   near.use_count(): 2, far.use_count(): 1, hazards.size(): 1
 
-- By ``const&``: no owner is added by the call. The function copies the ``std::shared_ptr`` only if it decides to keep the robot.
+- By ``const&``: no owner is added by the call. The function copies the ``std::shared_ptr`` only if it decides to keep the ``Obstacle`` object.
+- ``near``: id 2; ``far``: id 4. The 25 m limit is chosen for this example.
 
 .. note::
 
@@ -1586,70 +1657,71 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 64
-
-   std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
-   std::unique_ptr<RobotStatus> back{robot};           // does not compile
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 66
+   std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
+   std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
 .. code-block:: text
 
    error: no matching function for call to
-   'std::unique_ptr<RobotStatus>::unique_ptr(<brace-enclosed initializer list>)'
+   'std::unique_ptr<Obstacle>::unique_ptr(<brace-enclosed initializer list>)'
 
-``make_robot`` is the factory from :ref:`l7-unique-returning`.
+``make_track`` is the factory from :ref:`l7-unique-returning`.
 
 - A ``std::unique_ptr`` converts to a ``std::shared_ptr``: one owner becomes the first of several.
 - Not the other way: other owners may exist, and a ``std::unique_ptr`` must be the only one.
-- So a function that creates a robot returns a ``std::unique_ptr``. The caller turns it into a ``std::shared_ptr`` if it needs to share.
+- So a function that creates an ``Obstacle`` returns a ``std::unique_ptr``. The caller turns it into a ``std::shared_ptr`` if it needs to share.
 
 ``std::weak_ptr``
 ^^^^^^^^^^^^^^^^^
 
 A ``std::weak_ptr`` watches an object that ``std::shared_ptr``\ s own. It never keeps the object alive, and it can tell whether the object still exists.
 
-.. figure:: /_static/images/l7/owner_map_weak.png
-   :alt: A UML object diagram: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3. Highlighted in orange, with thick borders and lines: dashboard and robot3, and the arrow from the dashboard to robot3. The rest is black.
+.. figure:: /_static/images/l7/av_owner_map_weak.png
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: the box with id 2, dashboard, and the arrow from dashboard.
    :align: center
    :width: 80%
 
-   Orange, from the map in `The Program We Will Build`_: the arrow, a look without owning.
+   Orange, from the map in `Who Owns Each Obstacle`_: the arrow, a look without owning.
 
 See `cppreference: std::weak_ptr <https://en.cppreference.com/w/cpp/memory/weak_ptr>`__. Rule: `Core Guidelines R.24 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-weak_ptr>`__.
 
 A Cycle
 """""""
 
+Two more obstacles ahead in the ego lane: a tractor, id 5, at 60 m, towing a trailer, id 6, at 54 m, both at 8 m/s (chosen for this example).
+
 .. code-block:: cpp
 
-   struct Robot { RobotStatus status;
-                  std::shared_ptr<Robot> partner; };
-   auto a{std::make_shared<Robot>(RobotStatus{1, 82.5})};
-   auto b{std::make_shared<Robot>(RobotStatus{2, 35.0})};
-   a->partner = b;  // a owns b
-   b->partner = a;  // b owns a
+   struct Towing { Obstacle obstacle;
+                   std::shared_ptr<Towing> other; };
+   auto a{std::make_shared<Towing>(Obstacle{5, {60.0, 0.0}, 8.0})};
+   auto b{std::make_shared<Towing>(Obstacle{6, {54.0, 0.0}, 8.0})};
+   a->other = b;  // a's Towing owns b's
+   b->other = a;  // b's Towing owns a's
 
-- ``a->partner = b``: the ``Robot`` that ``a`` owns becomes an owner of the one ``b`` owns. ``b->partner = a`` does the reverse.
+- ``a->other = b``: the ``Towing`` object that ``a`` owns becomes an owner of the one ``b`` owns. ``b->other = a`` does the reverse.
 
 Step 1: Two Owners Each
 """""""""""""""""""""""
 
-.. figure:: /_static/images/l7/cycle_1.png
-   :alt: Two blue Stack boxes at the top, under name tags a and b, each holding two fields, object and control, each marked (ptr). Below, one red Heap box holds two allocations side by side, each one allocation: a control block with use_count 2 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. Green arrows run from a's fields to the left allocation, entering from the left: object to the Robot's first row, control to the control block's first row. Green arrows run from b's fields to the right allocation, entering from the right. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so the arrows cross between the two allocations.
+.. figure:: /_static/images/l7/av_cycle_1.png
+   :alt: Two blue Stack boxes at the top, under name tags a and b, each holding two fields side by side, object and control, each marked (ptr). Below, one red Heap box holds two allocations side by side: each a control block with use_count 2 and weak_ptrs 0, then a Towing object with rows obstacle.id, obstacle.pose, obstacle.speed, obstacle.is_static, other: object and other: control. The left Towing holds 5, {60.0, 0.0, 0.0}, 8.0, false; the right one 6, {54.0, 0.0, 0.0}, 8.0, false. Green arrows run from a's fields to the left allocation, entering from the left: object to the Towing object's first row, control to the control block's first row. Green arrows run from b's fields to the right allocation, entering from the right. The left Towing's other rows send green arrows to the right allocation's Towing first row and control block, and the right Towing's other rows send green arrows to the left allocation's, so the arrows cross between the two allocations.
    :align: center
    :width: 100%
 
-- While ``a`` and ``b`` exist, each ``Robot`` has two owners: a variable on the stack and the other ``Robot``'s ``partner``. Each count is 2.
+- While ``a`` and ``b`` exist, each ``Towing`` object has two owners: a variable on the stack and the other ``Towing``'s ``other``. Each count is 2.
 
 Step 2: Neither Is Deleted
 """"""""""""""""""""""""""
 
-.. figure:: /_static/images/l7/cycle_2.png
-   :alt: At the top, a and b are gray and dashed, marked scope ended, with no arrows. Below, one red Heap box holds two allocations side by side, each one allocation: a control block with use_count 1 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so each allocation is still owned by the other.
+.. figure:: /_static/images/l7/av_cycle_2.png
+   :alt: At the top, a and b are gray and dashed, marked scope ended, with no arrows. Below, one red Heap box holds two allocations side by side: each a control block with use_count 1 and weak_ptrs 0, then a Towing object with rows obstacle.id, obstacle.pose, obstacle.speed, obstacle.is_static, other: object and other: control. The left Towing holds 5, {60.0, 0.0, 0.0}, 8.0, false; the right one 6, {54.0, 0.0, 0.0}, 8.0, false. The left Towing's other rows send green arrows to the right allocation's Towing first row and control block, and the right Towing's other rows send green arrows to the left allocation's, so each allocation is still owned by the other.
    :align: center
    :width: 100%
 
 - ``a`` and ``b`` are destroyed when their scope ends: each count drops to 1, never 0.
-- Each ``Robot`` keeps the other alive, so 2 allocations of 72 bytes leak (`The Cycle, Measured`_).
+- Each ``Towing`` object keeps the other alive: 2 × 80 bytes leak (`The Cycle, Measured`_).
 
 The Cycle, Measured
 """""""""""""""""""
@@ -1658,40 +1730,40 @@ The Cycle, Measured
 
    a.use_count(): 2, b.use_count(): 2
 
-   ==1747904==ERROR: LeakSanitizer: detected memory leaks
+   ==143323==ERROR: LeakSanitizer: detected memory leaks
 
-   Indirect leak of 72 byte(s) in 1 object(s) allocated from:
-       #0 0x737f78afe548 in operator new(unsigned long)
+   Indirect leak of 80 byte(s) in 1 object(s) allocated from:
+       #0 0x749b09afe548 in operator new(unsigned long)
        ...
-       #9 0x5e88939d2db1 in undefined::shared_cycle::run() .../undefined.cpp:77
-   Indirect leak of 72 byte(s) in 1 object(s) allocated from:
+       #9 0x608b6a9fd7cc in undefined::shared_cycle::run() .../undefined.cpp:38
+   Indirect leak of 80 byte(s) in 1 object(s) allocated from:
        ...
-       #9 0x5e88939d2c05 in undefined::shared_cycle::run() .../undefined.cpp:76
+       #9 0x608b6a9fd5f2 in undefined::shared_cycle::run() .../undefined.cpp:37
 
-   SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
+   SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 86``. Both ``Robot`` objects leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
-- 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
-- An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory. Both leaks here are indirect: each robot is reachable only from the other.
+- An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
+- ``702run week7_playground 88``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
 """""""""""
 
 .. code-block:: cpp
 
-   struct Robot {
-     RobotStatus status;
-     std::weak_ptr<Robot> partner;  // watches, does not own
+   struct Towing {
+     Obstacle obstacle;
+     std::weak_ptr<Towing> other;  // watches, does not own
    };
-   a->partner = b;  // b's count stays 1
-   b->partner = a;  // a's count stays 1
+   a->other = b;  // b's count stays 1
+   b->other = a;  // a's count stays 1
 
 .. code-block:: text
 
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Robot`` objects are deleted. ``702run week7_playground 87``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 89``: no LeakSanitizer report.
 
 .. note::
 
@@ -1703,21 +1775,20 @@ Breaking It
 .. code-block:: cpp
 
    struct Dashboard {
-     std::weak_ptr<RobotStatus> shown;  // the robot on screen
+     std::weak_ptr<Obstacle> shown;  // the obstacle on screen
    };
-
    void show(const Dashboard& dashboard) {
-     if (std::shared_ptr<RobotStatus> robot{dashboard.shown.lock()}) {
-       std::cout << "robot " << robot->id << ": "
-                 << robot->battery_pct << " %\n";
+     if (std::shared_ptr<Obstacle> target{dashboard.shown.lock()}) {
+       std::cout << "obstacle " << target->id << ": "
+                 << target->speed << " m/s\n";
      } else {
-       std::cout << "the robot is gone\n";
+       std::cout << "the obstacle is gone\n";
      }
    }
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
-- While ``robot`` exists, it is one more owner, so the ``RobotStatus`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 88``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
+- ``702run week7_playground 90``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1726,17 +1797,17 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
-   std::weak_ptr<RobotStatus> watch{robot};
-   robot.reset();  // the only owner lets go
+   auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   std::weak_ptr<Obstacle> shown{track};
+   track.reset();  // the only owner lets go
 
 .. code-block:: text
 
-   watch.use_count(): 1, watch.expired(): false
-   watch.use_count(): 0, watch.expired(): true
+   shown.use_count(): 1, shown.expired(): false
+   shown.use_count(): 0, shown.expired(): true
 
-- ``use_count()`` counts the ``std::shared_ptr``\ s that own the robot. ``expired()`` is ``true`` when that count is 0.
-- To use the robot, call ``lock()`` and test the result. ``expired()`` then ``lock()`` is two steps, and the last owner could let go between them.
+- ``use_count()`` counts the ``std::shared_ptr``\ s that own the ``Obstacle`` object. ``expired()`` is ``true`` when that count is 0.
+- To use the object, call ``lock()`` and test the result. ``expired()`` then ``lock()`` is two steps, and the last owner could let go between them.
 
 .. note::
 
@@ -1747,16 +1818,16 @@ Exercise 5: Use Counts
 
 .. code-block:: cpp
 
-   auto robot{std::make_shared<RobotStatus>(3, 14.0)};
-   std::weak_ptr<RobotStatus> watch{robot};  // 1
-   auto a{robot};                            // 2
-   auto b{std::move(a)};                     // 3
-   std::weak_ptr<RobotStatus> watch_2{b};    // 4
-   robot.reset();                            // 5
-   b.reset();                                // 6
+   auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   std::weak_ptr<Obstacle> shown{track};  // 1
+   auto a{track};                         // 2
+   auto b{std::move(a)};                  // 3
+   std::weak_ptr<Obstacle> shown_2{b};    // 4
+   track.reset();                         // 5
+   b.reset();                             // 6
 
-- After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 90``.
+- After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
+- Check: ``702run week7_playground 92``.
 
 Choosing a Pointer
 ------------------
@@ -1774,27 +1845,27 @@ One Table
 
    * - The code...
      - Use
-     - In our fleet
+     - In our program
      - Rule
    * - only uses the object
      - ``T&``, ``const T&``, or ``T*``
-     - the ``print_status`` of :ref:`l7-unique-borrow`
+     - the ``print_obstacle`` of :ref:`l7-unique-borrow`
      - R.30
    * - is its only owner
      - ``std::unique_ptr<T>``, from ``std::make_unique``
-     - the fleet's robots
+     - the tracker's ``Obstacle`` objects
      - R.21, R.23
    * - is one of several owners
      - ``std::shared_ptr<T>``, from ``std::make_shared``
-     - robot 3, in the fleet and the queue
+     - the hazard, id 2, in the tracker and the planner
      - R.22
    * - watches, and must not keep it alive
      - ``std::weak_ptr<T>``
-     - the dashboard; partner robots
+     - the dashboard; the towing pair
      - R.24
    * - calls ``new`` and ``delete`` itself
      - nothing: do not write it
-     - `A Robot on the Heap`_ and `Three Ways to Get It Wrong`_
+     - `An Obstacle on the Heap`_ and `Reminder: Three Ways to Get It Wrong`_
      - R.11
 
 - Start with ``std::unique_ptr``. Change to ``std::shared_ptr`` only when a second owner appears: it costs a control block and a count.
@@ -1802,18 +1873,19 @@ One Table
 
 See `More Core Guidelines`_ under Further Reading.
 
-Back to the Fleet
-^^^^^^^^^^^^^^^^^
+Back to the Tracker
+^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/l7/owner_map.png
-   :alt: A UML object diagram in black and white: six boxes joined by lines, with nothing written on the lines. On the left, a box labeled fleet. In the middle, three boxes labeled robot1 : RobotStatus, robot2 : RobotStatus and robot3 : RobotStatus, one above the other. On the right, a box labeled charging_queue and, below it, a box labeled dashboard : Dashboard. Lines with a filled diamond at the fleet end join the fleet to robot1 and to robot2. Lines with an open diamond at the owner end join the fleet to robot3 and the charging_queue to robot3. A line with no diamond runs from the dashboard to robot3 and ends in an open arrowhead at robot3.
+.. figure:: /_static/images/l7/av_owner_map.png
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
    :align: center
-   :width: 100%
+   :width: 80%
 
-   The fleet with its smart pointers. **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks without owning.
+   The tracker, the planner and the dashboard with their smart pointers.
 
-- One ``std::vector`` holds one type: once the ``RobotStatus`` object with id 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
-- The ``RobotStatus`` objects with ids 1 and 2 still have one owner each, through that ``std::shared_ptr``.
+- **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks without owning.
+- One ``std::vector`` holds one type: once the ``Obstacle`` object with id 2 is shared, the tracker holds a ``std::shared_ptr`` for every ``Obstacle`` object (:ref:`l7-shared-creating-one`).
+- The ``Obstacle`` objects with ids 1, 3 and 4 still have one owner each, through that ``std::shared_ptr``.
 
 Summary
 -------
@@ -1853,56 +1925,56 @@ Double Delete, Measured
 
 .. code-block:: cpp
 
-   RobotStatus* robot{make_robot(3, 64.0)};  // make_robot(id, battery_pct)
-   std::vector<RobotStatus*> fleet{robot};
-   std::vector<RobotStatus*> idle{robot};  // the same robot
-   for (RobotStatus* r : fleet) { delete r; }
-   for (RobotStatus* r : idle) { delete r; }  // a second delete
+   Obstacle* track{make_track(2, Pose{12.0, -1.0}, 4.0)};
+   std::vector<Obstacle*> tracker{track};
+   std::vector<Obstacle*> hazards{track};  // the same Obstacle
+   for (Obstacle* t : tracker) { delete t; }
+   for (Obstacle* t : hazards) { delete t; }  // a second delete
 
 .. code-block:: text
 
-   ==1824048==ERROR: AddressSanitizer: attempting double-free on 0x5040000000d0
-       #1 0x5f7fd89b28fb in undefined::double_delete::run() .../undefined.cpp:53
-   0x5040000000d0 is located 0 bytes inside of 40-byte region [...)
+   ==143386==ERROR: AddressSanitizer: attempting double-free on 0x504000000090
+       #1 0x6352de22e888 in undefined::double_delete::run() .../undefined.cpp:53
+   0x504000000090 is located 0 bytes inside of 48-byte region [...)
    freed by thread T0 here:
-       #1 0x5f7fd89b272d in undefined::double_delete::run() .../undefined.cpp:52
+       #1 0x6352de22e6ba in undefined::double_delete::run() .../undefined.cpp:52
 
-- ``702run week7_appendix ii``. AddressSanitizer stops the program at the second ``delete``, line 53, and names the first one, line 52.
-- The region is 40 bytes: one ``RobotStatus``. Without the sanitizer, a double ``delete`` is undefined behavior: a crash, or nothing visible.
+- ``702run week7_appendix ii``. AddressSanitizer stops the program at the second ``delete`` and names the first one.
+- The region is 48 bytes: one ``Obstacle``. Without the sanitizer, a double ``delete`` is undefined behavior: a crash, or nothing visible.
 
 Dangling Read, Measured
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   RobotStatus* robot{make_robot(3, 64.0)};  // make_robot(id, battery_pct)
-   std::vector<RobotStatus*> fleet{robot};
-   std::vector<RobotStatus*> idle{robot};
-   for (RobotStatus* r : fleet) { delete r; }
-   std::cout << idle[0]->battery_pct << '\n';  // freed memory
+   Obstacle* track{make_track(2, Pose{12.0, -1.0}, 4.0)};
+   std::vector<Obstacle*> tracker{track};
+   std::vector<Obstacle*> hazards{track};
+   for (Obstacle* t : tracker) { delete t; }
+   std::cout << hazards[0]->speed << '\n';  // freed memory
 
 .. code-block:: text
 
-   ==1824050==ERROR: AddressSanitizer: heap-use-after-free on address 0x5040000000d8
-   0x5040000000d8 is located 8 bytes inside of 40-byte region [...)
+   ==143390==ERROR: AddressSanitizer: heap-use-after-free on address 0x5040000000b0
+   0x5040000000b0 is located 32 bytes inside of 48-byte region [...)
    freed by thread T0 here:
-       #1 0x61fe445c6e6c in undefined::dangling_read::run() .../undefined.cpp:63
+       #1 0x5dc9c2397e51 in undefined::dangling_read::run() .../undefined.cpp:63
    SUMMARY: AddressSanitizer: heap-use-after-free .../undefined.cpp:64
 
-- ``702run week7_appendix iii``. The read is on line 64; the ``delete`` that freed the robot is on line 63.
-- "8 bytes inside": ``battery_pct`` starts at byte 8 of a ``RobotStatus``, as ``offsetof`` showed in L6.
+- ``702run week7_appendix iii``. AddressSanitizer names the read and the ``delete`` that freed the ``Obstacle`` object.
+- "32 bytes inside": ``speed`` starts at byte 32 of an ``Obstacle``: ``id`` (4), 4 bytes of padding, ``pose`` (24), as ``offsetof`` shows (L6).
 
 The Moved-from ``std::string``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   std::string note{"robot 3 waits at the charging dock"};
-   std::string name{"robot 3"};
+   std::string note{"cyclist ahead, keeping to the right"};
+   std::string name{"cyclist"};
    std::string taken_note{std::move(note)};
    std::string taken_name{std::move(name)};
    // note.size(): 0, name.size(): 0     (g++ 13.3, libstdc++)
-   note = "robot 4 is charging";  // assigning gives it a known value again
+   note = "pedestrian crossing at 30 m";  // a known value again
 
 - With libstdc++, both moved-from strings are empty, the long one and the short one.
 - The standard does not promise that. Another library may leave text behind, so code that reads ``note`` after the move depends on one library.
@@ -1917,13 +1989,13 @@ Move Assignment
 
 .. code-block:: cpp
 
-   std::vector<Position> current{make_route(3)};
-   std::vector<Position> next{make_route(1000)};
-   const Position* where{next.data()};
-   current = std::move(next);  // current's 3 waypoints are destroyed
+   std::vector<Pose> current{make_path(3)};
+   std::vector<Pose> next{make_path(1000)};
+   const Pose* where{next.data()};
+   current = std::move(next);  // current's 3 poses are destroyed
    // current.size(): 1000, current.data() == where: true, next.size(): 0
 
-- `Handing a Route to a Robot`_ moved into a new vector. Here ``current`` already exists: the move gives up its old 3 waypoints and takes the 1000 of ``next``, without copying them (same ``data()``).
+- `Handing a Path to the Controller`_ moved into a new vector. Here ``current`` already exists: the move gives up its old 3 poses and takes the 1000 of ``next``, without copying them (same ``data()``).
 - ``next.size()`` is 0 with libstdc++. The standard says what ``current`` holds afterwards, and nothing about ``next``.
 
 .. note::
@@ -1935,16 +2007,16 @@ Move Assignment
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(1000)};
-   // take the route, and leave an empty one behind
-   std::vector<Position> done{std::exchange(route, {})};
-   // done.size(): 1000, route.size(): 0
+   std::vector<Pose> path{make_path(1000)};
+   // take the path, and leave an empty one behind
+   std::vector<Pose> done{std::exchange(path, {})};
+   // done.size(): 1000, path.size(): 0
 
-   int task_id{7};
-   int finished{std::exchange(task_id, 0)};  // finished: 7, task_id: 0
+   int track_id{7};
+   int lost{std::exchange(track_id, 0)};  // lost: 7, track_id: 0
 
 - ``std::exchange(obj, new_value)``, from ``<utility>``, sets ``obj`` to ``new_value`` and returns the value ``obj`` had before.
-- After ``std::move(route)`` the route is valid but unspecified. After ``std::exchange(route, {})`` it is empty, guaranteed: it was assigned ``{}``.
+- After ``std::move(path)`` the path is valid but unspecified. After ``std::exchange(path, {})`` it is empty, guaranteed: it was assigned ``{}``.
 
 .. note::
 
@@ -1960,13 +2032,13 @@ The Definition of ``std::move``
      return static_cast<std::remove_reference_t<T>&&>(t);
    }
 
-   std::vector<Position> route{make_route(1000)};
-   static_assert(std::is_same_v<decltype(my_move(route)),
-                                std::vector<Position>&&>);
-   std::vector<Position> taken{my_move(route)};  // taken: 1000, route: 0
+   std::vector<Pose> path{make_path(1000)};
+   static_assert(std::is_same_v<decltype(my_move(path)),
+                                std::vector<Pose>&&>);
+   std::vector<Pose> taken{my_move(path)};  // taken: 1000, path: 0
 
-- In a function template, a ``T&&`` parameter also accepts an lvalue: for ``route``, ``T`` is ``std::vector<Position>&``.
-- ``std::remove_reference_t<T>`` removes that ``&``, so the cast is always to ``std::vector<Position>&&``, an xvalue. The function only casts: no data moves until ``taken`` is built.
+- In a function template, a ``T&&`` parameter also accepts an lvalue: for ``path``, ``T`` is ``std::vector<Pose>&``.
+- ``std::remove_reference_t<T>`` removes that ``&``, so the cast is always to ``std::vector<Pose>&&``, an xvalue. The function only casts: no data moves until ``taken`` is built.
 
 .. note::
 
@@ -1977,15 +2049,15 @@ A ``unique_ptr`` with Its Own Deleter
 
 .. code-block:: cpp
 
-   auto say_and_delete{[](RobotStatus* robot) {
-     std::cout << "  deleting robot " << robot->id << '\n';
-     delete robot;
+   auto say_and_delete{[](Obstacle* target) {
+     std::cout << "  deleting obstacle " << target->id << '\n';
+     delete target;
    }};
    {
-     std::unique_ptr<RobotStatus, decltype(say_and_delete)> robot{
-         new RobotStatus{3, 64.0}, say_and_delete};
-     // sizeof(robot): 8
-   }  // prints: deleting robot 3
+     std::unique_ptr<Obstacle, decltype(say_and_delete)> track{
+         new Obstacle{2}, say_and_delete};
+     // sizeof(track): 8
+   }  // prints: deleting obstacle 2
 
 - The second template argument is the deleter (`One Owner Only`_). Here a lambda (L6) that prints first.
 - ``std::make_unique`` cannot take a deleter, so the code calls ``new`` and hands the result to the ``std::unique_ptr`` in the same statement.
@@ -2000,8 +2072,8 @@ A ``unique_ptr`` with Its Own Deleter
 
 .. code-block:: cpp
 
-   std::auto_ptr<RobotStatus> a{new RobotStatus{3, 64.0}};
-   std::auto_ptr<RobotStatus> b{a};  // looks like a copy
+   std::auto_ptr<Obstacle> a{new Obstacle{2}};
+   std::auto_ptr<Obstacle> b{a};  // looks like a copy
    // a.get() == nullptr: true
 
 .. code-block:: text
@@ -2022,33 +2094,34 @@ Testing for Empty
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> robot;  // empty
-   // robot == nullptr: true
-   robot = std::make_unique<RobotStatus>(3, 64.0);
-   if (robot) {
-     std::cout << "robot " << robot->id << '\n';  // robot 3
+   std::unique_ptr<Obstacle> track;  // empty
+   // track == nullptr: true
+   track = std::make_unique<Obstacle>(2);
+   if (track) {
+     std::cout << "obstacle " << track->id << '\n';  // obstacle 2
    }
-   auto other{std::move(robot)};  // !robot: true
-   bool has_robot = other;  // does not compile
+   auto other{std::move(track)};  // !track: true
+   bool has_track = other;  // does not compile
 
 .. code-block:: text
 
-   error: cannot convert 'std::unique_ptr<RobotStatus>' to 'bool' in initialization
+   error: cannot convert 'std::unique_ptr<Obstacle, std::default_delete<Obstacle> >'
+          to 'bool' in initialization
 
-- ``if (robot)``, ``!robot`` and ``robot == nullptr`` all test for empty. The same works for ``std::shared_ptr``.
-- The conversion to ``bool`` is ``explicit``: a condition and ``bool has_robot{other};`` use it, but the ``=`` form does not compile.
+- ``if (track)``, ``!track`` and ``track == nullptr`` all test for empty. The same works for ``std::shared_ptr``.
+- The conversion to ``bool`` is ``explicit``: a condition and ``bool has_track{other};`` use it, but the ``=`` form does not compile.
 
 ``unique_ptr`` to an Array
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   auto readings{std::make_unique<double[]>(5)};  // five doubles, each 0.0
-   readings[2] = 14.0;
+   auto ranges{std::make_unique<double[]>(5)};  // five distances, each 0.0
+   ranges[2] = 12.0;
    for (int i{0}; i < 5; ++i) {
-     std::cout << readings[i] << ' ';  // 0 0 14 0 0
+     std::cout << ranges[i] << ' ';  // 0 0 12 0 0
    }
-   // sizeof(readings): 8, sizeof(std::vector<double>): 24
+   // sizeof(ranges): 8, sizeof(std::vector<double>): 24
 
 - ``std::unique_ptr<double[]>`` calls ``delete[]``, not ``delete``, and has ``[]`` instead of ``->``.
 - It is 8 bytes because it does not keep the length. No ``size()``, no ``push_back``, no range-based ``for``: the 5 is yours to remember.
@@ -2063,13 +2136,13 @@ Testing for Empty
 
 .. code-block:: cpp
 
-   auto first{std::make_unique<RobotStatus>(3, 64.0)};
-   auto second{std::make_unique<RobotStatus>(4, 90.0)};
-   const RobotStatus* robot_3{first.get()};
+   auto first{std::make_unique<Obstacle>(2)};
+   auto second{std::make_unique<Obstacle>(4)};
+   const Obstacle* id_2{first.get()};
    first.swap(second);  // the same as std::swap(first, second)
-   // first->id: 4, second->id: 3, second.get() == robot_3: true
+   // first->id: 4, second->id: 2, second.get() == id_2: true
 
-- ``swap`` exchanges the two stored pointers. No ``RobotStatus`` object is created, copied or deleted: the one with id 3 stays at the same address, now owned by ``second``.
+- ``swap`` exchanges the two stored pointers. No ``Obstacle`` object is created, copied or deleted: the one with id 2 stays at the same address, now owned by ``second``.
 - ``std::shared_ptr`` has the same ``swap``.
 
 .. note::
@@ -2081,17 +2154,17 @@ One Allocation with ``make_shared``
 
 .. code-block:: cpp
 
-   auto made{std::make_shared<RobotStatus>(3, 14.0)};
-   std::shared_ptr<RobotStatus> from_new{new RobotStatus{3, 14.0}};
+   auto made{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   std::shared_ptr<Obstacle> from_new{new Obstacle{2, Pose{12.0, -1.0}, 4.0}};
 
 .. code-block:: text
 
-   std::make_shared<RobotStatus>: 1 allocation(s): 56 bytes
-   std::shared_ptr<RobotStatus>{new ...}: 2 allocation(s): 40 24 bytes
+   std::make_shared<Obstacle>: 1 allocation(s): 64 bytes
+   std::shared_ptr<Obstacle>{new ...}: 2 allocation(s): 48 24 bytes
 
 - ``702run week7_allocations`` counts every heap allocation each line makes.
-- ``std::make_shared`` puts the robot and the control block in one block of 56 bytes (`The Control Block`_).
-- With ``new``, the robot already exists when the ``std::shared_ptr`` is built, so the control block needs a second allocation: 40 bytes for the robot, 24 for the control block.
+- ``std::make_shared`` puts the ``Obstacle`` object and the control block in one block of 64 bytes (`The Control Block`_).
+- With ``new``, the ``Obstacle`` object already exists when the ``std::shared_ptr`` is built, so the control block needs a second allocation: 48 bytes for the object, 24 for the control block.
 
 .. note::
 
@@ -2102,25 +2175,25 @@ A Dashboard of ``weak_ptr``
 
 .. code-block:: cpp
 
-   std::vector<std::weak_ptr<RobotStatus>> shown;
-   for (const auto& robot : fleet) {  // robots 1, 2, 3
-     shown.push_back(robot);  // watches, does not own
+   std::vector<std::weak_ptr<Obstacle>> shown;
+   for (const auto& track : tracker) {  // ids 1, 2, 3
+     shown.push_back(track);  // watches, does not own
    }
-   fleet.erase(fleet.begin() + 1);  // deletes the RobotStatus with id 2
+   tracker.erase(tracker.begin() + 1);  // deletes the Obstacle with id 2
    for (const auto& watched : shown) {
-     if (auto robot{watched.lock()}) {
-       std::cout << "  robot " << robot->id << ": "
-                 << robot->battery_pct << " %\n";
+     if (auto target{watched.lock()}) {
+       std::cout << "  obstacle " << target->id << ": "
+                 << target->speed << " m/s\n";
      } else {
        std::cout << "  (gone)\n";
      }
    }
-   std::erase_if(shown, [](const std::weak_ptr<RobotStatus>& w) {
+   std::erase_if(shown, [](const std::weak_ptr<Obstacle>& w) {
      return w.expired();
    });
 
-- Output: ``robot 1: 82.5 %``, ``(gone)``, ``robot 3: 14 %``, then ``shown.size()`` is 2.
-- The dashboard never keeps a robot alive. L4's ``std::erase_if`` with a lambda (L6) drops the entries whose robot is gone.
+- Output: ``obstacle 1: 0 m/s``, ``(gone)``, ``obstacle 3: 1.4 m/s``, then ``shown.size()`` is 2.
+- The dashboard never keeps an ``Obstacle`` object alive. L4's ``std::erase_if`` with a lambda (L6) drops the entries whose object is gone.
 
 More Core Guidelines
 ^^^^^^^^^^^^^^^^^^^^
@@ -2144,16 +2217,16 @@ More Core Guidelines
    * - `R.37 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-smartptrget>`__
      - Do not pass a pointer or reference obtained from an aliased smart pointer
 
-- R.5 comes first in practice: a ``RobotStatus`` that lives only inside one function is a local variable, not a heap object.
-- R.37: when you pass ``*robot`` or ``robot.get()`` to a function, make sure an owner outlives the call.
+- R.5 comes first in practice: an ``Obstacle`` that lives only inside one function is a local variable, not a heap object.
+- R.37: when you pass ``*track`` or ``track.get()`` to a function, make sure an owner outlives the call.
 
 Category, Type and Lifetime
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   std::vector<Position> route{make_route(3)};
-   std::vector<Position>&& r{make_route(10)};
+   std::vector<Pose> path{make_path(3)};
+   std::vector<Pose>&& r{make_path(10)};
 
 .. list-table::
    :header-rows: 1
@@ -2163,7 +2236,7 @@ Category, Type and Lifetime
      - Category
      - ``decltype((e))``
      - The object
-   * - ``make_route(3)``
+   * - ``make_path(3)``
      - prvalue
      - ``V``
      - none yet: a value that will initialize one
@@ -2171,16 +2244,16 @@ Category, Type and Lifetime
      - lvalue
      - ``V&``
      - a temporary that lives as long as ``r``
-   * - ``route``
+   * - ``path``
      - lvalue
      - ``V&``
      - lives until the end of its scope
-   * - ``std::move(route)``
+   * - ``std::move(path)``
      - xvalue
      - ``V&&``
-     - the same object as ``route``, marked "may be taken"
+     - the same object as ``path``, marked "may be taken"
 
-- ``V`` is ``std::vector<Position>``. The type of the variable ``r`` is ``V&&``; the expression ``r`` is an lvalue (`Giving It a Name`_).
+- ``V`` is ``std::vector<Pose>``. The type of the variable ``r`` is ``V&&``; the expression ``r`` is an lvalue (`Giving It a Name`_).
 - Binding a prvalue to a reference extends the temporary's life. ``std::move`` creates nothing: it marks an object that already exists.
 
 .. note::
@@ -2192,15 +2265,15 @@ Inside ``std::vector``'s Move and Copy
 
 .. code-block:: cpp
 
-   class Route {  // a sketch of std::vector<Position>
-     Position* begin_; Position* end_; Position* cap_;
+   class Path {  // a sketch of std::vector<Pose>
+     Pose* begin_; Pose* end_; Pose* cap_;
     public:
-     Route(Route&& other) noexcept      // move: take the three pointers
+     Path(Path&& other) noexcept      // move: take the three pointers
          : begin_{other.begin_}, end_{other.end_}, cap_{other.cap_} {
        other.begin_ = other.end_ = other.cap_ = nullptr;
      }
-     Route(const Route& other)          // copy: a new block, every element
-         : begin_{new Position[other.end_ - other.begin_]},
+     Path(const Path& other)          // copy: a new block, every element
+         : begin_{new Pose[other.end_ - other.begin_]},
            end_{begin_ + (other.end_ - other.begin_)}, cap_{end_} {
        std::copy(other.begin_, other.end_, begin_);
      }
@@ -2208,4 +2281,4 @@ Inside ``std::vector``'s Move and Copy
 
 - The move takes the pointers and leaves the source null: nothing is allocated and no element is copied (`Inside a Move`_).
 - The copy allocates a block for the elements in use and copies each one, so its capacity equals its size (`Inside a Copy`_).
-- Constructors are L8. For an rvalue, the ``Route&&`` one is chosen (`Overloads for Copy and Move`_).
+- Constructors are L8. For an rvalue, the ``Path&&`` one is chosen (`Overloads for Copy and Move`_).
