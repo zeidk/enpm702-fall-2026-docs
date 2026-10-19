@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 80, runs only when you ask for it by number: ``702run week7_playground 80``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 86, runs only when you ask for it by number: ``702run week7_playground 86``. A full run skips it.
 
 .. note::
 
@@ -1069,7 +1069,7 @@ Moving Ownership
 
    robot == nullptr: true, other.get() == where: true, other->id: 3
 
-- Line 2: ``robot.get()`` returns the address of the ``RobotStatus`` object that ``robot`` owns, as a plain ``RobotStatus*``. The owner does not change: ``where`` only points at the object.
+- Line 2: ``robot.get()`` returns a plain ``RobotStatus*`` to the heap resource ``robot`` owns, the ``RobotStatus`` object. The owner does not change: ``where`` only points at the object.
 - Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``robot`` is left empty. ``other.get() == where``: the ``RobotStatus`` object did not move.
 - There is still exactly one owner, at every moment.
 - Unlike a moved-from ``std::vector``, a moved-from ``std::unique_ptr`` is guaranteed to be empty.
@@ -1318,7 +1318,7 @@ Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, 
 
 1. **A second** ``std::unique_ptr``: does not compile. One owner only (`One Owner Only`_).
 2. **A copy of the robot**: now there are two robots. Charging one leaves the other at 14 %.
-3. **A** ``RobotStatus*`` **from** ``get()``: the queue does not own it. If the fleet removes robot 3, the queue points at freed memory (`Three Ways to Get It Wrong`_).
+3. **A** ``RobotStatus*`` **from** ``get()``: the queue does not own it. If the fleet deletes the ``RobotStatus`` object with id 3, the queue points at freed memory (`Three Ways to Get It Wrong`_).
 
 .. code-block:: cpp
 
@@ -1331,7 +1331,7 @@ The ``fleet`` here is the one from `A Fleet of Owners`_.
 
 .. note::
 
-   Both lists must own robot 3, and it must be deleted when the last of them lets go.
+   Both lists must own the ``RobotStatus`` object with id 3, and it must be deleted when the last of them lets go.
 
 .. _l7-shared-creating-one:
 
@@ -1364,13 +1364,14 @@ The Control Block
 """""""""""""""""
 
 .. figure:: /_static/images/l7/shared_ptr_memory.png
-   :alt: On the left, two blue boxes, one above the other, each with a stack icon and the word Stack, under name tags reading robot and in_queue. Each holds two fields, object and control, each marked ptr, and a measuring line under each box reads 16 bytes. On the right, one red box with a heap icon and the word Heap holds two blocks: a RobotStatus labeled 40 bytes, and below it a control block reading use_count: 2 and weak_ptrs: 0. A measuring line under it reads one allocation, 56 bytes. From each Stack box, a blue arrow runs from the object field to the left edge of the RobotStatus block, and another from the control field to the left edge of the control block.
+   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+          "On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr), with a measuring line of 16 bytes under each box. On the right, a red Heap box holds one allocation, with a measuring line reading one allocation, 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
-   Two ``std::shared_ptr``\ s to one robot. Both point at the robot and at the control block that ``std::make_shared`` put in the same allocation.
+   Two ``std::shared_ptr``\ s, one allocation: the control block first, then the ``RobotStatus`` object.
 
-- A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners. A ``std::shared_ptr`` is two pointers, 16 bytes: to the robot and to its control block.
+- A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners. A ``std::shared_ptr`` is two pointers, 16 bytes: to the ``RobotStatus`` object and to its control block. ``std::make_shared`` puts both in one allocation, the control block first (libstdc++, measured).
 - ``std::make_shared``: one allocation of 56 bytes for both, measured. With ``new``: two, 40 and 24 bytes.
 - A copy adds 1 to the count; destroying a ``std::shared_ptr`` subtracts 1.
 
@@ -1421,17 +1422,65 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``robot`` is the last owner, so its ``RobotStatus`` object is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 71``.
+- In 3a, id 4 is chosen; the other members take their defaults. Run it: ``702run week7_playground 71``.
 
-.. figure:: /_static/images/l7/shared_ptr_let_go.png
-   :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
+Step 1: Two Owners
+""""""""""""""""""
+
+.. figure:: /_static/images/l7/shared_ptr_let_go_1.png
+   :alt: On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
+     "On the left, two blue Stack boxes under name tags robot and in_queue, each holding two fields, object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 56 bytes: at the top a control block with use_count 2 and weak_ptrs 0, then right below it a RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from each object field to the first row of the RobotStatus object, id, and from each control field to the first row of the control block.
    :align: center
    :width: 100%
 
-   The three ways to let go, in memory. Gray and dashed: gone.
+- After line 1 of `Three Ways to Let Go`_: ``in_queue`` copies ``robot``. Both hold the same two pointers, so ``use_count`` is 2.
+- Each green arrow is one pointer of a ``std::shared_ptr``: ``object`` ends at the object's first member, ``control`` at the control block.
 
-- 1: ``in_queue`` copies ``robot``: two owners. 2: ``in_queue``'s scope ends: one owner left.
-- 3a, 3b and 3c are three separate runs, each from 2.
+Step 2: One Owner
+"""""""""""""""""
+
+.. figure:: /_static/images/l7/shared_ptr_let_go_2.png
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
+     "On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then the RobotStatus object with id 3, battery_pct 14.0, position {2.0, 3.0} and busy false. Green arrows run from robot's object field to the object's first row, id, and from its control field to the control block's first row.
+   :align: center
+   :width: 100%
+
+- Line 2: ``in_queue``'s scope ends. Its destructor subtracts 1, so ``use_count`` is 1.
+- ``robot`` still owns the ``RobotStatus`` object, so nothing is freed.
+
+Step 3a: A New Object
+"""""""""""""""""""""
+
+.. figure:: /_static/images/l7/shared_ptr_let_go_3.png
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked (ptr). Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds at the top a gray dashed block marked freed, 56 bytes: the first control block and object. Below it, a new allocation, measured as 56 bytes: a control block with use_count 1 and weak_ptrs 0, then a RobotStatus object with id 4, battery_pct 100.0, position {0.0, 0.0} and busy false. Green arrows run from robot's object field to the new object's first row, id, and from its control field to the new control block's first row.
+   :align: center
+   :width: 100%
+
+- 3a, 3b and 3c are separate runs, each from step 2.
+- 3a: ``std::make_shared<RobotStatus>(4)`` makes a second allocation. ``robot`` lets go of the first: its count drops to 0, so its object is destroyed and its 56 bytes freed.
+- The new object has id 4; its other members take their defaults.
+
+Step 3b: reset()
+""""""""""""""""
+
+.. figure:: /_static/images/l7/shared_ptr_let_go_4.png
+   :alt: On the left, a blue Stack box under the name tag robot holds two fields, object and control, each marked nullptr, with no arrows. Below it, in_queue is gray and dashed, marked scope ended. On the right, a red Heap box holds one gray dashed block marked freed, 56 bytes: the control block and object.
+   :align: center
+   :width: 100%
+
+- 3b: ``robot.reset()`` leaves both of ``robot``'s pointers ``nullptr``.
+- ``robot`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
+
+Step 3c: The Scope Ends
+"""""""""""""""""""""""
+
+.. figure:: /_static/images/l7/shared_ptr_let_go_5.png
+   :alt: On the left, robot and in_queue are both gray and dashed, marked scope ended, with no arrows. On the right, a red Heap box holds one gray dashed block marked freed, 56 bytes: the control block and object.
+   :align: center
+   :width: 100%
+
+- 3c: ``robot``'s scope ends, and its destructor runs.
+- ``robot`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
 
 Deletion by the Last Owner
 """"""""""""""""""""""""""
@@ -1441,8 +1490,8 @@ Deletion by the Last Owner
    fleet.push_back(std::make_shared<RobotStatus>(
        3, 14.0, Position{2.0, 3.0}, false));
    charging_queue.push_back(fleet[0]);
-   fleet.clear();           // robot 3 leaves the fleet, still in the queue
-   charging_queue.clear();  // the last owner: robot 3 is deleted here
+   fleet.clear();           // the fleet lets go; the queue still owns it
+   charging_queue.clear();  // the last owner deletes the RobotStatus
 
 .. code-block:: text
 
@@ -1450,8 +1499,8 @@ Deletion by the Last Owner
    after fleet.clear(): 1, robot 3 still there
    after charging_queue.clear(): no owner left
 
-- The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 73`` ends with no LeakSanitizer report.
+- The queue keeps the ``RobotStatus`` object alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
+- Neither list deletes the ``RobotStatus`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 77`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1568,15 +1617,28 @@ A Cycle
    a->partner = b;  // a owns b
    b->partner = a;  // b owns a
 
-.. figure:: /_static/images/l7/cycle.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. In each, two red boxes with a heap icon, robot 1 and robot 2, side by side. Each box is one allocation: at the top a dashed part labeled control block that holds use_count, then the Robot object, a solid outline around two rows, status and partner. A green arrow runs from robot 1's partner row across the gap and into the left edge of robot 2's object, at its status row; another runs from robot 2's partner row down, under both boxes, and up into the bottom edge of robot 1's object. Panel 1: two small blue boxes with a stack icon and the word Stack, named a and b, above the robots. A green arrow from a goes around the left side of robot 1 into the left edge of its object, and one from b goes around the right side of robot 2 into the right edge of its object. Both control blocks read use_count: 2. Panel 2: no stack boxes; both control blocks read use_count: 1.
+- ``a->partner = b``: the ``Robot`` that ``a`` owns becomes an owner of the one ``b`` owns. ``b->partner = a`` does the reverse.
+
+Step 1: Two Owners Each
+"""""""""""""""""""""""
+
+.. figure:: /_static/images/l7/cycle_1.png
+   :alt: Two blue Stack boxes at the top, under name tags a and b, each holding two fields, object and control, each marked (ptr). Below, one red Heap box holds two allocations side by side, each measured as 72 bytes: a control block with use_count 2 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. Green arrows run from a's fields to the left allocation, entering from the left: object to the Robot's first row, control to the control block's first row. Green arrows run from b's fields to the right allocation, entering from the right. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so the arrows cross between the two allocations.
    :align: center
    :width: 100%
 
-   Two robots that own each other. **1**: while ``a`` and ``b`` exist, each robot has two owners. **2**: ``a`` and ``b`` are gone, and each count stays at 1.
+- While ``a`` and ``b`` exist, each ``Robot`` has two owners: a variable on the stack and the other ``Robot``'s ``partner``. Each count is 2.
 
-- **1**: while ``a`` and ``b`` exist, each robot has two owners.
-- **2**: ``a`` and ``b`` are gone. Each count is 1, never 0: each robot keeps the other alive, and nothing outside can reach either.
+Step 2: Neither Is Deleted
+""""""""""""""""""""""""""
+
+.. figure:: /_static/images/l7/cycle_2.png
+   :alt: At the top, a and b are gray and dashed, marked scope ended, with no arrows. Below, one red Heap box holds two allocations side by side, each measured as 72 bytes: a control block with use_count 1 and weak_ptrs 0, then a Robot object with rows status.id, status.battery_pct, status.position, status.busy, partner: object and partner: control. The left Robot holds 1, 82.5, {0.0, 0.0}, false; the right one 2, 35.0, {0.0, 0.0}, false. The left Robot's partner rows send green arrows to the right allocation's Robot first row and control block, and the right Robot's partner rows send green arrows to the left allocation's, so each allocation is still owned by the other.
+   :align: center
+   :width: 100%
+
+- ``a`` and ``b`` are destroyed when their scope ends: each count drops to 1, never 0.
+- Each ``Robot`` keeps the other alive, so 2 allocations of 72 bytes leak (`The Cycle, Measured`_).
 
 The Cycle, Measured
 """""""""""""""""""
@@ -1597,7 +1659,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 80``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 86``. Both ``Robot`` objects leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory. Both leaks here are indirect: each robot is reachable only from the other.
 
@@ -1618,7 +1680,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 81``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Robot`` objects are deleted. ``702run week7_playground 87``: no LeakSanitizer report.
 
 .. note::
 
@@ -1644,7 +1706,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``robot`` exists, it is one more owner, so the ``RobotStatus`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 82``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 88``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1685,7 +1747,7 @@ Exercise 5: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 84``.
+- Check: ``702run week7_playground 90``.
 
 Choosing a Pointer
 ------------------
@@ -1741,8 +1803,8 @@ Back to the Fleet
 
    The fleet with its smart pointers. **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks without owning.
 
-- One ``std::vector`` holds one type: once robot 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
-- Robots 1 and 2 still have one owner each, through that ``std::shared_ptr``.
+- One ``std::vector`` holds one type: once the ``RobotStatus`` object with id 3 is shared, the fleet holds a ``std::shared_ptr`` for every robot (:ref:`l7-shared-creating-one`).
+- The ``RobotStatus`` objects with ids 1 and 2 still have one owner each, through that ``std::shared_ptr``.
 
 Summary
 -------
@@ -2001,7 +2063,7 @@ Testing for Empty
    first.swap(second);  // the same as std::swap(first, second)
    // first->id: 4, second->id: 3, second.get() == robot_3: true
 
-- ``swap`` exchanges the two stored pointers. No robot is created, copied or deleted: robot 3 is at the same address, now owned by ``second``.
+- ``swap`` exchanges the two stored pointers. No ``RobotStatus`` object is created, copied or deleted: the one with id 3 stays at the same address, now owned by ``second``.
 - ``std::shared_ptr`` has the same ``swap``.
 
 .. note::
@@ -2040,7 +2102,7 @@ A Dashboard of ``weak_ptr``
    for (const auto& robot : fleet) {  // robots 1, 2, 3
      shown.push_back(robot);  // watches, does not own
    }
-   fleet.erase(fleet.begin() + 1);  // robot 2 is deleted
+   fleet.erase(fleet.begin() + 1);  // deletes the RobotStatus with id 2
    for (const auto& watched : shown) {
      if (auto robot{watched.lock()}) {
        std::cout << "  robot " << robot->id << ": "
