@@ -1061,8 +1061,7 @@ Moving Ownership
 .. code-block:: cpp
    :linenos:
 
-   auto robot{std::make_unique<RobotStatus>(
-       3, 64.0, Position{2.0, 3.0}, false)};
+   auto robot{std::make_unique<RobotStatus>(3, 64.0, Position{2.0, 3.0}, false)};
    RobotStatus* where{robot.get()};
    std::unique_ptr<RobotStatus> other{std::move(robot)};
 
@@ -1070,7 +1069,8 @@ Moving Ownership
 
    robot == nullptr: true, other.get() == where: true, other->id: 3
 
-- The move constructor of `Move Semantics`_ at work: ``other`` takes the pointer, and ``robot`` is left empty. The robot never moved in memory.
+- Line 2: ``robot.get()`` returns the address ``robot`` holds, as a plain ``RobotStatus*``. ``robot`` still owns the robot; ``where`` only points at it.
+- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``robot`` is left empty. ``other.get() == where``: the robot did not move.
 - There is still exactly one owner, at every moment.
 - Unlike a moved-from ``std::vector``, a moved-from ``std::unique_ptr`` is guaranteed to be empty.
 
@@ -1090,8 +1090,8 @@ The Move in Memory
 
    Moving Ownership, traced. Solid arrow: an owner. Dashed arrow: ``where``, which looks and owns nothing.
 
-- **1**: after line 3 of `Moving Ownership`_, ``robot`` owns robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
-- **2**: after line 4, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the robot did not move, only its owner changed.
+- **1**: after line 2 of `Moving Ownership`_, ``robot`` owns robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
+- **2**: after line 3, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the robot did not move, only its owner changed.
 
 Whiteboard 2: Handing Over a Robot
 """"""""""""""""""""""""""""""""""
