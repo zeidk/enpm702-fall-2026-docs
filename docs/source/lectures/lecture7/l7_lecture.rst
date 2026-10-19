@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 80, runs only when you ask for it by number: ``702run week7_playground 80``. A full run skips it.
 
 .. note::
 
@@ -315,8 +315,8 @@ The Moved-from Object
 
 See `The Moved-from std::string`_, `Move Assignment`_ and `std::exchange`_ under Further Reading.
 
-Whiteboard 1: Copy and Move
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Exercise 1: Copy and Move
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
    :linenos:
@@ -509,7 +509,7 @@ With the declarations above, each expression below refers to an object that alre
         return fleet[0];
       }
 
-   - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 1: Value Categories`_ use it.
+   - ``make_robot`` returns a new robot by value. The sections from here to `Exercise 2: Value Categories`_ use it.
    - ``first_robot`` returns a reference to the first robot, so a call to it is an lvalue.
 
 prvalue: A Computed Value
@@ -700,7 +700,7 @@ The ``decltype`` Test
 
    C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: "if E is an xvalue, decltype(E) is T&&", "if E is an lvalue, decltype(E) is T&", "otherwise, decltype(E) is the type of E".
 
-Exercise 1: Value Categories
+Exercise 2: Value Categories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -1080,21 +1080,32 @@ Moving Ownership
 
 See `Testing for Empty`_ under Further Reading.
 
-The Move in Memory
-""""""""""""""""""
+Step 1: Before the Move
+"""""""""""""""""""""""
 
-.. figure:: /_static/images/l7/unique_ptr_move.png
-   :alt: Two panels separated by a dashed line, tagged 1 and 2. Each shows a blue Stack box beside a red Heap box that holds one block, robot 3, a RobotStatus. Panel 1: the Stack holds robot and where; a solid arrow runs from robot to robot 3, and a dashed arrow from where to robot 3. Panel 2: the Stack holds robot, now marked null, where and other; a dashed arrow runs from where to robot 3 and a solid arrow from other to robot 3. Robot 3 is the same block in both panels.
+.. figure:: /_static/images/l7/unique_ptr_move_1.png
+   :alt: A blue box with a stack icon and the word Stack holds two fields: robot, of type std::unique_ptr, and where, of type RobotStatus*. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds one object of four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A solid blue arrow runs from robot to the left edge of the object, at its first row, id. A dashed blue arrow runs from where to the same row, just below the solid arrow.
    :align: center
    :width: 100%
 
-   Moving Ownership, traced. Solid arrow: an owner. Dashed arrow: ``where``, which looks and owns nothing.
+- After line 2 of `Moving Ownership`_: ``robot`` owns the ``RobotStatus`` object (solid arrow).
+- ``where`` holds the same address (dashed arrow), but a ``RobotStatus*`` owns nothing: it never deletes the object.
+- Both arrows end at ``id``: the object's address is where it starts, at its first member.
 
-- **1**: after line 2 of `Moving Ownership`_, ``robot`` owns the ``RobotStatus`` object, robot 3. ``where`` only points at it: a ``RobotStatus*`` owns nothing.
-- **2**: after line 3, ``other`` owns robot 3, and ``robot`` is null. ``where`` still points at the same block: the object did not move, only its owner changed.
+Step 2: After the Move
+""""""""""""""""""""""
 
-Whiteboard 2: Handing Over a Robot
-""""""""""""""""""""""""""""""""""
+.. figure:: /_static/images/l7/unique_ptr_move_2.png
+   :alt: A blue box with a stack icon and the word Stack holds three fields: robot, of type std::unique_ptr, marked nullptr, with no arrow; where, of type RobotStatus*; and other, of type std::unique_ptr. On the right, under a name tag reading RobotStatus, a red box with a heap icon and the word Heap holds the same object as before, four rows: id 3, battery_pct 64.0, position {0.0, 0.0}, and busy false. A dashed blue arrow runs from where to the left edge of the object, at its first row, id. A solid blue arrow runs from other to the same row, just below the dashed arrow.
+   :align: center
+   :width: 100%
+
+- After line 3: ``other`` owns the ``RobotStatus`` object, and ``robot`` holds ``nullptr``.
+- ``where`` still holds the same address: the object did not move. Only its owner changed.
+- ``robot`` points at nothing, so it deletes nothing when it goes out of scope.
+
+Exercise 3: Handing Over a Robot
+""""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
    :linenos:
@@ -1104,9 +1115,9 @@ Whiteboard 2: Handing Over a Robot
    p = std::make_unique<RobotStatus>(2);
    q = std::move(p);
 
-- At the board, after each line: draw ``p`` and ``q`` on the stack, every robot on the heap, and an arrow from each pointer to the robot it owns.
-- On which line is robot 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 56``.
+- At the board, after each line: draw ``p`` and ``q`` on the stack, every ``RobotStatus`` object on the heap, and an arrow from each pointer to the object it owns.
+- On which line is the ``RobotStatus`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
+- Check: ``702run week7_playground 57``.
 
 A Fleet of Owners
 """""""""""""""""
@@ -1262,7 +1273,7 @@ Returning
 - ``return robot;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
 - Compare `A Robot on the Heap`_: there, a ``RobotStatus*`` came back, and nothing said who must delete it. Here the type says it.
 
-Exercise 2: Lines That Compile
+Exercise 4: Lines That Compile
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -1284,7 +1295,7 @@ Exercise 2: Lines That Compile
    RobotStatus* f{d.get()};                            // 7
    std::unique_ptr<RobotStatus> g{f};                  // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 64`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 65`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1311,7 +1322,7 @@ Robot 3 is down to 14 % (chosen for this example). It joins the charging queue, 
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 57, 3 robots
+   std::vector<std::unique_ptr<RobotStatus>> fleet;   // slide 58, 3 robots
    std::vector<RobotStatus*> charging_queue;
    charging_queue.push_back(fleet[2].get());         // looks, does not own
    fleet.erase(fleet.begin() + 2);                   // the queue dangles
@@ -1410,7 +1421,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``robot`` is the last owner, so its ``RobotStatus`` object is deleted. C++20 (20.11.3.2 to 20.11.3.4): ``=`` and ``reset()`` swap with a temporary that is then destroyed, and destroying the last owner deletes the object.
-- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 70``.
+- Robot 4's id is chosen; its other members take their defaults. Run it: ``702run week7_playground 71``.
 
 .. figure:: /_static/images/l7/shared_ptr_let_go.png
    :alt: Five numbered states, each a blue Stack box beside a red Heap box. On the left, state 1: the Stack holds robot and in_queue, and an arrow from each points at robot 3 on the Heap, use_count: 2. Below it, state 2: in_queue is gray and dashed, gone, and only robot points at robot 3, use_count: 1. A dashed line separates three states on the right, 3a, 3b and 3c. In 3a, robot points at a new robot 4, use_count: 1, and robot 3 is gray, dashed and marked deleted. In 3b, robot holds null and robot 3 is deleted. In 3c, robot is gray and dashed, gone, and robot 3 is deleted.
@@ -1440,7 +1451,7 @@ Deletion by the Last Owner
    after charging_queue.clear(): no owner left
 
 - The queue keeps robot 3 alive after the fleet lets go. That is what the raw pointer of `A Robot in Two Lists`_ could not do.
-- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 72`` ends with no LeakSanitizer report.
+- Neither list deletes the robot itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 73`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1515,7 +1526,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 63
+   std::unique_ptr<RobotStatus> make_robot(int id);  // slide 64
 
    std::shared_ptr<RobotStatus> robot{make_robot(5)};  // compiles
    std::unique_ptr<RobotStatus> back{robot};           // does not compile
@@ -1586,7 +1597,7 @@ The Cycle, Measured
 
    SUMMARY: AddressSanitizer: 144 byte(s) leaked in 2 allocation(s).
 
-- ``702run week7_playground 79``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 80``. Both robots leak, one allocation each: lines 76 and 77 are the two ``std::make_shared`` calls.
 - 72 bytes each: a ``Robot`` (40 for the status, 16 for the ``std::shared_ptr``) and its 16-byte control block, in one ``std::make_shared`` allocation.
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory. Both leaks here are indirect: each robot is reachable only from the other.
 
@@ -1607,7 +1618,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both robots are deleted. ``702run week7_playground 81``: no LeakSanitizer report.
 
 .. note::
 
@@ -1633,7 +1644,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``robot`` exists, it is one more owner, so the ``RobotStatus`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 81``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
+- ``702run week7_playground 82``: ``robot 3: 14 %``, then, after the fleet lets go, ``the robot is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1659,7 +1670,7 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 
    C++20 **[util.smartptr.weak.obs]** (20.11.4.5): ``expired()`` "Returns: use_count() == 0." ``lock()`` "Returns: expired() ? shared_ptr<T>() : shared_ptr<T>(\*this), executed atomically."
 
-Exercise 3: Use Counts
+Exercise 5: Use Counts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
@@ -1674,7 +1685,7 @@ Exercise 3: Use Counts
    b.reset();                                // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the robot, and is ``watch`` expired?
-- Check: ``702run week7_playground 83``.
+- Check: ``702run week7_playground 84``.
 
 Choosing a Pointer
 ------------------
