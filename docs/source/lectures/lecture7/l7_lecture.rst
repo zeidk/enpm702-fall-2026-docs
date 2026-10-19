@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 88, runs only when you ask for it by number: ``702run week7_playground 88``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 89, runs only when you ask for it by number: ``702run week7_playground 89``. A full run skips it.
 
 .. note::
 
@@ -449,28 +449,61 @@ Value Categories
 The Five Definitions
 ^^^^^^^^^^^^^^^^^^^^
 
-.. list-table::
-   :header-rows: 1
-   :class: compact-table
+The slide steps through the tree above one box at a time, from the top: expression, then glvalue and rvalue, then lvalue, xvalue and prvalue. The quotes are C++20 **[basic.lval]** paragraph 1.
 
-   * - Term
-     - C++20 [basic.lval] paragraph 1
-     - In plain words
-   * - glvalue
-     - "an expression whose evaluation determines the identity of an object, bit-field, or function"
-     - It names something with an address.
-   * - prvalue
-     - "an expression whose evaluation initializes an object or a bit-field, or computes the value of an operand of an operator, [...]"
-     - A value that will fill an object, not an object yet.
-   * - xvalue
-     - "a glvalue that denotes an object or bit-field whose resources can be reused (usually because it is near the end of its lifetime)"
-     - An object you may take from.
-   * - lvalue
-     - "a glvalue that is not an xvalue"
-     - An object that stays: do not take from it.
-   * - rvalue
-     - "a prvalue or an xvalue"
-     - Something you may move from.
+**expression.** In plain words: code the program evaluates. A name or a literal alone is one, with no operator: C++20 calls it a primary expression (**[expr.prim]**). Operators build larger ones.
+
+.. code-block:: cpp
+
+   int count{3};
+   int a{count};      // a name
+   int b{42};         // a literal
+   int c{count + 1};  // an operator
+
+Each expression is exactly one of the three bottom boxes (lvalue, xvalue, prvalue); the middle two group them.
+
+**glvalue**, a "generalized" lvalue. C++20: "an expression whose evaluation determines the identity of an object, bit-field, or function". In plain words: it refers to an object that already exists, so the object has an address.
+
+.. code-block:: cpp
+
+   int count{3};
+   std::vector<int> scores{90, 75, 82};
+   int* p{&count};  // has an address
+   // refers to the object scores:
+   auto best{std::move(scores)};
+
+**rvalue.** C++20: "a prvalue or an xvalue". In plain words: an expression whose contents may be taken. An xvalue lets another object take them. A prvalue passed to a ``T&&`` parameter gets a temporary object (`Temporary Materialization`_), and nothing else can use it, so the function may take it (`Overloads for Copy and Move`_).
+
+.. code-block:: cpp
+
+   std::vector<int> scores{90, 75, 82};
+   int next{scores[0] + 1};  // computed
+   // marked:
+   auto best{std::move(scores)};
+
+**lvalue.** C++20: "a glvalue that is not an xvalue". In plain words: it refers to an object that already exists, and does not let another object take its contents.
+
+.. code-block:: cpp
+
+   int count{3};
+   std::vector<int> scores{90, 75, 82};
+   int* p{&count};     // count: lvalue
+   auto copy{scores};  // scores: lvalue
+
+**xvalue**, an "eXpiring" lvalue. C++20: "a glvalue that denotes an object or bit-field whose resources can be reused (usually because it is near the end of its lifetime)". In plain words: it refers to an object that already exists, and lets another object take its contents.
+
+.. code-block:: cpp
+
+   std::vector<int> scores{90, 75, 82};
+   // std::move(scores): an xvalue
+   auto best{std::move(scores)};
+
+**prvalue**, a "pure" rvalue. C++20: "an expression whose evaluation initializes an object or a bit-field, or computes the value of an operand of an operator, [...]". In plain words: it refers to no object that already exists; it computes a value.
+
+.. code-block:: cpp
+
+   int count{3};         // 3
+   int next{count + 1};  // count + 1
 
 .. note::
 
@@ -828,6 +861,22 @@ Binding to rvalues
 
 See `Category, Type and Lifetime`_ under Further Reading.
 
+
+What Each Reference Refers To
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l7/av_binding.png
+   :alt: On the right, two name tags, each over a blue box with a stack icon and the word Stack holding three fields, begin, end and capacity, each marked ptr: the upper one reads path, the lower one reads (temporary). On the left, three references, each a name tag with its type under it and a numbered tag beside it. Tag 2, any_ref, type const std::vector<Pose>&: a solid dark blue arrow runs from it to the path box. Tag 3, lvalue_ref, type std::vector<Pose>&&: a gray dashed arrow runs from it to the path box, crossed out by a circled X halfway along. Tag 1, temp_ref, type std::vector<Pose>&&: a solid dark blue arrow runs from it to the temporary's box.
+   :align: center
+   :width: 100%
+
+   The code of `Binding to rvalues`_, in memory: each reference and the object it refers to.
+
+- **1**, line 2: ``temp_ref`` binds the temporary from ``make_path(10)`` and keeps it alive (C++20 **[class.temporary]** paragraph 6: the temporary "persists for the lifetime of the reference").
+- **2**, line 3: ``any_ref``, a ``const&``, binds ``path``, an lvalue.
+- **3**, line 4: a ``T&&`` cannot bind ``path``, an lvalue, so it does not compile. The figure draws it dashed and crossed out.
+- A reference has no box. C++20 **[dcl.ref]** paragraph 4: "It is unspecified whether or not a reference requires storage."
+
 Giving It a Name
 ^^^^^^^^^^^^^^^^
 
@@ -1103,7 +1152,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, so the early return skips the ``delete``.
-- ``702run week7_playground 54`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 55`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object. There is no ``delete`` to forget.
 
 One Owner Only
@@ -1222,7 +1271,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 60``.
+- Check: ``702run week7_playground 61``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1374,7 +1423,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 67`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 68`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1401,7 +1450,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 61
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 62
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[1].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin() + 1);   // the track is lost: it dangles
@@ -1496,7 +1545,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 73``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 74``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1571,7 +1620,7 @@ Deletion by the Last Owner
    after hazards.clear(): no owner left
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Neither list deletes the ``Obstacle`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 79`` ends with no LeakSanitizer report.
+- Neither list deletes the ``Obstacle`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 80`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1657,7 +1706,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 66
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 67
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1743,7 +1792,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 88``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 89``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1763,7 +1812,7 @@ Breaking It
    a.use_count(): 1, b.use_count(): 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 89``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 90``: no LeakSanitizer report.
 
 .. note::
 
@@ -1788,7 +1837,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 90``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 91``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1827,7 +1876,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 92``.
+- Check: ``702run week7_playground 93``.
 
 Choosing a Pointer
 ------------------
