@@ -99,7 +99,7 @@ Reminder: Returning by Value
 From L5. **Copy elision**: the compiler builds the returned object **directly in the caller's destination**, so the copy or move from the function's object is never made.
 
 .. figure:: /_static/images/l7/return_by_value.png
-   :alt: A UML activity diagram in black and white. From a start dot, an arrow leads to a decision: a function returns an object by value: what does it return? Four arrows leave it, one to each of four boxes, left to right, and each box ends in its own end node. Box 1, RVO: a temporary, return std::vector<double>(n); built in the caller's destination, always, since C++17. Box 2, NRVO: a named local, return v; built in the caller's destination, usually, but not required. Box 3, Implicit move: a named local, when NRVO is not done, return v; the local is moved: its elements are handed over. Box 4, Copy: anything that is not the plain name of a local, return first ? x : y; every element is copied.
+   :alt: A UML activity diagram in black and white. From a start dot, an arrow leads to a decision: a function returns an object by value: what does it return? Three arrows leave it. The first leads to the box Elision: built in the caller's destination. From it a second decision, which kind?, leads to two boxes: RVO: a temporary, return std::vector<double>(n); always, since C++17; and NRVO: a named local, return v; usually, but not required. The second arrow leads to the box Implicit move: a named local, when NRVO is not done, return v; the local is moved: its elements are handed over. The third arrow leads to the box Copy: anything that is not the plain name of a local, return first ? x : y; every element is copied.
    :align: center
    :width: 100%
 
@@ -112,7 +112,7 @@ From L5. **Copy elision**: the compiler builds the returned object **directly in
 The Program We Will Build
 -------------------------
 
-An autonomous car, the **ego vehicle**, drives along a two-lane road. The ego vehicle has a **tracker**, which sees four obstacles. In this lecture we write the tracker and two other parts of its software: the **planner** and the **dashboard**.
+An autonomous car, the **ego vehicle**, drives along a two-lane road. The ego vehicle has a **tracker**, which sees four obstacles. In this lecture we write the tracker, the **planner** and the **dashboard**.
 
 .. list-table::
    :header-rows: 1
@@ -206,15 +206,14 @@ Who Owns Each Obstacle
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/av_owner_map.png
-   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
    :align: center
    :width: 80%
 
    Who owns each ``Obstacle`` object, as a UML object diagram.
 
-- A UML object diagram (L9): one box per object; a diamond marks the owner. ``: Obstacle``: an ``Obstacle`` object on the heap, with no name.
-- **Filled diamond**, the only owner: ``tracker`` alone owns the ``Obstacle`` objects with ids 1, 3 and 4.
-- **Open diamond**, one of several owners: ``tracker`` and ``planner`` both own the one with id 2, the cyclist.
+- A UML object diagram (L9): one box per object. ``: Obstacle`` is an ``Obstacle`` object on the heap, with no name; under the line, its members' values (the table above).
+- **Filled diamond**, the only owner: ``tracker`` owns ids 1, 3 and 4. **Open diamond**, one of several owners: ``tracker`` and ``planner`` own id 2, the cyclist.
 - **Arrow, no diamond**, looks without owning: ``dashboard`` looks at id 2.
 
 Ownership
@@ -254,7 +253,7 @@ Reminder: Three Ways to Get It Wrong
 
 .. note::
 
-   The cause is the same in all three: two lists, or two paths, and no code marked as the owner.
+   The cause is the same in all three: no code is marked as the owner.
 
 See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
 
@@ -264,7 +263,7 @@ RAII
 **RAII**, resource acquisition is initialization: the object that holds a resource, such as memory, gives it back in its destructor.
 
 - A ``std::vector`` is RAII: the planner's path, a ``std::vector<Pose>``, frees its heap block when it goes out of scope.
-- A **smart pointer** is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr`` (the only owner), ``std::shared_ptr`` (one of several owners), and ``std::weak_ptr`` (an observer that owns nothing).
+- A **smart pointer** that owns is RAII for one heap object (`Smart Pointers`_): ``std::unique_ptr`` (the only owner) or ``std::shared_ptr`` (one of several owners). ``std::weak_ptr`` only observes.
 
 .. note::
 
@@ -356,8 +355,8 @@ Inside a Copy
    A ``std::vector`` and its copy: each one owns its own block.
 
 - After ``std::vector<Pose> copied{path}``, each vector has its own block and frees it at the end of its scope.
-- ``begin`` points at the first ``Pose``. ``end`` points one past the last one: the right edge of the last cell. ``capacity`` points one past the last slot.
-- ``make_path`` reserved 1000 slots, so ``end`` and ``capacity`` are equal. Each block: 1000 × 24 = 24000 bytes. Total: 48000 bytes.
+- ``begin`` points at the first ``Pose``, ``end`` one past the last one (the right edge of the last cell), ``capacity`` one past the last slot.
+- ``make_path`` reserved 1000 slots, and a copy allocates exactly its size: in both, ``end`` equals ``capacity``. Each block: 1000 × 24 = 24000 bytes; total 48000.
 
 Inside a Move
 ^^^^^^^^^^^^^
@@ -384,7 +383,7 @@ The Moved-from Object
    path = make_path(5);                // assign before you use it again
    std::cout << path.size() << ' ' << controller_path.size();  // 5 1000
 
-- After a move, the source still exists. It is destroyed at the end of its scope, as usual.
+- After a move, the source still exists. It is destroyed at the end of its scope.
 - What it holds is not promised by the standard. libstdc++ leaves a moved-from ``std::vector`` empty; another library may not.
 - Safe: destroy it, or assign it a new value. Then use it as before.
 
@@ -563,7 +562,7 @@ lvalue: Checking with ``&``
 
    error: lvalue required as unary '&' operand
 
-- The built-in ``&`` compiles only on an lvalue: parts (1) and (2) of the definition must both hold. It fails when part (1) fails, as in line 3, and when part (2) fails (`xvalue: Ways to Mark`_).
+- The built-in ``&`` compiles only on an lvalue: parts (1) and (2) of the definition must both hold. Line 3 fails part (1); `xvalue: Ways to Mark`_ shows part (2) failing.
 - In line 2, ``count`` is an lvalue: parts (1) and (2) hold (`lvalue: A Named Object`_). So ``&count`` compiles.
 - In line 3, ``count + 1`` computes 4, but no object that already exists holds that 4. Part (1) fails: ``count + 1`` is not an lvalue, and ``&(count + 1)`` does not compile. `prvalue: A Computed Value`_ says what it is.
 
@@ -586,7 +585,7 @@ lvalue: A Reference, an Element, ``*p``
 lvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^
 
-An **lvalue** refers to an object that already exists and does not let another object take its contents (`lvalue: A Named Object`_). Test: ``&`` compiles on it.
+Test for an **lvalue** (`lvalue: A Named Object`_): ``&`` compiles on it.
 
 .. code-block:: cpp
 
@@ -670,7 +669,7 @@ prvalue: Literals, Results, Calls
 prvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-A **prvalue** refers to no object that already exists; it computes a value (`prvalue: A Computed Value`_). Test: ``&`` does not compile on it.
+Test for a **prvalue** (`prvalue: A Computed Value`_): ``&`` does not compile on it.
 
 .. code-block:: cpp
 
@@ -732,7 +731,7 @@ xvalue: Ways to Mark
 xvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^
 
-An **xvalue** refers to an object that already exists and lets another object take its contents (`xvalue: Marked by std::move`_). Marking it moves nothing.
+Marking an **xvalue** (`xvalue: Marked by std::move`_) moves nothing.
 
 .. code-block:: cpp
 
@@ -750,7 +749,7 @@ An **xvalue** refers to an object that already exists and lets another object ta
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To read a member, there must be an object. So the compiler creates a **temporary** object from the prvalue, and the expression becomes an xvalue that refers to it.
+To read a member, there must be an object, so the compiler creates a **temporary** from the prvalue.
 
 .. code-block:: cpp
 
@@ -784,7 +783,7 @@ With the declarations above:
 - ``decltype(count)`` is ``int``, so ``decltype(count) other{5};`` declares an ``int``.
 - ``decltype(limit)`` is ``const double``: unlike ``auto``, ``decltype`` keeps ``const``.
 - ``decltype(first)`` is ``Pose&``: it keeps the ``&`` too.
-- ``decltype(path.size())`` is ``std::size_t``, the type the call returns. ``size()`` is not called.
+- ``decltype(path.size())`` is ``std::size_t`` (libstdc++), the type the call returns. ``size()`` is not called.
 
 .. note::
 
@@ -857,7 +856,6 @@ Binding to rvalues
 - ``T&&`` is an **rvalue reference**. It binds only to rvalues: prvalues and xvalues.
 - Bound to the prvalue ``make_path(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
 - ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
-- A ``T&&`` says: whatever this refers to may be taken.
 
 See `Category, Type and Lifetime`_ under Further Reading.
 
@@ -1024,7 +1022,7 @@ A **smart pointer** is an object that points at one heap object and says, in its
 Three class templates in ``<memory>``, one for each kind of ownership in `Who Owns Each Obstacle`_. C++20 lists all three under smart pointers (20.11).
 
 .. figure:: /_static/images/l7/av_owner_map.png
-   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
    :align: center
    :width: 80%
 
@@ -1036,7 +1034,7 @@ Three class templates in ``<memory>``, one for each kind of ownership in `Who Ow
 A ``std::unique_ptr`` is the only owner of one object on the heap. It cannot be copied, only moved, and when it is destroyed it deletes the object.
 
 .. figure:: /_static/images/l7/av_owner_map_unique.png
-   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the boxes with id 1, 3 and 4, and the three lines with filled diamonds.
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the boxes with id 1, 3 and 4, and the three lines with filled diamonds.
    :align: center
    :width: 80%
 
@@ -1105,7 +1103,7 @@ In Memory
    sizeof(track): 8, sizeof(Obstacle*): 8, sizeof(Obstacle): 48
 
 - The ``std::unique_ptr`` is one pointer on the stack, the same 8 bytes as an ``Obstacle*``. The resource, the ``Obstacle`` object, is on the heap.
-- Using a ``std::unique_ptr`` instead of an ``Obstacle*`` adds no bytes (8 bytes either way). It adds two rules: it deletes the ``Obstacle`` object when it is destroyed, and no other ``std::unique_ptr`` can own that object.
+- Using a ``std::unique_ptr`` instead of an ``Obstacle*`` adds no bytes. It adds two rules: it deletes the ``Obstacle`` object when it is destroyed, and no other ``std::unique_ptr`` can own that object.
 
 The Leak, Fixed
 """""""""""""""
@@ -1151,9 +1149,9 @@ The Leak, Fixed
      return true;     // and here
    }
 
-- The first one leaks 48 bytes: the cyclist is 12 m ahead, so the early return skips the ``delete``.
+- The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
 - ``702run week7_playground 55`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
-- Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object. There is no ``delete`` to forget.
+- Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
 """"""""""""""
@@ -1200,7 +1198,7 @@ See `std::auto_ptr`_ under Further Reading.
       }
 
 - ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
-- ``reset()`` deletes the ``Obstacle`` object now, without waiting for the end of the scope. ``reset(p)`` takes ``p`` instead.
+- ``reset()`` deletes the ``Obstacle`` object now, without waiting for the end of the scope. ``reset(p)`` stores ``p``, then deletes the old object, if there was one.
 - Assigning a new ``std::unique_ptr`` stores the new object's address, then deletes the old object, as ``reset`` does.
 
 .. note::
@@ -1223,9 +1221,8 @@ Moving Ownership
 
    track == nullptr: true, other.get() == where: true, other->id: 2
 
-- Line 2: ``track.get()`` returns a plain ``Obstacle*`` to the heap resource ``track`` owns, the ``Obstacle`` object. The owner does not change: ``where`` only points at the object.
-- Line 3, the move constructor of `Move Semantics`_: ``other`` takes the pointer, and ``track`` is left empty. ``other.get() == where``: the ``Obstacle`` object did not move.
-- There is still exactly one owner, at every moment.
+- Line 2: ``where`` only points at the ``Obstacle`` object; ``track`` still owns it.
+- Line 3, the move constructor (`Inside a Move`_): ``other`` takes the pointer, and ``track`` is left empty. ``other.get() == where``: the ``Obstacle`` object did not move.
 - Unlike a moved-from ``std::vector``, a moved-from ``std::unique_ptr`` is guaranteed to be empty.
 
 .. note::
@@ -1255,7 +1252,7 @@ Step 2: After the Move
    :width: 100%
 
 - After line 3: ``other`` owns the ``Obstacle`` object, and ``track`` holds ``nullptr``.
-- ``where`` still holds the same address: the object did not move. Only its owner changed.
+- ``where`` still holds the same address: the object did not move.
 - ``track`` points at nothing, so it deletes nothing when it goes out of scope.
 
 Exercise 3: Handing Over a Track
@@ -1303,7 +1300,7 @@ See `unique_ptr to an Array`_ under Further Reading.
    // track == nullptr: true, raw->id: 2
    delete raw;  // you are the owner now: leave this out and it leaks
 
-- ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it. Nothing owns the object except your code.
+- ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it.
 - You are back where `An Obstacle on the Heap`_ started: an ``Obstacle*`` that must be deleted exactly once.
 - Use it only to hand the object to code that takes ownership of a plain pointer. Otherwise, move the ``std::unique_ptr``.
 
@@ -1339,7 +1336,7 @@ Passing: Borrow
         std::cout << "  obstacle " << target.id << ": " << target.speed << " m/s\n";
       }
 
-- A function that only uses the ``Obstacle`` object takes it by reference or plain pointer, not the smart pointer. L5's rules for parameters apply.
+- A function that only uses the ``Obstacle`` object takes it by reference or plain pointer, not the smart pointer.
 - It then works for any ``Obstacle``: on the heap, on the stack, or in a vector.
 
 .. note::
@@ -1360,7 +1357,7 @@ Passing: Sink
    keep_lost(track);             // does not compile: a copy
    keep_lost(std::move(track));  // track == nullptr, lost.size() == 1
 
-- By value: the parameter is a new owner, so the caller must hand the ``Obstacle`` object over with ``std::move``. The call says that ownership moves.
+- By value: the parameter is a new owner, so the caller must hand the ``Obstacle`` object over with ``std::move``.
 - F.18, from `A Parameter the Function Moves From`_, asks for ``&&`` here. Its own exception: a move-only type that is cheap to move, such as ``std::unique_ptr``, can be passed by value.
 
 .. note::
@@ -1400,7 +1397,7 @@ Returning
 
    std::unique_ptr<Obstacle> track{make_track(5)};  // track->id: 5
 
-- A factory returns the ``std::unique_ptr`` by value. The caller becomes the owner.
+- A function that creates the object, such as ``make_track``, returns the ``std::unique_ptr`` by value. The caller becomes the owner.
 - ``return track;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
 - Compare `An Obstacle on the Heap`_: there, ``make_track`` returned an ``Obstacle*``, and nothing said who must delete it. Here the type says it.
 
@@ -1431,7 +1428,7 @@ Exercise 4: Lines That Compile
 A ``std::shared_ptr`` is one of several owners of an object on the heap. The owners share a count, and the last one to let go deletes the object.
 
 .. figure:: /_static/images/l7/av_owner_map_shared.png
-   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the box with id 2, planner, and the two lines with open diamonds.
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: tracker, the box with id 2, planner, and the two lines with open diamonds.
    :align: center
    :width: 80%
 
@@ -1452,8 +1449,8 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
    std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 62
    std::vector<Obstacle*> hazards;
-   hazards.push_back(tracker[1].get());  // id 2: looks, does not own
-   tracker.erase(tracker.begin() + 1);   // the track is lost: it dangles
+   hazards.push_back(tracker[0].get());  // id 2: looks, does not own
+   tracker.erase(tracker.begin());       // the track is lost: it dangles
 
 The ``tracker`` here is the one from `The Tracker's List`_.
 
@@ -1499,6 +1496,7 @@ The Control Block
 - A **control block** is the block a ``std::shared_ptr`` keeps beside its object: it holds the count of owners.
 - A ``std::shared_ptr`` is two pointers, 16 bytes: ``object`` and ``control``.
 - A copy adds 1 to the count; destroying a ``std::shared_ptr`` subtracts 1.
+- ``weak_ptrs``: the ``std::weak_ptr``\ s watching (`std::weak_ptr`_); 0 here.
 
 See `One Allocation with make_shared`_ under Further Reading.
 
@@ -1519,7 +1517,7 @@ See `One Allocation with make_shared`_ under Further Reading.
    moved: 2, hazard == nullptr: true
    reset: 1
 
-- A copy adds an owner. A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
+- A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
 - ``reset()`` gives up this owner's place. The ``Obstacle`` object is deleted only when the count reaches 0.
 
 Three Ways to Let Go
@@ -1579,7 +1577,6 @@ Step 3a: A New Object
 
 - 3a, 3b and 3c are separate runs, each from step 2.
 - 3a: ``std::make_shared<Obstacle>(4)`` makes a second allocation. ``track`` lets go of the first: its count drops to 0, so its object is destroyed and its 64 bytes freed.
-- The new object has id 4; its other members take their defaults.
 
 Step 3b: reset()
 """"""""""""""""
@@ -1620,7 +1617,7 @@ Deletion by the Last Owner
    after hazards.clear(): no owner left
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Neither list deletes the ``Obstacle`` object itself. Whichever lets go last does, and nothing leaks: ``702run week7_playground 80`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 80`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1651,7 +1648,7 @@ Passing: Borrow
 
 .. note::
 
-   Rule: `Core Guidelines R.30 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-smartptrparam>`__, again.
+   Rule: `Core Guidelines R.30 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-smartptrparam>`__.
 
 Passing: Share
 """"""""""""""
@@ -1663,6 +1660,8 @@ Passing: Share
      hazards.push_back(std::move(hazard));  // the list keeps this owner
    }
 
+   Hazards hazards;
+   auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
    add_hazard(hazards, track);
    std::cout << track.use_count() << '\n';  // 2
 
@@ -1692,7 +1691,7 @@ Passing: ``const shared_ptr&``
 
    near.use_count(): 2, far.use_count(): 1, hazards.size(): 1
 
-- By ``const&``: no owner is added by the call. The function copies the ``std::shared_ptr`` only if it decides to keep the ``Obstacle`` object.
+- By ``const&``: the call adds no owner. The function copies the ``std::shared_ptr`` only if it decides to keep the ``Obstacle`` object.
 - ``near``: id 2; ``far``: id 4. The 25 m limit is chosen for this example.
 
 .. note::
@@ -1715,7 +1714,7 @@ Returning
    error: no matching function for call to
    'std::unique_ptr<Obstacle>::unique_ptr(<brace-enclosed initializer list>)'
 
-``make_track`` is the factory from :ref:`l7-unique-returning`.
+``make_track`` is the function from :ref:`l7-unique-returning`.
 
 - A ``std::unique_ptr`` converts to a ``std::shared_ptr``: one owner becomes the first of several.
 - Not the other way: other owners may exist, and a ``std::unique_ptr`` must be the only one.
@@ -1727,7 +1726,7 @@ Returning
 A ``std::weak_ptr`` watches an object that ``std::shared_ptr``\ s own. It never keeps the object alive, and it can tell whether the object still exists.
 
 .. figure:: /_static/images/l7/av_owner_map_weak.png
-   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: the box with id 2, dashboard, and the arrow from dashboard.
+   :alt: A UML object diagram in black, with one part in orange: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner. In orange, with thick borders: the box with id 2, dashboard, and the arrow from dashboard.
    :align: center
    :width: 80%
 
@@ -1856,7 +1855,7 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
    shown.use_count(): 0, shown.expired(): true
 
 - ``use_count()`` counts the ``std::shared_ptr``\ s that own the ``Obstacle`` object. ``expired()`` is ``true`` when that count is 0.
-- To use the object, call ``lock()`` and test the result. ``expired()`` then ``lock()`` is two steps, and the last owner could let go between them.
+- To use the object, call ``lock()`` and test the result. ``expired()`` then ``lock()`` is two steps, and another thread could make the last owner let go between them.
 
 .. note::
 
@@ -1881,7 +1880,7 @@ Exercise 5: Use Counts
 Choosing a Pointer
 ------------------
 
-The question is always the same: who gives this object's memory back? The answer picks the pointer.
+Who gives this object's memory back? The answer picks the pointer.
 
 Rule: `Core Guidelines R.11 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-newdelete>`__.
 
@@ -1902,7 +1901,7 @@ One Table
      - R.30
    * - is its only owner
      - ``std::unique_ptr<T>``, from ``std::make_unique``
-     - the tracker's ``Obstacle`` objects
+     - the tracker of `The Tracker's List`_
      - R.21, R.23
    * - is one of several owners
      - ``std::shared_ptr<T>``, from ``std::make_shared``
@@ -1917,7 +1916,7 @@ One Table
      - `An Obstacle on the Heap`_ and `Reminder: Three Ways to Get It Wrong`_
      - R.11
 
-- Start with ``std::unique_ptr``. Change to ``std::shared_ptr`` only when a second owner appears: it costs a control block and a count.
+- Start with ``std::unique_ptr``. Change to ``std::shared_ptr`` only when a second owner appears: it costs a control block.
 - Parameters: by value to take ownership (R.32, R.34), ``std::unique_ptr<T>&`` to reseat (R.33), and the object itself to only use it (R.30).
 
 See `More Core Guidelines`_ under Further Reading.
@@ -1926,7 +1925,7 @@ Back to the Tracker
 ^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/av_owner_map.png
-   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, showing id = 1, id = 3 and id = 4. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, showing id = 2, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
+   :alt: A UML object diagram in black and white: seven boxes joined by lines, with nothing written on the lines. Across the top, three boxes each labeled : Obstacle, each listing four members: id = 1, pose = {20.0, -3.0, 0.00}, speed = 0.0, is_static = true; then id = 3, pose = {30.0, 2.5, 1.57}, speed = 1.4, is_static = false; then id = 4, pose = {38.0, 3.5, 3.14}, speed = 13.4, is_static = false. Below them, in the middle, a box labeled tracker. A line runs from each of the three top boxes down to tracker and ends in a filled diamond at tracker. Below tracker, a fourth : Obstacle box, listing id = 2, pose = {12.0, -1.0, 0.00}, speed = 4.0, is_static = false, joined to tracker by a line with an open diamond at tracker. On the left of the id 2 box, a box labeled dashboard, with an arrow from dashboard that ends in an arrowhead at the id 2 box, with no diamond. On its right, a box labeled planner, joined to it by a line with an open diamond at planner.
    :align: center
    :width: 80%
 
