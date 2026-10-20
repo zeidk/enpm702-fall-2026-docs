@@ -871,7 +871,7 @@ Categories and References
      - another name for an object that already exists
    * - ``const T&``
      - lvalues and rvalues
-     - the object cannot be changed through it, so nothing is taken
+     - read-only, so a temporary may bind: no change to it can be lost
    * - ``T&&``
      - rvalues only: xvalues and prvalues
      - a function that takes one may take the contents
