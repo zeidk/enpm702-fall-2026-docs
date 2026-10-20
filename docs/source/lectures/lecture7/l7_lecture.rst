@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 80, runs only when you ask for it by number: ``702run week7_playground 80``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 82, runs only when you ask for it by number: ``702run week7_playground 82``. A full run skips it.
 
 .. note::
 
@@ -878,6 +878,7 @@ Categories and References
 
 - ``std::move(x)`` is a cast to ``T&&``: an xvalue. It moves nothing (`What std::move Does`_).
 - A named ``T&&`` is an lvalue (`Giving It a Name`_, under Further Reading).
+- One ``const T&`` parameter called with each category: :ref:`l7-const-ref-binds`, under Further Reading.
 
 Smart Pointers
 --------------
@@ -1285,6 +1286,24 @@ Exercise 4: Lines That Compile
 
 - For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 61`` and its comments.
 
+.. dropdown:: Answers
+   :class-container: sd-border-success
+
+   A ``std::unique_ptr`` cannot be copied: its copy constructor is deleted.
+
+   1. ``auto c{a};``: **does not compile**. It would copy ``a``, and then two owners would both delete the ``Obstacle`` object with id 1.
+   2. ``auto d{std::move(a)};``: **compiles, correct**. ``d`` now owns the object with id 1, and ``a`` is empty.
+   3. ``inspect(*d);``: **compiles, correct**. ``inspect`` only reads the object, through a ``const Obstacle&`` (:ref:`Borrow <l7-app-unique-borrow>`, under Further Reading). ``d`` still owns it.
+   4. ``adopt(b);``: **does not compile**. ``adopt`` takes its parameter by value, so the parameter would be a copy of ``b``.
+   5. ``adopt(std::move(b));``: **compiles, correct**. The parameter is moved from ``b``: ``adopt`` is a sink (:ref:`Sink <l7-app-unique-sink>`, under Further Reading). It owns the object with id 3 and deletes it when the parameter is destroyed. ``b`` is empty.
+   6. ``std::unique_ptr<Obstacle> e{new Obstacle{}};``: **compiles, correct**. ``e`` owns the new object. R.23 asks for ``std::make_unique<Obstacle>()`` instead, so the code has no ``new``.
+   7. ``Obstacle* f{d.get()};``: **compiles, correct**. ``f`` points at the object with id 1 but does not own it. ``d`` still deletes it.
+   8. ``std::unique_ptr<Obstacle> g{f};``: **compiles, wrong**. ``g`` and ``d`` both own the object with id 1, and both delete it. AddressSanitizer reports it:
+
+   .. code-block:: text
+
+      ERROR: AddressSanitizer: attempting double-free on 0x504000000010 in thread T0:
+
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
 
@@ -1411,7 +1430,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``cyclist`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, the tracker sees the cyclist again: a new ``Obstacle`` object. Run it: ``702run week7_playground 68``.
+- In 3a, the tracker sees the cyclist again: a new ``Obstacle`` object. Run it: ``702run week7_playground 70``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1479,7 +1498,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 74`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 76`` ends with no LeakSanitizer report.
 
 Passing and Returning
 """""""""""""""""""""
@@ -1581,7 +1600,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 80``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 82``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1597,7 +1616,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 81``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 83``: no LeakSanitizer report.
 
 .. note::
 
@@ -1622,7 +1641,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 82``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 84``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1677,7 +1696,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 85``.
+- Check: ``702run week7_playground 87``.
 
 Choosing a Pointer
 ------------------
@@ -2516,3 +2535,25 @@ Passing: ``weak_ptr``
 - A function that keeps a watcher takes ``const std::weak_ptr<T>&`` and stores a copy. ``cyclist.use_count()`` stays 1.
 - A function that only uses the object takes ``const T&``. The caller locks first, then passes the object (R.30).
 - The Core Guidelines have no rule for ``std::weak_ptr`` parameters. The first bullet follows the example in `Core Guidelines R.24 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-weak_ptr>`__.
+
+.. _l7-const-ref-binds:
+
+``const T&`` with Each Category
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<int> make_path(int n) { return std::vector<int>(n, 7); }
+   void print_size(const std::vector<int>& path) {
+     std::cout << path.size() << '\n';
+   }
+
+   std::vector<int> path{make_path(3)};
+   print_size(path);              // 1. lvalue: prints 3
+   print_size(make_path(5));      // 2. prvalue: prints 5
+   print_size(std::move(path));   // 3. xvalue: prints 3
+   std::cout << path.size();
+
+- 1: ``path`` is an lvalue. The reference is another name for ``path``.
+- 2: ``make_path(5)`` is a prvalue. A temporary vector is made, the reference binds to it, and it is destroyed at the end of the line. ``print_size`` only reads it, so nothing is lost.
+- 3: ``std::move(path)`` is an xvalue. Through a ``const&``, ``print_size`` cannot take the contents, so the last line prints 3.
