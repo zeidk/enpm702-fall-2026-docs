@@ -1580,8 +1580,9 @@ L7: Smart Pointers and Move Semantics
 
    lvalue
       An expression that refers to an object that already exists, and does
-      not let another object take its contents: an object made from it is a
-      copy. C++20 calls it a glvalue
+      not let another object take its contents. If you make a new object
+      from it, the new object gets a copy, and the original keeps its
+      contents. C++20 calls it a glvalue
       that is not an xvalue. A named variable, ``*ptr``, ``seen[0]``, a call
       that returns ``T&``, and a string literal are lvalues. You can take an
       lvalue's address.

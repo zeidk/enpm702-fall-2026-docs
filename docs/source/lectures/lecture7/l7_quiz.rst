@@ -4,7 +4,7 @@
 Lecture 7 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 7: Smart Pointers and Move Semantics. Topics include the owner of a heap object and the leak LeakSanitizer reports, moves, value categories, rvalue references, ``std::move``, ``std::unique_ptr``, ``std::shared_ptr``, ``std::weak_ptr``, and reference cycles. Question 15 comes from the Further Reading part of the lecture.
+This quiz covers the key concepts from Lecture 7: Smart Pointers and Move Semantics. Topics include the owner of a heap object and the leak LeakSanitizer reports, moves, value categories, rvalue references, ``std::move``, ``std::unique_ptr``, ``std::shared_ptr``, ``std::weak_ptr``, and reference cycles.
 
 The code uses the types ``Pose`` and ``Obstacle`` from ``project/week7/common/obstacle.hpp``, and ``make_path(n)`` returns a ``std::vector<Pose>`` of ``n`` poses, one meter apart, as in the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3 and libstdc++, with ``-std=c++20 -Wall -Wextra -fsanitize=address,undefined``.
 
@@ -194,30 +194,32 @@ Multiple Choice (Questions 1 to 10)
 .. admonition:: Question 6
    :class: hint
 
-   What happens here?
+   ``plan`` returns a local ``std::vector<Pose>`` by value, with ``return path;``. Which line initializes its destination directly from the prvalue ``plan(500)``, with no move in between?
 
    .. code-block:: cpp
 
-      const std::vector<Pose> path{make_path(1000)};
-      std::vector<Pose> controller_path{std::move(path)};
+      std::vector<Pose> p{plan(500)};                // line 1
+      std::vector<std::vector<Pose>> plans;
+      plans.push_back(plan(500));                    // line 2
 
-   A. It does not compile, because a ``const`` object cannot be moved.
-   B. It moves: ``controller_path`` takes the block, and ``path`` is left empty.
-   C. It compiles with no warning, and it copies: ``path`` still holds 1000 poses.
-   D. It is undefined behavior.
+   A. Both lines: the compiler elides in both.
+   B. Only line 1. In line 2, ``push_back`` takes a reference, so the prvalue becomes a temporary that is moved into the vector.
+   C. Only line 2: ``push_back`` takes an rvalue reference, so nothing is moved.
+   D. Neither: a vector returned from a function is always moved.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **C. It compiles with no warning, and it copies: path still holds 1000 poses.**
+      **B. Only line 1.**
 
-      ``std::move(path)`` has type ``const std::vector<Pose>&&``. It cannot bind to the move constructor's ``std::vector<Pose>&&``, which would change ``path``. It does bind to the copy constructor's ``const std::vector<Pose>&``, so the compiler copies. With ``-Wall -Wextra``, g++ prints no warning. The program prints:
+      A prvalue that initializes an object of its own type is used to initialize that object directly (C++20 [dcl.init] 17.6.1), so ``p`` is built in place. ``push_back`` takes a ``std::vector<Pose>&&``: the reference binds to a temporary, and the element in the vector is move-constructed from it. With g++ 13.3 and the course flags, ``702run week7_playground 14`` prints:
 
       .. code-block:: text
 
-         controller_path.data() == path.data(): false, path.size(): 1000
+         elision: &p == made_object: true, p.data() == made_block: true
+         move: &plans[0] == made_object: false, plans[0].data() == made_block: true
 
-      A ``const`` object cannot be moved from. Declare an object ``const`` only if you will not hand it on.
+      ``p`` is ``plan``'s local itself. ``plans[0]`` is a new object that took the same block. (``return path;`` inside ``plan`` is NRVO, which is permitted, not guaranteed: if the compiler does not do it, ``path`` is moved out.)
 
 .. admonition:: Question 7
    :class: hint
@@ -467,17 +469,29 @@ True/False (Questions 11 to 15)
 .. admonition:: Question 15
    :class: hint
 
-   **True or False**: ``other`` is a ``std::unique_ptr<Obstacle>``. The line ``bool has_track = other;`` compiles, because a ``std::unique_ptr`` converts to ``bool``.
+   What are ``copied.size()`` and ``copied.capacity()``, with libstdc++?
+
+   .. code-block:: cpp
+
+      std::vector<Pose> path{make_path(1000)};
+      path.reserve(1024);              // room for 24 more
+      std::vector<Pose> copied{path};
+
+   A. 1000 and 1024: the copy takes ``path``'s spare slots too.
+   B. 1000 and 1000.
+   C. 1024 and 1024.
+   D. 0 and 1024: ``reserve`` empties the vector.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **False.**
+      **B. 1000 and 1000.**
 
-      The conversion to ``bool`` is ``explicit``. A condition may use it, so ``if (other)`` and ``!other`` work. The initialization with ``=`` does not:
+      ``path`` has 1024 slots, 1000 in use: 24576 bytes. A copy allocates for the elements only, not the spare slots: ``copied`` has 1000 slots, 1000 times 24 bytes, which is 24000 bytes. ``702run week7_playground 13`` prints:
 
       .. code-block:: text
 
-         error: cannot convert ‘std::unique_ptr<Obstacle, std::default_delete<Obstacle> >’ to ‘bool’ in initialization
+         path: size 1000, capacity 1024, 24576 bytes
+         copied: size 1000, capacity 1000, 24000 bytes
 
-      Write ``bool has_track{other != nullptr};`` instead. ``if (other)``, ``!other`` and ``other == nullptr`` all test for empty, and the same works for ``std::shared_ptr``.
+      The standard only asks that a copy hold equal elements; libstdc++'s copy constructor allocates exactly ``size()``.

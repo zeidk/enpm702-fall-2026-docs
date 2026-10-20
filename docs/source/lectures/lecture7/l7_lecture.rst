@@ -31,7 +31,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week7)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week7_playground``.
-5. Run every slide: ``702run week7_playground``. Run only one slide, for example `Handing a Path to the Controller`_: ``702run week7_playground 14``.
+5. Run every slide: ``702run week7_playground``. Run only one slide, for example `Handing a Path to the Controller`_: ``702run week7_playground 12``.
 
 **Code That Leaks or Breaks**
 
@@ -51,7 +51,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week7_playground            # the code of every slide, in order
-      702run week7_playground 14         # only the code of slide 14
+      702run week7_playground 12         # only the code of slide 12
       702run week7_appendix              # the code of every appendix frame
       702run week7_appendix iv           # only appendix frame iv (4 works too)
       702run week7_allocations           # appendix frame xiv: counts make_shared's allocations
@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 89, runs only when you ask for it by number: ``702run week7_playground 89``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 81, runs only when you ask for it by number: ``702run week7_playground 81``. A full run skips it.
 
 .. note::
 
@@ -112,7 +112,7 @@ From L5. **Copy elision**: the compiler builds the returned object **directly in
 The Program We Will Build
 -------------------------
 
-An autonomous car, the **ego vehicle**, drives along a two-lane road. The ego vehicle has a **tracker**, which sees four obstacles. In this lecture we write the tracker, the **planner** and the **dashboard**.
+An autonomous car, the **ego vehicle**, drives along a two-lane road. Its software has a **tracker**, which sees four obstacles; a **planner**, which plans a path past them; and a **dashboard**, which shows the driver one obstacle. In this lecture we write all three.
 
 .. list-table::
    :header-rows: 1
@@ -238,24 +238,12 @@ An Obstacle on the Heap
    track = nullptr;
 
 - ``make_track`` creates the ``Obstacle`` object with ``new``. The caller must ``delete`` it.
-- Nothing in the type says so: ``Obstacle*`` looks the same whether it owns the ``Obstacle`` object or only points at it.
 
 .. note::
 
-   "A raw pointer (a ``T*``) is non-owning". An owner needs a type that says it owns. Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
+   "A raw pointer (a ``T*``) is non-owning". Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
-Reminder: Three Ways to Get It Wrong
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-1. **Leak**: a function returns early and skips its ``delete``. The ``Obstacle`` object's memory is never given back.
-2. **Double** ``delete``: the same ``Obstacle`` object is in the tracker's list and the planner's hazard list, and each list deletes it. It breaks the rule "``delete`` exactly once" and is undefined behavior.
-3. **Dangling read**: the tracker deletes the ``Obstacle`` object when the track is lost, and the planner still reads it. Undefined behavior.
-
-.. note::
-
-   The cause is the same in all three: no code is marked as the owner.
-
-See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading.
+See `Double Delete, Measured`_ and `Dangling Read, Measured`_ under Further Reading: the double ``delete`` and the dangling read that raw ``new`` and ``delete`` allow.
 
 RAII
 ^^^^
@@ -290,12 +278,6 @@ Handing a Path to the Controller
    std::vector<Pose> copied{path};            // a copy
    std::vector<Pose> moved{std::move(path)};  // a move
 
-.. code-block:: text
-
-   copy: copied.data() == path.data(): false, path.size(): 1000
-   move: moved.data() == where: true, path.size(): 0
-   bytes the copy allocated: 24000
-
 - The copy allocates a new block, 1000 × 24 bytes (``sizeof(Pose)``: three ``double``\ s) = 24000 bytes, and copies every ``Pose``. ``path`` is unchanged.
 - The move allocates nothing. ``moved`` holds the block ``path`` had, at the same address, and ``path`` is left empty.
 
@@ -320,43 +302,68 @@ Handing a Path to the Controller
    - ``702run week7_appendix iv`` prints the three poses of ``make_path(3)``: (0, 0, 0) (1, 0, 0) (2, 0, 0).
    - It returns the local ``path`` by value: no copy is made (`Returning a Local`_).
 
-An Implicit Move
-^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   const Pose* made{nullptr};             // where plan's block is made
-   std::vector<Pose> plan(int n) {        // a custom function
-     std::vector<Pose> path{make_path(n)};
-     made = path.data();
-     return path;                         // no std::move
-   }
-
-   std::vector<std::vector<Pose>> plans;
-   plans.push_back(plan(500));            // no std::move
-
-.. code-block:: text
-
-   plans[0].data() == made: true, plans[0].size(): 500
-
-- No ``std::move``, and still no copy: the block made inside ``plan`` is the block in ``plans[0]``.
-- ``return path;`` moves the local out of the function, or builds it in place (`Returning a Local`_).
-- ``push_back`` gets a temporary, so it takes the overload that moves (`Overloads for Copy and Move`_).
-- ``702run week7_playground 15`` prints the line above.
-
 Inside a Copy
 ^^^^^^^^^^^^^
 
+.. code-block:: cpp
+
+   std::vector<Pose> path{make_path(1000)};
+   path.reserve(1024);              // room for 24 more
+   std::vector<Pose> copied{path};  // a copy
+
 .. figure:: /_static/images/l7/av_vector_copy.png
-   :alt: Two panels side by side, one per vector, each under a rounded name tag: path on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip. The two panels are drawn the same way: the begin arrow ends at the left end of the first cell, and the end and capacity arrows both at the right end of the last cell. Each measuring line reads 1000 Pose, 24000 bytes. No arrow joins the two panels.
+   :alt: Two panels side by side, one per vector, each under a rounded name tag: path on the left, copied on the right. In each panel, a blue box with a stack icon and the word Stack holds three fields, begin, end and capacity, each marked ptr. Below it, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip. Under path, the strip ends in a gray part marked 24 free: the begin arrow ends at the left end of the first cell, the end arrow at the start of the gray part, and the capacity arrow at the right end of the strip. A measuring line under it reads 1024 Pose, 24576 bytes. Under copied, the strip has no gray part: the begin arrow ends at the left end of the first cell, and the end and capacity arrows both at the right end of the last cell. Its measuring line reads 1000 Pose, 24000 bytes. No arrow joins the two panels.
    :align: center
    :width: 100%
 
-   A ``std::vector`` and its copy: each one owns its own block.
+   A ``std::vector`` and its copy: each one owns its own block, and the copy has no spare slots.
 
-- After ``std::vector<Pose> copied{path}``, each vector has its own block and frees it at the end of its scope.
+- ``path.reserve(1024)`` gives ``path`` room for 24 more poses, so its block has spare slots. The copy shows that they are not copied.
 - ``begin`` points at the first ``Pose``, ``end`` one past the last one (the right edge of the last cell), ``capacity`` one past the last slot.
-- ``make_path`` reserved 1000 slots, and a copy allocates exactly its size: in both, ``end`` equals ``capacity``. Each block: 1000 × 24 = 24000 bytes; total 48000.
+- ``path``: 1024 slots (libstdc++ reserves exactly 1024), 1000 in use: 1024 × 24 = 24576 bytes, 24 unused (gray).
+- ``copied``: 1000 × 24 = 24000 bytes. A copy allocates for the elements only, not the spare slots: its ``end`` equals its ``capacity``.
+- Each vector frees its own block at the end of its scope. ``702run week7_playground 13`` prints both sizes and capacities.
+
+Elision or a Move
+^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   const std::vector<Pose>* made_object{nullptr};  // plan's local
+   const Pose* made_block{nullptr};                // its block
+   std::vector<Pose> plan(int n) {
+     std::vector<Pose> path{make_path(n)};
+     made_object = &path;
+     made_block = path.data();
+     return path;  // no std::move
+   }
+   std::vector<std::vector<Pose>> plans;           // a list of paths
+
+**Elision**
+
+.. code-block:: cpp
+
+   std::vector<Pose> p{plan(500)};
+
+- ``&p == made_object``: ``p`` **is** ``plan``'s local, one object.
+
+**Move**
+
+.. code-block:: cpp
+
+   plans.push_back(plan(500));
+
+- ``&plans[0] != made_object``, but ``plans[0].data() == made_block``: a new object that took the block.
+
+``702run week7_playground 14`` prints:
+
+.. code-block:: text
+
+   elision: &p == made_object: true, p.data() == made_block: true
+   move: &plans[0] == made_object: false, plans[0].data() == made_block: true
+
+- Elision is guaranteed when a prvalue initializes an object of its own type (C++20 **[dcl.init]** 17.6.1), as ``plan(500)`` initializes ``p``. ``push_back`` takes a reference: it gets a temporary and moves it in (`Overloads for Copy and Move`_).
+- ``return path;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). If it is not, ``path`` is moved out: an implicit move (`Returning a Local`_). Compiled with ``-fno-elide-constructors``, which turns NRVO off, ``&p == made_object`` is ``false`` too: ``p`` then gets a moved-in object.
 
 Inside a Move
 ^^^^^^^^^^^^^
@@ -407,7 +414,20 @@ Exercise 1: Copy and Move
 - At the board, after each line: draw ``a``, ``b`` and ``c`` on the stack, each with its ``begin``, ``end`` and ``capacity`` pointers (`Inside a Copy`_), and every block on the heap they point at.
 - Line 4 is a move into a vector that already exists. What does ``a`` hold before it, and after?
 - After line 4: how many blocks are on the heap? Which variable owns each one? Was any block freed?
-- Check: ``702run week7_playground 19`` prints each vector's size, capacity and block after every line.
+- Check: ``702run week7_playground 17`` prints each vector's size, capacity and block after every line.
+
+Exercise 1: After Each Line
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l7/av_copy_move_states.png
+   :alt: Four panels in a 2 by 2 grid, tagged 1 to 4. Each panel has a blue Stack box on the left and a red Heap box on the right. The Heap box holds the blocks of three cells that exist after that line, tagged A (upper) and B (lower). In the Stack box, each declared vector is a row, a at the bottom, b above it and c on top: a name tag and three fields, begin, end and capacity. Under each block, a dashed empty slot marks one past its last cell. A field that holds an address has a blue dot and its own arrow: begin to the block's first cell, end and capacity both to the dashed slot. A field that is null reads nullptr and has no arrow. Panel 1: only block A exists; a reads ptr, with an arrow to A. Panel 2: a points to A, and b, reading ptr, points to B. Panel 3: a reads null in all three fields, with no arrow; b points to B; c points to A. Panel 4: a points to B; b reads null, with no arrow; c points to A.
+   :align: center
+   :width: 100%
+
+   The answer to `Exercise 1: Copy and Move`_: memory after each of its four lines.
+
+- **1** to **4**: after lines 1 to 4 of `Exercise 1: Copy and Move`_. A and B: the two blocks, 3 ``Pose`` each, 3 × 24 = 72 bytes. An arrow: the block a vector owns.
+- Line 2 copies A into a new block, B. Lines 3 and 4 hand A to ``c`` and B to ``a``, and leave the source's pointers null. Nothing is freed.
 
 Value Categories
 ^^^^^^^^^^^^^^^^
@@ -511,7 +531,7 @@ Each expression is exactly one of the three bottom boxes (lvalue, xvalue, prvalu
 lvalue: A Named Object
 ^^^^^^^^^^^^^^^^^^^^^^
 
-An **lvalue** is an expression that (1) refers to an object that already exists, and (2) does not let another object take its contents: an object made from it is a copy.
+An **lvalue** is an expression that (1) refers to an object that already exists, and (2) does not let another object take its contents. If you make a new object from it, the new object gets a copy, and the original keeps its contents.
 
 .. code-block:: cpp
    :linenos:
@@ -519,10 +539,6 @@ An **lvalue** is an expression that (1) refers to an object that already exists,
    int count{3};        // makes an int object that holds 3
    count = 4;           // the same object now holds 4
    int* where{&count};  // where holds that object's address
-
-.. code-block:: text
-
-   count: 4, where == &count: true
 
 - An **object** is a piece of memory that holds a value. Line 1 makes one and names it ``count``.
 - In line 2, ``count`` is an lvalue. Part (1) of the definition holds: it refers to the object from line 1, which already exists. Part (2) holds: ``count`` is a plain name, with no ``std::move``, so nothing takes its contents. `lvalue: Copied, Not Taken`_ shows what taking looks like.
@@ -538,15 +554,10 @@ lvalue: Copied, Not Taken
    std::vector<int> copied{scores};
    std::vector<int> best{std::move(scores)};
 
-.. code-block:: text
-
-   after line 2: scores.size(): 3, copied.size(): 3
-   after line 3: scores.size(): 0, best.size(): 3
-
 - To **take** an object's contents is to move them into another object. To **mark** an object, with ``std::move``, is to say another object may take them. Line 3 takes the three numbers that ``scores`` keeps on the heap.
 - In line 2, ``scores`` is an lvalue. Part (2) holds: ``copied`` gets its own copy, and ``scores`` keeps its three numbers.
 - In line 3, ``std::move(scores)`` **marks** ``scores``. ``best`` takes its contents, and ``scores`` is left empty (libstdc++, measured). Part (2) fails: ``std::move(scores)`` is not an lvalue (`xvalue: Marked by std::move`_).
-- One exception: ``return path;`` may move from a local variable even though ``path`` is an lvalue (`An Implicit Move`_).
+- One exception: ``return path;`` may move from a local variable even though ``path`` is an lvalue (`Elision or a Move`_).
 
 lvalue: Checking with ``&``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -562,25 +573,11 @@ lvalue: Checking with ``&``
 
    error: lvalue required as unary '&' operand
 
-- The built-in ``&`` compiles only on an lvalue: parts (1) and (2) of the definition must both hold. Line 3 fails part (1); `xvalue: Ways to Mark`_ shows part (2) failing.
+- The built-in ``&`` compiles only on an lvalue: parts (1) and (2) of the definition must both hold. Line 3 fails part (1); `Ways to Mark`_, under Further Reading, shows part (2) failing.
 - In line 2, ``count`` is an lvalue: parts (1) and (2) hold (`lvalue: A Named Object`_). So ``&count`` compiles.
 - In line 3, ``count + 1`` computes 4, but no object that already exists holds that 4. Part (1) fails: ``count + 1`` is not an lvalue, and ``&(count + 1)`` does not compile. `prvalue: A Computed Value`_ says what it is.
 
-lvalue: A Reference, an Element, ``*p``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   int count{3};
-   int& alias{count};           // another name for count (L3)
-   int numbers[3]{10, 20, 30};
-   int* p{&numbers[1]};         // p holds the address of numbers[1]
-
-- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count`` (part 1). Nothing marks it (part 2), so ``alias`` is an lvalue.
-- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does (part 1). Nothing marks it (part 2), so ``numbers[2]`` is an lvalue.
-- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]`` (part 1). Nothing marks it (part 2), so ``*p`` is an lvalue.
-
-``702run week7_playground 26`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
+See `A Reference, an Element, *p`_ under Further Reading.
 
 lvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -603,7 +600,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_obstacle(seen)``: the ``Obstacle`` object the returned ``Obstacle&`` refers to, ``seen[0]``.
 - ``"stop"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 27`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 25`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_obstacle`` by Value and ``first_obstacle``
    :icon: code
@@ -634,37 +631,11 @@ A **prvalue** is an expression that does not refer to an object that already exi
    int count{3};
    int next{count + 1};  // the 4 initializes next
 
-.. code-block:: text
-
-   next: 4, count: 3
-   count + 1: prvalue
-
 - Part (1) of the lvalue definition: does ``count + 1`` refer to an object that already exists? No. It computes 4, and no object held that 4 before line 2.
 - The 4 initializes ``next``, a new object. ``count`` is unchanged.
 - Part (1) fails, so in line 2, ``count + 1`` is a prvalue. That is also why ``&(count + 1)`` does not compile (`lvalue: Checking with &`_).
 
-prvalue: Literals, Results, Calls
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-   :linenos:
-
-   int twice(int n) { return 2 * n; }  // returns an int by value
-   int count{3};
-   int doubled{count * 2};
-   int again{twice(count)};
-
-- In line 2, ``3`` is a number written in the code: no object holds it until it initializes ``count``. ``3`` is a prvalue.
-- In line 3, ``count * 2`` computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
-- In line 4, ``twice(count)`` returns an ``int`` by value: a value, not an object that already exists. ``twice(count)`` is a prvalue.
-
-``&`` on any of them gives:
-
-.. code-block:: text
-
-   error: lvalue required as unary '&' operand
-
-``702run week7_playground 30`` prints ``prvalue`` for all three.
+See `Literals, Results, Calls`_ under Further Reading.
 
 prvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -690,7 +661,7 @@ With the declarations above, each expression below is a prvalue:
    &(a + b):      error: lvalue required as unary '&' operand
    &make_path(3): error: taking address of rvalue
 
-``702run week7_playground 31`` prints ``prvalue`` for all five.
+``702run week7_playground 28`` prints ``prvalue`` for all five.
 
 xvalue: Marked by ``std::move``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -703,30 +674,11 @@ An **xvalue** is an expression that (1) refers to an object that already exists,
    std::vector<int> scores{90, 75, 82};
    std::vector<int> best{std::move(scores)};
 
-.. code-block:: text
-
-   best.size(): 3, scores.size(): 0
-
 - Part (1): ``std::move(scores)`` refers to ``scores``, made in line 1.
 - Part (2): ``std::move`` marks ``scores``, so another object may take its contents (`lvalue: Copied, Not Taken`_).
 - Both hold, so in line 2, ``std::move(scores)`` is an xvalue. ``best`` takes the three numbers, and ``scores`` is left empty (libstdc++, measured).
 
-xvalue: Ways to Mark
-^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   struct Point { int x; int y; };
-   int count{3};
-   Point pt{1, 2};
-
-``int&&`` reads "rvalue reference to ``int``": a reference whose object may be taken (`Binding to rvalues`_). Each expression below refers to an object that already exists and marks it:
-
-- ``std::move(count)``: a call to a function that returns ``int&&``. It refers to ``count``. ``std::move(count)`` is an xvalue.
-- ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
-- ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
-
-``702run week7_playground 34`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+See `Ways to Mark`_ under Further Reading.
 
 xvalue: In the Tracker
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -744,7 +696,7 @@ Marking an **xvalue** (`xvalue: Marked by std::move`_) moves nothing.
 - ``static_cast<std::vector<Pose>&&>(path)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(cyclist).pose``: ``std::move`` marks ``cyclist``, so its member ``pose`` is marked too. Its ``decltype((e))`` is ``Pose&&``, the same form with ``T`` = ``Pose`` (`The decltype Test`_).
 
-``702run week7_playground 35`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 31`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -836,7 +788,7 @@ Exercise 2: Value Categories
    make_obstacle(n).speed    // 9
    ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 40``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 36``.
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
@@ -857,8 +809,7 @@ Binding to rvalues
 - Bound to the prvalue ``make_path(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
 - ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
 
-See `Category, Type and Lifetime`_ under Further Reading.
-
+See `Category, Type and Lifetime`_ and `Giving It a Name`_ under Further Reading.
 
 What Each Reference Refers To
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -874,22 +825,6 @@ What Each Reference Refers To
 - **2**, line 3: ``any_ref``, a ``const&``, binds ``path``, an lvalue.
 - **3**, line 4: a ``T&&`` cannot bind ``path``, an lvalue, so it does not compile. The figure draws it dashed and crossed out.
 - A reference has no box. C++20 **[dcl.ref]** paragraph 4: "It is unspecified whether or not a reference requires storage."
-
-Giving It a Name
-^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   std::vector<Pose>&& r{make_path(10)};
-   decltype(r)     // std::vector<Pose>&&: the type of r
-   decltype((r))   // std::vector<Pose>&: the expression r is an lvalue
-
-- The **type** of ``r`` is an rvalue reference. The **expression** ``r`` is an lvalue: it has a name, and you can use it again on the next line.
-- So a function that receives a ``T&&`` parameter cannot move from it just by using its name. It has to mark it again with ``std::move``.
-
-.. note::
-
-   The note to **[basic.lval]** paragraph 4: "named rvalue references are treated as lvalues and unnamed rvalue references to objects are treated as xvalues".
 
 Overloads for Copy and Move
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -938,32 +873,13 @@ What ``std::move`` Does
 
    Write ``std::move`` only where the object is handed on, and do not use the source again until you assign it. Rule: `Core Guidelines ES.56 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-move>`__.
 
-See `The Definition of std::move`_ under Further Reading.
-
-``std::move`` on a ``const`` Object
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   const std::vector<Pose> path{make_path(1000)};
-   std::vector<Pose> controller_path{std::move(path)};   // compiles
-
-.. code-block:: text
-
-   controller_path.data() == path.data(): false, path.size(): 1000
-
-- No warning, and no move: a new block, and ``path`` still holds 1000 poses.
-- ``std::move(path)`` returns ``const std::vector<Pose>&&``. It cannot bind to the move constructor's ``std::vector<Pose>&&``, which would change ``path``.
-- It does bind to the copy constructor's ``const std::vector<Pose>&``, so the compiler copies.
-
-.. note::
-
-   A ``const`` object cannot be moved from. Declare an object ``const`` only if you will not hand it on.
+See `The Definition of std::move`_ and `std::move on a const Object`_ under Further Reading.
 
 A Parameter the Function Moves From
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
+   :linenos:
 
    struct Controller { std::vector<Pose> path; };  // the part that steers
    void set_path(Controller& controller, std::vector<Pose>&& path) {
@@ -977,11 +893,7 @@ A Parameter the Function Moves From
    set_path(controller, std::move(path));  // the caller says: take it
    set_path(controller, make_path(5));     // a prvalue: no std::move
 
-.. code-block:: text
-
-   controller.path.data() == where: true, path.size(): 0
-   controller.path.size(): 5
-
+- After line 10, ``controller.path`` holds ``path``'s block (``where``), and ``path`` is empty. After line 11, it holds 5 poses.
 - ``&&`` makes the caller write ``std::move`` for a named object. Inside, ``path`` has a name, so it is an lvalue: without the second ``std::move``, the assignment copies.
 
 .. note::
@@ -1002,8 +914,6 @@ Returning a Local
 
 .. code-block:: text
 
-     inside plan_path, path.data(): 0x52a000000200
-     in the caller, path.data(): 0x52a000000200
    warning: moving a local object in a return statement prevents copy elision
    [-Wpessimizing-move]
 
@@ -1017,7 +927,7 @@ Returning a Local
 Smart Pointers
 --------------
 
-A **smart pointer** is an object that points at one heap object and says, in its type, how that object is owned. The owning ones delete the object when its last owner lets go.
+A **smart pointer** is an object that points at one heap object. The owning ones delete the object when its last owner lets go.
 
 Three class templates in ``<memory>``, one for each kind of ownership in `Who Owns Each Obstacle`_. C++20 lists all three under smart pointers (20.11).
 
@@ -1098,10 +1008,6 @@ In Memory
 
    A ``std::unique_ptr`` on the stack and the ``Obstacle`` object it owns on the heap.
 
-.. code-block:: text
-
-   sizeof(track): 8, sizeof(Obstacle*): 8, sizeof(Obstacle): 48
-
 - The ``std::unique_ptr`` is one pointer on the stack, the same 8 bytes as an ``Obstacle*``. The resource, the ``Obstacle`` object, is on the heap.
 - Using a ``std::unique_ptr`` instead of an ``Obstacle*`` adds no bytes. It adds two rules: it deletes the ``Obstacle`` object when it is destroyed, and no other ``std::unique_ptr`` can own that object.
 
@@ -1150,7 +1056,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 55`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 49`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1169,7 +1075,7 @@ One Owner Only
 
 - A **deleted function** is declared with ``= delete``: any call to it is a compile error. A **deleter** is what a ``std::unique_ptr`` calls to give its object back.
 - The copy constructor is deleted, so a copy does not compile.
-- Two owners of one ``Obstacle`` object would both delete it: the double ``delete`` of `Reminder: Three Ways to Get It Wrong`_. The type rules it out at compile time.
+- Two owners of one ``Obstacle`` object would both delete it: the double ``delete`` of `Double Delete, Measured`_ (Further Reading). The type rules it out at compile time.
 - ``_Dp = std::default_delete<Obstacle>`` is the deleter; it calls ``delete``.
 
 See `std::auto_ptr`_ under Further Reading.
@@ -1205,7 +1111,7 @@ See `std::auto_ptr`_ under Further Reading.
 
    C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraph 4, ``reset(p)``: "Assigns p to the stored pointer, and then if and only if the old value of the stored pointer, old_p, was not equal to nullptr, calls get_deleter()(old_p)."
 
-See `swap`_ under Further Reading.
+See `swap`_ and `release`_ under Further Reading.
 
 Moving Ownership
 """"""""""""""""
@@ -1216,10 +1122,6 @@ Moving Ownership
    auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
    Obstacle* where{track.get()};
    std::unique_ptr<Obstacle> other{std::move(track)};
-
-.. code-block:: text
-
-   track == nullptr: true, other.get() == where: true, other->id: 2
 
 - Line 2: ``where`` only points at the ``Obstacle`` object; ``track`` still owns it.
 - Line 3, the move constructor (`Inside a Move`_): ``other`` takes the pointer, and ``track`` is left empty. ``other.get() == where``: the ``Obstacle`` object did not move.
@@ -1268,7 +1170,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 61``.
+- Check: ``702run week7_playground 55``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1289,24 +1191,6 @@ The Tracker's List
 - Copying the whole vector does not compile either: it would copy every ``std::unique_ptr``.
 
 See `unique_ptr to an Array`_ under Further Reading.
-
-``release``
-"""""""""""
-
-.. code-block:: cpp
-
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
-   Obstacle* raw{track.release()};  // gives up ownership
-   // track == nullptr: true, raw->id: 2
-   delete raw;  // you are the owner now: leave this out and it leaks
-
-- ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it.
-- You are back where `An Obstacle on the Heap`_ started: an ``Obstacle*`` that must be deleted exactly once.
-- Use it only to hand the object to code that takes ownership of a plain pointer. Otherwise, move the ``std::unique_ptr``.
-
-.. note::
-
-   C++20 **[unique.ptr.single.modifiers]** paragraphs 1 and 2: "Postconditions: get() == nullptr." "Returns: The value get() had at the start of the call to release."
 
 .. _l7-unique-borrow:
 
@@ -1364,24 +1248,7 @@ Passing: Sink
 
    "Take a ``unique_ptr<widget>`` parameter to express that a function assumes ownership of a ``widget``". Rule: `Core Guidelines R.32 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-uniqueptrparam>`__.
 
-Passing: Reseat
-"""""""""""""""
-
-.. code-block:: cpp
-
-   void replace_track(std::unique_ptr<Obstacle>& track, int new_id) {
-     track = std::make_unique<Obstacle>(new_id);
-   }  // the assignment deleted the old Obstacle object
-
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
-   replace_track(track, 7);  // track->id: 7, track->speed: 0
-
-- To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.
-- The caller keeps ownership. Only what it owns changes.
-
-.. note::
-
-   "Take a ``unique_ptr<widget>&`` parameter to express that a function reseats the ``widget``". Rule: `Core Guidelines R.33 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-reseat>`__.
+See `Passing: Reseat`_ under Further Reading.
 
 .. _l7-unique-returning:
 
@@ -1399,7 +1266,7 @@ Returning
 
 - A function that creates the object, such as ``make_track``, returns the ``std::unique_ptr`` by value. The caller becomes the owner.
 - ``return track;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
-- Compare `An Obstacle on the Heap`_: there, ``make_track`` returned an ``Obstacle*``, and nothing said who must delete it. Here the type says it.
+- Compare `An Obstacle on the Heap`_: there, the caller had to ``delete`` the ``Obstacle*`` that ``make_track`` returned. Here the ``std::unique_ptr`` deletes it.
 
 Exercise 4: Lines That Compile
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1420,7 +1287,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 68`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 60`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1443,11 +1310,11 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 1. **A second** ``std::unique_ptr``: does not compile. One owner only (`One Owner Only`_).
 2. **A copy of the** ``Obstacle``: two objects. The tracker's speed updates never reach the planner's copy.
-3. **An** ``Obstacle*`` **from** ``get()``: the hazard list does not own it. When the track is lost, it points at freed memory (`Reminder: Three Ways to Get It Wrong`_).
+3. **An** ``Obstacle*`` **from** ``get()``: the hazard list does not own it. When the track is lost, it points at freed memory (`Dangling Read, Measured`_, Further Reading).
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 62
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 56
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1471,12 +1338,7 @@ Creating One
    tracker.push_back(hazard);  // a copy: one more owner
    hazards.push_back(hazard);  // a copy: one more owner
 
-.. code-block:: text
-
-   hazard.use_count(): 3
-   tracker[0] == hazards[0]: true
-
-- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same ``Obstacle`` object, and ``use_count()`` counts them: ``hazard``, ``tracker[0]``, ``hazards[0]``.
+- A ``std::shared_ptr`` can be copied. Every copy is one more owner of the same ``Obstacle`` object, and ``use_count()`` counts them: 3, ``hazard``, ``tracker[0]`` and ``hazards[0]``.
 - All three point at one ``Obstacle`` object: when the tracker updates its speed, the planner reads the new speed.
 
 .. note::
@@ -1510,13 +1372,6 @@ See `One Allocation with make_shared`_ under Further Reading.
    std::shared_ptr<Obstacle> moved{std::move(hazard)};   // 2: a move
    moved.reset();                                        // 1
 
-.. code-block:: text
-
-   created: 1
-   copied: 2
-   moved: 2, hazard == nullptr: true
-   reset: 1
-
 - A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
 - ``reset()`` gives up this owner's place. The ``Obstacle`` object is deleted only when the count reaches 0.
 
@@ -1527,23 +1382,16 @@ Three Ways to Let Go
 
    auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
    {
-     std::shared_ptr<Obstacle> hazard{track};  // 1
-   }                                           // 2
+     std::shared_ptr<Obstacle> hazard{track};  // 1: count 2
+   }                                           // 2: count 1
    // three separate runs, each from 2:
    track = std::make_shared<Obstacle>(4);      // 3a
    track.reset();                              // 3b
                                     // 3c: track's scope ends
 
-.. code-block:: text
-
-   1: 2
-   2: 1
-   3a: track->id: 4, use_count: 1
-   3b: track == nullptr: true
-
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 74``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 66``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1606,18 +1454,12 @@ Deletion by the Last Owner
 .. code-block:: cpp
 
    tracker.push_back(std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0));
-   hazards.push_back(tracker[0]);
-   tracker.clear();  // the track is lost; the planner still owns it
+   hazards.push_back(tracker[0]);  // count 2
+   tracker.clear();  // count 1: the planner still owns it
    hazards.clear();  // the last owner deletes the Obstacle
 
-.. code-block:: text
-
-   both lists: 2
-   after tracker.clear(): 1, hazards[0]->id: 2
-   after hazards.clear(): no owner left
-
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 80`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 72`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1684,12 +1526,8 @@ Passing: ``const shared_ptr&``
      }
    }
 
-   add_if_close(hazards, near);  // x = 12 m: a hazard
-   add_if_close(hazards, far);   // x = 38 m: not a hazard
-
-.. code-block:: text
-
-   near.use_count(): 2, far.use_count(): 1, hazards.size(): 1
+   add_if_close(hazards, near);  // x = 12 m: kept, near's count 2
+   add_if_close(hazards, far);   // x = 38 m: not kept, far's count 1
 
 - By ``const&``: the call adds no owner. The function copies the ``std::shared_ptr`` only if it decides to keep the ``Obstacle`` object.
 - ``near``: id 2; ``far``: id 4. The 25 m limit is chosen for this example.
@@ -1705,7 +1543,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 67
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 59
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1791,7 +1629,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 89``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 81``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1806,12 +1644,8 @@ Breaking It
    a->other = b;  // b's count stays 1
    b->other = a;  // a's count stays 1
 
-.. code-block:: text
-
-   a.use_count(): 1, b.use_count(): 1
-
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 90``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 82``: no LeakSanitizer report.
 
 .. note::
 
@@ -1836,7 +1670,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 91``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 83``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1846,13 +1680,8 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 .. code-block:: cpp
 
    auto track{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
-   std::weak_ptr<Obstacle> shown{track};
-   track.reset();  // the only owner lets go
-
-.. code-block:: text
-
-   shown.use_count(): 1, shown.expired(): false
-   shown.use_count(): 0, shown.expired(): true
+   std::weak_ptr<Obstacle> shown{track};  // use_count 1, not expired
+   track.reset();  // use_count 0, expired
 
 - ``use_count()`` counts the ``std::shared_ptr``\ s that own the ``Obstacle`` object. ``expired()`` is ``true`` when that count is 0.
 - To use the object, call ``lock()`` and test the result. ``expired()`` then ``lock()`` is two steps, and another thread could make the last owner let go between them.
@@ -1875,7 +1704,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 93``.
+- Check: ``702run week7_playground 85``.
 
 Choosing a Pointer
 ------------------
@@ -1913,7 +1742,7 @@ One Table
      - R.24
    * - calls ``new`` and ``delete`` itself
      - nothing: do not write it
-     - `An Obstacle on the Heap`_ and `Reminder: Three Ways to Get It Wrong`_
+     - `An Obstacle on the Heap`_
      - R.11
 
 - Start with ``std::unique_ptr``. Change to ``std::shared_ptr`` only when a second owner appears: it costs a control block.
@@ -1932,7 +1761,7 @@ Back to the Tracker
    The tracker, the planner and the dashboard with their smart pointers.
 
 - **Filled diamond**: the only owner. **Open diamond**: one of several owners. **Arrow, no diamond**: looks without owning.
-- One ``std::vector`` holds one type: once the ``Obstacle`` object with id 2 is shared, the tracker holds a ``std::shared_ptr`` for every ``Obstacle`` object (:ref:`l7-shared-creating-one`).
+- The tracker is one ``std::vector``, so its elements share one type. Once id 2 needs a ``std::shared_ptr``, all four get one (:ref:`l7-shared-creating-one`).
 - The ``Obstacle`` objects with ids 1, 3 and 4 still have one owner each, through that ``std::shared_ptr``.
 
 Summary
@@ -1940,7 +1769,7 @@ Summary
 
 **Ownership**
 
-- The last owner of a heap object gives it back. A ``T*`` cannot say it owns, and that causes a leak, a double ``delete`` or a dangling read.
+- The last owner of a heap object gives it back. With a raw ``T*`` and ``delete``, a mistake causes a leak, a double ``delete`` or a dangling read.
 - LeakSanitizer, part of ``-fsanitize=address``, reports a leak with the line that allocated it.
 
 **Move Semantics**
@@ -2190,7 +2019,7 @@ Testing for Empty
    first.swap(second);  // the same as std::swap(first, second)
    // first->id: 4, second->id: 2, second.get() == id_2: true
 
-- ``swap`` exchanges the two stored pointers. No ``Obstacle`` object is created, copied or deleted: the one with id 2 stays at the same address, now owned by ``second``.
+- No ``Obstacle`` object is created, copied or deleted: the one with id 2 stays at the same address, now owned by ``second``.
 - ``std::shared_ptr`` has the same ``swap``.
 
 .. note::
@@ -2241,7 +2070,7 @@ A Dashboard of ``weak_ptr``
    });
 
 - Output: ``obstacle 1: 0 m/s``, ``(gone)``, ``obstacle 3: 1.4 m/s``, then ``shown.size()`` is 2.
-- The dashboard never keeps an ``Obstacle`` object alive. L4's ``std::erase_if`` with a lambda (L6) drops the entries whose object is gone.
+- L4's ``std::erase_if`` with a lambda (L6) drops the entries whose object is gone.
 
 More Core Guidelines
 ^^^^^^^^^^^^^^^^^^^^
@@ -2330,3 +2159,132 @@ Inside ``std::vector``'s Move and Copy
 - The move takes the pointers and leaves the source null: nothing is allocated and no element is copied (`Inside a Move`_).
 - The copy allocates a block for the elements in use and copies each one, so its capacity equals its size (`Inside a Copy`_).
 - Constructors are L8. For an rvalue, the ``Path&&`` one is chosen (`Overloads for Copy and Move`_).
+
+A Reference, an Element, ``*p``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   int count{3};
+   int& alias{count};           // another name for count (L3)
+   int numbers[3]{10, 20, 30};
+   int* p{&numbers[1]};         // p holds the address of numbers[1]
+
+- ``alias``: refers to the object ``count`` names, since a reference is another name for an object: ``&alias == &count`` (part 1). Nothing marks it (part 2), so ``alias`` is an lvalue.
+- ``numbers[2]``: refers to the third ``int`` inside ``numbers``, which exists as long as ``numbers`` does (part 1). Nothing marks it (part 2), so ``numbers[2]`` is an lvalue.
+- ``*p``: refers to the object ``p`` points at, ``numbers[1]``: ``&*p == &numbers[1]`` (part 1). Nothing marks it (part 2), so ``*p`` is an lvalue.
+
+``702run week7_appendix xxi`` prints ``lvalue`` for all three, and ``true`` for both address comparisons.
+
+Literals, Results, Calls
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :linenos:
+
+   int twice(int n) { return 2 * n; }  // returns an int by value
+   int count{3};
+   int doubled{count * 2};
+   int again{twice(count)};
+
+- In line 2, ``3`` is a number written in the code: no object holds it until it initializes ``count``. ``3`` is a prvalue.
+- In line 3, ``count * 2`` computes 6 from the value of ``count``. The 6 is a new value, not ``count``. ``count * 2`` is a prvalue.
+- In line 4, ``twice(count)`` returns an ``int`` by value: a value, not an object that already exists. ``twice(count)`` is a prvalue.
+
+``&`` on any of them gives:
+
+.. code-block:: text
+
+   error: lvalue required as unary '&' operand
+
+``702run week7_appendix xxii`` prints ``prvalue`` for all three.
+
+Ways to Mark
+^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   struct Point { int x; int y; };
+   int count{3};
+   Point pt{1, 2};
+
+``int&&`` reads "rvalue reference to ``int``": a reference whose object may be taken (`Binding to rvalues`_). Each expression below refers to an object that already exists and marks it:
+
+- ``std::move(count)``: a call to a function that returns ``int&&``. It refers to ``count``. ``std::move(count)`` is an xvalue.
+- ``static_cast<int&&>(count)``: the same mark, written as a cast to ``int&&``. It is an xvalue.
+- ``std::move(pt).x``: ``std::move`` marks ``pt``, so its member ``x`` is marked too. ``std::move(pt).x`` is an xvalue.
+
+``702run week7_appendix xxiii`` prints ``xvalue`` for all three. ``&`` fails on each: ``taking address of rvalue``.
+
+Giving It a Name
+^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<Pose>&& r{make_path(10)};
+   decltype(r)     // std::vector<Pose>&&: the type of r
+   decltype((r))   // std::vector<Pose>&: the expression r is an lvalue
+
+- The **type** of ``r`` is an rvalue reference. The **expression** ``r`` is an lvalue: it has a name, and you can use it again on the next line.
+- So a function that receives a ``T&&`` parameter cannot move from it just by using its name. It has to mark it again with ``std::move``.
+
+.. note::
+
+   The note to **[basic.lval]** paragraph 4: "named rvalue references are treated as lvalues and unnamed rvalue references to objects are treated as xvalues".
+
+``std::move`` on a ``const`` Object
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   const std::vector<Pose> path{make_path(1000)};
+   std::vector<Pose> controller_path{std::move(path)};   // compiles
+
+.. code-block:: text
+
+   controller_path.data() == path.data(): false, path.size(): 1000
+
+- No warning, and no move: a new block, and ``path`` still holds 1000 poses.
+- ``std::move(path)`` returns ``const std::vector<Pose>&&``. It cannot bind to the move constructor's ``std::vector<Pose>&&``, which would change ``path``.
+- It does bind to the copy constructor's ``const std::vector<Pose>&``, so the compiler copies.
+
+.. note::
+
+   A ``const`` object cannot be moved from. Declare an object ``const`` only if you will not hand it on.
+
+``release``
+^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   Obstacle* raw{track.release()};  // gives up ownership
+   // track == nullptr: true, raw->id: 2
+   delete raw;  // you are the owner now: leave this out and it leaks
+
+- ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it.
+- You are back where `An Obstacle on the Heap`_ started: an ``Obstacle*`` that must be deleted exactly once.
+- Use it only to hand the object to code that takes ownership of a plain pointer. Otherwise, move the ``std::unique_ptr``.
+
+.. note::
+
+   C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraphs 1 and 2: "Postconditions: get() == nullptr." "Returns: The value get() had at the start of the call to release."
+
+Passing: Reseat
+^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   void replace_track(std::unique_ptr<Obstacle>& track, int new_id) {
+     track = std::make_unique<Obstacle>(new_id);
+   }  // the assignment deleted the old Obstacle object
+
+   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   replace_track(track, 7);  // track->id: 7, track->speed: 0
+
+- To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.
+- The caller keeps ownership. Only what it owns changes.
+
+.. note::
+
+   "Take a ``unique_ptr<widget>&`` parameter to express that a function reseats the ``widget``". Rule: `Core Guidelines R.33 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-reseat>`__.
