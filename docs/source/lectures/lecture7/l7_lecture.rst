@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 82, runs only when you ask for it by number: ``702run week7_playground 82``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 83, runs only when you ask for it by number: ``702run week7_playground 83``. A full run skips it.
 
 .. note::
 
@@ -1406,13 +1406,19 @@ See `One Allocation with make_shared`_ under Further Reading.
 
 .. code-block:: cpp
 
-   auto cyclist{std::make_shared<Obstacle>(2)};          // 1
-   std::shared_ptr<Obstacle> hazard{cyclist};            // 2: a copy
-   std::shared_ptr<Obstacle> moved{std::move(hazard)};   // 2: a move
-   moved.reset();                                        // 1
+   auto cyclist{std::make_shared<Obstacle>(2)};
+   std::cout << cyclist.use_count() << '\n';             // 1
+   std::shared_ptr<Obstacle> hazard{cyclist};            // a copy
+   std::cout << cyclist.use_count() << '\n';             // 2
+   std::shared_ptr<Obstacle> moved{std::move(hazard)};   // a move
+   std::cout << cyclist.use_count() << '\n';             // 2
+   moved.reset();
+   std::cout << cyclist.use_count() << '\n';             // 1
 
+- ``use_count()`` returns how many ``std::shared_ptr`` objects own the object. Each line asks ``cyclist``, one of the owners.
 - A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
 - ``reset()`` gives up this owner's place. The ``Obstacle`` object is deleted only when the count reaches 0.
+- Check: ``702run week7_playground 69``.
 
 Three Ways to Let Go
 """"""""""""""""""""
@@ -1423,10 +1429,11 @@ Three Ways to Let Go
    {
      std::shared_ptr<Obstacle> hazard{cyclist};  // 1: count 2
    }                                             // 2: count 1
-   // three separate runs, each from 2:
+
+   // Three separate runs, each from 2:
    cyclist = std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0);  // 3a
-   cyclist.reset();                              // 3b
-                                                 // 3c: cyclist's scope ends
+   cyclist.reset();                                                 // 3b
+   // 3c: cyclist's scope ends
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``cyclist`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
@@ -1440,7 +1447,7 @@ Step 1: Two Owners
    :align: center
    :width: 100%
 
-- After line 1 of `Three Ways to Let Go`_: ``hazard`` copies ``cyclist``. Both hold the same two pointers, so ``use_count`` is 2.
+- After step 1 of `Three Ways to Let Go`_: ``hazard`` copies ``cyclist``. Both hold the same two pointers, so ``use_count`` is 2.
 - Each green arrow is one pointer of a ``std::shared_ptr``: ``object`` ends at the object's first member, ``control`` at the control block.
 
 Step 2: One Owner
@@ -1451,7 +1458,7 @@ Step 2: One Owner
    :align: center
    :width: 100%
 
-- Line 2: ``hazard``'s scope ends. Its destructor subtracts 1, so ``use_count`` is 1.
+- Step 2: ``hazard``'s scope ends. Its destructor subtracts 1, so ``use_count`` is 1.
 - ``cyclist`` still owns the ``Obstacle`` object, so nothing is freed.
 
 Step 3a: A New Object
@@ -1543,10 +1550,41 @@ A ``std::weak_ptr`` watches an object that ``std::shared_ptr``\ s own. It never 
 
 See `cppreference: std::weak_ptr <https://en.cppreference.com/w/cpp/memory/weak_ptr>`__. Rule: `Core Guidelines R.24 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-weak_ptr>`__.
 
-A Cycle
-"""""""
+.. _l7-weak-syntax:
+
+The Syntax
+""""""""""
+
+.. code-block:: cpp
+
+   #include <memory>
+
+   std::weak_ptr<T> name{owner};  // 1
+   std::weak_ptr<T> name;         // 2
+   name = owner;                  // 3
+   auto locked{name.lock()};      // 4
+
+- ``owner`` is a ``std::shared_ptr<T>``. 1 and 3 watch its object; 2 watches nothing. There is no ``make_weak``.
+- 4: no ``*`` and no ``->``. ``lock()`` returns a ``std::shared_ptr<T>`` that owns the object while you use it, or an empty one if it is gone (`lock`_).
+- Two uses: a watcher that must not keep the object alive (the dashboard in `Who Owns Each Obstacle`_), and breaking a cycle of owners (`Cyclic Reference`_).
+
+.. code-block:: cpp
+
+   auto cyclist{std::make_shared<Obstacle>(2)};
+   std::weak_ptr<Obstacle> shown{cyclist};    // adds no owner
+   std::cout << cyclist.use_count() << '\n';  // 1
+
+Cyclic Reference
+""""""""""""""""
 
 Two more obstacles ahead in the ego lane: a tractor, id 5, at 60 m, towing a trailer, id 6, at 54 m, both at 8 m/s (chosen for this example).
+
+.. figure:: /_static/images/l7/av_road_towing.png
+   :alt: A top view of a straight two-lane road, drawn to scale, with an x axis along the bottom marked 0 to 60 meters every 10 meters and a y axis on the left marked 0.0 and 3.5 meters at the two lane centers. From the bottom up: a lighter parking strip, the lane of the ego vehicle, a dashed yellow center line, and the oncoming lane. The ego vehicle, a blue car tagged E, sits at x 0 in the center of its lane, facing plus x, with a white arrow pointing in plus x. Tag 1: an amber car parked in the parking strip at x 20. Tag 2: a green cyclist at x 12 near the right edge of the ego lane, with an arrow in plus x. Tag 3: a gray circle, the pedestrian, at x 30 in the oncoming lane, with an arrow pointing up. Tag 4, to the right of it: a coral red car at x 38 in the oncoming lane, facing minus x, with an arrow in minus x. Ahead in the ego lane, centered in it: tag 6, a light purple trailer, a long rectangle from about x 50 to 57 with a wheel on each side, joined by a short dark bar to tag 5, a purple tractor from x 58 to 62 with two large rear wheels and two small front wheels, facing plus x, with a white arrow pointing in plus x. Tag 5 sits just above the tractor, and tag 6 on the trailer.
+   :align: center
+   :width: 100%
+
+   The road, with the tractor (5) towing the trailer (6) in the ego lane.
 
 .. code-block:: cpp
 
@@ -1578,10 +1616,10 @@ Step 2: Neither Is Deleted
    :width: 100%
 
 - ``a`` and ``b`` are destroyed when their scope ends: each count drops to 1, never 0.
-- Each ``Towing`` object keeps the other alive: 2 × 80 bytes leak (`The Cycle, Measured`_).
+- Each ``Towing`` object keeps the other alive: 2 × 80 bytes leak (`Cyclic Reference, Measured`_).
 
-The Cycle, Measured
-"""""""""""""""""""
+Cyclic Reference, Measured
+""""""""""""""""""""""""""
 
 .. code-block:: text
 
@@ -1600,7 +1638,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 82``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 83``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1616,7 +1654,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 83``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 84``: no LeakSanitizer report.
 
 .. note::
 
@@ -1641,7 +1679,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 84``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 85``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1696,7 +1734,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 87``.
+- Check: ``702run week7_playground 88``.
 
 Choosing a Pointer
 ------------------
@@ -2280,7 +2318,7 @@ A Parameter the Function Moves From
    set_path(controller, std::move(path));  // the caller says: take it
    set_path(controller, make_path(5));     // a prvalue: no std::move
 
-- After line 10, ``controller.path`` holds ``path``'s block (``where``), and ``path`` is empty. After line 11, it holds 5 poses. ``702run week7_appendix xxix``
+- After line 10, ``controller.path`` holds ``path``'s block (``where``), and ``path`` is empty. After line 11, it holds 5 poses. ``702run week7_appendix xxvii``
 - ``&&`` makes the caller write ``std::move`` for a named object. Inside, ``path`` has a name, so it is an lvalue: without the second ``std::move``, the assignment copies.
 
 .. note::
@@ -2304,7 +2342,7 @@ Returning a Local
    warning: moving a local object in a return statement prevents copy elision
    [-Wpessimizing-move]
 
-- L5 (`Reminder: Returning by Value`_): a local returned by value is constructed in place, or moved if it cannot be. ``702run week7_appendix xxx`` prints the same address twice.
+- L5 (`Reminder: Returning by Value`_): a local returned by value is constructed in place, or moved if it cannot be. ``702run week7_appendix xxviii`` prints the same address twice.
 - ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place.
 
 .. note::
