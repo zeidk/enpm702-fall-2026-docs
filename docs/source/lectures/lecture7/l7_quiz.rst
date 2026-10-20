@@ -194,13 +194,13 @@ Multiple Choice (Questions 1 to 10)
 .. admonition:: Question 6
    :class: hint
 
-   ``plan`` returns a local ``std::vector<Pose>`` by value, with ``return path;``. Which line initializes its destination directly from the prvalue ``plan(500)``, with no move in between?
+   ``make_scores`` returns a local ``std::vector<int>`` by value, with ``return scores;``. Which line initializes its destination directly from the prvalue ``make_scores()``, with no move in between?
 
    .. code-block:: cpp
 
-      std::vector<Pose> p{plan(500)};                // line 1
-      std::vector<std::vector<Pose>> plans;
-      plans.push_back(plan(500));                    // line 2
+      std::vector<int> best{make_scores()};          // line 1
+      std::vector<std::vector<int>> all;
+      all.push_back(make_scores());                  // line 2
 
    A. Both lines: the compiler elides in both.
    B. Only line 1. In line 2, ``push_back`` takes a reference, so the prvalue becomes a temporary that is moved into the vector.
@@ -212,14 +212,18 @@ Multiple Choice (Questions 1 to 10)
 
       **B. Only line 1.**
 
-      A prvalue that initializes an object of its own type is used to initialize that object directly (C++20 [dcl.init] 17.6.1), so ``p`` is built in place. ``push_back`` takes a ``std::vector<Pose>&&``: the reference binds to a temporary, and the element in the vector is move-constructed from it. With g++ 13.3 and the course flags, ``702run week7_playground 14`` prints:
+      A prvalue that initializes an object of its own type is used to initialize that object directly (C++20 [dcl.init] 17.6.1), so ``best`` is built in place. ``push_back`` takes a ``std::vector<int>&&``: the reference binds to a temporary, and the element in the vector is move-constructed from it. ``702run week7_playground 14`` prints the address of the local and of its block, then the same two for the caller's vector (one run, g++ 13.3, the course flags):
 
       .. code-block:: text
 
-         elision: &p == made_object: true, p.data() == made_block: true
-         move: &plans[0] == made_object: false, plans[0].data() == made_block: true
+         elision:
+           inside: 0x7ffce43fc630 0x502000000010
+           best:   0x7ffce43fc630 0x502000000010
+         move:
+           inside: 0x7ffce43fc670 0x502000000030
+           all[0]: 0x503000000160 0x502000000030
 
-      ``p`` is ``plan``'s local itself. ``plans[0]`` is a new object that took the same block. (``return path;`` inside ``plan`` is NRVO, which is permitted, not guaranteed: if the compiler does not do it, ``path`` is moved out.)
+      ``best`` is ``make_scores``'s local itself. ``all[0]`` is a new vector that holds the same block. (``return scores;`` is NRVO, which is permitted, not guaranteed: if the compiler does not do it, ``scores`` is moved out.)
 
 .. admonition:: Question 7
    :class: hint

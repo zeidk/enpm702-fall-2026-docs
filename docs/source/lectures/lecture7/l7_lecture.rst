@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 81, runs only when you ask for it by number: ``702run week7_playground 81``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 80, runs only when you ask for it by number: ``702run week7_playground 80``. A full run skips it.
 
 .. note::
 
@@ -329,41 +329,34 @@ Elision or a Move
 
 .. code-block:: cpp
 
-   const std::vector<Pose>* made_object{nullptr};  // plan's local
-   const Pose* made_block{nullptr};                // its block
-   std::vector<Pose> plan(int n) {
-     std::vector<Pose> path{make_path(n)};
-     made_object = &path;
-     made_block = path.data();
-     return path;  // no std::move
+   std::vector<int> make_scores() {
+     std::vector<int> scores{90, 75, 82};
+     std::cout << &scores << ' ' << scores.data() << '\n';  // local, block
+     return scores;  // no std::move
    }
-   std::vector<std::vector<Pose>> plans;           // a list of paths
-
-**Elision**
 
 .. code-block:: cpp
 
-   std::vector<Pose> p{plan(500)};
+   std::vector<int> best{make_scores()};  // elision: same two addresses
+   std::cout << &best << ' ' << best.data() << '\n';
 
-- ``&p == made_object``: ``p`` **is** ``plan``'s local, one object.
+   std::vector<std::vector<int>> all;
+   all.push_back(make_scores());  // a move: new vector, same block
+   std::cout << &all[0] << ' ' << all[0].data() << '\n';
 
-**Move**
-
-.. code-block:: cpp
-
-   plans.push_back(plan(500));
-
-- ``&plans[0] != made_object``, but ``plans[0].data() == made_block``: a new object that took the block.
-
-``702run week7_playground 14`` prints:
+``make_scores`` prints the address of its local vector and of that vector's block. Each caller then prints the same two addresses for the vector it got. ``702run week7_playground 14`` prints, in one run (the addresses change from run to run):
 
 .. code-block:: text
 
-   elision: &p == made_object: true, p.data() == made_block: true
-   move: &plans[0] == made_object: false, plans[0].data() == made_block: true
+   elision:
+     inside: 0x7ffce43fc630 0x502000000010
+     best:   0x7ffce43fc630 0x502000000010
+   move:
+     inside: 0x7ffce43fc670 0x502000000030
+     all[0]: 0x503000000160 0x502000000030
 
-- Elision is guaranteed when a prvalue initializes an object of its own type (C++20 **[dcl.init]** 17.6.1), as ``plan(500)`` initializes ``p``. ``push_back`` takes a reference: it gets a temporary and moves it in (`Overloads for Copy and Move`_).
-- ``return path;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). If it is not, ``path`` is moved out: an implicit move (`Returning a Local`_). Compiled with ``-fno-elide-constructors``, which turns NRVO off, ``&p == made_object`` is ``false`` too: ``p`` then gets a moved-in object.
+- ``best`` **is** ``scores``: a prvalue that initializes an object of its own type is elided (C++20 **[dcl.init]** 17.6.1). ``push_back`` takes a reference: it gets a temporary and moves it into ``all[0]``, a new vector that holds the same block (`Overloads for Copy and Move`_).
+- ``return scores;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). Without it, ``best`` gets a new address, the same block: ``scores`` is moved out, an implicit move (`Returning a Local`_). Compiled with ``-fno-elide-constructors``, which turns NRVO off, that is what happens.
 
 Inside a Move
 ^^^^^^^^^^^^^
@@ -415,19 +408,6 @@ Exercise 1: Copy and Move
 - Line 4 is a move into a vector that already exists. What does ``a`` hold before it, and after?
 - After line 4: how many blocks are on the heap? Which variable owns each one? Was any block freed?
 - Check: ``702run week7_playground 17`` prints each vector's size, capacity and block after every line.
-
-Exercise 1: After Each Line
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l7/av_copy_move_states.png
-   :alt: Four panels in a 2 by 2 grid, tagged 1 to 4. Each panel has a blue Stack box on the left and a red Heap box on the right. The Heap box holds the blocks of three cells that exist after that line, tagged A (upper) and B (lower). In the Stack box, each declared vector is a row, a at the bottom, b above it and c on top: a name tag and three fields, begin, end and capacity. Under each block, a dashed empty slot marks one past its last cell. A field that holds an address has a blue dot and its own arrow: begin to the block's first cell, end and capacity both to the dashed slot. A field that is null reads nullptr and has no arrow. Panel 1: only block A exists; a reads ptr, with an arrow to A. Panel 2: a points to A, and b, reading ptr, points to B. Panel 3: a reads null in all three fields, with no arrow; b points to B; c points to A. Panel 4: a points to B; b reads null, with no arrow; c points to A.
-   :align: center
-   :width: 100%
-
-   The answer to `Exercise 1: Copy and Move`_: memory after each of its four lines.
-
-- **1** to **4**: after lines 1 to 4 of `Exercise 1: Copy and Move`_. A and B: the two blocks, 3 ``Pose`` each, 3 × 24 = 72 bytes. An arrow: the block a vector owns.
-- Line 2 copies A into a new block, B. Lines 3 and 4 hand A to ``c`` and B to ``a``, and leave the source's pointers null. Nothing is freed.
 
 Value Categories
 ^^^^^^^^^^^^^^^^
@@ -600,7 +580,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_obstacle(seen)``: the ``Obstacle`` object the returned ``Obstacle&`` refers to, ``seen[0]``.
 - ``"stop"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 25`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 24`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_obstacle`` by Value and ``first_obstacle``
    :icon: code
@@ -661,7 +641,7 @@ With the declarations above, each expression below is a prvalue:
    &(a + b):      error: lvalue required as unary '&' operand
    &make_path(3): error: taking address of rvalue
 
-``702run week7_playground 28`` prints ``prvalue`` for all five.
+``702run week7_playground 27`` prints ``prvalue`` for all five.
 
 xvalue: Marked by ``std::move``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -696,7 +676,7 @@ Marking an **xvalue** (`xvalue: Marked by std::move`_) moves nothing.
 - ``static_cast<std::vector<Pose>&&>(path)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(cyclist).pose``: ``std::move`` marks ``cyclist``, so its member ``pose`` is marked too. Its ``decltype((e))`` is ``Pose&&``, the same form with ``T`` = ``Pose`` (`The decltype Test`_).
 
-``702run week7_playground 31`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 30`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -788,7 +768,7 @@ Exercise 2: Value Categories
    make_obstacle(n).speed    // 9
    ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 36``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 35``.
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
@@ -1056,7 +1036,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 49`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 48`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1170,7 +1150,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 55``.
+- Check: ``702run week7_playground 54``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1287,7 +1267,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 60`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 59`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1314,7 +1294,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 56
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 55
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1391,7 +1371,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 66``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 65``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1459,7 +1439,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 72`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 71`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1543,7 +1523,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 59
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 58
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1629,7 +1609,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 81``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 80``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1645,7 +1625,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 82``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 81``: no LeakSanitizer report.
 
 .. note::
 
@@ -1670,7 +1650,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 83``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 82``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1704,7 +1684,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 85``.
+- Check: ``702run week7_playground 84``.
 
 Choosing a Pointer
 ------------------
