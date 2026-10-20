@@ -97,15 +97,14 @@ Multiple Choice (Questions 1 to 10)
    .. code-block:: cpp
 
       std::vector<Pose> path{make_path(3)};
-      std::vector<Obstacle> seen{make_obstacle(1), make_obstacle(2)};
       int a{2};
       int b{3};
 
-   Here ``make_obstacle(int)`` returns an ``Obstacle`` by value. Which expression is a **prvalue**?
+   Which expression is a **prvalue**?
 
    A. ``path``
-   B. ``seen[0]``
-   C. ``"stop"``
+   B. ``std::move(path)``
+   C. ``a``
    D. ``a + b``
 
    .. dropdown:: Answer
@@ -113,18 +112,18 @@ Multiple Choice (Questions 1 to 10)
 
       **D. a + b**
 
-      A prvalue does not refer to an object that already exists. It computes a value, and that value can initialize a new object. ``a + b`` is a built-in arithmetic result, so it is a prvalue. ``path`` and ``seen[0]`` refer to objects that live on after the expression: they are lvalues. A string literal such as ``"stop"`` is an array that the program keeps until it ends, so it is an lvalue too.
+      A prvalue does not refer to an object that already exists: it computes a value. ``a + b`` computes 5, and no object held that 5 before, so it is a prvalue. ``path`` and ``a`` name objects that already exist and do not let another object take their contents: they are lvalues. ``std::move(path)`` refers to ``path`` and marks it, so it is an xvalue.
 
       The program prints each category with the ``decltype((e))`` test from the lecture:
 
       .. code-block:: text
 
          path: lvalue
-         seen[0]: lvalue
-         "stop": lvalue
+         std::move(path): xvalue
+         a: lvalue
          a + b: prvalue
 
-      You can also try to take the address. ``&seen[0]`` compiles, but ``&(a + b)`` does not:
+      You can also try to take the address. ``&a`` compiles, but ``&(a + b)`` does not:
 
       .. code-block:: text
 

@@ -1612,9 +1612,9 @@ L7: Smart Pointers and Move Semantics
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
    prvalue
-      An expression that does not refer to an object that already exists. It
-      computes a value, and that value can initialize a new object. A literal
-      such as ``42``, ``a + b``, and a call that returns by value are
+      An expression that (1) does not refer to an object that already exists:
+      it computes a value, and (2) lets another object take that value. A
+      literal such as ``42``, ``a + b``, and a call that returns by value are
       prvalues. You cannot take a prvalue's address.
       :doc:`L7 </lectures/lecture7/l7_lecture>`
 
