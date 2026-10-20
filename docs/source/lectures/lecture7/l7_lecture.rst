@@ -858,7 +858,7 @@ A ``std::unique_ptr`` is the only owner of one object on the heap. It cannot be 
    :align: center
    :width: 80%
 
-   Orange, from the map in `Who Owns Each Obstacle`_: the filled diamonds, one owner.
+   Orange, from the map in `Who Owns Each Obstacle`_: each filled diamond is one ``std::unique_ptr`` in the list ``tracker``. ``tracker`` is a ``std::vector<std::unique_ptr<Obstacle>>`` (`The Tracker's List`_): three pointers, each the only owner of one ``Obstacle`` object.
 
 See `cppreference: std::unique_ptr <https://en.cppreference.com/w/cpp/memory/unique_ptr>`__. Rule: `Core Guidelines R.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-owner>`__.
 
