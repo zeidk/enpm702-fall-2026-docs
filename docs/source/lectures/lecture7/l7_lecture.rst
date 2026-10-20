@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 83, runs only when you ask for it by number: ``702run week7_playground 83``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 78, runs only when you ask for it by number: ``702run week7_playground 78``. A full run skips it.
 
 .. note::
 
@@ -1014,7 +1014,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the parked car is 20 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 46`` runs the second one: ``needs_braking(1): false``, and no LeakSanitizer report.
+- ``702run week7_playground 44`` runs the second one: ``needs_braking(1): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1187,7 +1187,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 56``.
+- Check: ``702run week7_playground 54``.
 
 .. dropdown:: Answers
    :class-container: sd-border-success
@@ -1284,7 +1284,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 61`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 58`` and its comments.
 
 .. dropdown:: Answers
    :class-container: sd-border-success
@@ -1418,7 +1418,7 @@ See `One Allocation with make_shared`_ under Further Reading.
 - ``use_count()`` returns how many ``std::shared_ptr`` objects own the object. Each line asks ``cyclist``, one of the owners.
 - A move hands one owner's place to another: the count stays at 2, and ``hazard`` is left empty.
 - ``reset()`` gives up this owner's place. The ``Obstacle`` object is deleted only when the count reaches 0.
-- Check: ``702run week7_playground 69``.
+- Check: ``702run week7_playground 64``.
 
 Three Ways to Let Go
 """"""""""""""""""""
@@ -1437,7 +1437,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``cyclist`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, the tracker sees the cyclist again: a new ``Obstacle`` object. Run it: ``702run week7_playground 70``.
+- In 3a, the tracker sees the cyclist again: a new ``Obstacle`` object. Run it: ``702run week7_playground 65``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1505,7 +1505,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 76`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 71`` ends with no LeakSanitizer report.
 
 Passing and Returning
 """""""""""""""""""""
@@ -1638,7 +1638,7 @@ Cyclic Reference, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 83``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 78``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1654,7 +1654,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 84``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 79``: no LeakSanitizer report.
 
 .. note::
 
@@ -1679,7 +1679,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 85``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 80``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1734,7 +1734,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 88``.
+- Check: ``702run week7_playground 83``.
 
 Choosing a Pointer
 ------------------
