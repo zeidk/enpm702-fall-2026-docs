@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 77, runs only when you ask for it by number: ``702run week7_playground 77``. A full run skips it.
 
 .. note::
 
@@ -295,7 +295,7 @@ Inside a Copy
    - It builds a path of ``n`` poses, one meter apart along the road: pose ``i`` is at x = ``i`` meters, y = 0, heading 0.
    - ``reserve(n)`` allocates room for ``n`` poses before the loop. Without it, ``push_back`` allocates 11 times for 1000 poses, and ends with room for 1024.
    - ``702run week7_appendix iv`` prints the three poses of ``make_path(3)``: (0, 0, 0) (1, 0, 0) (2, 0, 0).
-   - It returns the local ``path`` by value: no copy is made (`Returning a Local`_).
+   - It returns the local ``path`` by value: no copy is made (`Returning a Local`_, under Further Reading).
 
 .. code-block:: cpp
 
@@ -369,7 +369,7 @@ Elision or a Move
      all[0]: 0x503000000160 0x502000000030
 
 - ``best`` **is** ``scores``: a prvalue that initializes an object of its own type is elided (C++20 **[dcl.init]** 17.6.1). ``push_back`` takes a reference: it gets a temporary and moves it into ``all[0]``, a new vector that holds the same block (`Overloads for Copy and Move`_).
-- ``return scores;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). Without it, ``best`` gets a new address, the same block: ``scores`` is moved out, an implicit move (`Returning a Local`_). Compiled with ``-fno-elide-constructors``, which turns NRVO off, that is what happens.
+- ``return scores;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). Without it, ``best`` gets a new address, the same block: ``scores`` is moved out, an implicit move (`Returning a Local`_, under Further Reading). Compiled with ``-fno-elide-constructors``, which turns NRVO off, that is what happens.
 
 The Moved-from Object
 ^^^^^^^^^^^^^^^^^^^^^
@@ -788,6 +788,8 @@ Overloads for Copy and Move
 
 .. code-block:: cpp
 
+   std::vector<Pose> controller_path;  // what the controller follows
+
    void assign_path(const std::vector<Pose>& path) {        // 1
      controller_path = path;             // copy
    }
@@ -831,55 +833,6 @@ What ``std::move`` Does
    Write ``std::move`` only where the object is handed on, and do not use the source again until you assign it. Rule: `Core Guidelines ES.56 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-move>`__.
 
 See `The Definition of std::move`_ and `std::move on a const Object`_ under Further Reading.
-
-A Parameter the Function Moves From
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-   :linenos:
-
-   struct Controller { std::vector<Pose> path; };  // the part that steers
-   void set_path(Controller& controller, std::vector<Pose>&& path) {
-     controller.path = std::move(path);  // path is named: move it again
-   }
-   Controller controller{};
-   std::vector<Pose> path{make_path(1000)};
-   const Pose* where{path.data()};         // where path's block is
-
-   set_path(controller, path);             // error: path is an lvalue
-   set_path(controller, std::move(path));  // the caller says: take it
-   set_path(controller, make_path(5));     // a prvalue: no std::move
-
-- After line 10, ``controller.path`` holds ``path``'s block (``where``), and ``path`` is empty. After line 11, it holds 5 poses.
-- ``&&`` makes the caller write ``std::move`` for a named object. Inside, ``path`` has a name, so it is an lvalue: without the second ``std::move``, the assignment copies.
-
-.. note::
-
-   "For 'will-move-from' parameters, pass by ``X&&`` and ``std::move`` the parameter". Rule: `Core Guidelines F.18 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-consume>`__.
-
-Returning a Local
-^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   std::vector<Pose> plan_path(int n) {
-     std::vector<Pose> path{make_path(n)};
-     return path;                // elided or moved, never copied
-     // return std::move(path);  // warns, and blocks the elision
-   }
-   std::vector<Pose> path{plan_path(1000)};
-
-.. code-block:: text
-
-   warning: moving a local object in a return statement prevents copy elision
-   [-Wpessimizing-move]
-
-- L5 (`Reminder: Returning by Value`_): a local returned by value is constructed in place, or moved if it cannot be. Same address, measured.
-- ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place.
-
-.. note::
-
-   "Don't ``return std::move(local)``". Rule: `Core Guidelines F.48 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-return-move-local>`__.
 
 Smart Pointers
 --------------
@@ -1014,7 +967,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 47`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 45`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1128,7 +1081,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 53``.
+- Check: ``702run week7_playground 51``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1200,7 +1153,7 @@ Passing: Sink
    keep_lost(std::move(track));  // track == nullptr, lost.size() == 1
 
 - By value: the parameter is a new owner, so the caller must hand the ``Obstacle`` object over with ``std::move``.
-- F.18, from `A Parameter the Function Moves From`_, asks for ``&&`` here. Its own exception: a move-only type that is cheap to move, such as ``std::unique_ptr``, can be passed by value.
+- F.18, from `A Parameter the Function Moves From`_ under Further Reading, asks for ``&&`` here. Its own exception: a move-only type that is cheap to move, such as ``std::unique_ptr``, can be passed by value.
 
 .. note::
 
@@ -1223,7 +1176,7 @@ Returning
    std::unique_ptr<Obstacle> track{make_track(5)};  // track->id: 5
 
 - A function that creates the object, such as ``make_track``, returns the ``std::unique_ptr`` by value. The caller becomes the owner.
-- ``return track;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_).
+- ``return track;`` compiles although ``std::unique_ptr`` cannot be copied: a local returned by value is moved, never copied (L5, and `Returning a Local`_ under Further Reading).
 - Compare `An Obstacle on the Heap`_: there, the caller had to ``delete`` the ``Obstacle*`` that ``make_track`` returned. Here the ``std::unique_ptr`` deletes it.
 
 Exercise 4: Lines That Compile
@@ -1245,7 +1198,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 58`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 56`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1272,7 +1225,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 54
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 52
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1349,7 +1302,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 64``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 62``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1417,7 +1370,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 70`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 68`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1501,7 +1454,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 57
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 55
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1587,7 +1540,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 79``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 77``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1603,7 +1556,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 78``: no LeakSanitizer report.
 
 .. note::
 
@@ -1628,7 +1581,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 81``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 79``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1662,7 +1615,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 83``.
+- Check: ``702run week7_playground 81``.
 
 Choosing a Pointer
 ------------------
@@ -2264,3 +2217,52 @@ One Pair or Two Parentheses
 .. note::
 
    C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: "if E is an unparenthesized id-expression [...], decltype(E) is the type of the entity named by E"; "otherwise, if E is an xvalue, decltype(E) is T&&", "if E is an lvalue, decltype(E) is T&", "otherwise, decltype(E) is the type of E".
+
+A Parameter the Function Moves From
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :linenos:
+
+   struct Controller { std::vector<Pose> path; };  // the part that steers
+   void set_path(Controller& controller, std::vector<Pose>&& path) {
+     controller.path = std::move(path);  // path is named: move it again
+   }
+   Controller controller{};
+   std::vector<Pose> path{make_path(1000)};
+   const Pose* where{path.data()};         // where path's block is
+
+   set_path(controller, path);             // error: path is an lvalue
+   set_path(controller, std::move(path));  // the caller says: take it
+   set_path(controller, make_path(5));     // a prvalue: no std::move
+
+- After line 10, ``controller.path`` holds ``path``'s block (``where``), and ``path`` is empty. After line 11, it holds 5 poses. ``702run week7_appendix xxix``
+- ``&&`` makes the caller write ``std::move`` for a named object. Inside, ``path`` has a name, so it is an lvalue: without the second ``std::move``, the assignment copies.
+
+.. note::
+
+   "For 'will-move-from' parameters, pass by ``X&&`` and ``std::move`` the parameter". Rule: `Core Guidelines F.18 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-consume>`__.
+
+Returning a Local
+^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<Pose> plan_path(int n) {
+     std::vector<Pose> path{make_path(n)};
+     return path;                // elided or moved, never copied
+     // return std::move(path);  // warns, and blocks the elision
+   }
+   std::vector<Pose> path{plan_path(1000)};
+
+.. code-block:: text
+
+   warning: moving a local object in a return statement prevents copy elision
+   [-Wpessimizing-move]
+
+- L5 (`Reminder: Returning by Value`_): a local returned by value is constructed in place, or moved if it cannot be. ``702run week7_appendix xxx`` prints the same address twice.
+- ``std::move`` on the return turns the local into an xvalue, and the compiler can no longer build it in place.
+
+.. note::
+
+   "Don't ``return std::move(local)``". Rule: `Core Guidelines F.48 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-return-move-local>`__.
