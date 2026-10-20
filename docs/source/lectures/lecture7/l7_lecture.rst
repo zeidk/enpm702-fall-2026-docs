@@ -1642,6 +1642,27 @@ See `A Dashboard of weak_ptr`_ under Further Reading.
 
    C++20 **[util.smartptr.weak.obs]** (20.11.4.5): ``expired()`` "Returns: use_count() == 0." ``lock()`` "Returns: expired() ? shared_ptr<T>() : shared_ptr<T>(\*this), executed atomically."
 
+Passing
+"""""""
+
+Required reading: the section in the table, under Further Reading, shows how a function takes a ``std::weak_ptr``.
+
+.. list-table::
+   :header-rows: 1
+
+   * - The function...
+     - Parameter type
+     - Rule
+     - Further Reading
+   * - keeps a watcher
+     - ``const std::weak_ptr<T>&``
+     - R.24
+     - :ref:`Passing: weak_ptr <l7-weak-passing>`
+   * - only uses the object
+     - ``const T&``, after ``lock()``
+     - R.30
+     - :ref:`Passing: weak_ptr <l7-weak-passing>`
+
 Exercise 5: Use Counts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1656,7 +1677,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 84``.
+- Check: ``702run week7_playground 85``.
 
 Choosing a Pointer
 ------------------
@@ -2470,3 +2491,28 @@ Returning
 - A ``std::unique_ptr`` converts to a ``std::shared_ptr``: one owner becomes the first of several.
 - Not the other way: other owners may exist, and a ``std::unique_ptr`` must be the only one.
 - So a function that creates an ``Obstacle`` returns a ``std::unique_ptr``. The caller turns it into a ``std::shared_ptr`` if it needs to share.
+
+.. _l7-weak-passing:
+
+Passing: ``weak_ptr``
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   struct Dashboard { std::weak_ptr<Obstacle> shown; };
+   void watch(Dashboard& dashboard,
+              const std::weak_ptr<Obstacle>& target) {
+     dashboard.shown = target;  // stores a watcher, not an owner
+   }
+   void print_obstacle(const Obstacle& target);  // only reads it
+
+   auto cyclist{std::make_shared<Obstacle>(2, Pose{12.0, -1.0}, 4.0)};
+   Dashboard dashboard{};
+   watch(dashboard, cyclist);  // a shared_ptr converts to a weak_ptr
+   if (auto target{dashboard.shown.lock()}) {
+     print_obstacle(*target);  // lock first, then pass the object
+   }
+
+- A function that keeps a watcher takes ``const std::weak_ptr<T>&`` and stores a copy. ``cyclist.use_count()`` stays 1.
+- A function that only uses the object takes ``const T&``. The caller locks first, then passes the object (R.30).
+- The Core Guidelines have no rule for ``std::weak_ptr`` parameters. The first bullet follows the example in `Core Guidelines R.24 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-weak_ptr>`__.
