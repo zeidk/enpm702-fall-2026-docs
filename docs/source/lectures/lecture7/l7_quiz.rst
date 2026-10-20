@@ -270,25 +270,25 @@ Multiple Choice (Questions 1 to 10)
         lost.push_back(std::move(track));
       }
 
-      auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
+      auto parked_car{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
 
    Which call compiles?
 
-   A. ``keep_lost(track);``
-   B. ``keep_lost(std::move(track));``
-   C. ``keep_lost(track.get());``
-   D. ``keep_lost(*track);``
+   A. ``keep_lost(parked_car);``
+   B. ``keep_lost(std::move(parked_car));``
+   C. ``keep_lost(parked_car.get());``
+   D. ``keep_lost(*parked_car);``
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B. keep_lost(std::move(track));**
+      **B. keep_lost(std::move(parked_car));**
 
       The parameter is taken by value, so it is a new owner. The caller must hand the ``Obstacle`` object over with ``std::move``, and the call shows that ownership moves. After it, the program prints:
 
       .. code-block:: text
 
-         track == nullptr: true, lost.size(): 1
+         parked_car == nullptr: true, lost.size(): 1
 
       The other three do not compile. A would copy a ``std::unique_ptr``, and its copy constructor is deleted:
 

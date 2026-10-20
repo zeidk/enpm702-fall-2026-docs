@@ -6,10 +6,9 @@ This exercise covers Lecture 7: Smart Pointers and Move Semantics. There is
 one exercise this week, and it is graded: hand it in on Canvas before
 L8.
 
-The exercise works on the software of the autonomous car from the lecture.
-Four obstacles are on the heap. The tracker owns every obstacle, the
-planner's hazard list shares the obstacles near the ego vehicle, and a
-dashboard watches one obstacle without keeping it alive.
+The exercise works on the sensors of a mobile robot. A sensor manager owns
+every sensor, a fusion list shares the sensors fast enough to fuse, and a
+logger watches one sensor without keeping it alive.
 
 .. note::
 
@@ -18,15 +17,13 @@ dashboard watches one obstacle without keeping it alive.
 
    .. code-block:: cmake
 
-      add_executable(week7_hazards exercises/hazards.cpp)
-      target_include_directories(week7_hazards PRIVATE common)
-      target_compile_options(week7_hazards PRIVATE -fsanitize=address)
-      target_link_options(week7_hazards PRIVATE -fsanitize=address)
+      add_executable(week7_sensors exercises/sensors.cpp)
+      target_compile_options(week7_sensors PRIVATE -fsanitize=address)
+      target_link_options(week7_sensors PRIVATE -fsanitize=address)
 
-   The ``common`` folder holds ``obstacle.hpp``, with ``Pose`` and
-   ``Obstacle``. ``-fsanitize=address`` turns on LeakSanitizer, so a leak
-   is reported when the program ends. The course project already turns on
-   the warnings, so fix every warning before you submit.
+   ``-fsanitize=address`` turns on LeakSanitizer, so a leak is reported
+   when the program ends. The course project already turns on the
+   warnings, so fix every warning before you submit.
 
    Format the output as in the **Example Output**: a title between two lines
    of ``=``, and each part under a heading underlined with ``-``, with the
@@ -36,57 +33,60 @@ dashboard watches one obstacle without keeping it alive.
 ----
 
 
-.. dropdown:: Exercise 1: The Hazard List
+.. dropdown:: Exercise 1: The Sensor Manager
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Use the three smart pointers of L7 in one short program: a
-    factory that returns a ``std::unique_ptr``, a tracker and a hazard list
-    that share obstacles through ``std::shared_ptr``, and a dashboard that
-    watches an obstacle through a ``std::weak_ptr``.
+    Use the three smart pointers of L7 in one short program: a factory that
+    returns a ``std::unique_ptr``, a manager and a fusion list that share
+    sensors through ``std::shared_ptr``, and a logger that watches a sensor
+    through a ``std::weak_ptr``.
 
     **Specification**
 
-    Write one program, ``project/week7/exercises/hazards.cpp``, with the
-    target ``week7_hazards``. Include ``obstacle.hpp`` and use its
-    ``Obstacle`` as it is. Write no ``new`` and no ``delete``.
+    Write one program, ``project/week7/exercises/sensors.cpp``, with the
+    target ``week7_sensors``. Write no ``new`` and no ``delete``.
 
-    1. Write ``make_track``. It takes an id, a ``Pose``, a speed in m/s and
-       whether the obstacle is static, and returns a
-       ``std::unique_ptr<Obstacle>`` made with ``std::make_unique``.
-    2. Declare ``using Tracker = std::vector<std::shared_ptr<Obstacle>>;``.
-       Put obstacles 1, 2 and 3 into the tracker straight from
-       ``make_track``. Create obstacle 4 in a variable ``track_4``, then move
-       it into the tracker. Print the tracker, and whether ``track_4`` is now
+    1. Declare a ``struct Sensor`` with four members: ``id`` (an ``int``),
+       ``name`` (a ``std::string``), ``rate_hz`` (a ``double``, how many
+       readings per second) and ``active`` (a ``bool``). Give ``id``,
+       ``rate_hz`` and ``active`` the defaults ``0``, ``0.0`` and ``false``.
+    2. Write ``make_sensor``. It takes an id, a name and a rate, and returns
+       a ``std::unique_ptr<Sensor>`` made with ``std::make_unique``, with
+       ``active`` set to ``true``.
+    3. Declare ``using Sensors = std::vector<std::shared_ptr<Sensor>>;``.
+       Put sensors 1, 2 and 3 into the manager straight from
+       ``make_sensor``. Create sensor 4 in a variable ``gps``, then move it
+       into the manager. Print the manager, and whether ``gps`` is now
        empty.
-    3. Write ``add_if_close``. It takes the hazard list as a ``Tracker&``, an
-       obstacle as a ``const std::shared_ptr<Obstacle>&``, and a limit in
-       meters. It adds the obstacle to the hazard list only when its ``x`` is
-       less than the limit. Call it for every obstacle in the tracker with
-       ``25.0``. Print the number of owners of each obstacle
-       (``use_count()``) and the size of the hazard list.
-    4. Make a ``std::weak_ptr<Obstacle>`` that watches obstacle 2, the second
-       obstacle in the tracker. Write ``show``. It takes the
+    4. Write ``add_if_fast``. It takes the fusion list as a ``Sensors&``, a
+       sensor as a ``const std::shared_ptr<Sensor>&``, and a rate in Hz. It
+       adds the sensor to the fusion list only when its rate is at least that
+       rate. Call it for every sensor in the manager with ``10.0``. Print the
+       number of owners of each sensor (``use_count()``) and the size of the
+       fusion list.
+    5. Make a ``std::weak_ptr<Sensor>`` named ``logger`` that watches sensor
+       2, the second sensor in the manager. Write ``show``. It takes the
        ``std::weak_ptr`` by ``const`` reference, and calls ``lock()``. It
-       prints the obstacle's id and speed, or ``the obstacle is gone``.
-    5. The tracker loses obstacle 2. Call ``show``, erase obstacle 2 from the
-       tracker, print the number of owners of obstacle 2, and call ``show``
-       again. Then clear the hazard list, print the number of owners of
-       obstacle 2, and call ``show`` one last time.
-    6. The program must end with no LeakSanitizer report.
+       prints the sensor's name and rate, or ``the sensor is gone``.
+    6. The camera is removed. Call ``show``, erase sensor 2 from the manager,
+       print the number of owners of the camera, and call ``show`` again.
+       Then clear the fusion list, print the number of owners of the camera,
+       and call ``show`` one last time.
+    7. The program must end with no LeakSanitizer report.
 
-    Use these obstacles, in this order (the table of the lecture):
+    Use these sensors, in this order:
 
     .. code-block:: text
 
-       id  x (m)  y (m)  heading (rad)  speed (m/s)  static
-       1   20.0   -3.0   0.00            0.0         yes
-       2   12.0   -1.0   0.00            4.0         no
-       3   30.0    2.5   1.57            1.4         no
-       4   38.0    3.5   3.14           13.4         no
+       id  name    rate (Hz)
+       1   lidar    10.0
+       2   camera   30.0
+       3   imu     100.0
+       4   gps       1.0
 
     **Example Output**
 
@@ -95,29 +95,29 @@ dashboard watches one obstacle without keeping it alive.
     .. code-block:: text
 
        ====================================
-         The Hazard List
+         The Sensor Manager
        ====================================
 
-       Tracker
+       Manager
        ------------------------------------
-         obstacle 1 : x  20.00 m,   0.00 m/s
-         obstacle 2 : x  12.00 m,   4.00 m/s
-         obstacle 3 : x  30.00 m,   1.40 m/s
-         obstacle 4 : x  38.00 m,  13.40 m/s
-         track_4 == nullptr : true
+         sensor 1 : lidar   10.00 Hz
+         sensor 2 : camera  30.00 Hz
+         sensor 3 : imu    100.00 Hz
+         sensor 4 : gps      1.00 Hz
+         gps == nullptr : true
 
        Owners
        ------------------------------------
-         obstacle 1 : 2
-         obstacle 2 : 2
-         obstacle 3 : 1
-         obstacle 4 : 1
-         in the hazard list : 2
+         sensor 1 : 2
+         sensor 2 : 2
+         sensor 3 : 2
+         sensor 4 : 1
+         in the fusion list : 3
 
-       Obstacle 2 Is Lost
+       The Camera Is Removed
        ------------------------------------
-         dashboard : obstacle 2,   4.00 m/s
-         owners of obstacle 2 : 1
-         dashboard : obstacle 2,   4.00 m/s
-         owners of obstacle 2 : 0
-         dashboard : the obstacle is gone
+         logger : camera  30.00 Hz
+         owners of the camera : 1
+         logger : camera  30.00 Hz
+         owners of the camera : 0
+         logger : the sensor is gone
