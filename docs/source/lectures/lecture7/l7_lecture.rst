@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 78, runs only when you ask for it by number: ``702run week7_playground 78``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
 
 .. note::
 
@@ -322,19 +322,20 @@ Inside a Move
 .. code-block:: cpp
 
    std::vector<Pose> path{make_path(1000)};
+   path.reserve(1024);                        // room for 24 more
    const Pose* where{path.data()};            // where path's block is
    std::vector<Pose> moved{std::move(path)};  // std::move marks path
 
 .. figure:: /_static/images/l7/av_vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, and end and capacity both at the right end of the last cell. A measuring line under it reads 1000 Pose, 24000 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same places, with the same measuring line, 1000 Pose, 24000 bytes.
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells that ends in a gray part labeled 24 free. Three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, end at the right end of the last cell in use, where the gray part starts, and capacity at the right end of the gray part. A measuring line under the whole strip reads 1024 Pose, 24576 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to a strip of cells like the one in panel 1, with the same gray part labeled 24 free, ending at the same places, with the same measuring line, 1024 Pose, 24576 bytes.
    :align: center
    :width: 100%
 
    A ``std::vector`` before and after a move. **1**: ``path`` owns the block. **2**: after the move, ``moved`` owns the block and ``path``'s three pointers are null.
 
-- **1**: ``path`` owns the block through its three pointers (L4).
+- **1**: ``path`` owns the block through its three pointers (L4): 1024 slots, 1000 in use.
 - **2**: after the move, ``moved`` holds the same three pointers (``moved.data() == where``), and ``path``'s are null (libstdc++, measured). ``702run week7_playground 13`` prints ``moved.data() == where: true, path.size(): 0, path.data() == nullptr: true``.
-- Only 24 bytes change hands: the three 8-byte pointers, whatever the vector holds.
+- Only 24 bytes change hands, the three 8-byte pointers, so the block keeps its 24 spare slots: ``moved.capacity()`` is 1024. A copy leaves them out (`Inside a Copy`_). ``702run week7_playground 13`` also prints ``moved: size 1000, capacity 1024, 24576 bytes``.
 
 Elision or a Move
 ^^^^^^^^^^^^^^^^^
@@ -690,25 +691,9 @@ The ``decltype`` Test
 
 .. note::
 
-   ``T&&`` is an **rvalue reference**: a reference to an object whose contents may be taken (`Binding to rvalues`_). ``std::move(path)`` returns ``std::vector<Pose>&&``: it marks ``path`` and moves nothing (`xvalue: Marked by std::move`_).
+   ``T&&`` is an **rvalue reference**: a reference to an object whose contents may be taken (`Binding to rvalues`_). ``std::move(path)`` returns ``std::vector<Pose>&&``: that is its type. A call that returns an rvalue reference is an xvalue (**[basic.lval]** paragraph 4.1): that is its category. It marks ``path`` and moves nothing (`xvalue: Marked by std::move`_).
 
-One Pair or Two Parentheses
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   std::vector<Pose> path{make_path(3)};
-   static_assert(std::is_same_v<decltype(path),
-                                std::vector<Pose>>);        // one pair
-   static_assert(std::is_same_v<decltype((path)),
-                                std::vector<Pose>&>);       // two pairs
-
-- One pair around a plain name: ``decltype`` gives the type ``path`` was declared with, ``std::vector<Pose>``. It says nothing about the category.
-- Two pairs: ``(path)`` is no longer a plain name, so ``decltype`` follows its category. ``path`` is an lvalue, so the result is ``std::vector<Pose>&``.
-
-.. note::
-
-   C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: "if E is an unparenthesized id-expression [...], decltype(E) is the type of the entity named by E"; "otherwise, if E is an xvalue, decltype(E) is T&&", "if E is an lvalue, decltype(E) is T&", "otherwise, decltype(E) is the type of E".
+See `One Pair or Two Parentheses`_ under Further Reading.
 
 Exercise 2: Value Categories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -736,7 +721,31 @@ Exercise 2: Value Categories
    make_obstacle(n).speed    // 9
    ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 33``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 32``.
+
+.. dropdown:: Answers
+   :class-container: sd-border-success
+
+   An lvalue refers to an object that already exists, and nothing marks it (`lvalue: A Named Object`_).
+
+   1. ``seen``: **lvalue**. The name ``seen`` refers to a vector that already exists.
+   2. ``seen[1].pose``: **lvalue**. ``seen[1]`` refers to the second ``Obstacle`` object in ``seen``, and ``.pose`` to its ``pose`` member. Both already exist.
+   3. ``p->pose.x``: **lvalue**. ``p->pose`` is ``(*p).pose``. ``*p`` is the ``Obstacle`` object ``p`` points at, ``seen[0]``, so the expression refers to its ``x``.
+   4. ``n * 2``: **prvalue**. It computes 8 from the value of ``n``. No object held that 8 before (`prvalue: A Computed Value`_).
+   5. ``lookup(seen, 1)``: **lvalue**, because of its return type, ``Obstacle&``: the call refers to an ``Obstacle`` object that is already in ``seen``. The ``&`` on the parameter plays no part.
+   6. ``make_path(n)``: **prvalue**. ``make_path`` returns a ``std::vector<Pose>`` by value. A call that returns by value computes a value: no object exists yet (`prvalue: A Computed Value`_).
+   7. ``std::move(seen[0])``: **xvalue**. It refers to ``seen[0]``, which already exists, and marks it: its return type is ``Obstacle&&`` (`xvalue: Marked by std::move`_).
+   8. ``std::move(seen[0]).pose``: **xvalue**. A member of an xvalue is an xvalue: when the whole ``Obstacle`` object is marked, its ``pose`` is marked too.
+   9. ``make_obstacle(n).speed``: **xvalue**. ``make_obstacle(n)`` is a prvalue. ``.speed`` needs an object, so a temporary is made, and its member is an xvalue (`Temporary Materialization`_).
+   10. ``++n``: **lvalue**. Prefix ``++`` adds 1 to ``n``, and the result is ``n`` itself, now 5.
+
+   .. note::
+
+      C++20 **[expr.call]** (7.6.1.2) paragraph 14: "A function call is an lvalue if the result type is an lvalue reference type [...], an xvalue if the result type is an rvalue reference to object type, and a prvalue otherwise."
+
+   .. note::
+
+      C++20 **[basic.lval]** paragraph 4.4: an xvalue is "a class member access expression [...] in which the object expression is an xvalue". **[expr.pre.incr]** (7.6.2.2): "The result is the updated operand; it is an lvalue".
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
@@ -745,7 +754,7 @@ Binding to rvalues
 
    std::vector<Pose> path{make_path(1000)};
    std::vector<Pose>&& temp_ref{make_path(10)};       // OK: an rvalue
-   const std::vector<Pose>& any_ref{path};            // binds to both
+   const std::vector<Pose>& any_ref{path};            // lvalue or rvalue
    std::vector<Pose>&& lvalue_ref{path};              // does not compile
 
 .. code-block:: text
@@ -755,7 +764,7 @@ Binding to rvalues
 
 - ``T&&`` is an **rvalue reference**. It binds only to rvalues: prvalues and xvalues.
 - Bound to the prvalue ``make_path(10)``, ``temp_ref`` gets a temporary that lives as long as ``temp_ref``.
-- ``const T&`` binds to both (L5), but through it you cannot change the object, so you cannot take from it.
+- ``const T&`` binds to lvalues and rvalues alike, but through it you cannot change the object, so you cannot take from it.
 
 See `Category, Type and Lifetime`_ and `Giving It a Name`_ under Further Reading.
 
@@ -763,16 +772,16 @@ What Each Reference Refers To
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l7/av_binding.png
-   :alt: On the right, two name tags, each over a blue box with a stack icon and the word Stack holding three fields, begin, end and capacity, each marked ptr: the upper one reads path, the lower one reads (temporary). On the left, three references, each a name tag with its type under it and a numbered tag beside it. Tag 2, any_ref, type const std::vector<Pose>&: a solid dark blue arrow runs from it to the path box. Tag 3, lvalue_ref, type std::vector<Pose>&&: a gray dashed arrow runs from it to the path box, crossed out by a circled X halfway along. Tag 1, temp_ref, type std::vector<Pose>&&: a solid dark blue arrow runs from it to the temporary's box.
+   :alt: In the middle, two name tags, each over a blue box with a stack icon and the word Stack holding three fields in rows, begin, end and capacity, each marked ptr: the upper one reads path, the lower one reads (temporary). On the right, one red box with a heap icon and the word Heap holds two blocks, each a column of cells with dots in it and a dashed empty slot under its last cell. The upper block, level with path, is measured as 1000 Pose, 24000 bytes; the lower one, level with the temporary, as 10 Pose, 240 bytes. From each Stack box, a blue arrow runs from begin to the block's first cell, and two blue arrows run from end and capacity to the dashed slot. On the left, three references, each a name tag with its type under it and a numbered tag beside it. Tag 2, any_ref, type const std::vector<Pose>&: a solid dark blue arrow runs from it to path's Stack box. Tag 3, lvalue_ref, type std::vector<Pose>&&: a gray dashed arrow runs from it to path's Stack box, crossed out by a circled X halfway along. Tag 1, temp_ref, type std::vector<Pose>&&: a solid dark blue arrow runs from it to the temporary's Stack box.
    :align: center
    :width: 100%
 
-   The code of `Binding to rvalues`_, in memory: each reference and the object it refers to.
+   The code of `Binding to rvalues`_, in memory: each reference, the object it refers to, and the block each vector owns on the heap.
 
-- **1**, line 2: ``temp_ref`` binds the temporary from ``make_path(10)`` and keeps it alive (C++20 **[class.temporary]** paragraph 6: the temporary "persists for the lifetime of the reference").
+- **1**, line 2: ``temp_ref`` binds the temporary from ``make_path(10)`` and keeps it alive, with its 10 poses (240 bytes) on the heap (C++20 **[class.temporary]** paragraph 6: the temporary "persists for the lifetime of the reference").
 - **2**, line 3: ``any_ref``, a ``const&``, binds ``path``, an lvalue.
 - **3**, line 4: a ``T&&`` cannot bind ``path``, an lvalue, so it does not compile. The figure draws it dashed and crossed out.
-- A reference has no box. C++20 **[dcl.ref]** paragraph 4: "It is unspecified whether or not a reference requires storage."
+- A reference has no box and owns no block: each block on the heap belongs to a vector, 1000 poses (24000 bytes) for ``path``. C++20 **[dcl.ref]** paragraph 4: "It is unspecified whether or not a reference requires storage."
 
 Overloads for Copy and Move
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1005,7 +1014,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 46`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 47`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1119,7 +1128,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 52``.
+- Check: ``702run week7_playground 53``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1236,7 +1245,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 57`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 58`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1263,7 +1272,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 53
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 54
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1340,7 +1349,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 63``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 64``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1408,7 +1417,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 69`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 70`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1492,7 +1501,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 56
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 57
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1578,7 +1587,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 78``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 79``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1594,7 +1603,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 79``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
 
 .. note::
 
@@ -1619,7 +1628,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 80``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 81``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1653,7 +1662,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 82``.
+- Check: ``702run week7_playground 83``.
 
 Choosing a Pointer
 ------------------
@@ -2237,3 +2246,21 @@ Passing: Reseat
 .. note::
 
    "Take a ``unique_ptr<widget>&`` parameter to express that a function reseats the ``widget``". Rule: `Core Guidelines R.33 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-reseat>`__.
+
+One Pair or Two Parentheses
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<Pose> path{make_path(3)};
+   static_assert(std::is_same_v<decltype(path),
+                                std::vector<Pose>>);        // one pair
+   static_assert(std::is_same_v<decltype((path)),
+                                std::vector<Pose>&>);       // two pairs
+
+- One pair around a plain name: ``decltype`` gives the type ``path`` was declared with, ``std::vector<Pose>``. It says nothing about the category.
+- Two pairs: ``(path)`` is no longer a plain name, so ``decltype`` follows its category. ``path`` is an lvalue, so the result is ``std::vector<Pose>&``.
+
+.. note::
+
+   C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: "if E is an unparenthesized id-expression [...], decltype(E) is the type of the entity named by E"; "otherwise, if E is an xvalue, decltype(E) is T&&", "if E is an lvalue, decltype(E) is T&", "otherwise, decltype(E) is the type of E".
