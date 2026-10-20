@@ -623,7 +623,7 @@ With the declaration above:
 ``decltype``
 ^^^^^^^^^^^^
 
-``decltype(e)`` names a type: the type of ``e``, worked out by the compiler without running ``e``. You can use it wherever you would write a type.
+``decltype`` (short for *declared type*) yields the type of an expression ``e``, determined at compile time. The expression ``e`` is never evaluated, and the result can be used anywhere a type is expected.
 
 .. code-block:: cpp
 
