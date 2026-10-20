@@ -21,9 +21,16 @@ Code for This Lecture
    project/week7/
    ├── CMakeLists.txt
    ├── playground/
+   │   ├── include/
+   │   └── src/
    ├── appendix/
+   │   └── src/
    ├── common/
+   │   ├── include/
+   │   └── src/
    └── undefined/
+       ├── include/
+       └── src/
 
 **Run a Slide's Code**
 
@@ -316,7 +323,7 @@ Inside a Move
 
    std::vector<Pose> path{make_path(1000)};
    const Pose* where{path.data()};            // where path's block is
-   std::vector<Pose> moved{std::move(path)};  // a move
+   std::vector<Pose> moved{std::move(path)};  // std::move marks path
 
 .. figure:: /_static/images/l7/av_vector_move.png
    :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, and end and capacity both at the right end of the last cell. A measuring line under it reads 1000 Pose, 24000 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same places, with the same measuring line, 1000 Pose, 24000 bytes.

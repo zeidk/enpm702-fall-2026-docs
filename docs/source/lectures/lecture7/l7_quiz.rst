@@ -6,7 +6,7 @@ Lecture 7 Quiz
 
 This quiz covers the key concepts from Lecture 7: Smart Pointers and Move Semantics. Topics include the owner of a heap object and the leak LeakSanitizer reports, moves, value categories, rvalue references, ``std::move``, ``std::unique_ptr``, ``std::shared_ptr``, ``std::weak_ptr``, and reference cycles.
 
-The code uses the types ``Pose`` and ``Obstacle`` from ``project/week7/common/obstacle.hpp``, and ``make_path(n)`` returns a ``std::vector<Pose>`` of ``n`` poses, one meter apart, as in the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3 and libstdc++, with ``-std=c++20 -Wall -Wextra -fsanitize=address,undefined``.
+The code uses the types ``Pose`` and ``Obstacle`` from ``project/week7/common/include/obstacle.hpp``, and ``make_path(n)`` returns a ``std::vector<Pose>`` of ``n`` poses, one meter apart, as in the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3 and libstdc++, with ``-std=c++20 -Wall -Wextra -fsanitize=address,undefined``.
 
 .. note::
 
