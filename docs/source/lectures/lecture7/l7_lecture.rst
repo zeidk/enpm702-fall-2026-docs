@@ -31,7 +31,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week7)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week7_playground``.
-5. Run every slide: ``702run week7_playground``. Run only one slide, for example `Handing a Path to the Controller`_: ``702run week7_playground 12``.
+5. Run every slide: ``702run week7_playground``. Run only one slide, for example `Inside a Copy`_: ``702run week7_playground 12``.
 
 **Code That Leaks or Breaks**
 
@@ -87,7 +87,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 80, runs only when you ask for it by number: ``702run week7_playground 80``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
 
 .. note::
 
@@ -266,20 +266,8 @@ A **copy** makes a second object with its own memory: a new block, every element
 
 See `cppreference: std::move <https://en.cppreference.com/w/cpp/utility/move>`__.
 
-Handing a Path to the Controller
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   std::vector<Pose> make_path(int n);        // n poses, 1 m apart
-   std::vector<Pose> path{make_path(1000)};   // pose i at x = i m
-   const Pose* where{path.data()};
-
-   std::vector<Pose> copied{path};            // a copy
-   std::vector<Pose> moved{std::move(path)};  // a move
-
-- The copy allocates a new block, 1000 × 24 bytes (``sizeof(Pose)``: three ``double``\ s) = 24000 bytes, and copies every ``Pose``. ``path`` is unchanged.
-- The move allocates nothing. ``moved`` holds the block ``path`` had, at the same address, and ``path`` is left empty.
+Inside a Copy
+^^^^^^^^^^^^^
 
 .. dropdown:: The Definition of ``make_path``
    :icon: code
@@ -302,9 +290,6 @@ Handing a Path to the Controller
    - ``702run week7_appendix iv`` prints the three poses of ``make_path(3)``: (0, 0, 0) (1, 0, 0) (2, 0, 0).
    - It returns the local ``path`` by value: no copy is made (`Returning a Local`_).
 
-Inside a Copy
-^^^^^^^^^^^^^
-
 .. code-block:: cpp
 
    std::vector<Pose> path{make_path(1000)};
@@ -322,7 +307,27 @@ Inside a Copy
 - ``begin`` points at the first ``Pose``, ``end`` one past the last one (the right edge of the last cell), ``capacity`` one past the last slot.
 - ``path``: 1024 slots (libstdc++ reserves exactly 1024), 1000 in use: 1024 × 24 = 24576 bytes, 24 unused (gray).
 - ``copied``: 1000 × 24 = 24000 bytes. A copy allocates for the elements only, not the spare slots: its ``end`` equals its ``capacity``.
-- Each vector frees its own block at the end of its scope. ``702run week7_playground 13`` prints both sizes and capacities.
+- Each vector frees its own block at the end of its scope. ``702run week7_playground 12`` prints both sizes and capacities.
+
+Inside a Move
+^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   std::vector<Pose> path{make_path(1000)};
+   const Pose* where{path.data()};            // where path's block is
+   std::vector<Pose> moved{std::move(path)};  // a move
+
+.. figure:: /_static/images/l7/av_vector_move.png
+   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, and end and capacity both at the right end of the last cell. A measuring line under it reads 1000 Pose, 24000 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same places, with the same measuring line, 1000 Pose, 24000 bytes.
+   :align: center
+   :width: 100%
+
+   A ``std::vector`` before and after a move. **1**: ``path`` owns the block. **2**: after the move, ``moved`` owns the block and ``path``'s three pointers are null.
+
+- **1**: ``path`` owns the block through its three pointers (L4).
+- **2**: after the move, ``moved`` holds the same three pointers (``moved.data() == where``), and ``path``'s are null (libstdc++, measured). ``702run week7_playground 13`` prints ``moved.data() == where: true, path.size(): 0, path.data() == nullptr: true``.
+- Only 24 bytes change hands: the three 8-byte pointers, whatever the vector holds.
 
 Elision or a Move
 ^^^^^^^^^^^^^^^^^
@@ -357,20 +362,6 @@ Elision or a Move
 
 - ``best`` **is** ``scores``: a prvalue that initializes an object of its own type is elided (C++20 **[dcl.init]** 17.6.1). ``push_back`` takes a reference: it gets a temporary and moves it into ``all[0]``, a new vector that holds the same block (`Overloads for Copy and Move`_).
 - ``return scores;`` may be elided (NRVO), but that is only permitted (**[class.copy.elision]** 11.10.5). Without it, ``best`` gets a new address, the same block: ``scores`` is moved out, an implicit move (`Returning a Local`_). Compiled with ``-fno-elide-constructors``, which turns NRVO off, that is what happens.
-
-Inside a Move
-^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l7/av_vector_move.png
-   :alt: Two panels separated by a thin line, tagged 1 and 2. Panel 1: a name tag reading path over a blue box with a stack icon and the word Stack, holding three fields, begin, end and capacity, each marked ptr. Below, a red box with a heap icon and the word Heap holds a strip of cells, and three blue arrows run from the fields down to the top edge of the strip: begin ends at the left end of the first cell, and end and capacity both at the right end of the last cell. A measuring line under it reads 1000 Pose, 24000 bytes. Panel 2: a name tag reading path over the same Stack box, its three fields now reading nullptr, with no arrows. Below it a name tag reading moved over a second Stack box with the same three fields, each marked ptr, and three blue arrows from them to the strip of cells in a Heap box like the one in panel 1, ending at the same places, with the same measuring line, 1000 Pose, 24000 bytes.
-   :align: center
-   :width: 100%
-
-   A ``std::vector`` before and after a move. **1**: ``path`` owns the block. **2**: after the move, ``moved`` owns the block and ``path``'s three pointers are null.
-
-- **1**: ``path`` owns the block through its three pointers (L4).
-- **2**: after ``std::vector<Pose> moved{std::move(path)}``, ``moved`` holds the same three pointers and ``path``'s are null (libstdc++, measured).
-- Only 24 bytes change hands: the three 8-byte pointers, whatever the vector holds.
 
 The Moved-from Object
 ^^^^^^^^^^^^^^^^^^^^^
@@ -407,7 +398,7 @@ Exercise 1: Copy and Move
 - At the board, after each line: draw ``a``, ``b`` and ``c`` on the stack, each with its ``begin``, ``end`` and ``capacity`` pointers (`Inside a Copy`_), and every block on the heap they point at.
 - Line 4 is a move into a vector that already exists. What does ``a`` hold before it, and after?
 - After line 4: how many blocks are on the heap? Which variable owns each one? Was any block freed?
-- Check: ``702run week7_playground 17`` prints each vector's size, capacity and block after every line.
+- Check: ``702run week7_playground 16`` prints each vector's size, capacity and block after every line.
 
 Value Categories
 ^^^^^^^^^^^^^^^^
@@ -580,7 +571,7 @@ With the declarations above, each expression below refers to an object that alre
 - ``first_obstacle(seen)``: the ``Obstacle`` object the returned ``Obstacle&`` refers to, ``seen[0]``.
 - ``"stop"``: a ``const char[5]`` array that the program keeps until it ends.
 
-``&`` compiles on all five. ``702run week7_playground 24`` prints ``lvalue`` for each.
+``&`` compiles on all five. ``702run week7_playground 23`` prints ``lvalue`` for each.
 
 .. dropdown:: The Definitions of ``make_obstacle`` by Value and ``first_obstacle``
    :icon: code
@@ -627,6 +618,8 @@ Test for a **prvalue** (`prvalue: A Computed Value`_): ``&`` does not compile on
    std::vector<Pose> make_path(int n);
    int a{2};
    int b{3};
+   std::vector<Pose> path;
+   path = make_path(5);  // the prvalue's block is taken
 
 With the declarations above, each expression below is a prvalue:
 
@@ -641,7 +634,9 @@ With the declarations above, each expression below is a prvalue:
    &(a + b):      error: lvalue required as unary '&' operand
    &make_path(3): error: taking address of rvalue
 
-``702run week7_playground 27`` prints ``prvalue`` for all five.
+``702run week7_playground 26`` prints ``prvalue`` for all five.
+
+A prvalue may be taken: after the last line, ``path`` holds the block ``make_path`` allocated, not a copy. ``702run week7_playground 26`` also prints ``path took make_path's block: true``.
 
 xvalue: Marked by ``std::move``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -676,7 +671,7 @@ Marking an **xvalue** (`xvalue: Marked by std::move`_) moves nothing.
 - ``static_cast<std::vector<Pose>&&>(path)``: the same marking, written as a cast to ``T&&``.
 - ``std::move(cyclist).pose``: ``std::move`` marks ``cyclist``, so its member ``pose`` is marked too. Its ``decltype((e))`` is ``Pose&&``, the same form with ``T`` = ``Pose`` (`The decltype Test`_).
 
-``702run week7_playground 30`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
+``702run week7_playground 29`` prints ``xvalue`` for all three. Afterwards ``path.size()`` is still 3. The three are cases 4.1, 4.2 and 4.4 in the note to **[basic.lval]** paragraph 4.
 
 Temporary Materialization
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -768,7 +763,7 @@ Exercise 2: Value Categories
    make_obstacle(n).speed    // 9
    ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 35``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 34``.
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
@@ -826,7 +821,7 @@ Overloads for Copy and Move
    assign_path(std::move(path));    // xvalue: 2, a move
 
 - The compiler picks the overload from the argument's value category: an lvalue gets ``const&``, an rvalue gets ``&&``.
-- ``std::vector`` itself has both: a copy constructor and a move constructor. That is how the compiler chose between the copy and the move in `Handing a Path to the Controller`_.
+- ``std::vector`` itself has both: a copy constructor and a move constructor. That is how the compiler chose between the copy in `Inside a Copy`_ and the move in `Inside a Move`_.
 
 See `Inside std::vector's Move and Copy`_ under Further Reading.
 
@@ -1036,7 +1031,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 48`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 47`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1150,7 +1145,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 54``.
+- Check: ``702run week7_playground 53``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1267,7 +1262,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 59`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 58`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1294,7 +1289,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 55
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 54
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1371,7 +1366,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 65``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 64``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1439,7 +1434,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 71`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 70`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1523,7 +1518,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 58
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 57
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1609,7 +1604,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 80``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 79``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1625,7 +1620,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 81``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
 
 .. note::
 
@@ -1650,7 +1645,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 82``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 81``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1684,7 +1679,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 84``.
+- Check: ``702run week7_playground 83``.
 
 Choosing a Pointer
 ------------------
@@ -1852,7 +1847,7 @@ Move Assignment
    current = std::move(next);  // current's 3 poses are destroyed
    // current.size(): 1000, current.data() == where: true, next.size(): 0
 
-- `Handing a Path to the Controller`_ moved into a new vector. Here ``current`` already exists: the move gives up its old 3 poses and takes the 1000 of ``next``, without copying them (same ``data()``).
+- `Inside a Move`_ moved into a new vector. Here ``current`` already exists: the move gives up its old 3 poses and takes the 1000 of ``next``, without copying them (same ``data()``).
 - ``next.size()`` is 0 with libstdc++. The standard says what ``current`` holds afterwards, and nothing about ``next``.
 
 .. note::

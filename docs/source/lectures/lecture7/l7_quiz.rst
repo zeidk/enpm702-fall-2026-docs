@@ -491,7 +491,7 @@ True/False (Questions 11 to 15)
 
       **B. 1000 and 1000.**
 
-      ``path`` has 1024 slots, 1000 in use: 24576 bytes. A copy allocates for the elements only, not the spare slots: ``copied`` has 1000 slots, 1000 times 24 bytes, which is 24000 bytes. ``702run week7_playground 13`` prints:
+      ``path`` has 1024 slots, 1000 in use: 24576 bytes. A copy allocates for the elements only, not the spare slots: ``copied`` has 1000 slots, 1000 times 24 bytes, which is 24000 bytes. ``702run week7_playground 12`` prints:
 
       .. code-block:: text
 
