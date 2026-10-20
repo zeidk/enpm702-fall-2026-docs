@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 77, runs only when you ask for it by number: ``702run week7_playground 77``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 79, runs only when you ask for it by number: ``702run week7_playground 79``. A full run skips it.
 
 .. note::
 
@@ -891,9 +891,8 @@ Creating One
 
    #include <memory>
 
-   Pose cyclist_pose{12.0, -1.0, 0.0};  // from the table
-   std::unique_ptr<Obstacle> track{
-       std::make_unique<Obstacle>(2, cyclist_pose, 4.0)};
+   Pose parked_pose{20.0, -3.0, 0.0};  // from the table
+   auto track{std::make_unique<Obstacle>(1, parked_pose, 0.0, true)};
    std::cout << track->id << ' ' << (*track).speed << '\n';  // 2 4
    auto empty{std::make_unique<Obstacle>()};  // members take defaults
    std::cout << empty->id << ' ' << empty->speed << '\n';    // 0 0
@@ -913,7 +912,7 @@ In Memory
 """""""""
 
 .. figure:: /_static/images/l7/av_unique_ptr_memory.png
-   :alt: On the left, a name tag reading track over a blue box with a stack icon and the word Stack, holding one field, pointer, marked an Obstacle*. A measuring line under it reads 8 bytes. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds a block of four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 48 bytes.
+   :alt: On the left, a name tag reading track over a blue box with a stack icon and the word Stack, holding one field, pointer, marked an Obstacle*. A measuring line under it reads 8 bytes. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds a block of four rows: id 1, pose {20.0, -3.0, 0.0}, speed 0.0, and is_static true. A blue arrow runs from the pointer field to the left edge of that block, at its first row, id. A measuring line under the block reads 48 bytes.
    :align: center
    :width: 100%
 
@@ -931,7 +930,7 @@ The Leak, Fixed
 
    bool needs_braking(int id) {
      Obstacle* track{make_track(
-         id, Pose{12.0, -1.0}, 4.0)};
+         id, Pose{20.0, -3.0}, 0.0)};
      if (track->pose.x > 10.0) {
        return false;  // leaks
      }
@@ -959,15 +958,15 @@ The Leak, Fixed
 
    bool needs_braking(int id) {
      auto track{std::make_unique<Obstacle>(
-         id, Pose{12.0, -1.0}, 4.0)};
+         id, Pose{20.0, -3.0}, 0.0)};
      if (track->pose.x > 10.0) {
        return false;  // deleted here
      }
      return true;     // and here
    }
 
-- The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 45`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- The first one leaks 48 bytes: the parked car is 20 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
+- ``702run week7_playground 45`` runs the second one: ``needs_braking(1): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -991,17 +990,15 @@ One Owner Only
 
 See `std::auto_ptr`_ under Further Reading.
 
-``get`` and ``reset``
-"""""""""""""""""""""
+``get``
+"""""""
 
 .. code-block:: cpp
 
    void print_obstacle(const Obstacle* target);  // only looks
 
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
    print_obstacle(track.get());  // track still owns it
-   track.reset();                // deletes it now: track == nullptr
-   track = std::make_unique<Obstacle>(3, Pose{30.0, 2.5, 1.57}, 1.4);
 
 .. dropdown:: The Definition of ``print_obstacle``
    :icon: code
@@ -1014,7 +1011,25 @@ See `std::auto_ptr`_ under Further Reading.
         std::cout << "  obstacle " << target->id << ": " << target->speed << " m/s\n";
       }
 
-- ``get()`` returns the plain pointer. It does not give up ownership: the code that receives it only looks, and must not ``delete`` it.
+- ``get()`` returns the plain pointer, an ``Obstacle*``. It does not give up ownership: ``track`` still deletes the ``Obstacle`` object when it goes out of scope.
+- The code that receives the pointer only looks. It must not ``delete`` it: ``track`` would delete the object a second time (`Double Delete, Measured`_, under Further Reading).
+
+.. note::
+
+   C++20 **[unique.ptr.single.observers]** (20.11.1.2.4) paragraph 6, ``get()``: "Returns: The stored pointer."
+
+See `release`_ under Further Reading.
+
+``reset``
+"""""""""
+
+.. code-block:: cpp
+   :linenos:
+
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
+   track.reset();                // deletes it now: track == nullptr
+   track = std::make_unique<Obstacle>(3, Pose{30.0, 2.5, 1.57}, 1.4);
+
 - ``reset()`` deletes the ``Obstacle`` object now, without waiting for the end of the scope. ``reset(p)`` stores ``p``, then deletes the old object, if there was one.
 - Assigning a new ``std::unique_ptr`` stores the new object's address, then deletes the old object, as ``reset`` does.
 
@@ -1022,7 +1037,18 @@ See `std::auto_ptr`_ under Further Reading.
 
    C++20 **[unique.ptr.single.modifiers]** (20.11.1.2.5) paragraph 4, ``reset(p)``: "Assigns p to the stored pointer, and then if and only if the old value of the stored pointer, old_p, was not equal to nullptr, calls get_deleter()(old_p)."
 
-See `swap`_ and `release`_ under Further Reading.
+.. figure:: /_static/images/l7/av_unique_ptr_reset.png
+   :alt: Three panels separated by thin lines, tagged 1 to 3. Each has, at the top, a blue box with a stack icon and the word Stack holding one field, track, and below it a red box with a heap icon and the word Heap. Panel 1: track is marked std::unique_ptr, and a blue arrow runs from it down to the top edge of an object in the Heap box with four rows: id 1, pose {20.0, -3.0, 0.0}, speed 0.0, is_static true. Panel 2: track is marked nullptr, with no arrow, and in the Heap box the same place is a gray dashed block labeled freed: 48 bytes. Panel 3: track is marked std::unique_ptr, and a blue arrow runs from it down to an object in the same place with four rows: id 3, pose {30.0, 2.5, 1.57}, speed 1.4, is_static false.
+   :align: center
+   :width: 100%
+
+   ``track`` after each line of the code above.
+
+- **1** to **3**: after lines 1 to 3.
+- **2**: ``reset()`` deletes the ``Obstacle`` object with id 1 and frees its 48 bytes. ``track`` holds ``nullptr``.
+- **3**: the new object may get the freed bytes: with g++ 13.3 it lands at the old address, and under AddressSanitizer it does not (measured).
+
+See `swap`_ under Further Reading.
 
 Moving Ownership
 """"""""""""""""
@@ -1030,7 +1056,7 @@ Moving Ownership
 .. code-block:: cpp
    :linenos:
 
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
    Obstacle* where{track.get()};
    std::unique_ptr<Obstacle> other{std::move(track)};
 
@@ -1048,7 +1074,7 @@ Step 1: Before the Move
 """""""""""""""""""""""
 
 .. figure:: /_static/images/l7/av_unique_ptr_move_1.png
-   :alt: A blue box with a stack icon and the word Stack holds two fields: track, of type std::unique_ptr, and where, of type Obstacle*. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds one object of four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A solid blue arrow runs from track to the left edge of the object, at its first row, id. A dashed blue arrow runs from where to the same row, just below the solid arrow.
+   :alt: A blue box with a stack icon and the word Stack holds two fields: track, of type std::unique_ptr, and where, of type Obstacle*. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds one object of four rows: id 1, pose {20.0, -3.0, 0.0}, speed 0.0, and is_static true. A solid blue arrow runs from track to the left edge of the object, at its first row, id. A dashed blue arrow runs from where to the same row, just below the solid arrow.
    :align: center
    :width: 100%
 
@@ -1060,7 +1086,7 @@ Step 2: After the Move
 """"""""""""""""""""""
 
 .. figure:: /_static/images/l7/av_unique_ptr_move_2.png
-   :alt: A blue box with a stack icon and the word Stack holds three fields: track, of type std::unique_ptr, marked nullptr, with no arrow; where, of type Obstacle*; and other, of type std::unique_ptr. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds the same object as before, four rows: id 2, pose {12.0, -1.0, 0.0}, speed 4.0, and is_static false. A dashed blue arrow runs from where to the left edge of the object, at its first row, id. A solid blue arrow runs from other to the same row, just below the dashed arrow.
+   :alt: A blue box with a stack icon and the word Stack holds three fields: track, of type std::unique_ptr, marked nullptr, with no arrow; where, of type Obstacle*; and other, of type std::unique_ptr. On the right, under a name tag reading Obstacle, a red box with a heap icon and the word Heap holds the same object as before, four rows: id 1, pose {20.0, -3.0, 0.0}, speed 0.0, and is_static true. A dashed blue arrow runs from where to the left edge of the object, at its first row, id. A solid blue arrow runs from other to the same row, just below the dashed arrow.
    :align: center
    :width: 100%
 
@@ -1076,12 +1102,12 @@ Exercise 3: Handing Over a Track
 
    auto p{std::make_unique<Obstacle>(1)};
    auto q{std::move(p)};
-   p = std::make_unique<Obstacle>(2);
+   p = std::make_unique<Obstacle>(3);
    q = std::move(p);
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 51``.
+- Check: ``702run week7_playground 53``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1115,8 +1141,8 @@ Passing: Borrow
      if (target != nullptr) { target->speed = speed; }
    }
 
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
-   print_obstacle(*track);       // 4 m/s
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
+   print_obstacle(*track);       // 0 m/s
    set_speed(track.get(), 2.0);
    print_obstacle(*track);       // 2 m/s: the caller still owns it
 
@@ -1148,7 +1174,7 @@ Passing: Sink
      lost.push_back(std::move(track));
    }
 
-   auto track{std::make_unique<Obstacle>(2)};
+   auto track{std::make_unique<Obstacle>(1)};
    keep_lost(track);             // does not compile: a copy
    keep_lost(std::move(track));  // track == nullptr, lost.size() == 1
 
@@ -1188,7 +1214,7 @@ Exercise 4: Lines That Compile
    void adopt(std::unique_ptr<Obstacle> track);
 
    auto a{std::make_unique<Obstacle>(1)};
-   auto b{std::make_unique<Obstacle>(2)};
+   auto b{std::make_unique<Obstacle>(3)};
    auto c{a};                                    // 1
    auto d{std::move(a)};                         // 2
    inspect(*d);                                  // 3
@@ -1198,7 +1224,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 56`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 58`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1225,7 +1251,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 52
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 54
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1302,7 +1328,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 62``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 64``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1370,7 +1396,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 68`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 70`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1454,7 +1480,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 55
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 57
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1540,7 +1566,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 77``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 79``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1556,7 +1582,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 78``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 80``: no LeakSanitizer report.
 
 .. note::
 
@@ -1581,7 +1607,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 79``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 81``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1615,7 +1641,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 81``.
+- Check: ``702run week7_playground 83``.
 
 Choosing a Pointer
 ------------------
@@ -1843,9 +1869,9 @@ A ``unique_ptr`` with Its Own Deleter
    }};
    {
      std::unique_ptr<Obstacle, decltype(say_and_delete)> track{
-         new Obstacle{2}, say_and_delete};
+         new Obstacle{1}, say_and_delete};
      // sizeof(track): 8
-   }  // prints: deleting obstacle 2
+   }  // prints: deleting obstacle 1
 
 - The second template argument is the deleter (`One Owner Only`_). Here a lambda (L6) that prints first.
 - ``std::make_unique`` cannot take a deleter, so the code calls ``new`` and hands the result to the ``std::unique_ptr`` in the same statement.
@@ -1860,7 +1886,7 @@ A ``unique_ptr`` with Its Own Deleter
 
 .. code-block:: cpp
 
-   std::auto_ptr<Obstacle> a{new Obstacle{2}};
+   std::auto_ptr<Obstacle> a{new Obstacle{1}};
    std::auto_ptr<Obstacle> b{a};  // looks like a copy
    // a.get() == nullptr: true
 
@@ -1884,9 +1910,9 @@ Testing for Empty
 
    std::unique_ptr<Obstacle> track;  // empty
    // track == nullptr: true
-   track = std::make_unique<Obstacle>(2);
+   track = std::make_unique<Obstacle>(1);
    if (track) {
-     std::cout << "obstacle " << track->id << '\n';  // obstacle 2
+     std::cout << "obstacle " << track->id << '\n';  // obstacle 1
    }
    auto other{std::move(track)};  // !track: true
    bool has_track = other;  // does not compile
@@ -1924,13 +1950,13 @@ Testing for Empty
 
 .. code-block:: cpp
 
-   auto first{std::make_unique<Obstacle>(2)};
+   auto first{std::make_unique<Obstacle>(1)};
    auto second{std::make_unique<Obstacle>(4)};
-   const Obstacle* id_2{first.get()};
+   const Obstacle* id_1{first.get()};
    first.swap(second);  // the same as std::swap(first, second)
-   // first->id: 4, second->id: 2, second.get() == id_2: true
+   // first->id: 4, second->id: 1, second.get() == id_1: true
 
-- No ``Obstacle`` object is created, copied or deleted: the one with id 2 stays at the same address, now owned by ``second``.
+- No ``Obstacle`` object is created, copied or deleted: the one with id 1 stays at the same address, now owned by ``second``.
 - ``std::shared_ptr`` has the same ``swap``.
 
 .. note::
@@ -2168,9 +2194,9 @@ Giving It a Name
 
 .. code-block:: cpp
 
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
    Obstacle* raw{track.release()};  // gives up ownership
-   // track == nullptr: true, raw->id: 2
+   // track == nullptr: true, raw->id: 1
    delete raw;  // you are the owner now: leave this out and it leaks
 
 - ``release()`` hands the ``Obstacle`` object back as a plain pointer and forgets it.
@@ -2190,7 +2216,7 @@ Passing: Reseat
      track = std::make_unique<Obstacle>(new_id);
    }  // the assignment deleted the old Obstacle object
 
-   auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+   auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
    replace_track(track, 7);  // track->id: 7, track->speed: 0
 
 - To **reseat** a pointer is to make it own, or point at, a different object. By reference to the ``std::unique_ptr``, the function may reseat the caller's pointer.

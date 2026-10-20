@@ -53,7 +53,7 @@ Multiple Choice (Questions 1 to 10)
       }
 
       bool needs_braking(int id) {
-        Obstacle* track{make_track(id, Pose{12.0, -1.0}, 4.0)};
+        Obstacle* track{make_track(id, Pose{20.0, -3.0}, 0.0)};
         if (track->pose.x > 10.0) {
           return false;  // leaves without delete
         }
@@ -61,7 +61,7 @@ Multiple Choice (Questions 1 to 10)
         return true;
       }
 
-   You compile with ``-fsanitize=address`` and call ``needs_braking(2)``. What happens?
+   You compile with ``-fsanitize=address`` and call ``needs_braking(1)``. What happens?
 
    A. The code does not compile, because one path has no ``delete``.
    B. The program crashes at ``return false;``.
@@ -73,17 +73,17 @@ Multiple Choice (Questions 1 to 10)
 
       **C. The call returns false. When the program ends, LeakSanitizer reports a leak of 48 bytes and names the line that called new.**
 
-      The cyclist is 12 m ahead, more than 10 m, so the function returns ``false`` before it reaches ``delete``. The compiler does not check that every path deletes. A ``main`` that prints the result gives this output, with the stack trace shortened:
+      The parked car is 20 m ahead, more than 10 m, so the function returns ``false`` before it reaches ``delete``. The compiler does not check that every path deletes. A ``main`` that prints the result gives this output, with the stack trace shortened:
 
       .. code-block:: text
 
-         needs_braking(2): false
+         needs_braking(1): false
 
          =================================================================
-         ==327177==ERROR: LeakSanitizer: detected memory leaks
+         ==1011889==ERROR: LeakSanitizer: detected memory leaks
 
          Direct leak of 48 byte(s) in 1 object(s) allocated from:
-             #0 0x7cf67a4fe548 in operator new(unsigned long) ...
+             #0 0x7269edcfe548 in operator new(unsigned long) ...
 
          SUMMARY: AddressSanitizer: 48 byte(s) leaked in 1 allocation(s).
 
@@ -270,7 +270,7 @@ Multiple Choice (Questions 1 to 10)
         lost.push_back(std::move(track));
       }
 
-      auto track{std::make_unique<Obstacle>(2, Pose{12.0, -1.0, 0.0}, 4.0)};
+      auto track{std::make_unique<Obstacle>(1, Pose{20.0, -3.0}, 0.0, true)};
 
    Which call compiles?
 
