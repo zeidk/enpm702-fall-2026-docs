@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 77, runs only when you ask for it by number: ``702run week7_playground 77``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 78, runs only when you ask for it by number: ``702run week7_playground 78``. A full run skips it.
 
 .. note::
 
@@ -653,6 +653,25 @@ With the declarations above:
 
    C++20 **[dcl.type.decltype]** (9.2.8.4) paragraph 1: for a plain name, "decltype(E) is the type of the entity named by E". "The operand of the decltype specifier is an unevaluated operand".
 
+``std::is_same_v``
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   #include <type_traits>
+
+   static_assert(std::is_same_v<int, int>);         // the same type
+   static_assert(!std::is_same_v<int, int&>);       // int& is another type
+   static_assert(!std::is_same_v<int, const int>);  // const int is too
+
+- ``std::is_same_v<A, B>`` is ``true`` when ``A`` and ``B`` are the same type, and ``false`` otherwise. An ``&`` or a ``const`` makes another type.
+- ``static_assert`` (L2) stops the build when its condition is ``false``. ``!`` (not) turns ``false`` into ``true``, so all three lines compile.
+- The next section uses both to check what ``decltype((e))`` gives.
+
+.. note::
+
+   C++20 **[meta.rel]** (20.15.6), Table 51, ``is_same``: "T and U name the same type with the same cv-qualifications". A cv-qualification is ``const`` or ``volatile``.
+
 The ``decltype`` Test
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -666,7 +685,7 @@ The ``decltype`` Test
    static_assert(std::is_same_v<decltype((make_path(3))),
                                 std::vector<Pose>>);        // prvalue
 
-- ``static_assert`` (L2) checks a condition while compiling. ``std::is_same_v<A, B>``, from ``<type_traits>``, is ``true`` when ``A`` and ``B`` are the same type. So each line says "``decltype((e))`` is this type", and the program compiles only if it is.
+- Each ``static_assert`` compiles only if ``decltype((e))`` is the type written after it (`std::is_same_v`_).
 - ``decltype((e))`` gives ``T&`` for an lvalue, ``T&&`` for an xvalue, and ``T`` for a prvalue. All three lines compile. The playground prints each category with this test.
 
 .. note::
@@ -717,7 +736,7 @@ Exercise 2: Value Categories
    make_obstacle(n).speed    // 9
    ++n                       // 10
 
-- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 32``.
+- Write lvalue, xvalue or prvalue for each line. Then check: ``702run week7_playground 33``.
 
 Binding to rvalues
 ^^^^^^^^^^^^^^^^^^
@@ -986,7 +1005,7 @@ The Leak, Fixed
    }
 
 - The first one leaks 48 bytes: the cyclist is 12 m ahead, past the 10 m chosen for this example, so the early return skips the ``delete``.
-- ``702run week7_playground 45`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
+- ``702run week7_playground 46`` runs the second one: ``needs_braking(2): false``, and no LeakSanitizer report.
 - Every path out of the function destroys ``track``, and its destructor deletes the ``Obstacle`` object.
 
 One Owner Only
@@ -1100,7 +1119,7 @@ Exercise 3: Handing Over a Track
 
 - At the board, after each line: draw ``p`` and ``q`` on the stack, every ``Obstacle`` object on the heap, and an arrow from each pointer to the object it owns.
 - On which line is the ``Obstacle`` object with id 1 deleted, and what deletes it? Nothing in the code says ``delete``.
-- Check: ``702run week7_playground 51``.
+- Check: ``702run week7_playground 52``.
 
 The Tracker's List
 """"""""""""""""""
@@ -1217,7 +1236,7 @@ Exercise 4: Lines That Compile
    Obstacle* f{d.get()};                         // 7
    std::unique_ptr<Obstacle> g{f};               // 8
 
-- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 56`` and its comments.
+- For each line: does it compile? If it compiles, is it correct? Then check in ``702run week7_playground 57`` and its comments.
 
 ``std::shared_ptr``
 ^^^^^^^^^^^^^^^^^^^
@@ -1244,7 +1263,7 @@ The planner puts the cyclist, id 2, in its hazard list; the tracker keeps it too
 
 .. code-block:: cpp
 
-   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 52
+   std::vector<std::unique_ptr<Obstacle>> tracker;  // as on slide 53
    std::vector<Obstacle*> hazards;
    hazards.push_back(tracker[0].get());  // id 2: looks, does not own
    tracker.erase(tracker.begin());       // the track is lost: it dangles
@@ -1321,7 +1340,7 @@ Three Ways to Let Go
 
 - An owner lets go when its scope ends (2, 3c), when it is assigned another pointer (3a), or when it calls ``reset()`` (3b). Each one subtracts 1 from the count.
 - In all three, ``track`` is the last owner, so its ``Obstacle`` object is deleted: ``=`` and ``reset()`` swap it into a temporary that is destroyed (C++20 20.11.3.2 to 20.11.3.4).
-- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 62``.
+- In 3a, id 4 is chosen; the rest take defaults. Run it: ``702run week7_playground 63``.
 
 Step 1: Two Owners
 """"""""""""""""""
@@ -1389,7 +1408,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 68`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 69`` ends with no LeakSanitizer report.
 
 .. _l7-shared-borrow:
 
@@ -1473,7 +1492,7 @@ Returning
 
 .. code-block:: cpp
 
-   std::unique_ptr<Obstacle> make_track(int id);  // slide 55
+   std::unique_ptr<Obstacle> make_track(int id);  // slide 56
    std::shared_ptr<Obstacle> hazard{make_track(5)};  // compiles
    std::unique_ptr<Obstacle> back{hazard};           // does not compile
 
@@ -1559,7 +1578,7 @@ The Cycle, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 77``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 78``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1575,7 +1594,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 78``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 79``: no LeakSanitizer report.
 
 .. note::
 
@@ -1600,7 +1619,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 79``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 80``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1634,7 +1653,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 81``.
+- Check: ``702run week7_playground 82``.
 
 Choosing a Pointer
 ------------------
