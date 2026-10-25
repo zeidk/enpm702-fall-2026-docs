@@ -358,6 +358,9 @@ Two cumulative chains: one individual in C++, one in teams in ROS 2.
 - **Group Projects are collaborative.** Teams are assigned on
   ELMS-Canvas, and each member is responsible for understanding the
   whole submission, not only the part they wrote.
+- **A GP grade is 60% team grade and 40% peer review.** After each GP,
+  every member emails a peer evaluation of the team: see
+  :ref:`peer-evaluation` for the form and how the score is computed.
 
 
 Quizzes
