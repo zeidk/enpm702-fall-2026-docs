@@ -114,7 +114,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week8_playground            # the code of every slide, in order
-      702run week8_playground 29         # only the code of slide 29
+      702run week8_playground 28         # only the code of slide 28
       702run week8_appendix              # the code of every appendix frame
       702run week8_appendix xi           # only appendix frame xi (11 works too)
 
@@ -523,8 +523,8 @@ For ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``
 
 - In words: ``speed_`` is at least 0, and ``speed_`` is at most ``max_speed_``. A negative speed makes no sense for a car, and neither does a speed above its maximum, 13.4 m/s in our examples.
 - The table lists the three things that keep it: ``private`` data members, methods that check, and a constructor that starts the object with a valid speed. We write the checking ``set_speed`` and the constructor later today.
-- We chose -50 for this example: any negative speed throws the same way. Throwing is one choice. The other is to change the value to a valid one, and `Discussion: The School Zone`_ compares the two.
-- Run: ``702run week8_playground 27``.
+- We chose -50 for this example: any negative speed throws the same way. Throwing is one choice. The other is to change the value to a valid one.
+- Run: ``702run week8_playground 26``.
 
 Sensor and Position in the Class Diagram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -562,7 +562,7 @@ The Sensor Class
 
 - ``SensorType`` is a scoped enumeration (L2). We chose the defaults: ``Sensor{1}`` is a 100 m lidar.
 - The other parts come later: ``const`` methods (`Accessors`_), ``[[nodiscard]]`` and ``noexcept`` (:ref:`l8-nodiscard`), constructors (`Constructors`_), the range check (`The Range Check`_) and ``explicit`` (:ref:`l8-explicit`).
-- Run: ``702run week8_playground 29``.
+- Run: ``702run week8_playground 28``.
 
 Default Access
 ^^^^^^^^^^^^^^
@@ -588,7 +588,7 @@ Default Access
 
 - With no access specifier, a member is ``public`` in a ``struct`` and ``private`` in a ``class``. Access to a base class (L9) has the same two defaults.
 - So no code outside ``Sensor`` can set a negative range.
-- Run: ``702run week8_playground 30``. The line that does not compile is commented out.
+- Run: ``702run week8_playground 29``. The line that does not compile is commented out.
 
 .. note::
 
@@ -611,7 +611,7 @@ A Rule Nothing Checks
 
 - As a ``struct``, the vehicle's rule is only a comment. Any line of the program can set a speed above the maximum.
 - As a ``class``, ``speed_`` is ``private``. Only ``Vehicle``'s own methods can change it, so ``set_speed`` can check every change (`Mutators`_).
-- Run: ``702run week8_playground 31``.
+- Run: ``702run week8_playground 30``.
 
 Which One
 ^^^^^^^^^
@@ -829,7 +829,7 @@ Changing the Inside
 - The speed calls of `Live Coding: Step 1`_ did not change: they still print ``12 10``.
 - That is **abstraction**: the calling code depends on the methods, not on how the data is stored.
 - With ``public`` members, every line that read ``speed_`` would now be wrong.
-- Run: ``702run week8_playground 42``.
+- Run: ``702run week8_playground 41``.
 
 Short Methods in the Class
 """"""""""""""""""""""""""
@@ -998,7 +998,7 @@ If a class has an invariant, must every call be in a ``try`` and ``catch``? No. 
    * - These slides
      - They put one call in a ``try`` only to show the exception.
 
-- An invariant does not need a ``try``. A mutator can also keep it by changing the value to a valid one (`Discussion: The School Zone`_), and a type such as ``SensorType`` cannot hold a bad value: it is only lidar, camera or radar.
+- An invariant does not need a ``try``. A mutator can also keep it by changing the value to a valid one, and a type such as ``SensorType`` cannot hold a bad value: it is only lidar, camera or radar.
 
 .. note::
 
@@ -1041,36 +1041,11 @@ A Getter and Setter That Add Nothing
 
 - This setter checks nothing, so the pair only adds lines: any code can still set any ``x``. With no invariant, ``Position`` is the ``struct`` of `Which One`_, with ``public`` members.
 - ``Vehicle``'s setter checks the maximum speed, so its pair keeps the invariant.
-- Run: ``702run week8_playground 55``.
+- Run: ``702run week8_playground 54``.
 
 .. note::
 
    "A trivial getter or setter adds no semantic value; the data item could just as well be ``public``". Rule: `Core Guidelines C.131 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-get>`__.
-
-Discussion: The School Zone
-"""""""""""""""""""""""""""
-
-The robotaxi drives at 12 m/s. It enters a school zone, and the fleet lowers its maximum speed from 13.4 m/s to 8.9 m/s (about 20 mph: 20 × 0.44704 = 8.94). The fleet's software calls:
-
-.. code-block:: cpp
-
-   car_a.set_max_speed(8.9);  // a new mutator
-
-1. Throw, and keep the old maximum?
-2. Lower the speed to 8.9?
-3. Keep the speed at 12?
-
-Which one goes in a real robotaxi, and why? Which one breaks the invariant (`The Invariant`_)?
-
-.. dropdown:: Answers
-   :class-container: sd-border-success
-
-   There is a right answer for the invariant and a judgment call for the robotaxi.
-
-   - Option 3 breaks the invariant: the speed, 12, is above the maximum, 8.9. Any code that trusted the class would now drive too fast in a school zone, so option 3 is out.
-   - Option 1 keeps the invariant, but the fleet's new maximum is correct, so refusing it leaves the old maximum in the robotaxi. The caller would have to lower the speed first, and every caller would have to remember.
-   - Option 2 is the one to ship: the class keeps its own rule in one place. It is what ``702run week8_playground 56`` runs: ``8.9 8.9``, then ``13.4 8.9`` when the zone ends. The speed does not go back up by itself, which is a second design question.
-   - A maximum of 0 or less is a real mistake, so that case still throws. The method is neither ``const`` nor ``noexcept``: it changes the object and it can throw.
 
 Summary
 ^^^^^^^
@@ -1137,7 +1112,7 @@ A User-Defined Default Constructor
 
 - It has the class's name, no parameters and no return type. When its body starts, the members already hold their default values.
 - Once you write it, the compiler writes none. Write one only when a new object needs more than its members' first values, here a line of output.
-- Run: ``702run week8_playground 60`` prints ``a new Vehicle: white, 13.4 m/s``.
+- Run: ``702run week8_playground 58`` prints ``a new Vehicle: white, 13.4 m/s``.
 
 .. note::
 
@@ -1161,7 +1136,7 @@ A Member with No Initializer
 
 - Reading ``a.get_speed()`` is undefined behavior. g++ does not warn at ``-O0``, the Debug build. At ``-O2``, in a function other than ``main``, it warns: ``'a.Vehicle::speed_' is used uninitialized``.
 - ``b`` prints 0 only because of its ``{ }``. Give every member an initializer.
-- Run: ``702run week8_playground 61`` (it prints ``b`` only).
+- Run: ``702run week8_playground 59`` (it prints ``b`` only).
 
 .. note::
 
@@ -1188,7 +1163,7 @@ A **constructor with parameters** takes the values the object starts from. Here 
    };
 
 - A constructor can be written in the class: declared and defined in one place, like the short methods of `Short Methods in the Class`_.
-- Run: ``702run week8_playground 62``. The ``Vehicle`` of ``vehicle.cpp`` uses the member initializer list instead (`Member Initializer List`_).
+- Run: ``702run week8_playground 60``. The ``Vehicle`` of ``vehicle.cpp`` uses the member initializer list instead (`Member Initializer List`_).
 
 Two Kinds of Default Values
 """""""""""""""""""""""""""
@@ -1211,7 +1186,7 @@ Two Kinds of Default Values
 
 - A **default member initializer**, in the class body, gives a member its value when no constructor sets it: every vehicle starts at speed 0 and mileage 0.
 - A **default argument** (L5), in the parameter list, gives a parameter its value when the caller leaves it out. The caller picks the color, so it is a parameter; most cars are white, so it has a default.
-- Run: ``702run week8_playground 63``.
+- Run: ``702run week8_playground 61``.
 
 The Default Argument in the Header
 """"""""""""""""""""""""""""""""""
@@ -1260,7 +1235,7 @@ Which of these lines compile? Why?
         error: no matching function for call to 'Vehicle::Vehicle()'
 
    - That is the right result here. No maximum speed is right for every vehicle, so every ``Vehicle`` must be given one.
-   - ``702run week8_playground 65`` runs ``car_a`` and ``car_b``.
+   - ``702run week8_playground 63`` runs ``car_a`` and ``car_b``.
 
 Braces or Parentheses
 """""""""""""""""""""
@@ -1286,7 +1261,7 @@ Braces or Parentheses
 
 - With two arguments, braces and parentheses run the same constructor, and both cars are blue.
 - Empty is different. With empty parentheses, C++ reads the line as a function named ``parked_car`` that returns a ``Vehicle``. g++ warns, and the first use of ``parked_car`` as an object fails: ``request for member 'get_color' in 'parked_car', which is of non-class type 'Vehicle()'``.
-- Run: ``702run week8_playground 66``.
+- Run: ``702run week8_playground 64``.
 
 Narrowing and Member Defaults
 """""""""""""""""""""""""""""
@@ -1375,7 +1350,7 @@ Assignment Builds a Member Twice
 - ``tray_`` is created before the body of the ``Printer`` constructor runs, so the default constructor of ``PaperTray`` runs first: a letter tray.
 - Then the body builds a second ``PaperTray``, a temporary with no name, for A4, and assigns it to ``tray_``.
 - Two ``PaperTray`` constructors run for one member, and the letter tray is thrown away.
-- Run: ``702run week8_playground 69``.
+- Run: ``702run week8_playground 67``.
 
 .. note::
 
@@ -1454,7 +1429,7 @@ The List Fixes Both Problems
 
 - ``tray_`` is created from ``paper_size``: one ``PaperTray`` constructor instead of two (:ref:`l8-assign-twice`).
 - The ``Vehicle`` of :ref:`l8-const-member` compiles: ``max_speed_`` gets its value as it is created.
-- Run: ``702run week8_playground 72``.
+- Run: ``702run week8_playground 70``.
 
 .. note::
 
@@ -1487,7 +1462,7 @@ The Range Check
 
 - The constructor of `The Sensor Class`_ sets every member in the list, then checks the range.
 - A negative range throws, so no ``Sensor`` breaks the rule that makes it a ``class`` (`Which One`_).
-- Run: ``702run week8_playground 73``.
+- Run: ``702run week8_playground 71``.
 
 Declaration Order
 """""""""""""""""
@@ -1545,7 +1520,7 @@ Discussion: Spot the Bug
 
    - It does not return 24. ``distance_`` is declared first, on line 10, so it is created first, whatever the order of the list. It reads ``time_``, which has no value yet: undefined behavior.
    - A reviewer reads the list left to right and sees ``time_`` first, so the bug is easy to miss. g++ catches it at ``-O0``: ``will be initialized after [-Wreorder]``, and ``member 'FollowingGap::time_' is used uninitialized [-Wuninitialized]``. This is why the course builds with ``-Wall -Wextra``.
-   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 75`` runs the first fix.
+   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 73`` runs the first fix.
 
 .. _l8-explicit:
 
@@ -1595,7 +1570,7 @@ A Conversion Nobody Asked For
    error: invalid initialization of reference of type 'const Vehicle&'
           from expression of type 'double'
 
-- Run: ``702run week8_playground 77``.
+- Run: ``702run week8_playground 75``.
 
 Delegating Constructor
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -1612,7 +1587,7 @@ A **delegating constructor** is a constructor whose member initializer list name
 
 - The check of the maximum speed is written once, in the constructor of `Member Initializer List`_. The new constructor reuses it, then the setter's check.
 - ``Vehicle car_a{13.4, 12.0};`` starts at 12; ``{13.4, 20.0}`` throws the setter's exception.
-- Run: ``702run week8_playground 78``.
+- Run: ``702run week8_playground 76``.
 
 .. note::
 
@@ -1690,7 +1665,7 @@ One Method, Many Objects
    &car_a: 0x7ffe745810b0
    this:   0x7ffe745810b0
 
-- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 83``.
+- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 81``.
 - Every object uses the same code (`Two Objects in Memory`_). The call passes the object's address, and the method reaches the members through it.
 
 .. _l8-this-type:
@@ -1738,7 +1713,7 @@ Returning ``*this``
 
 - ``*this`` is the object, and the return type ``Vehicle&`` hands back a reference to it, not a copy. The second ``speed_up`` runs on ``car_a`` again: 12 + 0.5 + 0.5 = 13.
 - An assignment operator, ``operator=``, returns ``*this`` the same way: see the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading.
-- Run: ``702run week8_playground 85``.
+- Run: ``702run week8_playground 83``.
 
 Summary
 ^^^^^^^
@@ -1822,7 +1797,7 @@ When It Runs
 - At the end of a scope, objects are destroyed in the reverse order they were created: ``car_b``, then ``car_a``.
 - A heap object is destroyed when its owner lets go: here ``reset()`` (L7).
 - The destructor is one of five **special member functions**, with two copies and two moves. When a class writes them: the rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, required after class.
-- Run: ``702run week8_playground 90``.
+- Run: ``702run week8_playground 88``.
 
 Live Coding: Step 6
 """""""""""""""""""
@@ -1868,7 +1843,7 @@ Returning a Large Member
 - ``get_speed`` returns a ``double`` by value (:ref:`l8-nodiscard`). A large member is returned by ``const&`` (L5): no copy, and the caller cannot change it.
 - Here a copy is not possible: returning the vector by value does not compile, because each ``std::unique_ptr`` would be copied.
 - The reference is valid only while the ``Vehicle`` object lives.
-- Run: ``702run week8_playground 92``.
+- Run: ``702run week8_playground 90``.
 
 Summary
 ^^^^^^^
