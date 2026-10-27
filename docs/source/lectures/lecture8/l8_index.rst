@@ -42,13 +42,13 @@ Follow :doc:`Setup Before Class <l8_setup>`. In class you write code with me and
 Before the Next Lecture
 -----------------------
 
-There is no quiz in this lecture. The next lecture, on **Nov 3**, starts with the 5-minute quiz on the reading and **Quiz 4**, which has questions on the rule of five and the rule of zero.
+There is no quiz in this lecture. The next lecture, on **Nov 3**, starts with **Quiz 4**, which includes questions on the reading, the rule of five and the rule of zero.
 
 - The :doc:`shell exercises <l8_shell>` and the :doc:`quiz <l8_quiz>` are for your own practice. They are **not** collected.
 
 **Required reading, after class:**
 
-- :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`, on this site. It is not presented in class. L8 has no C++ exercise: this reading replaces it, and Lecture 9, on Nov 3, starts with a 5-minute quiz on it.
+- :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`, on this site. It is not presented in class. L8 has no C++ exercise: this reading replaces it, and **Quiz 4**, at the start of Lecture 9 on Nov 3, includes questions on it.
 - `C++ Core Guidelines: Classes and class hierarchies <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#s-class>`_
 - `cppreference: Constructors <https://en.cppreference.com/w/cpp/language/constructor>`_
 

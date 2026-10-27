@@ -1727,7 +1727,7 @@ Rule: `Core Guidelines C.31 <https://isocpp.github.io/CppCoreGuidelines/CppCoreG
 
 .. important::
 
-   **Reading Instead of an Exercise.** L8 has no C++ exercise. After class, read :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`. Lecture 9, on Nov 3, starts with a 5-minute quiz on it.
+   **Reading Instead of an Exercise.** L8 has no C++ exercise. After class, read :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`. **Quiz 4**, at the start of Lecture 9 on Nov 3, includes questions on it.
 
 Vehicle Owns Its Sensors
 ^^^^^^^^^^^^^^^^^^^^^^^^
