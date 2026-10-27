@@ -58,12 +58,13 @@ Step 2: Compile and Run
 
       bash ~/Downloads/enpm702_setup.sh
 
-   If your repository is not in the default place, tell the script where it is first. These are two lines: ``export`` keeps ``ENPM702_WS`` set for the commands that follow in the same terminal.
+   The script looks for the repository in ``~/enpm702_cpp/enpm702-fall-2026-cpp``. If you cloned it somewhere else, open ``enpm702_setup.sh`` in VS Code and change **line 24**, between the quotes, to the folder where you cloned it. For example, for a clone in ``~/courses``:
 
    .. code-block:: bash
 
-      export ENPM702_WS=~/somewhere/enpm702-fall-2026-cpp
-      bash ~/Downloads/enpm702_setup.sh
+      ws="$HOME/courses/enpm702-fall-2026-cpp"
+
+   Save the file, then run the script again.
 
 3. Read the output. Each line says ``ok`` or ``FIX``. When all is well, it looks like this:
 
@@ -90,7 +91,7 @@ Common Fixes
    * - The ``FIX`` line says
      - What to do
    * - no ENPM702 repository
-     - Clone the repository (Step 1), or set ``ENPM702_WS`` to where you cloned it.
+     - Clone the repository (Step 1), or change line 24 of the script to the folder where you cloned it.
    * - cmake could not configure the repository
      - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
    * - ``week8_live`` did not build, with ``No rule to make target 'week8_live'``

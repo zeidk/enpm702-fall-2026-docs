@@ -11,17 +11,17 @@
 # the same as 702build week8_live) and runs it (the same as 702run week8_live).
 # Each line says ok or FIX.
 #
-# The repository is ~/enpm702_cpp/enpm702-fall-2026-cpp unless you set
-# ENPM702_WS, the same variable enpm702-cpp.sh uses:
-#
-#     export ENPM702_WS=~/somewhere/enpm702-fall-2026-cpp
-#     bash enpm702_setup.sh
+# The script looks for the repository in ~/enpm702_cpp/enpm702-fall-2026-cpp.
+# If you cloned it somewhere else, change the line that starts with ws= below.
 
 week="${1:-8}"
 case "$week" in
     ''|*[!0-9]*) echo "usage: bash enpm702_setup.sh [week number]"; exit 2 ;;
 esac
-ws="${ENPM702_WS:-$HOME/enpm702_cpp/enpm702-fall-2026-cpp}"
+# The folder where you cloned the course repository. If you cloned it somewhere
+# else, change the path between the quotes, for example:
+#     ws="$HOME/courses/enpm702-fall-2026-cpp"
+ws="$HOME/enpm702_cpp/enpm702-fall-2026-cpp"
 target="week${week}_live"
 log="$(mktemp)"
 
@@ -34,7 +34,7 @@ echo "ENPM702: compile and run $target"
 
 if [ ! -f "$ws/CMakeLists.txt" ]; then
     fix "no ENPM702 repository at $ws"
-    echo "        Set ENPM702_WS to the folder where you cloned it."
+    echo "        Change line 24 of this script to the folder where you cloned it."
     finish "Fix the line above, then run this script again." 1
 fi
 ok "repository at $ws"
