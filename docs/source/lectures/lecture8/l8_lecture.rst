@@ -13,15 +13,15 @@ Learning Objectives
 6. Use members that give back their own memory, such as ``std::unique_ptr``, so a class needs no destructor of its own.
 7. Use the ``this`` pointer.
 
-We write one ``Vehicle`` together, in six Live Coding steps (`Live Coding: Step 1`_ first). The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
+We write one ``Vehicle`` in six Live Coding steps: Step 1 together (`Live Coding: Step 1`_), Steps 2 to 6 on your own. The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
 
 Upload Your Live Coding
 -----------------------
 
-You type Steps 1 and 3 to 6 with me, in ``project/week8/live``. You write **Step 2** on your own (`Live Coding: Step 2`_).
+You type Step 1 with me, in ``project/week8/live``. You write **Steps 2 to 6** on your own, in the time each step gives: 5 minutes for Step 2, 15 for Step 5, 10 for the others. In class, I walk around and help, but I do not show the answers: the recording would give them away.
 
 - **Before the end of class**, upload ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp`` to the L8 Live Coding assignment on Canvas.
-- It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and your Step 2 block is written. The upload is not graded for correctness: most of the code you type with me.
+- It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and you wrote Steps 2 to 6. The upload is not graded for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (Copilot included). Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 - The finished code is posted after Nov 3.
@@ -85,7 +85,7 @@ Code for This Lecture
    ├── common/
    └── undefined/
 
-**live** holds the class we write together: ``live8`` builds and runs it.
+**live** holds the class you write in the Live Coding steps: ``live8`` builds and runs it.
 
 **Run a Slide's Code**
 
@@ -114,7 +114,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week8_playground            # the code of every slide, in order
-      702run week8_playground 28         # only the code of slide 28
+      702run week8_playground 27         # only the code of slide 28
       702run week8_appendix              # the code of every appendix frame
       702run week8_appendix xi           # only appendix frame xi (11 works too)
 
@@ -319,7 +319,7 @@ Two Objects in Memory
 Live Coding: Step 1
 """""""""""""""""""
 
-**10 minutes.** We write the class ``Vehicle`` in ``live/src/main.cpp``, above ``main``, and make two objects of it.
+**10 minutes, with me.** We write the class ``Vehicle`` in ``live/src/main.cpp``, above ``main``, and make two objects of it.
 
 1. Four ``private`` data members: ``max_speed_{13.4}``, ``speed_{0.0}``, ``color_{"white"}`` and ``mileage_{0.0}``.
 2. Two ``public`` methods, with their bodies in the class: ``set_speed``, which checks nothing yet, and ``get_speed``.
@@ -372,7 +372,7 @@ Instantiation
 Live Coding: Step 2
 """"""""""""""""""""""
 
-You have **10 minutes** to make one object on the stack and one on the heap, in the Step 2 block of ``live/src/main.cpp``, with the class of Step 1. You write this step on your own:
+You have **5 minutes** to make one object on the stack and one on the heap, in the Step 2 block of ``live/src/main.cpp``, with the class of Step 1. You write this step on your own:
 
 1. Make ``car_a`` on the stack and set its speed to 12.
 2. Make ``car_b`` on the heap with ``std::make_unique<Vehicle>()`` (L7) and set its speed to 10.
@@ -387,12 +387,12 @@ Build and run: ``live8``. The block prints:
    10
 
 - An object of a class is created like any other variable: on the stack, or on the heap and owned by a smart pointer.
-- **Checkpoint**: in class, you show me your three lines before we start Step 3. This block is the part of the upload that is yours alone.
+- **Checkpoint**: in class, you show me your three lines before we start Step 3.
 
-Stack or Heap: Rows 1 to 3
-""""""""""""""""""""""""""
+Stack or Heap
+"""""""""""""
 
-An object goes on the stack unless one of rows 2 to 5 applies.
+An object goes on the stack unless one of two reasons sends it to the heap.
 
 .. list-table::
    :header-rows: 1
@@ -404,43 +404,21 @@ An object goes on the stack unless one of rows 2 to 5 applies.
    * - 1\. It is used only inside one function or block.
      - The stack. It is destroyed at the end of the scope.
      - ``Vehicle car_a;``
-   * - 2\. It must live on after the scope that made it, and one owner decides when it ends.
+   * - 2\. It must live on after the scope that made it.
      - The heap, owned by a ``std::unique_ptr`` (L7).
      - ``auto car_b{std::make_unique<Vehicle>()};``
-   * - 3\. Several owners share it.
-     - The heap, owned by ``std::shared_ptr`` (L7).
-     - L9's ``Fleet`` shares each ``Vehicle`` with the code that made it.
+   * - 3\. It is very large.
+     - The heap, inside a ``std::vector``, which keeps its elements on the heap (L4).
+     - A lidar scan or a camera image.
 
-- The Step 2 block made ``car_a`` on the stack and ``car_b`` on the heap. Both work, so you need a rule for picking one. The stack is the default. Each of rows 2 to 5 is a reason to leave it.
-- Row 1: ``car_a`` lives inside one function. At the closing brace it is destroyed and its memory is free. Nothing is allocated on the heap and nothing has to be given back.
-- Row 2: the object must outlive the block that made it, and one owner decides when it ends. That is ``std::unique_ptr`` from L7. If the caller only needs the value, returning it by value works too, as in L5.
-- Row 3 points ahead to L9. Several parts of the program own the same object, and it ends when the last owner lets go: ``std::shared_ptr`` from L7. L9's ``Fleet`` holds its vehicles this way.
+- The Step 2 block made ``car_a`` on the stack and ``car_b`` on the heap. Both work, so you need a rule for picking one. The stack is the default, and two reasons send an object to the heap.
+- Row 1: ``car_a`` lives inside one function. At the closing brace it is destroyed and its memory is free. Nothing has to be given back.
+- Row 2: the object must outlive the block that made it. A ``std::unique_ptr`` from L7 owns it and decides when it ends. If the caller only needs the value, returning it by value works too, as in L5.
+- Row 3: the stack is small. ``ulimit -s`` prints its size in kilobytes, 16384 (16 MiB) on the PC used for the slides. A camera image or a lidar scan goes in a ``std::vector``, and the vector keeps its elements on the heap, as in L4.
 
 .. note::
 
    "Prefer scoped objects, don't heap-allocate unnecessarily". Rule: `Core Guidelines R.5 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-scoped>`__. A scoped object, in the Guidelines, is a local variable, a global variable or a data member.
-
-Stack or Heap: Rows 4 and 5
-"""""""""""""""""""""""""""
-
-Two more reasons to put an object on the heap.
-
-.. list-table::
-   :header-rows: 1
-   :widths: 30 30 40
-
-   * - Situation
-     - Where
-     - Example
-   * - 4\. Its exact class is chosen while the program runs.
-     - The heap, through a pointer to ``Vehicle``, the base class (L9).
-     - A ``std::unique_ptr<Vehicle>`` that owns a ``RoboTaxi``, a kind of ``Vehicle``.
-   * - 5\. It is very large.
-     - The heap, inside a ``std::vector``, which keeps its elements on the heap (L4).
-     - A lidar scan or a camera image.
-
-- Row 4 points ahead to L9, where we write ``RoboTaxi``. The program picks a ``RoboTaxi`` or a ``Taxi`` while it runs and keeps it through a pointer to ``Vehicle``. Inheritance, in L9, explains why a pointer to ``Vehicle`` can hold a ``RoboTaxi``.
-- Row 5: the stack is small. ``ulimit -s`` prints its size in kilobytes, 16384 (16 MiB) on the PC used for the slides. A camera image or a lidar scan goes in a ``std::vector``, and the vector keeps its elements on the heap, as in L4.
 
 Discussion: Class, Object, or Neither?
 """"""""""""""""""""""""""""""""""""""
@@ -486,15 +464,15 @@ An **invariant** (a class invariant) is a **condition on an object's data member
 
 The section asks struct or class, and the Core Guidelines answer with one word: invariant. The definition has two parts.
 
-- **Condition on an object's data members**: which values the data members may hold. *Example*: an elevator in a 10-story building.
+- **Condition on an object's data members**: which values the data members may hold. *Example*: a ``Square`` object.
 
-  - **Data member**: ``current_floor``, the floor the elevator is on.
-  - **Condition**: ``current_floor`` is always between 1 and 10. An elevator on floor 0 or floor 11 does not exist in that building, so an object that says so is wrong.
+  - **Data members**: ``width_`` and ``height_``.
+  - **Condition**: ``width_`` and ``height_`` are always equal. A ``Square`` 10 wide and 4 high is not a square, so an object that says so is wrong.
 
-- **Must be true whenever code outside the class uses the object**: the rule holds before a ``public`` method is called and after it returns. Inside the method, the rule may break for a moment, but it holds again before the method returns. *Example*: the same elevator shows its floor on a display, and ``display_floor`` must always equal ``current_floor``.
+- **Must be true whenever code outside the class uses the object**: the rule holds before a ``public`` method is called and after it returns. Inside the method, the rule may break for a moment, but it holds again before the method returns. *Example*: the same ``Square``.
 
-  - **Broken**: ``go_to(5)`` sets ``current_floor`` to 5 first. The display still shows the old floor, so the rule is broken.
-  - **Restored**: ``go_to`` sets ``display_floor`` to 5 before it returns. Outside code never sees the broken state: no code outside the class runs between the two lines.
+  - **Broken**: ``resize(10)`` sets ``width_`` to 10 first. ``height_`` still has the old size, so the rule is broken.
+  - **Restored**: ``resize`` sets ``height_`` to 10 before it returns. Outside code never sees the broken state: no code outside the class runs between the two lines.
 
 In `Live Coding: Step 4`_, ``Vehicle``'s ``set_speed`` checks the new value first, then assigns it, so it never breaks its speed rule, even for a moment.
 
@@ -519,7 +497,7 @@ For ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``
 - In words: ``speed_`` is at least 0, and ``speed_`` is at most ``max_speed_``. A negative speed makes no sense for a car, and neither does a speed above its maximum, 13.4 m/s in our examples.
 - Three things keep it: ``private`` data members, methods that check, and a constructor that starts the object with a valid speed. We write the checking ``set_speed`` and the constructor later today.
 - We chose -50 for this example: any negative speed throws the same way. Throwing is one choice. The other is to change the value to a valid one.
-- Run: ``702run week8_playground 26``.
+- Run: ``702run week8_playground 25``.
 
 Sensor and Position in the Class Diagram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -557,7 +535,7 @@ The Sensor Class
 
 - ``SensorType`` is a scoped enumeration (L2). We chose the defaults: ``Sensor{1}`` is a 100 m lidar.
 - The other parts come later: ``const`` methods (`Accessors`_), ``[[nodiscard]]`` (:ref:`l8-nodiscard`), ``noexcept`` (:ref:`l8-noexcept`), constructors (`Constructors`_), the range check (`The Range Check`_) and ``explicit`` (:ref:`l8-explicit`).
-- Run: ``702run week8_playground 28``.
+- Run: ``702run week8_playground 27``.
 
 Default Access
 ^^^^^^^^^^^^^^
@@ -583,7 +561,7 @@ Default Access
 
 - With no access specifier, a member is ``public`` in a ``struct`` and ``private`` in a ``class``. Access to a base class (L9) has the same two defaults.
 - So no code outside ``Sensor`` can set a negative range.
-- Run: ``702run week8_playground 29``. The line that does not compile is commented out.
+- Run: ``702run week8_playground 28``. The line that does not compile is commented out.
 
 .. note::
 
@@ -606,7 +584,7 @@ A Rule Nothing Checks
 
 - As a ``struct``, the vehicle's rule is only a comment. Any line of the program can set a speed above the maximum.
 - As a ``class``, ``speed_`` is ``private``. Only ``Vehicle``'s own methods can change it, so ``set_speed`` can check every change (`Mutators`_).
-- Run: ``702run week8_playground 30``.
+- Run: ``702run week8_playground 29``.
 
 Which One
 ^^^^^^^^^
@@ -650,7 +628,7 @@ Who would break each rule by mistake: the code that reads the data, or the code 
 
    If nobody can state a rule, it is a struct.
 
-   1. The GPS fix: a struct. Any latitude, longitude and time make a fix; there is no rule between them.
+   1. The GPS fix: a class. Latitude must be from −90 to 90 degrees, and longitude from −180 to 180: a latitude of 1,000,000 is no place on Earth. There is no rule between the two, but each has its own range, like the battery level. In C.2, members that vary independently can each take any value, like ``Position``'s ``x`` and ``y``.
    2. The battery level: a class, the example from L6's appendix. The rule is from 0 to 100, and a setter checks it.
    3. The lane: a class. The left edge must be to the left of the right edge, so the two members must agree.
    4. The color: a struct, if each member is a ``std::uint8_t``. The type already keeps each value from 0 to 255, and the three values vary independently. A range rule can sometimes go into the type instead of a class.
@@ -776,7 +754,7 @@ A **method defined outside the class**: the class declares the method. Its body 
 Live Coding: Step 3
 """""""""""""""""""
 
-**10 minutes.** We move the class to ``live/include/vehicle.hpp`` and the bodies of its methods to ``live/src/vehicle.cpp``.
+**10 minutes, on your own.** Move the class to ``live/include/vehicle.hpp`` and the bodies of its methods to ``live/src/vehicle.cpp``.
 
 1. In ``vehicle.hpp``: ``#pragma once`` (L5), then the class, with only the declarations of its two methods.
 2. In ``vehicle.cpp``: the two bodies, named ``Vehicle::set_speed`` and ``Vehicle::get_speed``.
@@ -824,7 +802,7 @@ Changing the Inside
 - The speed calls of `Live Coding: Step 1`_ did not change: they still print ``12 10``.
 - That is **abstraction**: the calling code depends on the methods, not on how the data is stored.
 - With ``public`` members, every line that read ``speed_`` would now fail to compile.
-- Run: ``702run week8_playground 41``.
+- Run: ``702run week8_playground 40``.
 
 A Body in the Class
 """""""""""""""""""
@@ -957,7 +935,7 @@ A **mutator that checks** tests the new value against the invariant. If the valu
 Live Coding: Step 4
 """""""""""""""""""
 
-**10 minutes.** ``get_speed`` promises to change nothing, and ``set_speed`` keeps the invariant.
+**10 minutes, on your own.** ``get_speed`` promises to change nothing, and ``set_speed`` keeps the invariant.
 
 1. ``get_speed`` gets ``[[nodiscard]]``, ``const`` and ``noexcept`` in the header. Its body stays in ``vehicle.cpp``, which repeats ``const`` and ``noexcept``.
 2. Add ``speed_ = 0.0;`` to its body and build: ``assignment of member 'Vehicle::speed_' in read-only object``. Delete the line.
@@ -1036,7 +1014,7 @@ A Getter and Setter That Add Nothing
 
 - This setter checks nothing, so the pair only adds lines: any code can still set any ``x``. With no invariant, ``Position`` is the ``struct`` of `Which One`_, with ``public`` members.
 - ``Vehicle``'s setter checks the speed, so its pair keeps the invariant.
-- Run: ``702run week8_playground 54``.
+- Run: ``702run week8_playground 53``.
 
 .. note::
 
@@ -1105,7 +1083,7 @@ A User-Defined Default Constructor
 
 - It has the class's name, no parameters and no return type. When its body starts, the members already hold their default values.
 - Once you write it, the compiler writes none. Write one only when a new object needs more than its members' first values, here a line of output.
-- Run: ``702run week8_playground 58`` prints ``a new Vehicle: white, 13.4 m/s``.
+- Run: ``702run week8_playground 57`` prints ``a new Vehicle: white, 13.4 m/s``.
 
 .. note::
 
@@ -1129,7 +1107,7 @@ A Member with No Initializer
 
 - Reading ``a.get_speed()`` is undefined behavior. g++ does not warn at ``-O0``, the Debug build. At ``-O2``, in a function other than ``main``, it warns: ``'a.Vehicle::speed_' is used uninitialized``.
 - ``b`` prints 0 only because of its ``{ }``. Give every member an initializer.
-- Run: ``702run week8_playground 59`` (it prints ``b`` only).
+- Run: ``702run week8_playground 58`` (it prints ``b`` only).
 
 .. note::
 
@@ -1156,7 +1134,7 @@ A **constructor with parameters** takes the values the object starts from. Here 
    };
 
 - This constructor is written in the class: declared and defined in one place. This course writes every constructor this way (`The Default Argument in the Header`_).
-- Run: ``702run week8_playground 60``. The ``Vehicle`` of ``vehicle.hpp`` uses the member initializer list instead (`Member Initializer List`_).
+- Run: ``702run week8_playground 59``. The ``Vehicle`` of ``vehicle.hpp`` uses the member initializer list instead (`Member Initializer List`_).
 
 Two Kinds of Default Values
 """""""""""""""""""""""""""
@@ -1179,7 +1157,7 @@ Two Kinds of Default Values
 
 - A **default member initializer**, in the class body, gives a member its value when no constructor sets it: every vehicle starts at speed 0 and mileage 0.
 - A **default argument** (L5), in the parameter list, gives a parameter its value when the caller leaves it out. The caller picks the color, so it is a parameter; most cars are white, so it has a default.
-- Run: ``702run week8_playground 61``.
+- Run: ``702run week8_playground 60``.
 
 The Default Argument in the Header
 """"""""""""""""""""""""""""""""""
@@ -1230,7 +1208,7 @@ Which of these lines compile? Why?
         error: no matching function for call to 'Vehicle::Vehicle()'
 
    - That is the right result here. No maximum speed is right for every vehicle, so every ``Vehicle`` must be given one.
-   - ``702run week8_playground 63`` runs ``car_a`` and ``car_b``.
+   - ``702run week8_playground 62`` runs ``car_a`` and ``car_b``.
 
 Braces or Parentheses
 """""""""""""""""""""
@@ -1256,7 +1234,7 @@ Braces or Parentheses
 
 - With two arguments, braces and parentheses run the same constructor, and both cars are blue.
 - Empty is different. With empty parentheses, C++ reads the line as a function named ``parked_car`` that returns a ``Vehicle``. g++ warns, and the first use of ``parked_car`` as an object fails: ``request for member 'get_color' in 'parked_car', which is of non-class type 'Vehicle()'``.
-- Run: ``702run week8_playground 64``.
+- Run: ``702run week8_playground 63``.
 
 Narrowing and Member Defaults
 """""""""""""""""""""""""""""
@@ -1345,7 +1323,7 @@ Assignment Builds a Member Twice
 - ``tray_`` is created before the body of the ``Printer`` constructor runs, so the default constructor of ``PaperTray`` runs first: a letter tray.
 - Then the body builds a second ``PaperTray``, a temporary with no name, for A4, and assigns it to ``tray_``.
 - Two ``PaperTray`` constructors run for one member, and the assignment overwrites the letter tray.
-- Run: ``702run week8_playground 67``.
+- Run: ``702run week8_playground 66``.
 
 .. note::
 
@@ -1423,7 +1401,7 @@ The List Fixes Both Problems
 
 - ``tray_`` is created from ``paper_size``: one ``PaperTray`` constructor instead of two (:ref:`l8-assign-twice`).
 - The ``Vehicle`` of :ref:`l8-const-member` compiles: ``max_speed_`` gets its value as it is created.
-- Run: ``702run week8_playground 70``.
+- Run: ``702run week8_playground 69``.
 
 .. note::
 
@@ -1457,7 +1435,7 @@ The Range Check
 
 - The constructor of `The Sensor Class`_ sets every member in the list, then checks the range.
 - A negative range throws, so no ``Sensor`` breaks the rule that makes it a ``class`` (`Which One`_).
-- Run: ``702run week8_playground 71``.
+- Run: ``702run week8_playground 70``.
 
 Declaration Order
 """""""""""""""""
@@ -1515,7 +1493,7 @@ Discussion: Spot the Bug
 
    - It does not return 24. ``distance_`` is declared first, on line 10, so it is created first, whatever the order of the list. It reads ``time_``, which has no value yet: undefined behavior.
    - A reviewer reads the list left to right and sees ``time_`` first, so the bug is easy to miss. g++ catches it at ``-O0``: ``will be initialized after [-Wreorder]``, and ``member 'FollowingGap::time_' is used uninitialized [-Wuninitialized]``. This is why the course builds with ``-Wall -Wextra``.
-   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 73`` runs the first fix.
+   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 72`` runs the first fix.
 
 .. _l8-explicit:
 
@@ -1565,7 +1543,7 @@ A Conversion Nobody Asked For
    error: invalid initialization of reference of type 'const Vehicle&'
           from expression of type 'double'
 
-- Run: ``702run week8_playground 75``.
+- Run: ``702run week8_playground 74``.
 
 Delegating Constructor
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -1582,7 +1560,7 @@ A **delegating constructor** is a constructor whose member initializer list name
 
 - The check of the maximum speed is written once, in the constructor of `Member Initializer List`_. The new constructor reuses it, then the setter's check.
 - ``Vehicle car_a{13.4, 12.0};`` starts at 12; ``{13.4, 20.0}`` throws the setter's exception.
-- Run: ``702run week8_playground 76``.
+- Run: ``702run week8_playground 75``.
 
 .. note::
 
@@ -1591,7 +1569,7 @@ A **delegating constructor** is a constructor whose member initializer list name
 Live Coding: Step 5
 """""""""""""""""""
 
-**10 minutes.** Every ``Vehicle`` starts with a maximum speed greater than 0, or it is never created.
+**15 minutes, on your own.** Every ``Vehicle`` starts with a maximum speed greater than 0, or it is never created.
 
 1. In the class: the ``explicit`` constructor of `Member Initializer List`_ and :ref:`l8-explicit`, the constructor of `Delegating Constructor`_, and the declaration of ``get_color``. ``max_speed_`` and ``color_`` lose their ``{ }`` values.
 2. In the source: the body of ``get_color``.
@@ -1660,7 +1638,7 @@ One Method, Many Objects
    &car_a: 0x7ffe745810b0
    this:   0x7ffe745810b0
 
-- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 81``.
+- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 80``.
 - The method reaches the members through ``this``: ``speed_`` means ``this->speed_``.
 
 .. _l8-this-type:
@@ -1708,7 +1686,7 @@ Returning ``*this``
 
 - ``*this`` is the object, and the return type ``Vehicle&`` hands back a reference to it, not a copy. The second ``speed_up`` runs on ``car_a`` again: 12 + 0.5 + 0.5 = 13.
 - An assignment operator, ``operator=``, returns ``*this`` the same way: see the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading.
-- Run: ``702run week8_playground 83``.
+- Run: ``702run week8_playground 82``.
 
 Summary
 ^^^^^^^
@@ -1792,12 +1770,12 @@ When It Runs
 - At the end of a scope, objects are destroyed in the reverse order they were created: ``car_b``, then ``car_a``.
 - A heap object is destroyed when its owner lets go: here ``reset()`` (L7).
 - The destructor, two copies and two moves are five of the six **special member functions**; the default constructor is the sixth. The rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, required after class, say when a class writes these five.
-- Run: ``702run week8_playground 88``.
+- Run: ``702run week8_playground 87``.
 
 Live Coding: Step 6
 """""""""""""""""""
 
-**10 minutes.** Each ``Vehicle`` owns its sensors through ``std::unique_ptr``, and the class writes no destructor: each ``std::unique_ptr`` deletes its ``Sensor``.
+**10 minutes, on your own.** Each ``Vehicle`` owns its sensors through ``std::unique_ptr``, and the class writes no destructor: each ``std::unique_ptr`` deletes its ``Sensor``.
 
 1. In the header, the data member ``sensors_``, a ``std::vector<std::unique_ptr<Sensor>>``. ``Sensor`` is the course's, in ``common/include/sensor.hpp``.
 2. ``int add_sensor(SensorType type, double range)`` creates a ``Sensor`` with the next id, 1, 2, and so on, and returns that id.
@@ -1838,7 +1816,7 @@ Returning a Large Member
 - ``get_speed`` returns a ``double`` by value (:ref:`l8-nodiscard`). A large member is returned by ``const&`` (L5): no copy, and the caller cannot change it.
 - Here a copy is not possible: returning the vector by value does not compile, because each ``std::unique_ptr`` would be copied.
 - The reference is valid only while the ``Vehicle`` object lives.
-- Run: ``702run week8_playground 90``.
+- Run: ``702run week8_playground 89``.
 
 Summary
 ^^^^^^^

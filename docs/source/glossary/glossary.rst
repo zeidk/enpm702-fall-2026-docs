@@ -1882,8 +1882,8 @@ L8: OOP Basics
       A condition on an object's data members that must be true whenever
       code outside the class uses the object: before and after each call to
       a ``public`` method. Inside the method, it may be false between two
-      lines, as when an elevator's ``go_to`` sets ``current_floor`` before
-      ``display_floor``. For a ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``.
+      lines, as when a ``Square``'s ``resize`` sets ``width_`` before
+      ``height_``. For a ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``.
       The data members are ``private``, the constructor makes the condition
       true, and a method given a value that would break it either throws, as
       ``set_speed(-50.0)`` does, or changes the value to a valid one. A type

@@ -459,4 +459,4 @@ True/False (Questions 11 to 15)
 
       **False.**
 
-      An invariant must be true whenever code outside the class uses the object: before a ``public`` method is called and after it returns. Inside the method, it may break for a moment, as long as it holds again before the method returns. An elevator whose display must always show its current floor is an example: ``go_to(5)`` sets ``current_floor`` first, which breaks the rule, then sets ``display_floor``, which restores it. No code outside the class runs between the two lines, so outside code never sees the broken state.
+      An invariant must be true whenever code outside the class uses the object: before a ``public`` method is called and after it returns. Inside the method, it may break for a moment, as long as it holds again before the method returns. A ``Square`` whose width and height must be equal is an example: ``resize(10)`` sets ``width_`` first, which breaks the rule, then sets ``height_``, which restores it. No code outside the class runs between the two lines, so outside code never sees the broken state.
