@@ -42,7 +42,7 @@ Follow :doc:`Setup Before Class <l8_setup>`. In class you write code with me and
 Before the Next Lecture
 -----------------------
 
-**Quiz 3** is in class, in this lecture. The next lecture is on **Nov 3**.
+There is no quiz in this lecture. The next lecture, on **Nov 3**, starts with the 5-minute quiz on the reading and **Quiz 4**, which has questions on the rule of five and the rule of zero.
 
 - The :doc:`shell exercises <l8_shell>` and the :doc:`quiz <l8_quiz>` are for your own practice. They are **not** collected.
 

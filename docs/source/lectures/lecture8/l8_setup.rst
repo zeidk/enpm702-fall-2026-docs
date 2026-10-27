@@ -15,58 +15,69 @@ In Lecture 8 you write code with me during class, and you upload it on Canvas be
    - **No AI:** you write the code yourself. No chatbot, and no AI in VS Code (GitHub Copilot or any other AI extension): turn it off before class. Code written with AI gets **0**.
    - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 
-What You Need
--------------
+Step 1: Get Your Workspace Ready
+--------------------------------
 
-- Ubuntu, with ``g++``, ``cmake`` and ``git``. The script below tells you if one is missing, and how to install it.
-- The course C++ repository, cloned on your machine. The default place is ``~/enpm702_cpp/enpm702-fall-2026-cpp``. If you have not cloned it yet:
+Do these yourself, before class. The script in Step 2 does none of them.
 
-  .. code-block:: bash
+1. **The tools.** On Ubuntu, install ``g++``, ``cmake`` and ``git`` if you have not yet:
 
-     git clone https://github.com/zeidk/enpm702-fall-2026-cpp.git ~/enpm702_cpp/enpm702-fall-2026-cpp
+   .. code-block:: bash
 
-Run the Setup Script
---------------------
+      sudo apt install build-essential cmake git
+
+2. **The course C++ repository.** Clone it if you have not yet. The default place is ``~/enpm702_cpp/enpm702-fall-2026-cpp``:
+
+   .. code-block:: bash
+
+      git clone https://github.com/zeidk/enpm702-fall-2026-cpp.git ~/enpm702_cpp/enpm702-fall-2026-cpp
+
+3. **The latest code.** Pull it, so that you have the ``project/week8/live`` folder:
+
+   .. code-block:: bash
+
+      cd ~/enpm702_cpp/enpm702-fall-2026-cpp
+      git pull
+
+4. **The 702 commands.** Your terminal must load ``enpm702-cpp.sh``, as the setup notes at the top of that file say. Add this line once to ``~/.bashrc`` (or ``~/.zshrc`` if you use zsh), then open a new terminal:
+
+   .. code-block:: bash
+
+      source ~/enpm702_cpp/enpm702-fall-2026-cpp/enpm702-cpp.sh
+
+5. **Week 8 enabled.** In the repository's ``CMakeLists.txt``, the line ``add_subdirectory(project/week8)`` must not start with ``#``.
+
+Step 2: Compile and Run
+-----------------------
 
 1. Download the script: :download:`enpm702_setup.sh <enpm702_setup.sh>`.
 
-2. Run it from the folder where you saved it. It does not change any code you wrote.
+2. Run it. It does not change any file in the repository: it only compiles and runs the live coding program, ``week8_live``.
 
    .. code-block:: bash
 
       bash ~/Downloads/enpm702_setup.sh
 
-   If your repository is not in the default place, tell the script where it is:
+   If your repository is not in the default place, tell the script where it is first. These are two lines: ``export`` keeps ``ENPM702_WS`` set for the commands that follow in the same terminal.
 
    .. code-block:: bash
 
-      ENPM702_WS=~/somewhere/enpm702-fall-2026-cpp bash ~/Downloads/enpm702_setup.sh
+      export ENPM702_WS=~/somewhere/enpm702-fall-2026-cpp
+      bash ~/Downloads/enpm702_setup.sh
 
-3. Read the output. The script checks seven things, in order: the tools, the repository, the latest code (a ``git pull`` that never overwrites your own changes), that your terminal loads ``enpm702-cpp.sh``, that week 8 is enabled, that the ``live`` folder is there, and that ``week8_live`` builds and runs. Each line says ``ok`` or ``FIX``. A ``FIX`` line says what to do. Fix it, then run the script again, until it ends with ``Ready``:
+3. Read the output. Each line says ``ok`` or ``FIX``. When all is well, it looks like this:
 
    .. code-block:: text
 
-      ENPM702 setup for the week 8 live coding
-        ok    g++ is installed
-        ok    cmake is installed
-        ok    git is installed
+      ENPM702: compile and run week8_live
         ok    repository at /home/you/enpm702_cpp/enpm702-fall-2026-cpp
-        ok    repository is up to date
-        ok    /home/you/.bashrc loads enpm702-cpp.sh
-        ok    week 8 is enabled in CMakeLists.txt
-        ok    project/week8/live is there
         ok    configured (the same as 702configure)
         ok    built week8_live (the same as 702build week8_live)
         ok    ran week8_live (the same as 702run week8_live)
 
-      Ready. In class, open a new terminal and type:
-          enpm702
-          702build week8_live
-          702run week8_live
+      Ready for class.
 
-   Your paths and the list of enabled weeks will differ.
-
-4. Open a **new** terminal, so that it loads the latest ``enpm702-cpp.sh``, and type the three commands the script printed. ``702run week8_live`` prints nothing yet: each block in ``main.cpp`` stays commented out until we reach its step in class.
+   ``week8_live`` prints nothing yet: each block in ``main.cpp`` stays commented out until we reach its step in class.
 
 Common Fixes
 ------------
@@ -78,17 +89,15 @@ Common Fixes
 
    * - The ``FIX`` line says
      - What to do
-   * - ``g++``, ``cmake`` or ``git`` is missing
-     - Run the ``sudo apt install`` command it prints.
    * - no ENPM702 repository
-     - Clone the repository (above), or set ``ENPM702_WS`` to where you cloned it.
-   * - git pull did not finish
-     - You changed a file that the pull also changes. Run ``git -C ~/enpm702_cpp/enpm702-fall-2026-cpp status`` to see which one. Copy your version somewhere safe, run ``git -C ~/enpm702_cpp/enpm702-fall-2026-cpp restore <file>``, then run the script again.
-   * - ``.bashrc`` (or ``.zshrc``) does not load ``enpm702-cpp.sh``
-     - Run the ``echo 'source ...' >> ...`` line it prints, **once**.
-   * - week 8 is not enabled
-     - In the repository's ``CMakeLists.txt``, remove the ``#`` before ``add_subdirectory(project/week8)``.
-   * - ``week8_live`` did not build or run
-     - Read the lines it prints under the ``FIX`` line. If they do not tell you what to do, send them to me before class.
+     - Clone the repository (Step 1), or set ``ENPM702_WS`` to where you cloned it.
+   * - cmake could not configure the repository
+     - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
+   * - ``week8_live`` did not build, with ``No rule to make target 'week8_live'``
+     - Pull the latest code, and enable week 8 in ``CMakeLists.txt`` (Step 1).
+   * - ``week8_live`` did not build, with compiler errors
+     - Run ``git status`` in the repository: a file you changed under ``project/week8`` may not compile. If the lines do not tell you what to do, send them to me before class.
+   * - ``week8_live`` did not run
+     - Read the lines printed under the ``FIX`` line, and send them to me before class.
 
 Lecture 9 uses the same script, with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``.
