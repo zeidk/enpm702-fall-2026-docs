@@ -1835,8 +1835,8 @@ L8: OOP Basics
       :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
 
    Default Constructor
-      A constructor that takes no arguments. A class that declares no
-      constructor gets one from the compiler, which sets each data member
+      A constructor that can be called with no arguments. A class that
+      declares no constructor gets one from the compiler, which sets each data member
       from its default member initializer. Once a class declares any
       constructor, the compiler writes no default constructor.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
@@ -1863,7 +1863,7 @@ L8: OOP Basics
    explicit Constructor
       A constructor marked ``explicit``. It runs only when the code names the
       class. Without ``explicit``, a constructor that can be called with one
-      argument also turns a value of that type into an object: ``show(13.4)`` would build a
+      argument also turns a value of its parameter's type into an object: ``show(13.4)`` would build a
       temporary ``Vehicle`` from 13.4.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
@@ -1929,7 +1929,7 @@ L8: OOP Basics
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Programming Paradigm
-      A way to organize a program. C++ supports several. In the procedural
+      A way to organize a program. In the procedural
       way, data and the functions that use it are kept apart: a ``struct``
       holds the data, and any line can change it without calling the
       function that checks it. In the object-oriented way, a class keeps the
@@ -1982,7 +1982,8 @@ L8: OOP Basics
 
    static Method
       A method called on the class, as in ``Vehicle::next_id()``, with no
-      object. It has no ``this``, so it can use only the ``static`` members.
+      object. It has no ``this``, so without an object it can use only the
+      ``static`` members.
       In the Further Reading part of L8.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 

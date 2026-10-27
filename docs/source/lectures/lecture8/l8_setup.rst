@@ -98,7 +98,7 @@ This gives the terminal one new command, ``live8``. After each step, save your f
 
 ``live8`` builds ``week8_live``. If the code compiles, it runs the program and shows what it prints. If it does not compile, it shows the compiler's errors: fix the first one, save, and type ``live8`` again. At the start, ``week8_live`` prints nothing: each block in ``main.cpp`` stays commented out until we reach its step.
 
-``live8`` exists only in the terminal where you typed ``source``. In a new terminal, type the ``source`` line again. The ``702build week8_live`` and ``702run week8_live`` commands on the slides do the same two things, if your terminal loads ``enpm702-cpp.sh`` and you typed ``enpm702``.
+``live8`` exists only in the terminal where you typed ``source``. In a new terminal, type the ``source`` line again. The ``702build week8_live`` and ``702run week8_live`` commands do the same two things, if your terminal loads ``enpm702-cpp.sh`` and you typed ``enpm702``.
 
 Common Fixes
 ------------

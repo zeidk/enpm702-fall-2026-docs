@@ -4,7 +4,7 @@
 Rule of Five and Rule of Zero
 ====================================================
 
-This page is **required reading** after the Lecture 8 class. It is not presented in class. In class, a ``Vehicle`` owns its ``Sensor``\ s through ``std::unique_ptr`` and writes none of the five special member functions: the rule of zero. This page shows why the compiler gets that class right. It then builds a ``Vehicle`` that owns its ``Sensor`` through a raw pointer, a plain ``Sensor*``, and shows what goes wrong until the class writes all five functions itself: the rule of five.
+This page is **required reading** after the Lecture 8 class. It is not presented in class. In class, a ``Vehicle`` owns its ``Sensor``\ s through ``std::unique_ptr`` and writes none of the five special member functions that manage what a class owns: the rule of zero. This page shows why the compiler gets that class right. It then builds a ``Vehicle`` that owns its ``Sensor`` through a raw pointer, a plain ``Sensor*``, and shows what goes wrong until the class writes all five functions itself: the rule of five.
 
 .. dropdown:: Code for This Page
    :icon: terminal
@@ -42,7 +42,7 @@ Why It Matters for Vehicle
 
 In the class diagram of Lecture 8, a filled diamond joins ``Vehicle`` to ``Sensor``: a ``Vehicle`` owns its ``Sensor``\ s. In C++, owning means that the ``Vehicle`` gives the memory of its ``Sensor``\ s back when its lifetime ends. The method that does it is the **destructor**, ``~Vehicle()``. It runs when an object's lifetime ends, and it gives back what the object owns (`Core Guidelines C.31 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-release>`__).
 
-The destructor is one of five member functions that manage what a class owns. A ``Vehicle`` can also be copied, moved, or assigned from another ``Vehicle``, and each of those operations must leave every ``Sensor`` with one owner. These five are **special member functions**: when a class does not declare one, the compiler can write it for you. Here are their declarations, for a class named ``ClassName``:
+The destructor is one of five member functions that manage what a class owns. A ``Vehicle`` can also be copied, moved, or assigned from another ``Vehicle``, and each of those operations must leave every ``Sensor`` with one owner. They are five of the six **special member functions** that C++20 lists; the sixth is the default constructor, from the lecture. When a class does not declare a special member function, the compiler can write it for you. Here are the declarations of the five, for a class named ``ClassName``:
 
 .. code-block:: cpp
 
@@ -60,12 +60,16 @@ The destructor is one of five member functions that manage what a class owns. A 
 
 The copies take a ``const&``. The moves take an rvalue reference, ``&&``, from L7.
 
+.. note::
+
+   "Default constructors (11.4.4.1), copy constructors, move constructors (11.4.4.2), copy assignment operators, move assignment operators (11.4.5), and prospective destructors (11.4.6) are special member functions". C++20 **[special]** (11.4.3) paragraph 1.
+
 Two rules say which of the five a class writes. The **rule of zero** is for a class whose members give back their own memory, as the ``Vehicle`` of the lecture does. The **rule of five** is for a class that calls ``new`` and ``delete`` itself.
 
 Rule of Zero
 ------------
 
-The **rule of zero**: a class whose members give back their own resources writes none of the five special member functions. The ones the compiler writes are right. A resource is something a class must give back, such as the heap memory of a ``Sensor``.
+The **rule of zero**: a class whose members give back their own resources writes none of the five special member functions that manage what a class owns. The ones the compiler writes are right. A resource is something a class must give back, such as the heap memory of a ``Sensor``.
 
 .. code-block:: cpp
 
@@ -224,7 +228,7 @@ The class here has no print in its destructor. With the print, ``car_b``'s destr
 Rule of Five
 ------------
 
-The **rule of five**: a class that needs its own destructor needs its own copy and move operations too, or must delete them. Those are the five special member functions of `Why It Matters for Vehicle`_.
+The **rule of five**: a class that needs its own destructor needs its own copy and move operations too, or must delete them. Those are the five special member functions that manage what a class owns (`Why It Matters for Vehicle`_).
 
 An **assignment** gives a new value to an object that already exists: ``copy = car_a;``. That is why the class needs a copy assignment and a move assignment, beside the two constructors.
 
@@ -414,6 +418,6 @@ That is the reason C.21 asks for all five.
 Which Rule to Follow
 --------------------
 
-Follow the **rule of zero** by default. Give a class members that give back their own resources, such as a ``std::unique_ptr`` or a ``std::vector`` of ``std::unique_ptr``, and write none of the five special member functions. The compiler writes the right ones (Core Guidelines C.20). The ``Vehicle`` of the lecture does this.
+Follow the **rule of zero** by default. Give a class members that give back their own resources, such as a ``std::unique_ptr`` or a ``std::vector`` of ``std::unique_ptr``, and write none of the five special member functions that manage what a class owns. The compiler writes the right ones (Core Guidelines C.20). The ``Vehicle`` of the lecture does this.
 
 Follow the **rule of five** only for a class that manages a resource by hand, such as heap memory through a raw pointer. Such a class writes all five, or deletes the ones it must not have with ``= delete`` (Core Guidelines C.21). The course does not write such classes (Core Guidelines R.11): a ``std::unique_ptr`` member does the ``delete``.
