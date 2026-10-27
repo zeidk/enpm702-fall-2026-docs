@@ -115,7 +115,7 @@ The compiler's destructor destroys the ``std::unique_ptr``, and the ``std::uniqu
 
 The compiler cannot copy a ``std::unique_ptr`` (L7), so it writes no copy for ``Vehicle``. A ``Vehicle`` is **move-only**: you can move it, but you cannot copy it. So no two ``Vehicle``\ s can own one ``Sensor``.
 
-The ``Vehicle`` of the lecture, whose ``sensors_`` is a ``std::vector<std::unique_ptr<Sensor>>``, follows the same rule: it writes none of the five, and copying it does not compile (the lecture's "Many Sensors" section).
+The ``Vehicle`` of the lecture, whose ``sensors_`` is a ``std::vector<std::unique_ptr<Sensor>>``, follows the same rule: it writes none of the five, and copying it does not compile (Live Coding Step 6 of the lecture).
 
 A raw pointer does not delete what it points at. A class that owns memory through a raw pointer must write all five functions itself, or delete them: the rule of five. The rest of this page builds that class one step at a time.
 
