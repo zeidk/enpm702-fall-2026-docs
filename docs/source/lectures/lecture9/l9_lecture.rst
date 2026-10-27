@@ -384,8 +384,8 @@ Live Coding: Step 1
 **10 minutes.** We write ``Passenger`` in ``live/include/fleet.hpp``, below L8's ``Vehicle``. A passenger rides a vehicle and does not own it.
 
 1. ``private``: ``std::string name_`` and ``std::weak_ptr<Vehicle> ride_``.
-2. An ``explicit`` constructor. In ``fleet.cpp``, it throws for an empty name: the rule of the class is a name that is not empty.
-3. ``board`` stores a ``std::shared_ptr<Vehicle>`` in ``ride_``. ``leave`` resets it.
+2. An ``explicit`` constructor, defined in the class. It throws for an empty name: the rule of the class is a name that is not empty.
+3. In ``fleet.cpp``, ``board`` stores the vehicle in ``ride_``, and ``leave`` resets it.
 4. Uncomment the Step 1 block in ``main.cpp``: ``maya`` boards ``car_a``, then ``car_a.reset()``.
 
 Build, then run:
@@ -464,7 +464,7 @@ Live Coding: Step 2
 
 1. ``private``: ``vehicles_``, a ``std::vector<std::shared_ptr<Vehicle>>``.
 2. ``add`` throws for a null pointer, and skips a vehicle already in the fleet. It checks the invariant before it changes anything.
-3. ``remove(int id)`` erases by id with ``std::erase_if``. ``size`` returns the count.
+3. ``remove(int id)`` erases by id with ``std::erase_if``. ``size`` returns the count. The three bodies go in ``fleet.cpp``.
 4. Uncomment the Step 2 block: ``car_a`` is added twice, then ``car_b`` is removed.
 
 Build with ``702build week9_live``, then run with ``702run week9_live``. The Step 2 block prints:
@@ -1839,17 +1839,20 @@ A Passenger Rides a Vehicle
 
    class Passenger {
     public:
-     explicit Passenger(std::string name);  // throws if name is empty
-     void board(const std::shared_ptr<Vehicle>& vehicle) {
-       ride_ = vehicle;
+     explicit Passenger(std::string name) : name_{std::move(name)} {
+       if (name_.empty()) {
+         throw std::invalid_argument{"a passenger has a name"};
+       }
      }
-     void leave() noexcept { ride_.reset(); }
+     void board(const std::shared_ptr<Vehicle>& vehicle);
+     void leave() noexcept;
 
     private:
      std::string name_;
      std::weak_ptr<Vehicle> ride_;  // does not own the Vehicle
    };
 
+- ``board`` and ``leave`` are defined in ``fleet.cpp``: ``board`` stores the pointer in ``ride_``, and ``leave`` resets it.
 - ``Vehicle`` is L8's class. The program keeps each ``Vehicle`` in a ``std::shared_ptr``, so a ``std::weak_ptr`` (L7) can refer to it without owning it.
 
 Back to `Live Coding: Step 1`_.
@@ -1863,14 +1866,13 @@ A Fleet of Shared Vehicles
     public:
      void add(std::shared_ptr<Vehicle> vehicle);
      bool remove(int id);  // the Vehicle's id, from L8's counter
-     [[nodiscard]] std::size_t size() const noexcept {
-       return vehicles_.size();
-     }
+     [[nodiscard]] std::size_t size() const noexcept;
 
     private:
      std::vector<std::shared_ptr<Vehicle>> vehicles_;  // shared
    };
 
+- The three methods are defined in ``fleet.cpp``.
 - The invariant: no null pointer and no vehicle twice. ``add`` throws ``std::invalid_argument`` for a null pointer, and does not add a vehicle that is already in the fleet.
 - Each ``std::shared_ptr`` in ``vehicles_`` is one more owner (L7): the ``Fleet`` shares each ``Vehicle`` with the code that created it.
 

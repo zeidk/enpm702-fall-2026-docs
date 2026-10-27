@@ -546,9 +546,9 @@ The Sensor Class
     public:
      explicit Sensor(int id, SensorType type = SensorType::lidar,
                      double range = 100.0);
-     [[nodiscard]] int get_id() const noexcept { return id_; }
-     [[nodiscard]] SensorType get_type() const noexcept { return type_; }
-     [[nodiscard]] double get_range() const noexcept { return range_; }
+     [[nodiscard]] int get_id() const noexcept;
+     [[nodiscard]] SensorType get_type() const noexcept;
+     [[nodiscard]] double get_range() const noexcept;
     private:
      int id_;           // picked by Vehicle::add_sensor()
      SensorType type_;  // what kind of sensor
@@ -826,8 +826,8 @@ Changing the Inside
 - With ``public`` members, every line that read ``speed_`` would now fail to compile.
 - Run: ``702run week8_playground 41``.
 
-Short Methods in the Class
-""""""""""""""""""""""""""
+A Body in the Class
+"""""""""""""""""""
 
 .. code-block:: cpp
 
@@ -837,8 +837,8 @@ Short Methods in the Class
      void set_speed(double speed);  // body in vehicle.cpp
    };
 
-- A method defined in its class is **inline**: each source file that includes the header may hold its body, and the compiler can put that body in place of a call.
-- This course puts one-line accessors in the class and longer methods in ``vehicle.cpp``: ``set_speed`` checks and throws, so it goes in ``vehicle.cpp``. Defining all of them in ``vehicle.cpp`` is also correct.
+- A method can also be defined in its class. It is then **inline**: each source file that includes the header may hold its body, and the compiler can put that body in place of a call.
+- This course defines every method in ``vehicle.cpp``, even a one-line ``get_speed``: the header lists what the class does, and ``vehicle.cpp`` holds the code that does it. Constructors (`The Default Argument in the Header`_) are the one exception.
 
 See `One Definition in Many Files`_, `A Method Defined in Its Class`_ and :ref:`l8-inline-hint` under Further Reading: why a function defined in a header must be ``inline``, what that means for a method defined in its class, and what ``inline`` does not promise.
 
@@ -959,7 +959,7 @@ Live Coding: Step 4
 
 **10 minutes.** ``get_speed`` promises to change nothing, and ``set_speed`` keeps the invariant.
 
-1. ``get_speed`` moves into the class with its body (`Short Methods in the Class`_): ``[[nodiscard]]``, ``const`` and ``noexcept``.
+1. ``get_speed`` gets ``[[nodiscard]]``, ``const`` and ``noexcept`` in the header. Its body stays in ``vehicle.cpp``, which repeats ``const`` and ``noexcept``.
 2. Add ``speed_ = 0.0;`` to its body and build: ``assignment of member 'Vehicle::speed_' in read-only object``. Delete the line.
 3. ``set_speed`` checks first: for a speed below 0 or above ``max_speed_``, it throws ``std::invalid_argument``.
 4. Uncomment the Step 4 block: it calls ``set_speed(20.0)`` in a ``try``.
@@ -1155,8 +1155,8 @@ A **constructor with parameters** takes the values the object starts from. Here 
      // ...
    };
 
-- A constructor can be written in the class: declared and defined in one place, like the short methods of `Short Methods in the Class`_.
-- Run: ``702run week8_playground 60``. The ``Vehicle`` of ``vehicle.cpp`` uses the member initializer list instead (`Member Initializer List`_).
+- This constructor is written in the class: declared and defined in one place. This course writes every constructor this way (`The Default Argument in the Header`_).
+- Run: ``702run week8_playground 60``. The ``Vehicle`` of ``vehicle.hpp`` uses the member initializer list instead (`Member Initializer List`_).
 
 Two Kinds of Default Values
 """""""""""""""""""""""""""
@@ -1194,7 +1194,7 @@ The Default Argument in the Header
      // the assignments and the check
    }
 
-- With the constructor split into ``vehicle.hpp`` and ``vehicle.cpp`` (`Live Coding: Step 3`_), the default argument is written once, in the header. The code that creates a ``Vehicle`` sees only the header.
+- A constructor can also be split into ``vehicle.hpp`` and ``vehicle.cpp``, like a method (`Live Coding: Step 3`_). The default argument is then written once, in the header: the code that creates a ``Vehicle`` sees only the header.
 - Writing ``= "white"`` again in ``vehicle.cpp`` does not compile, as in L5:
 
 .. code-block:: text
@@ -1204,7 +1204,7 @@ The Default Argument in the Header
    note: previous specification in
          'Vehicle::Vehicle(double, const std::string&)' here
 
-- In this course, a short constructor is defined in the class, like a short method (`Short Methods in the Class`_).
+- This course defines every constructor in the class. Every other method goes in ``vehicle.cpp`` (`A Body in the Class`_).
 
 Discussion: Which Lines Compile?
 """"""""""""""""""""""""""""""""
@@ -1389,15 +1389,15 @@ The **member initializer list** is the list after ``:`` in a constructor. It **i
 
 .. code-block:: cpp
 
-   // vehicle.cpp
-   Vehicle::Vehicle(double max_speed, const std::string& color)
+   // vehicle.hpp, in the class
+   Vehicle(double max_speed, const std::string& color = "white")
        : max_speed_{max_speed}, color_{color} {
      if (max_speed_ <= 0.0) {
        throw std::invalid_argument{"maximum speed must be greater than 0"};
      }
    }
 
-- The constructor of `Constructor with Parameters`_, defined in ``vehicle.cpp`` (`The Default Argument in the Header`_), with the list: the two assignments are gone, and the body keeps only the check.
+- The constructor of `Constructor with Parameters`_, with the list: the two assignments are gone, and the body keeps only the check.
 
 The List Fixes Both Problems
 """"""""""""""""""""""""""""
@@ -1434,8 +1434,9 @@ The Range Check
 
 .. code-block:: cpp
 
-   // sensor.cpp
-   Sensor::Sensor(int id, SensorType type, double range)
+   // sensor.hpp, in the class
+   explicit Sensor(int id, SensorType type = SensorType::lidar,
+                   double range = 100.0)
        : id_{id}, type_{type}, range_{range} {
      if (range_ < 0.0) {
        throw std::invalid_argument{"range must be at least 0"};
@@ -1573,8 +1574,8 @@ A **delegating constructor** is a constructor whose member initializer list name
 
 .. code-block:: cpp
 
-   // vehicle.cpp
-   Vehicle::Vehicle(double max_speed, double speed)
+   // vehicle.hpp, in the class
+   Vehicle(double max_speed, double speed)
        : Vehicle{max_speed} {  // checks the maximum speed
      set_speed(speed);         // checks the speed
    }
@@ -1592,8 +1593,8 @@ Live Coding: Step 5
 
 **10 minutes.** Every ``Vehicle`` starts with a maximum speed greater than 0, or it is never created.
 
-1. In the header: the ``explicit`` constructor of :ref:`l8-explicit`, ``Vehicle(double max_speed, double speed);`` and ``get_color``. ``max_speed_`` and ``color_`` lose their ``{ }`` values.
-2. In the source: the constructors of `Member Initializer List`_ and `Delegating Constructor`_.
+1. In the class: the ``explicit`` constructor of `Member Initializer List`_ and :ref:`l8-explicit`, the constructor of `Delegating Constructor`_, and the declaration of ``get_color``. ``max_speed_`` and ``color_`` lose their ``{ }`` values.
+2. In the source: the body of ``get_color``.
 3. ``Vehicle car_a;`` in the Step 1, 2 and 4 blocks gives ``no matching function for call to 'Vehicle::Vehicle()'``: write ``Vehicle car_a{13.4};`` instead, and the same for ``car_b``.
 4. Uncomment the Step 5 block.
 
@@ -1800,7 +1801,7 @@ Live Coding: Step 6
 
 1. In the header, the data member ``sensors_``, a ``std::vector<std::unique_ptr<Sensor>>``. ``Sensor`` is the course's, in ``common/include/sensor.hpp``.
 2. ``int add_sensor(SensorType type, double range)`` creates a ``Sensor`` with the next id, 1, 2, and so on, and returns that id.
-3. In the class, ``sensor_count`` returns ``sensors_.size()``, and ``get_sensors`` returns ``sensors_`` by ``const&`` (`Returning a Large Member`_).
+3. ``sensor_count`` returns ``sensors_.size()``, and ``get_sensors`` returns ``sensors_`` by ``const&`` (`Returning a Large Member`_).
 4. Uncomment the Step 6 block: a 100 m lidar and an 80 m camera.
 
 Build and run: ``live8``. The Step 6 block prints:
@@ -1820,9 +1821,9 @@ Returning a Large Member
 
 .. code-block:: cpp
 
-   // Vehicle's accessor, in vehicle.hpp
-   [[nodiscard]] const std::vector<std::unique_ptr<Sensor>>&
-   get_sensors() const noexcept {
+   // vehicle.cpp
+   const std::vector<std::unique_ptr<Sensor>>& Vehicle::get_sensors()
+       const noexcept {
      return sensors_;
    }
 
@@ -2047,7 +2048,7 @@ Appendix frame ix, the class after `Live Coding: Step 5`_.
      double mileage_{0.0};  // m driven, never goes down
    };
 
-- ``add_mileage`` throws for a negative distance. To save room, the accessors are only declared here; ``vehicle.hpp`` defines each in the class (`Short Methods in the Class`_).
+- ``add_mileage`` throws for a negative distance. To save room, the constructors are only declared here: ``vehicle.hpp`` defines them in the class.
 - ``vehicle.hpp`` (in ``common/include``) also has ``get_color``, ``get_mileage``, the sensors (`Live Coding: Step 6`_), the id (`static Members`_) and ``drive``, which takes a ``Route`` and prints the trip.
 - ``drive`` takes a ``Route``, the list of ``Position``\ s the robotaxi drives through, and prints the trip: its length, the speed and the time.
 - Run: ``702run week8_appendix ix`` drives ``car_a``, at 12 m/s, along a 700 m ``Route``: it prints ``700 m at 12 m/s: 58.3333 s``.
@@ -2062,9 +2063,7 @@ Appendix frame x, the class of `Live Coding: Step 6`_.
    class Vehicle {  // owns one Sensor for each sensor it carries
     public:
      int add_sensor(SensorType type, double range);
-     [[nodiscard]] std::size_t sensor_count() const noexcept {
-       return sensors_.size();
-     }
+     [[nodiscard]] std::size_t sensor_count() const noexcept;
      // ... and the members of The Class So Far
 
     private:
@@ -2078,7 +2077,7 @@ Appendix frame x, the class of `Live Coding: Step 6`_.
 One Definition in Many Files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame xi, from `Short Methods in the Class`_.
+Appendix frame xi, from `A Body in the Class`_.
 
 .. code-block:: cpp
 
@@ -2121,13 +2120,13 @@ Appendix frame xi, from `Short Methods in the Class`_.
 A Method Defined in Its Class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame xii, from `Short Methods in the Class`_.
+Appendix frame xii, from `A Body in the Class`_.
 
 .. note::
 
    "A member function may be defined (9.5) in its class definition, in which case it is an inline (9.2.7) member function if it is attached to the global module". C++20 **[class.mfct]** (11.4.1) paragraph 1. Code that uses no C++20 modules, as in this course, is attached to the global module.
 
-- So the ``get_speed`` of `Short Methods in the Class`_ is inline: every source file that includes ``vehicle.hpp`` holds its body, which the rule of `One Definition in Many Files`_ allows.
+- So the ``get_speed`` of `A Body in the Class`_ is inline, and so is each constructor this course writes in the class: every source file that includes ``vehicle.hpp`` holds its body, which the rule of `One Definition in Many Files`_ allows.
 - Each caller's compiler sees that body and can put it in place of the call. With g++ 13.3 ``-O2``, a call of this ``get_speed`` becomes one read of ``speed_``.
 - With the body in ``vehicle.cpp`` instead, a call from another source file stays a call: that file's compiler sees only the declaration.
 - The cost: changing a body in the class recompiles every file that includes the header.
@@ -2137,7 +2136,7 @@ Appendix frame xii, from `Short Methods in the Class`_.
 ``inline`` Does Not Force Inlining
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame xiii, from `Short Methods in the Class`_.
+Appendix frame xiii, from `A Body in the Class`_.
 
 - ``inline`` has two meanings. The first is the rule of `One Definition in Many Files`_: every source file may hold the same definition. The standard guarantees it.
 - The second is a hint to replace each call with the function's body, called **inline substitution**. The compiler does not have to follow it:
