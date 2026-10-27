@@ -2,219 +2,205 @@
 C++ Exercises
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 9: OOP Advanced.
-Work through them in order, as each exercise builds on the skills from the
-previous one. Write, compile, and run each program to verify your understanding.
+This exercise covers Lecture 9: OOP Advanced. There is one exercise this
+week, and it is graded: hand it in on Canvas before L10.
+
+The exercise works on the airport shuttles of the robotaxi company. A
+``Shuttle`` is an abstract class with two concrete kinds, a dispatcher
+shares the shuttles it quotes fares for, and a rider knows the shuttle
+it boarded without keeping it alive.
 
 .. note::
 
-   Compile all programs with warnings enabled:
+   Build the exercise from VS Code with CMake, as in the lecture. Add a
+   target for it to ``project/week9/CMakeLists.txt``:
 
-   .. code-block:: bash
+   .. code-block:: cmake
 
-      g++ -std=c++20 -Wall -Wextra -o program program.cpp
+      add_executable(week9_shuttles exercises/shuttles.cpp)
+      target_compile_options(week9_shuttles PRIVATE -fsanitize=address)
+      target_link_options(week9_shuttles PRIVATE -fsanitize=address)
+
+   ``-fsanitize=address`` turns on AddressSanitizer, so a ``delete``
+   through the wrong type or a leak is reported. The course project
+   already turns on the warnings, so fix every warning before you submit.
+
+   Format the output as in the **Example Output**: a title between two lines
+   of ``=``, and each part under a heading underlined with ``-``, with the
+   labels in one column and the values after a ``:``.
 
 
 ----
 
 
-.. dropdown:: Exercise 1: Basic Inheritance
+.. dropdown:: Exercise 1: The Airport Shuttles
     :icon: gear
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Practice creating a base class and a derived class using public
-    inheritance, and understand how constructors are chained.
+    Write a small class hierarchy as L9 does with ``Vehicle``: an
+    abstract base class with pure ``virtual`` methods and a ``virtual``
+    destructor, two ``final`` concrete classes that override them, a
+    class that holds shuttles it shares (aggregation), a class that
+    refers to a shuttle without owning it (association), and a ``struct``
+    that the shuttles use for one call (dependency).
 
     **Specification**
 
-    1. Create a ``Vehicle`` base class with:
-
-       - A ``protected`` ``std::string`` attribute ``name_``.
-       - A ``protected`` ``int`` attribute ``year_``.
-       - A constructor that initializes both attributes.
-       - A ``public`` method ``display_info()`` that prints the vehicle name and year.
-
-    2. Create a ``Car`` derived class (public inheritance from ``Vehicle``) with:
-
-       - A ``private`` ``int`` attribute ``num_doors_``.
-       - A constructor that takes ``name``, ``year``, and ``num_doors``, and explicitly calls the ``Vehicle`` constructor.
-       - A ``public`` method ``display_car_info()`` that calls ``display_info()`` and also prints the number of doors.
-
-    3. In ``main()``, create a ``Car`` object and call ``display_car_info()``.
-
-.. dropdown:: Exercise 2: Method Overriding with ``virtual``
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Understand the difference between static binding (no ``virtual``) and
-    dynamic binding (with ``virtual``), and practice using ``override``.
-
-    **Specification**
-
-    1. Create a ``Vehicle`` base class with:
-
-       - A ``virtual`` method ``drive()`` that prints ``"Vehicle is driving"``.
-       - A ``virtual`` destructor (``= default``).
-
-    2. Create a ``RoboTaxi`` class (derived from ``Vehicle``) with:
-
-       - An overridden ``drive()`` method that prints ``"RoboTaxi is driving autonomously"``.
-       - Use the ``override`` keyword.
-
-    3. Create a ``Taxi`` class (derived from ``Vehicle``) with:
-
-       - An overridden ``drive()`` method that prints ``"Taxi is driving with a human driver"``.
-
-    4. In ``main()``:
-
-       a. Create a ``std::unique_ptr<Vehicle>`` pointing to a ``RoboTaxi``.
-       b. Create a ``std::unique_ptr<Vehicle>`` pointing to a ``Taxi``.
-       c. Call ``drive()`` on both pointers and observe runtime polymorphism.
-       d. Create a ``std::vector<std::unique_ptr<Vehicle>>`` and iterate through it calling ``drive()`` on each element.
-
-.. dropdown:: Exercise 3: Abstract Class with Pure Virtual Methods
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Practice defining an abstract base class with pure virtual methods and
-    implementing concrete derived classes.
-
-    **Specification**
-
-    1. Create an abstract ``Sensor`` class with:
-
-       - A ``protected`` ``std::string`` attribute ``sensor_id_``.
-       - A constructor that initializes ``sensor_id_``.
-       - A ``virtual`` destructor (``= default``).
-       - A pure virtual method ``double read_value() const = 0``.
-       - A pure virtual method ``std::string get_type() const = 0``.
-       - A non-virtual method ``void display() const`` that prints the sensor ID, type, and current reading.
-
-    2. Create a ``TemperatureSensor`` class that:
-
-       - Inherits from ``Sensor``.
-       - Has a ``private`` ``double`` attribute ``temperature_``.
-       - Implements ``read_value()`` to return ``temperature_``.
-       - Implements ``get_type()`` to return ``"Temperature"``.
-
-    3. Create a ``DistanceSensor`` class that:
-
-       - Inherits from ``Sensor``.
-       - Has a ``private`` ``double`` attribute ``distance_``.
-       - Implements ``read_value()`` to return ``distance_``.
-       - Implements ``get_type()`` to return ``"Distance"``.
-
-    4. In ``main()``, create a vector of ``unique_ptr<Sensor>`` and add both sensor types. Iterate and call ``display()`` on each.
-
-    5. Verify that attempting to instantiate ``Sensor`` directly causes a compile error.
-
-.. dropdown:: Exercise 4: Composition vs. Inheritance
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Understand the difference between "has-a" (composition) and "is-a"
-    (inheritance) relationships by implementing both.
-
-    **Specification**
-
-    1. Create an ``Engine`` class with:
-
-       - A ``private`` ``int`` attribute ``horsepower_``.
-       - A ``public`` method ``start()`` that prints ``"Engine started (<hp> HP)"``.
-       - A ``public`` method ``stop()`` that prints ``"Engine stopped"``.
-
-    2. Create a ``GPS`` class with:
-
-       - A ``private`` ``std::string`` attribute ``model_``.
-       - A ``public`` method ``get_location()`` that prints ``"GPS (<model>): Location acquired"``.
-
-    3. Create a ``Vehicle`` base class with:
-
-       - **Composition**: An ``Engine`` member and a ``GPS`` member (has-a relationships).
-       - A ``virtual`` destructor (``= default``).
-       - A ``virtual`` method ``describe()`` that prints the vehicle type.
-
-    4. Create a ``Truck`` class (derived from ``Vehicle``) that:
-
-       - Has an additional ``private`` ``double`` attribute ``payload_capacity_``.
-       - Overrides ``describe()`` to include payload capacity.
-
-    5. In ``main()``, create a ``Truck``, start its engine, get its GPS location, and call ``describe()``.
-
-.. dropdown:: Exercise 5: Virtual Destructors
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Understand why virtual destructors are essential in polymorphic
-    hierarchies and observe the difference between virtual and non-virtual
-    destructors.
-
-    **Specification**
-
-    1. Create a ``Base`` class with:
-
-       - A **non-virtual** destructor that prints ``"~Base()"``.
-
-    2. Create a ``Derived`` class (derived from ``Base``) with:
-
-       - A ``private`` ``int*`` attribute ``data_`` allocated with ``new int[100]``.
-       - A destructor that ``delete[]``'s ``data_`` and prints ``"~Derived()"``.
-
-    3. In ``main()``:
-
-       a. Create a ``Derived`` object on the stack and observe both destructors run.
-       b. Create a ``Base*`` pointer to a ``new Derived()`` object, then ``delete`` it. Observe that only ``~Base()`` runs (resource leak).
-
-    4. Now fix the problem by making the ``Base`` destructor ``virtual``. Re-run step 3b and confirm both destructors run.
-
-    5. Run the fixed and unfixed versions through Valgrind and compare the memory leak reports.
-
-.. dropdown:: Exercise 6 Challenge: Shape Hierarchy with Polymorphic Area Calculation
-    :icon: rocket
-    :class-container: sd-border-warning
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Build a complete shape hierarchy using abstract classes, pure virtual
-    methods, ``override``, ``final``, virtual destructors, and smart pointers.
-
-    **Specification**
-
-    1. Create an abstract ``Shape`` class with:
-
-       - A ``virtual`` destructor (``= default``).
-       - A pure virtual method ``double area() const = 0``.
-       - A pure virtual method ``std::string name() const = 0``.
-       - A non-virtual method ``void print() const`` that prints the shape name and area.
-
-    2. Create the following concrete classes:
-
-       - ``Circle`` with a ``double`` radius. ``area()`` returns pi * r * r.
-       - ``Rectangle`` with ``double`` width and height. ``area()`` returns width * height.
-       - ``Triangle`` with ``double`` base and height. ``area()`` returns 0.5 * base * height.
-       - ``Square final`` that inherits from ``Rectangle``. Constructor takes a single side length. Mark the class ``final``.
-
-    3. In ``main()``:
-
-       a. Create a ``std::vector<std::unique_ptr<Shape>>`` containing one of each shape type.
-       b. Iterate through the vector and call ``print()`` on each shape.
-       c. Calculate and print the total area of all shapes.
-       d. Find and print the shape with the largest area.
-
-    4. Verify that attempting to derive from ``Square`` causes a compile error.
+    Write one program, ``project/week9/exercises/shuttles.cpp``, with the
+    target ``week9_shuttles``. Write no ``new`` and no ``delete``. Every
+    data member of a class is ``private``.
+
+    1. Write a ``struct Trip`` with two members: ``destination`` (a
+       ``std::string``) and ``distance_km`` (a ``double``, with the default
+       member initializer ``0.0``). Any destination and distance make a
+       trip, so it is a ``struct``.
+    2. Write an abstract ``class Shuttle`` with two data members: an
+       ``int id_`` and an ``int seats_`` (greater than 0, its invariant).
+       Give it:
+
+       - ``Shuttle(int id, int seats)``, which sets ``id_`` and
+         ``seats_``, and throws ``std::invalid_argument`` with the message
+         ``seats must be greater than 0`` when ``seats`` is not greater
+         than 0.
+       - ``virtual ~Shuttle() = default;``
+       - Two pure ``virtual`` methods, both ``[[nodiscard]]`` and
+         ``const``: ``double fare(const Trip& trip)``, the fare in dollars,
+         and ``std::string kind()``, the name of the class.
+       - ``get_id()`` and ``get_seats()``, both ``[[nodiscard]]``,
+         ``const`` and ``noexcept``.
+
+    3. Write two concrete classes, each ``final`` and derived from
+       ``Shuttle`` with ``public``. Each constructor passes the id and the
+       seats to ``Shuttle`` with a base class initializer. Mark each override
+       ``override``. The fares are chosen for this exercise.
+
+       - ``RoboShuttle``: ``RoboShuttle(int id, int seats)``. Its fare is
+         2.50 + 1.20 × the distance in km, and its ``kind()`` is
+         ``"RoboShuttle"``.
+       - ``DrivenShuttle``: ``DrivenShuttle(int id, int seats, std::string driver_name)``,
+         which moves the name into a ``driver_name_`` member. Its fare is
+         6.00 + 0.90 × the distance in km, and its ``kind()`` is
+         ``"DrivenShuttle"``.
+
+    4. Write a ``class Dispatcher`` with one data member,
+       ``std::vector<std::shared_ptr<Shuttle>> shuttles_``, and these
+       methods. None of them names ``RoboShuttle`` or ``DrivenShuttle``.
+
+       - ``void add(std::shared_ptr<Shuttle> shuttle)``, which throws
+         ``std::invalid_argument`` with the message
+         ``a dispatcher cannot hold a null shuttle`` for a null pointer,
+         and does not add a shuttle that is already in the dispatcher.
+       - ``bool remove(int id)``, which removes the shuttle with that id
+         and returns ``false`` when there is none.
+       - ``size()``, ``[[nodiscard]]``, ``const`` and ``noexcept``.
+       - ``std::shared_ptr<Shuttle> cheapest(const Trip& trip) const``,
+         the shuttle with the lowest fare for the trip. On a tie, the
+         shuttle added first wins.
+       - ``void print_quotes(const Trip& trip) const``, which prints one
+         line per shuttle: its id, its ``kind()`` and its fare.
+
+    5. Write a ``class Rider`` with two data members, ``name_`` (a
+       ``std::string``, not empty) and ``ride_``
+       (a ``std::weak_ptr<Shuttle>``). Give it:
+
+       - ``explicit Rider(std::string name)``, which throws
+         ``std::invalid_argument`` with the message ``a rider has a name``
+         when the name is empty.
+       - ``void board(const std::shared_ptr<Shuttle>& shuttle)`` and
+         ``void leave() noexcept``.
+       - ``std::string ride() const``, which returns ``shuttle`` and the
+         shuttle's id while the shuttle exists, and ``none`` when it does
+         not. Use ``lock()`` (L7).
+
+    6. Write ``print_shuttle``. It takes a ``const Shuttle&`` and prints
+       one line as in the Example Output.
+    7. In ``main``:
+
+       - Create three shuttles with ``std::make_shared`` and ``auto``:
+         ``robo_a``, a ``RoboShuttle`` with id 1 and 4 seats; ``robo_b``,
+         a ``RoboShuttle`` with id 2 and 6 seats; and ``driven``, a
+         ``DrivenShuttle`` with id 3, 12 seats and the driver ``Ana``.
+         Print them.
+       - Create a ``Dispatcher``. Add ``robo_a``, ``robo_b``, ``driven``,
+         and ``robo_a`` a second time. Print its size and
+         ``robo_a.use_count()``.
+       - For the trips to ``Union Station`` (5.0 km) and to
+         ``BWI Airport`` (30.0 km), print the quotes and the cheapest
+         shuttle.
+       - Create a ``Rider`` named ``Maya`` and board ``driven``. Print her
+         ride and ``driven.use_count()``. Remove shuttle 3 from the
+         dispatcher, then call ``driven.reset()``. Print her ride and the
+         dispatcher's size again.
+       - Show that the rules hold: create a ``RoboShuttle`` with id 4 and 0 seats,
+         a ``Rider`` with an empty name, and add ``nullptr`` to the
+         dispatcher. Catch each exception and print its message.
+       - Create ``std::unique_ptr<Shuttle> spare`` that owns a
+         ``DrivenShuttle`` with id 5, 8 seats and the driver
+         ``Ana Maria Rodrigues``. Print its kind and seats, and its fare to
+         ``Inner Harbor`` (10.0 km). Call ``spare.reset()`` and print that
+         it was released.
+
+    8. Write the line ``class NightShuttle : public RoboShuttle {};``,
+       build, read the error, and leave the line in the file as a comment
+       that says why it does not compile.
+    9. Remove ``virtual`` from ``~Shuttle``, build, and run. Copy the
+       first line of the AddressSanitizer report into a comment, with one
+       sentence that says why it happens. Then put ``virtual`` back.
+    10. The program must end with no AddressSanitizer report.
+
+    **Example Output**
+
+    Fares have two digits after the decimal point, distances one.
+
+    .. code-block:: text
+
+       ====================================
+         The Airport Shuttles
+       ====================================
+
+       Shuttles
+       ------------------------------------
+         shuttle 1 RoboShuttle    : 4 seats
+         shuttle 2 RoboShuttle    : 6 seats
+         shuttle 3 DrivenShuttle  : 12 seats
+
+       Dispatcher
+       ------------------------------------
+         shuttles                 : 3
+         owners of shuttle 1      : 2
+
+       Quotes to Union Station (5.0 km)
+       ------------------------------------
+         shuttle 1 RoboShuttle    :   8.50
+         shuttle 2 RoboShuttle    :   8.50
+         shuttle 3 DrivenShuttle  :  10.50
+         cheapest                 : shuttle 1 RoboShuttle
+
+       Quotes to BWI Airport (30.0 km)
+       ------------------------------------
+         shuttle 1 RoboShuttle    :  38.50
+         shuttle 2 RoboShuttle    :  38.50
+         shuttle 3 DrivenShuttle  :  33.00
+         cheapest                 : shuttle 3 DrivenShuttle
+
+       Rider
+       ------------------------------------
+         Maya rides               : shuttle 3
+         owners of shuttle 3      : 2
+         Maya rides               : none
+         shuttles                 : 2
+
+       Rules Kept
+       ------------------------------------
+         caught: seats must be greater than 0
+         caught: a rider has a name
+         caught: a dispatcher cannot hold a null shuttle
+
+       Owned through a Base Pointer
+       ------------------------------------
+         spare                    : DrivenShuttle, 8 seats
+         to Inner Harbor          :  15.00
+         spare                    : released

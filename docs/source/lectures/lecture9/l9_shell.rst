@@ -6,7 +6,7 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1-8 and represent
+These exercises build on the shell skills from Lectures 1 to 8 and represent
 the **final shell exercise set** before we transition to ROS 2. The focus
 is on shell libraries, building CLI tools, systemd basics, cron jobs, and a
 comprehensive review that ties together everything covered so far.
@@ -278,7 +278,7 @@ comprehensive review that ties together everything covered so far.
     **Tasks:**
 
     1. Use ``crontab -e`` to add a cron job that appends the current date and system load (use ``uptime``) to ``~/cron_log.txt`` every minute.
-    2. Wait 3 minutes, then verify the log file contains 3 entries.
+    2. Wait 3 minutes, then verify that the log file contains at least 2 entries. cron starts the job once a minute, at the start of the minute, so the count depends on when you added the job and when you check.
     3. Remove the every-minute job and replace it with one that runs every 5 minutes.
     4. Write a cron expression that runs a backup script at 2:30 AM on the first day of every month.
     5. Remove your test crontab entries when done (use ``crontab -e`` to delete the lines).
@@ -338,7 +338,7 @@ comprehensive review that ties together everything covered so far.
     1. Create ``rotate_logs.sh`` as shown above.
     2. Create a test directory with several ``.log`` files of varying sizes (use ``dd`` or ``yes | head -c 2000000 > big.log`` to create large files).
     3. Run the script and verify that large files are compressed and archived while small files are left alone.
-    4. Add a ``--dry-run`` flag that shows what would be rotated without actually doing it.
+    4. Add a ``--dry-run`` flag that shows what would be rotated without doing it.
 
 
 .. dropdown:: Exercise 7: Environment Setup Script
@@ -370,7 +370,7 @@ comprehensive review that ties together everything covered so far.
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
-    This exercise combines skills from all previous shell exercises (L1-L9).
+    This exercise combines skills from all previous shell exercises (L1 to L9).
     Build a project workspace manager that automates common development tasks.
 
     **Tasks:**

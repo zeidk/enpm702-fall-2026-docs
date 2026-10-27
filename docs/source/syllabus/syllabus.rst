@@ -115,9 +115,9 @@ scheduled.
    * - Week 9
      - Oct 27
      -
-     - | OOP Basics (Classes, Objects, Encapsulation, Constructors)
+     - | OOP Basics (Classes, Objects, Encapsulation, Constructors, Destructors, ``this``)
        | :quiz:`Quiz 3`
-     - Submit Lecture 8 exercises
+     - Upload the L8 Live Coding on Canvas, before the end of class
    * - Week 10
      - Nov 3
      -

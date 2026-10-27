@@ -1241,9 +1241,16 @@ L5: Functions
       A compiler optimization that eliminates unnecessary copy/move operations when returning objects from functions. Guaranteed in C++17 for certain cases (RVO).
       :doc:`L5 </lectures/lecture5/l5_lecture>`
 
-   Default Parameter
-      A value provided in a function declaration that is used when no argument is supplied for that parameter. Must be specified from right to left.
-      :doc:`L5 </lectures/lecture5/l5_lecture>`
+   Default Argument
+      A value written after a parameter in a function's declaration, such as
+      ``int precision = 3``. The parameter takes it when the caller leaves
+      that argument out. Once a parameter has one, every parameter after it
+      needs one too. When the function is declared in a header, the default
+      goes there, once; writing it again in the definition does not compile.
+      In L8, a constructor's color has one:
+      ``const std::string& color = "white"``.
+      :doc:`L5 </lectures/lecture5/l5_lecture>`,
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Function Overloading
       Defining multiple functions with the same name but different parameter lists. The compiler selects the correct overload based on the arguments.
@@ -1252,8 +1259,12 @@ L5: Functions
    inline
       A specifier that lets a function be defined in a header that several
       ``.cpp`` files include. Without it, each file gets its own copy of
-      the body and the linker reports ``multiple definition``.
-      :doc:`L5 </lectures/lecture5/l5_lecture>`
+      the body and the linker reports ``multiple definition``. In L8, a
+      method defined in its class is inline without the keyword, and an
+      ``inline static`` data member is a variable under the same rule.
+      ``inline`` does not force the compiler to replace a call with the body.
+      :doc:`L5 </lectures/lecture5/l5_lecture>`,
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Recursion
       A programming technique where a function calls itself to solve a problem by breaking it into smaller subproblems. Requires a base case to terminate.
@@ -1334,8 +1345,11 @@ L6: Functions Advanced
    Default Member Initializer
       A value written next to a member in a ``struct``, such as
       ``double battery_pct{100.0};``. It is used whenever the braced list
-      does not reach that member, so the member never holds garbage.
-      :doc:`L6 </lectures/lecture6/l6_lecture>`
+      does not reach that member, so the member never holds garbage. In a
+      class (L8), it is used when no constructor sets that member:
+      ``double speed_{0.0};``.
+      :doc:`L6 </lectures/lecture6/l6_lecture>`,
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Dependent Name
       A name inside a template whose meaning depends on a template
@@ -1740,33 +1754,248 @@ L8: OOP Basics
 
 .. glossary::
 
+   Abstraction
+      Code that uses an object calls its methods and does not need to know
+      how the object stores its data. In L8, ``Vehicle`` changes its data
+      members from m/s to km/h, and the code that calls ``set_speed`` and
+      ``get_speed`` does not change.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
    Access Specifier
-      Keywords (``public``, ``private``, ``protected``) that control the visibility and accessibility of class members.
+      A label in a class, ``public:``, ``private:`` or ``protected:``. It
+      says which code may use the members declared after it, up to the next
+      label. A ``public`` member is open to any code, a ``private`` one to
+      the class's own methods (and its friends), and a ``protected`` one also
+      to the classes that inherit from it (L9). Access is checked when the
+      code compiles.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Accessor
+      A ``public`` method that gives a value of the object's state and
+      changes nothing, also called a getter. It is a const method, and
+      ``[[nodiscard]]`` and ``noexcept`` when those are true:
+      ``[[nodiscard]] double get_speed() const noexcept``.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Behavior
+      What an object's methods do. ``car_a.set_speed(12.0)`` changes
+      ``car_a`` only. See **State**.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Class
-      A user-defined type that encapsulates data (attributes) and behavior (methods). A blueprint for creating objects.
+      A type you define: a blueprint. It declares data members, which hold
+      an object's values, and methods, the functions that work on those
+      values. Use a ``class`` when the data members must keep an invariant;
+      its members are ``private`` by default.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   const Method
+      A method with ``const`` after its parameter list. It promises not to
+      change the object's data members, and the compiler checks the promise.
+      Inside it, ``this`` is a ``const X*``. Only const and static methods can
+      be called on a ``const`` object or through a ``const&``.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   const Object
+      An object declared ``const``: it cannot change after its constructor
+      ends, and only its const and static methods can be called on it. Its
+      constructor and destructor still run. Calling a mutator on one gives
+      "passing 'const Vehicle' as 'this' argument discards qualifiers". In
+      the Further Reading part of L8.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Constructor
-      A special member function automatically called when an object is created. Initializes the object's data members.
+      A method with the class's name and no return type. It runs when an
+      object is created, and it makes the invariant true before the object
+      is used. The memory is already there when it starts; the constructor
+      builds a valid object in it. When it cannot, it throws, and the object
+      never exists.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Copy Constructor
+      The constructor that makes a new object from an existing object of the
+      same class: ``Vehicle(const Vehicle& other)``. If a class declares
+      none, the compiler writes one that copies each member. For a pointer
+      member that copies the address, not the object it points at: the
+      Rule of Five and Rule of Zero reading shows the double free that
+      follows.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
+   Data Member
+      A variable declared in a class. Each object holds its own value of
+      it. In this course a class's data members are ``private`` and their
+      names end in ``_``, as in ``speed_``.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Deep Copy
+      A copy that makes a second copy of what the object owns, so each
+      object owns its own. A copy constructor that writes
+      ``sensor_{new Sensor{*other.sensor_}}`` makes a deep copy (in the
+      Rule of Five and Rule of Zero reading).
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
+   Default Constructor
+      A constructor that takes no arguments. A class that declares no
+      constructor gets one from the compiler, which sets each data member
+      from its default member initializer. Once a class declares any
+      constructor, the compiler writes no default constructor.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Delegating Constructor
+      A constructor whose member initializer list names another constructor
+      of the same class. That constructor runs first, then this one's body:
+      ``Vehicle(double max_speed, double speed) : Vehicle{max_speed}``.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Destructor
+      The method ``~ClassName()``, with no parameters and no return type. It
+      runs when an object's lifetime ends, and it gives back what the object
+      owns. At the end of a scope, objects are destroyed in the reverse order
+      they were created.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Encapsulation
-      An OOP principle that bundles data and methods that operate on that data within a single class, restricting direct access to internal state.
+      Keeping a class's data members ``private``. Code outside the class goes
+      through its ``public`` methods, so those methods can keep the
+      invariant.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
-   Member Initialization List
-      A constructor syntax that initializes data members before the constructor body executes. More efficient than assignment in the body. Required for ``const`` and reference members.
+   explicit Constructor
+      A constructor marked ``explicit``. It runs only when the code names the
+      class. Without ``explicit``, a constructor that can be called with one
+      argument also turns a value of that type into an object: ``show(13.4)`` would build a
+      temporary ``Vehicle`` from 13.4.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Friend
+      A function or another class that a class names as a friend. It may use
+      the class's ``private`` members too.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Instance
+      An object of a class. Building one is called instantiation, as a
+      factory builds a car from its blueprint. (A template is instantiated
+      too, in a different sense: see **Instantiation**, under L6.)
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Invariant
+      A condition on an object's data members that must be true whenever
+      code outside the class uses the object: before and after each call to
+      a ``public`` method. Inside the method, it may be false between two
+      lines, as when a ``Square``'s ``resize`` sets the width before the
+      height. For a ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``.
+      The data members are ``private``, the constructor makes the condition
+      true, and a method given a value that would break it either throws, as
+      ``set_speed(-50.0)`` does, or changes the value to a valid one. A type
+      with an invariant is a ``class``; one whose members vary independently
+      is a ``struct``.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Member Initializer List
+      The list after ``:`` in a constructor, which gives each member its
+      first value as the member is created: ``: max_speed_{max_speed}``. A
+      line in the constructor's body assigns instead, after the member was
+      created. A ``const`` member can get its value only from the list, and
+      a member whose type is a class is built once instead of twice. Members
+      are created in the order the class declares them, whatever the order
+      of the list.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Method
+      A function declared in a class, also called a member function. It
+      works on the data members of the object it is called on. The methods
+      exist once, in the program's code, and every object uses them.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Mutator
+      A ``public`` method that changes the object's state, also called a
+      setter. It checks that the new value keeps the invariant, and throws
+      when it does not, so the object keeps its old value. A mutator is not
+      ``const``, and not ``noexcept`` if it can throw.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Object
-      An instance of a class. Contains its own copy of the class's data members and can call the class's methods.
+      A piece of memory that holds one value for each data member of a
+      class: one car built from the blueprint. An object is an instance of
+      its class. ``sizeof`` an object counts its data members, not its
+      methods.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
-   this Pointer
-      An implicit pointer available inside non-static member functions that points to the object on which the method was called.
+   Object-Oriented Programming
+      OOP: building a program from objects. Each object holds data and has
+      the functions that work on that data. The course uses four principles:
+      encapsulation and abstraction (L8), inheritance and polymorphism (L9).
+      See **Programming Paradigm**.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Programming Paradigm
+      A way to organize a program. C++ supports several. In the procedural
+      way, data and the functions that use it are kept apart: a ``struct``
+      holds the data, and any line can change it without calling the
+      function that checks it. In the object-oriented way, a class keeps the
+      data and its functions together, and ``private`` members make every
+      change go through the class's methods.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Rule of Five
+      A class that needs its own destructor needs its own copy constructor,
+      copy assignment, move constructor and move assignment too, or must
+      delete them. Without them, the compiler's copy of a raw-pointer member
+      causes a double free. Core Guidelines C.21. It is in the Rule of Five
+      and Rule of Zero reading, required after L8 and not presented: classes
+      in this course own heap memory through ``std::unique_ptr`` (see
+      **Rule of Zero**).
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
+   Rule of Zero
+      A class whose members give back their own resources, such as a
+      ``std::unique_ptr``, writes none of the five special member functions
+      that manage resources: the ones the compiler writes are right. Core
+      Guidelines C.20. In L8, a ``Vehicle`` that owns its sensors through
+      ``std::unique_ptr`` needs no destructor of its own; the Rule of Five and
+      Rule of Zero reading explains the rule.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
+   Special Members
+      The six member functions the compiler can write for a class that does
+      not declare them: the default constructor, the destructor, the copy
+      constructor, the copy assignment, the move constructor and the move
+      assignment (C++20 [special], 11.4.3 paragraph 1). The last five manage
+      the class's resources, and the rules of zero and five are about them. A
+      rule can stop the compiler from writing one: declaring any constructor
+      stops the default constructor, and declaring the copies stops the moves.
+      See **Rule of Zero** and **Rule of Five**.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   State
+      The values of an object's data members at one time. Two objects of the
+      same class have their own state: ``car_a`` can hold a speed of
+      12 while ``car_b`` holds 10.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   static Data Member
+      A data member that belongs to the class, not to an object: there is
+      one, shared by every object. ``inline static int next_id_{1};`` is one
+      counter that gives every ``Vehicle`` its own id. ``inline`` (C++17) lets
+      the header give it its first value. In the Further Reading part of L8.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   static Method
+      A method called on the class, as in ``Vehicle::next_id()``, with no
+      object. It has no ``this``, so it can use only the ``static`` members.
+      In the Further Reading part of L8.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   this
+      Inside a method, a pointer to the object the method was called on. It
+      is a ``Vehicle*`` in a method of ``Vehicle`` that is not ``const``, and
+      a ``const Vehicle*`` in a const method. It is a prvalue, so it cannot
+      be assigned. ``return *this;`` returns the object itself.
+      :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Assignment" target="_blank" rel="noopener">Assignment</a> (L2), <a href="#term-Default-Argument" target="_blank" rel="noopener">Default Argument</a> (L5), <a href="#term-Default-Member-Initializer" target="_blank" rel="noopener">Default Member Initializer</a> (L6), <a href="#term-Deleted-Function" target="_blank" rel="noopener">Deleted Function</a> (L7), <a href="#term-inline" target="_blank" rel="noopener">inline</a> (L5), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-noexcept" target="_blank" rel="noopener">noexcept</a> (L7), <a href="#term-RAII" target="_blank" rel="noopener">RAII</a> (L4), <a href="#term-Scope-Resolution-Operator" target="_blank" rel="noopener">Scope Resolution Operator</a> (L2), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2).</p>
 
 
 .. _g-l9:
@@ -1777,40 +2006,221 @@ L9: OOP Advanced
 .. glossary::
 
    Abstract Class
-      A class with at least one pure virtual function. Cannot be instantiated directly; serves as an interface for derived classes.
+      A class with at least one pure virtual method. No object of it can be
+      created; references and pointers to it are fine, and they refer to an
+      object of a derived class. L9's ``Vehicle`` is abstract: ``Vehicle
+      vehicle{13.4};`` does not compile. UML writes its name in italics.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Aggregation
-      A "has-a" relationship where the part can exist independently of the whole. Represented by an empty diamond in UML.
+      A whole that holds parts it does not own alone. A part can exist before
+      the whole, after it, and in more than one whole. In C++, a
+      ``std::shared_ptr`` member: a ``Fleet`` holds its vehicles. UML draws an
+      open diamond at the whole.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Association
-      A general relationship between classes where objects of one class use or interact with objects of another.
+      Objects of two classes work together, and neither owns the other. Each
+      object is created and destroyed on its own. One class knows the other.
+      In C++, a ``std::weak_ptr`` member: a ``Passenger`` rides a ``Vehicle``.
+      UML draws an arrow to the class that is known: a ``Passenger`` knows
+      its ``Vehicle``; the ``Vehicle`` does not know its passengers.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Base Class
+      The class a derived class is built from. ``Vehicle`` is the base class
+      of ``RoboTaxi`` and ``Taxi``. See **Inheritance**.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Base Class Initializer
+      The base class named first in a derived constructor's member
+      initializer list, with the arguments for a base constructor:
+      ``Taxi(double max_speed, std::string driver_name) : Vehicle{max_speed},
+      driver_name_{std::move(driver_name)} {}``. Without it, C++ uses the
+      base's default constructor, and the code does not compile when the base
+      has none.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Base Subobject
+      The whole base class object at the start of a derived object. Where L9
+      measures it, ``Taxi`` still derives from L8's ``Vehicle``, which has no
+      ``virtual`` method: a ``Taxi`` starts with that 88-byte ``Vehicle``
+      (with g++), then its own ``std::string``. A ``Vehicle&`` bound to a
+      ``Taxi`` names this part, at the same address.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Class Relationship
+      How the objects of two classes are connected: one knows or uses the
+      other, one holds the other, or one is a kind of the other. L9 uses five:
+      association, aggregation, composition, dependency and inheritance.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Compile-Time Polymorphism
+      The compiler picks the function a call runs, from the types written in
+      the code. Overloading (L5) is one kind; redefinition is another.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Composition
-      A strong "has-a" relationship where the part cannot exist without the whole. The whole manages the lifetime of its parts.
+      A whole that owns its parts alone. Each part belongs to one whole and is
+      destroyed with it. In C++, a ``std::unique_ptr`` or a plain member: a
+      ``Vehicle`` owns its ``Sensor``\ s, a ``Route`` its ``Position``\ s. UML
+      draws a filled diamond at the whole.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Concrete Class
+      A class with no pure virtual method left: it overrides every one it
+      inherits. Objects of a concrete class can be created: ``RoboTaxi`` and
+      ``Taxi``.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Dependency
+      One class uses another only inside a method, as a parameter or a local
+      variable, and keeps no member of it: ``Vehicle::drive(const Route&)``.
+      If the class used changes, the class that uses it may have to change.
+      UML draws a dashed arrow to the class that is used.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Derived Class
+      A class built from a base class: it gets the base's data members and
+      methods, and adds its own. Every derived object is also a base object:
+      a ``RoboTaxi`` is a ``Vehicle``. See **Inheritance**.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Design
+      A description of which classes a program needs, what each class holds
+      and does, and how the classes are connected. It comes before the code,
+      from the requirements, and a UML class diagram draws it.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Dynamic Type
+      The class of the object an expression refers to while the program runs.
+      For ``const Vehicle& vehicle`` bound to a ``RoboTaxi``, the dynamic type
+      is ``RoboTaxi``. It picks the version of a ``virtual`` method. See
+      **Static Type**.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   final
+      After a class name, it stops other classes from deriving from it:
+      ``class RoboTaxi final : public Vehicle``. After a ``virtual`` method,
+      it stops derived classes from overriding it. A ``final`` class needs no
+      ``final`` on its methods. Core Guidelines C.139: use it sparingly.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Inheritance
-      An OOP mechanism where a derived class acquires the properties and behaviors of a base class. Supports code reuse and hierarchical relationships.
+      A derived class is built from a base class, with ``class Derived :
+      public Base``. It gets the base's members and adds its own, and every
+      derived object is also a base object ("is a"). With no access
+      specifier, the base is ``private`` for a class defined with ``class``
+      and ``public`` for one defined with ``struct``. UML draws a hollow
+      triangle at the base.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Multiplicity
+      The numbers at an end of a UML line: how many objects of that end's
+      class take part, for one object of the class at the other end. ``1``,
+      ``0..1``, ``*`` or ``0..*``, and ``1..*``. ``0..1`` at ``Vehicle`` on
+      the ``rides`` arrow: a passenger rides at most one vehicle at a time.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   override
+      Written after a derived method's parameter list and its ``const``. The
+      compiler checks that the method overrides a ``virtual`` method of a
+      base class, and stops with an error if it does not, so a typo in the
+      name or a missing ``const`` cannot pass silently.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Polymorphism
-      The ability to process objects differently based on their type. Compile-time (overloading) and runtime (virtual functions) forms exist in C++.
+      One piece of code works with objects of different classes. C++ picks
+      the function a call runs either when it compiles the code
+      (compile-time polymorphism) or while the program runs (runtime
+      polymorphism).
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
-   Pure Virtual Function
-      A virtual function declared with ``= 0`` that has no implementation in the base class. Forces derived classes to provide their own implementation.
+   protected Member
+      A member that the class's own methods and the methods of its derived
+      classes can use. Other code cannot use it, as for a ``private`` member.
+      UML marks it with ``#``. In this course, data members are never
+      ``protected`` (Core Guidelines C.133).
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
-   Virtual Destructor
-      A destructor declared ``virtual`` to ensure proper cleanup when deleting a derived object through a base class pointer.
+   Pure virtual Method
+      A ``virtual`` method declared with ``= 0``:
+      ``virtual void drive(const Route& route) const = 0;``. The class gives
+      it no body, and a class with one is abstract.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
-   Virtual Function
-      A member function declared with the ``virtual`` keyword that enables runtime polymorphism. The correct function is called based on the actual object type, not the pointer/reference type.
+   Redefinition
+      A derived class writes a method with the same name as a method of its
+      base, which is not ``virtual``. The derived method hides the base's;
+      a call through a base reference still runs the base's version.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Requirement
+      A sentence that says what the program must do (functional) or how well
+      it must do it (non-functional). A constraint limits the choices, and a
+      success criterion says how the result is checked. The requirements say
+      what; the design says how.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Runtime Polymorphism
+      A call through a base reference or pointer runs the version of a
+      ``virtual`` method that belongs to the dynamic type, picked while the
+      program runs. It needs inheritance, a base reference or pointer, and a
+      ``virtual`` method overridden in the derived class.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Slicing
+      Copying a derived object into an object of its base class copies only
+      the base part: ``Vehicle copy{taxi};`` leaves the driver's name behind,
+      and the copy's dynamic type is ``Vehicle``. Core Guidelines ES.63:
+      don't slice.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Static Type
+      The type of an expression as written in the code: ``const Vehicle&
+      vehicle`` has the static type ``const Vehicle&``, whatever it refers to.
+      The compiler checks every name against it, and without ``virtual`` it
+      picks the method. See **Dynamic Type**.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Stereotype
+      A word between « and » in a UML box that says what kind of type the box
+      is: «struct» for a ``struct``, «enumeration» for an ``enum class``.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   UML Class Diagram
+      A drawing of a program's classes. Each box is a class: its name, then
+      its data members (``name : type``), then its methods. Each line between
+      two boxes is a relationship. ``+`` is ``public``, ``-`` ``private``,
+      ``#`` ``protected``; underlined is ``static``, italics is abstract. UML
+      is the Unified Modeling Language.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   virtual Destructor
+      A destructor declared ``virtual`` in the base class. Deleting a derived
+      object through a base pointer then runs the derived destructor first,
+      then the base destructor. Without it, that ``delete`` is undefined
+      behavior, which AddressSanitizer reports as
+      ``new-delete-type-mismatch``.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   virtual Method
+      A method declared ``virtual`` in a base class. A call through a base
+      reference or pointer runs the version of the dynamic type. A derived
+      method with the same name, parameters and ``const`` overrides it. A
+      class with one is a polymorphic class.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   vtable
+      The table of a class's ``virtual`` methods that g++ makes for a
+      polymorphic class. Each object holds a hidden pointer to it, 8 bytes on
+      the course's 64-bit Linux, and a ``virtual`` call reads it first. The
+      C++ standard leaves this to the compiler.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7).</p>
 
 
 .. _g-vc:

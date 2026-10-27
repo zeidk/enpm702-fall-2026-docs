@@ -651,7 +651,7 @@ autonomous robot in simulation.
      -
      - RWA2 due Fri, Oct 23
    * - 9 (Oct 27)
-     - L8: OOP basics (classes, encapsulation, constructors)
+     - L8: OOP basics (classes, encapsulation, constructors, destructors, ``this``)
      - Quiz 3
      -
    * - 10 (Nov 3)

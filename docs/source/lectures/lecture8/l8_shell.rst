@@ -8,7 +8,7 @@ Shell Exercises
    :depth: 2
    :local:
 
-These exercises build on the shell skills from Lectures 1-7 and introduce advanced scripting techniques including command-line argument parsing with ``getopts``, associative arrays, JSON processing with ``jq``, signal handling, and process substitution.
+These exercises build on the shell skills from Lectures 1 to 7 and introduce advanced scripting techniques including command-line argument parsing with ``getopts``, associative arrays, JSON processing with ``jq``, signal handling, and process substitution.
 
 
 .. dropdown:: Exercise 1 getopts: Basic Option Parsing
@@ -144,7 +144,7 @@ These exercises build on the shell skills from Lectures 1-7 and introduce advanc
 
     **Tasks**
 
-    1. Create an associative array mapping programming language names to their file extensions (e.g., ``cpp`` -> ``.cpp``, ``python`` -> ``.py``, ``rust`` -> ``.rs``).
+    1. Create an associative array mapping programming language names to their file extensions (for example, ``cpp`` -> ``.cpp``, ``python`` -> ``.py``, ``rust`` -> ``.rs``).
     2. Write a script that reads a file extension from the user and looks up the language name.
     3. Write a script that counts the number of files by extension in a given directory, storing results in an associative array and printing a summary.
 
@@ -277,7 +277,7 @@ These exercises build on the shell skills from Lectures 1-7 and introduce advanc
 
     1. Run the script and press ``Ctrl+C``. Observe the cleanup behavior.
     2. Open a second terminal and send ``SIGTERM`` using ``kill <PID>``. Verify cleanup runs.
-    3. Modify the script to count the number of times ``Ctrl+C`` is pressed. On the first press, print "Press Ctrl+C again to quit." On the second press, actually exit.
+    3. Modify the script to count the number of times ``Ctrl+C`` is pressed. On the first press, print ``Press Ctrl+C again to quit.`` On the second press, actually exit.
 
 
 .. dropdown:: Exercise 7: Subshells and Process Substitution
