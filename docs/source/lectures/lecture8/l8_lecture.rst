@@ -769,6 +769,20 @@ Build and run: ``live8``. Item 4 gives:
 
 - Without ``Vehicle::``, ``set_speed`` is a new function that belongs to no class. It has no object, so it has no ``speed_``.
 
+Abstraction
+"""""""""""
+
+**Abstraction** means that code that uses an object calls its ``public`` methods. It does not need to know how the object stores its data or how the methods do their work.
+
+.. figure:: /_static/images/l8/coffee_machine.png
+   :alt: Drawing of an espresso machine with dials and buttons on its front panel, two coffee holders with handles, and three glasses of coffee on the drip tray.
+   :align: center
+   :width: 35%
+
+- You press a button on a coffee machine and get a coffee. You do not need to know the water temperature, the pressure or the order of the steps inside.
+- The buttons are the ``public`` methods. The water tank, the heater and the pump are the ``private`` data members and the code behind the methods.
+- The maker can change the inside, and you press the same buttons. `Changing the Inside`_ does this to ``Vehicle``.
+
 Changing the Inside
 """""""""""""""""""
 
@@ -800,7 +814,7 @@ Changing the Inside
 - The speed calls of `Live Coding: Step 1`_ did not change: they still print ``12 10``.
 - That is **abstraction**: the calling code depends on the methods, not on how the data is stored.
 - With ``public`` members, every line that read ``speed_`` would now fail to compile.
-- Run: ``702run week8_playground 40``.
+- Run: ``702run week8_playground 41``.
 
 A Body in the Class
 """""""""""""""""""
@@ -932,7 +946,7 @@ Returning a Large Member
 - ``get_speed`` returns a ``double`` by value (:ref:`l8-nodiscard`): a copy of 8 bytes costs no more than a reference.
 - A copy of a ``std::string`` copies every character, so a large member is returned by ``const&`` (L5): no copy, and the caller cannot change it.
 - The reference is valid only while the ``Vehicle`` object lives (`Discussion: Returning a Reference`_).
-- Run: ``702run week8_playground 49``.
+- Run: ``702run week8_playground 50``.
 
 Mutators
 ^^^^^^^^
@@ -958,7 +972,7 @@ Live Coding: Step 4
 **10 minutes, on your own.** ``get_speed`` promises to change nothing, and ``set_speed`` keeps the invariant.
 
 1. ``get_speed`` gets ``[[nodiscard]]``, ``const`` and ``noexcept`` in the header. Its body stays in ``vehicle.cpp``, which repeats ``const`` and ``noexcept``.
-2. Add ``speed_ = 0.0;`` to its body and build: ``assignment of member 'Vehicle::speed_' in read-only object``. Delete the line.
+2. To see what ``const`` checks, add ``speed_ = 0.0;`` as the first line of the body of ``get_speed`` and build. The compiler refuses: ``assignment of member 'Vehicle::speed_' in read-only object``. Delete that line.
 3. ``set_speed`` checks first: for a speed below 0 or above ``max_speed_``, it throws ``std::invalid_argument``.
 4. Uncomment the Step 4 block: it calls ``set_speed(20.0)`` in a ``try``.
 
@@ -1033,7 +1047,7 @@ A Getter and Setter That Add Nothing
 
 - This setter checks nothing, so the pair only adds lines: any code can still set any ``x``. With no invariant, ``Position`` is the ``struct`` of `Which One`_, with ``public`` members.
 - ``Vehicle``'s setter checks the speed, so its pair keeps the invariant.
-- Run: ``702run week8_playground 54``.
+- Run: ``702run week8_playground 55``.
 
 .. note::
 
@@ -1102,7 +1116,7 @@ A User-Defined Default Constructor
 
 - It has the class's name, no parameters and no return type. When its body starts, the members already hold their default values.
 - Once you write it, the compiler writes none. Write one only when a new object needs more than its members' first values, here a line of output.
-- Run: ``702run week8_playground 58`` prints ``a new Vehicle: white, 13.4 m/s``.
+- Run: ``702run week8_playground 59`` prints ``a new Vehicle: white, 13.4 m/s``.
 
 .. note::
 
@@ -1126,7 +1140,7 @@ A Member with No Initializer
 
 - Reading ``a.get_speed()`` is undefined behavior. g++ does not warn at ``-O0``, the Debug build. At ``-O2``, in a function other than ``main``, it warns: ``'a.Vehicle::speed_' is used uninitialized``.
 - ``b`` prints 0 only because of its ``{ }``. Give every member an initializer.
-- Run: ``702run week8_playground 59`` (it prints ``b`` only).
+- Run: ``702run week8_playground 60`` (it prints ``b`` only).
 
 .. note::
 
@@ -1153,7 +1167,7 @@ A **constructor with parameters** takes the values the object starts from. Here 
    };
 
 - This constructor is written in the class: declared and defined in one place. This course writes every constructor this way (`The Default Argument in the Header`_).
-- Run: ``702run week8_playground 60``. The ``Vehicle`` of ``vehicle.hpp`` uses the member initializer list instead (`Member Initializer List`_).
+- Run: ``702run week8_playground 61``. The ``Vehicle`` of ``vehicle.hpp`` uses the member initializer list instead (`Member Initializer List`_).
 
 Two Kinds of Default Values
 """""""""""""""""""""""""""
@@ -1176,7 +1190,7 @@ Two Kinds of Default Values
 
 - A **default member initializer**, in the class body, gives a member its value when no constructor sets it: every vehicle starts at speed 0 and mileage 0.
 - A **default argument** (L5), in the parameter list, gives a parameter its value when the caller leaves it out. The caller picks the color, so it is a parameter; most cars are white, so it has a default.
-- Run: ``702run week8_playground 61``.
+- Run: ``702run week8_playground 62``.
 
 The Default Argument in the Header
 """"""""""""""""""""""""""""""""""
@@ -1227,7 +1241,7 @@ Which of these lines compile? Why?
         error: no matching function for call to 'Vehicle::Vehicle()'
 
    - That is the right result here. No maximum speed is right for every vehicle, so every ``Vehicle`` must be given one.
-   - ``702run week8_playground 63`` runs ``car_a`` and ``car_b``.
+   - ``702run week8_playground 64`` runs ``car_a`` and ``car_b``.
 
 Braces or Parentheses
 """""""""""""""""""""
@@ -1253,7 +1267,7 @@ Braces or Parentheses
 
 - With two arguments, braces and parentheses run the same constructor, and both cars are blue.
 - Empty is different. With empty parentheses, C++ reads the line as a function named ``parked_car`` that returns a ``Vehicle``. g++ warns, and the first use of ``parked_car`` as an object fails: ``request for member 'get_color' in 'parked_car', which is of non-class type 'Vehicle()'``.
-- Run: ``702run week8_playground 64``.
+- Run: ``702run week8_playground 65``.
 
 Narrowing and Member Defaults
 """""""""""""""""""""""""""""
@@ -1342,7 +1356,7 @@ Assignment Builds a Member Twice
 - ``tray_`` is created before the body of the ``Printer`` constructor runs, so the default constructor of ``PaperTray`` runs first: a letter tray.
 - Then the body builds a second ``PaperTray``, a temporary with no name, for A4, and assigns it to ``tray_``.
 - Two ``PaperTray`` constructors run for one member, and the assignment overwrites the letter tray.
-- Run: ``702run week8_playground 67``.
+- Run: ``702run week8_playground 68``.
 
 .. note::
 
@@ -1420,7 +1434,7 @@ The List Fixes Both Problems
 
 - ``tray_`` is created from ``paper_size``: one ``PaperTray`` constructor instead of two (:ref:`l8-assign-twice`).
 - The ``Vehicle`` of :ref:`l8-const-member` compiles: ``max_speed_`` gets its value as it is created.
-- Run: ``702run week8_playground 70``.
+- Run: ``702run week8_playground 71``.
 
 .. note::
 
@@ -1454,7 +1468,7 @@ The Range Check
 
 - The constructor of `The Sensor Class`_ sets every member in the list, then checks the range.
 - A negative range throws, so no ``Sensor`` breaks the rule that makes it a ``class`` (`Which One`_).
-- Run: ``702run week8_playground 71``.
+- Run: ``702run week8_playground 72``.
 
 Declaration Order
 """""""""""""""""
@@ -1512,7 +1526,7 @@ Discussion: Spot the Bug
 
    - It does not return 24. ``distance_`` is declared first, on line 10, so it is created first, whatever the order of the list. It reads ``time_``, which has no value yet: undefined behavior.
    - A reviewer reads the list left to right and sees ``time_`` first, so the bug is easy to miss. g++ catches it at ``-O0``: ``will be initialized after [-Wreorder]``, and ``member 'FollowingGap::time_' is used uninitialized [-Wuninitialized]``. This is why the course builds with ``-Wall -Wextra``.
-   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 73`` runs the first fix.
+   - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 74`` runs the first fix.
 
 .. _l8-explicit:
 
@@ -1562,7 +1576,7 @@ A Conversion Nobody Asked For
    error: invalid initialization of reference of type 'const Vehicle&'
           from expression of type 'double'
 
-- Run: ``702run week8_playground 75``.
+- Run: ``702run week8_playground 76``.
 
 Delegating Constructor
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -1579,7 +1593,7 @@ A **delegating constructor** is a constructor whose member initializer list name
 
 - The check of the maximum speed is written once, in the constructor of `Member Initializer List`_. The new constructor reuses it, then the setter's check.
 - ``Vehicle car_a{13.4, 12.0};`` starts at 12; ``{13.4, 20.0}`` throws the setter's exception.
-- Run: ``702run week8_playground 76``.
+- Run: ``702run week8_playground 77``.
 
 .. note::
 
@@ -1656,7 +1670,7 @@ One Method, Many Objects
    &car_a: 0x7ffe745810b0
    this:   0x7ffe745810b0
 
-- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 81``.
+- One run; the address changes from run to run, but the two lines always match. Run it yourself: ``702run week8_playground 82``.
 - The method reaches the members through ``this``: ``speed_`` means ``this->speed_``.
 
 .. _l8-this-type:
@@ -1704,7 +1718,7 @@ Returning ``*this``
 
 - ``*this`` is the object, and the return type ``Vehicle&`` hands back a reference to it, not a copy. The second ``speed_up`` runs on ``car_a`` again: 12 + 0.5 + 0.5 = 13.
 - An assignment operator, ``operator=``, returns ``*this`` the same way: see the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading.
-- Run: ``702run week8_playground 83``.
+- Run: ``702run week8_playground 84``.
 
 Summary
 ^^^^^^^
@@ -1788,7 +1802,7 @@ When It Runs
 - At the end of a scope, objects are destroyed in the reverse order they were created: ``car_b``, then ``car_a``.
 - A heap object is destroyed when its owner lets go: here ``reset()`` (L7).
 - The destructor, two copies and two moves are five of the six **special member functions**; the default constructor is the sixth. The rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, required after class, say when a class writes these five.
-- Run: ``702run week8_playground 88``.
+- Run: ``702run week8_playground 89``.
 
 Live Coding: Step 6
 """""""""""""""""""
