@@ -144,8 +144,8 @@ Procedural:
    };
    void set_speed(VehicleData& car,
                   double speed);
-
    VehicleData car_a;
+   set_speed(car_a, 12.0);  // ok
    car_a.speed = -50.0;  // compiles
 
 Object-oriented:
@@ -159,12 +159,12 @@ Object-oriented:
      double max_speed_{13.4};
      double speed_{0.0};
    };
-
    Vehicle car_b;
+   car_b.set_speed(12.0);  // ok
    car_b.speed_ = -50.0;  // error
 
-- Both ``set_speed`` functions check the speed. In the ``struct``, any line can change ``speed`` and skip the check. In the class, only ``Vehicle``'s own methods can (``private``, `Access Specifiers`_).
-- Until now we wrote mostly procedural code: structs that hold data, and functions that take them. On the left, ``set_speed`` checks the speed, but nothing makes anyone call it: ``car_a.speed = -50.0;`` compiles, and the program prints -50 (measured with g++).
+- Both programs call ``set_speed``, which checks the speed. In the ``struct``, any line can still change ``speed`` and skip the check. In the class, only ``Vehicle``'s own methods can (``private``, `Access Specifiers`_).
+- Until now we wrote mostly procedural code: structs that hold data, and functions that take them. On the left, ``set_speed(car_a, 12.0)`` checks the speed and sets 12, but nothing makes anyone call it: ``car_a.speed = -50.0;`` compiles, and the program then prints -50 (measured with g++).
 - On the right, ``speed_`` is ``private``, so only ``Vehicle``'s methods can change it. The same line does not compile: ``'double Vehicle::speed_' is private within this context``. Every change goes through ``set_speed``, so the check always runs.
 - That is the reason for OOP in one example: a class keeps its data and its rules together, and the compiler enforces it.
 
