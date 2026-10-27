@@ -18,7 +18,7 @@ We write one ``Vehicle`` together, in six Live Coding steps (`Live Coding: Step 
 Upload Your Live Coding
 -----------------------
 
-You type each Live Coding step with me, in ``project/week8/live``. You write **Step 2** on your own (`Live Coding: Step 2`_).
+You type Steps 1 and 3 to 6 with me, in ``project/week8/live``. You write **Step 2** on your own (`Live Coding: Step 2`_).
 
 - **Before the end of class**, upload ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp`` to the L8 Live Coding assignment on Canvas.
 - It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and your Step 2 block is written. The upload is not graded for correctness: most of the code you type with me.
