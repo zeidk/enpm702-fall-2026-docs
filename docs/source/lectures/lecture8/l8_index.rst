@@ -27,11 +27,16 @@ This lecture introduces the foundations of Object-Oriented Programming (OOP) in 
    :maxdepth: 2
    :caption: Lecture 8 Contents
 
+   l8_setup
    l8_lecture
    l8_shell
-   l8_exercises
    l8_quiz
    l8_references
+
+Before Class
+------------
+
+Follow :doc:`Setup Before Class <l8_setup>`. In class you write code with me and upload it on Canvas before the end of class. That upload is graded, and no AI is allowed.
 
 Next Steps
 ----------
