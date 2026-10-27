@@ -496,10 +496,10 @@ The section asks struct or class, and the Core Guidelines answer with one word: 
   - **Data member**: ``current_floor``, the floor the elevator is on.
   - **Condition**: ``current_floor`` is always between 1 and 10. An elevator on floor 0 or floor 11 does not exist in that building, so an object that says so is wrong.
 
-- **Must be true whenever code outside the class uses the object**: the rule holds before a ``public`` method is called and after it returns. Inside the method, the rule may break for a moment, but it holds again before the method returns. *Example*: a ``Square`` object whose width and height must be equal.
+- **Must be true whenever code outside the class uses the object**: the rule holds before a ``public`` method is called and after it returns. Inside the method, the rule may break for a moment, but it holds again before the method returns. *Example*: the same elevator shows its floor on a display, and ``display_floor`` must always equal ``current_floor``.
 
-  - **Broken**: ``resize(10)`` sets the width to 10 first. The height still has the old size, so the rule is broken.
-  - **Restored**: ``resize`` sets the height to 10 before it returns. Outside code never sees the broken state: no code outside the class runs between the two lines.
+  - **Broken**: ``go_to(5)`` sets ``current_floor`` to 5 first. The display still shows the old floor, so the rule is broken.
+  - **Restored**: ``go_to`` sets ``display_floor`` to 5 before it returns. Outside code never sees the broken state: no code outside the class runs between the two lines.
 
 ``Vehicle``'s ``set_speed`` never needs to break its rule: it checks the new value first, then assigns it.
 
