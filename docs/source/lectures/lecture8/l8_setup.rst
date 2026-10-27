@@ -47,8 +47,8 @@ Do these yourself, before class. The script in Step 2 does none of them.
 
 5. **Week 8 enabled.** In the repository's ``CMakeLists.txt``, the line ``add_subdirectory(project/week8)`` must not start with ``#``.
 
-Step 2: Compile and Run
------------------------
+Step 2: Compile and Run, Once
+-----------------------------
 
 1. Download the script: :download:`enpm702_setup.sh <enpm702_setup.sh>`.
 
@@ -58,11 +58,11 @@ Step 2: Compile and Run
 
       bash ~/Downloads/enpm702_setup.sh
 
-   The script looks for the repository in ``~/enpm702_cpp/enpm702-fall-2026-cpp``. If you cloned it somewhere else, open ``enpm702_setup.sh`` in VS Code and change **line 24**, between the quotes, to the folder where you cloned it. For example, for a clone in ``~/courses``:
+   The script looks for the repository in ``~/enpm702_cpp/enpm702-fall-2026-cpp``. If you cloned it somewhere else, open ``enpm702_setup.sh`` in VS Code and change **line 18**, between the quotes, to the folder where you cloned it. For example, for a clone in ``~/courses``:
 
    .. code-block:: bash
 
-      ws="$HOME/courses/enpm702-fall-2026-cpp"
+      ENPM702_LIVE_WS="$HOME/courses/enpm702-fall-2026-cpp"
 
    Save the file, then run the script again.
 
@@ -72,13 +72,33 @@ Step 2: Compile and Run
 
       ENPM702: compile and run week8_live
         ok    repository at /home/you/enpm702_cpp/enpm702-fall-2026-cpp
-        ok    configured (the same as 702configure)
-        ok    built week8_live (the same as 702build week8_live)
-        ok    ran week8_live (the same as 702run week8_live)
+        ok    configured
+        ok    built week8_live
+        ok    ran week8_live
 
-      Ready for class.
+      Ready for class. In class, type these two lines once in your terminal:
+          source /home/you/Downloads/enpm702_setup.sh
+          live8
+      and type live8 again after each step.
 
-   ``week8_live`` prints nothing yet: each block in ``main.cpp`` stays commented out until we reach its step in class.
+In Class: ``live8``
+-------------------
+
+In class, load the script into your terminal once, with ``source`` instead of ``bash``:
+
+.. code-block:: bash
+
+   source ~/Downloads/enpm702_setup.sh
+
+This gives the terminal one new command, ``live8``. After each step, save your files and type:
+
+.. code-block:: bash
+
+   live8
+
+``live8`` builds ``week8_live``. If the code compiles, it runs the program and shows what it prints. If it does not compile, it shows the compiler's errors: fix the first one, save, and type ``live8`` again. At the start, ``week8_live`` prints nothing: each block in ``main.cpp`` stays commented out until we reach its step.
+
+``live8`` exists only in the terminal where you typed ``source``. In a new terminal, type the ``source`` line again. The ``702build week8_live`` and ``702run week8_live`` commands on the slides do the same two things, if your terminal loads ``enpm702-cpp.sh`` and you typed ``enpm702``.
 
 Common Fixes
 ------------
@@ -88,17 +108,19 @@ Common Fixes
    :widths: 40 60
    :class: compact-table
 
-   * - The ``FIX`` line says
+   * - The message says
      - What to do
    * - no ENPM702 repository
-     - Clone the repository (Step 1), or change line 24 of the script to the folder where you cloned it.
+     - Clone the repository (Step 1), or change line 18 of the script to the folder where you cloned it.
    * - cmake could not configure the repository
      - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
    * - ``week8_live`` did not build, with ``No rule to make target 'week8_live'``
      - Pull the latest code, and enable week 8 in ``CMakeLists.txt`` (Step 1).
-   * - ``week8_live`` did not build, with compiler errors
-     - Run ``git status`` in the repository: a file you changed under ``project/week8`` may not compile. If the lines do not tell you what to do, send them to me before class.
-   * - ``week8_live`` did not run
-     - Read the lines printed under the ``FIX`` line, and send them to me before class.
+   * - ``week8_live`` did not build, or did not compile, with compiler errors
+     - Read the first error: it names the file and the line. If you did not change that file, run ``git status`` in the repository. If the lines do not tell you what to do, send them to me before class.
+   * - ``live8: command not found``
+     - Type ``source ~/Downloads/enpm702_setup.sh`` in that terminal first.
+   * - ``702run: command not found``
+     - Type ``enpm702`` first, or use ``live8``.
 
-Lecture 9 uses the same script, with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``.
+Lecture 9 uses the same script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9`` before class, and ``live9`` in class.
