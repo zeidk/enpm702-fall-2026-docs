@@ -21,7 +21,7 @@ We write the new classes and change L8's ``Vehicle`` in seven Live Coding steps:
 Upload Your Live Coding
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-You type Step 1 with me, in ``project/week9/live``. You write **Steps 2 to 7** on your own, in the time each step gives: 10 minutes each. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
+You type Step 1 with me, in ``project/week9/live``. You write **Steps 2 to 7** on your own, in the time each step gives: 15 minutes for Steps 2 and 4, 10 for Step 3, and 5 for each of Steps 5 to 7. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
 - **Before the end of class**, upload ``fleet.hpp``, ``fleet.cpp`` and ``main.cpp`` to the L9 Live Coding assignment on Canvas.
 - It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and you wrote Steps 2 to 7. I do not grade it for correctness.
@@ -58,7 +58,7 @@ Code for This Lecture
 - **common** holds every class of the diagram: L8's ``Sensor``, ``SensorType``, ``Position`` and ``Route``, and today's ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger``. Each section file writes the earlier versions its slides need.
 - The code with undefined behavior is in the **undefined** folder, built with AddressSanitizer. It runs only when you ask for its slide by number.
 - **uml** holds the PlantUML file of the diagram.
-- The code of the appendix is in the **appendix** folder. Run appendix frame xi with ``702run week9_appendix xi``.
+- The code of the appendix is in the **appendix** folder. Run appendix frame x with ``702run week9_appendix x``.
 
 .. dropdown:: How to Run the Code
    :icon: terminal
@@ -74,7 +74,7 @@ Code for This Lecture
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
       702run week9_playground 55         # only the code of slide 55
-      702run week9_appendix xi           # only appendix frame xi (11 works too)
+      702run week9_appendix x            # only appendix frame x (10 works too)
       702build week9_live                # the classes you write in class
       702run week9_live
 
@@ -460,7 +460,7 @@ Fleet and Vehicle in the Class Diagram
 Live Coding: Step 2
 """""""""""""""""""
 
-**10 minutes, on your own.** Write ``Fleet``, below ``Passenger``. A fleet shares its vehicles. Its invariant: no null pointer and no vehicle twice.
+**15 minutes, on your own.** Write ``Fleet``, below ``Passenger``. A fleet shares its vehicles. Its invariant: no null pointer and no vehicle twice.
 
 1. ``private``: ``vehicles_``, a ``std::vector<std::shared_ptr<Vehicle>>``.
 2. ``add`` throws for a null pointer, and skips a vehicle already in the fleet. It checks the invariant before it changes anything.
@@ -1117,7 +1117,7 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
 Live Coding: Step 4
 """""""""""""""""""
 
-**10 minutes, on your own.** Make ``drive`` ``virtual``: one loop drives both kinds.
+**15 minutes, on your own.** Make ``drive`` ``virtual``: one loop drives both kinds.
 
 1. In ``Vehicle``: ``virtual void drive(const Route& route) const``, with a body in ``fleet.cpp``.
 2. In ``RoboTaxi`` and ``Taxi``: the same ``drive``, marked ``override``, each printing its own line.
@@ -1134,7 +1134,7 @@ Build with ``702build week9_live``, then run with ``702run week9_live``. The Ste
 
 - ``drive_all`` names only ``Vehicle``. Each object runs its own ``drive``; ``Vehicle``'s never runs here.
 
-Under Further Reading, `One Function for Every Vehicle`_ and `Vehicles of Both Kinds in One Vector`_ show the same calls without the live code.
+Under Further Reading, `One Function for Every Vehicle`_ shows the same calls without the live code.
 
 Three Things Runtime Polymorphism Needs
 """""""""""""""""""""""""""""""""""""""
@@ -1415,7 +1415,7 @@ Measured with AddressSanitizer
 Live Coding: Step 5
 """""""""""""""""""
 
-**10 minutes, on your own.** Delete a ``Taxi`` through a ``Vehicle`` pointer, as in `Deleting through a Base Pointer`_, then add a ``virtual`` destructor. Your ``Vehicle`` has a ``virtual`` method since Step 4, but its destructor is not ``virtual`` yet.
+**5 minutes, on your own.** Delete a ``Taxi`` through a ``Vehicle`` pointer, as in `Deleting through a Base Pointer`_, then add a ``virtual`` destructor. Your ``Vehicle`` has a ``virtual`` method since Step 4, but its destructor is not ``virtual`` yet.
 
 1. Uncomment the Step 5 block: a ``std::unique_ptr<Vehicle>`` owns a ``Taxi`` driven by Ana Maria Rodrigues. Build: no warning. Run: the ``Taxi`` drives 500 m, then AddressSanitizer stops the program.
 2. In ``Vehicle``, in ``fleet.hpp``: ``virtual ~Vehicle() = default;``. Run again: the same line, and no report.
@@ -1500,7 +1500,7 @@ A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``.
 Live Coding: Step 6
 """""""""""""""""""
 
-**10 minutes, on your own.** Make ``drive`` pure ``virtual``, so ``Vehicle`` is abstract: no ``Vehicle`` object can be created.
+**5 minutes, on your own.** Make ``drive`` pure ``virtual``, so ``Vehicle`` is abstract: no ``Vehicle`` object can be created.
 
 1. In ``Vehicle``, ``drive`` ends with ``= 0``. Delete its body from ``fleet.cpp``: a pure ``virtual`` method has no body here.
 2. In the Step 1 and Step 2 blocks, ``std::make_shared<Vehicle>`` becomes ``std::make_shared<RoboTaxi>``.
@@ -1640,7 +1640,7 @@ See `cppreference: final specifier <https://en.cppreference.com/w/cpp/language/f
 Live Coding: Step 7
 ^^^^^^^^^^^^^^^^^^^
 
-**10 minutes, on your own.** Mark ``RoboTaxi`` and ``Taxi`` ``final``: no class can derive from them. The last step is one word in each class.
+**5 minutes, on your own.** Mark ``RoboTaxi`` and ``Taxi`` ``final``: no class can derive from them. The last step is one word in each class.
 
 1. ``class RoboTaxi final : public Vehicle``, and the same for ``Taxi``.
 2. In ``main.cpp``, above ``main``, write ``class SuperRoboTaxi : public RoboTaxi {};``. Build, read the error, then delete it.
@@ -1767,22 +1767,22 @@ The sections below come from the appendix of the slides. They are **not presente
      - `All Twelve Requirements`_ (ii)
      - The full list, FR-1 to FR-12
    * - Live Coding
-     - `What the Live Coding Replaces`_ (iii to ix)
+     - `What the Live Coding Replaces`_ (iii to viii)
      - The class of Step 1, and code that goes with Steps 4 to 7, each with a link back
    * - Class Relationships
-     - `Generalization and Specialization`_ (x)
+     - `Generalization and Specialization`_ (ix)
      - Two ways to find a base class
    * - Class Relationships
-     - `Multiple Inheritance`_ (xi)
+     - `Multiple Inheritance`_ (x)
      - A class with two base classes
    * - Class Relationships
-     - `protected and private Inheritance`_ (xii)
+     - `protected and private Inheritance`_ (xi)
      - The full access table
    * - Polymorphism
-     - `auto or a Base Pointer: Summary`_ (xiii)
+     - `auto or a Base Pointer: Summary`_ (xii)
      - What each one allows
    * - Polymorphism
-     - `Copying a Vehicle of the Design`_ (xiv)
+     - `Copying a Vehicle of the Design`_ (xiii)
      - Why the copy fails, and how to delete it
 
 All Twelve Requirements
@@ -1877,32 +1877,6 @@ One Function for Every Vehicle
 
 Back to `Live Coding: Step 4`_.
 
-Vehicles of Both Kinds in One Vector
-""""""""""""""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   std::vector<std::unique_ptr<Vehicle>> vehicles;
-   vehicles.push_back(std::make_unique<RoboTaxi>(13.4));
-   vehicles.push_back(std::make_unique<Taxi>(13.4, "Ana"));
-   for (const std::unique_ptr<Vehicle>& vehicle : vehicles) {
-     vehicle->drive(trip);
-   }
-
-.. code-block:: text
-
-   RoboTaxi: drives itself 500 m
-   Taxi: Ana drives 500 m
-
-- Every element has the static type ``std::unique_ptr<Vehicle>``. The dynamic type of each object picks its ``drive``.
-- Run: ``702run week9_appendix v``.
-
-.. note::
-
-   "If you have a class with a virtual function, you don't (in general) know which class provided the function to be used". Rule: `Core Guidelines C.145 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-poly>`__, "Access polymorphic objects through pointers and references".
-
-Back to `Live Coding: Step 4`_.
-
 With a virtual Destructor
 """""""""""""""""""""""""
 
@@ -1928,7 +1902,7 @@ With a virtual Destructor
 
 - The ``delete`` of `Deleting through a Base Pointer`_ now runs ``~Taxi``, then ``~Vehicle``. Built with AddressSanitizer: no error, no leak.
 - ``~Taxi`` overrides ``~Vehicle`` although the names differ (**[class.virtual]** (11.7.2) paragraph 7).
-- Run: ``702run week9_appendix vi``.
+- Run: ``702run week9_appendix v``.
 
 .. note::
 
@@ -1961,7 +1935,7 @@ No Vehicle Objects
    RoboTaxi: 1 sensor checked, drives 500 m
 
 - References and pointers to ``Vehicle`` are fine: they refer to a ``RoboTaxi`` or a ``Taxi``. Slicing cannot be written now: ``Vehicle copy{robotaxi};`` gives the same first error.
-- Run: ``702run week9_appendix vii``.
+- Run: ``702run week9_appendix vi``.
 
 Back to `Live Coding: Step 6`_.
 
@@ -1985,7 +1959,7 @@ RoboTaxi and Taxi
 
 - ``Taxi`` overrides ``drive`` too: it prints its driver's name, as in `Redefinition`_.
 - Both are concrete: each overrides ``drive``.
-- Run: ``702run week9_appendix viii``.
+- Run: ``702run week9_appendix vii``.
 
 Back to `Live Coding: Step 6`_.
 
@@ -2048,7 +2022,7 @@ Multiple Inheritance
 - A class can have more than one base class, separated by commas. An ``ElectricTaxi`` is a ``Vehicle`` and a ``Chargeable``.
 - A ``Vehicle&`` and a ``Chargeable&`` can both refer to it.
 - This course uses single inheritance.
-- Run: ``702run week9_appendix xi``. It prints ``ElectricTaxi: drives 500 m`` through the ``Vehicle&``, then ``ElectricTaxi: charges`` through the ``Chargeable&``.
+- Run: ``702run week9_appendix x``. It prints ``ElectricTaxi: drives 500 m`` through the ``Vehicle&``, then ``ElectricTaxi: charges`` through the ``Chargeable&``.
 
 Back to `Inheritance`_.
 
