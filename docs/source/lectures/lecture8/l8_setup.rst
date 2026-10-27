@@ -11,7 +11,7 @@ In Lecture 8 you write code with me during class, and you upload it on Canvas be
    The code you upload at the end of class is graded.
 
    - **What you upload:** ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp``, from ``project/week8/live``, to the L8 Live Coding assignment on Canvas, before the end of class.
-   - **How it is graded:** complete or incomplete, as part of Participation (5% of the grade). Complete means that the code builds and that the **Your turn** block, the one you write on your own, is written.
+   - **How it is graded:** complete or incomplete, as part of Participation (5% of the grade). Complete means that the code builds and that your **Step 2** block, the step you write on your own, is written.
    - **No AI:** you write the code yourself. No chatbot, and no AI in VS Code (GitHub Copilot or any other AI extension): turn it off before class. Code written with AI gets **0**.
    - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 

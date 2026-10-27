@@ -13,15 +13,15 @@ Learning Objectives
 6. Use members that give back their own memory, such as ``std::unique_ptr``, so a class needs no destructor of its own.
 7. Use the ``this`` pointer.
 
-We write one ``Vehicle`` together, in five Live Coding steps (`Live Coding: Step 1`_ first). The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
+We write one ``Vehicle`` together, in six Live Coding steps (`Live Coding: Step 1`_ first). The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
 
 Upload Your Live Coding
 -----------------------
 
-You type each Live Coding step with me, in ``project/week8/live``. After Step 1, you write the **Your turn** block on your own (`Live Coding: Your Turn`_).
+You type each Live Coding step with me, in ``project/week8/live``. You write **Step 2** on your own (`Live Coding: Step 2`_).
 
 - **Before the end of class**, upload ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp`` to the L8 Live Coding assignment on Canvas.
-- It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and the Your turn block is written. The upload is not graded for correctness: most of the code you type with me.
+- It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and your Step 2 block is written. The upload is not graded for correctness: most of the code you type with me.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (Copilot included). Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 - The finished code is posted after Nov 3.
@@ -339,7 +339,7 @@ Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 1
    56
 
 - Each object keeps its own **state**, the values of its data members: 56 bytes with g++ (`Two Objects in Memory`_). Three ``double``\ s take 8 bytes each and a ``std::string`` 32; the methods take no room in the object.
-- In this step, ``get_speed`` has no ``const`` and ``set_speed`` has no check yet: `Live Coding: Step 3`_ adds both.
+- In this step, ``get_speed`` has no ``const`` and ``set_speed`` has no check yet: `Live Coding: Step 4`_ adds both.
 - The code of this step, and what state and behavior mean: `State and Behavior`_, under Further Reading.
 
 Instantiation
@@ -374,10 +374,10 @@ Instantiation
 
          **The objects** are the cars.
 
-Live Coding: Your Turn
+Live Coding: Step 2
 """"""""""""""""""""""
 
-You have **10 minutes** to make one object on the stack and one on the heap, in the block marked **Your turn** in ``live/src/main.cpp``, with the class of Step 1:
+You have **10 minutes** to make one object on the stack and one on the heap, in the Step 2 block of ``live/src/main.cpp``, with the class of Step 1. You write this step on your own:
 
 1. Make ``car_a`` on the stack and set its speed to 12.
 2. Make ``car_b`` on the heap with ``std::make_unique<Vehicle>()`` (L7) and set its speed to 10.
@@ -387,12 +387,12 @@ Build, then run: ``702build week8_live``, then ``702run week8_live``. The block 
 
 .. code-block:: text
 
-   [Your turn]
+   [Step 2]
    12
    10
 
 - An object of a class is created like any other variable: on the stack, or on the heap and owned by a smart pointer.
-- **Checkpoint**: in class, you show me your three lines before we start Step 2. This block is the part of the upload that is yours alone.
+- **Checkpoint**: in class, you show me your three lines before we start Step 3. This block is the part of the upload that is yours alone.
 
 Stack or Heap: Rows 1 to 3
 """"""""""""""""""""""""""
@@ -416,7 +416,7 @@ An object goes on the stack unless one of rows 2 to 5 applies.
      - The heap, owned by ``std::shared_ptr`` (L7).
      - L9's ``Fleet`` shares each ``Vehicle`` with the code that made it.
 
-- The Your turn block made ``car_a`` on the stack and ``car_b`` on the heap. Both work, so you need a rule for picking one. The stack is the default. Each of rows 2 to 5 is a reason to leave it.
+- The Step 2 block made ``car_a`` on the stack and ``car_b`` on the heap. Both work, so you need a rule for picking one. The stack is the default. Each of rows 2 to 5 is a reason to leave it.
 - Row 1: ``car_a`` lives inside one function. At the closing brace it is destroyed and its memory is free. Nothing is allocated and nothing has to be given back.
 - Row 2: the object must outlive the block that made it, and one owner decides when it ends. That is ``std::unique_ptr`` from L7. If the caller only needs the value, returning it by value works too, as in L5.
 - Row 3 points ahead to L9, where we write ``Fleet``. Several parts of the program own the same object, and it ends when the last owner lets go: ``std::shared_ptr`` from L7.
@@ -455,7 +455,7 @@ Class, object, or neither? Vote on each one, then say why.
 1. ``std::string``
 2. ``std::cout``
 3. ``std::vector``, with no type in the angle brackets
-4. ``car_b`` of `Live Coding: Your Turn`_, made with ``std::make_unique<Vehicle>()``
+4. ``car_b`` of `Live Coding: Step 2`_, made with ``std::make_unique<Vehicle>()``
 
 Can a class exist with no object of it? Can an object exist without its class?
 
@@ -778,7 +778,7 @@ A **method defined outside the class**: the class declares the method. Its body 
 - The class goes in a header, ``vehicle.hpp``. The bodies of its methods go in a source file, ``vehicle.cpp``: the split of L5's header files.
 - ``::`` is the scope resolution operator, the same one as in ``std::cout``.
 
-Live Coding: Step 2
+Live Coding: Step 3
 """""""""""""""""""
 
 **10 minutes.** We move the class to ``live/include/vehicle.hpp`` and the bodies of its methods to ``live/src/vehicle.cpp``.
@@ -959,7 +959,7 @@ A **mutator that checks** tests the new value against the invariant. If the valu
 - ``std::invalid_argument`` is in ``<stdexcept>``, as in the :doc:`Exception Handling reading </reading_material/exception_handling/eh_index>` that L6 assigned.
 - The test comes first: ``speed_`` changes only when the new value is allowed.
 
-Live Coding: Step 3
+Live Coding: Step 4
 """""""""""""""""""
 
 **10 minutes.** ``get_speed`` promises to change nothing, and ``set_speed`` keeps the invariant.
@@ -967,13 +967,13 @@ Live Coding: Step 3
 1. ``get_speed`` moves into the class with its body (`Short Methods in the Class`_): ``[[nodiscard]]``, ``const`` and ``noexcept``.
 2. Add ``speed_ = 0.0;`` to its body and build: ``assignment of member 'Vehicle::speed_' in read-only object``. Delete the line.
 3. ``set_speed`` checks first: for a speed below 0 or above ``max_speed_``, it throws ``std::invalid_argument``.
-4. Uncomment the Step 3 block: it calls ``set_speed(20.0)`` in a ``try``.
+4. Uncomment the Step 4 block: it calls ``set_speed(20.0)`` in a ``try``.
 
-Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 3 block prints:
+Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 4 block prints:
 
 .. code-block:: text
 
-   [Step 3]
+   [Step 4]
    caught: speed must be from 0 to the maximum speed
    12
 
@@ -992,7 +992,7 @@ If a class has an invariant, must every call be in a ``try`` and ``catch``? No. 
    * - Who
      - What it does
    * - The class
-     - A method that would break the invariant throws instead (E.2). It checks before it changes anything, so after a throw the object keeps its old value: 12 in `Live Coding: Step 3`_. It does not catch its own exception.
+     - A method that would break the invariant throws instead (E.2). It checks before it changes anything, so after a throw the object keeps its old value: 12 in `Live Coding: Step 4`_. It does not catch its own exception.
    * - The caller
      - It catches only where it can do something about the error (E.17). Most code calls ``set_speed`` with no ``try``: the exception leaves each function in turn until it reaches a ``catch``.
    * - These slides
@@ -1019,7 +1019,7 @@ Not ``const``, Not ``noexcept``
    terminate called after throwing an instance of 'std::invalid_argument'
      what():  speed must be from 0 to the maximum speed
 
-- The warning comes from the compiler, the last two lines from the run. The ``catch`` of the Step 3 block (`Live Coding: Step 3`_) never runs.
+- The warning comes from the compiler, the last two lines from the run. The ``catch`` of the Step 4 block (`Live Coding: Step 4`_) never runs.
 
 .. note::
 
@@ -1226,7 +1226,7 @@ The Default Argument in the Header
      // the assignments and the check
    }
 
-- With the constructor split into ``vehicle.hpp`` and ``vehicle.cpp`` (`Live Coding: Step 2`_), the default argument is written once, in the header. The code that creates a ``Vehicle`` sees only the header.
+- With the constructor split into ``vehicle.hpp`` and ``vehicle.cpp`` (`Live Coding: Step 3`_), the default argument is written once, in the header. The code that creates a ``Vehicle`` sees only the header.
 - Writing ``= "white"`` again in ``vehicle.cpp`` does not compile, as in L5:
 
 .. code-block:: text
@@ -1618,25 +1618,25 @@ A **delegating constructor** is a constructor whose member initializer list name
 
    "Use delegating constructors to represent common actions for all constructors of a class". Rule: `Core Guidelines C.51 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-delegating>`__.
 
-Live Coding: Step 4
+Live Coding: Step 5
 """""""""""""""""""
 
 **10 minutes.** Every ``Vehicle`` starts with a maximum speed greater than 0, or it is never created.
 
 1. In the header: the ``explicit`` constructor of :ref:`l8-explicit`, ``Vehicle(double max_speed, double speed);`` and ``get_color``. ``max_speed_`` and ``color_`` lose their ``{ }`` values.
 2. In the source: the constructors of `Member Initializer List`_ and `Delegating Constructor`_.
-3. ``Vehicle car_a;`` in the Step 1 and Step 3 blocks gives ``no matching function for call to 'Vehicle::Vehicle()'``: write ``Vehicle car_a{13.4};`` instead, and the same for ``car_b``.
-4. Uncomment the Step 4 block.
+3. ``Vehicle car_a;`` in the Step 1 and Step 4 blocks gives ``no matching function for call to 'Vehicle::Vehicle()'``: write ``Vehicle car_a{13.4};`` instead, and the same for ``car_b``.
+4. Uncomment the Step 5 block.
 
-Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 4 block prints:
+Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 5 block prints:
 
 .. code-block:: text
 
-   [Step 4]
+   [Step 5]
    white blue 12
    caught: maximum speed must be greater than 0
 
-- The class has no default constructor any more (`Discussion: Which Lines Compile?`_), so the Step 1 and Step 3 blocks need a maximum speed.
+- The class has no default constructor any more (`Discussion: Which Lines Compile?`_), so the Step 1 and Step 4 blocks need a maximum speed.
 - ``bad_car{0.0}`` throws, so ``bad_car`` never exists.
 - The code of this step: `A Constructor That Throws`_ and `The Class So Far`_, under Further Reading.
 
@@ -1770,7 +1770,7 @@ Vehicle Owns Its Sensors
    The filled diamond says that a ``Vehicle`` owns its ``Sensor``\ s.
 
 - ``Vehicle`` owns its sensors: that is the filled diamond. L9 gives it its name, composition. Today we look at what it means in code.
-- In C++, owning means the ``Vehicle`` gives the memory back when its lifetime ends. This section shows when a destructor runs, then gives each ``Vehicle`` its ``Sensor``\ s through ``std::unique_ptr`` (`Live Coding: Step 5`_), and the destructor the compiler writes gives the memory back.
+- In C++, owning means the ``Vehicle`` gives the memory back when its lifetime ends. This section shows when a destructor runs, then gives each ``Vehicle`` its ``Sensor``\ s through ``std::unique_ptr`` (`Live Coding: Step 6`_), and the destructor the compiler writes gives the memory back.
 - At the end, a ``std::vector`` of ``std::unique_ptr`` is the ``sensors_`` of the diagram, and the class needs no destructor of its own. A ``Vehicle`` that calls ``new`` and ``delete`` itself, and the five special member functions it must then write, are in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading.
 
 Destructor
@@ -1785,11 +1785,11 @@ Destructor
      ~Vehicle() {  // prints, to show when it runs
        std::cout << "~Vehicle: speed " << speed_ << '\n';
      }
-     // ... the members we wrote in Steps 1 to 4
+     // ... the members we wrote in Steps 1 to 5
    };
 
 - This ``Vehicle`` owns no memory by hand: its ``std::string`` gives back its own. So this destructor only prints.
-- A class in this course never calls ``new`` and ``delete`` itself: a ``std::unique_ptr`` member owns the heap memory (`Live Coding: Step 5`_).
+- A class in this course never calls ``new`` and ``delete`` itself: a ``std::unique_ptr`` member owns the heap memory (`Live Coding: Step 6`_).
 
 .. note::
 
@@ -1824,7 +1824,7 @@ When It Runs
 - The destructor is one of five **special member functions**, with two copies and two moves. When a class writes them: the rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, required after class.
 - Run: ``702run week8_playground 90``.
 
-Live Coding: Step 5
+Live Coding: Step 6
 """""""""""""""""""
 
 **10 minutes.** Each ``Vehicle`` owns its sensors through ``std::unique_ptr``, and the class writes no destructor: each ``std::unique_ptr`` deletes its ``Sensor``.
@@ -1832,13 +1832,13 @@ Live Coding: Step 5
 1. In the header, the data member ``sensors_``, a ``std::vector<std::unique_ptr<Sensor>>``. ``Sensor`` is the course's, in ``common/include/sensor.hpp``.
 2. ``int add_sensor(SensorType type, double range)`` creates a ``Sensor`` with the next id, 1, 2, and so on, and returns that id.
 3. In the class, ``sensor_count`` returns ``sensors_.size()``, and ``get_sensors`` returns ``sensors_`` by ``const&`` (`Returning a Large Member`_).
-4. Uncomment the Step 5 block: a 100 m lidar and an 80 m camera.
+4. Uncomment the Step 6 block: a 100 m lidar and an 80 m camera.
 
-Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 5 block prints:
+Build, then run: ``702build week8_live``, then ``702run week8_live``. The Step 6 block prints:
 
 .. code-block:: text
 
-   [Step 5]
+   [Step 6]
    2 sensors
    1 100
    2 80
@@ -1915,7 +1915,7 @@ Appendix frame ii, the code of `Live Coding: Step 1`_.
 The Header File
 ^^^^^^^^^^^^^^^
 
-Appendix frame iii, the header of `Live Coding: Step 2`_. ``vehicle.hpp``:
+Appendix frame iii, the header of `Live Coding: Step 3`_. ``vehicle.hpp``:
 
 .. code-block:: cpp
 
@@ -1941,7 +1941,7 @@ Appendix frame iii, the header of `Live Coding: Step 2`_. ``vehicle.hpp``:
 The Source File
 ^^^^^^^^^^^^^^^
 
-Appendix frame iv, the source file of `Live Coding: Step 2`_. ``vehicle.cpp``:
+Appendix frame iv, the source file of `Live Coding: Step 3`_. ``vehicle.cpp``:
 
 .. code-block:: cpp
 
@@ -1965,7 +1965,7 @@ Appendix frame iv, the source file of `Live Coding: Step 2`_. ``vehicle.cpp``:
 Without ``Vehicle::``
 ^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame v, item 4 of `Live Coding: Step 2`_.
+Appendix frame v, item 4 of `Live Coding: Step 3`_.
 
 .. code-block:: cpp
 
@@ -1989,7 +1989,7 @@ Appendix frame v, item 4 of `Live Coding: Step 2`_.
 The Compiler Checks const
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame vi, item 2 of `Live Coding: Step 3`_.
+Appendix frame vi, item 2 of `Live Coding: Step 4`_.
 
 .. code-block:: cpp
 
@@ -2008,7 +2008,7 @@ Appendix frame vi, item 2 of `Live Coding: Step 3`_.
 A Broken Rule Is Caught
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame vii, the Step 3 block of `Live Coding: Step 3`_.
+Appendix frame vii, the Step 4 block of `Live Coding: Step 4`_.
 
 .. code-block:: cpp
 
@@ -2032,7 +2032,7 @@ Appendix frame vii, the Step 3 block of `Live Coding: Step 3`_.
 A Constructor That Throws
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Appendix frame viii, from `Live Coding: Step 4`_.
+Appendix frame viii, from `Live Coding: Step 5`_.
 
 .. code-block:: cpp
 
@@ -2058,7 +2058,7 @@ Appendix frame viii, from `Live Coding: Step 4`_.
 The Class So Far
 ^^^^^^^^^^^^^^^^
 
-Appendix frame ix, the class after `Live Coding: Step 4`_.
+Appendix frame ix, the class after `Live Coding: Step 5`_.
 
 .. code-block:: cpp
 
@@ -2079,14 +2079,14 @@ Appendix frame ix, the class after `Live Coding: Step 4`_.
    };
 
 - ``add_mileage`` throws for a negative distance. To save room, the accessors are only declared here; ``vehicle.hpp`` defines each in the class (`Short Methods in the Class`_).
-- ``vehicle.hpp`` (in ``common/include``) also has ``get_color``, ``get_mileage``, the sensors (`Live Coding: Step 5`_), the id (`static Members`_) and ``drive``, which takes a ``Route`` and prints the trip.
+- ``vehicle.hpp`` (in ``common/include``) also has ``get_color``, ``get_mileage``, the sensors (`Live Coding: Step 6`_), the id (`static Members`_) and ``drive``, which takes a ``Route`` and prints the trip.
 - ``drive`` is the last method of the box. It takes a ``Route``, the list of ``Position``\ s the robotaxi drives through, and prints the trip: its length, the speed and the time.
 - Run: ``702run week8_appendix ix`` drives ``car_a``, at 12 m/s, along a 700 m ``Route``: it prints ``700 m at 12 m/s: 58.3333 s``.
 
 Many Sensors
 ^^^^^^^^^^^^
 
-Appendix frame x, the class of `Live Coding: Step 5`_.
+Appendix frame x, the class of `Live Coding: Step 6`_.
 
 .. code-block:: cpp
 
@@ -2282,7 +2282,7 @@ Discussion: Will It Compile?
    Vehicle copy_car{logged_car};      // 7
    car_a = logged_car;                // 8
 
-- ``Vehicle`` is the class we wrote in `Live Coding: Step 4`_. Line by line: does it compile? For each line that does not, which rule stops it?
+- ``Vehicle`` is the class we wrote in `Live Coding: Step 5`_. Line by line: does it compile? For each line that does not, which rule stops it?
 
 .. dropdown:: Answers
    :class-container: sd-border-success
