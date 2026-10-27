@@ -39,6 +39,8 @@ Before Class
 
 Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` from Lecture 8, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type each Live Coding step with me, in ``project/week9/live``, and you upload ``fleet.hpp``, ``fleet.cpp`` and ``main.cpp`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts toward Participation, as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
 
+Class starts with a 5-minute quiz on the Lecture 8 reading, :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`. Read it before you come.
+
 Before the Next Lecture
 -----------------------
 

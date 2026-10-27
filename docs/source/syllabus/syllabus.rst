@@ -120,8 +120,9 @@ scheduled.
      - Upload the L8 Live Coding on Canvas, before the end of class
    * - Week 10
      - Nov 3
-     -
-     - OOP Advanced (Inheritance, Polymorphism, Abstraction)
+     - Read :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`
+     - | OOP Advanced (Inheritance, Polymorphism, Abstraction)
+       | 5-minute quiz on the L8 reading, at the start of class
      - | Submit Lecture 9 exercises
        | :assignment:`RWA3 posted`
    * - Week 11
