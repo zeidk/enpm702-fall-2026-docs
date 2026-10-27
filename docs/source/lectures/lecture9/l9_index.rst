@@ -39,12 +39,12 @@ Before Class
 
 Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` from Lecture 8, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type each Live Coding step with me, in ``project/week9/live``, and you upload ``fleet.hpp``, ``fleet.cpp`` and ``main.cpp`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts toward Participation, as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
 
-Class starts with a 5-minute quiz on the Lecture 8 reading, :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`. Read it before you come.
+Class starts with a 5-minute quiz on the Lecture 8 reading, :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`, and **Quiz 4**, which has questions on the rule of five and the rule of zero. Read the reading before you come.
 
 Before the Next Lecture
 -----------------------
 
-**RWA3** is posted today and is due on **Nov 17**. **Quiz 4** is at the start of the next lecture, on **Nov 10**.
+**RWA3** is posted today and is due on **Nov 17**.
 
 - **Before the end of class**: upload your three Live Coding files on Canvas. If you watch the recording, upload them before Nov 10.
 - The :doc:`C++ exercise <l9_exercises>` is **graded**. Hand it in on Canvas before the next lecture.
@@ -58,7 +58,7 @@ Before the Next Lecture
 Next Steps
 ----------
 
-In **Lecture 10: ROS 2 Foundations** (Nov 10), we cover nodes, publishers and subscribers. A ROS 2 node is a class derived from ``rclcpp::Node``: today's inheritance. **Quiz 4** is at the start of class, and **RWA3** is due on **Nov 17**.
+In **Lecture 10: ROS 2 Foundations** (Nov 10), we cover nodes, publishers and subscribers. A ROS 2 node is a class derived from ``rclcpp::Node``: today's inheritance. **RWA3** is due on **Nov 17**.
 
 Before that class, check that your ROS 2 installation works.
 

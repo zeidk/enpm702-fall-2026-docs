@@ -45,6 +45,6 @@ The next lecture is on **Oct 27**.
 Next Steps
 ----------
 
-In **Lecture 8: OOP Basics**, we cover classes, objects, encapsulation and constructors. A class can own a resource and give it back in its destructor, as ``std::unique_ptr`` does. **Quiz 3** is in class.
+In **Lecture 8: OOP Basics**, we cover classes, objects, encapsulation and constructors. A class can own a resource and give it back in its destructor, as ``std::unique_ptr`` does.
 
 The :doc:`references <l7_references>` page lists the recommended reading for this lecture.

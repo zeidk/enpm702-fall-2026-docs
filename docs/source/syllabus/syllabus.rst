@@ -109,27 +109,27 @@ scheduled.
    * - Week 8
      - Oct 20
      - :reading:`Read: Exception Handling`
-     - Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
+     - | Smart Pointers and Move Semantics (``unique_ptr``, ``shared_ptr``, ``weak_ptr``)
+       | :quiz:`Quiz 3`
      - | Submit Lecture 7 exercises
        | :assignment:`RWA2 due (Fri, Oct 23)`
    * - Week 9
      - Oct 27
      -
-     - | OOP Basics (Classes, Objects, Encapsulation, Constructors, Destructors, ``this``)
-       | :quiz:`Quiz 3`
+     - OOP Basics (Classes, Objects, Encapsulation, Constructors, Destructors, ``this``)
      - Upload the L8 Live Coding on Canvas, before the end of class
    * - Week 10
      - Nov 3
      - Read :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`
      - | OOP Advanced (Inheritance, Polymorphism, Abstraction)
        | 5-minute quiz on the L8 reading, at the start of class
+       | :quiz:`Quiz 4`
      - | Submit Lecture 9 exercises
        | :assignment:`RWA3 posted`
    * - Week 11
      - Nov 10
      -
-     - | ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
-       | :quiz:`Quiz 4`
+     - ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
      - Submit Lecture 10 exercises
    * - Week 12
      - Nov 17
@@ -560,12 +560,12 @@ comprehension checks given in class on the dates below:
      - Oct 6
      - 20
    * - Quiz 3
-     - Week 9
-     - Oct 27
+     - Week 8
+     - Oct 20
      - 20
    * - Quiz 4
-     - Week 11
-     - Nov 10
+     - Week 10
+     - Nov 3
      - 20
    * - Quiz 5
      - Week 13

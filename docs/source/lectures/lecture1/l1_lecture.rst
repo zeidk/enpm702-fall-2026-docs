@@ -381,11 +381,11 @@ Quizzes
      - 6
      - Oct 6
    * - Quiz 3
-     - 9
-     - Oct 27
+     - 8
+     - Oct 20
    * - Quiz 4
-     - 11
-     - Nov 10
+     - 10
+     - Nov 3
    * - Quiz 5
      - 13
      - Nov 24
@@ -648,19 +648,19 @@ autonomous robot in simulation.
      -
    * - 8 (Oct 20)
      - L7: Smart pointers and move semantics
-     -
+     - Quiz 3
      - RWA2 due Fri, Oct 23
    * - 9 (Oct 27)
      - L8: OOP basics (classes, encapsulation, constructors, destructors, ``this``)
-     - Quiz 3
+     -
      -
    * - 10 (Nov 3)
      - L9: OOP advanced (inheritance, polymorphism, abstraction)
-     -
+     - Quiz 4
      - RWA3 posted
    * - 11 (Nov 10)
      - L10: ROS 2 foundations (nodes, publishers, subscribers)
-     - Quiz 4
+     -
      -
    * - 12 (Nov 17)
      - L11: ROS 2 configuration (parameters, launch, executors)
