@@ -79,7 +79,6 @@ Lecture 8 References
    - `C.4 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-member>`_: Make a function a member only if it needs direct access to the representation of a class
    - `C.8 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-class>`_: Use ``class`` rather than ``struct`` if any member is non-public
    - `C.9 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-private>`_: Minimize exposure of members
-   - `C.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-concrete>`_: Prefer concrete types over class hierarchies
    - `C.31 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-release>`_: All resources acquired by a class must be released by the class's destructor
    - `C.41 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-complete>`_: A constructor should create a fully initialized object
    - `C.42 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-throw>`_: If a constructor cannot construct a valid object, throw an exception

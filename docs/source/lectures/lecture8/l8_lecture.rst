@@ -47,13 +47,13 @@ The Class Diagram
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l8/model_l8_members.png
-   :alt: A UML class diagram of the robotaxi program with nine boxes, each listing its data members and methods. In the middle, Vehicle, purple, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor &, plus drive(const Route&) : void, and the underlined plus next_id() : int. On the left, grey: Fleet with plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, purple: Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a purple line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. A purple dashed arrow runs from Sensor to SensorType, purple, marked enumeration, with lidar, camera and radar. A purple dashed arrow labeled uses runs from Vehicle to Route, purple, with plus add(Position) : void and plus length() : double; a purple line labeled has with a filled diamond at Route joins Route to Position, purple, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, grey: RoboTaxi, marked final, with plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the robotaxi program with nine boxes, each listing its data members and methods. In the middle, Vehicle, purple, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor &, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, grey: Fleet with plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, purple: Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a purple line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. A purple dashed arrow runs from Sensor to SensorType, purple, marked enumeration, with lidar, camera and radar. A purple dashed arrow labeled uses runs from Vehicle to Route, purple, with plus add(Position) : void and plus length() : double; a purple line labeled has with a filled diamond at Route joins Route to Position, purple, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, grey: RoboTaxi, marked final, with plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
    The robotaxi program as a UML class diagram, with every data member and method. Purple: L8's part of the program.
 
-- Each box is a type: a class, a «struct» (``Position``) or an «enumeration» (``SensorType``), with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, and underlining a ``static`` one (`static Members`_, under Further Reading). The types are C++ types.
+- Each box is a type: a class, a «struct» (``Position``) or an «enumeration» (``SensorType``), with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, ``#`` a ``protected`` one (L9), and underlining a ``static`` one (`static Members`_, under Further Reading). The types are C++ types.
 - Each line is a relationship (L9). A member that a line stands for, such as ``sensors_``, is named at the line's end, not in the box: ``vehicles_`` and ``ride_`` at the ``Vehicle`` end of the lines from ``Fleet`` and ``Passenger``, ``sensors_`` at the ``Sensor`` end, and ``waypoints_`` at the ``Position`` end.
 - This is the whole program we build in L8 and L9. This is the only time in L8 the diagram shows all of it. From here on (`Class Names Only`_) it shows the class names only, and each member comes in the section that builds it.
 - Today we build the purple part: ``Vehicle``, its ``Sensor``\ s with their ``SensorType``, and the ``Position`` struct. ``Route`` is purple too, because ``drive`` takes one; it holds ``Position``\ s, and it is ready in the course code. The grey part, ``Fleet``, ``Passenger``, ``RoboTaxi`` and ``Taxi``, comes in L9, with the meaning of each kind of line.
@@ -204,12 +204,12 @@ What OOP Gives and What It Costs
 
    * - Gives
      - Costs
-   * - Each class is a part you can read and test alone: ``Sensor`` without ``Vehicle``.
-     - More code before anything runs: a class, its header, its source file.
-   * - The class checks its own invariant, in one place.
-     - You must decide which data belongs to which class. A wrong split is hard to change later.
-   * - Callers depend on methods, so the inside can change (`Changing the Inside`_).
-     - A ``virtual`` call through a pointer to a base class (L9) can cost more than a direct call.
+   * - You can read and test each class on its own: ``Sensor`` works without ``Vehicle``.
+     - You write more code before anything runs: each class has a header and a source file.
+   * - Each class keeps its own rule in one place: only ``Vehicle``'s methods change ``speed_``.
+     - You must decide which data goes in which class. A wrong choice is hard to undo later.
+   * - Code that uses a class only calls its methods, so the class can change how it stores its data (`Changing the Inside`_).
+     - A ``virtual`` call through a pointer to a base class (L9) can be slower than a direct call.
 
 When Not to Use a Class
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -217,7 +217,6 @@ When Not to Use a Class
 - **No rule between the data members**: use a ``struct``. Any ``x`` and any ``y`` make a ``Position``, so it is a ``struct`` (C.2). `Struct or Class`_ comes back to it.
 - **A function that needs no private member**: keep it outside the class. A function that computes the distance between two ``Position`` objects reads only public members, so it stays a plain function (C.4). Such a function couples less to the class and has fewer ways to change the object. The distance example is chosen for this page.
 - **Nothing to keep between calls**: a function is enough (L5). A class pays off when an object holds data that must stay valid.
-- **A class hierarchy needs a reason**: a single class, with no base class, is simpler and faster (C.10, "Prefer concrete types over class hierarchies", L9).
 
 .. note::
 
@@ -508,8 +507,8 @@ For ``Vehicle``: ``0.0 <= speed_ && speed_ <= max_speed_``
    :header-rows: 1
    :widths: 30 70
 
-   * - Who keeps it
-     - How
+   * - Part of the class
+     - How it keeps the invariant true
    * - ``private`` data members
      - Only ``Vehicle``'s own methods can change them (`Four Principles`_).
    * - Each method that changes a member
@@ -839,7 +838,7 @@ Short Methods in the Class
    };
 
 - A method defined in its class is **inline**: each source file that includes the header may hold its body, and the compiler can put that body in place of a call.
-- This course puts one-line accessors in the class and longer methods in ``vehicle.cpp``. Defining all of them in ``vehicle.cpp`` is also correct.
+- This course puts one-line accessors in the class and longer methods in ``vehicle.cpp``: ``set_speed`` checks and throws, so it goes in ``vehicle.cpp``. Defining all of them in ``vehicle.cpp`` is also correct.
 
 See `One Definition in Many Files`_, `A Method Defined in Its Class`_ and :ref:`l8-inline-hint` under Further Reading: why a function defined in a header must be ``inline``, what that means for a method defined in its class, and what ``inline`` does not promise.
 
