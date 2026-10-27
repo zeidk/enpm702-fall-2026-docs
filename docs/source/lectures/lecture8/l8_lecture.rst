@@ -53,7 +53,7 @@ The Class Diagram
 
    The robotaxi program as a UML class diagram, with every data member and method. Purple: what L8 builds.
 
-- Each box is a class, with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, and underlining a ``static`` one (`static Members`_, under Further Reading). The types are C++ types.
+- Each box is a type: a class, a «struct» (``Position``) or an «enumeration» (``SensorType``), with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, and underlining a ``static`` one (`static Members`_, under Further Reading). The types are C++ types.
 - Each line is a relationship (L9). A member that a line stands for, such as ``sensors_``, is named at the line's end, not in the box: ``vehicles_`` and ``ride_`` at the ``Vehicle`` end of the lines from ``Fleet`` and ``Passenger``, ``sensors_`` at the ``Sensor`` end, and ``waypoints_`` at the ``Position`` end.
 - This is the whole program we build in L8 and L9. This is the only time in L8 the diagram shows all of it. From here on (`Class Names Only`_) it shows the class names only, and each member comes in the section that builds it.
 - Today we build the purple part: ``Vehicle``, its ``Sensor``\ s with their ``SensorType``, the ``Position`` struct, and the ``Route`` that ``drive`` takes, which holds ``Position``\ s. The grey part, ``Fleet``, ``Passenger``, ``RoboTaxi`` and ``Taxi``, comes in L9, with the meaning of each kind of line.
