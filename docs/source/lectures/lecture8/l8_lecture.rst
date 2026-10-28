@@ -99,7 +99,7 @@ Code for This Lecture
 
 - **common** holds what L8 builds from the class diagram: ``Vehicle``, ``Sensor`` with its ``SensorType``, ``Position``, and a small ``Route`` for ``drive``.
 - For the **appendix**, the `Further Reading`_ part of this page: ``702build week8_appendix``, then ``702run week8_appendix ii`` runs appendix frame ii, `One Definition in Many Files`_.
-- The code that leaks or frees twice is in the **undefined** folder, built with AddressSanitizer: it runs only when asked for by name.
+- For the required reading, :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`: the **rule_of_five** folder, one file per part of the reading. ``702build week8_rule_of_five``, then ``702run week8_rule_of_five five`` runs the part ``five``. It is built with AddressSanitizer, and the parts that leak or free memory twice run only when asked for by name.
 
 .. dropdown:: How to Run the Code
    :icon: terminal
@@ -117,6 +117,7 @@ Code for This Lecture
       702run week8_playground 27         # only the code of slide 28
       702run week8_appendix              # the code of every appendix frame
       702run week8_appendix ii           # only appendix frame ii (2 works too)
+      702run week8_rule_of_five five     # only the part five of the reading
 
    The number is the one in the top-left corner of the slide. Appendix frames are numbered in roman numerals, i, ii, iii, and so on. After you edit a file, build again before you run: ``702build week8_playground`` builds one program, ``702build`` builds all of them.
 

@@ -5,10 +5,26 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.11.0: Lecture 8 and Its Reading, Rule of Five and Rule of Zero (2026-10-28)
+.. dropdown:: v1.11.1: The Rule of Five Reading Has Its Own Program (2026-10-28)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - The code of **Rule of Five and Rule of Zero** is now its own
+     program, ``week8_rule_of_five``, in ``project/week8/rule_of_five/``,
+     with one source file per part of the reading. Pull, build with
+     ``702build week8_rule_of_five``, then run a part by its key:
+     ``702run week8_rule_of_five five``. The keys are the same as before.
+   - ``week8_appendix`` now runs only the appendix frames of the slides,
+     and the ``undefined`` folder of week 8 is gone.
+   - Every listing of the reading shows the line numbers of its new file.
+     Each special member function in the code has a comment above it that
+     names it.
+
+
+.. dropdown:: v1.11.0: Lecture 8 and Its Reading, Rule of Five and Rule of Zero (2026-10-28)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 8** is rewritten around the software of a robotaxi, a
      ``Vehicle`` that owns its ``Sensor``\ s. Its sections: The Program We
