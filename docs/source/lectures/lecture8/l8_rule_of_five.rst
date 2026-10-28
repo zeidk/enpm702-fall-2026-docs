@@ -82,36 +82,43 @@ The copies take a ``const ClassName&``: they read ``other`` and leave it unchang
 Which Function Runs
 ^^^^^^^^^^^^^^^^^^^
 
-Before you write any of the five, learn which line of code calls which one. This ``Vehicle`` owns nothing. Each of its special member functions prints its own name and the id of the object, so a run shows which one each line calls. A move sets the id of its source to 0 (lines 281 and 286), the way a real move leaves its source owning nothing.
+Before you write any of the five, learn which line of code calls which one. This ``Vehicle`` owns nothing. Each of its special member functions prints its own name and the id of the object, so a run shows which one each line calls. A move sets the id of its source to 0 (lines 286 and 292), the way a real move leaves its source owning nothing.
 
 .. code-block:: cpp
-   :caption: ``appendix/src/appendix.cpp``, lines 266 to 294
+   :caption: ``appendix/src/appendix.cpp``, lines 266 to 301
    :lineno-start: 266
 
    class Vehicle {
     public:
+     // Constructor
      explicit Vehicle(int id) : id_{id} {
        std::cout << "  constructor, id " << id_ << '\n';
      }
+     // Destructor
      ~Vehicle() { std::cout << "  destructor, id " << id_ << '\n'; }
+     // Copy constructor
      Vehicle(const Vehicle& other) : id_{other.id_} {
        std::cout << "  copy constructor, id " << id_ << '\n';
      }
+     // Copy assignment
      Vehicle& operator=(const Vehicle& other) {
        id_ = other.id_;
        std::cout << "  copy assignment, id " << id_ << '\n';
        return *this;
      }
+     // Move constructor
      Vehicle(Vehicle&& other) noexcept : id_{other.id_} {
        other.id_ = 0;  // as if the source gave its contents away
        std::cout << "  move constructor, id " << id_ << '\n';
      }
+     // Move assignment
      Vehicle& operator=(Vehicle&& other) noexcept {
        id_ = other.id_;
        other.id_ = 0;
        std::cout << "  move assignment, id " << id_ << '\n';
        return *this;
      }
+     // Accessor
      [[nodiscard]] int get_id() const noexcept { return id_; }
 
     private:
@@ -119,8 +126,8 @@ Before you write any of the five, learn which line of code calls which one. This
    };
 
 .. code-block:: cpp
-   :caption: ``appendix/src/appendix.cpp``, lines 296 to 318
-   :lineno-start: 296
+   :caption: ``appendix/src/appendix.cpp``, lines 303 to 325
+   :lineno-start: 303
 
    void park(Vehicle vehicle) {  // takes a Vehicle by value: a new object
      std::cout << "  park(), id " << vehicle.get_id() << '\n';
@@ -175,14 +182,14 @@ Before you write any of the five, learn which line of code calls which one. This
      destructor, id 0
      destructor, id 0
 
-1. Lines 302 and 304 make each ``Vehicle`` from an id, with the constructor of line 268.
-2. Line 306 makes a new ``Vehicle``, ``copy``, from ``car_a``: the copy constructor.
-3. Line 308 has an ``=`` sign, but ``other`` does not exist before this line. A new object is made, so the copy constructor runs, not the copy assignment.
-4. Line 310: ``copy`` already exists, so the copy assignment runs. ``copy`` now has id 2.
-5. Line 312 makes ``moved`` from ``std::move(car_a)``: the move constructor. ``moved`` gets id 1, and ``car_a``'s id becomes 0.
-6. Line 314: ``moved`` already exists, so the move assignment runs. ``moved`` gets id 2, and ``car_b``'s id becomes 0.
-7. Line 316 passes ``copy`` to ``park()``, which takes its parameter **by value** (line 296): the parameter ``vehicle`` is a new ``Vehicle``, made by the copy constructor. It is destroyed at the end of ``park()``, line 298.
-8. At the end of ``run()``, line 318, the five objects are destroyed in the reverse order they were created: ``moved`` (id 2), ``other`` (1), ``copy`` (2), ``car_b`` (0) and ``car_a`` (0).
+1. Lines 309 and 311 make each ``Vehicle`` from an id, with the constructor of line 269.
+2. Line 313 makes a new ``Vehicle``, ``copy``, from ``car_a``: the copy constructor.
+3. Line 315 has an ``=`` sign, but ``other`` does not exist before this line. A new object is made, so the copy constructor runs, not the copy assignment.
+4. Line 317: ``copy`` already exists, so the copy assignment runs. ``copy`` now has id 2.
+5. Line 319 makes ``moved`` from ``std::move(car_a)``: the move constructor. ``moved`` gets id 1, and ``car_a``'s id becomes 0.
+6. Line 321: ``moved`` already exists, so the move assignment runs. ``moved`` gets id 2, and ``car_b``'s id becomes 0.
+7. Line 323 passes ``copy`` to ``park()``, which takes its parameter **by value** (line 303): the parameter ``vehicle`` is a new ``Vehicle``, made by the copy constructor. It is destroyed at the end of ``park()``, line 305.
+8. At the end of ``run()``, line 325, the five objects are destroyed in the reverse order they were created: ``moved`` (id 2), ``other`` (1), ``copy`` (2), ``car_b`` (0) and ``car_a`` (0).
 
 .. tip::
 
@@ -856,8 +863,8 @@ Beyond Memory: A File
 A ``TripLog`` keeps a log of a robotaxi's trips in a file. It owns an open file, a ``std::FILE*`` from the C library (``<cstdio>``). The ``std::FILE*`` is a handle: the program must close the file with ``std::fclose``, once, as it must ``delete`` memory once. No class of the standard library owns a ``std::FILE*``, so ``TripLog`` writes the five itself.
 
 .. code-block:: cpp
-   :caption: ``appendix/src/appendix.cpp``, lines 327 to 371
-   :lineno-start: 327
+   :caption: ``appendix/src/appendix.cpp``, lines 334 to 378
+   :lineno-start: 334
 
    class TripLog {
     public:
@@ -905,10 +912,10 @@ A ``TripLog`` keeps a log of a robotaxi's trips in a file. It owns an open file,
      kept.write("trip 2: 1.5 km");
    }  // ~TripLog: file closed, then ~TripLog: no file
 
-- **Line 329** opens the file. ``std::tmpfile()`` creates a temporary file that the system deletes when the file is closed, so the run leaves nothing on your disk. It returns ``nullptr`` when it fails, and the constructor then throws (line 331).
-- **Lines 334 to 341**, the destructor, close the file when the ``TripLog`` owns one, and print what they did.
-- **Lines 342 and 343** delete the copies: two ``TripLog``\ s with one handle would close one file twice.
-- **Lines 344 to 356**, the moves, hand the handle over and leave the source holding ``nullptr``, as the moves of the ``Vehicle`` do with ``sensor_``.
+- **Line 336** opens the file. ``std::tmpfile()`` creates a temporary file that the system deletes when the file is closed, so the run leaves nothing on your disk. It returns ``nullptr`` when it fails, and the constructor then throws (line 338).
+- **Lines 341 to 348**, the destructor, close the file when the ``TripLog`` owns one, and print what they did.
+- **Lines 349 and 350** delete the copies: two ``TripLog``\ s with one handle would close one file twice.
+- **Lines 351 to 363**, the moves, hand the handle over and leave the source holding ``nullptr``, as the moves of the ``Vehicle`` do with ``sensor_``.
 
 ``702run week8_appendix file_owner`` prints:
 
@@ -917,7 +924,7 @@ A ``TripLog`` keeps a log of a robotaxi's trips in a file. It owns an open file,
    ~TripLog: file closed
    ~TripLog: no file
 
-Line 369 moves the file from ``log`` into ``kept``. At the end of ``run()``, line 371, ``kept`` is destroyed first, since it was created last, and closes the file. ``log`` owns nothing after the move, so its destructor closes nothing. The file is closed exactly once.
+Line 376 moves the file from ``log`` into ``kept``. At the end of ``run()``, line 378, ``kept`` is destroyed first, since it was created last, and closes the file. ``log`` owns nothing after the move, so its destructor closes nothing. The file is closed exactly once.
 
 Which Rule to Follow
 --------------------
