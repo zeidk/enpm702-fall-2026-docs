@@ -1854,6 +1854,13 @@ L8: OOP Basics
       they were created.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
+   Double Free
+      Deleting the same memory twice, as when two objects hold one address
+      and each destructor deletes it. It is undefined behavior.
+      AddressSanitizer stops the program with "attempting double-free". The
+      compiler's copy of a raw-pointer member leads to one.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
    Encapsulation
       Keeping a class's data members ``private``. Code outside the class goes
       through its ``public`` methods, so those methods can keep the
@@ -1871,6 +1878,13 @@ L8: OOP Basics
       A function or another class that a class names as a friend. It may use
       the class's ``private`` members too.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Handle
+      A value that names a resource a library gave you, such as the
+      ``std::FILE*`` that ``std::fopen`` returns. The program must give the
+      resource back once, with the library's function (``std::fclose``). A
+      class that holds a handle follows the rule of five.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
 
    Instance
       An object of a class. Building one is called instantiation, as a
@@ -1906,6 +1920,13 @@ L8: OOP Basics
       works on the data members of the object it is called on. The methods
       exist once, in the program's code, and every object uses them.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
+
+   Move-only Class
+      A class whose objects can be moved but not copied, such as
+      ``std::unique_ptr``. A class with a ``std::unique_ptr`` member is
+      move-only without writing any code; a class that holds a raw pointer
+      becomes move-only by deleting its copies with ``= delete``.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
 
    Mutator
       A ``public`` method that changes the object's state, also called a
@@ -1950,10 +1971,18 @@ L8: OOP Basics
    Rule of Zero
       A class whose members give back their own resources, such as a
       ``std::unique_ptr``, writes none of the five special member functions
-      that manage resources: the ones the compiler writes are right. Core
+      that manage resources: the default versions the compiler provides are
+      enough. Core
       Guidelines C.20. In L8, a ``Vehicle`` that owns its sensors through
       ``std::unique_ptr`` needs no destructor of its own; the Rule of Five and
       Rule of Zero reading explains the rule.
+      :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
+
+   Shallow Copy
+      A copy that copies only the address a pointer member holds, so both
+      objects point at the same object. The compiler's copy constructor makes
+      one for a raw-pointer member, and both destructors then delete the same
+      memory. See **Deep Copy**.
       :doc:`L8 reading </lectures/lecture8/l8_rule_of_five>`
 
    Special Members

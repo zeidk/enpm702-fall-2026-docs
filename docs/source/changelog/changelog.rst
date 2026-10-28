@@ -5,10 +5,115 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.7.0: One Program per Part of the Deck, Weeks 5 and 6 (2026-10-07)
+.. dropdown:: v1.11.0: Lecture 8 and Its Reading, Rule of Five and Rule of Zero (2026-10-28)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 8** is rewritten around the software of a robotaxi, a
+     ``Vehicle`` that owns its ``Sensor``\ s. Its sections: The Program We
+     Will Build, Classes and Objects, Struct or Class, Encapsulation,
+     Accessors and Mutators, Constructors, The this Pointer, Destructors,
+     and Further Reading (``inline``, ``const`` objects, ``static``
+     members).
+   - **Live coding:** six steps, Step 1 together and Steps 2 to 6 on your
+     own. You upload your code on Canvas for Participation, graded
+     complete or incomplete. No AI. A new page, **Setup Before Class**,
+     gets your workspace ready with ``enpm702_setup.sh``.
+   - Lecture 8 has no C++ exercise page: Discussion boxes on the lecture
+     page and the reading below take its place. The quiz has 15 questions.
+   - **Rule of Five and Rule of Zero**, the required reading after the
+     class, is rewritten. Quiz 4 (Nov 3) includes questions on it.
+
+     - Every listing shows the line numbers of its file in the course
+       repository, and the text refers to those lines.
+     - Ten new figures show the stack and the heap at each copy and
+       move.
+     - What the Compiler Writes Now explains each line of the compiler's
+       message for a copy that does not compile.
+     - The copies and the moves each have their own sections, one per
+       function.
+     - New parts: Which Function Runs, Without the Moves, and Beyond
+       Memory: A File. They run with three new keys:
+       ``702run week8_appendix which_one``, ``no_move`` and
+       ``file_owner``.
+     - Correction: All Five, Run creates four ``Sensor``\ s, not three.
+       The copy assignment makes one too.
+
+   - **Glossary:** the Lecture 8 section has the terms of the lecture and
+     of the reading, Double Free, Handle, Move-only Class and Shallow Copy
+     among them.
+
+
+.. dropdown:: v1.10.0: Lecture 9 Follows the Robotaxi Deck (2026-10-27)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 9** continues the robotaxi of Lecture 8. Its sections: The
+     Program We Will Build, Design, Class Relationships, Polymorphism,
+     Abstraction, The final Keyword, and Further Reading.
+   - **Live coding:** seven steps, Step 1 together and Steps 2 to 7 on
+     your own.
+   - **C++ exercise:** The Airport Shuttles. The quiz has 15 questions.
+   - **Quiz dates:** Quiz 3 was on Oct 20, Quiz 4 is on Nov 3 at the
+     start of Lecture 9, and Quiz 5 is on Nov 24.
+
+
+.. dropdown:: v1.9.1: Peer Review for the Group Projects (2026-10-25)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Syllabus:** a new Peer Review section. A group project grade is 60%
+     for the team's work and 40% for the peer review, with a worked
+     example.
+
+
+.. dropdown:: v1.9.0: Lecture 7 Follows the Slides (2026-10-20)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 7**, Smart Pointers and Move Semantics, is written from the
+     deck, around the software of an autonomous car (a tracker, a planner
+     and a dashboard). Its sections: Reminder: Returning by Value, The
+     Program We Will Build, Ownership, Move Semantics, Smart Pointers,
+     Choosing a Pointer, Summary, and Further Reading.
+   - Figures of the stack and the heap for each copy, move and smart
+     pointer, as in the deck.
+   - **C++ exercise:** The Sensor Manager. The quiz has 15 questions.
+
+
+.. dropdown:: v1.8.1: Fall Break Schedule and RWA2 (2026-10-09)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Schedule:** Fall Break on Oct 13 moves every lecture from Lecture 7
+     on one week later. The Lifecycle Nodes lecture is cut, so Robot
+     Autonomy Architecture is now Lecture 14. GP3 is folded into GP2.
+   - **RWA2**, Sector Sweep Mission Planner, is posted. It is due Oct 23.
+   - **Glossary:** grouped by lecture, with a letter bar under the search
+     box.
+   - **Reading material:** listed in alphabetical order.
+   - **Site:** a new logo and a light theme.
+
+
+.. dropdown:: v1.8.0: Lecture 6 Follows the Slides (2026-10-09)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 6**, Functions Advanced, follows the deck, with the deck's
+     appendix as Further Reading.
+   - Function Templates follows the order of the deck. A new section,
+     Deduced Return Types, shows the errors g++ gives.
+   - Warning boxes for the common traps: narrowing in ``emplace_back``,
+     ``*`` on an empty ``std::optional``, a lambda that captures a
+     variable that no longer exists, and templates outside headers.
+   - **C++ exercise:** one exercise, The Drone Charging Station.
+   - **Glossary:** the Lecture 6 terms.
+
+
+.. dropdown:: v1.7.0: One Program per Part of the Deck, Weeks 5 and 6 (2026-10-07)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lectures 5 and 6:** the code of every slide is one program,
      ``week5_playground`` and ``week6_playground``. Pass a slide number to
@@ -26,6 +131,18 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      ``build/``.
    - **How to Run the Code:** a new dropdown under Code for This Lecture,
      in Lectures 5 and 6, lists the ``702`` commands and what each does.
+
+
+.. dropdown:: v1.6.1: Lecture 5 Follow-ups and Exception Handling Fixes (2026-10-06)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 5:** a new section, A String View in Memory, and the page
+     follows the latest L5 deck. The exercises explain the lookup table in
+     ``deg_to_rad_table``.
+   - **Exception Handling** (reading material): corrections checked
+     against the C++20 standard and g++ 13, and new exercises.
+   - American spelling across the site.
 
 
 .. dropdown:: v1.6.0: Lecture 4 Synced with the L4 Slides v2.0 (2026-09-28)
