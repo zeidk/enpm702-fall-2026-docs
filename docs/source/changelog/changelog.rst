@@ -5,10 +5,21 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.14.0: Lecture 9, One Class per File (2026-10-30)
+.. dropdown:: v1.14.1: Lecture 9, Every Member of Each Relationship (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 9**: Aggregation, Composition, Dependency and Inheritance
+     each show their classes with every member, as Association already did.
+     The class diagram with every member is renamed The Class Diagram, with
+     Every Member, and says that every class should be writable from the
+     diagram alone. The ``702run`` slide numbers follow the slides.
+
+
+.. dropdown:: v1.14.0: Lecture 9, One Class per File (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9**: the live code has one class per file: a header in
      ``live/include`` and a source file in ``live/src`` for each class. A

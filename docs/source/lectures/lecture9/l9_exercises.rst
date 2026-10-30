@@ -229,7 +229,7 @@ it boarded without keeping it alive.
     a. Which class knows the other one?
     b. Say what the two numbers mean, as one sentence about passengers,
        vehicles or fleets.
-    c. Which line is the one of the robotaxi design?
+    c. Which line is the one in the lecture's class diagram?
 
     .. dropdown:: Solution
         :class-container: sd-border-success
@@ -237,7 +237,7 @@ it boarded without keeping it alive.
         1. A ``Passenger`` knows its ``Vehicle``; the vehicle does not know
            its passengers. A passenger rides at most one vehicle at a time
            (``0..1``), and a vehicle carries any number of passengers
-           (``0..*``). This is the line of the robotaxi design: ``Passenger``
+           (``0..*``). This is the line in the lecture's class diagram: ``Passenger``
            holds ``ride_``, a ``std::weak_ptr<Vehicle>``.
         2. A ``Passenger`` knows its ``Vehicle``. Every passenger always rides
            exactly one vehicle, and every vehicle carries exactly one
