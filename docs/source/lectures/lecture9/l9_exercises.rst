@@ -2,8 +2,9 @@
 C++ Exercises
 ====================================================
 
-This exercise covers Lecture 9: OOP Advanced. There is one exercise this
-week, and it is graded: hand it in on Canvas before L10.
+These exercises cover Lecture 9: OOP Advanced. Exercise 1 is graded: hand
+it in on Canvas before L10. Exercise 2 is practice, and you do not hand it
+in.
 
 The exercise works on the airport shuttles of the robotaxi company. A
 ``Shuttle`` is an abstract class with two concrete kinds, a dispatcher
@@ -204,3 +205,48 @@ it boarded without keeping it alive.
          spare                    : DrivenShuttle, 8 seats
          to Inner Harbor          :  15.00
          spare                    : released
+
+
+.. dropdown:: Exercise 2: Reading Association Lines
+    :icon: gear
+    :class-container: sd-border-primary
+    :class-title: sd-font-weight-bold
+
+    Each line below is written in PlantUML, as on the lecture's A Diagram as
+    Text. ``-->`` is an arrow: the class at the arrow's point is the one that
+    is known. The numbers are the multiplicities of each end.
+
+    .. code-block:: text
+
+       1.  Passenger "0..*" --> "0..1" Vehicle
+       2.  Passenger "1" --> "1" Vehicle
+       3.  Vehicle "0..1" --> "0..*" Passenger
+       4.  Fleet "1" --> "1..*" Vehicle
+       5.  Passenger "0..*" --> "1" Fleet
+
+    For each line:
+
+    a. Which class knows the other one?
+    b. Say what the two numbers mean, as one sentence about passengers,
+       vehicles or fleets.
+    c. Which line is the one of the robotaxi design?
+
+    .. dropdown:: Solution
+        :class-container: sd-border-success
+
+        1. A ``Passenger`` knows its ``Vehicle``; the vehicle does not know
+           its passengers. A passenger rides at most one vehicle at a time
+           (``0..1``), and a vehicle carries any number of passengers
+           (``0..*``). This is the line of the robotaxi design: ``Passenger``
+           holds ``ride_``, a ``std::weak_ptr<Vehicle>``.
+        2. A ``Passenger`` knows its ``Vehicle``. Every passenger always rides
+           exactly one vehicle, and every vehicle carries exactly one
+           passenger: no passenger waits, and no vehicle drives empty.
+        3. The arrow points the other way: a ``Vehicle`` knows its
+           passengers, and a passenger does not know its vehicle. The numbers
+           are those of line 1, so they say the same thing about how many.
+        4. A ``Fleet`` knows its vehicles. A fleet has at least one vehicle
+           (``1..*``), and each vehicle belongs to exactly one fleet (``1``).
+        5. A ``Passenger`` knows one ``Fleet``: each passenger is a customer
+           of exactly one fleet (``1``), and a fleet has any number of
+           passengers (``0..*``).

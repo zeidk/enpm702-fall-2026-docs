@@ -5,10 +5,28 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.9: Lecture 9, Requirements Before Design (2026-10-30)
+.. dropdown:: v1.14.0: Lecture 9, One Class per File (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 9**: the live code has one class per file: a header in
+     ``live/include`` and a source file in ``live/src`` for each class. A
+     new section, One Class per File, shows the folder and says why. The
+     Live Coding steps name each class's files, and ``live9`` builds and
+     runs them. Upload every file of ``live/include`` and ``live/src``.
+   - **Lecture 9**: an overriding method is ``virtual`` without the keyword,
+     quoted from the C++20 standard. Deleting through a Base Pointer holds
+     the AddressSanitizer report, and says that ``-Wnon-virtual-dtor``
+     catches the missing ``virtual`` destructor at compile time.
+     Generalization and Specialization has a figure.
+   - **C++ Exercises**: new practice Exercise 2, Reading Association Lines.
+   - The ``702run`` slide numbers follow the slides.
+
+
+.. dropdown:: v1.13.9: Lecture 9, Requirements Before Design (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9**: Requirements is its own part, before Design, since the
      requirements say what the program must do and the design says how.

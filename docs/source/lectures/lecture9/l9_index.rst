@@ -36,7 +36,7 @@ This lecture covers advanced object-oriented programming in C++, on the robotaxi
 Before Class
 ------------
 
-Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>`, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type Step 1 with me, in ``project/week9/live``, and write Steps 2 to 7 on your own. You upload ``fleet.hpp``, ``fleet.cpp`` and ``main.cpp`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts toward Participation, as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
+Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>`, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type Step 1 with me, in ``project/week9/live``, and write Steps 2 to 7 on your own. You upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts toward Participation, as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
 
 Class starts with **Quiz 4**, which includes questions on the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`. Read it before you come.
 

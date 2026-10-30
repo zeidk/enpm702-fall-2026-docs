@@ -21,7 +21,7 @@ Upload Your Live Coding
 
 You type Step 1 with me, in ``project/week9/live``. You write **Steps 2 to 7** on your own, in the time each step gives: 15 minutes for Steps 2 and 4, 10 for Step 3, and 5 for each of Steps 5 to 7. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
-- **Before the end of class**, upload ``fleet.hpp``, ``fleet.cpp`` and ``main.cpp`` to the L9 Live Coding assignment on Canvas.
+- **Before the end of class**, upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas.
 - It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and you wrote Steps 2 to 7. I do not grade it for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (GitHub Copilot included), in class or after. Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 10**. The same rules apply.
@@ -41,7 +41,7 @@ Code for This Lecture
    ├── undefined/
    └── uml/
 
-**live** holds the classes you write in the Live Coding steps: ``702build week9_live``.
+**live** holds the classes you write in the Live Coding steps: ``live9`` builds and runs them. Load it in class with ``source ~/Downloads/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture8/l8_setup>` shows.
 
 **Run a Slide's Code**
 
@@ -73,18 +73,50 @@ Code for This Lecture
       702run week9_playground            # the code of every slide, in order
       702run week9_playground 57         # only the code of slide 57
       702run week9_appendix x            # only appendix frame x (10 works too)
-      702build week9_live                # the classes you write in class
-      702run week9_live
+      live9                              # build and run the classes you write in class
 
    After you edit a file, build again before you run: ``702build week9_playground`` builds one program, ``702build`` builds all of them.
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   The slides whose code has undefined behavior, slides 72 and 73, run only when you ask for them by number: ``702run week9_playground 73``. A full run skips them.
+   The slide whose code has undefined behavior, slide 72, runs only when you ask for it by number: ``702run week9_playground 72``. A full run skips it.
 
 .. note::
 
    The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
+
+One Class per File
+^^^^^^^^^^^^^^^^^^
+
+.. grid:: 1 1 2 2
+   :gutter: 2
+
+   .. grid-item::
+
+      .. code-block:: text
+
+         live/
+         ├── include/
+         │   ├── vehicle.hpp
+         │   ├── passenger.hpp
+         │   ├── fleet.hpp
+         │   ├── robotaxi.hpp
+         │   └── taxi.hpp
+         └── src/
+             ├── vehicle.cpp
+             ├── passenger.cpp
+             ├── fleet.cpp
+             ├── robotaxi.cpp
+             ├── taxi.cpp
+             └── main.cpp
+
+   .. grid-item::
+
+      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class.
+      - You find a class by its file name. A change to one class recompiles only the files that include its header: a change to ``Taxi`` recompiles ``taxi.cpp`` and the files that include ``taxi.hpp``.
+      - A derived class gets its own files too: ``robotaxi.hpp`` includes ``vehicle.hpp``, because ``RoboTaxi`` needs its base. ``vehicle.hpp`` includes none of its derived classes: a base class does not know the classes derived from it.
+      - So a new kind of vehicle adds two files and changes none.
+      - ``main.cpp`` includes the headers it uses.
 
 One Namespace: ``fleet``
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -126,7 +158,7 @@ Every class of the program is in the namespace ``fleet``. ``Vehicle``, ``Route``
 
          }  // namespace fleet
 
-- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Every file of ``project/week9/common`` does the same, and so do ``fleet.hpp`` and ``fleet.cpp`` in the live code. The comment after the last brace says which brace closes the namespace.
+- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Every file of ``project/week9/common`` does the same, and so does every file of the live code. The comment after the last brace says which brace closes the namespace.
 - Inside the namespace, ``Route`` uses ``Position`` with no prefix: both are in ``fleet``.
 - Outside ``fleet``, as in ``live/src/main.cpp``, write ``fleet::Route``. The listings on this page leave ``fleet::`` out.
 
@@ -435,21 +467,14 @@ Multiplicity
 Live Coding: Step 1
 """""""""""""""""""
 
-**10 minutes, with me.** We write ``Passenger`` in ``live/include/fleet.hpp``, below ``Vehicle``. It is the class you already wrote, plus an id from a static counter.
+**10 minutes, with me.** We write ``Passenger`` in ``passenger.hpp`` and ``passenger.cpp``. ``Vehicle`` is your class plus an id from a static counter.
 
 1. ``private``: ``std::string name_`` and ``std::weak_ptr<Vehicle> ride_``.
 2. An ``explicit`` constructor, defined in the class. It throws for an empty name: it checks the invariant, a name that is not empty.
-3. In ``fleet.cpp``, ``board`` stores the vehicle in ``ride_``, and ``leave`` resets it.
+3. In ``passenger.cpp``, ``board`` stores the vehicle in ``ride_``, and ``leave`` resets it.
 4. Uncomment the Step 1 block in ``main.cpp``: ``maya`` boards ``car_a``, then ``car_a.reset()``.
 
-Build, then run:
-
-.. code-block:: bash
-
-   702build week9_live
-   702run week9_live
-
-The Step 1 block prints:
+Build and run: ``live9``. The Step 1 block prints:
 
 .. code-block:: text
 
@@ -458,7 +483,7 @@ The Step 1 block prints:
    true
 
 - 1: ``board`` added no owner. ``true``: ``watcher``, a second ``std::weak_ptr``, finds the ``Vehicle`` destroyed, while ``maya`` still exists.
-- The ``Vehicle`` in ``live/include/fleet.hpp`` is the one you already wrote, with one addition: ``get_id`` and the static counter ``next_id_``. ``Fleet`` needs the id in Step 2.
+- The ``Vehicle`` in ``live/include/vehicle.hpp`` is the one you already wrote, with one addition: ``get_id`` and the static counter ``next_id_``. ``Fleet`` needs the id in Step 2.
 - **Checkpoint**: show me your three lines before we start Step 2.
 
 The class we write is in `A Passenger Rides a Vehicle`_, under Further Reading.
@@ -515,14 +540,14 @@ Fleet and Vehicle in the Class Diagram
 Live Coding: Step 2
 """""""""""""""""""
 
-**15 minutes, on your own.** Write ``Fleet``, below ``Passenger``. A fleet shares its vehicles. Its invariant: no null pointer and no vehicle twice.
+**15 minutes, on your own.** Write ``Fleet`` in ``fleet.hpp`` and ``fleet.cpp``. A fleet shares its vehicles. Its invariant: no null pointer and no vehicle twice.
 
 1. ``private``: ``vehicles_``, a ``std::vector<std::shared_ptr<Vehicle>>``.
 2. ``add`` throws for a null pointer, and skips a vehicle already in the fleet. It checks the invariant before it changes anything.
 3. ``remove(int id)`` erases by id with ``std::erase_if``. ``size`` returns the count. The three bodies go in ``fleet.cpp``.
 4. Uncomment the Step 2 block: ``car_a`` is added twice, then ``car_b`` is removed.
 
-Build with ``702build week9_live``, then run with ``702run week9_live``. The Step 2 block prints:
+Build and run: ``live9``. The Step 2 block prints:
 
 .. code-block:: text
 
@@ -758,13 +783,13 @@ RoboTaxi and Taxi in the Class Diagram
 Live Coding: Step 3
 """""""""""""""""""
 
-**10 minutes, on your own.** Derive ``RoboTaxi`` and ``Taxi`` from ``Vehicle``, below ``Fleet``. Each line with a hollow triangle becomes one class.
+**10 minutes, on your own.** Derive ``RoboTaxi`` and ``Taxi`` from ``Vehicle``, each in its own files: ``robotaxi.hpp``, ``taxi.hpp`` and their ``.cpp`` files. Each line with a hollow triangle becomes one class.
 
 1. ``class RoboTaxi : public Vehicle``. Its ``explicit`` constructor passes the maximum speed on: ``: Vehicle{max_speed}`` (`Constructors and Inheritance`_). This base class initializer builds the ``Vehicle`` part, with ``Vehicle``'s own check of the maximum speed.
 2. ``class Taxi : public Vehicle``, plus a ``private`` ``driver_name_``. Its constructor passes the maximum speed on too, and ``std::move`` moves the name into ``driver_name_``.
 3. Uncomment the Step 3 block: a lidar on a ``RoboTaxi``, a ``Taxi`` at 10 m/s, and one of each in a ``Fleet``.
 
-Build with ``702build week9_live``, then run with ``702run week9_live``. The Step 3 block prints:
+Build and run: ``live9``. The Step 3 block prints:
 
 .. code-block:: text
 
@@ -1174,12 +1199,12 @@ Live Coding: Step 4
 
 **15 minutes, on your own.** Make ``drive`` ``virtual``: one loop drives both kinds.
 
-1. In ``Vehicle``: ``virtual void drive(const Route& route) const``, with a body in ``fleet.cpp``.
+1. In ``Vehicle``: ``virtual void drive(const Route& route) const``, with a body in ``vehicle.cpp``.
 2. In ``RoboTaxi`` and ``Taxi``: the same ``drive``, marked ``override``, each printing its own line.
 3. In ``Fleet``: ``drive_all``, which calls ``drive`` on each vehicle. ``drive_all`` knows only ``Vehicle``.
 4. Uncomment the Step 4 block: one of each kind in a ``Fleet``, on ``trip``, the 500 m route at the top of ``main``.
 
-Build with ``702build week9_live``, then run with ``702run week9_live``. The Step 4 block prints:
+Build and run: ``live9``. The Step 4 block prints:
 
 .. code-block:: text
 
@@ -1294,6 +1319,8 @@ override
     public:
      void drive(const Route& route) const override;  // must override
    };
+
+- ``RoboTaxi::drive`` is ``virtual`` too, without the keyword. C++20 **[class.virtual]** (11.7.2) paragraph 1: "A non-static member function is a virtual function if it is first declared with the keyword virtual or if it overrides a virtual member function declared in a base class".
 
 .. note::
 
@@ -1444,10 +1471,7 @@ Deleting through a Base Pointer
 
 - ``vehicle`` deletes a ``Vehicle*``. Its destructor is not ``virtual``, so the static type picks it: only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
 - The name has 19 characters, more than the 15 a ``std::string`` of g++ keeps inside itself, so the name is on the heap.
-- Run: ``702run week9_playground 72``. It prints the two lines above, then AddressSanitizer stops the run with the report of `Measured with AddressSanitizer`_.
-
-Measured with AddressSanitizer
-""""""""""""""""""""""""""""""
+- Run: ``702run week9_playground 72``. It prints the two lines above, then AddressSanitizer stops the run:
 
 .. code-block:: text
 
@@ -1464,9 +1488,10 @@ Measured with AddressSanitizer
    Direct leak of 20 byte(s) in 1 object(s) allocated from:
    SUMMARY: AddressSanitizer: 20 byte(s) leaked in 1 allocation(s).
 
-- The code of `Deleting through a Base Pointer`_, in ``undefined/``: ``702run week9_playground 73``. The stack traces are cut.
+- The code is in ``undefined/``. The stack traces are cut.
 - 56 bytes were allocated for a ``Taxi``, and ``delete`` freed them as a 24-byte ``Vehicle``.
 - The 20 bytes that leak are the driver's name: 19 characters and the ``'\0'`` that ends them, never freed because ``~Taxi`` never ran.
+- The course flags do not catch this at compile time: with ``-Wall -Wextra``, g++ gives no warning. With ``-Wnon-virtual-dtor``, it warns: ``'class Vehicle' has virtual functions and accessible non-virtual destructor``.
 
 Live Coding: Step 5
 """""""""""""""""""
@@ -1474,7 +1499,7 @@ Live Coding: Step 5
 **5 minutes, on your own.** Delete a ``Taxi`` through a ``Vehicle`` pointer, as in `Deleting through a Base Pointer`_, then add a ``virtual`` destructor. Your ``Vehicle`` has a ``virtual`` method since Step 4, but its destructor is not ``virtual`` yet.
 
 1. Uncomment the Step 5 block: a ``std::unique_ptr<Vehicle>`` owns a ``Taxi`` driven by Ana Maria Rodrigues. Build: no warning. Run: the ``Taxi`` drives 500 m, then AddressSanitizer stops the program.
-2. In ``Vehicle``, in ``fleet.hpp``: ``virtual ~Vehicle() = default;``. Run again: the same line, and no report.
+2. In ``Vehicle``, in ``vehicle.hpp``: ``virtual ~Vehicle() = default;``. Run again: the same line, and no report.
 
 Item 1 gives (the stack traces are cut):
 
@@ -1486,7 +1511,7 @@ Item 1 gives (the stack traces are cut):
      size of the deallocated type: 96 bytes.
 
 - AddressSanitizer saw 128 bytes allocated for a ``Taxi`` and freed as a 96-byte ``Vehicle``.
-- 96: your ``Vehicle``, 88 bytes measured with g++, and the 8-byte vtable pointer of Step 4 (`The Cost of virtual`_). A ``Taxi`` adds its ``std::string``, 32 bytes: 96 + 32 = 128. These sizes differ from the 56 and 24 of `Measured with AddressSanitizer`_ because your ``Vehicle`` is the full class, with every data member.
+- 96: your ``Vehicle``, 88 bytes measured with g++, and the 8-byte vtable pointer of Step 4 (`The Cost of virtual`_). A ``Taxi`` adds its ``std::string``, 32 bytes: 96 + 32 = 128. These sizes differ from the 56 and 24 of `Deleting through a Base Pointer`_ because your ``Vehicle`` is the full class, with every data member.
 - After item 2, the program ends normally. The ``delete`` now runs ``~Taxi`` first, which frees the driver's name, then ``~Vehicle``.
 
 The code this step replaces is in `With a virtual Destructor`_, under Further Reading.
@@ -1513,7 +1538,7 @@ The test: can some code delete an object of a derived class through a pointer to
    4. No, for the same reason: no class derives from ``Fleet``.
    5. No, until we derived from it and kept RoboTaxis behind ``Vehicle`` pointers. Adding the first ``virtual`` method to a class is the moment to add the ``virtual`` destructor: "A class with a virtual function should have a virtual or protected destructor". Rule: `Core Guidelines C.127 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-dtor>`__.
 
-   ``702run week9_playground 75`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
+   ``702run week9_playground 74`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
 
 Summary
 ^^^^^^^
@@ -1558,7 +1583,7 @@ Live Coding: Step 6
 
 **5 minutes, on your own.** Make ``drive`` pure ``virtual``, so ``Vehicle`` is abstract: no ``Vehicle`` object can be created.
 
-1. In ``Vehicle``, ``drive`` ends with ``= 0``. Delete its body from ``fleet.cpp``: a pure ``virtual`` method has no body here.
+1. In ``Vehicle``, ``drive`` ends with ``= 0``. Delete its body from ``vehicle.cpp``: a pure ``virtual`` method has no body here.
 2. In the Step 1 and Step 2 blocks, ``std::make_shared<Vehicle>`` becomes ``std::make_shared<RoboTaxi>``.
 3. Uncomment ``Vehicle vehicle{13.4}``, build, and read the error. Then comment it out again.
 4. Build and run: the Step 4 block still drives a ``RoboTaxi`` and a ``Taxi``.
@@ -1656,7 +1681,7 @@ The Whole Program
    Taxi: Ana drives 500 m
 
 - ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
-- Run: ``702run week9_playground 83``.
+- Run: ``702run week9_playground 82``.
 
 Discussion: Add a RoboBus
 """""""""""""""""""""""""
@@ -1674,7 +1699,7 @@ The design has a non-functional requirement for this case: a new kind of vehicle
    :class-container: sd-border-success
 
    1. ``class RoboBus final : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 84`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 83`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". And ``RoboTaxi`` is ``final``: nothing derives from it.
 
@@ -1904,7 +1929,7 @@ A Passenger Rides a Vehicle
      std::weak_ptr<Vehicle> ride_;  // does not own the Vehicle
    };
 
-- ``board`` and ``leave`` are defined in ``fleet.cpp``: ``board`` stores the pointer in ``ride_``, and ``leave`` resets it.
+- ``board`` and ``leave`` are defined in ``passenger.cpp``: ``board`` stores the pointer in ``ride_``, and ``leave`` resets it.
 - ``Vehicle`` is the class you already wrote. The program keeps each ``Vehicle`` in a ``std::shared_ptr``, so a ``std::weak_ptr`` can refer to it without owning it.
 
 Back to `Live Coding: Step 1`_.
@@ -2049,8 +2074,15 @@ Generalization and Specialization
 
 **Specialization**: starting from a base class, and writing a derived class for objects that need more: top-down.
 
-- Specialization: ``Vehicle`` came first. Today, ``RoboTaxi`` and ``Taxi`` derive from it, and `Discussion: Add a RoboBus`_ adds ``RoboBus``.
-- Generalization: if a program had separate ``RoboTaxi`` and ``Taxi`` classes, each with its own speeds and its own check, the shared part would move up into a new ``Vehicle``.
+.. figure:: /_static/images/l9/generalization.png
+   :alt: A class diagram: Vehicle, in italics, on top; RoboTaxi and Taxi, each marked final, below it, each joined to Vehicle by a line with a hollow triangle at Vehicle. A thick arrow on the left, tagged 1, points up. A thick arrow on the right, tagged 2, points down.
+   :align: center
+   :width: 60%
+
+   1: generalization, bottom-up. 2: specialization, top-down.
+
+- 2, specialization: ``Vehicle`` came first. Today, ``RoboTaxi`` and ``Taxi`` derive from it, and `Discussion: Add a RoboBus`_ adds ``RoboBus``.
+- 1, generalization: if a program had separate ``RoboTaxi`` and ``Taxi`` classes, each with its own speeds and its own check, the shared part would move up into a new ``Vehicle``.
 - Both end with the same diagram: a hollow triangle at the base.
 
 Back to `Inheritance`_.

@@ -674,7 +674,7 @@ slide.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 83`` (The Whole
+     - Live Coding Step 4. ``702run week9_playground 82`` (The Whole
        Program) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
@@ -721,7 +721,7 @@ slide.
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_playground 84`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_playground 83`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
@@ -730,8 +730,8 @@ slide.
      - Yes, apart from the slides in ``undefined/``, which show such a bug on
        purpose and run only when asked for by number.
      - ``week9_live``, ``week9_playground`` and ``week9_appendix`` are built
-       with both sanitizers. After Live Coding Step 5, ``702run week9_live``
-       runs with no report.
+       with both sanitizers. After Live Coding Step 5, ``live9`` runs
+       ``week9_live`` with no report.
    * - NFR-4
      - Yes.
      - ``702build`` on ``project/week9``.
