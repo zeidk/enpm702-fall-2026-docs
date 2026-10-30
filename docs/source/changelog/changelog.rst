@@ -5,10 +5,21 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.6: Lecture 9, No References to Earlier Lectures (2026-10-30)
+.. dropdown:: v1.13.7: Lecture 9, Full Requirements Specification (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **L9 Requirements** has the full specification: a priority for each
+     functional requirement, nine non-functional requirements (the last
+     five are targets for a full product), ten technical constraints,
+     implementation guidance with an example program and its output,
+     success criteria, assumptions and the verification approach.
+
+
+.. dropdown:: v1.13.6: Lecture 9, No References to Earlier Lectures (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - The **Lecture 9** pages no longer point back to earlier lectures,
      such as "(L8)" or "L8's ``Vehicle``": each sentence says the thing
