@@ -5,10 +5,20 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.1: Value Categories, Four Flowcharts (2026-10-30)
+.. dropdown:: v1.13.2: Value Categories, Definitions on Hover (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - On the **Value Categories** reading and its quiz, the mouse over
+     ``make_obstacle``, ``lookup`` or ``first_pose`` shows that
+     function's definition in a box (on a phone, tap the name). The quiz
+     shows the three definitions in a box too.
+
+
+.. dropdown:: v1.13.1: Value Categories, Four Flowcharts (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - The **Value Categories** reading has four flowcharts: the two
      questions that give the category, the four steps, the category of a

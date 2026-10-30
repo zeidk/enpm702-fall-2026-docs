@@ -207,7 +207,8 @@ The examples on the rest of this page use these declarations.
 <vcat-make-path>`) and ``make_obstacle`` are the ones from Lecture 7, and
 ``lookup`` is the one from its Exercise 2. The definitions of
 ``make_obstacle``, ``lookup`` and ``first_pose`` are in the box under the
-declarations.
+declarations. With the mouse over one of these names anywhere on the page,
+its definition shows in a box. On a phone, tap the name.
 
 .. _vcat-declarations:
 
@@ -248,27 +249,7 @@ declarations.
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   .. code-block:: cpp
-      :linenos:
-
-      Obstacle make_obstacle(int id) {
-        return Obstacle{id};  // the other members take their defaults
-      }
-
-      // The Obstacle with this id, or the first one when no id matches.
-      Obstacle& lookup(std::vector<Obstacle>& seen, int id) {
-        for (Obstacle& obstacle : seen) {
-          if (obstacle.id == id) {
-            return obstacle;
-          }
-        }
-        return seen[0];
-      }
-
-      // The first pose of a path.
-      const Pose& first_pose(const std::vector<Pose>& path) {
-        return path[0];
-      }
+   .. include:: vcat_definitions.inc
 
    - Line 1: ``make_obstacle`` returns an ``Obstacle`` **by value**, with
      no ``&``. So a call such as ``make_obstacle(3)`` is a prvalue

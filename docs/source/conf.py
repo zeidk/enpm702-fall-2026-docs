@@ -116,6 +116,8 @@ html_js_files = [
     ("sidebar-persist.js", {"defer": None}),
     # Shape of the Read the Docs version menu; see the file's header.
     ("flyout-style.js", {"defer": "defer"}),
+    # Value Categories: the definitions on hover; see the file's header.
+    ("vcat-hover.js", {"defer": "defer"}),
 ]
 
 html_css_files = [

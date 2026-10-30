@@ -5,6 +5,16 @@ Value Categories: Quiz
 The questions use the :ref:`declarations <vcat-declarations>` at the
 start of Finding the Category in Four Steps, in :doc:`vcat_lecture`.
 
+.. dropdown:: The Definitions of ``make_obstacle``, ``lookup`` and ``first_pose``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. include:: vcat_definitions.inc
+
+   With the mouse over one of these names anywhere on this page, its
+   definition shows in a box. On a phone, tap the name.
+
 
 .. admonition:: Question 1
    :class: hint

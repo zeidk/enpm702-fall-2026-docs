@@ -528,3 +528,31 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
   --enpm-flyout-logo-filter: none;
 }
+
+/* Value Categories: the definition of make_obstacle, lookup or first_pose in a
+   box when the mouse is over the name (_static/vcat-hover.js). */
+.vcat-fn {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+.vcat-fn:focus-visible {
+  outline: 2px solid var(--pst-color-primary);
+  outline-offset: 1px;
+}
+.vcat-tip {
+  position: absolute;
+  z-index: 2000;
+  max-width: min(42rem, calc(100vw - 16px));
+  background: var(--pst-color-background);
+  border: 1px solid var(--pst-color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  padding: 0.25rem;
+  font-size: 0.85rem;
+}
+.vcat-tip .highlight pre {
+  margin: 0;
+  white-space: pre;
+  overflow-x: auto;
+}
