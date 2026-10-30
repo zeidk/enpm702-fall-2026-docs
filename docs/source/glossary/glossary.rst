@@ -2145,6 +2145,13 @@ L9: OOP Advanced
       triangle at the base.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Internal Linkage
+      A name with internal linkage is not matched by the linker with a name
+      in another file. Every name in an unnamed namespace has it, so two
+      source files can each have their own ``make_trip`` in an unnamed
+      namespace, and the program links.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
    Multiplicity
       The numbers at an end of a UML line: how many objects of that end's
       class take part, for one object of the class at the other end. ``1``,
@@ -2226,6 +2233,13 @@ L9: OOP Advanced
       is the Unified Modeling Language.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Unnamed Namespace
+      A namespace with no name, ``namespace { ... }``. The names inside it
+      can be used only in the source file that declares them, so it holds the
+      helpers that only one file needs. Never in a header: each file that
+      includes it would get its own copy.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
    virtual Destructor
       A destructor declared ``virtual`` in the base class. Deleting a derived
       object through a base pointer then runs the derived destructor first,
@@ -2250,7 +2264,7 @@ L9: OOP Advanced
 
 .. raw:: html
 
-   <p class="glossary-also">Also used here: <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7).</p>
+   <p class="glossary-also">Also used here: <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Namespace" target="_blank" rel="noopener">Namespace</a> (L2), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7), <a href="#term-using-Declaration" target="_blank" rel="noopener">using Declaration</a> (L2).</p>
 
 
 .. _g-vc:

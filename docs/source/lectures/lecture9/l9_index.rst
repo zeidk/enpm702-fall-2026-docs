@@ -7,7 +7,7 @@ L9: OOP Advanced
 Overview
 --------
 
-This lecture covers advanced object-oriented programming in C++, on the same robotaxi program as L8. It opens with the UML class diagram of the whole program and comes back to it, with the part being built in purple, before each new piece. A **design** comes first: requirements say what the program must do, their nouns and verbs give the classes and methods, and a **UML class diagram** draws them. The lecture then names each line of the diagram: a ``Passenger`` rides a ``Vehicle`` (association, ``std::weak_ptr``), a ``Fleet`` holds vehicles it shares (aggregation, ``std::shared_ptr``), a ``Vehicle`` owns its ``Sensor``\ s and a ``Route`` its ``Position``\ s (composition), a ``Vehicle`` uses a ``Route`` for one call (dependency), and a ``RoboTaxi`` and a ``Taxi`` are vehicles (inheritance, with ``protected``, base class initializers and construction order). **Polymorphism** follows: compile-time (redefinition, static types) and runtime (``virtual``, ``override``), slicing, ``auto`` against a pointer to the base class, and ``virtual`` destructors, measured with AddressSanitizer. The lecture ends with **abstraction**, an abstract ``Vehicle`` with a pure ``virtual`` ``drive``, concrete classes that override it, and ``final``. In class, you write ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi`` and change L8's ``Vehicle`` in seven Live Coding steps: Step 1 with me, Steps 2 to 7 on your own. Discussions take the place of the in-class exercises of earlier lectures. The graded C++ exercise is done after class.
+This lecture covers advanced object-oriented programming in C++, on the same robotaxi program as L8. A warm-up asks you to improve a ``Vehicle`` class with what L8 taught. The lecture then opens with the UML class diagram of the whole program and comes back to it, with the part being built in purple, before each new piece. A **design** comes first: requirements say what the program must do, their nouns and verbs give the classes and methods, and a **UML class diagram** draws them. **Namespaces** come next: every class of the program goes in the namespace ``fleet``, across several files, with using-declarations, nested namespaces, and unnamed namespaces for helpers of one file. The lecture then names each line of the diagram: a ``Passenger`` rides a ``Vehicle`` (association, ``std::weak_ptr``), a ``Fleet`` holds vehicles it shares (aggregation, ``std::shared_ptr``), a ``Vehicle`` owns its ``Sensor``\ s and a ``Route`` its ``Position``\ s (composition), a ``Vehicle`` uses a ``Route`` for one call (dependency), and a ``RoboTaxi`` and a ``Taxi`` are vehicles (inheritance, with ``protected``, base class initializers and construction order). **Polymorphism** follows: compile-time (redefinition, static types) and runtime (``virtual``, ``override``), slicing, ``auto`` against a pointer to the base class, and ``virtual`` destructors, measured with AddressSanitizer. The lecture ends with **abstraction**, an abstract ``Vehicle`` with a pure ``virtual`` ``drive``, concrete classes that override it, and ``final``. In class, you write ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi`` and change L8's ``Vehicle`` in seven Live Coding steps: Step 1 with me, Steps 2 to 7 on your own. Discussions take the place of the in-class exercises of earlier lectures. The graded C++ exercise is done after class.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
@@ -15,13 +15,14 @@ This lecture covers advanced object-oriented programming in C++, on the same rob
    By the end of this lecture, you will be able to:
 
    1. **Turn** requirements into classes, and **read** a UML class diagram.
-   2. **Tell** association, aggregation, composition and dependency apart, and **write** each one with the right member or parameter.
-   3. **Derive** a class from a base class, **call** the base constructor, and **use** ``protected``.
-   4. **Explain** compile-time and runtime polymorphism, and **write** ``virtual`` methods with ``override``.
-   5. **Choose** between ``auto`` and a pointer to the base class.
-   6. **Give** a base class a ``virtual`` destructor, and **say** what goes wrong without one.
-   7. **Write** an abstract class with a pure ``virtual`` method, and concrete classes that override it.
-   8. **Use** ``final`` on a class and on a method.
+   2. **Put** classes in a namespace across several files, and **keep** a helper private to one file with an unnamed namespace.
+   3. **Tell** association, aggregation, composition and dependency apart, and **write** each one with the right member or parameter.
+   4. **Derive** a class from a base class, **call** the base constructor, and **use** ``protected``.
+   5. **Explain** compile-time and runtime polymorphism, and **write** ``virtual`` methods with ``override``.
+   6. **Choose** between ``auto`` and a pointer to the base class.
+   7. **Give** a base class a ``virtual`` destructor, and **say** what goes wrong without one.
+   8. **Write** an abstract class with a pure ``virtual`` method, and concrete classes that override it.
+   9. **Use** ``final`` on a class and on a method.
 
 .. toctree::
    :hidden:

@@ -11,6 +11,8 @@ Lecture 9 References
 
    - **Design and Relationships**: Requirements say what the program does. Their nouns give classes, their verbs methods, their links relationships, drawn in a UML class diagram. Association knows (``std::weak_ptr``), aggregation shares (``std::shared_ptr``), composition owns alone (``std::unique_ptr`` or a member), dependency uses for one call (a parameter).
 
+   - **Namespaces**: A namespace keeps two classes with the same name apart: every class of the program is in ``fleet``. Each file opens it again and adds its names. Outside it, write ``fleet::Vehicle`` or use a using-declaration, never ``using namespace`` in a header. A helper of one source file goes in an unnamed namespace.
+
    - **Inheritance**: ``class D : public B`` adds to ``B``. ``private`` members of ``B`` stay ``private``; data members are never ``protected`` in this course. The constructor names ``B{...}`` first in its list. The base is built first and destroyed last.
 
    - **Polymorphism**: Without ``virtual``, the static type picks the method. With ``virtual`` and a base reference or pointer, the dynamic type picks it while the program runs. Mark every override ``override``. Copying into a base object slices. ``auto`` keeps the derived type; moving converts to a base pointer. A base class whose objects are deleted through base pointers needs a ``virtual`` destructor.
@@ -34,6 +36,14 @@ Lecture 9 References
 
    .. grid:: 1 1 2 2
       :gutter: 2
+
+      .. grid-item-card:: Namespaces
+         :link: https://en.cppreference.com/w/cpp/language/namespace
+         :class-card: sd-border-secondary
+
+         **cppreference: Namespaces**
+
+         Named, nested and unnamed namespaces. Cited on the Namespaces divider.
 
       .. grid-item-card:: Derived Classes
          :link: https://en.cppreference.com/w/cpp/language/derived_class
@@ -85,6 +95,9 @@ Lecture 9 References
    - `C.145 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-poly>`_: Access polymorphic objects through pointers and references
    - `ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`_: Don't slice
    - `R.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-unique>`_: Prefer ``unique_ptr`` over ``shared_ptr`` unless you need to share ownership
+   - `SF.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-using-directive>`_: Don't write ``using namespace`` at global scope in a header file
+   - `SF.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-unnamed>`_: Don't use an unnamed (anonymous) namespace in a header
+   - `SF.22 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-unnamed2>`_: Use an unnamed (anonymous) namespace for all internal/non-exported entities
 
 
 .. dropdown:: UML
