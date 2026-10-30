@@ -5,10 +5,20 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.8: Lecture 9, Requirements as a Real Specification (2026-10-30)
+.. dropdown:: v1.13.9: Lecture 9, Requirements Before Design (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 9**: Requirements is its own part, before Design, since the
+     requirements say what the program must do and the design says how.
+     The Five Relationships table shows ``class Taxi : public Vehicle``,
+     and the ``702run`` slide numbers follow the slides.
+
+
+.. dropdown:: v1.13.8: Lecture 9, Requirements as a Real Specification (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **L9 Requirements** is written the way a project writes its
      requirements: one behavior per requirement, each with a rationale, a
