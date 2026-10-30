@@ -20,12 +20,9 @@ Lecture
    The keys, in the order of the page: ``helper``, ``examples``,
    ``traps``, ``dangling``, ``overloads`` and ``exercises``. To test an
    expression of your own, use `The CATEGORY Helper`_, a complete program
-   you can copy into a file.
-
-   Every category on this page was checked with ``static_assert`` on g++
-   13.3 with the course flags, ``-std=c++20 -Wall -Wextra -pedantic-errors
-   -Wshadow``. Every output and compiler message on this page was copied
-   from that compiler.
+   you can copy into a file. The outputs and compiler messages on this
+   page come from g++ 13.3 with the course flags, ``-std=c++20 -Wall
+   -Wextra -pedantic-errors -Wshadow``.
 
 
 Three Categories, Two Groups
@@ -38,9 +35,11 @@ Three Categories, Two Groups
 
    The value categories, from Lecture 7.
 
-Every expression in C++ has a **type** and a **value category**. There
-are three categories: **lvalue**, **xvalue** and **prvalue**. Every
-expression is exactly one of the three.
+An **expression** is code the program evaluates: ``count``,
+``count + 1`` and ``make_path(3)`` are three. Every expression has a
+**type** and a **value category**. There are three categories:
+**lvalue**, **xvalue** and **prvalue**, and every expression is exactly
+one of them.
 
 The two boxes in the middle row of the tree are not categories of their
 own. Each one is a name for two of the three bottom boxes together:
@@ -49,10 +48,9 @@ own. Each one is a name for two of the three bottom boxes together:
 - An **rvalue** is an xvalue or a prvalue.
 
 So the question "is this expression an rvalue, a prvalue or an xvalue?"
-mixes two rows of the tree. An rvalue is always a prvalue or an xvalue,
-never a third thing. Ask instead which of the three bottom boxes the
-expression is in. That answer also tells you whether it is a glvalue and
-whether it is an rvalue:
+mixes two rows of the tree. Ask instead which of the three bottom boxes
+the expression is in. The answer then tells you whether it is a glvalue
+and whether it is an rvalue:
 
 .. list-table::
    :header-rows: 1
@@ -87,13 +85,58 @@ The category answers two questions about an expression:
 
 1. **Does it refer to an object that already exists?** An **object** is a
    piece of memory that holds a value. When the answer is yes, the
-   object has an address, and the expression is a glvalue. The tree
-   calls this "has identity".
+   object has an address, and the expression is a glvalue: the left box
+   of the tree, labeled "has identity".
 2. **May another object take its contents?** To **take** the contents is
    to move them into another object, as the move constructor of
    ``std::vector`` does in Lecture 7: the new vector gets the block on the
    heap, and no element is copied. When the answer is yes, the
-   expression is an rvalue.
+   expression is an rvalue: the right box, labeled "may be taken".
+
+An xvalue answers yes to both questions, which is why the tree joins it
+to both boxes.
+
+The examples in the table below and in the rest of the page use
+``path``, a ``std::vector<Pose>``, and ``make_path``, the function from
+Lecture 7 that builds one:
+
+.. _vcat-make-path:
+
+.. dropdown:: The Definition of ``make_path``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+      :linenos:
+
+      struct Pose {
+        double x{0.0};       // m
+        double y{0.0};       // m
+        double heading{0.0}; // rad
+      };
+
+      std::vector<Pose> make_path(int n) {
+        std::vector<Pose> path;
+        path.reserve(n);  // room for n poses: one allocation
+        for (int i{0}; i < n; ++i) {
+          path.push_back({static_cast<double>(i), 0.0, 0.0});
+        }
+        return path;
+      }
+
+   - Lines 1 to 5: a ``Pose`` is a position on the road (``x`` and ``y``,
+     in meters) and a direction (``heading``, in radians). A path is a
+     vector of them, one per point.
+   - Line 7: ``make_path`` returns a ``std::vector<Pose>`` **by value**,
+     with no ``&``. So a call such as ``make_path(3)`` is a prvalue
+     (`Step 3: A Function Call or a Cast`_).
+   - Lines 8 to 12: it builds a path of ``n`` poses, one meter apart
+     along the road: pose ``i`` is at x = ``i`` meters, y = 0, heading 0.
+     ``reserve(n)`` allocates room for all ``n`` poses before the loop.
+   - Line 13: it returns the local ``path``. The caller's vector gets the
+     block on the heap that this ``path`` allocated: no pose is copied
+     (Lecture 7, Elision or a Move).
 
 .. list-table::
    :header-rows: 1
@@ -117,8 +160,8 @@ The category answers two questions about an expression:
      - ``make_path(3)``
 
 There is no fourth row. An expression that refers to no object only
-computes a value, and nothing else in the program can use that value, so
-another object may always take it.
+computes a value. That value has no name, so no other line of the
+program can reach it, and another object may always take it.
 
 
 One Object, Three Expressions
@@ -140,7 +183,7 @@ One Object, Three Expressions
   them, and ``path`` is left empty (libstdc++, measured: ``path.size()``
   printed ``0``).
 - ``path`` and ``std::move(path)`` refer to the same object, and their
-  categories differ. A category belongs to an expression, not to an
+  categories differ: a category belongs to an expression, not to an
   object.
 
 .. note::
@@ -152,24 +195,74 @@ One Object, Three Expressions
 Finding the Category in Four Steps
 ====================================================
 
-Look at the **last operation** the expression does: its outermost
-operator, call or name. In ``std::move(obstacle).pose``, the last
-operation is ``.pose``, a member access, so Step 4 decides. In
-``make_path(3).size()``, it is the call to ``size()``, so Step 3 decides.
-Go through the steps in order, and stop at the first one that applies.
+The examples on the rest of this page use these declarations.
+``Pose``, ``Obstacle``, ``make_path`` (:ref:`its definition
+<vcat-make-path>`) and ``make_obstacle`` are the ones from Lecture 7, and
+``lookup`` is the one from its Exercise 2.
+
+.. _vcat-declarations:
+
+.. code-block:: cpp
+
+   struct Pose { double x{0.0}; double y{0.0}; double heading{0.0}; };
+   struct Obstacle {
+     int id{0};
+     Pose pose{};
+     double speed{0.0};
+     bool is_static{false};
+   };
+
+   std::vector<Pose> make_path(int n);                     // returns by value
+   Obstacle make_obstacle(int id);                         // returns by value
+   Obstacle& lookup(std::vector<Obstacle>& seen, int id);  // returns Obstacle&
+   const Pose& first_pose(const std::vector<Pose>& path);  // returns const Pose&
+
+   int count{3};
+   int other{7};
+   const double limit{40.0};
+   int& alias{count};
+   int numbers[3]{10, 20, 30};
+   int* p{&numbers[1]};
+   Pose pose{1.0, 2.0, 0.0};
+   Pose* pp{&pose};
+   Obstacle obstacle{2, {12.0, -1.0, 0.0}, 4.0};
+   std::vector<Pose> path{make_path(3)};
+   std::vector<Pose>&& r{make_path(10)};
+   std::vector<Obstacle> seen{make_obstacle(0), make_obstacle(1)};
+   std::string a{"cyc"};
+   std::string b{"list"};
+
+To find the category of an expression, first find its **outermost
+operation**: the operator, call or name that runs last and gives the
+whole expression its result. In ``make_path(3).size()``, ``make_path(3)``
+runs first, and ``.size()`` then runs on what it returned. The result of
+the whole expression is what ``size()`` returns, so the call to
+``size()`` decides.
+
+Then ask four questions about that outermost operation, in order, and
+stop at the first one that answers yes:
+
+1. Is it a name? (Step 1)
+2. Is it a literal? (Step 2)
+3. Is it a function call or a cast? (Step 3)
+4. Is it a built-in operator? (Step 4)
+
+For ``make_path(3).size()``, the answer is yes at question 3, and Step 3
+gives prvalue.
 
 
 Step 1: A Name
 --------------
 
 The name of a variable, a parameter or a reference is an **lvalue**,
-whatever its type. A name declared with ``&&`` is an lvalue too.
+whatever its type, even a type with ``&&``.
 
 A name refers to an object that already exists, and you can use the
 name again on the next line. If another object could take its contents
 without your saying so, the next line would find it empty. So a name
 never lets another object take its contents: you mark it with
-``std::move`` when you want that.
+``std::move`` when you want that. `One Object, Three Expressions`_
+shows both cases, ``path`` on line 2 and ``std::move(path)`` on line 3.
 
 .. note::
 
@@ -202,8 +295,10 @@ that already exists.
 Step 3: A Function Call or a Cast
 ---------------------------------
 
-Read the **return type** of the function. For a cast, read the type you
-cast to.
+Read the **return type** of the function: the type written before its
+name in the declaration. ``Obstacle& lookup(...)`` returns
+``Obstacle&``. For a cast, read the type you cast to, the one between
+``<`` and ``>``.
 
 .. list-table::
    :header-rows: 1
@@ -228,8 +323,11 @@ cast to.
 - Member functions follow the same rule: ``seen.size()`` returns a
   ``std::size_t`` by value, a prvalue; ``seen.front()`` returns a
   reference, an lvalue.
-- An **overloaded operator** is a function too. ``seen[0]`` calls the
-  ``operator[]`` of ``std::vector``, which returns a reference: an lvalue.
+- A class can define what an operator does on its objects, with a
+  function named ``operator[]``, ``operator+`` and so on. Such an
+  operator is an **overloaded operator**, and using it calls that
+  function, so Step 3 applies. ``seen[0]`` calls the ``operator[]`` of
+  ``std::vector``, which returns a reference: an lvalue.
   ``a + b`` on two ``std::string`` objects calls ``operator+``, which
   returns a new ``std::string`` by value: a prvalue.
 - ``std::move(x)`` returns ``T&&``, so it is an xvalue. It is a cast, and
@@ -299,10 +397,17 @@ category of each one's result:
        when one of them is a prvalue, such as ``0``
      - it is one of the two, or a value computed from one of them
 
-When ``e`` in ``e.m`` is a prvalue, there is no object to take a member
-of yet. The compiler creates a temporary object from the prvalue
-(**temporary materialization**, Lecture 7), and the member of that
-temporary is an xvalue: it exists, and nothing else can use it.
+For ``e.m``, find the category of ``e`` first, with the same four
+steps. Then:
+
+1. ``e`` is an lvalue: ``e.m`` is an lvalue. ``pose.x`` is one.
+2. ``e`` is an xvalue: ``e.m`` is an xvalue. ``std::move(pose).x`` is
+   one: when the whole object is marked, its members are marked too.
+3. ``e`` is a prvalue: there is no object to take a member of yet. The
+   compiler creates a temporary object from the prvalue (**temporary
+   materialization**, Lecture 7), and the member of that temporary is an
+   xvalue: it exists, and nothing else can use it.
+   ``make_obstacle(3).id`` is one.
 
 .. note::
 
@@ -319,12 +424,19 @@ temporary is an xvalue: it exists, and nothing else can use it.
 Checking Your Answer
 ====================================================
 
-Lecture 7 gave a test that the compiler runs for you: ``decltype((e))``,
-with two pairs of parentheses, gives
+``decltype(e)`` (Lecture 7) gives the type of an expression ``e``. The
+compiler works it out without running ``e``. With two pairs of
+parentheses, ``decltype((e))`` also shows the category. If ``T`` is the
+type of ``e``, it gives
 
 - ``T&`` when ``e`` is an lvalue,
 - ``T&&`` when ``e`` is an xvalue,
 - ``T`` when ``e`` is a prvalue.
+
+For example, ``decltype((path))`` is ``std::vector<Pose>&``: it ends in
+one ``&``, so ``path`` is an lvalue. ``decltype((std::move(path)))`` is
+``std::vector<Pose>&&``, an xvalue, and ``decltype((make_path(3)))`` is
+``std::vector<Pose>``, with no ``&``, a prvalue.
 
 With one pair around a plain name, ``decltype(e)`` gives the type the
 name was declared with instead, and says nothing about the category
@@ -396,7 +508,16 @@ Save it as ``categories.cpp``, then build and run it:
    3
    prvalue
 
-- ``decltype`` does not evaluate the expression (Lecture 7). Line 29
+- Lines 8 to 17: ``category<T>()`` looks at a type ``T``.
+  ``std::is_lvalue_reference_v<T>`` is ``true`` when ``T`` ends in one
+  ``&``, and ``std::is_rvalue_reference_v<T>`` when it ends in ``&&``. So
+  the function returns ``"lvalue"``, ``"xvalue"`` or ``"prvalue"``, the
+  three cases of the list above.
+- Line 19: ``CATEGORY(e)`` hands ``decltype((e))`` to ``category``.
+- Lines 26 to 28 print the first three lines of the output: ``count`` is
+  a name (Step 1), ``count + 1`` a built-in operator (Step 4), and
+  ``std::move(path)`` a call that returns ``T&&`` (Step 3).
+- ``decltype`` does not evaluate the expression. Line 29
   prints ``3`` for ``count`` after ``CATEGORY(count++)``, and line 30
   prints ``3`` for ``path.size()`` after line 28's
   ``CATEGORY(std::move(path))``: nothing was incremented, and nothing was
@@ -417,41 +538,30 @@ Save it as ``categories.cpp``, then build and run it:
 Worked Examples
 ====================================================
 
-Each example below uses these declarations. ``Pose``, ``Obstacle``,
-``make_path`` and ``make_obstacle`` are the ones from Lecture 7, and
-``lookup`` is the one from its Exercise 2. ``702run
+The examples use the :ref:`declarations <vcat-declarations>` at the
+start of `Finding the Category in Four Steps`_. ``702run
 week7_value_categories examples`` prints the category of every
 expression in the tables of this section.
 
-.. code-block:: cpp
 
-   struct Pose { double x{0.0}; double y{0.0}; double heading{0.0}; };
-   struct Obstacle {
-     int id{0};
-     Pose pose{};
-     double speed{0.0};
-     bool is_static{false};
-   };
+One Example in Full
+-------------------
 
-   std::vector<Pose> make_path(int n);                     // returns by value
-   Obstacle make_obstacle(int id);                         // returns by value
-   Obstacle& lookup(std::vector<Obstacle>& seen, int id);  // returns Obstacle&
-   const Pose& first_pose(const std::vector<Pose>& path);  // returns const Pose&
+The tables below give each answer in one line. Here is the full
+reasoning for one expression, ``std::move(obstacle).pose.x``, step by
+step.
 
-   int count{3};
-   int other{7};
-   const double limit{40.0};
-   int& alias{count};
-   int numbers[3]{10, 20, 30};
-   int* p{&numbers[1]};
-   Pose pose{1.0, 2.0, 0.0};
-   Pose* pp{&pose};
-   Obstacle obstacle{2, {12.0, -1.0, 0.0}, 4.0};
-   std::vector<Pose> path{make_path(3)};
-   std::vector<Pose>&& r{make_path(10)};
-   std::vector<Obstacle> seen{make_obstacle(0), make_obstacle(1)};
-   std::string a{"cyc"};
-   std::string b{"list"};
+1. The outermost operation is ``.x``, a member access: Step 4. For
+   ``e.m``, you need the category of ``e`` first, so find the category of
+   ``std::move(obstacle).pose``.
+2. In ``std::move(obstacle).pose``, the outermost operation is ``.pose``,
+   another member access. Find the category of ``std::move(obstacle)``.
+3. In ``std::move(obstacle)``, the outermost operation is a call to
+   ``std::move``: Step 3. It returns ``Obstacle&&``, so it is an xvalue.
+4. Back to step 2: ``e`` is an xvalue, so ``std::move(obstacle).pose`` is
+   an xvalue.
+5. Back to step 1: ``e`` is an xvalue, so ``std::move(obstacle).pose.x``
+   is an xvalue.
 
 
 Names (Step 1)
@@ -660,14 +770,16 @@ For ``e.m``, find the category of ``e`` first, with the same four steps.
        When the whole ``Obstacle`` is marked, its ``pose`` is marked too.
    * - ``std::move(obstacle).pose.x``
      - xvalue
-     - the same rule twice
+     - ``std::move(obstacle).pose`` is an xvalue (the row above), so its
+       member ``x`` is an xvalue (`One Example in Full`_)
    * - ``make_obstacle(3).id``
      - xvalue
      - ``make_obstacle(3)`` is a prvalue. ``.id`` needs an object, so a
        temporary is made, and its member is an xvalue.
    * - ``Pose{}.x``
      - xvalue
-     - ``Pose{}`` is a prvalue, so the same as the line above
+     - ``Pose{}`` is a prvalue, so a temporary is made, as for
+       ``make_obstacle(3).id``
    * - ``std::move(pp)->x``
      - lvalue
      - ``->`` follows the pointer, and ``*`` always gives an lvalue
@@ -681,8 +793,8 @@ For ``e.m``, find the category of ``e`` first, with the same four steps.
      - ``make_path(3)[0]`` is an lvalue, so its member is an lvalue
    * - ``make_path(3).size()``
      - prvalue
-     - the last operation is the call to ``size()``, which returns by
-       value (Step 3)
+     - the outermost operation is the call to ``size()``, which returns
+       by value (Step 3)
 
 
 Objects Made on the Spot
@@ -739,7 +851,9 @@ Trap 1: The Type Is Not the Category
 - The **category** belongs to an expression, and the expression ``r`` is a
   name: Step 1 says lvalue. Both ``static_assert`` lines compile.
 - A parameter is a name too. In the function below, ``path`` has the type
-  ``std::vector<Pose>&&``, and the expression ``path`` is still an lvalue:
+  ``std::vector<Pose>&&``, and the expression ``path`` is still an
+  lvalue, for the reason Step 1 gives: ``inside`` could use ``path`` again
+  on its next line.
 
 .. code-block:: cpp
    :linenos:
@@ -759,8 +873,10 @@ Trap 1: The Type Is Not the Category
    1 const&
    2 &&
 
-- Line 5 calls overload 1, the ``const&`` one. If ``take`` copied its
-  argument, line 5 would copy.
+- Line 5 calls overload 1, the ``const&`` one. Overload 2 takes a
+  ``std::vector<Pose>&&``, which binds only to rvalues (`Why the Category
+  Matters`_), so it cannot receive the lvalue ``path``. If ``take`` copied
+  its argument, line 5 would copy.
 - To let a function take a parameter's contents, mark it again with
   ``std::move``, as on line 6 (Lecture 7, A Parameter the Function Moves
   From).
@@ -825,6 +941,9 @@ rvalue only on the right. That rule no longer holds, in both directions.
   line. It compiles, and does nothing useful.
 - Lines 4 and 6: for built-in types, the left of ``=`` must be an lvalue
   that can be changed. The second message, for each line.
+- Line 5: ``++count`` is an lvalue (Step 4), the variable ``count``
+  itself, so the assignment compiles. ``++count`` makes ``count`` 4, then
+  ``= 3`` sets it back to 3 (measured with g++ 13.3).
 - Use the four steps, not the side of ``=``.
 
 .. note::
@@ -901,8 +1020,8 @@ Three things in your code depend on the category.
    error: lvalue required as unary '&' operand
    error: taking address of rvalue [-fpermissive]
 
-The built-in ``&`` accepts only an lvalue. An xvalue refers to an object
-that has an address, and ``&`` still does not compile on it.
+The first message is for ``b``, the second for ``c``. An xvalue refers
+to an object that has an address, and ``&`` still does not compile on it.
 
 .. note::
 
@@ -919,21 +1038,29 @@ that has an address, and ``&`` still does not compile on it.
 
    * - Reference
      - Binds to
+     - Why
      - Example that does not compile
    * - ``T&``
      - lvalues
+     - another name for an object that already exists
      - ``int& lr{count + 1};``
    * - ``const T&``
      - lvalues, xvalues and prvalues
+     - read-only, so a temporary may bind: no change to it can be lost
      - none
    * - ``T&&``
      - xvalues and prvalues (rvalues)
+     - a function that takes one may take the contents
      - ``int&& rr{count};``
 
 .. code-block:: text
 
    error: cannot bind non-const lvalue reference of type 'int&' to an rvalue of type 'int'
    error: cannot bind rvalue reference of type 'int&&' to lvalue of type 'int'
+
+- The first message is for ``lr``: ``count + 1`` is a prvalue. g++ calls
+  it an "rvalue", the group name, which covers prvalues and xvalues.
+- The second message is for ``rr``: ``count`` is a name, an lvalue.
 
 **3. The category picks the overload: a copy or a move.** With the two
 ``take`` functions of `Trap 1: The Type Is Not the Category`_
@@ -961,12 +1088,20 @@ that has an address, and ``&`` still does not compile on it.
    1 const&
    1 const&
 
-- An lvalue picks ``const T&``, overload 1.
-- An rvalue picks ``T&&``, overload 2, when it can bind there. That is
-  what lets ``std::vector`` move instead of copy (Lecture 7, Overloads for
-  Copy and Move).
+- An lvalue picks ``const T&``, overload 1: overload 2's ``T&&`` cannot
+  bind to an lvalue (item 2).
+- An rvalue could bind to either overload, since ``const T&`` binds to
+  every category. For an rvalue, the compiler prefers ``T&&``, overload
+  2, when it can bind there. That is what lets ``std::vector`` move
+  instead of copy (Lecture 7, Overloads for Copy and Move).
 - Line 8 is the ``const`` case of `Trap 2: std::move Moves Nothing`_: an
   xvalue of type ``const std::vector<Pose>&&`` cannot bind to overload 2.
+
+.. note::
+
+   C++20 **[over.ics.rank]** (12.4.3.2) paragraph 3.2.3: one binding is
+   better than another when "S1 binds an rvalue reference to an rvalue and
+   S2 binds an lvalue reference".
 
 
 Summary
@@ -1001,7 +1136,8 @@ Summary
        value, ``T{...}``
 
 - **glvalue** = lvalue or xvalue. **rvalue** = xvalue or prvalue.
-- To find the category: a name (lvalue), a literal (prvalue, or lvalue for
-  a string), a call or cast (read the return type), a built-in operator
+- To find the category: find the outermost operation, then the first
+  step that applies. A name (lvalue), a literal (prvalue, or lvalue for a
+  string), a call or cast (read the return type), a built-in operator
   (the table in `Step 4: A Built-in Operator`_).
 - Check with ``decltype((e))`` or ``CATEGORY(e)``.

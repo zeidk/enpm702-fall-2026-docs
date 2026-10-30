@@ -12,8 +12,7 @@ reading module, with no video. Read it after the Value Categories part of
 
 The page gives a step-by-step way to find the category of any expression,
 then applies it to 54 expressions, each with its reason. The exercises
-add 33 more, with answers. Every category in this module was checked
-with g++ 13.3 and ``-std=c++20``.
+add 33 more, with answers.
 
 
 .. admonition:: Learning Objectives
@@ -22,8 +21,9 @@ with g++ 13.3 and ``-std=c++20``.
    By the end of this material, you will be able to:
 
    - Say why "rvalue" is not a third answer next to "prvalue" and "xvalue".
-   - Find the category of an expression in four steps: names, literals,
-     function calls and casts, built-in operators.
+   - Find the category of an expression from its outermost operation, in
+     four steps: names, literals, function calls and casts, built-in
+     operators.
    - Check any answer with ``decltype((e))`` and the ``CATEGORY`` helper.
    - Tell the type of a variable apart from the category of an expression
      that names it.

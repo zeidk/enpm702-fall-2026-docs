@@ -2,8 +2,8 @@
 Value Categories: Quiz
 ====================================================
 
-The questions use the declarations of the Worked Examples in
-:doc:`vcat_lecture`.
+The questions use the :ref:`declarations <vcat-declarations>` at the
+start of Finding the Category in Four Steps, in :doc:`vcat_lecture`.
 
 
 .. admonition:: Question 1
@@ -22,7 +22,8 @@ The questions use the declarations of the Worked Examples in
 
       **a) Exactly one**
 
-      C++20 **[basic.lval]** paragraph 2: "Every expression belongs to
+      glvalue and rvalue are not categories of their own: each is a name
+      for two of the three. C++20 **[basic.lval]** paragraph 2: "Every expression belongs to
       exactly one of the fundamental classifications in this taxonomy:
       lvalue, xvalue, or prvalue".
 
@@ -125,9 +126,10 @@ The questions use the declarations of the Worked Examples in
 
       **b) xvalue**
 
-      ``make_obstacle(3)`` is a prvalue. To read ``.id``, the compiler
-      creates a temporary object from it (temporary materialization). The
-      member of that temporary is an xvalue.
+      The outermost operation is ``.id`` (Step 4), so find the category
+      of ``make_obstacle(3)`` first: a prvalue (Step 3). To read ``.id``,
+      the compiler creates a temporary object from it (temporary
+      materialization). The member of that temporary is an xvalue.
 
 
 .. admonition:: Question 7
@@ -210,8 +212,9 @@ The questions use the declarations of the Worked Examples in
 
       ``int&&`` binds only to rvalues, and ``count`` is an lvalue. g++
       says: ``cannot bind rvalue reference of type 'int&&' to lvalue of
-      type 'int'``. ``const int&`` binds to every category, and ``int&``
-      binds to the lvalue ``count``.
+      type 'int'``. b) compiles because ``count + 1`` is a prvalue, an
+      rvalue. ``const int&`` binds to every category, and ``int&`` binds
+      to the lvalue ``count``.
 
 
 .. admonition:: Question 11

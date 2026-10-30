@@ -5,10 +5,27 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.12.0: Reading Material, Value Categories (2026-10-29)
+.. dropdown:: v1.12.1: Value Categories, Step by Step (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - The **Value Categories** reading now walks through each idea in
+     smaller steps. Before the four steps, it shows how to find the
+     outermost operation of an expression, and the declarations of every
+     example come first.
+   - New: the definition of ``make_path``, a full worked example
+     (``std::move(obstacle).pose.x``), the three cases of a member access,
+     what ``decltype((e))`` gives for ``path``, ``std::move(path)`` and
+     ``make_path(3)``, why an rvalue prefers the ``T&&`` overload, and why
+     g++ writes "rvalue" in its messages.
+   - The exercise solutions and quiz answers name the step that decides
+     each answer.
+
+
+.. dropdown:: v1.12.0: Reading Material, Value Categories (2026-10-29)
+   :icon: tag
+   :class-container: sd-border-success
 
    - New self-study reading, **Value Categories**, under Reading
      Material. It extends the Value Categories part of Lecture 7: why

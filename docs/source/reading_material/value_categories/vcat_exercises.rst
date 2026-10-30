@@ -5,10 +5,9 @@ C++ Exercises
 
 .. note::
 
-   **Not graded, and not submitted on Canvas.** These exercises belong to
-   a self-study reading module: work them at your own pace. Write your
-   answer for each expression first, then check it with the ``CATEGORY``
-   helper from :doc:`vcat_lecture` and open the solution.
+   **Not graded, and not submitted on Canvas.** Write your answer for
+   each expression first, then check it with the ``CATEGORY`` helper from
+   :doc:`vcat_lecture` and open the solution.
    ``702run week7_value_categories exercises`` prints the answers of
    Exercises 1 to 5 and 7, and ``702run week7_value_categories dangling``
    shows Exercise 6: ``whole`` works, and ``second`` stops the program.
@@ -132,7 +131,8 @@ C++ Exercises
    :class-title: sd-font-weight-bold
 
    Use the declarations of Exercise 2. For each expression, find the
-   category of the part before ``.`` or ``->`` first.
+   outermost operation first. For ``e.m``, find the category of ``e``
+   before the category of ``e.m``.
 
    .. code-block:: cpp
 
@@ -158,19 +158,25 @@ C++ Exercises
       2. ``make_sensor(1).range``: **xvalue**. ``make_sensor(1)`` is a
          prvalue. A temporary is made for ``.range``, and its member is an
          xvalue.
-      3. ``std::move(sensors[0]).id``: **xvalue**. A member of an xvalue.
+      3. ``std::move(sensors[0]).id``: **xvalue**.
+         ``std::move(sensors[0])`` returns ``Sensor&&``, an xvalue (Step
+         3), so its member is an xvalue.
       4. ``release(sensors[0]).range``: **xvalue**. ``release`` returns
          ``Sensor&&``, so the call is an xvalue, and so is its member.
-      5. ``front_sensor(sensors).id``: **lvalue**. A member of an lvalue.
-      6. ``Sensor{}.id``: **xvalue**. ``Sensor{}`` is a prvalue, so the
-         same as line 2.
+      5. ``front_sensor(sensors).id``: **lvalue**. ``front_sensor``
+         returns ``Sensor&``, an lvalue (Step 3), so its member is an
+         lvalue.
+      6. ``Sensor{}.id``: **xvalue**. ``Sensor{}`` is a prvalue, so a
+         temporary is made, as for ``make_sensor(1).range`` on line 2.
       7. ``Sensor{}``: **prvalue**. A type name followed by braces.
       8. ``sensors.data()->range``: **lvalue**. ``->`` follows a pointer,
          and the object a pointer points at is an lvalue.
-      9. ``std::vector<Sensor>{}.size()``: **prvalue**. The last operation
-         is the call to ``size()``, which returns by value.
-      10. ``(*sensors.data()).id``: **lvalue**. The same as line 8, written
-          with ``*`` and ``.``.
+      9. ``std::vector<Sensor>{}.size()``: **prvalue**. The outermost
+         operation is the call to ``size()``, which returns by value.
+      10. ``(*sensors.data()).id``: **lvalue**. ``*sensors.data()`` is the
+          object the pointer points at, an lvalue (Step 4), so its member
+          is an lvalue. Line 8 is the same expression, written with
+          ``->``.
 
 
 .. dropdown:: Exercise 4: Copy or Move?
@@ -212,6 +218,10 @@ C++ Exercises
          copy
          move
          move
+
+      An lvalue goes to ``store(const Sensor&)``, because ``Sensor&&``
+      cannot bind to it. An rvalue goes to ``store(Sensor&&)`` when it can
+      bind there (:doc:`vcat_lecture`, Why the Category Matters).
 
       - Line 8: ``lidar`` is an lvalue: ``copy``.
       - Line 9: ``make_sensor(4)`` is a prvalue: ``move``.
@@ -295,9 +305,9 @@ C++ Exercises
    .. dropdown:: Solution
       :class-container: sd-border-success
 
-      1. ``make_path(3)`` is a **prvalue** (it returns by value).
-         ``make_path(3)[1]`` is an **lvalue**: ``operator[]`` returns
-         ``Pose&``.
+      1. ``make_path(3)`` is a **prvalue**: it returns by value (Step 3).
+         In ``make_path(3)[1]``, the outermost operation is ``operator[]``,
+         which returns ``Pose&``, so it is an **lvalue** (Step 3).
       2. On line 1, ``whole`` binds to the temporary vector itself, so the
          temporary lives as long as ``whole``. On line 2, ``second`` binds
          to the ``Pose&`` that ``operator[]`` returned, not to the
