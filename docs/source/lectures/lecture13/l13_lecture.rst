@@ -44,7 +44,9 @@ the robot's base frame or the world frame. This is where **TF2** comes
 in.
 
 .. figure:: /_static/images/l13/frame_tree.png
+   :alt: A tree of four boxes. world at the top has an arrow to base_link below it. base_link has two arrows, to camera_link on the left and to lidar_link on the right.
    :align: center
+   :width: 45%
 
    A coordinate frame tree showing relationships between world,
    base_link, camera_link, and lidar_link frames.

@@ -125,7 +125,9 @@ The ROS 2 computation graph consists of several key concepts:
         operations (covered in L12).
 
 .. figure:: /_static/images/l10/computation_graph.png
+   :alt: Five nodes, A to E, and three filled boxes: a topic, a service and an action, each named /name. Node A publishes to the topic, and Nodes B and C subscribe to it. Node B sends a request through the service to Node D, and the response comes back to Node B. Node C sends a goal through the action to Node E, and feedback and the result come back to Node C.
    :align: center
+   :width: 100%
 
    The ROS 2 computation graph: nodes communicate through topics
    (publish-subscribe), services (request-response), and actions
@@ -328,7 +330,9 @@ Publish-Subscribe Pattern
 ----------------------------------------------------
 
 .. figure:: /_static/images/l10/pub_sub_pattern.png
+   :alt: Publisher 1 and Publisher 2 on the left each send an arrow to a filled box in the middle, a topic named /name. From the topic, arrows go to Subscriber 1, Subscriber 2 and Subscriber 3 on the right.
    :align: center
+   :width: 75%
 
    The publish-subscribe pattern: publishers send messages to a named
    topic, and subscribers receive messages from that topic.

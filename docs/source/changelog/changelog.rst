@@ -13,6 +13,9 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
    - The **Value Categories** reading has four flowcharts: the two
      questions that give the category, the four steps, the category of a
      member access ``e.m``, and which reference binds to which category.
+   - **Lecture 10** and **Lecture 13** show the three figures that were
+     missing: the computation graph, the publish-subscribe pattern and the
+     coordinate frame tree.
 
 
 .. dropdown:: v1.13.0: Lecture 9, Warm-Up and Namespaces (2026-10-30)
