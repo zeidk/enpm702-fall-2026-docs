@@ -198,7 +198,9 @@ Finding the Category in Four Steps
 The examples on the rest of this page use these declarations.
 ``Pose``, ``Obstacle``, ``make_path`` (:ref:`its definition
 <vcat-make-path>`) and ``make_obstacle`` are the ones from Lecture 7, and
-``lookup`` is the one from its Exercise 2.
+``lookup`` is the one from its Exercise 2. The definitions of
+``make_obstacle``, ``lookup`` and ``first_pose`` are in the box under the
+declarations.
 
 .. _vcat-declarations:
 
@@ -231,6 +233,54 @@ The examples on the rest of this page use these declarations.
    std::vector<Obstacle> seen{make_obstacle(0), make_obstacle(1)};
    std::string a{"cyc"};
    std::string b{"list"};
+
+.. _vcat-make-obstacle-lookup:
+
+.. dropdown:: The Definitions of ``make_obstacle``, ``lookup`` and ``first_pose``
+   :icon: code
+   :class-container: sd-border-primary
+   :class-title: sd-font-weight-bold
+
+   .. code-block:: cpp
+      :linenos:
+
+      Obstacle make_obstacle(int id) {
+        return Obstacle{id};  // the other members take their defaults
+      }
+
+      // The Obstacle with this id, or the first one when no id matches.
+      Obstacle& lookup(std::vector<Obstacle>& seen, int id) {
+        for (Obstacle& obstacle : seen) {
+          if (obstacle.id == id) {
+            return obstacle;
+          }
+        }
+        return seen[0];
+      }
+
+      // The first pose of a path.
+      const Pose& first_pose(const std::vector<Pose>& path) {
+        return path[0];
+      }
+
+   - Line 1: ``make_obstacle`` returns an ``Obstacle`` **by value**, with
+     no ``&``. So a call such as ``make_obstacle(3)`` is a prvalue
+     (`Step 3: A Function Call or a Cast`_).
+   - Line 2: ``Obstacle{id}`` sets ``id``. The other members take the
+     defaults written in ``Obstacle``: ``pose`` at (0, 0, 0), ``speed``
+     0.0 and ``is_static`` ``false``.
+   - Line 6: ``lookup`` returns an ``Obstacle&``. So a call such as
+     ``lookup(seen, 1)`` is an lvalue (Step 3): it refers to an
+     ``Obstacle`` that is already in ``seen``.
+   - Line 7: ``obstacle`` is a reference, ``Obstacle&``, so what line 9
+     returns is the element of ``seen`` itself, not a copy.
+   - Line 12: when no ``id`` matches, it returns the first element.
+     ``seen`` must not be empty: ``seen[0]`` on an empty vector reads
+     memory that holds no ``Obstacle``.
+   - Line 16: ``first_pose`` returns a ``const Pose&``. So a call such as
+     ``first_pose(path)`` is an lvalue (Step 3): it refers to the first
+     ``Pose`` in ``path``. The ``const`` means you can read that ``Pose``
+     through it but not change it. ``path`` must not be empty either.
 
 To find the category of an expression, first find its **outermost
 operation**: the operator, call or name that runs last and gives the

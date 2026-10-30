@@ -5,10 +5,19 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.12.1: Value Categories, Step by Step (2026-10-30)
+.. dropdown:: v1.12.2: Value Categories, the Example Functions (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - The **Value Categories** reading shows the code of ``make_obstacle``,
+     ``lookup`` and ``first_pose``, in a box under the declarations, with
+     what each call's return type makes of it.
+
+
+.. dropdown:: v1.12.1: Value Categories, Step by Step (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - The **Value Categories** reading now walks through each idea in
      smaller steps. Before the four steps, it shows how to find the
