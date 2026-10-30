@@ -6,7 +6,7 @@ Lecture 9 Quiz
 
 This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``auto`` against a pointer to the base class, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
 
-Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do after Using the Names Outside fleet. ``trip`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
+Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do (One Namespace: ``fleet``). ``trip`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
 .. note::
 
@@ -374,7 +374,7 @@ Multiple Choice (Questions 1 to 11)
       Line 2 names the class in full. The using-declaration brings the one name ``fleet::Route`` into ``main``, so line 3 finds it without ``fleet::``. With line 1 removed, the program compiles.
 
 
-True/False (Questions 12 to 17)
+True/False (Questions 12 to 16)
 =================================
 
 .. admonition:: Question 12
@@ -446,16 +446,3 @@ True/False (Questions 12 to 17)
       **True.**
 
       A ``protected`` member can be used by the methods of the derived classes, so the assignment compiles, and it skips ``set_speed``'s check. Every derived class can now break ``Vehicle``'s invariant. That is why every data member is ``private`` in this course's assignments, and why Core Guidelines C.133 says "``protected`` data is a source of complexity and errors. ``protected`` data complicates the statement of invariants".
-
-
-.. admonition:: Question 17
-   :class: hint
-
-   **True or False**: Two source files of one program each define a helper ``double make_trip()``, each inside an unnamed namespace, ``namespace { }``. The linker stops with "multiple definition of ``make_trip()``".
-
-   .. dropdown:: Answer
-      :class-container: sd-border-success
-
-      **False.**
-
-      A name in an unnamed namespace has internal linkage (C++20 [basic.link] 6.6 paragraph 4): the linker does not match it with a name in another file, so each file keeps its own ``make_trip``. In the lecture's Two Helpers with One Name, the program links and prints ``500 200``. Without the unnamed namespaces, the same two files stop the linker with ``multiple definition of `make_trip()'``.

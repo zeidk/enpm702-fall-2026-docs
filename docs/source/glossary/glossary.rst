@@ -2145,13 +2145,6 @@ L9: OOP Advanced
       triangle at the base.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
-   Internal Linkage
-      A name with internal linkage is not matched by the linker with a name
-      in another file. Every name in an unnamed namespace has it, so two
-      source files can each have their own ``make_trip`` in an unnamed
-      namespace, and the program links.
-      :doc:`L9 </lectures/lecture9/l9_lecture>`
-
    Multiplicity
       The numbers at an end of a UML line: how many objects of that end's
       class take part, for one object of the class at the other end. ``1``,
@@ -2231,13 +2224,6 @@ L9: OOP Advanced
       two boxes is a relationship. ``+`` is ``public``, ``-`` ``private``,
       ``#`` ``protected``; underlined is ``static``, italics is abstract. UML
       is the Unified Modeling Language.
-      :doc:`L9 </lectures/lecture9/l9_lecture>`
-
-   Unnamed Namespace
-      A namespace with no name, ``namespace { ... }``. The names inside it
-      can be used only in the source file that declares them, so it holds the
-      helpers that only one file needs. Never in a header: each file that
-      includes it would get its own copy.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    virtual Destructor

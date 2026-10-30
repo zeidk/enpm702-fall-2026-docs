@@ -5,10 +5,21 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.3: Lecture 9, Requirements Page (2026-10-30)
+.. dropdown:: v1.13.4: Lecture 9, One Namespace Section (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 9** shows the namespace ``fleet`` in one section: why the
+     program uses it, and what it looks like in a header and a source
+     file. The longer Namespaces part, the quiz question on unnamed
+     namespaces (16 questions now) and the glossary entries Internal
+     Linkage and Unnamed Namespace are gone.
+
+
+.. dropdown:: v1.13.3: Lecture 9, Requirements Page (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - New page, **L9 Requirements**: the five requirements today's code
      uses, with where each one is in the code, and all twelve. The
