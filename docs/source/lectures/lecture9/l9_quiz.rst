@@ -429,7 +429,7 @@ True/False (Questions 12 to 16)
 
       **False.**
 
-      ``Fleet`` stores ``std::shared_ptr<Vehicle>`` and names only ``Vehicle``. A ``std::shared_ptr<RoboBus>`` converts to a ``std::shared_ptr<Vehicle>``, as a ``std::shared_ptr<RoboTaxi>`` does, so not one line of ``Fleet`` changes. That is the non-functional requirement of last year's design: a new kind of vehicle needs no change to ``Fleet``.
+      ``Fleet`` stores ``std::shared_ptr<Vehicle>`` and names only ``Vehicle``. A ``std::shared_ptr<RoboBus>`` converts to a ``std::shared_ptr<Vehicle>``, as a ``std::shared_ptr<RoboTaxi>`` does, so not one line of ``Fleet`` changes. That is the non-functional requirement of the design: a new kind of vehicle needs no change to ``Fleet``.
 
 .. admonition:: Question 16
    :class: hint

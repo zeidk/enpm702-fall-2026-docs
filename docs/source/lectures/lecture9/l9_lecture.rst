@@ -89,7 +89,7 @@ Code for This Lecture
 One Namespace: ``fleet``
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Every class of the program is in the namespace ``fleet`` (L2). ``Vehicle``, ``Route`` and ``Sensor`` are common names: a library with its own ``Vehicle`` would clash with ours. g++ then says ``redefinition of 'class Vehicle'``.
+Every class of the program is in the namespace ``fleet``. ``Vehicle``, ``Route`` and ``Sensor`` are common names: a library with its own ``Vehicle`` would clash with ours. g++ then says ``redefinition of 'class Vehicle'``.
 
 .. grid:: 1 1 2 2
    :gutter: 2
@@ -193,7 +193,7 @@ A **requirement** is a sentence that says what the program must do, or how well 
 - A **constraint** limits the choices: "the code is C++20".
 - A **success criterion** says how we check the result: "every test passes".
 
-Last year's design of this system lists twelve functional requirements, FR-1 to FR-12. Today's code uses five of them. See :doc:`L9 Requirements <l9_requirements>`.
+The design of this system lists twelve functional requirements, FR-1 to FR-12. Today's code uses five of them. See :doc:`L9 Requirements <l9_requirements>`.
 
 From Requirements to Classes
 """"""""""""""""""""""""""""
@@ -273,7 +273,7 @@ Reading a Class Box
    * - «final»
      - No class derives from this one (`Live Coding: Step 7`_)
 
-- The types are the C++ types of the code. A design written before any code often uses types that belong to no language (``String``, ``Integer``), as last year's did.
+- The types are the C++ types of the code. A design written before any code often uses types that belong to no language (``String``, ``Integer``).
 
 Tools
 """""
@@ -328,7 +328,7 @@ Two boxes of the design, in PlantUML:
 Summary
 ^^^^^^^
 
-- Requirements say what the program must do; the design says how. Today's code uses five of last year's twelve functional requirements.
+- Requirements say what the program must do; the design says how. Today's code uses five of the twelve functional requirements.
 - In a requirement, a noun that holds data and keeps a rule becomes a class, a verb becomes a method, and a link between two nouns becomes a relationship.
 - A UML class diagram draws each class as a box with its name, data members and methods, and each relationship as a line.
 
@@ -1673,7 +1673,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
 3. What happens if you forget ``drive``?
 4. Should ``RoboBus`` derive from ``RoboTaxi`` instead?
 
-Last year's design has a non-functional requirement for this case: a new kind of vehicle needs no change to ``Fleet``.
+The design has a non-functional requirement for this case: a new kind of vehicle needs no change to ``Fleet``.
 
 .. dropdown:: Answers
    :class-container: sd-border-success
@@ -1880,7 +1880,7 @@ All Twelve Requirements
    * - FR-12
      - support passengers boarding and leaving, which updates the vehicle.
 
-- Shortened from last year's design document. Today's code covers FR-3, FR-4, FR-5, FR-10 and FR-12, listed with their code on :doc:`L9 Requirements <l9_requirements>`.
+- Today's code covers FR-3, FR-4, FR-5, FR-10 and FR-12, listed with their code on :doc:`L9 Requirements <l9_requirements>`.
 
 Back to `Requirements`_.
 

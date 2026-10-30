@@ -5,10 +5,22 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.4: Lecture 9, One Namespace Section (2026-10-30)
+.. dropdown:: v1.13.5: Lecture 9, Requirements Specification (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **L9 Requirements** is now a requirements specification: purpose,
+     scope and definitions, then the functional requirements (FR-1 to
+     FR-12), non-functional requirements, constraints and success criteria.
+     Each requirement says whether it is in the course code, and how it is
+     checked.
+   - Lecture 9 no longer calls the design "last year's".
+
+
+.. dropdown:: v1.13.4: Lecture 9, One Namespace Section (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9** shows the namespace ``fleet`` in one section: why the
      program uses it, and what it looks like in a header and a source
