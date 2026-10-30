@@ -5,10 +5,23 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.7: Lecture 9, Full Requirements Specification (2026-10-30)
+.. dropdown:: v1.13.8: Lecture 9, Requirements as a Real Specification (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **L9 Requirements** is written the way a project writes its
+     requirements: one behavior per requirement, each with a rationale, a
+     priority, a verification method and an acceptance criterion. Combined
+     requirements are split (FR-10.1 to FR-10.6). Which requirements the
+     course code meets is now a separate traceability table.
+   - The class diagram with every member, in Lecture 9, now shows the
+     constructors of ``Passenger``, ``RoboTaxi`` and ``Taxi``.
+
+
+.. dropdown:: v1.13.7: Lecture 9, Full Requirements Specification (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **L9 Requirements** has the full specification: a priority for each
      functional requirement, nine non-functional requirements (the last

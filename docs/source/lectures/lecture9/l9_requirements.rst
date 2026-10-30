@@ -4,7 +4,7 @@
 L9 Requirements
 ====================================================
 
-**Robotaxi Fleet Software: Requirements Specification**
+**Robotaxi Fleet Software: Software Requirements Specification**
 
 This document states the requirements of the robotaxi fleet software that
 we build in class. The :doc:`lecture page <l9_lecture>` says what
@@ -18,28 +18,24 @@ the classes and methods.
 1.1 Purpose
 ----------------------------------------------------
 
-The **requirements analysis** says **what** the software must do before the
-design says **how**. This document lists what the software must do
-(functional requirements), how well it must do it (non-functional
-requirements), the limits on how it is built (technical constraints), and how
-we check the result (success criteria and verification). Each requirement has
-an ID, so the design, the code and the checks can name it.
+This specification states what the robotaxi fleet software shall do and how
+well it shall do it, so that the design, the code and the tests can be checked
+against one list. It is written for the developers who build the software and
+for the reviewers who accept it.
 
 1.2 Scope
 ----------------------------------------------------
 
-The software models a ride company's fleet. It serves both kinds of vehicle: a
-**robotaxi** drives itself and checks its sensors before it moves; a **taxi**
-is driven by a person. Passengers ride the vehicles, and a fleet holds them.
+The software manages a ride company's fleet. The fleet has two kinds of
+vehicle: a **robotaxi**, which drives itself using its sensors, and a
+**taxi**, which a person drives. Passengers request rides, board a vehicle and
+leave it.
 
-- **In the course code** (``project/week9``): FR-3, FR-4, FR-5, FR-10
-  (adding and removing) and FR-12.
-- **Not in the course code**: ride requests and dispatch (FR-1, FR-2),
-  status queries (FR-6), event logging (FR-7), continuous sensor reading
-  (FR-8), route optimization (FR-9), listing available vehicles (part of
-  FR-10) and driver management (FR-11). They stay in this document because a
-  full product would need them.
-- **Out of scope** of the product itself: payment and user authentication.
+Payment, user accounts and user authentication are outside the scope of this
+specification.
+
+Section 8 traces each requirement to the course code: which ones the code of
+``project/week9`` meets, and the check that shows it.
 
 1.3 Definitions
 ----------------------------------------------------
@@ -55,214 +51,445 @@ is driven by a person. Passengers ride the vehicles, and a fleet holds them.
        an id, a maximum speed, a speed, a color and a mileage, and it owns its
        sensors.
    * - RoboTaxi
-     - A vehicle that drives itself. It drives only when it has a sensor.
+     - A vehicle that drives itself.
    * - Taxi
-     - A vehicle with a driver, known by the driver's name. A taxi with no
-       driver does not move.
+     - A vehicle driven by a person, its driver.
    * - Fleet
-     - The company's set of vehicles. It shares them with the rest of the
-       program and does not own them alone.
+     - The company's set of vehicles.
    * - Passenger
-     - A person who rides one vehicle at a time and does not own it.
+     - A person who rides a vehicle.
    * - Route
-     - The waypoints of one trip, in order. Its length is the sum of the
-       straight segments between them.
+     - The waypoints of one trip, in order.
+   * - Waypoint
+     - One point of a route, given as a Position.
    * - Position
-     - One point on the map, ``x`` east and ``y`` north.
+     - One point on the map, ``x`` east and ``y`` north, in meters.
    * - Sensor
-     - A lidar, a camera or a radar, with an id and a range.
+     - A lidar, a camera or a radar mounted on a vehicle, with an id and a
+       range.
+   * - Available vehicle
+     - A vehicle of the fleet that is not on a trip.
 
 All distances are in meters (m) and all speeds in meters per second (m/s).
 
-1.4 Conventions
+1.4 How to Read a Requirement
 ----------------------------------------------------
 
-- **shall** marks a requirement: the software must meet it.
-- **Priority**: **Must** is needed for a first release; **Should** is wanted,
-  and can wait for a later one.
-- IDs: **FR-n** for a functional requirement, **NFR-n** for a non-functional
-  requirement, **TC-n** for a technical constraint, **SC-n** for a success
-  criterion.
-- **Verified by** names the check that shows the requirement is met. A
-  ``702run`` command runs the code of one slide; its output is the one on that
-  slide.
+Each requirement has:
+
+- an **ID**: FR for functional, NFR for non-functional, TC for a technical
+  constraint. A requirement split into parts keeps its number: FR-10.1,
+  FR-10.2.
+- a **statement** with **shall**. It names one behavior, and a test can show
+  whether the software has it.
+- a **rationale**: why the requirement exists.
+- a **priority**: **Must** is needed for the first release; **Should** is
+  wanted, and can wait for a later release.
+- a **verification method**: **Test** (run the software with set inputs and
+  compare the output with the expected one), **Demonstration** (run it and
+  watch it work), **Inspection** (read the code or the design) or
+  **Analysis** (compute or estimate from a model).
+- an **acceptance criterion**: the result that passes the check.
 
 
 2. Functional Requirements
 ====================================================
 
-.. list-table::
-   :header-rows: 1
-   :widths: 8 32 8 26 26
+2.1 Ride Requests and Dispatch
+----------------------------------------------------
 
-   * - ID
-     - Requirement
-     - Priority
-     - Status and design
-     - Verified by
-   * - FR-1
-     - A Passenger shall be able to **request a ride** by giving a pickup and
-       a dropoff location.
-     - Must
-     - Not in the course code.
-     -
-   * - FR-2
-     - The Fleet shall **dispatch an available vehicle**, a RoboTaxi or a
-       Taxi, to a ride request.
-     - Must
-     - Not in the course code.
-     -
-   * - FR-3
-     - Each kind of vehicle shall **drive in its own way**: a RoboTaxi drives
-       itself, and a Taxi is driven by its driver.
-     - Must
-     - In the code: ``Vehicle::drive`` is pure ``virtual``;
-       ``RoboTaxi::drive`` and ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 82`` (The Whole Program)
-       prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
-       ``Taxi: Ana drives 500 m``.
-   * - FR-4
-     - Each RoboTaxi shall carry **one or more Sensors**. A RoboTaxi with no
-       sensor shall not drive.
-     - Must
-     - In the code: a ``Vehicle`` owns its sensors through
-       ``std::unique_ptr``; ``RoboTaxi::drive`` checks ``sensor_count()``
-       first.
-     - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
-       ``RoboTaxi: no sensor, stays parked``, then, with one sensor,
-       ``RoboTaxi: 1 sensor checked, drives 500 m``.
-   * - FR-5
-     - A Vehicle shall **follow a Route** that it is given for one trip.
-     - Must
-     - In the code: ``Vehicle::drive(const Route&)``. The vehicle uses the
-       route only during the call.
-     - ``702run week9_playground 36`` (A Route for One Call) prints
-       ``500 m at 10 m/s: 50 s``.
-   * - FR-6
-     - The software shall answer **status queries**: a vehicle's status and
-       location, and the driver of a Taxi.
-     - Should
-     - Not in the course code.
-     -
-   * - FR-7
-     - The software shall **log the key events** of a ride: ride requested,
-       vehicle dispatched, route given, passenger boarded and left, trip
-       ended.
-     - Should
-     - Not in the course code. ``Vehicle`` has a ``protected`` method,
-       ``log_event``, that prints one event.
-     -
-   * - FR-8
-     - A RoboTaxi shall **read its sensor data continuously** while it
-       operates, to navigate and to find obstacles.
-     - Must
-     - Not in the course code: a ``Sensor`` holds its type and range, and
-       reads nothing.
-     -
-   * - FR-9
-     - The software shall **create Routes** with several waypoints and
-       **optimize** them.
-     - Should
-     - A ``Route`` holds several waypoints and computes its length.
-       Optimizing: not in the course code.
-     -
-   * - FR-10
-     - The Fleet shall **add and remove vehicles**, and **list the available
-       ones**.
-     - Must
-     - Adding and removing in the code: ``Fleet::add``, ``Fleet::remove``.
-       Listing available vehicles: not in the course code.
-     - Live Coding Step 2. ``702run week9_playground 28`` (The Vehicles
-       Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``.
-   * - FR-11
-     - The software shall **manage the drivers** of Taxis: assigning and
-       removing a driver.
-     - Must
-     - Not in the course code: a ``Taxi`` gets its driver's name when it is
-       made.
-     -
-   * - FR-12
-     - A Passenger shall **board and leave** a vehicle. Boarding shall not
-       make the passenger an owner of the vehicle.
-     - Must
-     - In the code: ``Passenger::board``, ``Passenger::leave``; the passenger
-       holds a ``std::weak_ptr<Vehicle>``.
-     - Live Coding Step 1. ``702run week9_playground 24`` (Two Separate
-       Lifetimes) prints ``1``, ``1`` and ``true``.
+**FR-1. Request a ride**
+
+The system shall accept a ride request from a Passenger that gives a pickup
+location and a dropoff location.
+
+:Rationale: A ride starts from a passenger's request.
+:Priority: Must
+:Verification: Test
+:Acceptance: A request with both locations is accepted. A request with a
+   missing location is rejected, and the passenger is told why.
+
+**FR-2. Dispatch a vehicle**
+
+When the system accepts a ride request, the Fleet shall assign one available
+vehicle, a RoboTaxi or a Taxi, to it.
+
+:Rationale: Every accepted request needs a vehicle, of either kind.
+:Priority: Must
+:Verification: Test
+:Acceptance: After the assignment, the request has exactly one vehicle, and
+   that vehicle is no longer available.
+
+2.2 Driving
+----------------------------------------------------
+
+**FR-3. Vehicle-specific driving**
+
+When a vehicle is given a route to drive, the system shall run the driving
+procedure of that vehicle's kind: a RoboTaxi drives itself, and a Taxi is
+driven by its driver.
+
+:Rationale: The two kinds drive differently, and code that drives a vehicle
+   must not need to know which kind it has.
+:Priority: Must
+:Verification: Test
+:Acceptance: One call that drives a list of vehicles makes each vehicle run
+   its own procedure: a RoboTaxi reports its sensors and the distance; a Taxi
+   reports its driver and the distance.
+
+**FR-4.1. Sensors of a RoboTaxi**
+
+Each RoboTaxi shall be able to carry one or more Sensors, of the types lidar,
+camera and radar.
+
+:Rationale: A robotaxi sees its surroundings only through its sensors.
+:Priority: Must
+:Verification: Test
+:Acceptance: Mounting a sensor raises the vehicle's sensor count by 1, and
+   gives the new sensor the next id: 1, then 2.
+
+**FR-4.2. No sensor, no driving**
+
+A RoboTaxi with no sensor shall not move when it is given a route.
+
+:Rationale: Driving without any sensor is unsafe.
+:Priority: Must
+:Verification: Test
+:Acceptance: A RoboTaxi with 0 sensors reports that it stays parked. After one
+   sensor is mounted, the same RoboTaxi drives the route.
+
+**FR-5. Follow a route**
+
+A vehicle shall drive the route it is given for a trip, from the first
+waypoint to the last, in order.
+
+:Rationale: A trip is a sequence of waypoints from the pickup to the dropoff.
+:Priority: Must
+:Verification: Test
+:Acceptance: For a route from (0, 0) to (300, 400), the vehicle drives 500 m.
+   The vehicle keeps no reference to the route after the trip.
+
+**FR-5.1. Taxi without a driver**
+
+A Taxi with no driver shall not move when it is given a route.
+
+:Rationale: A taxi needs a person to drive it.
+:Priority: Must
+:Verification: Test
+:Acceptance: A Taxi made with an empty driver name reports that it stays
+   parked.
+
+2.3 Status and Logging
+----------------------------------------------------
+
+**FR-6. Status queries**
+
+The system shall answer a query for a vehicle's status and location, and for
+the driver of a Taxi.
+
+:Rationale: Dispatchers and passengers need to know where vehicles are and
+   who drives them.
+:Priority: Should
+:Verification: Test
+:Acceptance: A query returns the current status, the current location and,
+   for a Taxi, the driver.
+
+**FR-7. Event log**
+
+The system shall log each key event of a ride: ride requested, vehicle
+dispatched, route given, passenger boarded, passenger left, trip ended.
+
+:Rationale: The log is the record used to investigate a ride after the fact.
+:Priority: Should
+:Verification: Test
+:Acceptance: An end-to-end ride produces one log entry for each of the six
+   events, in order.
+
+2.4 Sensors
+----------------------------------------------------
+
+**FR-8. Continuous sensor reading**
+
+While a RoboTaxi operates, the system shall read the data of each of its
+sensors continuously, to navigate and to detect obstacles.
+
+:Rationale: A robotaxi navigates and avoids obstacles from current sensor
+   data.
+:Priority: Must
+:Verification: Test
+:Acceptance: During operation, every sensor of the RoboTaxi delivers new
+   readings. A sensor that stops delivering is detected (see NFR-6).
+
+2.5 Routes
+----------------------------------------------------
+
+**FR-9.1. Build a route**
+
+The system shall let a route be built by adding waypoints, in order.
+
+:Rationale: A trip has a pickup, a dropoff and stops between them.
+:Priority: Must
+:Verification: Test
+:Acceptance: A route with waypoints added in an order keeps that order.
+
+**FR-9.2. Route length**
+
+The system shall compute a route's length as the sum of the straight segments
+between consecutive waypoints.
+
+:Rationale: The length is needed to plan the trip and to update the vehicle's
+   mileage.
+:Priority: Must
+:Verification: Test
+:Acceptance: A route through (0, 0), (300, 400) and (300, 0) has a length of
+   900 m.
+
+**FR-9.3. Optimize a route**
+
+The system shall reorder the waypoints between the first and the last one to
+shorten a route.
+
+:Rationale: Shorter routes save time and energy.
+:Priority: Should
+:Verification: Test
+:Acceptance: The optimized route is never longer than the original, and keeps
+   the same first and last waypoints.
+
+2.6 Fleet
+----------------------------------------------------
+
+**FR-10.1. Add a vehicle**
+
+The Fleet shall add a vehicle of either kind.
+
+:Rationale: The company adds vehicles to its fleet.
+:Priority: Must
+:Verification: Test
+:Acceptance: Adding two vehicles gives a fleet size of 2.
+
+**FR-10.2. Reject a missing vehicle**
+
+The Fleet shall reject an attempt to add a null vehicle, and shall stay
+unchanged.
+
+:Rationale: A fleet entry that holds no vehicle would fail later, far from the
+   mistake.
+:Priority: Must
+:Verification: Test
+:Acceptance: Adding a null vehicle throws ``std::invalid_argument``, and the
+   fleet size does not change.
+
+**FR-10.3. No duplicates**
+
+Adding a vehicle that is already in the Fleet shall leave the Fleet unchanged.
+
+:Rationale: A vehicle counted twice would be dispatched twice.
+:Priority: Must
+:Verification: Test
+:Acceptance: Adding the same vehicle twice gives a fleet size of 1.
+
+**FR-10.4. Remove a vehicle**
+
+The Fleet shall remove the vehicle with a given id, and shall report whether
+it found one.
+
+:Rationale: Vehicles leave the fleet for service or sale.
+:Priority: Must
+:Verification: Test
+:Acceptance: Removing an id in the fleet reduces the size by 1 and reports
+   success. Removing an unknown id reports failure and changes nothing.
+
+**FR-10.5. The fleet does not own its vehicles**
+
+A vehicle removed from the Fleet, or whose Fleet is destroyed, shall stay
+usable by the rest of the program.
+
+:Rationale: A vehicle can move between fleets, and other parts of the
+   program may still use it.
+:Priority: Must
+:Verification: Test
+:Acceptance: After the fleet is destroyed, a vehicle it held still answers
+   ``get_max_speed()``.
+
+**FR-10.6. List available vehicles**
+
+The Fleet shall list its available vehicles.
+
+:Rationale: Dispatch (FR-2) picks from this list.
+:Priority: Must
+:Verification: Test
+:Acceptance: The list holds every vehicle of the fleet that is not on a trip,
+   and no other.
+
+2.7 Drivers
+----------------------------------------------------
+
+**FR-11. Manage drivers**
+
+The system shall let a driver be assigned to a Taxi and removed from it.
+
+:Rationale: Drivers change between shifts.
+:Priority: Must
+:Verification: Test
+:Acceptance: After an assignment, the Taxi drives with that driver. After the
+   removal, it does not move (FR-5.1).
+
+2.8 Passengers
+----------------------------------------------------
+
+**FR-12.1. Board a vehicle**
+
+A Passenger shall be able to board one vehicle.
+
+:Rationale: A ride needs the passenger in the vehicle.
+:Priority: Must
+:Verification: Test
+:Acceptance: After boarding, the passenger refers to that vehicle.
+
+**FR-12.2. Leave a vehicle**
+
+A Passenger shall be able to leave the vehicle they boarded.
+
+:Rationale: A ride ends when the passenger leaves.
+:Priority: Must
+:Verification: Test
+:Acceptance: After leaving, the passenger refers to no vehicle.
+
+**FR-12.3. A passenger does not own the vehicle**
+
+Boarding shall not keep a vehicle alive: a vehicle shall be destroyed when its
+last owner lets it go, even while a passenger still refers to it.
+
+:Rationale: A passenger's ride must not stop the company from retiring a
+   vehicle.
+:Priority: Must
+:Verification: Test
+:Acceptance: Boarding leaves the vehicle's owner count unchanged (1). After
+   the only owner lets go, the vehicle is destroyed while the passenger
+   exists.
+
+**FR-12.4. A passenger has a name**
+
+The system shall reject a Passenger with an empty name.
+
+:Rationale: A ride is booked under a name.
+:Priority: Must
+:Verification: Test
+:Acceptance: Creating a passenger with an empty name throws
+   ``std::invalid_argument``.
 
 
 3. Non-Functional Requirements
 ====================================================
 
-A non-functional requirement says how well the software works. The first four
-can be checked in the course code. The others are targets for a full product:
-they need a part, such as dispatch or sensor reading, that the course code does
-not have, so nothing in the course measures them.
+**NFR-1. Extensibility**
 
-.. list-table::
-   :header-rows: 1
-   :widths: 9 16 45 30
+Adding a new kind of vehicle shall require no change to the source code of
+``Fleet`` or ``Passenger``.
 
-   * - ID
-     - Quality
-     - Requirement
-     - Verified by
-   * - NFR-1
-     - Extensibility
-     - A new kind of vehicle, such as a RoboBus, shall need **no change** to
-       ``Fleet`` or ``Passenger``.
-     - ``702run week9_playground 83`` (Discussion: Add a RoboBus): a
-       ``RoboBus`` joins a ``Fleet`` unchanged and prints
-       ``RoboBus: 30 seats, drives 500 m``.
-   * - NFR-2
-     - Valid state
-     - Every object shall keep its rule. A value that breaks one shall be
-       rejected with ``std::invalid_argument`` and a message: a maximum speed
-       that is not greater than 0, a speed outside 0 to the maximum speed, a
-       negative distance added to the mileage, a negative sensor range, an
-       empty passenger name, a null vehicle given to a ``Fleet``.
-     - The constructors and methods that throw, in ``project/week9/common``.
-   * - NFR-3
-     - Memory safety
-     - The software shall run with no report from AddressSanitizer and
-       UndefinedBehaviorSanitizer: no leak, no use after free, no deletion
-       through a pointer of the wrong type. The slides in ``undefined/`` show
-       such a bug on purpose and run only when asked for by number.
-     - ``week9_live``, ``week9_playground`` and ``week9_appendix`` are built
-       with both sanitizers. After Live Coding Step 5, ``702run week9_live``
-       runs with no report.
-   * - NFR-4
-     - Code quality
-     - The code shall build with **no warning** under the course flags,
-       ``-Wall -Wextra -pedantic-errors -Wshadow``.
-     - ``702build`` on ``project/week9``.
-   * - NFR-5
-     - Performance
-     - Reading one sensor shall take at most **50 ms**. Optimizing a route of
-       up to 20 waypoints shall take at most **500 ms**.
-     - Target only.
-   * - NFR-6
-     - Reliability
-     - The software shall handle a failed sensor without stopping, using the
-       other sensors. The mean time between failures in autonomous operation
-       shall be more than **1000 hours**.
-     - Target only.
-   * - NFR-7
-     - Safety
-     - The software shall refuse an unsafe operation, such as boarding a
-       vehicle that is moving, with a checked state in ``Vehicle``.
-     - Target only.
-   * - NFR-8
-     - Availability
-     - Dispatch and vehicle status shall be available **99.9%** of the
-       operating hours.
-     - Target only.
-   * - NFR-9
-     - Observability
-     - Every ride request, dispatch, route given and passenger event shall be
-       logged with its time, its location and the ids of the objects it
-       involves.
-     - Target only.
+:Rationale: The company will add kinds of vehicle, such as a robotic bus.
+:Priority: Must
+:Verification: Demonstration
+:Acceptance: A new vehicle kind, written in its own files, joins a Fleet and is
+   boarded by a Passenger, with ``fleet.hpp``, ``fleet.cpp``,
+   ``passenger.hpp`` and ``passenger.cpp`` unchanged.
+
+**NFR-2. Valid state**
+
+Every object shall reject a value that breaks its rule, with
+``std::invalid_argument`` and a message that names the rule, and shall stay
+unchanged. The rules are:
+
+- NFR-2.1: a vehicle's maximum speed is greater than 0 m/s;
+- NFR-2.2: a vehicle's speed is from 0 to its maximum speed;
+- NFR-2.3: a distance added to a vehicle's mileage is at least 0 m;
+- NFR-2.4: a sensor's range is at least 0 m;
+- NFR-2.5: a passenger's name is not empty (FR-12.4);
+- NFR-2.6: a fleet holds no null vehicle (FR-10.2).
+
+:Rationale: An object that keeps its rule never needs to be checked again by
+   the code that uses it.
+:Priority: Must
+:Verification: Test
+:Acceptance: For each rule, one value just outside it throws, and one value
+   just inside it is accepted.
+
+**NFR-3. Memory safety**
+
+The software shall have no memory leak, no use of freed memory, and no
+deletion through a pointer of the wrong type.
+
+:Rationale: These errors corrupt data silently and are hard to find later.
+:Priority: Must
+:Verification: Test
+:Acceptance: All programs, built with AddressSanitizer and
+   UndefinedBehaviorSanitizer, run with no report.
+
+**NFR-4. Clean build**
+
+The code shall compile with no warning under ``-Wall -Wextra
+-pedantic-errors -Wshadow``.
+
+:Rationale: Warnings point at likely bugs; a clean build keeps new ones
+   visible.
+:Priority: Must
+:Verification: Inspection
+:Acceptance: A full build prints no warning.
+
+**NFR-5. Performance**
+
+Reading one sensor shall take at most 50 ms, and optimizing a route of up to
+20 waypoints shall take at most 500 ms.
+
+:Rationale: Driving decisions need current data, and dispatch must not wait on
+   route planning.
+:Priority: Must
+:Verification: Test
+:Acceptance: Measured on the target computer, every sensor reading and every
+   optimization of a 20-waypoint route meets its limit.
+
+**NFR-6. Reliability**
+
+When one sensor fails, a RoboTaxi shall keep operating on its other sensors.
+The mean time between failures in autonomous operation shall be more than
+1000 hours.
+
+:Rationale: One failed sensor must not stop a vehicle in traffic.
+:Priority: Must
+:Verification: Test (sensor failure), Analysis (mean time between failures)
+:Acceptance: With one sensor disabled, the RoboTaxi still drives, and the
+   failure is logged.
+
+**NFR-7. Safety**
+
+The system shall refuse to let a passenger board a vehicle that is moving.
+
+:Rationale: Boarding a moving vehicle can injure the passenger.
+:Priority: Must
+:Verification: Test
+:Acceptance: A boarding attempt on a vehicle with a speed above 0 m/s is
+   rejected, and the passenger stays off the vehicle.
+
+**NFR-8. Availability**
+
+Dispatch and status queries shall be available 99.9% of the operating hours.
+
+:Rationale: Passengers cannot book a ride while dispatch is down.
+:Priority: Should
+:Verification: Analysis
+:Acceptance: The measured downtime of a month of operation is at most 0.1% of
+   its operating hours.
+
+**NFR-9. Observability**
+
+Each logged event (FR-7) shall carry its time, its location and the ids of the
+objects it involves.
+
+:Rationale: An event without these cannot be traced back to a vehicle and a
+   ride.
+:Priority: Should
+:Verification: Inspection
+:Acceptance: Every entry of an end-to-end ride's log has the three fields.
 
 
 4. Technical Constraints
@@ -274,50 +501,45 @@ not have, so nothing in the course measures them.
 
    * - ID
      - Constraint
-     - Description
+     - Statement
    * - TC-1
      - Language
-     - The code shall be C++20 and use only the standard library. It shall
-       build with CMake and g++, as set up in :doc:`Setup Before Class
-       </lectures/lecture8/l8_setup>`.
+     - The software shall be written in C++20, with only the standard
+       library, and built with CMake and g++, as set up in
+       :doc:`Setup Before Class </lectures/lecture8/l8_setup>`.
    * - TC-2
      - Namespace
-     - Every class shall be in the namespace ``fleet``: ``Vehicle``,
-       ``RoboTaxi``, ``Taxi``, ``Fleet``, ``Passenger``, ``Route``,
-       ``Position``, ``Sensor`` and ``SensorType``.
+     - Every class shall be in the namespace ``fleet``.
    * - TC-3
      - Encapsulation
      - Code outside ``Vehicle`` shall reach the sensors only through
-       ``Vehicle``'s methods: ``add_sensor``, ``sensor_count`` and
-       ``get_sensors``. ``get_sensors`` gives read-only access.
+       ``Vehicle``'s methods ``add_sensor``, ``sensor_count`` and
+       ``get_sensors``. ``get_sensors`` shall give read-only access.
    * - TC-4
      - Composition
-     - A ``Vehicle`` owns its ``Sensor``\ s: they are made and destroyed with
-       it. A ``Route`` owns its ``Position``\ s, held by value.
+     - A ``Vehicle`` shall own its ``Sensor``\ s, so they are made and
+       destroyed with it. A ``Route`` shall hold its ``Position``\ s by
+       value.
    * - TC-5
      - Aggregation
-     - A ``Fleet`` holds ``Vehicle``\ s that it does not own alone: a vehicle
-       can exist without the fleet and outlive it.
+     - A ``Fleet`` shall share its vehicles with the rest of the program, not
+       own them alone (FR-10.5).
    * - TC-6
      - Association
-     - A ``Passenger`` refers to at most one ``Vehicle`` and does not own it.
-       The vehicle can be destroyed while the passenger still exists.
+     - A ``Passenger`` shall refer to at most one ``Vehicle``, without owning
+       it (FR-12.3).
    * - TC-7
      - Dependency
-     - A ``Vehicle`` gets a ``Route`` for one call of ``drive`` and keeps no
-       reference to it.
+     - A ``Vehicle`` shall receive a ``Route`` for one call of ``drive`` and
+       keep no reference to it (FR-5).
    * - TC-8
-     - Driver
-     - A ``Taxi`` holds its driver's name. An empty name means no driver, and
-       then the taxi does not move.
-   * - TC-9
-     - Types
-     - The class diagram uses the C++ types of the code (``double``,
-       ``string``, ``shared_ptr<Vehicle>``), so a box reads like its class.
-   * - TC-10
      - Errors
-     - A broken rule shall throw ``std::invalid_argument`` with a message that
-       says which rule.
+     - A broken rule shall be reported with ``std::invalid_argument`` and a
+       message that names the rule (NFR-2).
+   * - TC-9
+     - Design types
+     - The class diagram shall use the C++ types of the code (``double``,
+       ``string``, ``shared_ptr<Vehicle>``).
 
 
 5. Implementation Guidance
@@ -410,72 +632,113 @@ and prints:
 6. Success Criteria
 ====================================================
 
-.. list-table::
-   :header-rows: 1
-   :widths: 9 26 65
+The first release is accepted when:
 
-   * - ID
-     - Criterion
-     - Measurable outcome
-   * - SC-1
-     - Polymorphic driving
-     - One loop over ``Vehicle``\ s drives a RoboTaxi and a Taxi, and each
-       prints its own line (FR-3), with no change to ``Fleet``.
-   * - SC-2
-     - Sensors
-     - A RoboTaxi with no sensor stays parked, and with one sensor it drives
-       (FR-4).
-   * - SC-3
-     - Routes
-     - A vehicle drives two routes, 500 m and 200 m, given one per call
-       (FR-5).
-   * - SC-4
-     - Fleet
-     - Adding two vehicles gives a size of 2; removing one by its id gives 1;
-       a vehicle lives on after the fleet is destroyed (FR-10).
-   * - SC-5
-     - Passengers
-     - Boarding does not change the vehicle's owner count, and the vehicle can
-       be destroyed while the passenger exists (FR-12).
-   * - SC-6
-     - Extensibility
-     - A RoboBus joins a Fleet with no change to ``Fleet`` (NFR-1).
-   * - SC-7
-     - Quality
-     - Every rule of NFR-2 throws; the sanitizers report nothing (NFR-3); the
-       build has no warning (NFR-4).
-   * - SC-8
-     - Constraints
-     - The code meets TC-1 to TC-10 and the conventions of section 5.
+- **SC-1**: every **Must** requirement of sections 2 and 3 passes its
+  acceptance criterion;
+- **SC-2**: the code meets every technical constraint of section 4;
+- **SC-3**: the whole test run is repeated on the release build, with no
+  failure.
 
 
 7. Assumptions
 ====================================================
 
-- A Fleet holds zero or more vehicles of both kinds, and vehicles can be added
-  and removed at any time.
+- A Fleet holds zero or more vehicles of both kinds.
 - A Passenger rides zero or one vehicle at a time.
-- A Vehicle owns zero or more Sensors. A RoboTaxi needs at least one to drive.
-- A Route holds zero or more Positions, in order.
+- A Vehicle carries zero or more Sensors; a RoboTaxi needs at least one to
+  drive.
 - A Taxi has zero or one driver.
-- Sensors are simulated: they hold their type and range, and no data.
-- Speeds and distances are plain numbers in m/s and m; time is computed from
-  them, not measured.
+- A Route holds zero or more waypoints.
+- Sensor readings are simulated: a timing in NFR-5 refers to the software on
+  the target computer, not to the sensor hardware.
 
 
-8. Verification Approach
+8. Traceability to the Course Code
 ====================================================
 
-- **Live Coding outputs**: each step prints a block, and the slide shows the
-  expected lines (FR-3, FR-5, FR-10, FR-12).
-- **Slide programs**: ``702run week9_playground`` and
-  ``702run week9_appendix`` run the code of every slide and print its output.
-- **Compiler checks**: ``override`` catches a method that does not override,
-  ``final`` stops a class from deriving, an abstract ``Vehicle`` cannot be
-  made, and the course flags turn on the warnings (NFR-4).
-- **Sanitizers**: AddressSanitizer and UndefinedBehaviorSanitizer in
-  ``week9_live``, ``week9_playground`` and ``week9_appendix`` (NFR-3).
-- **Negative checks**: each rule of NFR-2 is called with a value that breaks
-  it, and the call throws.
-- **Not in the course**: unit, performance, reliability and availability tests
-  for the targets NFR-5 to NFR-9.
+The course code, ``project/week9``, meets part of this specification. A
+``702run`` command runs the code of one slide; its output is the one on that
+slide.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 11 34 55
+
+   * - ID
+     - In the course code
+     - Evidence
+   * - FR-1, FR-2
+     - No.
+     -
+   * - FR-3
+     - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
+       ``Taxi::drive`` override it.
+     - Live Coding Step 4. ``702run week9_playground 82`` (The Whole
+       Program) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
+       ``Taxi: Ana drives 500 m``.
+   * - FR-4.1, FR-4.2
+     - Yes: ``Vehicle::add_sensor``; ``RoboTaxi::drive`` checks
+       ``sensor_count()`` first.
+     - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
+       ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
+       checked, drives 500 m``.
+   * - FR-5
+     - Yes: ``Vehicle::drive(const Route&)``.
+     - ``702run week9_playground 36`` (A Route for One Call) prints
+       ``500 m at 10 m/s: 50 s``.
+   * - FR-5.1
+     - Yes: ``Taxi::drive`` checks for an empty driver name.
+     - Measured: a Taxi made with an empty name prints
+       ``Taxi: no driver, stays parked``.
+   * - FR-6, FR-7, FR-8
+     - No. ``Vehicle::log_event`` prints one event, without a time or a
+       location.
+     -
+   * - FR-9.1, FR-9.2
+     - Yes: ``Route::add``, ``Route::length``.
+     - The Composition section of the lecture: a route of 500 m and a longer
+       one of 900 m.
+   * - FR-9.3
+     - No.
+     -
+   * - FR-10.1 to FR-10.5
+     - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
+     - Live Coding Step 2. ``702run week9_playground 28`` (The Vehicles
+       Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
+       adding the same vehicle twice gives a size of 1, and removing an
+       unknown id returns ``false``.
+   * - FR-10.6
+     - No.
+     -
+   * - FR-11
+     - No: a Taxi gets its driver's name when it is made.
+     -
+   * - FR-12.1 to FR-12.4
+     - Yes: ``Passenger::board``, ``Passenger::leave``; the passenger holds a
+       ``std::weak_ptr<Vehicle>``.
+     - Live Coding Step 1. ``702run week9_playground 24`` (Two Separate
+       Lifetimes) prints ``1``, ``1`` and ``true``.
+   * - NFR-1
+     - Yes, for ``Fleet``: a new kind joins it unchanged.
+     - ``702run week9_playground 83`` (Discussion: Add a RoboBus) prints
+       ``RoboBus: 30 seats, drives 500 m``.
+   * - NFR-2
+     - Yes: every rule throws ``std::invalid_argument``.
+     - The constructors and methods of ``project/week9/common``.
+   * - NFR-3
+     - Yes, apart from the slides in ``undefined/``, which show such a bug on
+       purpose and run only when asked for by number.
+     - ``week9_live``, ``week9_playground`` and ``week9_appendix`` are built
+       with both sanitizers. After Live Coding Step 5, ``702run week9_live``
+       runs with no report.
+   * - NFR-4
+     - Yes.
+     - ``702build`` on ``project/week9``.
+   * - NFR-5 to NFR-9
+     - No: they need dispatch, sensor reading or logging, which the course
+       code does not have.
+     -
+   * - TC-1 to TC-9
+     - Yes.
+     - Inspection of ``project/week9/common``.
