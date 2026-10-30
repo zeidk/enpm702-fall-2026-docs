@@ -5,10 +5,21 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.5: Lecture 9, Requirements Specification (2026-10-30)
+.. dropdown:: v1.13.6: Lecture 9, No References to Earlier Lectures (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - The **Lecture 9** pages no longer point back to earlier lectures,
+     such as "(L8)" or "L8's ``Vehicle``": each sentence says the thing
+     itself.
+   - The table that says how to read a class box is now part of UML Class
+     Diagrams, and the ``702run`` slide numbers follow the slides.
+
+
+.. dropdown:: v1.13.5: Lecture 9, Requirements Specification (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **L9 Requirements** is now a requirements specification: purpose,
      scope and definitions, then the functional requirements (FR-1 to

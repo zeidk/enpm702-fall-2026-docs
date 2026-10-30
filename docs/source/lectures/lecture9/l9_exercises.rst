@@ -113,7 +113,7 @@ it boarded without keeping it alive.
          ``void leave() noexcept``.
        - ``std::string ride() const``, which returns ``shuttle`` and the
          shuttle's id while the shuttle exists, and ``none`` when it does
-         not. Use ``lock()`` (L7).
+         not. Use ``lock()``.
 
     6. Write ``print_shuttle``. It takes a ``const Shuttle&`` and prints
        one line as in the Example Output.

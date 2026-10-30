@@ -370,7 +370,7 @@ comprehensive review that ties together everything covered so far.
     :class-container: sd-border-primary
     :class-title: sd-font-weight-bold
 
-    This exercise combines skills from all previous shell exercises (L1 to L9).
+    This exercise combines skills from all previous shell exercises.
     Build a project workspace manager that automates common development tasks.
 
     **Tasks:**

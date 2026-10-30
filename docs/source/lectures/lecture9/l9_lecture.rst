@@ -49,11 +49,11 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week9_playground``.
-5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 57``.
+5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 56``.
 
 **Where the Classes Are**
 
-- **common** holds every class of the diagram: L8's ``Sensor``, ``SensorType``, ``Position`` and ``Route``, and today's ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger``. Each section file writes the earlier versions its slides need.
+- **common** holds every class of the diagram: ``Sensor``, ``SensorType``, ``Position`` and ``Route``, and today's ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger``. Each section file writes the earlier versions its slides need.
 - The code with undefined behavior is in the **undefined** folder, built with AddressSanitizer. It runs only when you ask for its slide by number.
 - **uml** holds the PlantUML file of the diagram.
 - The code of the appendix is in the **appendix** folder. Run appendix frame x with ``702run week9_appendix x``.
@@ -71,7 +71,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
-      702run week9_playground 57         # only the code of slide 57
+      702run week9_playground 56         # only the code of slide 56
       702run week9_appendix x            # only appendix frame x (10 works too)
       702build week9_live                # the classes you write in class
       702run week9_live
@@ -80,7 +80,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   The slides whose code has undefined behavior, slides 72 and 73, run only when you ask for them by number: ``702run week9_playground 73``. A full run skips them.
+   The slides whose code has undefined behavior, slides 71 and 72, run only when you ask for them by number: ``702run week9_playground 72``. A full run skips them.
 
 .. note::
 
@@ -133,7 +133,7 @@ Every class of the program is in the namespace ``fleet``. ``Vehicle``, ``Route``
 Warm-Up
 -------
 
-Before the new material, a check on L8.
+Before the new material, a check on what you already know.
 
 Discussion: Improve This Class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -156,7 +156,7 @@ Discussion: Improve This Class
      std::string color_;
    };
 
-It compiles with no warning. It is neither safe nor efficient. With what you learned in L8, find at least nine changes, and say why.
+It compiles with no warning. It is neither safe nor efficient. With what you already know, find at least nine changes, and say why.
 
 - Work in pairs for three minutes: find every line you would change, and say what goes wrong without the change.
 - Hints, if you are stuck: what does ``Vehicle car_a = 13.4;`` do? What is the speed of a new car? Can you call ``get_speed`` on a ``const Vehicle&``?
@@ -169,12 +169,12 @@ The Program We Will Build
    :align: center
    :width: 100%
 
-   The robotaxi program as a UML class diagram: everything L8 and L9 build.
+   The robotaxi program as a UML class diagram: the whole program.
 
 - A box is a class, a line is a relationship: today's lecture says what each kind of line means. Later copies show the part being built in purple.
-- This is the class diagram from the start of L8, now with nothing in grey: the whole program of L8 and L9. In L8 we wrote ``Vehicle``, its ``Sensor``\ s, ``Position`` and a small ``Route``.
+- This is the class diagram of the whole program, with nothing in grey. We already wrote ``Vehicle``, its ``Sensor``\ s, ``Position`` and a small ``Route``.
 - Today you write the rest: ``Passenger`` with me, then ``Fleet``, ``RoboTaxi`` and ``Taxi`` on your own, and we name each kind of line between the boxes. ``Vehicle`` changes too: by the end, its ``drive`` is abstract, which is why its name is in italics.
-- As in L8, the diagram comes back at the start of each part, with the piece we are about to build in purple.
+- The diagram comes back at the start of each part, with the piece we are about to build in purple.
 
 Design
 ------
@@ -207,7 +207,7 @@ Read each requirement for its nouns and its verbs.
 
 .. note::
 
-   Not every noun is a class. "range" is a data member of ``Sensor``, and "Ana" is a value. A noun whose data members follow no rule is a ``struct``, like ``Position`` (L8).
+   Not every noun is a class. "range" is a data member of ``Sensor``, and "Ana" is a value. A noun whose data members follow no rule is a ``struct``, like ``Position``.
 
 Discussion: Find the Classes
 """"""""""""""""""""""""""""
@@ -225,7 +225,7 @@ Which nouns become classes? Which verbs become methods? Which link between two c
 
    1. A ``ChargingStation`` class, with ``charge`` and ``release`` methods. The station holds robotaxis it does not own: they arrive and leave, and they live on. Its rule is at most four at a time, which is the multiplicity ``0..4`` (`Multiplicity`_).
    2. A ``Meter`` class, with a fare that is never below 0, so it is a class and not a struct. The meter is part of the taxi and goes away with it.
-   3. An ``ElectricRoboTaxi`` is a ``RoboTaxi``: inheritance. The battery level from 0 to 100 is a data member with a rule, as L8's Struct or Class discussion argued. In the diagram, ``RoboTaxi`` is marked final, so this requirement would make us change that.
+   3. An ``ElectricRoboTaxi`` is a ``RoboTaxi``: inheritance. The battery level from 0 to 100 is a data member with a rule. In the diagram, ``RoboTaxi`` is marked final, so this requirement would make us change that.
 
    Nouns like fare and battery level are data members, not classes. The test from `From Requirements to Classes`_: does the noun hold data and keep a rule of its own? The relationships get their names in the next section; `Discussion: Which Relationship?`_ comes back to the station and the meter.
 
@@ -234,8 +234,24 @@ UML Class Diagrams
 
 A **UML class diagram** is a drawing of a program's classes. Each box is a class: its name, then its data members, then its methods. Each line between two boxes is a relationship. UML is the Unified Modeling Language.
 
-- A data member is written ``name : type``, a method ``name(parameter types) : return type``. A constructor has no return type.
-- The diagrams of L8 and of the other parts of today show only the names. `The Robotaxi Design, with Every Member`_ shows the same diagram with every member.
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
+
+   * - In the box
+     - Means
+   * - ``+`` ``-`` ``#``
+     - ``public``, ``private``, ``protected`` (`protected Members`_)
+   * - ``next_id_ : int``, underlined
+     - Underlined: a ``static`` member
+   * - ``-waypoints_`` at a line's end
+     - A data member that the line shows. The box does not list it again.
+   * - ``drive(const Route&)``, in italics
+     - In italics: an abstract method, with no body in this class (`Pure virtual Methods`_)
+   * - «struct», «enumeration»
+     - A **stereotype**: what kind of type the box is, a ``struct`` or an ``enum class``
+   * - «final»
+     - No class derives from this one (`Live Coding: Step 7`_)
 
 The Robotaxi Design, with Every Member
 """"""""""""""""""""""""""""""""""""""
@@ -248,32 +264,8 @@ The Robotaxi Design, with Every Member
    The same nine boxes as `The Program We Will Build`_, with their members.
 
 - Read one box, ``Vehicle``: the name on top, in italics, which means abstract; then the data members, each ``name : type``; then the methods.
-- A minus sign is ``private``, a plus sign ``public``. ``next_id_`` is underlined: a ``static`` member, from the L8 appendix. ``drive`` is in italics too: a pure ``virtual`` method, which `Abstraction`_ explains.
+- A minus sign is ``private``, a plus sign ``public``. ``next_id_`` is underlined: a ``static`` member. ``drive`` is in italics too: a pure ``virtual`` method, which `Abstraction`_ explains.
 - Every member here is in ``project/week9/common``, with the same name.
-
-Reading a Class Box
-"""""""""""""""""""
-
-.. list-table::
-   :header-rows: 1
-   :widths: 35 65
-
-   * - In the box
-     - Means
-   * - ``+`` ``-`` ``#``
-     - ``public``, ``private``, ``protected`` (`protected Members`_)
-   * - ``next_id_ : int``, underlined
-     - Underlined: a ``static`` member (L8 appendix)
-   * - ``-waypoints_`` at a line's end
-     - A data member that the line shows. The box does not list it again.
-   * - ``drive(const Route&)``, in italics
-     - In italics: an abstract method, with no body in this class (`Pure virtual Methods`_)
-   * - «struct», «enumeration»
-     - A **stereotype**: what kind of type the box is, a ``struct`` or an ``enum class``
-   * - «final»
-     - No class derives from this one (`Live Coding: Step 7`_)
-
-- The types are the C++ types of the code. A design written before any code often uses types that belong to no language (``String``, ``Integer``).
 
 Tools
 """""
@@ -376,7 +368,7 @@ Five Relationships
      - ``class D : public B``
      - RoboTaxi is a Vehicle
 
-- L7's owner map drew three of them for objects: a filled diamond for ``std::unique_ptr``, an open diamond for ``std::shared_ptr``, an arrow for ``std::weak_ptr``.
+- You have seen three of them on the owner map of smart pointers: a filled diamond for ``std::unique_ptr``, an open diamond for ``std::shared_ptr``, an arrow for ``std::weak_ptr``.
 
 Association
 ^^^^^^^^^^^
@@ -411,7 +403,7 @@ Passenger and Vehicle, Every Member
 
 - The same two boxes as in `Passenger and Vehicle in the Class Diagram`_, with every member. ``Passenger`` is what we write in Step 1: a name, a constructor, ``board`` and ``leave``.
 - ``Passenger``'s box has no ``ride_`` row. Its name is at the far end of the arrow, at ``Vehicle``, and its type is ``std::weak_ptr<Vehicle>``. A data member that a line already shows is not listed twice.
-- ``Vehicle``'s box is L8's class, plus the id and the static counter ``next_id_`` from the L8 appendix. ``drive`` is in italics: `Abstraction`_ makes it pure ``virtual``. Step 1 does not touch ``Vehicle``.
+- ``Vehicle``'s box is the class you already wrote, plus the id and the static counter ``next_id_``. ``drive`` is in italics: `Abstraction`_ makes it pure ``virtual``. Step 1 does not touch ``Vehicle``.
 
 Multiplicity
 """"""""""""
@@ -440,7 +432,7 @@ Multiplicity
 Live Coding: Step 1
 """""""""""""""""""
 
-**10 minutes, with me.** We write ``Passenger`` in ``live/include/fleet.hpp``, below ``Vehicle``. It is L8's class, plus an id from a static counter (L8 appendix).
+**10 minutes, with me.** We write ``Passenger`` in ``live/include/fleet.hpp``, below ``Vehicle``. It is the class you already wrote, plus an id from a static counter.
 
 1. ``private``: ``std::string name_`` and ``std::weak_ptr<Vehicle> ride_``.
 2. An ``explicit`` constructor, defined in the class. It throws for an empty name: it checks the invariant, a name that is not empty.
@@ -463,7 +455,7 @@ The Step 1 block prints:
    true
 
 - 1: ``board`` added no owner. ``true``: ``watcher``, a second ``std::weak_ptr``, finds the ``Vehicle`` destroyed, while ``maya`` still exists.
-- The ``Vehicle`` in ``live/include/fleet.hpp`` is the one we finished in L8, with one addition: ``get_id`` and the static counter ``next_id_``, from the L8 appendix. ``Fleet`` needs the id in Step 2.
+- The ``Vehicle`` in ``live/include/fleet.hpp`` is the one you already wrote, with one addition: ``get_id`` and the static counter ``next_id_``. ``Fleet`` needs the id in Step 2.
 - **Checkpoint**: show me your three lines before we start Step 2.
 
 The class we write is in `A Passenger Rides a Vehicle`_, under Further Reading.
@@ -490,11 +482,11 @@ Two Separate Lifetimes
    1
    true
 
-- ``13.4`` is 13.4 m/s, L8's maximum speed (about 30 mph).
-- ``use_count()`` (L7) stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
+- ``13.4`` is 13.4 m/s, the maximum speed (about 30 mph).
+- ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
 - ``maya`` lives on: that is what "neither owns the other" means in the code.
-- Run: ``702run week9_playground 25``.
+- Run: ``702run week9_playground 24``.
 
 Aggregation
 ^^^^^^^^^^^
@@ -564,7 +556,7 @@ The Vehicles Outlive the Fleet
    1 13.4
 
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
-- Run: ``702run week9_playground 29``.
+- Run: ``702run week9_playground 28``.
 
 Composition
 ^^^^^^^^^^^
@@ -572,7 +564,7 @@ Composition
 A **composition** is a whole that owns its parts alone. Each part belongs to one whole and is destroyed with it.
 
 - In UML, a line with a filled diamond at the whole.
-- L8 built one: a ``Vehicle`` owns its ``Sensor`` objects.
+- We already built one: a ``Vehicle`` owns its ``Sensor`` objects.
 
 Two Compositions in the Class Diagram
 """""""""""""""""""""""""""""""""""""
@@ -584,7 +576,7 @@ Two Compositions in the Class Diagram
 
    A ``Vehicle`` owns its ``Sensor`` objects, and a ``Route`` has its ``Position`` values.
 
-- Two filled diamonds, both from L8. ``Vehicle`` owns its sensors through ``std::unique_ptr``: L8 built that ownership in its Destructors section.
+- Two filled diamonds. ``Vehicle`` owns its sensors through ``std::unique_ptr``, an ownership we already built.
 - ``Route`` holds its positions by value, in a ``std::vector``. That is composition too: each position belongs to one route.
 
 Owned through std::unique_ptr, or by Value
@@ -592,23 +584,23 @@ Owned through std::unique_ptr, or by Value
 
 .. code-block:: cpp
 
-   class Vehicle {  // L8, cut
+   class Vehicle {  // cut
      // ...
     private:
      std::vector<std::unique_ptr<Sensor>>
          sensors_;
    };
 
-   class Route {  // L8, cut
+   class Route {  // cut
      // ...
     private:
      std::vector<Position>
          waypoints_;
    };
 
-- A ``Sensor`` lives on the heap, owned by one ``std::unique_ptr``. When the ``Vehicle`` is destroyed, its ``std::vector`` destroys each ``std::unique_ptr``, and each deletes its ``Sensor`` (L8's rule of zero).
+- A ``Sensor`` lives on the heap, owned by one ``std::unique_ptr``. When the ``Vehicle`` is destroyed, its ``std::vector`` destroys each ``std::unique_ptr``, and each deletes its ``Sensor`` (the rule of zero).
 - A ``Position`` lives inside the ``Route``'s own ``std::vector``: a plain member, no pointer.
-- A ``Vehicle`` cannot be copied (L8): two vehicles cannot share a ``Sensor``.
+- A ``Vehicle`` cannot be copied: two vehicles cannot share a ``Sensor``.
 
 Each Route Has Its Own Positions
 """"""""""""""""""""""""""""""""
@@ -625,7 +617,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: (0, 0) to (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Then 400 m straight down, from (300, 400) to (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding one to ``longer`` leaves ``trip`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_playground 33``.
+- Run: ``702run week9_playground 32``.
 
 Aggregation or Composition
 """"""""""""""""""""""""""
@@ -650,7 +642,7 @@ Aggregation or Composition
      - ``Fleet`` and its vehicles
      - ``Vehicle`` and its sensors
 
-- When in doubt, start with composition: one owner is simpler to follow, and a ``std::unique_ptr`` can still be moved to a new owner (L7).
+- When in doubt, start with composition: one owner is simpler to follow, and a ``std::unique_ptr`` can still be moved to a new owner.
 
 .. note::
 
@@ -663,7 +655,7 @@ A **dependency**: one class uses another only inside a method, as a parameter or
 
 .. code-block:: cpp
 
-   void drive(const Route& route) const;  // in Vehicle (L8)
+   void drive(const Route& route) const;  // in Vehicle
 
 - In UML, a dashed arrow to the class that is used.
 - If ``Route`` changes, ``Vehicle`` may have to change too: that is what "depends on" means. A ``Vehicle`` object holds no ``Route``.
@@ -704,9 +696,9 @@ A Route for One Call
    500 m at 10 m/s: 50 s
    200 m at 10 m/s: 20 s
 
-- L8's ``drive`` prints the length and the time: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
+- ``Vehicle``'s ``drive`` prints the length and the time: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``trip`` is destroyed and the ``Vehicle`` is not affected: it kept nothing of it.
-- Run: ``702run week9_playground 37``.
+- Run: ``702run week9_playground 36``.
 
 Discussion: Which Relationship?
 """""""""""""""""""""""""""""""
@@ -757,7 +749,7 @@ RoboTaxi and Taxi in the Class Diagram
 
    ``RoboTaxi`` and ``Taxi`` each join ``Vehicle`` by a line with a hollow triangle at ``Vehicle``.
 
-- L8 built ``Vehicle`` and left ``RoboTaxi`` and ``Taxi`` grey. A robotaxi is a kind of vehicle, and so is a taxi. Each line with a hollow triangle says "is a".
+- We already wrote ``Vehicle``; ``RoboTaxi`` and ``Taxi`` were still grey. A robotaxi is a kind of vehicle, and so is a taxi. Each line with a hollow triangle says "is a".
 - ``RoboTaxi`` and ``Taxi`` get everything ``Vehicle`` has. What they add is small: ``Taxi`` adds the driver's name, and each one will drive in its own way, which is polymorphism, the next section.
 
 Live Coding: Step 3
@@ -766,7 +758,7 @@ Live Coding: Step 3
 **10 minutes, on your own.** Derive ``RoboTaxi`` and ``Taxi`` from ``Vehicle``, below ``Fleet``. Each line with a hollow triangle becomes one class.
 
 1. ``class RoboTaxi : public Vehicle``. Its ``explicit`` constructor passes the maximum speed on: ``: Vehicle{max_speed}`` (`Constructors and Inheritance`_). This base class initializer builds the ``Vehicle`` part, with ``Vehicle``'s own check of the maximum speed.
-2. ``class Taxi : public Vehicle``, plus a ``private`` ``driver_name_``. Its constructor passes the maximum speed on too, and ``std::move`` (L7) moves the name into ``driver_name_``.
+2. ``class Taxi : public Vehicle``, plus a ``private`` ``driver_name_``. Its constructor passes the maximum speed on too, and ``std::move`` moves the name into ``driver_name_``.
 3. Uncomment the Step 3 block: a lidar on a ``RoboTaxi``, a ``Taxi`` at 10 m/s, and one of each in a ``Fleet``.
 
 Build with ``702build week9_live``, then run with ``702run week9_live``. The Step 3 block prints:
@@ -803,7 +795,7 @@ Inside a Taxi Object
 
 - A ``Taxi`` object starts with a whole ``Vehicle``, the **base subobject**: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120. ``RoboTaxi`` adds nothing: 88.
 - A ``Vehicle&`` binds to a ``Taxi`` with no cast: it names the ``Vehicle`` part, at the same address. The addresses are from one run; they change from run to run.
-- Run: ``702run week9_playground 42``.
+- Run: ``702run week9_playground 41``.
 
 protected Members
 ^^^^^^^^^^^^^^^^^
@@ -812,7 +804,7 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 
 .. code-block:: cpp
 
-   class Vehicle {  // L8's Vehicle, with one protected method
+   class Vehicle {  // the Vehicle you wrote, with one protected method
     public:     // any code
      explicit Vehicle(double max_speed,
                       const std::string& color = "white");
@@ -821,19 +813,19 @@ A ``protected`` **member** is a member that the class's own methods and the meth
        std::cout << "vehicle " << id_ << ": " << event << '\n';
      }
     private:    // Vehicle's methods only
-     int id_;  // and the rest of L8's data members
+     int id_;  // and the rest of Vehicle's data members
    };
 
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
-- ``protected`` is the third access specifier of L8's table. UML marks it with ``#``.
-- Run: ``702run week9_playground 43``.
+- ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
+- Run: ``702run week9_playground 42``.
 
 private Stays private
 """""""""""""""""""""
 
 .. code-block:: cpp
 
-   class RoboTaxi : public Vehicle {  // L8's Vehicle: speed_ is private
+   class RoboTaxi : public Vehicle {  // the Vehicle you wrote: speed_ is private
     public:
      void go() { speed_ = get_max_speed(); }  // does not compile
      // ...
@@ -861,8 +853,8 @@ protected Data
    };
 
 - With ``speed_`` ``protected``, this compiles, and ``get_speed()`` then returns 20, above the maximum speed of 13.4. Every derived class can now break ``Vehicle``'s invariant.
-- The rule of L8 holds for assignments: **every data member is** ``private``, or the assignment gets 0. Use ``protected`` for methods meant only for derived classes, as ``log_event`` in `protected Members`_.
-- Run: ``702run week9_playground 45``. It prints ``20 13.4``: the speed, then the maximum speed.
+- The rule for assignments stays: **every data member is** ``private``, or the assignment gets 0. Use ``protected`` for methods meant only for derived classes, as ``log_event`` in `protected Members`_.
+- Run: ``702run week9_playground 44``. It prints ``20 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -909,7 +901,7 @@ See `protected and private Inheritance`_ under Further Reading.
 Constructors and Inheritance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A **base class initializer**: a derived constructor names its base class first in its member initializer list (L8), with the arguments for a base constructor. The base part is built first, then the derived class's own members.
+A **base class initializer**: a derived constructor names its base class first in its member initializer list, with the arguments for a base constructor. The base part is built first, then the derived class's own members.
 
 .. code-block:: cpp
 
@@ -943,7 +935,7 @@ Without the Base Class Initializer
    note: candidate: 'Vehicle::Vehicle(double, const std::string&)'
    note:   candidate expects 2 arguments, 0 provided
 
-- With no base class initializer, C++ builds the base part with the base's default constructor. L8's ``Vehicle`` has none: every ``Vehicle`` needs a maximum speed. The output is cut: g++ lists more candidates after these two.
+- With no base class initializer, C++ builds the base part with the base's default constructor. ``Vehicle`` has none: every ``Vehicle`` needs a maximum speed. The output is cut: g++ lists more candidates after these two.
 - The ``Vehicle`` part must exist before the ``RoboTaxi`` constructor's body runs, so the body is too late to call ``Vehicle``'s constructor.
 
 A Base Member in the List
@@ -986,7 +978,7 @@ Construction and Destruction Order
    after the scope
 
 - The base is built first, so ``RoboTaxi``'s constructor can use ``Vehicle``'s methods. Destruction runs in reverse: ``~RoboTaxi`` first, while the ``Vehicle`` part still exists.
-- Run: ``702run week9_playground 50``.
+- Run: ``702run week9_playground 49``.
 
 .. note::
 
@@ -1030,8 +1022,8 @@ Discussion: What Prints First?
 
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
-   - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members in L8.
-   - Run: ``702run week9_playground 51``.
+   - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
+   - Run: ``702run week9_playground 50``.
 
 Summary
 ^^^^^^^
@@ -1103,10 +1095,10 @@ Redefinition
    RoboTaxi: drives itself 500 m
    Taxi: Ana drives 500 m
 
-- **Redefinition**: a derived class writes a method with the name of a base method, as ``RoboTaxi`` does in `Compile-Time Polymorphism`_. Overloading (L5) is another kind of compile-time polymorphism.
+- **Redefinition**: a derived class writes a method with the name of a base method, as ``RoboTaxi`` does in `Compile-Time Polymorphism`_. Overloading is another kind of compile-time polymorphism.
 - The compiler looks for ``drive`` in the class of the object first, then in its base. ``RoboTaxi::drive`` and ``Taxi::drive`` **hide** ``Vehicle::drive``.
 - A method the derived class does not write, such as ``set_speed``, is found in ``Vehicle``.
-- Run: ``702run week9_playground 56``.
+- Run: ``702run week9_playground 55``.
 
 Through a Base Reference
 """"""""""""""""""""""""
@@ -1129,7 +1121,7 @@ Through a Base Reference
 The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``. The **dynamic type** is the class of the object it refers to while the program runs: ``RoboTaxi``, then ``Taxi``.
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
-- Run: ``702run week9_playground 57``.
+- Run: ``702run week9_playground 56``.
 
 One Overload per Class
 """"""""""""""""""""""
@@ -1150,9 +1142,9 @@ One Overload per Class
    RoboTaxi: drives itself 500 m
    Taxi: Ana drives 500 m
 
-- The same two calls as in `Through a Base Reference`_. Overloading (L5) picks the right function, but each new kind of vehicle needs one more overload with the same body.
+- The same two calls as in `Through a Base Reference`_. Overloading picks the right function, but each new kind of vehicle needs one more overload with the same body.
 - A ``Fleet`` holds RoboTaxis and Taxis in one ``std::vector``. Overloads cannot help there: the elements of one ``std::vector`` all have one type.
-- Run: ``702run week9_playground 58``.
+- Run: ``702run week9_playground 57``.
 
 Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^
@@ -1223,8 +1215,8 @@ The Cost of virtual
 
 - ``compile_time::Vehicle`` is the class of `Compile-Time Polymorphism`_, and ``runtime::Vehicle`` the class of `Runtime Polymorphism`_, both in ``playground/src/polymorphism.cpp``, with the same two ``double`` members. The polymorphic one is 8 bytes larger: g++ stores a hidden pointer in it, to a table of its class's ``virtual`` methods, the **vtable**. The C++ standard leaves this to the compiler.
 - ``nm -C polymorphism.cpp.o`` lists ``vtable for polymorphism::runtime::Vehicle``. Without ``-C`` (demangle), ``nm`` prints the linker's name, ``_ZTVN12polymorphism7runtime7VehicleE``. The object file is in ``build/project/week9/CMakeFiles/week9_playground.dir/playground/src/``.
-- A ``virtual`` call reads that table first, so it costs a little more than a direct call (L8, slide 11, What OOP Gives and What It Costs).
-- Run: ``702run week9_playground 62``.
+- A ``virtual`` call reads that table first, so it costs a little more than a direct call.
+- Run: ``702run week9_playground 61``.
 
 .. note::
 
@@ -1254,7 +1246,7 @@ Slicing
 
 - 24 of the 56 bytes are copied: ``driver_name_`` is left behind, and the copy's dynamic type is ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
 - These are the ``runtime::`` classes of `The Cost of virtual`_: 24 bytes for ``Vehicle``, plus the 32-byte ``std::string`` of ``Taxi``.
-- Run: ``702run week9_playground 63``.
+- Run: ``702run week9_playground 62``.
 
 See `Copying a Vehicle of the Design`_ under Further Reading.
 
@@ -1286,7 +1278,7 @@ For each line: ``Vehicle::drive`` or ``RoboTaxi::drive``? Give the static type a
    4. ``Vehicle::drive``. ``copy`` is a ``Vehicle`` object, sliced: its static type and its dynamic type are both ``Vehicle``.
    5. ``Vehicle::drive``. Naming the class, ``Vehicle::drive``, turns off the virtual call. This is how an override calls the base's version on purpose.
 
-   ``702run week9_playground 64`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` twice.
+   ``702run week9_playground 63`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` twice.
 
 override
 ^^^^^^^^
@@ -1326,7 +1318,7 @@ A Typo That Compiles
             was hidden [-Woverloaded-virtual=]
    note:   by 'void RoboTaxi::drive(const Route&)'
 
-- Run: ``702run week9_playground 66``.
+- Run: ``702run week9_playground 65``.
 
 override Catches Both
 """""""""""""""""""""
@@ -1385,7 +1377,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. If ``RoboTaxi`` had a method of its own, only ``robotaxi`` could call it.
-- Run: ``702run week9_playground 69``.
+- Run: ``702run week9_playground 68``.
 
 From auto into a Vector of Vehicles
 """""""""""""""""""""""""""""""""""
@@ -1406,7 +1398,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and a ``std::unique_ptr<Vehicle>`` parameter all accept it.
 - Use ``auto`` while the code needs the ``RoboTaxi`` type, then move the pointer.
-- Run: ``702run week9_playground 70``.
+- Run: ``702run week9_playground 69``.
 
 See `auto or a Base Pointer: Summary`_ under Further Reading.
 
@@ -1423,8 +1415,8 @@ A ``virtual`` **destructor** is a destructor declared ``virtual`` in the base cl
      // ...
    };
 
-- With ``= default`` (:doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`, the L8 reading), the compiler writes the body, which here does nothing. What matters is ``virtual``.
-- L8's destructors gave back what an object owns. The question now is which destructor runs.
+- With ``= default`` (the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`), the compiler writes the body, which here does nothing. What matters is ``virtual``.
+- The destructors you already wrote gave back what an object owns. The question now is which destructor runs.
 
 .. note::
 
@@ -1449,7 +1441,7 @@ Deleting through a Base Pointer
 
 - ``vehicle`` deletes a ``Vehicle*``. Its destructor is not ``virtual``, so the static type picks it: only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
 - The name has 19 characters, more than the 15 a ``std::string`` of g++ keeps inside itself, so the name is on the heap.
-- Run: ``702run week9_playground 72``. It prints the two lines above, then AddressSanitizer stops the run with the report of `Measured with AddressSanitizer`_.
+- Run: ``702run week9_playground 71``. It prints the two lines above, then AddressSanitizer stops the run with the report of `Measured with AddressSanitizer`_.
 
 Measured with AddressSanitizer
 """"""""""""""""""""""""""""""
@@ -1469,7 +1461,7 @@ Measured with AddressSanitizer
    Direct leak of 20 byte(s) in 1 object(s) allocated from:
    SUMMARY: AddressSanitizer: 20 byte(s) leaked in 1 allocation(s).
 
-- The code of `Deleting through a Base Pointer`_, in ``undefined/``: ``702run week9_playground 73``. The stack traces are cut.
+- The code of `Deleting through a Base Pointer`_, in ``undefined/``: ``702run week9_playground 72``. The stack traces are cut.
 - 56 bytes were allocated for a ``Taxi``, and ``delete`` freed them as a 24-byte ``Vehicle``.
 - The 20 bytes that leak are the driver's name: 19 characters and the ``'\0'`` that ends them, never freed because ``~Taxi`` never ran.
 
@@ -1491,7 +1483,7 @@ Item 1 gives (the stack traces are cut):
      size of the deallocated type: 96 bytes.
 
 - AddressSanitizer saw 128 bytes allocated for a ``Taxi`` and freed as a 96-byte ``Vehicle``.
-- 96: L8's ``Vehicle``, 88 bytes measured with g++, and the 8-byte vtable pointer of Step 4 (`The Cost of virtual`_). A ``Taxi`` adds its ``std::string``, 32 bytes: 96 + 32 = 128. These sizes differ from the 56 and 24 of `Measured with AddressSanitizer`_ because your ``Vehicle`` is L8's whole class.
+- 96: your ``Vehicle``, 88 bytes measured with g++, and the 8-byte vtable pointer of Step 4 (`The Cost of virtual`_). A ``Taxi`` adds its ``std::string``, 32 bytes: 96 + 32 = 128. These sizes differ from the 56 and 24 of `Measured with AddressSanitizer`_ because your ``Vehicle`` is the full class, with every data member.
 - After item 2, the program ends normally. The ``delete`` now runs ``~Taxi`` first, which frees the driver's name, then ``~Vehicle``.
 
 The code this step replaces is in `With a virtual Destructor`_, under Further Reading.
@@ -1503,9 +1495,9 @@ Which of these classes of the design needs ``virtual ~ClassName() = default;``?
 
 1. ``Vehicle``, the base of ``RoboTaxi`` and ``Taxi``.
 2. ``RoboTaxi``, which no class derives from.
-3. ``Sensor`` and ``Route``, from L8.
+3. ``Sensor`` and ``Route``.
 4. ``Fleet``, which has no ``virtual`` method and no derived class.
-5. L8's ``Vehicle``, before anything derived from it.
+5. ``Vehicle`` as you first wrote it, before anything derived from it.
 
 The test: can some code delete an object of a derived class through a pointer to this class?
 
@@ -1518,7 +1510,7 @@ The test: can some code delete an object of a derived class through a pointer to
    4. No, for the same reason: no class derives from ``Fleet``.
    5. No, until we derived from it and kept RoboTaxis behind ``Vehicle`` pointers. Adding the first ``virtual`` method to a class is the moment to add the ``virtual`` destructor: "A class with a virtual function should have a virtual or protected destructor". Rule: `Core Guidelines C.127 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-dtor>`__.
 
-   ``702run week9_playground 75`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
+   ``702run week9_playground 74`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
 
 Summary
 ^^^^^^^
@@ -1549,7 +1541,7 @@ A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``.
                       const std::string& color = "white");
      virtual ~Vehicle() = default;
      virtual void drive(const Route& route) const = 0;  // no body
-     // ... the rest of L8's members: id, speeds, color, mileage, sensors
+     // ... the rest of Vehicle's members: id, speeds, color, mileage, sensors
    };
 
 - A vehicle that is neither a robotaxi nor a taxi has no way to drive, so ``Vehicle::drive`` has no right body to write. FR-3 says the same: each kind of vehicle drives in its own way.
@@ -1661,7 +1653,7 @@ The Whole Program
    Taxi: Ana drives 500 m
 
 - ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
-- Run: ``702run week9_playground 83``.
+- Run: ``702run week9_playground 82``.
 
 Discussion: Add a RoboBus
 """""""""""""""""""""""""
@@ -1679,7 +1671,7 @@ The design has a non-functional requirement for this case: a new kind of vehicle
    :class-container: sd-border-success
 
    1. ``class RoboBus final : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 84`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 83`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". And ``RoboTaxi`` is ``final``: nothing derives from it.
 
@@ -1910,7 +1902,7 @@ A Passenger Rides a Vehicle
    };
 
 - ``board`` and ``leave`` are defined in ``fleet.cpp``: ``board`` stores the pointer in ``ride_``, and ``leave`` resets it.
-- ``Vehicle`` is L8's class. The program keeps each ``Vehicle`` in a ``std::shared_ptr``, so a ``std::weak_ptr`` (L7) can refer to it without owning it.
+- ``Vehicle`` is the class you already wrote. The program keeps each ``Vehicle`` in a ``std::shared_ptr``, so a ``std::weak_ptr`` can refer to it without owning it.
 
 Back to `Live Coding: Step 1`_.
 
@@ -2054,7 +2046,7 @@ Generalization and Specialization
 
 **Specialization**: starting from a base class, and writing a derived class for objects that need more: top-down.
 
-- Specialization: L8 wrote ``Vehicle``. Today, ``RoboTaxi`` and ``Taxi`` derive from it, and `Discussion: Add a RoboBus`_ adds ``RoboBus``.
+- Specialization: ``Vehicle`` came first. Today, ``RoboTaxi`` and ``Taxi`` derive from it, and `Discussion: Add a RoboBus`_ adds ``RoboBus``.
 - Generalization: if a program had separate ``RoboTaxi`` and ``Taxi`` classes, each with its own speeds and its own check, the shared part would move up into a new ``Vehicle``.
 - Both end with the same diagram: a hollow triangle at the base.
 
@@ -2164,8 +2156,8 @@ Copying a Vehicle of the Design
 
    error: static assertion failed: result type must be constructible from input type
 
-- Each line gives the same 4 errors, from inside ``std::vector``: copying ``Vehicle`` copies ``sensors_``, and a ``std::unique_ptr`` cannot be copied (L8). The move falls back to the copy: ``Vehicle`` declares its destructor, so the compiler writes no moves (Core Guidelines C.21).
-- The copy is not suppressed: ``std::is_copy_constructible_v<Taxi>`` is ``true``. The copy constructor exists, and fails only when a copy is compiled. To suppress it, ``Vehicle`` deletes it (``= delete``, in the L8 reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`):
+- Each line gives the same 4 errors, from inside ``std::vector``: copying ``Vehicle`` copies ``sensors_``, and a ``std::unique_ptr`` cannot be copied. The move falls back to the copy: ``Vehicle`` declares its destructor, so the compiler writes no moves (Core Guidelines C.21).
+- The copy is not suppressed: ``std::is_copy_constructible_v<Taxi>`` is ``true``. The copy constructor exists, and fails only when a copy is compiled. To suppress it, ``Vehicle`` deletes it (``= delete``, in the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`):
 
 .. code-block:: cpp
 

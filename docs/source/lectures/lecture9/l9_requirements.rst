@@ -7,7 +7,7 @@ L9 Requirements
 **Robotaxi Fleet Software: Requirements Specification**
 
 This document states the requirements of the robotaxi fleet software that
-Lecture 8 and Lecture 9 build. The :doc:`lecture page <l9_lecture>` says what
+we build in class. The :doc:`lecture page <l9_lecture>` says what
 each kind of requirement is, and how the nouns and verbs of a requirement give
 the classes and methods.
 
@@ -107,14 +107,14 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
        itself, and a Taxi is driven by its driver.
      - In the code: ``Vehicle::drive`` is pure ``virtual``;
        ``RoboTaxi::drive`` and ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 83`` (The Whole Program)
+     - Live Coding Step 4. ``702run week9_playground 82`` (The Whole Program)
        prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4
      - Each RoboTaxi shall carry one or more Sensors. A RoboTaxi with no
        sensor shall not drive.
      - In the code: a ``Vehicle`` owns its sensors through
-       ``std::unique_ptr`` (L8); ``RoboTaxi::drive`` checks
+       ``std::unique_ptr``; ``RoboTaxi::drive`` checks
        ``sensor_count()`` first.
      - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
        ``RoboTaxi: no sensor, stays parked``, then, with one sensor,
@@ -123,7 +123,7 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
      - A Vehicle shall follow a Route that it is given for one trip.
      - In the code: ``Vehicle::drive(const Route&)``. The vehicle uses the
        route only during the call.
-     - ``702run week9_playground 37`` (A Route for One Call) prints
+     - ``702run week9_playground 36`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-6
      - The software shall answer status queries: a vehicle's status and
@@ -148,7 +148,7 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
      - The Fleet shall add and remove vehicles, and list the available ones.
      - Adding and removing in the code: ``Fleet::add``, ``Fleet::remove``.
        Listing available vehicles: not in the course code.
-     - Live Coding Step 2. ``702run week9_playground 29`` (The Vehicles
+     - Live Coding Step 2. ``702run week9_playground 28`` (The Vehicles
        Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``.
    * - FR-11
      - The software shall manage the drivers of Taxis: assigning and removing
@@ -160,7 +160,7 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
        the passenger an owner of the vehicle.
      - In the code: ``Passenger::board``, ``Passenger::leave``; the passenger
        holds a ``std::weak_ptr<Vehicle>``.
-     - Live Coding Step 1. ``702run week9_playground 25`` (Two Separate
+     - Live Coding Step 1. ``702run week9_playground 24`` (Two Separate
        Lifetimes) prints ``1``, ``1`` and ``true``.
 
 
@@ -179,7 +179,7 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
      - Extensibility
      - A new kind of vehicle shall need no change to ``Fleet`` or
        ``Passenger``.
-     - ``702run week9_playground 84`` (Discussion: Add a RoboBus): a
+     - ``702run week9_playground 83`` (Discussion: Add a RoboBus): a
        ``RoboBus`` joins a ``Fleet`` unchanged and prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2

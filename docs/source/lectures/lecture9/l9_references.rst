@@ -7,7 +7,7 @@ Lecture 9 References
 .. dropdown:: Lecture 9 Summary
    :class-container: sd-border-success
 
-   This lecture covered advanced object-oriented programming, on the robotaxi program whose class diagram L8 and L9 share:
+   This lecture covered advanced object-oriented programming, on the robotaxi program and its class diagram:
 
    - **Design and Relationships**: Requirements say what the program does. Their nouns give classes, their verbs methods, their links relationships, drawn in a UML class diagram. Association knows (``std::weak_ptr``), aggregation shares (``std::shared_ptr``), composition owns alone (``std::unique_ptr`` or a member), dependency uses for one call (a parameter).
 
