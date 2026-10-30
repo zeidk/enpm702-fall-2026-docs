@@ -121,7 +121,7 @@ scheduled.
    * - Week 10
      - Nov 3
      - Read :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`
-     - | OOP Advanced (Inheritance, Polymorphism, Abstraction)
+     - | OOP Advanced (Inheritance, Polymorphism, Abstraction, Namespaces)
        | :quiz:`Quiz 4`, with questions on the L8 reading
      - | Submit Lecture 9 exercises
        | :assignment:`RWA3 posted`

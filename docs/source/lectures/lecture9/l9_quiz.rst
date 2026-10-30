@@ -4,7 +4,7 @@
 Lecture 9 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``auto`` against a pointer to the base class, ``virtual`` destructors, abstract and concrete classes, and ``final``. No question uses the Further Reading part of the lecture.
+This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``auto`` against a pointer to the base class, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
 
 Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do after Using the Names Outside fleet. ``trip`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
@@ -21,7 +21,7 @@ Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``
 ----
 
 
-Multiple Choice (Questions 1 to 10)
+Multiple Choice (Questions 1 to 11)
 =====================================
 
 .. admonition:: Question 1
@@ -337,10 +337,47 @@ Multiple Choice (Questions 1 to 10)
       ``final`` after the class name, ``class Taxi final``, is what would stop every derived class.
 
 
-True/False (Questions 11 to 15)
+.. admonition:: Question 11
+   :class: hint
+
+   Which of the numbered lines compile?
+
+   .. code-block:: cpp
+
+      namespace fleet {
+      class Route {};
+      }  // namespace fleet
+
+      int main() {
+        Route trip;          // 1
+        fleet::Route back;   // 2
+        using fleet::Route;
+        Route next;          // 3
+      }
+
+   A. All three.
+   B. Only 2.
+   C. Only 2 and 3.
+   D. Only 1 and 3.
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      **C. Only 2 and 3.**
+
+      ``Route`` is declared inside ``fleet``, so outside the namespace line 1 does not find it:
+
+      .. code-block:: text
+
+         error: 'Route' was not declared in this scope; did you mean 'fleet::Route'?
+
+      Line 2 names the class in full. The using-declaration brings the one name ``fleet::Route`` into ``main``, so line 3 finds it without ``fleet::``. With line 1 removed, the program compiles.
+
+
+True/False (Questions 12 to 17)
 =================================
 
-.. admonition:: Question 11
+.. admonition:: Question 12
    :class: hint
 
    **True or False**: ``Vehicle`` declares ``virtual void drive(const Route& route) const;``. In ``RoboTaxi``, ``void drive(const Route& route) { /* ... */ }``, with no ``const``, overrides it.
@@ -358,7 +395,7 @@ True/False (Questions 11 to 15)
 
       Writing ``override`` turns the mistake into an error: "marked 'override', but does not override".
 
-.. admonition:: Question 12
+.. admonition:: Question 13
    :class: hint
 
    **True or False**: ``RoboTaxi`` is declared ``class RoboTaxi final : public Vehicle``. Its ``drive`` must also be marked ``final``, or a class derived from ``RoboTaxi`` could override it.
@@ -370,7 +407,7 @@ True/False (Questions 11 to 15)
 
       No class can derive from a ``final`` class, so nothing can override its methods. A ``final`` class needs no ``final`` on its methods: ``RoboTaxi::drive`` is marked ``override`` only. Core Guidelines C.128: "Virtual functions should specify exactly one of ``virtual``, ``override``, or ``final``".
 
-.. admonition:: Question 13
+.. admonition:: Question 14
    :class: hint
 
    **True or False**: In the lecture's discussion "Which drive() Runs?", ``Vehicle::drive`` is ``virtual`` with a body, ``RoboTaxi`` overrides it, and ``ref`` is a ``Vehicle&`` bound to a ``RoboTaxi``. Then ``ref.Vehicle::drive(trip);`` runs ``RoboTaxi::drive``, because ``drive`` is ``virtual``.
@@ -382,7 +419,7 @@ True/False (Questions 11 to 15)
 
       Naming the class, ``Vehicle::drive``, turns off the virtual call: the line runs ``Vehicle::drive`` and prints ``Vehicle: drives 500 m``. This is how an override calls the base's version on purpose. ``ref.drive(trip);``, without the class name, runs ``RoboTaxi::drive``.
 
-.. admonition:: Question 14
+.. admonition:: Question 15
    :class: hint
 
    **True or False**: The company adds ``class RoboBus final : public Vehicle``, which overrides ``drive``. ``Fleet`` must get a new overload of ``add`` before it can hold a ``RoboBus``.
@@ -394,7 +431,7 @@ True/False (Questions 11 to 15)
 
       ``Fleet`` stores ``std::shared_ptr<Vehicle>`` and names only ``Vehicle``. A ``std::shared_ptr<RoboBus>`` converts to a ``std::shared_ptr<Vehicle>``, as a ``std::shared_ptr<RoboTaxi>`` does, so not one line of ``Fleet`` changes. That is the non-functional requirement of last year's design: a new kind of vehicle needs no change to ``Fleet``.
 
-.. admonition:: Question 15
+.. admonition:: Question 16
    :class: hint
 
    **True or False**: If ``Vehicle`` declares ``speed_`` ``protected`` instead of ``private``, this method of a derived class compiles, and afterwards ``get_speed()`` returns 20, above the maximum speed of 13.4.
@@ -409,3 +446,16 @@ True/False (Questions 11 to 15)
       **True.**
 
       A ``protected`` member can be used by the methods of the derived classes, so the assignment compiles, and it skips ``set_speed``'s check. Every derived class can now break ``Vehicle``'s invariant. That is why every data member is ``private`` in this course's assignments, and why Core Guidelines C.133 says "``protected`` data is a source of complexity and errors. ``protected`` data complicates the statement of invariants".
+
+
+.. admonition:: Question 17
+   :class: hint
+
+   **True or False**: Two source files of one program each define a helper ``double make_trip()``, each inside an unnamed namespace, ``namespace { }``. The linker stops with "multiple definition of ``make_trip()``".
+
+   .. dropdown:: Answer
+      :class-container: sd-border-success
+
+      **False.**
+
+      A name in an unnamed namespace has internal linkage (C++20 [basic.link] 6.6 paragraph 4): the linker does not match it with a name in another file, so each file keeps its own ``make_trip``. In the lecture's Two Helpers with One Name, the program links and prints ``500 200``. Without the unnamed namespaces, the same two files stop the linker with ``multiple definition of `make_trip()'``.

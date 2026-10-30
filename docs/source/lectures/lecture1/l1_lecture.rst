@@ -655,7 +655,7 @@ autonomous robot in simulation.
      -
      -
    * - 10 (Nov 3)
-     - L9: OOP advanced (inheritance, polymorphism, abstraction)
+     - L9: OOP advanced (inheritance, polymorphism, abstraction, namespaces)
      - Quiz 4
      - RWA3 posted
    * - 11 (Nov 10)

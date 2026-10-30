@@ -114,7 +114,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week8_playground            # the code of every slide, in order
-      702run week8_playground 27         # only the code of slide 28
+      702run week8_playground 27         # only the code of slide 27
       702run week8_appendix              # the code of every appendix frame
       702run week8_appendix ii           # only appendix frame ii (2 works too)
       702run week8_rule_of_five five     # only the part five of the reading
@@ -988,6 +988,8 @@ Build and run: ``live8``. The Step 4 block prints:
    12
 
 - ``car_a`` kept its old speed, 12.
+
+.. _l8-not-noexcept:
 
 Not ``const``, Not ``noexcept``
 """""""""""""""""""""""""""""""

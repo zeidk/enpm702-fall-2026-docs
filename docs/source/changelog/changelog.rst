@@ -5,10 +5,29 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.12.2: Value Categories, the Example Functions (2026-10-30)
+.. dropdown:: v1.13.0: Lecture 9, Warm-Up and Namespaces (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 9** starts with a warm-up: a ``Vehicle`` class that
+     compiles but breaks L8's rules, the improved class, and what each of
+     nine changes prevents.
+   - New section **Namespaces**: the robotaxi classes in the namespace
+     ``fleet``, one namespace across several files, using-declarations,
+     nested namespaces, and unnamed namespaces for helpers of one file.
+     The glossary adds Internal Linkage and Unnamed Namespace.
+   - New figure: ``Passenger`` and ``Vehicle`` with every member.
+   - The ``702run week9_playground`` slide numbers follow the new slides.
+   - The Lecture 9 quiz has two new questions on namespaces (17 in all),
+     and the schedule lists namespaces for Lecture 9.
+   - Lecture 8: a link to "Not ``const``, Not ``noexcept``" works again,
+     and one ``702run`` example names the right slide.
+
+
+.. dropdown:: v1.12.2: Value Categories, the Example Functions (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - The **Value Categories** reading shows the code of ``make_obstacle``,
      ``lookup`` and ``first_pose``, in a box under the declarations, with
