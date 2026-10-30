@@ -5,10 +5,23 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.2: Value Categories, Definitions on Hover (2026-10-30)
+.. dropdown:: v1.13.3: Lecture 9, Requirements Page (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - New page, **L9 Requirements**: the five requirements today's code
+     uses, with where each one is in the code, and all twelve. The
+     lecture page links to it.
+   - Lecture 9 has six shorter learning objectives.
+   - The warm-up class's ``get_speed`` returns ``double&``: one more
+     thing to fix. The improved version and its table are no longer on
+     the page; we go through them in class.
+
+
+.. dropdown:: v1.13.2: Value Categories, Definitions on Hover (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - On the **Value Categories** reading and its quiz, the mouse over
      ``make_obstacle``, ``lookup`` or ``first_pose`` shows that

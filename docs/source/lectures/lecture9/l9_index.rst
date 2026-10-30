@@ -15,14 +15,11 @@ This lecture covers advanced object-oriented programming in C++, on the same rob
    By the end of this lecture, you will be able to:
 
    1. **Turn** requirements into classes, and **read** a UML class diagram.
-   2. **Put** classes in a namespace across several files, and **keep** a helper private to one file with an unnamed namespace.
-   3. **Tell** association, aggregation, composition and dependency apart, and **write** each one with the right member or parameter.
-   4. **Derive** a class from a base class, **call** the base constructor, and **use** ``protected``.
-   5. **Explain** compile-time and runtime polymorphism, and **write** ``virtual`` methods with ``override``.
-   6. **Choose** between ``auto`` and a pointer to the base class.
-   7. **Give** a base class a ``virtual`` destructor, and **say** what goes wrong without one.
-   8. **Write** an abstract class with a pure ``virtual`` method, and concrete classes that override it.
-   9. **Use** ``final`` on a class and on a method.
+   2. **Put** classes in a namespace.
+   3. **Write** association, aggregation, composition and dependency.
+   4. **Derive** a class from a base class, and **call** the base constructor.
+   5. **Write** ``virtual`` methods with ``override``, and a ``virtual`` destructor.
+   6. **Write** an abstract class, and **use** ``final``.
 
 .. toctree::
    :hidden:
@@ -30,6 +27,7 @@ This lecture covers advanced object-oriented programming in C++, on the same rob
    :caption: Lecture 9 Contents
 
    l9_lecture
+   l9_requirements
    l9_shell
    l9_exercises
    l9_quiz
