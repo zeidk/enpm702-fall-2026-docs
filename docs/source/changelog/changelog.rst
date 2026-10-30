@@ -5,10 +5,19 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.13.0: Lecture 9, Warm-Up and Namespaces (2026-10-30)
+.. dropdown:: v1.13.1: Value Categories, Four Flowcharts (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - The **Value Categories** reading has four flowcharts: the two
+     questions that give the category, the four steps, the category of a
+     member access ``e.m``, and which reference binds to which category.
+
+
+.. dropdown:: v1.13.0: Lecture 9, Warm-Up and Namespaces (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9** starts with a warm-up: a ``Vehicle`` class that
      compiles but breaks L8's rules, the improved class, and what each of

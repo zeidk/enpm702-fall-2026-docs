@@ -159,6 +159,13 @@ Lecture 7 that builds one:
      - prvalue
      - ``make_path(3)``
 
+.. figure:: /_static/images/vcat/vcat_two_questions.png
+   :alt: A flowchart. From the box An expression, an arrow leads to the question Does it refer to an object that already exists? Its no arrow leads to a filled box, prvalue, with the example make_path(3). Its yes arrow leads to the question May another object take its contents? From there, no leads to lvalue, with the example path, and yes leads to xvalue, with the example std::move(path). The three filled boxes, lvalue, xvalue and prvalue, sit side by side on the bottom row.
+   :align: center
+   :width: 70%
+
+   The two questions as a flowchart: each path ends at one category.
+
 There is no fourth row. An expression that refers to no object only
 computes a value. That value has no name, so no other line of the
 program can reach it, and another object may always take it.
@@ -299,6 +306,13 @@ stop at the first one that answers yes:
 
 For ``make_path(3).size()``, the answer is yes at question 3, and Step 3
 gives prvalue.
+
+.. figure:: /_static/images/vcat/vcat_steps.png
+   :alt: A flowchart. The top box says Find the outermost operation: the one that runs last. Below it, down the left side, the steps in order, each joined to the next by a no arrow: Step 1: Is it a name?, Step 2: Is it a literal?, Step 3: Is it a function call or a cast?, and Step 4: a built-in operator. Read its row in the Step 4 table. Step 1's yes arrow leads to a filled box, lvalue, with the example count. Step 2's yes arrow leads to the question Is it a string literal?, whose yes leads to lvalue, with the example "lidar", and whose no leads to prvalue, with the example 40.0. Step 3's yes arrow leads to Read the return type (for a cast, the type cast to), with three arrows: T& or const T& to lvalue, with the example lookup(seen, 1); T&& to xvalue, with the example std::move(path); and T, with no &, to prvalue, with the example make_path(3).
+   :align: center
+   :width: 95%
+
+   The four steps as a flowchart. Stop at the first step that answers yes.
 
 
 Step 1: A Name
@@ -458,6 +472,13 @@ steps. Then:
    materialization**, Lecture 7), and the member of that temporary is an
    xvalue: it exists, and nothing else can use it.
    ``make_obstacle(3).id`` is one.
+
+.. figure:: /_static/images/vcat/vcat_member.png
+   :alt: A flowchart for a member access, e.m. The first box says Find the category of e with the four steps. Three arrows leave it. e is an lvalue leads to a filled box, lvalue, with the example pose.x. e is an xvalue leads to xvalue, with the example std::move(pose).x. e is a prvalue leads to the box Temporary materialization: the compiler creates a temporary object, and from there to xvalue, with the example make_obstacle(3).id.
+   :align: center
+   :width: 80%
+
+   The category of ``e.m`` follows from the category of ``e``.
 
 .. note::
 
@@ -1111,6 +1132,14 @@ to an object that has an address, and ``&`` still does not compile on it.
 - The first message is for ``lr``: ``count + 1`` is a prvalue. g++ calls
   it an "rvalue", the group name, which covers prvalues and xvalues.
 - The second message is for ``rr``: ``count`` is a name, an lvalue.
+
+.. figure:: /_static/images/vcat/vcat_binding.png
+   :alt: Three filled boxes on the top row, lvalue, xvalue and prvalue; a dashed frame labeled rvalue holds xvalue and prvalue. Three boxes on the bottom row, T&, const T& and T&&. Arrows show which reference binds to which category: lvalue to T& and to const T&; xvalue to const T& and to T&&; prvalue to const T& and to T&&.
+   :align: center
+   :width: 60%
+
+   Which reference binds to which category: ``const T&`` to every
+   category, ``T&`` only to an lvalue, ``T&&`` only to an rvalue.
 
 **3. The category picks the overload: a copy or a move.** With the two
 ``take`` functions of `Trap 1: The Type Is Not the Category`_
