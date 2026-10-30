@@ -444,6 +444,8 @@ Value Categories
 
    The tree is Figure 1 of C++20 **[basic.lval]** (7.2.1); the labels under glvalue and rvalue are ours. Paragraph 2: "Every expression belongs to exactly one of the fundamental classifications in this taxonomy: lvalue, xvalue, or prvalue."
 
+For more examples, a step-by-step method and exercises with answers, see the :doc:`Value Categories reading </reading_material/value_categories/vcat_index>`.
+
 The Five Definitions
 ^^^^^^^^^^^^^^^^^^^^
 

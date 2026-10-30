@@ -5,10 +5,28 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.11.1: The Rule of Five Reading Has Its Own Program (2026-10-28)
+.. dropdown:: v1.12.0: Reading Material, Value Categories (2026-10-29)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - New self-study reading, **Value Categories**, under Reading
+     Material. It extends the Value Categories part of Lecture 7: why
+     "rvalue" is a group and not a third category, four steps to find the
+     category of any expression, the ``CATEGORY`` helper, 54 worked
+     examples, five traps, and how the category picks a copy or a move.
+   - Seven exercises with solutions (33 more expressions to classify, and
+     programs to predict) and a 13-question quiz. Not graded.
+   - Every example runs in a new program of the course repository,
+     ``week7_value_categories``, in ``project/week7/value_categories/``.
+     Pull, build with ``702build week7_value_categories``, then run a
+     part by its key: ``702run week7_value_categories examples``.
+   - Lecture 7 links to it from its Value Categories section.
+
+
+.. dropdown:: v1.11.1: The Rule of Five Reading Has Its Own Program (2026-10-28)
+   :icon: tag
+   :class-container: sd-border-success
 
    - The code of **Rule of Five and Rule of Zero** is now its own
      program, ``week8_rule_of_five``, in ``project/week8/rule_of_five/``,

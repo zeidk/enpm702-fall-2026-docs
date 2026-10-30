@@ -34,6 +34,10 @@ are expected to work through these outside of class.
      - Validating terminal input: what ``std::cin >> value`` does when the
        input is not a number, stream state and recovery, and whole-line
        parsing with ``std::getline`` and ``std::from_chars``
+   * - :doc:`value_categories/vcat_index`
+     - lvalue, xvalue and prvalue: four steps to find the category of an
+       expression, checking with ``decltype((e))``, worked examples,
+       common traps, and how the category picks a copy or a move
    * - :doc:`version_control/vc_index`
      - Git fundamentals, branching, merging, GitHub, pull requests,
        fork workflow
@@ -54,5 +58,6 @@ are expected to work through these outside of class.
    flow_control/fc_index
    linux_shell/ls_index
    input_validation/iv_index
+   value_categories/vcat_index
    version_control/vc_index
    vscode_cmake/vcm_index
