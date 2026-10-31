@@ -15,6 +15,9 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      The class diagram with every member is renamed The Class Diagram, with
      Every Member, and says that every class should be writable from the
      diagram alone. The ``702run`` slide numbers follow the slides.
+   - **Lecture 9**: Association, Aggregation or Dependency, a table with two
+     questions that tell the three apart. The ``702run`` slide numbers
+     follow the slides.
    - **Lecture 9**: One Namespace shows the second way to define a method,
      ``void fleet::Route::add(Position waypoint)``, and why ``Position``
      needs no prefix there.
