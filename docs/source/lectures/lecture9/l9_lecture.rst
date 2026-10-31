@@ -158,7 +158,15 @@ Every class of the program is in the namespace ``fleet``. ``Vehicle``, ``Route``
 
          }  // namespace fleet
 
-- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Every file of ``project/week9/common`` does the same, and so does every file of the live code. The comment after the last brace says which brace closes the namespace.
+      or
+
+      .. code-block:: cpp
+
+         void fleet::Route::add(Position waypoint) {
+           waypoints_.push_back(waypoint);
+         }
+
+- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Or it names the namespace in front of each method, ``fleet::Route::add``. After that name, the compiler looks in ``Route`` and then in ``fleet``, so ``Position`` needs no prefix. Every file of ``project/week9/common`` does the same, and so does every file of the live code. The comment after the last brace says which brace closes the namespace.
 - Inside the namespace, ``Route`` uses ``Position`` with no prefix: both are in ``fleet``.
 - Outside ``fleet``, as in ``live/src/main.cpp``, write ``fleet::Route``. The listings on this page leave ``fleet::`` out.
 
