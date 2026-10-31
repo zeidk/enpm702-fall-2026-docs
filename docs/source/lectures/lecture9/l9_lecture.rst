@@ -98,12 +98,17 @@ One Class per File
          live/
          ├── include/
          │   ├── vehicle.hpp
+         │   ├── sensor.hpp
+         │   ├── route.hpp
+         │   ├── position.hpp
          │   ├── passenger.hpp
          │   ├── fleet.hpp
          │   ├── robotaxi.hpp
          │   └── taxi.hpp
          └── src/
              ├── vehicle.cpp
+             ├── sensor.cpp
+             ├── route.cpp
              ├── passenger.cpp
              ├── fleet.cpp
              ├── robotaxi.cpp
@@ -112,7 +117,8 @@ One Class per File
 
    .. grid-item::
 
-      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class.
+      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class. ``Position``, a ``struct`` with no method, has only a header.
+      - ``Vehicle``, ``Sensor``, ``Route`` and ``Position`` are given: you read them, you do not write them. You write the other four.
       - You find a class by its file name. A change to one class recompiles only the files that include its header: a change to ``Taxi`` recompiles ``taxi.cpp`` and the files that include ``taxi.hpp``.
       - A derived class gets its own files too: ``robotaxi.hpp`` includes ``vehicle.hpp``, because ``RoboTaxi`` needs its base. ``vehicle.hpp`` includes none of its derived classes: a base class does not know the classes derived from it.
       - So a new kind of vehicle adds two files and changes none.
@@ -519,10 +525,10 @@ Multiplicity
 Live Coding: Step 1
 """""""""""""""""""
 
-**10 minutes, with me.** We write ``Passenger`` in ``passenger.hpp`` and ``passenger.cpp``. ``Vehicle`` is given, in ``vehicle.hpp`` and ``vehicle.cpp``.
+**10 minutes, with me.** We write ``Passenger`` in ``passenger.hpp`` and ``passenger.cpp``. ``Vehicle`` is given.
 
 1. ``private``: ``std::string name_`` and ``std::weak_ptr<Vehicle> ride_``.
-2. An ``explicit`` constructor, defined in the class. It throws for an empty name: it checks the invariant, a name that is not empty.
+2. The constructor throws for an empty name: it checks the invariant, a name that is not empty.
 3. In ``passenger.cpp``, ``board`` stores the vehicle in ``ride_``, and ``leave`` resets it.
 4. Uncomment the Step 1 block in ``main.cpp``: ``maya`` boards ``car_a``, then ``car_a.reset()``.
 
@@ -536,7 +542,6 @@ Build and run: ``live9``. The Step 1 block prints:
 
 - 1: ``board`` added no owner. ``true``: ``watcher``, a second ``std::weak_ptr``, finds the ``Vehicle`` destroyed, while ``maya`` still exists.
 - The ``Vehicle`` in ``live/include/vehicle.hpp`` and ``live/src/vehicle.cpp`` is given: you do not write it. Its ``get_id`` and static counter ``next_id_`` give each vehicle an id, which ``Fleet`` needs in Step 2.
-- **Checkpoint**: show me your three lines before we start Step 2.
 
 The class we write is in `A Passenger Rides a Vehicle`_, under Further Reading.
 
@@ -554,7 +559,7 @@ Two Separate Lifetimes
    car_a.reset();  // the only owner lets go
    std::cout << std::boolalpha
              << watcher.expired() << '\n';
-   maya.leave();   // maya still exists
+   maya.leave();   // her ride_ has expired
 
 .. code-block:: text
 
@@ -565,7 +570,7 @@ Two Separate Lifetimes
 - ``13.4`` is 13.4 m/s, the maximum speed (about 30 mph).
 - ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
-- ``maya`` lives on: that is what "neither owns the other" means in the code.
+- ``maya`` lives on, aboard a car that no longer exists. FR-12.3 allows it, and her ``std::weak_ptr`` can tell that the car is gone, where a plain pointer could not.
 - The type follows a requirement, not the real world: :doc:`FR-12.3 <l9_requirements>` says boarding shall not keep a vehicle alive. In C++, an owner is whoever decides when an object is destroyed, nothing more.
 - A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while she holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
 - Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.

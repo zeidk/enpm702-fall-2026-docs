@@ -12,6 +12,13 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 
    - **Lecture 9**: every class diagram with members lists each data member in
      its box, and a line's end names the member too, such as ``-ride_``.
+   - **L9 Requirements**: a new section, External Interfaces, with a UML use
+     case diagram and four interfaces: the passenger app, the in-vehicle
+     display, the operator console and the sensors (IF-1 to IF-4).
+   - **Lecture 9**: Two Separate Lifetimes says that ``maya`` is aboard a car
+     that no longer exists, which FR-12.3 allows. Step 1 follows the slide.
+   - **Lecture 9**: the live folder holds the given ``Sensor``, ``Route`` and
+     ``Position`` too, so ``week9_live`` is built from ``live/`` alone.
    - **L9 Design**: Class Specifications, every data member and method of each
      class, with its type, meaning and the exception it throws.
    - **L9 Design**, a new page: the class diagram, each class with its

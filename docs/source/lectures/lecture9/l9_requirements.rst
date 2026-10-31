@@ -35,7 +35,7 @@ leave it.
 Payment, user accounts and user authentication are outside the scope of this
 specification.
 
-Section 7 traces each requirement to the course code: which ones the code of
+Section 8 traces each requirement to the course code: which ones the code of
 ``project/week9`` meets, and the check that shows it.
 
 1.3 Definitions
@@ -78,9 +78,9 @@ All distances are in meters (m) and all speeds in meters per second (m/s).
 
 Each requirement has:
 
-- an **ID**: FR for functional, NFR for non-functional, TC for a technical
-  constraint. A requirement split into parts keeps its number: FR-10.1,
-  FR-10.2.
+- an **ID**: FR for functional, NFR for non-functional, IF for an external
+  interface, TC for a technical constraint. A requirement split into parts
+  keeps its number: FR-10.1, FR-10.2.
 - a **statement** with **shall**. It names one behavior, and a test can show
   whether the software has it.
 - a **rationale**: why the requirement exists.
@@ -493,7 +493,83 @@ objects it involves.
 :Acceptance: Every entry of an end-to-end ride's log has the three fields.
 
 
-4. Technical Constraints
+4. External Interfaces
+====================================================
+
+The software has no screen of its own. People and devices reach it through
+four interfaces. The passenger app, the in-vehicle display and the operator
+console are separate products: this specification says what the software gives
+them and takes from them, not how they look.
+
+.. figure:: /_static/images/l9/use_cases.png
+   :alt: A UML use case diagram. A rectangle labeled Robotaxi fleet software holds eight ovals, the use cases: Request a ride (FR-1), Board and leave a vehicle (FR-12), Query a vehicle's status (FR-6), Drive a Taxi (FR-3), Add and remove vehicles (FR-10), Assign a driver (FR-11), Read the event log (FR-7) and Send sensor readings (FR-8). Outside the rectangle are four stick figures, the actors. On the left, Passenger, joined by lines to Request a ride, Board and leave a vehicle and Query a vehicle's status; below it, Driver, joined to Drive a Taxi. On the right, Operator, joined to Query a vehicle's status, Add and remove vehicles, Assign a driver and Read the event log; below it, Sensor, marked hardware, joined to Send sensor readings.
+   :align: center
+   :width: 70%
+
+   Who uses the software, and for what: a UML use case diagram.
+
+- **Actor**, a stick figure: a role that uses the system, a person or a
+  device. UML 2.5.1 (18.1.1): "Actors may represent roles played by human
+  users, external hardware, or other systems."
+- **Use case**, an oval: something the system does for an actor. Each one
+  names the requirement it comes from.
+- **The rectangle** is the system's boundary: what is inside it is this
+  software. A line joins an actor to each use case it takes part in.
+
+**IF-1. Passenger app**
+
+Through the passenger app, the system shall take a passenger's ride requests
+(FR-1) and the boarding and leaving of a vehicle (FR-12), and shall send back
+the answer to each request, with the reason for a rejection (FR-1), the
+vehicle assigned (FR-2), the vehicle's status and location (FR-6), and the end
+of the ride, also when the vehicle is retired during it (FR-12.3).
+
+:Rationale: A passenger reaches the service only through the app.
+:Priority: Must
+:Verification: Demonstration
+:Acceptance: From the app, a passenger requests a ride, sees the vehicle
+   assigned and where it is, boards, and sees the ride end. When the vehicle
+   is retired during the ride, the app shows that the ride has ended.
+
+**IF-2. In-vehicle display**
+
+The system shall send the display inside each vehicle the state of the ride:
+on the way, arrived, ended. When the vehicle is retired during a ride
+(FR-12.3), the display shall show that the ride has ended.
+
+:Rationale: A passenger aboard must know what the vehicle is doing, and when
+   to get off.
+:Priority: Must
+:Verification: Demonstration
+:Acceptance: Each change of state appears on the display. Retiring the
+   vehicle during a ride makes the display show that the ride has ended.
+
+**IF-3. Operator console**
+
+Through the operator console, the system shall let the company's operators add
+and remove vehicles (FR-10), assign and remove drivers (FR-11), query a
+vehicle's status (FR-6) and read the event log (FR-7).
+
+:Rationale: The company runs the fleet from its office, and investigates a
+   ride from the log.
+:Priority: Must
+:Verification: Demonstration
+:Acceptance: Each of the four actions, done from the console, has the effect
+   that its requirement states.
+
+**IF-4. Sensors**
+
+The system shall receive the readings of each sensor of a RoboTaxi from the
+sensor hardware (FR-8).
+
+:Rationale: The sensors are hardware; the software only reads them.
+:Priority: Must
+:Verification: Test
+:Acceptance: With a lidar, a camera and a radar connected, the system receives
+   readings from each one.
+
+
+5. Technical Constraints
 ====================================================
 
 .. list-table::
@@ -539,19 +615,19 @@ objects it involves.
        message that names the rule (NFR-2).
 
 
-5. Success Criteria
+6. Success Criteria
 ====================================================
 
 The first release is accepted when:
 
-- **SC-1**: every **Must** requirement of sections 2 and 3 passes its
+- **SC-1**: every **Must** requirement of sections 2, 3 and 4 passes its
   acceptance criterion;
-- **SC-2**: the code meets every technical constraint of section 4;
+- **SC-2**: the code meets every technical constraint of section 5;
 - **SC-3**: the whole test run is repeated on the release build, with no
   failure.
 
 
-6. Assumptions
+7. Assumptions
 ====================================================
 
 - A Fleet holds zero or more vehicles of both kinds.
@@ -564,7 +640,7 @@ The first release is accepted when:
   the target computer, not to the sensor hardware.
 
 
-7. Traceability to the Course Code
+8. Traceability to the Course Code
 ====================================================
 
 The course code, ``project/week9``, meets part of this specification. A
@@ -648,6 +724,9 @@ slide.
    * - NFR-5 to NFR-9
      - No: they need dispatch, sensor reading or logging, which the course
        code does not have.
+     -
+   * - IF-1 to IF-4
+     - No: the course code has no app, display, console or sensor hardware.
      -
    * - TC-1 to TC-8
      - Yes.
