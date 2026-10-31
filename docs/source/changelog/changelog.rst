@@ -53,6 +53,16 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      a Taxi, Not the Other Way, and Through Vehicle's public Methods; the
      inheritance syntax shows public, protected and private; protected
      Members and Constructors and Inheritance are parts of Inheritance.
+   - **Lecture 9**: Choosing the Type of ``ride_`` compares three types against
+     FR-12.3 and replaces A std::weak_ptr, or a Plain Pointer. A Vehicle Uses
+     a Route moves into Dependency. Each relationship section says what its
+     multiplicity decides: one object or a ``std::vector``.
+   - **Lecture 9**: Inheritance shows public, protected and private
+     inheritance in one figure. The Animal examples keep their data
+     ``private``; MythicalCreature passes ``has_wings`` to Animal's
+     constructor.
+   - **Lecture 9**: the PlantUML source of the slides' UML diagrams is in
+     ``project/week9/uml``.
    - **Lecture 9**: when a relationship needs a smart pointer: A std::weak_ptr,
      or a Plain Pointer (association), Shared Ownership Needs std::shared_ptr
      (aggregation), and one line each for dependency and inheritance. Vehicle

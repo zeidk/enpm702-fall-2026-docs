@@ -370,6 +370,7 @@ Multiplicity
 - ``0..1`` at ``Vehicle``: one passenger rides at most one vehicle at a time.
 - ``0..*`` at ``Passenger``: one vehicle carries any number of passengers.
 - An end with no number leaves the count open.
+- The number at ``B``'s end decides ``A``'s member: ``0..1`` or ``1``, one object; ``0..*`` or ``1..*``, a container such as ``std::vector``.
 
 A Diagram as Text
 """""""""""""""""
@@ -396,6 +397,10 @@ Two boxes of the design, in PlantUML:
 - A line is written between two class names: ``-->`` is an arrow, ``o--`` an open diamond, ``*--`` a filled diamond, ``<|--`` a hollow triangle, ``..>`` a dashed arrow.
 - The VS Code extension draws the file as you type (``Alt+D``).
 - The whole diagram is ``project/week9/uml/robotaxi_model.plantuml``.
+
+.. note::
+
+   The PlantUML source of the UML diagrams on the slides is in `project/week9/uml <https://github.com/zeidk/enpm702-fall-2026-cpp/tree/main/project/week9/uml>`__. See `PlantUML: class diagrams <https://plantuml.com/class-diagram>`__.
 
 Summary
 ^^^^^^^
@@ -469,20 +474,6 @@ Every question is about the design, not about code that already exists.
 3. If ``A`` keeps ``B``: can ``B`` exist without ``A``? A ``Sensor`` is part of its ``Vehicle`` and goes with it, so composition: ``std::unique_ptr``, or a plain member as for a ``Route``'s ``Position`` values.
 4. If ``B`` lives on its own: must ``A`` keep it alive? The ``Fleet`` must, so aggregation: ``std::shared_ptr``. A ``Passenger`` must not: FR-12.3 says boarding does not keep a vehicle alive, so association: ``std::weak_ptr``.
 
-A Vehicle Uses a Route
-""""""""""""""""""""""
-
-.. figure:: /_static/images/l9/model_l9_dependency_members.png
-   :alt: A UML class diagram with only two boxes, Vehicle on the left and Route on the right, each listing its members; both boxes and the arrow are purple. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. Route has minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double. A dashed arrow labeled uses runs from Vehicle to Route.
-   :align: center
-   :width: 100%
-
-   ``Vehicle`` and ``Route`` with every member: the dashed arrow labeled ``uses``.
-
-- The first question of the table at work: ``Vehicle`` and ``Route``, with every member. ``Route`` is in one place only in ``Vehicle``'s box: the parameter of ``drive``.
-- No data member of ``Vehicle`` is a ``Route``. That is what the dashed arrow says: ``Vehicle`` uses a ``Route`` during a call and keeps nothing.
-- ``Route``'s box lists ``waypoints_``, as every box lists its data members; the ``has`` line to ``Position`` is not drawn here.
-
 Association
 ^^^^^^^^^^^
 
@@ -530,9 +521,41 @@ A Passenger Rides a Vehicle
 
    ``Passenger`` and ``Vehicle`` with every member: the arrow labeled ``rides``, its ``Vehicle`` end named ``-ride_``.
 
+- ``0..1`` at ``Vehicle``: a passenger rides at most one vehicle, so ``ride_`` is one ``std::weak_ptr``, not a container. ``0..*`` at ``Passenger`` needs no member: the arrow is one-way.
 - The same two boxes as in `Passenger and Vehicle in the Class Diagram`_, with every member. ``Passenger`` is what we write in Step 1: a name, a constructor, ``board`` and ``leave``.
 - ``ride_`` is in ``Passenger``'s box, with its type, ``std::weak_ptr<Vehicle>``. Its name is at the ``Vehicle`` end of the arrow too: the line says which data member holds the vehicle.
 - ``Vehicle``'s box is the class you are given, in ``vehicle.hpp`` and ``vehicle.cpp``, with the id and the static counter ``next_id_``. ``drive`` is in italics: `Abstraction`_ makes it pure ``virtual``. Step 1 does not touch ``Vehicle``.
+
+Choosing the Type of ``ride_``
+""""""""""""""""""""""""""""""
+
+:ref:`FR-12.3 <fr-12-3>`: "Boarding shall not keep a vehicle alive". The company can retire a car during a ride. Three types could hold the car in ``ride_``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 24 22 38 16
+
+   * - Type of ``ride_``
+     - Keeps the car alive?
+     - After the car is destroyed
+     - FR-12.3
+   * - ``std::shared_ptr<Vehicle>``
+     - Yes: the passenger is an owner
+     - The car is never destroyed while the passenger rides
+     - Broken
+   * - ``Vehicle*``
+     - No
+     - The pointer dangles: the code cannot tell, and reading it is undefined behavior
+     - Met, unsafely
+   * - ``std::weak_ptr<Vehicle>``
+     - No
+     - ``expired()`` is true, and ``lock()`` gives an empty pointer
+     - Met
+
+- A ``std::shared_ptr`` makes Maya an owner: a car the company retires would live on as long as Maya rides.
+- A plain pointer owns nothing, but when the car is destroyed it still holds the old address. The code cannot tell, and reading through it is undefined behavior.
+- A ``std::weak_ptr`` owns nothing and can tell. That is why ``ride_`` is a ``std::weak_ptr``. `Two Separate Lifetimes`_ runs it.
+- A plain pointer is right only when the other object surely outlives this one, as a ``Vehicle`` outlives the sensors it owns.
 
 Two Separate Lifetimes
 """"""""""""""""""""""
@@ -548,7 +571,7 @@ Two Separate Lifetimes
    car_a.reset();  // the only owner lets go
    std::cout << std::boolalpha
              << watcher.expired() << '\n';
-   maya.leave();   // her ride_ has expired
+   maya.leave();   // maya's ride_ has expired
 
 .. code-block:: text
 
@@ -559,9 +582,9 @@ Two Separate Lifetimes
 - ``13.4`` is 13.4 m/s, the maximum speed (about 30 mph).
 - ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
-- ``maya`` lives on, aboard a car that no longer exists. FR-12.3 allows it, and her ``std::weak_ptr`` can tell that the car is gone, where a plain pointer could not.
+- ``maya`` lives on, aboard a car that no longer exists. FR-12.3 allows it, and ``ride_`` can tell that the car is gone, where a plain pointer could not.
 - The type follows a requirement, not the real world: :ref:`FR-12.3 <fr-12-3>` says boarding shall not keep a vehicle alive. In C++, an owner is whoever decides when an object is destroyed, nothing more.
-- A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while she holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
+- A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while maya holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
 - Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.
 - A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
 - Run: ``702run week9_playground 26``.
@@ -581,44 +604,6 @@ A program models the part of reality that its requirements need. It departs from
 
 - Start from reality: classes named after the domain are easy to read. When reality and the requirements disagree, the requirements win.
 - The test to use: what must happen to ``B`` when ``A`` is destroyed, and which requirement says so?
-
-A std::weak_ptr, or a Plain Pointer
-"""""""""""""""""""""""""""""""""""
-
-.. grid:: 1 1 2 2
-   :gutter: 2
-
-   .. grid-item::
-
-      .. code-block:: cpp
-
-         class Passenger {  // cut
-           // ...
-          private:
-           std::weak_ptr<Vehicle> ride_;
-         };
-
-   .. grid-item::
-
-      .. code-block:: cpp
-
-         class Sensor {  // a variant
-          public:
-           explicit Sensor(const Vehicle* mount)
-               : mount_{mount} {}
-          private:
-           const Vehicle* mount_;  // owns nothing
-         };
-         // in add_sensor:
-         //   std::make_unique<Sensor>(this)
-
-- A ``std::weak_ptr`` when the other object is owned by ``std::shared_ptr`` and can be destroyed first: a car can be retired during a ride (FR-12.3).
-- A plain pointer when the other object surely outlives this one. The right box is a variant: a sensor that would know which car it is mounted on. A ``Vehicle`` owns its sensors, so it outlives each of them; our ``Sensor`` has no such member. The pointer comes from ``this``, not from ``new``: ``add_sensor`` still uses ``std::make_unique``, and nobody deletes through ``mount_``.
-- Never a ``std::shared_ptr``: it would make the passenger an owner, and keep a retired car alive.
-
-.. note::
-
-   "A raw pointer (a ``T*``) is non-owning". Rule: `Core Guidelines R.3 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-ptr>`__.
 
 Live Coding: Step 1
 """""""""""""""""""
@@ -689,6 +674,7 @@ A Fleet Holds Vehicles
 
    ``Fleet`` and ``Vehicle`` with every member: the line labeled ``holds``, its ``Vehicle`` end named ``-vehicles_``.
 
+- ``0..*`` at ``Vehicle``: a fleet holds any number of vehicles, so ``vehicles_`` is a ``std::vector``, with one ``std::shared_ptr<Vehicle>`` per vehicle.
 - The same two boxes as in `Fleet and Vehicle in the Class Diagram`_, with every member. ``Fleet`` is what you write in Step 2: ``add``, ``remove`` and ``size``.
 - ``vehicles_`` is in ``Fleet``'s box, with its type, a ``std::vector`` of ``std::shared_ptr<Vehicle>``. Its name is at the ``Vehicle`` end of the line too.
 - ``Vehicle``'s box does not change in Step 2. ``Fleet`` needs only ``get_id``, to remove a vehicle by its id.
@@ -720,7 +706,7 @@ The Vehicles Outlive the Fleet
    1 13.4
 
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
-- Run: ``702run week9_playground 35``.
+- Run: ``702run week9_playground 34``.
 
 Shared Ownership Needs std::shared_ptr
 """"""""""""""""""""""""""""""""""""""
@@ -773,7 +759,7 @@ A Route Owns Its Positions
 
    ``Route`` and ``Position`` with every member: the line labeled ``has``.
 
-- ``waypoints_`` holds the ``Position`` values themselves, in a ``std::vector``: they are destroyed with the ``Route``.
+- ``0..*`` at ``Position``: a route has any number of waypoints, so ``waypoints_`` is a ``std::vector``. It holds the ``Position`` values themselves: they are destroyed with the ``Route``.
 - ``waypoints_`` is in ``Route``'s box, and its name is at the ``Position`` end of the ``has`` line too. ``Position`` is a ``struct``: any ``x`` and any ``y`` make a position.
 
 A Vehicle Owns Its Sensors
@@ -786,7 +772,7 @@ A Vehicle Owns Its Sensors
 
    ``Vehicle`` and ``Sensor`` with every member: the line labeled ``owns``.
 
-- ``sensors_`` holds one ``std::unique_ptr`` per ``Sensor``: each ``Sensor`` is destroyed with its ``Vehicle``.
+- ``0..*`` at ``Sensor``: a vehicle has any number of sensors, so ``sensors_`` is a ``std::vector``, with one ``std::unique_ptr`` per ``Sensor``. Each ``Sensor`` is destroyed with its ``Vehicle``.
 - ``Sensor``'s ``type_`` is a ``SensorType``, the enumeration. Its box is not in this diagram, because no composition involves it.
 - Nothing here is new code: ``Vehicle``, ``Sensor``, ``Route`` and ``Position`` are all in ``project/week9/common`` already.
 
@@ -828,7 +814,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_playground 43``.
+- Run: ``702run week9_playground 42``.
 
 Aggregation or Composition
 """"""""""""""""""""""""""
@@ -883,6 +869,20 @@ Vehicle and Route in the Class Diagram
 
 - The dashed arrow is the weakest line in the diagram. No diamond and no number: a vehicle does not hold a route, it is handed one for each drive.
 - The other dashed arrow, from ``Sensor`` to ``SensorType``, is a dependency too: ``Sensor`` uses the enumeration as the type of a member.
+
+A Vehicle Uses a Route
+""""""""""""""""""""""
+
+.. figure:: /_static/images/l9/model_l9_dependency_members.png
+   :alt: A UML class diagram with only two boxes, Vehicle on the left and Route on the right, each listing its members; both boxes and the arrow are purple. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. Route has minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double. A dashed arrow labeled uses runs from Vehicle to Route.
+   :align: center
+   :width: 100%
+
+   ``Vehicle`` and ``Route`` with every member: the dashed arrow labeled ``uses``.
+
+- The same two boxes, with every member. This is the flowchart's dependency question at work: does ``Vehicle`` use ``Route`` without keeping it? ``Route`` is in one place only in ``Vehicle``'s box: the parameter of ``drive``.
+- No data member of ``Vehicle`` is a ``Route``. That is what the dashed arrow says: ``Vehicle`` uses a ``Route`` during a call and keeps nothing.
+- ``Route``'s box lists ``waypoints_``, as every box lists its data members; the ``has`` line to ``Position`` is not drawn here.
 
 A Route for One Call
 """"""""""""""""""""
@@ -947,7 +947,15 @@ Inheritance
    class Derived : protected Base { /* what Derived adds */ };
    class Derived : private Base { /* what Derived adds */ };
 
-- This course uses ``public`` inheritance. `protected and private Inheritance`_ shows what each of the three does to the base's members.
+.. figure:: /_static/images/l9/inheritance_kinds.png
+   :alt: Three UML panels side by side, one per kind of inheritance, each headed by its syntax: class Derived : public Base, class Derived : protected Base, class Derived : private Base. In each, a Base box lists plus start() : void, hash log_event() : void and minus check() : void, and a Derived box below it joins Base by a line with a hollow triangle at Base. With public inheritance, Derived lists plus start() and hash log_event(). With protected inheritance, hash start() and hash log_event(). With private inheritance, minus start() and minus log_event(). In all three, Derived lists check() in grey as not accessible.
+   :align: center
+   :width: 100%
+
+   What ``start()``, ``log_event()`` and ``check()`` of ``Base`` become in ``Derived``, for each kind of inheritance.
+
+- Three kinds, by the keyword before the base. With ``public``, ``start()`` stays public; with ``protected``, it becomes protected; with ``private``, both methods become private. ``check()`` is private in ``Base``, so ``Derived`` never reaches it, whatever the keyword.
+- This course uses ``public`` inheritance; `protected and private Inheritance`_ has the full table.
 - In UML, a hollow triangle at the base class.
 - What every kind of vehicle shares (an id, the speeds and their check, the sensors) is written once, in ``Vehicle``.
 
@@ -955,7 +963,7 @@ Single Inheritance
 """"""""""""""""""
 
 .. figure:: /_static/images/l9/single_inheritance.png
-   :alt: A UML class diagram. On top, Animal, with the protected data member species_ : string and the method plus make_sound(sound : string) : void. Below it, Bird, with minus wing_span_ : double and plus can_fly() : bool, and Elephant, with plus use_trunk() : void. Each joins Animal by a line with a hollow triangle at Animal.
+   :alt: A UML class diagram. On top, Animal, with minus species_ : string and the method plus make_sound(sound : string) : void. Below it, Bird, with minus wing_span_ : double and plus can_fly() : bool, and Elephant, with plus use_trunk() : void. Each joins Animal by a line with a hollow triangle at Animal.
    :align: center
    :width: 55%
 
@@ -978,14 +986,14 @@ Multiple Inheritance, in UML
 """"""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/multiple_inheritance.png
-   :alt: A UML class diagram. On top, two boxes side by side: Animal, with the protected data members has_tail_, has_wings_ and has_horns_, each a bool, and the method plus can_fly() : bool; and Human, with the protected data member is_bipedal_ : bool and the method plus speak() : void. Below them, MythicalCreature, with minus powers_ : vector<string> and plus use_power(power : string) : void. MythicalCreature joins each of the two boxes by a line with a hollow triangle at the box above.
+   :alt: A UML class diagram. On top, two boxes side by side: Animal, with minus has_tail_, minus has_wings_ and minus has_horns_, each a bool, and the method plus can_fly() : bool; and Human, with minus is_bipedal_ : bool and the method plus speak() : void. Below them, MythicalCreature, with minus powers_ : vector<string> and plus use_power(power : string) : void. MythicalCreature joins each of the two boxes by a line with a hollow triangle at the box above.
    :align: center
    :width: 55%
 
    Multiple inheritance: MythicalCreature has two base classes.
 
 - **Multiple inheritance**: a class derives from more than one base class, separated by commas.
-- A ``MythicalCreature``, such as a sphinx, is an ``Animal`` and a ``Human``. It gets the ``public`` and ``protected`` members of both: ``has_wings_`` and ``can_fly`` from ``Animal``, ``is_bipedal_`` and ``speak`` from ``Human``. Its code is in `Multiple Inheritance`_, under Further Reading.
+- A ``MythicalCreature``, such as a sphinx, is an ``Animal`` and a ``Human``. It gets the ``public`` and ``protected`` members of both. A ``MythicalCreature`` object holds the data of both, and its code can call the ``public`` methods of both: ``can_fly`` from ``Animal``, ``speak`` from ``Human``. The data stays ``private`` to each base class. Its code is in `Multiple Inheritance`_, under Further Reading.
 
 .. figure:: /_static/images/l9/sphinx.png
    :alt: An engraving of a winged sphinx: a human head with long hair on a lion's body, with feathered wings and a curled tail, one front paw resting on a ball.
@@ -2246,8 +2254,10 @@ Multiple Inheritance
 
    class Animal {
     public:
+     explicit Animal(
+         bool has_wings);
      bool can_fly() const;
-    protected:
+    private:
      bool has_tail_{true};
      bool has_wings_{false};
      bool has_horns_{false};
@@ -2256,7 +2266,7 @@ Multiple Inheritance
    class Human {
     public:
      void speak() const;
-    protected:
+    private:
      bool is_bipedal_{true};
    };
 
@@ -2265,9 +2275,8 @@ Multiple Inheritance
     public:
      MythicalCreature(bool has_wings,
          std::vector<std::string> powers)
-         : powers_{std::move(powers)} {
-       has_wings_ = has_wings;
-     }
+         : Animal{has_wings},
+           powers_{std::move(powers)} {}
      void use_power(
          const std::string& power) const;
 
@@ -2275,7 +2284,7 @@ Multiple Inheritance
      std::vector<std::string> powers_;
    };
 
-- The base classes are separated by commas. The constructor sets ``has_wings_``, a ``protected`` member of ``Animal``.
+- The base classes are separated by commas. The constructor passes ``has_wings`` to ``Animal``'s constructor: ``Animal``'s data stays ``private``.
 - A ``const Animal&`` and a ``const Human&`` can both refer to a ``MythicalCreature``.
 - Run: ``702run week9_appendix ix``. A sphinx with wings and the power ``riddle`` prints ``true`` for ``can_fly`` through the ``const Animal&``, ``Human: speaks`` through the ``const Human&``, then ``uses riddle``.
 
