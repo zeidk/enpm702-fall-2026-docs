@@ -101,7 +101,350 @@ constructor checks the rule. A type with no rule to check, such as
 ``Position``, is a ``struct``.
 
 
-3. Relationships
+3. Class Specifications
+====================================================
+
+Each data member and each method of each class, as in ``project/week9/common``.
+The data members of a class are ``private``; only ``Position``, a ``struct``,
+has ``public`` ones. Every method that only returns a value is
+``[[nodiscard]]`` and ``noexcept``, apart from ``Route::length``, which is not
+``noexcept``; all of them but the ``static`` ``next_id`` are ``const``. The
+tables leave ``[[nodiscard]]`` and ``noexcept`` out of these signatures. The Throws
+column names the exception a method throws when a rule is broken: "none"
+means it never throws one.
+
+``Vehicle``
+-----------
+
+Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``next_id_``, ``static``
+     - ``int``
+     - The id the next ``Vehicle`` gets. One counter for the whole class, starting at 1.
+   * - ``id_``
+     - ``int``
+     - This vehicle's id. The constructor takes it from ``next_id_``, then adds 1 to ``next_id_``.
+   * - ``max_speed_``
+     - ``double``
+     - The maximum speed, in m/s. Greater than 0.
+   * - ``speed_``
+     - ``double``
+     - The speed the vehicle drives at, in m/s. From 0 to ``max_speed_``; starts at 0.
+   * - ``color_``
+     - ``std::string``
+     - Its color, given to the constructor: ``"white"`` by default.
+   * - ``mileage_``
+     - ``double``
+     - The distance driven so far, in m. Starts at 0 and never goes down.
+   * - ``sensors_``
+     - ``std::vector<std::unique_ptr<Sensor>>``
+     - The sensors it carries. The vehicle is the only owner of each (composition).
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``explicit Vehicle(double max_speed, const std::string& color = "white")``
+     - Takes the next id and sets the maximum speed and the color. The speed and the mileage start at 0, with no sensor.
+     - ``std::invalid_argument`` if ``max_speed`` is not greater than 0
+   * - ``Vehicle(double max_speed, double speed)``
+     - Calls the first constructor, then ``set_speed(speed)``. The color is ``"white"``.
+     - ``std::invalid_argument`` if either value breaks the invariant
+   * - ``virtual ~Vehicle() = default``
+     - Destroys the vehicle and its sensors. ``virtual``: deleting a ``RoboTaxi`` or a ``Taxi`` through a ``Vehicle`` pointer runs its own destructor first.
+     - none
+   * - ``virtual void drive(const Route& route) const = 0``
+     - Drives the route. Pure ``virtual``: each derived class says how.
+     - none
+   * - ``int get_id() const``
+     - Returns the id.
+     - none
+   * - ``const std::string& get_color() const``
+     - Returns the color, by ``const`` reference: no copy.
+     - none
+   * - ``double get_max_speed() const``
+     - Returns the maximum speed, in m/s.
+     - none
+   * - ``double get_speed() const``
+     - Returns the speed, in m/s.
+     - none
+   * - ``void set_speed(double speed)``
+     - Sets the speed, in m/s.
+     - ``std::invalid_argument`` if ``speed`` is not from 0 to the maximum speed
+   * - ``double get_mileage() const``
+     - Returns the distance driven so far, in m.
+     - none
+   * - ``void add_mileage(double meters)``
+     - Adds a trip's distance to the mileage.
+     - ``std::invalid_argument`` if ``meters`` is less than 0
+   * - ``int add_sensor(SensorType type, double range)``
+     - Makes a new ``Sensor`` that the vehicle owns. Returns its id: 1 for the first sensor, 2 for the second, and so on.
+     - ``std::invalid_argument`` if ``range`` is less than 0 (from ``Sensor``'s constructor)
+   * - ``std::size_t sensor_count() const``
+     - Returns how many sensors the vehicle carries.
+     - none
+   * - ``const std::vector<std::unique_ptr<Sensor>>& get_sensors() const``
+     - Returns the sensors, by ``const`` reference: no copy, and the caller cannot change them.
+     - none
+   * - ``static int next_id()``
+     - Returns the id the next ``Vehicle`` gets.
+     - none
+   * - ``void log_event(const std::string& event) const``, ``protected``
+     - Prints one line: ``vehicle <id>: <event>``. For the methods of ``Vehicle`` and of its derived classes.
+     - none
+
+``RoboTaxi``
+------------
+
+``final``, derived from ``Vehicle`` with ``public`` inheritance. It adds no data member: the sensors are ``Vehicle``'s.
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``explicit RoboTaxi(double max_speed)``
+     - Passes the maximum speed to ``Vehicle``. Starts parked, with no sensor.
+     - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
+   * - ``void drive(const Route& route) const override``
+     - With no sensor, prints ``RoboTaxi: no sensor, stays parked``. Otherwise prints the number of sensors checked and the route's length: ``RoboTaxi: 1 sensor checked, drives 500 m``.
+     - none
+
+``Taxi``
+--------
+
+``final``, derived from ``Vehicle`` with ``public`` inheritance.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``driver_name_``
+     - ``std::string``
+     - The driver's name. Empty means the taxi has no driver.
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``Taxi(double max_speed, std::string driver_name)``
+     - Passes the maximum speed to ``Vehicle``, and moves the name into ``driver_name_``. Starts parked.
+     - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
+   * - ``void drive(const Route& route) const override``
+     - With no driver, prints ``Taxi: no driver, stays parked``. Otherwise prints the driver and the route's length: ``Taxi: Ana drives 500 m``.
+     - none
+
+``Fleet``
+---------
+
+It writes no constructor: the compiler's default one makes an empty fleet.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``vehicles_``
+     - ``std::vector<std::shared_ptr<Vehicle>>``
+     - The vehicles of the fleet, shared with the rest of the program (aggregation). No null pointer and no vehicle twice.
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``void add(std::shared_ptr<Vehicle> vehicle)``
+     - Adds a vehicle. A vehicle already in the fleet is not added again.
+     - ``std::invalid_argument`` if ``vehicle`` is null
+   * - ``bool remove(int id)``
+     - Removes the vehicle with this id. Returns ``false`` when no vehicle of the fleet has it. The vehicle lives on while other code holds it.
+     - none
+   * - ``std::size_t size() const``
+     - Returns how many vehicles the fleet holds.
+     - none
+
+``Passenger``
+-------------
+
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``name_``
+     - ``std::string``
+     - The passenger's name. Not empty.
+   * - ``ride_``
+     - ``std::weak_ptr<Vehicle>``
+     - The vehicle the passenger rides, or empty when not riding. It does not own the vehicle (association).
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``explicit Passenger(std::string name)``
+     - Moves the name into ``name_``. Starts riding nothing.
+     - ``std::invalid_argument`` if ``name`` is empty
+   * - ``void board(const std::shared_ptr<Vehicle>& vehicle)``
+     - Stores the vehicle in ``ride_``. It adds no owner: the vehicle's ``use_count()`` does not change.
+     - none
+   * - ``void leave() noexcept``
+     - Empties ``ride_``.
+     - none
+
+``Sensor``
+----------
+
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``id_``
+     - ``int``
+     - Its id, picked by ``Vehicle::add_sensor``.
+   * - ``type_``
+     - ``SensorType``
+     - What kind of sensor it is.
+   * - ``range_``
+     - ``double``
+     - How far it sees, in m. At least 0.
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``explicit Sensor(int id, SensorType type = SensorType::lidar, double range = 100.0)``
+     - Sets the id, the type and the range. By default a lidar that sees 100 m, a value chosen for the examples.
+     - ``std::invalid_argument`` if ``range`` is less than 0
+   * - ``int get_id() const``
+     - Returns the id.
+     - none
+   * - ``SensorType get_type() const``
+     - Returns the type.
+     - none
+   * - ``double get_range() const``
+     - Returns the range, in m.
+     - none
+
+``SensorType``
+--------------
+
+An ``enum class`` with three values: ``lidar`` (light detection and ranging), ``camera`` (a video camera) and ``radar`` (radio detection and ranging).
+
+``Route``
+---------
+
+It writes no constructor: the compiler's default one makes a route with no waypoint.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``waypoints_``
+     - ``std::vector<Position>``
+     - The waypoints of one trip, in order, held by value (composition).
+
+**Methods**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 45 15
+
+   * - Method
+     - What it does
+     - Throws
+   * - ``void add(Position waypoint)``
+     - Adds a waypoint at the end of the route.
+     - none
+   * - ``double length() const``
+     - Returns the length, in m: the sum of the straight segments between consecutive waypoints. 0 for fewer than two waypoints.
+     - none
+
+``Position``
+------------
+
+A ``struct``: its members are ``public``, and any values make a position.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``x``, ``public``
+     - ``double``
+     - East, in m. 0 by default.
+   * - ``y``, ``public``
+     - ``double``
+     - North, in m. 0 by default.
+
+
+4. Relationships
 ====================================================
 
 Each line of the diagram is a relationship, and each relationship becomes a
@@ -157,7 +500,7 @@ the far end when the first class is destroyed.
      - FR-3
 
 
-4. Design Decisions
+5. Design Decisions
 ====================================================
 
 .. list-table::
@@ -193,7 +536,7 @@ the far end when the first class is destroyed.
        (NFR-2, TC-8).
 
 
-5. Implementation Guidance
+6. Implementation Guidance
 ====================================================
 
 **C++ conventions.** Every class of the course code follows these:
@@ -280,7 +623,7 @@ and prints:
    Taxi: Ana drives 500 m
 
 
-6. Traceability
+7. Traceability
 ====================================================
 
 Each requirement that the course code meets, with the classes and members
