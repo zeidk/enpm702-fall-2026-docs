@@ -659,13 +659,17 @@ A std::weak_ptr, or a Plain Pointer
       .. code-block:: cpp
 
          class Sensor {  // a variant
-           // ...
+          public:
+           explicit Sensor(const Vehicle* mount)
+               : mount_{mount} {}
           private:
-           const Vehicle* mount_;
+           const Vehicle* mount_;  // owns nothing
          };
+         // in add_sensor:
+         //   std::make_unique<Sensor>(this)
 
 - A ``std::weak_ptr`` when the other object is owned by ``std::shared_ptr`` and can be destroyed first: a car can be retired during a ride (FR-12.3).
-- A plain pointer when the other object surely outlives this one. The right box is a variant: a sensor that would know which car it is mounted on. A ``Vehicle`` owns its sensors, so it outlives each of them; our ``Sensor`` has no such member.
+- A plain pointer when the other object surely outlives this one. The right box is a variant: a sensor that would know which car it is mounted on. A ``Vehicle`` owns its sensors, so it outlives each of them; our ``Sensor`` has no such member. The pointer comes from ``this``, not from ``new``: ``add_sensor`` still uses ``std::make_unique``, and nobody deletes through ``mount_``.
 - Never a ``std::shared_ptr``: it would make the passenger an owner, and keep a retired car alive.
 
 .. note::
