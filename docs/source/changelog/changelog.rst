@@ -10,6 +10,8 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
    :class-container: sd-border-success
    :open:
 
+   - **Lecture 9**: every class diagram with members lists each data member in
+     its box, and a line's end names the member too, such as ``-ride_``.
    - **L9 Design**, a new page: the class diagram, each class with its
      responsibility, invariant and requirements, each relationship with its
      C++ member and lifetime rule, the design decisions with their reasons,
