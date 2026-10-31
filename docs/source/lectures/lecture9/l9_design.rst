@@ -509,7 +509,7 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
 ``project/week9/common``.
 
 .. figure:: /_static/images/l9/sequence_example.png
-   :alt: A UML sequence diagram with seven participants along the top, from left to right: main(), trip : Route, robotaxi : RoboTaxi, : Sensor, taxi : Taxi, company : Fleet and maya : Passenger. robotaxi, the Sensor, taxi and maya start lower down, at the message that creates them. A vertical line runs down from each. From top to bottom, solid arrows from main(): add(Position{0.0, 0.0}) and add(Position{300.0, 400.0}) to trip; make_shared<RoboTaxi>(13.4), which creates robotaxi; add_sensor(lidar, 100.0) to robotaxi, which sends make_unique<Sensor>(1, lidar, 100.0) to create the Sensor, and returns 1 to main() on a dashed arrow; make_shared<Taxi>(13.4, "Ana"), which creates taxi; add(robotaxi), add(taxi) and size() to company, which returns 2; Passenger{"Maya"}, which creates maya; board(robotaxi) to maya; drive(trip) to robotaxi, which calls sensor_count() on itself and length() on trip, which returns 500; leave() to maya; drive(trip) to taxi, which calls length() on trip, which returns 500. A narrow bar on robotaxi and taxi marks each method while it runs.
+   :alt: A UML sequence diagram with seven participants along the top, from left to right: main(), maya_ride : Route, robotaxi : RoboTaxi, : Sensor, taxi : Taxi, company : Fleet and maya : Passenger. robotaxi, the Sensor, taxi and maya start lower down, at the message that creates them. A vertical line runs down from each. From top to bottom, solid arrows from main(): add(Position{0.0, 0.0}) and add(Position{300.0, 400.0}) to maya_ride; make_shared<RoboTaxi>(13.4), which creates robotaxi; add_sensor(lidar, 100.0) to robotaxi, which sends make_unique<Sensor>(1, lidar, 100.0) to create the Sensor, and returns 1 to main() on a dashed arrow; make_shared<Taxi>(13.4, "Ana"), which creates taxi; add(robotaxi), add(taxi) and size() to company, which returns 2; Passenger{"Maya"}, which creates maya; board(robotaxi) to maya; drive(maya_ride) to robotaxi, which calls sensor_count() on itself and length() on maya_ride, which returns 500; leave() to maya; drive(maya_ride) to taxi, which calls length() on maya_ride, which returns 500. A narrow bar on robotaxi and taxi marks each method while it runs.
    :align: center
    :width: 100%
 
@@ -520,7 +520,7 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
 - Time runs down. A solid arrow is a call, labeled with the method and its
   arguments. A dashed arrow is the value it returns.
 - A narrow bar on a lifeline is a method while it runs: ``drive`` on
-  ``robotaxi`` calls ``sensor_count()`` and ``trip.length()`` before it returns.
+  ``robotaxi`` calls ``sensor_count()`` and ``maya_ride.length()`` before it returns.
 - ``board(robotaxi)`` stores the vehicle in ``maya``'s ``ride_`` and calls
   nothing: ``main`` drives the vehicle, not ``maya``.
 - A label may cross the lifelines between the caller and the callee; it belongs
@@ -619,9 +619,9 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
    #include "taxi.hpp"
 
    int main() {
-     fleet::Route trip;  // 500 m: (0, 0) to (300, 400)
-     trip.add(fleet::Position{0.0, 0.0});
-     trip.add(fleet::Position{300.0, 400.0});
+     fleet::Route maya_ride;  // 500 m: (0, 0) to (300, 400)
+     maya_ride.add(fleet::Position{0.0, 0.0});
+     maya_ride.add(fleet::Position{300.0, 400.0});
 
      auto robotaxi{std::make_shared<fleet::RoboTaxi>(13.4)};
      robotaxi->add_sensor(fleet::SensorType::lidar, 100.0);
@@ -634,9 +634,9 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
 
      fleet::Passenger maya{"Maya"};
      maya.board(robotaxi);
-     robotaxi->drive(trip);
+     robotaxi->drive(maya_ride);
      maya.leave();
-     taxi->drive(trip);
+     taxi->drive(maya_ride);
    }
 
 Built with the course flags and both sanitizers, it compiles with no warning

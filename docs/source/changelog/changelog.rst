@@ -12,6 +12,11 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 
    - **Lecture 9**: every class diagram with members lists each data member in
      its box, and a line's end names the member too, such as ``-ride_``.
+   - **Lecture 9**: the 500 m route is ``maya_ride`` everywhere, in the slides,
+     this page and the code; Each Route Has Its Own Positions is a shared ride,
+     with Ana's stop added to a copy of Maya's route.
+   - **Lecture 9**: the two compositions get one diagram each: Route and
+     Position, then Vehicle and Sensor.
    - **Lecture 9**: Inheritance follows last year's outline: Single Inheritance
      and Multiple Inheritance with UML diagrams, Generalization and
      Specialization, and protected and private Inheritance move into the
@@ -22,6 +27,19 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      follow the slides.
    - **Lecture 9**: Live Coding Steps 6 and 7 are homework, not collected; the
      upload at the end of class covers Steps 1 to 5.
+   - **Lecture 9**: the Live Coding steps are on the slides only, and What the
+     Live Coding Replaces is no longer under Further Reading.
+   - **Lecture 9**: the example of a non-functional requirement is "reading one
+     sensor takes at most 50 ms".
+   - **Lecture 9**: Single Inheritance and Multiple Inheritance use last year's
+     examples, Animal with Bird and Elephant, and MythicalCreature from Animal
+     and Human, with their pictures; the Multiple Inheritance code under
+     Further Reading follows.
+   - **Lecture 9**: the Generalization and Specialization diagram shows the
+     members each class holds: what RoboTaxi and Taxi share is in Vehicle.
+   - **Lecture 9** and the quiz: Discussion: Add a RoboBus says what the
+     requirement asks for: adding ``RoboBus`` changes no line of ``fleet.hpp``
+     or ``fleet.cpp``.
    - **Lecture 9**: when a relationship needs a smart pointer: A std::weak_ptr,
      or a Plain Pointer (association), Shared Ownership Needs std::shared_ptr
      (aggregation), and one line each for dependency and inheritance. Vehicle

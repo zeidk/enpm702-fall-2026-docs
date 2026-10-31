@@ -662,7 +662,7 @@ slide.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 101`` (The Whole
+     - Live Coding Step 4. ``702run week9_playground 102`` (The Whole
        Program) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
@@ -673,7 +673,7 @@ slide.
        checked, drives 500 m``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_playground 46`` (A Route for One Call) prints
+     - ``702run week9_playground 47`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -709,7 +709,7 @@ slide.
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_playground 102`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_playground 103`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
