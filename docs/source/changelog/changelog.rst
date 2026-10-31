@@ -40,6 +40,19 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
    - **Lecture 9** and the quiz: Discussion: Add a RoboBus says what the
      requirement asks for: adding ``RoboBus`` changes no line of ``fleet.hpp``
      or ``fleet.cpp``.
+   - **Lecture 9**: Choosing a Relationship and Its C++ replaces the table:
+     four questions about the design lead to a relationship and its C++.
+     Association shows one-way and two-way examples in UML; Aggregation and
+     Composition say they are associations and how they differ from a plain
+     one.
+   - **Lecture 9**: each Live Coding step is at the end of its part;
+     Multiplicity follows The Class Diagram, with Every Member; the "Every
+     Member" sections are named by their relationship, such as A Passenger
+     Rides a Vehicle.
+   - **Lecture 9**: new sections A Vehicle Reference and a Vehicle Pointer to
+     a Taxi, Not the Other Way, and Through Vehicle's public Methods; the
+     inheritance syntax shows public, protected and private; protected
+     Members and Constructors and Inheritance are parts of Inheritance.
    - **Lecture 9**: when a relationship needs a smart pointer: A std::weak_ptr,
      or a Plain Pointer (association), Shared Ownership Needs std::shared_ptr
      (aggregation), and one line each for dependency and inheritance. Vehicle

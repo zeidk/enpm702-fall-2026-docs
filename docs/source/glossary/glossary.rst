@@ -2043,21 +2043,23 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Aggregation
-      A whole that holds parts it does not own alone. A part can exist before
-      the whole, after it, and in more than one whole. In C++, a
+      An association between a whole and its parts, in which the whole does
+      not own its parts alone. A part can exist before the whole, after it,
+      and in more than one whole. In C++, a
       ``std::shared_ptr`` member: a ``Fleet`` holds its vehicles. UML draws an
       open diamond at the whole.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Association
       A relationship between two classes whose objects can be linked: an
-      object of one refers to an object of the other (UML 2.5.1, 11.5.3.1).
-      In this course, an association has no owner: neither object owns the
-      other, and each is created and destroyed on its own. UML counts aggregation and
-      composition as associations too, with an owner. One class knows the other.
-      In C++, a ``std::weak_ptr`` member: a ``Passenger`` rides a ``Vehicle``.
-      UML draws an arrow to the class that is known: a ``Passenger`` knows
-      its ``Vehicle``; the ``Vehicle`` does not know its passengers.
+      object of one class refers to an object of the other, in one direction
+      or in both (UML 2.5.1, 11.5.3.1). In this course, neither object owns
+      the other: each is created and destroyed on its own. UML counts
+      aggregation and composition as associations too, with a whole and its
+      parts. In C++, a ``std::weak_ptr`` member: a ``Passenger`` rides a
+      ``Vehicle``. UML draws a one-way association as an arrow to the class
+      that is known (a ``Passenger`` knows its ``Vehicle``; the ``Vehicle``
+      does not know its passengers), and a two-way one with no arrows.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Base Class
@@ -2094,8 +2096,9 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Composition
-      A whole that owns its parts alone. Each part belongs to one whole and is
-      destroyed with it. In C++, a ``std::unique_ptr`` or a plain member: a
+      An association between a whole and its parts, in which the whole owns
+      its parts alone. Each part belongs to one whole and is destroyed with
+      it. In C++, a ``std::unique_ptr`` or a plain member: a
       ``Vehicle`` owns its ``Sensor``\ s, a ``Route`` its ``Position``\ s. UML
       draws a filled diamond at the whole.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
