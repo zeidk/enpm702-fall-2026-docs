@@ -21,7 +21,8 @@ the classes and methods.
 This specification states what the robotaxi fleet software shall do and how
 well it shall do it, so that the design, the code and the tests can be checked
 against one list. It is written for the developers who build the software and
-for the reviewers who accept it.
+for the reviewers who accept it. How the software meets these requirements is
+in the :doc:`L9 Design <l9_design>`.
 
 1.2 Scope
 ----------------------------------------------------
@@ -34,7 +35,7 @@ leave it.
 Payment, user accounts and user authentication are outside the scope of this
 specification.
 
-Section 8 traces each requirement to the course code: which ones the code of
+Section 7 traces each requirement to the course code: which ones the code of
 ``project/week9`` meets, and the check that shows it.
 
 1.3 Definitions
@@ -536,100 +537,9 @@ objects it involves.
      - Errors
      - A broken rule shall be reported with ``std::invalid_argument`` and a
        message that names the rule (NFR-2).
-   * - TC-9
-     - Design types
-     - The class diagram shall use the C++ types of the code (``double``,
-       ``string``, ``shared_ptr<Vehicle>``).
 
 
-5. Implementation Guidance
-====================================================
-
-**C++ conventions.** Every class of the course code follows these:
-
-- Each class is declared in a header file that starts with ``#pragma once``.
-- Constructors are defined in the class, in the header. Every other method is
-  declared in the class and defined in the source file.
-- Names are ``snake_case``; a data member ends with an underscore:
-  ``max_speed_``, ``sensors_``.
-- Data members are ``private``. Only ``log_event`` in ``Vehicle`` is
-  ``protected``.
-- Composition uses ``std::unique_ptr`` (``Vehicle`` owns its sensors).
-  Aggregation uses ``std::shared_ptr`` (``Fleet``). Association uses
-  ``std::weak_ptr`` (``Passenger``). A dependency is a ``const`` reference
-  parameter (``drive(const Route&)``).
-- The abstract method is marked ``= 0``, every override is marked
-  ``override``, and ``RoboTaxi`` and ``Taxi`` are ``final``.
-- ``Vehicle``, the polymorphic base class, has a ``virtual`` destructor.
-- The ``get_`` methods, ``sensor_count`` and ``size`` are ``[[nodiscard]]``,
-  ``const`` and ``noexcept``.
-- Files and methods are documented in Doxygen format: ``@file``, ``@brief``,
-  ``@param``, ``@return``, ``@throw``.
-
-**Namespace structure.**
-
-.. code-block:: cpp
-
-   namespace fleet {
-
-   enum class SensorType;  // lidar, camera, radar
-   class Sensor;           // id, type, range
-   struct Position;        // x, y in m
-   class Route;            // waypoints of one trip
-   class Vehicle;          // abstract base class
-   class RoboTaxi;         // drives itself, final
-   class Taxi;             // has a driver, final
-   class Fleet;            // shares its vehicles
-   class Passenger;        // rides one vehicle, owns none
-
-   }  // namespace fleet
-
-**Example usage.** This program uses the classes of ``project/week9/common``:
-
-.. code-block:: cpp
-
-   #include <iostream>
-   #include <memory>
-
-   #include "fleet.hpp"
-   #include "passenger.hpp"
-   #include "position.hpp"
-   #include "robotaxi.hpp"
-   #include "route.hpp"
-   #include "taxi.hpp"
-
-   int main() {
-     fleet::Route trip;  // 500 m: (0, 0) to (300, 400)
-     trip.add(fleet::Position{0.0, 0.0});
-     trip.add(fleet::Position{300.0, 400.0});
-
-     auto robotaxi{std::make_shared<fleet::RoboTaxi>(13.4)};
-     robotaxi->add_sensor(fleet::SensorType::lidar, 100.0);
-     auto taxi{std::make_shared<fleet::Taxi>(13.4, "Ana")};
-
-     fleet::Fleet company;
-     company.add(robotaxi);
-     company.add(taxi);
-     std::cout << company.size() << " vehicles\n";
-
-     fleet::Passenger maya{"Maya"};
-     maya.board(robotaxi);
-     robotaxi->drive(trip);
-     maya.leave();
-     taxi->drive(trip);
-   }
-
-Built with the course flags and both sanitizers, it compiles with no warning
-and prints:
-
-.. code-block:: text
-
-   2 vehicles
-   RoboTaxi: 1 sensor checked, drives 500 m
-   Taxi: Ana drives 500 m
-
-
-6. Success Criteria
+5. Success Criteria
 ====================================================
 
 The first release is accepted when:
@@ -641,7 +551,7 @@ The first release is accepted when:
   failure.
 
 
-7. Assumptions
+6. Assumptions
 ====================================================
 
 - A Fleet holds zero or more vehicles of both kinds.
@@ -654,7 +564,7 @@ The first release is accepted when:
   the target computer, not to the sensor hardware.
 
 
-8. Traceability to the Course Code
+7. Traceability to the Course Code
 ====================================================
 
 The course code, ``project/week9``, meets part of this specification. A
@@ -674,7 +584,7 @@ slide.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 87`` (The Whole
+     - Live Coding Step 4. ``702run week9_playground 88`` (The Whole
        Program) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
@@ -685,7 +595,7 @@ slide.
        checked, drives 500 m``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_playground 41`` (A Route for One Call) prints
+     - ``702run week9_playground 42`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -704,7 +614,7 @@ slide.
      -
    * - FR-10.1 to FR-10.5
      - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
-     - Live Coding Step 2. ``702run week9_playground 31`` (The Vehicles
+     - Live Coding Step 2. ``702run week9_playground 32`` (The Vehicles
        Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
        adding the same vehicle twice gives a size of 1, and removing an
        unknown id returns ``false``.
@@ -721,7 +631,7 @@ slide.
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_playground 88`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_playground 89`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
@@ -739,6 +649,6 @@ slide.
      - No: they need dispatch, sensor reading or logging, which the course
        code does not have.
      -
-   * - TC-1 to TC-9
+   * - TC-1 to TC-8
      - Yes.
      - Inspection of ``project/week9/common``.

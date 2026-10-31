@@ -49,7 +49,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week9_playground``.
-5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 62``.
+5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 63``.
 
 **Where the Classes Are**
 
@@ -71,7 +71,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
-      702run week9_playground 62         # only the code of slide 62
+      702run week9_playground 63         # only the code of slide 63
       702run week9_appendix x            # only appendix frame x (10 works too)
       live9                              # build and run the classes you write in class
 
@@ -79,7 +79,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   The slide whose code has undefined behavior, slide 77, runs only when you ask for it by number: ``702run week9_playground 77``. A full run skips it.
+   The slide whose code has undefined behavior, slide 78, runs only when you ask for it by number: ``702run week9_playground 78``. A full run skips it.
 
 .. note::
 
@@ -236,7 +236,7 @@ Design
 
 A **design** says which classes a program needs, what each class holds and does, and how the classes are connected. It comes before the code.
 
-See `OMG: Unified Modeling Language <https://www.omg.org/spec/UML/>`__.
+See :doc:`L9 Design <l9_design>`, and `OMG: Unified Modeling Language <https://www.omg.org/spec/UML/>`__.
 
 From Requirements to Classes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -315,6 +315,8 @@ The Class Diagram, with Every Member
 .. note::
 
    You should be able to write every class from this diagram alone. So the design deserves the effort: what the diagram leaves out, the programmer guesses.
+
+:doc:`L9 Design <l9_design>` explains every class and every line of this diagram, with the requirements each one meets.
 
 Tools
 """""
@@ -571,6 +573,22 @@ Two Separate Lifetimes
 - A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
 - Run: ``702run week9_playground 26``.
 
+Requirements, Not Reality
+"""""""""""""""""""""""""
+
+A program models the part of reality that its requirements need. It departs from reality where they say so:
+
+- The company owns the cars. In the code, ``Fleet`` and ``main`` share them.
+- Nothing owns a point on a map, yet a ``Route`` holds its ``Position`` values: they are destroyed with it.
+- In C++, an owner is whoever decides when an object is destroyed, nothing more.
+
+.. note::
+
+   ``Passenger`` holds a ``std::weak_ptr`` because of :doc:`FR-12.3 <l9_requirements>`: "Boarding shall not keep a vehicle alive". Change the requirement and the code changes, while the real world stays the same.
+
+- Start from reality: classes named after the domain are easy to read. When reality and the requirements disagree, the requirements win.
+- The test to use: what must happen to ``B`` when ``A`` is destroyed, and which requirement says so?
+
 Aggregation
 ^^^^^^^^^^^
 
@@ -653,7 +671,7 @@ The Vehicles Outlive the Fleet
    1 13.4
 
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
-- Run: ``702run week9_playground 31``.
+- Run: ``702run week9_playground 32``.
 
 Composition
 ^^^^^^^^^^^
@@ -728,7 +746,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: (0, 0) to (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Then 400 m straight down, from (300, 400) to (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding one to ``longer`` leaves ``trip`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_playground 36``.
+- Run: ``702run week9_playground 37``.
 
 Aggregation or Composition
 """"""""""""""""""""""""""
@@ -823,7 +841,7 @@ A Route for One Call
 
 - ``Vehicle``'s ``drive`` prints the length and the time: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``trip`` is destroyed and the ``Vehicle`` is not affected: it kept nothing of it.
-- Run: ``702run week9_playground 41``.
+- Run: ``702run week9_playground 42``.
 
 Discussion: Which Relationship?
 """""""""""""""""""""""""""""""
@@ -933,7 +951,7 @@ Inside a Taxi Object
 
 - A ``Taxi`` object starts with a whole ``Vehicle``, the **base subobject**: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120. ``RoboTaxi`` adds nothing: 88.
 - A ``Vehicle&`` binds to a ``Taxi`` with no cast: it names the ``Vehicle`` part, at the same address. The addresses are from one run; they change from run to run.
-- Run: ``702run week9_playground 47``.
+- Run: ``702run week9_playground 48``.
 
 protected Members
 ^^^^^^^^^^^^^^^^^
@@ -956,7 +974,7 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
 - ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
-- Run: ``702run week9_playground 48``.
+- Run: ``702run week9_playground 49``.
 
 private Stays private
 """""""""""""""""""""
@@ -992,7 +1010,7 @@ protected Data
 
 - With ``speed_`` ``protected``, this compiles, and ``get_speed()`` then returns 20, above the maximum speed of 13.4. Every derived class can now break ``Vehicle``'s invariant.
 - The rule for assignments stays: **every data member is** ``private``, or the assignment gets 0. Use ``protected`` for methods meant only for derived classes, as ``log_event`` in `protected Members`_.
-- Run: ``702run week9_playground 50``. It prints ``20 13.4``: the speed, then the maximum speed.
+- Run: ``702run week9_playground 51``. It prints ``20 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -1116,7 +1134,7 @@ Construction and Destruction Order
    after the scope
 
 - The base is built first, so ``RoboTaxi``'s constructor can use ``Vehicle``'s methods. Destruction runs in reverse: ``~RoboTaxi`` first, while the ``Vehicle`` part still exists.
-- Run: ``702run week9_playground 55``.
+- Run: ``702run week9_playground 56``.
 
 .. note::
 
@@ -1161,7 +1179,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_playground 56``.
+   - Run: ``702run week9_playground 57``.
 
 Summary
 ^^^^^^^
@@ -1236,7 +1254,7 @@ Redefinition
 - **Redefinition**: a derived class writes a method with the name of a base method, as ``RoboTaxi`` does in `Compile-Time Polymorphism`_. Overloading is another kind of compile-time polymorphism.
 - The compiler looks for ``drive`` in the class of the object first, then in its base. ``RoboTaxi::drive`` and ``Taxi::drive`` **hide** ``Vehicle::drive``.
 - A method the derived class does not write, such as ``set_speed``, is found in ``Vehicle``.
-- Run: ``702run week9_playground 61``.
+- Run: ``702run week9_playground 62``.
 
 Through a Base Reference
 """"""""""""""""""""""""
@@ -1259,7 +1277,7 @@ Through a Base Reference
 The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``. The **dynamic type** is the class of the object it refers to while the program runs: ``RoboTaxi``, then ``Taxi``.
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
-- Run: ``702run week9_playground 62``.
+- Run: ``702run week9_playground 63``.
 
 One Overload per Class
 """"""""""""""""""""""
@@ -1282,7 +1300,7 @@ One Overload per Class
 
 - The same two calls as in `Through a Base Reference`_. Overloading picks the right function, but each new kind of vehicle needs one more overload with the same body.
 - A ``Fleet`` holds RoboTaxis and Taxis in one ``std::vector``. Overloads cannot help there: the elements of one ``std::vector`` all have one type.
-- Run: ``702run week9_playground 63``.
+- Run: ``702run week9_playground 64``.
 
 Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^
@@ -1354,7 +1372,7 @@ The Cost of virtual
 - ``compile_time::Vehicle`` is the class of `Compile-Time Polymorphism`_, and ``runtime::Vehicle`` the class of `Runtime Polymorphism`_, both in ``playground/src/polymorphism.cpp``, with the same two ``double`` members. The polymorphic one is 8 bytes larger: g++ stores a hidden pointer in it, to a table of its class's ``virtual`` methods, the **vtable**. The C++ standard leaves this to the compiler.
 - ``nm -C polymorphism.cpp.o`` lists ``vtable for polymorphism::runtime::Vehicle``. Without ``-C`` (demangle), ``nm`` prints the linker's name, ``_ZTVN12polymorphism7runtime7VehicleE``. The object file is in ``build/project/week9/CMakeFiles/week9_playground.dir/playground/src/``.
 - A ``virtual`` call reads that table first, so it costs a little more than a direct call.
-- Run: ``702run week9_playground 67``.
+- Run: ``702run week9_playground 68``.
 
 .. note::
 
@@ -1384,7 +1402,7 @@ Slicing
 
 - 24 of the 56 bytes are copied: ``driver_name_`` is left behind, and the copy's dynamic type is ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
 - These are the ``runtime::`` classes of `The Cost of virtual`_: 24 bytes for ``Vehicle``, plus the 32-byte ``std::string`` of ``Taxi``.
-- Run: ``702run week9_playground 68``.
+- Run: ``702run week9_playground 69``.
 
 See `Copying a Vehicle of the Design`_ under Further Reading.
 
@@ -1416,7 +1434,7 @@ For each line: ``Vehicle::drive`` or ``RoboTaxi::drive``? Give the static type a
    4. ``Vehicle::drive``. ``copy`` is a ``Vehicle`` object, sliced: its static type and its dynamic type are both ``Vehicle``.
    5. ``Vehicle::drive``. Naming the class, ``Vehicle::drive``, turns off the virtual call. This is how an override calls the base's version on purpose.
 
-   ``702run week9_playground 69`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` twice.
+   ``702run week9_playground 70`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` twice.
 
 override
 ^^^^^^^^
@@ -1458,7 +1476,7 @@ A Typo That Compiles
             was hidden [-Woverloaded-virtual=]
    note:   by 'void RoboTaxi::drive(const Route&)'
 
-- Run: ``702run week9_playground 71``.
+- Run: ``702run week9_playground 72``.
 
 override Catches Both
 """""""""""""""""""""
@@ -1517,7 +1535,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. If ``RoboTaxi`` had a method of its own, only ``robotaxi`` could call it.
-- Run: ``702run week9_playground 74``.
+- Run: ``702run week9_playground 75``.
 
 From auto into a Vector of Vehicles
 """""""""""""""""""""""""""""""""""
@@ -1538,7 +1556,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and a ``std::unique_ptr<Vehicle>`` parameter all accept it.
 - Use ``auto`` while the code needs the ``RoboTaxi`` type, then move the pointer.
-- Run: ``702run week9_playground 75``.
+- Run: ``702run week9_playground 76``.
 
 See `auto or a Base Pointer: Summary`_ under Further Reading.
 
@@ -1581,7 +1599,7 @@ Deleting through a Base Pointer
 
 - ``vehicle`` deletes a ``Vehicle*``. Its destructor is not ``virtual``, so the static type picks it: only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
 - The name has 19 characters, more than the 15 a ``std::string`` of g++ keeps inside itself, so the name is on the heap.
-- Run: ``702run week9_playground 77``. It prints the two lines above, then AddressSanitizer stops the run:
+- Run: ``702run week9_playground 78``. It prints the two lines above, then AddressSanitizer stops the run:
 
 .. code-block:: text
 
@@ -1648,7 +1666,7 @@ The test: can some code delete an object of a derived class through a pointer to
    4. No, for the same reason: no class derives from ``Fleet``.
    5. No, until we derived from it and kept RoboTaxis behind ``Vehicle`` pointers. Adding the first ``virtual`` method to a class is the moment to add the ``virtual`` destructor: "A class with a virtual function should have a virtual or protected destructor". Rule: `Core Guidelines C.127 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-dtor>`__.
 
-   ``702run week9_playground 79`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
+   ``702run week9_playground 80`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
 
 Summary
 ^^^^^^^
@@ -1791,7 +1809,7 @@ The Whole Program
    Taxi: Ana drives 500 m
 
 - ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
-- Run: ``702run week9_playground 87``.
+- Run: ``702run week9_playground 88``.
 
 Discussion: Add a RoboBus
 """""""""""""""""""""""""
@@ -1809,7 +1827,7 @@ The design has a non-functional requirement for this case: a new kind of vehicle
    :class-container: sd-border-success
 
    1. ``class RoboBus final : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 88`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground 89`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". And ``RoboTaxi`` is ``final``: nothing derives from it.
 

@@ -5,10 +5,26 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.14.1: Lecture 9, Every Member of Each Relationship (2026-10-30)
+.. dropdown:: v1.15.0: Lecture 9, L9 Design (2026-10-30)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **L9 Design**, a new page: the class diagram, each class with its
+     responsibility, invariant and requirements, each relationship with its
+     C++ member and lifetime rule, the design decisions with their reasons,
+     and the traceability from requirements to classes.
+   - **Lecture 9**: Requirements, Not Reality, after Two Separate Lifetimes: the
+     code follows the requirements, not the real world. The ``702run`` slide
+     numbers follow the slides.
+   - **L9 Requirements**: Implementation Guidance and the Design types
+     constraint moved to L9 Design, where they belong; the sections after
+     them are renumbered.
+
+
+.. dropdown:: v1.14.1: Lecture 9, Every Member of Each Relationship (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9**: Aggregation, Composition, Dependency and Inheritance
      each show their classes with every member, as Association already did.

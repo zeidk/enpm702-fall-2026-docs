@@ -28,6 +28,7 @@ This lecture covers advanced object-oriented programming in C++, on the robotaxi
 
    l9_lecture
    l9_requirements
+   l9_design
    l9_shell
    l9_exercises
    l9_quiz
