@@ -2050,8 +2050,11 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Association
-      Objects of two classes work together, and neither owns the other. Each
-      object is created and destroyed on its own. One class knows the other.
+      A relationship between two classes whose objects can be linked: an
+      object of one refers to an object of the other (UML 2.5.1, 11.5.3.1).
+      In this course, the plain kind: neither object owns the other, and each
+      is created and destroyed on its own. UML counts aggregation and
+      composition as associations too, with an owner. One class knows the other.
       In C++, a ``std::weak_ptr`` member: a ``Passenger`` rides a ``Vehicle``.
       UML draws an arrow to the class that is known: a ``Passenger`` knows
       its ``Vehicle``; the ``Vehicle`` does not know its passengers.

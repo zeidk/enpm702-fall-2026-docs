@@ -12,6 +12,11 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 
    - **Lecture 9**: every class diagram with members lists each data member in
      its box, and a line's end names the member too, such as ``-ride_``.
+   - **Lecture 9** and the glossary: the definition of association follows UML
+     2.5.1, then says which kind the course means.
+   - **Lecture 9**: Step 1 in Memory, two figures of the Step 1 block before and
+     after ``car_a.reset()``: one owner, two weak pointers, and the control block
+     that outlives the ``Vehicle``. The ``702run`` slide numbers follow the slides.
    - **L9 Requirements**: a new section, External Interfaces, with a UML use
      case diagram and four interfaces: the passenger app, the in-vehicle
      display, the operator console and the sensors (IF-1 to IF-4).
@@ -19,6 +24,8 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      that no longer exists, which FR-12.3 allows. Step 1 follows the slide.
    - **Lecture 9**: the live folder holds the given ``Sensor``, ``Route`` and
      ``Position`` too, so ``week9_live`` is built from ``live/`` alone.
+   - **L9 Design**: A Run of the Program, a UML sequence diagram of the example
+     program, call by call.
    - **L9 Design**: Class Specifications, every data member and method of each
      class, with its type, meaning and the exception it throws.
    - **L9 Design**, a new page: the class diagram, each class with its

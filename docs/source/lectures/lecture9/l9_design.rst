@@ -500,7 +500,33 @@ the far end when the first class is destroyed.
      - FR-3
 
 
-5. Design Decisions
+5. A Run of the Program
+====================================================
+
+The class diagram shows what each class is. A UML **sequence diagram** shows
+what the objects do in one run: who calls whom, in which order. This one is the
+run of the example program in `7. Implementation Guidance`_, with the classes of
+``project/week9/common``.
+
+.. figure:: /_static/images/l9/sequence_example.png
+   :alt: A UML sequence diagram with seven participants along the top, from left to right: main(), trip : Route, robotaxi : RoboTaxi, : Sensor, taxi : Taxi, company : Fleet and maya : Passenger. robotaxi, the Sensor, taxi and maya start lower down, at the message that creates them. A vertical line runs down from each. From top to bottom, solid arrows from main(): add(Position{0.0, 0.0}) and add(Position{300.0, 400.0}) to trip; make_shared<RoboTaxi>(13.4), which creates robotaxi; add_sensor(lidar, 100.0) to robotaxi, which sends make_unique<Sensor>(1, lidar, 100.0) to create the Sensor, and returns 1 to main() on a dashed arrow; make_shared<Taxi>(13.4, "Ana"), which creates taxi; add(robotaxi), add(taxi) and size() to company, which returns 2; Passenger{"Maya"}, which creates maya; board(robotaxi) to maya; drive(trip) to robotaxi, which calls sensor_count() on itself and length() on trip, which returns 500; leave() to maya; drive(trip) to taxi, which calls length() on trip, which returns 500. A narrow bar on robotaxi and taxi marks each method while it runs.
+   :align: center
+   :width: 100%
+
+   The example program, one call after the other, from top to bottom.
+
+- Each box at the top is an object, ``name : Class``. A box placed lower down is
+  an object made at that point; its vertical line, the **lifeline**, starts there.
+- Time runs down. A solid arrow is a call, labeled with the method and its
+  arguments. A dashed arrow is the value it returns.
+- A narrow bar on a lifeline is a method while it runs: ``drive`` on
+  ``robotaxi`` calls ``sensor_count()`` and ``trip.length()`` before it returns.
+- ``board(robotaxi)`` stores the vehicle in ``maya``'s ``ride_`` and calls
+  nothing: ``main`` drives the vehicle, not ``maya``.
+- A label may cross the lifelines between the caller and the callee; it belongs
+  to the arrow under it.
+
+6. Design Decisions
 ====================================================
 
 .. list-table::
@@ -536,7 +562,7 @@ the far end when the first class is destroyed.
        (NFR-2, TC-8).
 
 
-6. Implementation Guidance
+7. Implementation Guidance
 ====================================================
 
 **C++ conventions.** Every class of the course code follows these:
@@ -623,7 +649,7 @@ and prints:
    Taxi: Ana drives 500 m
 
 
-7. Traceability
+8. Traceability
 ====================================================
 
 Each requirement that the course code meets, with the classes and members
