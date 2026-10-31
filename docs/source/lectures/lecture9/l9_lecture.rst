@@ -417,6 +417,43 @@ Five Relationships
 
 - You have seen three of them on the owner map of smart pointers: a filled diamond for ``std::unique_ptr``, an open diamond for ``std::shared_ptr``, an arrow for ``std::weak_ptr``.
 
+Association, Aggregation or Dependency
+""""""""""""""""""""""""""""""""""""""
+
+``A`` and ``B`` are two classes, joined by a line that starts at ``A``. Answer from the top:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 19 27 27 27
+
+   * -
+     - Dependency
+     - Association
+     - Aggregation
+   * - Is ``B`` a data member of ``A``?
+     - No: a parameter, a local variable or a return type
+     - Yes
+     - Yes
+   * - Does ``A`` keep ``B`` alive?
+     - No
+     - No: ``std::weak_ptr``, or a pointer that does not own
+     - Yes, with other owners: ``std::shared_ptr``
+   * - UML
+     - Dashed arrow
+     - Solid line, or an arrow to ``B``
+     - Open diamond at ``A``
+   * - In the design
+     - ``Vehicle`` uses ``Route``
+     - ``Passenger`` rides ``Vehicle``
+     - ``Fleet`` holds ``Vehicle``
+
+- ``Vehicle`` never stores a ``Route``: it gets one as the parameter of ``drive``. That is a dependency.
+- ``Passenger`` stores its ``Vehicle`` in a ``std::weak_ptr``, which never keeps the vehicle alive: association. ``Fleet`` stores ``std::shared_ptr``, so the fleet is one of the owners of each vehicle: aggregation.
+
+.. note::
+
+   "Precise semantics of shared aggregation varies by application area and modeler" (`UML 2.5.1 <https://www.omg.org/spec/UML/2.5.1/PDF>`__, 9.5.3). In this course, an aggregation is a whole that shares ownership of its parts. Other books draw the line elsewhere: when you read one, check what it means by the open diamond.
+
 Association
 ^^^^^^^^^^^
 
@@ -526,7 +563,7 @@ Two Separate Lifetimes
 - ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
 - ``maya`` lives on: that is what "neither owns the other" means in the code.
-- Run: ``702run week9_playground 25``.
+- Run: ``702run week9_playground 26``.
 
 Aggregation
 ^^^^^^^^^^^
@@ -610,7 +647,7 @@ The Vehicles Outlive the Fleet
    1 13.4
 
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
-- Run: ``702run week9_playground 30``.
+- Run: ``702run week9_playground 31``.
 
 Composition
 ^^^^^^^^^^^
@@ -685,7 +722,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: (0, 0) to (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Then 400 m straight down, from (300, 400) to (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding one to ``longer`` leaves ``trip`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_playground 35``.
+- Run: ``702run week9_playground 36``.
 
 Aggregation or Composition
 """"""""""""""""""""""""""
@@ -780,44 +817,7 @@ A Route for One Call
 
 - ``Vehicle``'s ``drive`` prints the length and the time: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``trip`` is destroyed and the ``Vehicle`` is not affected: it kept nothing of it.
-- Run: ``702run week9_playground 40``.
-
-Association, Aggregation or Dependency
-""""""""""""""""""""""""""""""""""""""
-
-``A`` and ``B`` are two classes, joined by a line that starts at ``A``. Answer from the top:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 19 27 27 27
-
-   * -
-     - Dependency
-     - Association
-     - Aggregation
-   * - Is ``B`` a data member of ``A``?
-     - No: a parameter, a local variable or a return type
-     - Yes
-     - Yes
-   * - Does ``A`` keep ``B`` alive?
-     - No
-     - No: ``std::weak_ptr``, or a pointer that does not own
-     - Yes, with other owners: ``std::shared_ptr``
-   * - UML
-     - Dashed arrow
-     - Solid line, or an arrow to ``B``
-     - Open diamond at ``A``
-   * - In the design
-     - ``Vehicle`` uses ``Route``
-     - ``Passenger`` rides ``Vehicle``
-     - ``Fleet`` holds ``Vehicle``
-
-- ``Vehicle`` never stores a ``Route``: it gets one as the parameter of ``drive``. That is a dependency.
-- ``Passenger`` stores its ``Vehicle`` in a ``std::weak_ptr``, which never keeps the vehicle alive: association. ``Fleet`` stores ``std::shared_ptr``, so the fleet is one of the owners of each vehicle: aggregation.
-
-.. note::
-
-   "Precise semantics of shared aggregation varies by application area and modeler" (`UML 2.5.1 <https://www.omg.org/spec/UML/2.5.1/PDF>`__, 9.5.3). In this course, an aggregation is a whole that shares ownership of its parts. Other books draw the line elsewhere: when you read one, check what it means by the open diamond.
+- Run: ``702run week9_playground 41``.
 
 Discussion: Which Relationship?
 """""""""""""""""""""""""""""""
