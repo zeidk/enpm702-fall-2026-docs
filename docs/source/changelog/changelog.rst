@@ -12,8 +12,23 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
 
    - **Lecture 9**: every class diagram with members lists each data member in
      its box, and a line's end names the member too, such as ``-ride_``.
+   - **Lecture 9**: Inheritance follows last year's outline: Single Inheritance
+     and Multiple Inheritance with UML diagrams, Generalization and
+     Specialization, and protected and private Inheritance move into the
+     lecture. Polymorphism gains Method Order Check, and Runtime Polymorphism
+     goes from The Challenge through one overload per class, Scalability and
+     Redundancy, and a base reference, to What Runtime Polymorphism Needs and
+     virtual Methods in the Base Class. The appendix and ``702run`` numbers
+     follow the slides.
+   - **Lecture 9**: Live Coding Steps 6 and 7 are homework, not collected; the
+     upload at the end of class covers Steps 1 to 5.
+   - **Lecture 9**: when a relationship needs a smart pointer: A std::weak_ptr,
+     or a Plain Pointer (association), Shared Ownership Needs std::shared_ptr
+     (aggregation), and one line each for dependency and inheritance. Vehicle
+     and Route, Every Member follows the table that tells the relationships
+     apart. The ``702run`` slide numbers follow the slides.
    - **Lecture 9** and the glossary: the definition of association follows UML
-     2.5.1, then says which kind the course means.
+     2.5.1, then says what the course means by it, with real-life examples.
    - **Lecture 9**: Step 1 in Memory, two figures of the Step 1 block before and
      after ``car_a.reset()``: one owner, two weak pointers, and the control block
      that outlives the ``Vehicle``. The ``702run`` slide numbers follow the slides.
