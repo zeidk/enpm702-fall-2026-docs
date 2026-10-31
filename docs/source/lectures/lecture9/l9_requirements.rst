@@ -356,6 +356,8 @@ A Passenger shall be able to leave the vehicle they boarded.
 :Verification: Test
 :Acceptance: After leaving, the passenger refers to no vehicle.
 
+.. _fr-12-3:
+
 **FR-12.3. A passenger does not own the vehicle**
 
 Boarding shall not keep a vehicle alive: a vehicle shall be destroyed when its

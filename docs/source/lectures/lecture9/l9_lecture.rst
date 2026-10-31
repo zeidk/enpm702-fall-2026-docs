@@ -565,7 +565,7 @@ Step 1 in Memory, Before reset
 """"""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/step1_memory_1.png
-   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked (ptr). maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 1 and weak_ptrs 2, then a Vehicle object with id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). Solid green arrows run from car_a's object field to the Vehicle object and from its control field to the control block. Dashed orange arrows run from ride_.object and watcher's object field to the Vehicle object, and from ride_.control and watcher's control field to the control block.
+   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked (ptr). maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 1 and weak_ptrs 2, then a Vehicle object with id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). Solid green arrows run from car_a's object field to the Vehicle object and from its control field to the control block. Dashed orange arrows run from ride_.object to the Vehicle object and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
    :align: center
    :width: 90%
 
@@ -580,7 +580,7 @@ Step 1 in Memory, After reset
 """""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/step1_memory_2.png
-   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked nullptr, with no arrows. maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 0 and weak_ptrs 2, then a gray dashed block under the caption Vehicle, marked destroyed: its memory stays allocated until the last weak_ptr goes. Dashed orange arrows run from ride_.object and watcher's object field to the gray block, and from ride_.control and watcher's control field to the control block.
+   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked nullptr, with no arrows. maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 0 and weak_ptrs 2, then a gray dashed block under the caption Vehicle, marked destroyed: its memory stays allocated until the last weak_ptr goes. Dashed orange arrows run from ride_.object to the gray block and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
    :align: center
    :width: 90%
 
@@ -616,7 +616,7 @@ Two Separate Lifetimes
 - ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
 - ``maya`` lives on, aboard a car that no longer exists. FR-12.3 allows it, and her ``std::weak_ptr`` can tell that the car is gone, where a plain pointer could not.
-- The type follows a requirement, not the real world: :doc:`FR-12.3 <l9_requirements>` says boarding shall not keep a vehicle alive. In C++, an owner is whoever decides when an object is destroyed, nothing more.
+- The type follows a requirement, not the real world: :ref:`FR-12.3 <fr-12-3>` says boarding shall not keep a vehicle alive. In C++, an owner is whoever decides when an object is destroyed, nothing more.
 - A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while she holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
 - Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.
 - A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
@@ -633,7 +633,7 @@ A program models the part of reality that its requirements need. It departs from
 
 .. note::
 
-   ``Passenger`` holds a ``std::weak_ptr`` because of :doc:`FR-12.3 <l9_requirements>`: "Boarding shall not keep a vehicle alive". Change the requirement and the code changes, while the real world stays the same.
+   ``Passenger`` holds a ``std::weak_ptr`` because of :ref:`FR-12.3 <fr-12-3>`: "Boarding shall not keep a vehicle alive". Change the requirement and the code changes, while the real world stays the same.
 
 - Start from reality: classes named after the domain are easy to read. When reality and the requirements disagree, the requirements win.
 - The test to use: what must happen to ``B`` when ``A`` is destroyed, and which requirement says so?
