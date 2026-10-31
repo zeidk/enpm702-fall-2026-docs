@@ -565,6 +565,10 @@ Two Separate Lifetimes
 - ``use_count()`` stays 1 after ``board``: the ``std::weak_ptr`` is not an owner.
 - ``watcher`` is a second ``std::weak_ptr``, only for the check. ``reset()`` ends the only owner, and ``expired()`` is true: the ``Vehicle`` object is destroyed, although ``maya`` still refers to it.
 - ``maya`` lives on: that is what "neither owns the other" means in the code.
+- The type follows a requirement, not the real world: :doc:`FR-12.3 <l9_requirements>` says boarding shall not keep a vehicle alive. In C++, an owner is whoever decides when an object is destroyed, nothing more.
+- A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while she holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
+- Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.
+- A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
 - Run: ``702run week9_playground 26``.
 
 Aggregation
