@@ -281,7 +281,7 @@ A **UML class diagram** is a drawing of a program's classes. Each box is a class
    :header-rows: 1
    :widths: 35 65
 
-   * - In the box
+   * - In the diagram
      - Means
    * - ``+`` ``-`` ``#``
      - ``public``, ``private``, ``protected`` (`protected Members`_)
@@ -295,6 +295,8 @@ A **UML class diagram** is a drawing of a program's classes. Each box is a class
      - A **stereotype**: what kind of type the box is, a ``struct`` or an ``enum class``
    * - «final»
      - No class derives from this one (`Live Coding: Step 7`_)
+   * - ``-ride_  0..1`` at a line's end
+     - The data member that holds the class at that end, with its visibility, and how many (`Multiplicity`_)
 
 The Class Diagram, with Every Member
 """"""""""""""""""""""""""""""""""""
