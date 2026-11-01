@@ -2220,10 +2220,11 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Requirement
-      A sentence that says what the program must do (functional) or how well
-      it must do it (non-functional). A constraint limits the choices, and a
-      success criterion says how the result is checked. The requirements say
-      what; the design says how.
+      A statement of a need the program must meet, with the constraints and
+      conditions that come with it (ISO/IEC/IEEE 29148). A functional
+      requirement says what the program does, a non-functional one how well it
+      does it; a constraint limits the choices, and a success criterion says
+      how the result is checked. The requirements say what; the design says how.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Runtime Polymorphism

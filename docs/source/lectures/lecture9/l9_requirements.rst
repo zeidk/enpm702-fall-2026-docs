@@ -664,7 +664,7 @@ the one on that slide or frame.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Steps 4 and 6. ``702run week9_playground 83`` (Fleet and
+     - Live Coding Steps 4 and 6. ``702run week9_playground 84`` (Fleet and
        Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
