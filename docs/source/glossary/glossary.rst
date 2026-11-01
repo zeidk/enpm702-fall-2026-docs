@@ -2123,9 +2123,10 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Design
-      A description of which classes a program needs, what each class holds
-      and does, and how the classes are connected. It comes before the code,
-      from the requirements, and a UML class diagram draws it.
+      The parts of a program and the interfaces between them, defined before
+      the code (ISO/IEC/IEEE 24765). In C++, the parts are classes: the design
+      says what each class holds and does, and how the classes are connected.
+      It comes from the requirements, and a UML class diagram draws it.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Dynamic Type
