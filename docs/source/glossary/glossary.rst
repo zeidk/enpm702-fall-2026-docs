@@ -2144,7 +2144,9 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Forward Declaration
-      A declaration of a class's name only, with no body: ``class Vehicle;``.
+      A class's name only, with no body: ``class Vehicle;``. As a function
+      declaration lets two functions call each other, it lets two classes refer
+      to each other.
       It is enough for a pointer, a reference or a ``std::weak_ptr`` member;
       a by-value member or a call needs the full class. Two headers that
       need each other each declare the other class this way, and the
@@ -2152,9 +2154,11 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Inheritance
-      A derived class is built from a base class, with ``class Derived :
-      public Base``. It gets the base's members and adds its own, and every
-      derived object is also a base object ("is a"). With no access
+      One of the four principles of OOP, with encapsulation, abstraction and
+      polymorphism. A derived class is built from a base class, with ``class
+      Derived : public Base``: it gets the base's members and adds its own.
+      Use it when every derived object is also a base object ("is a"): what
+      they share is written once, in the base. With no access
       specifier, the base is ``private`` for a class defined with ``class``
       and ``public`` for one defined with ``struct``. UML draws a hollow
       triangle at the base.

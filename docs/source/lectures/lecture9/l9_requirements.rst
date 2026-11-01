@@ -52,7 +52,15 @@ Section 8 traces each requirement to the course code: which ones the code of
        an id, a maximum speed, a speed, a color and a mileage, and it owns its
        sensors.
    * - RoboTaxi
-     - A vehicle that drives itself.
+     - A vehicle that drives itself, in its operating zone, at its level of
+       driving automation.
+   * - Operating zone
+     - The area a RoboTaxi may drive in, for example College Park.
+   * - Level of driving automation
+     - How much of the driving the system does, from Level 0 (no driving
+       automation) to Level 5 (full driving automation), as SAE J3016 defines
+       the levels. A RoboTaxi of this system is Level 4 (high driving
+       automation).
    * - Taxi
      - A vehicle driven by a person, its driver.
    * - Fleet
@@ -159,6 +167,19 @@ A RoboTaxi with no sensor shall not move when it is given a route.
 :Acceptance: A RoboTaxi with 0 sensors reports that it stays parked. After one
    sensor is mounted, the same RoboTaxi drives the route.
 
+**FR-4.3. Operating zone and automation level**
+
+Each RoboTaxi shall record its operating zone and its level of driving
+automation. A RoboTaxi made without them shall have the zone College Park and
+Level 4.
+
+:Rationale: A robotaxi is approved for one area and one level of driving
+   automation; dispatch needs both.
+:Priority: Must
+:Verification: Test
+:Acceptance: A RoboTaxi made with only its maximum speed reports College Park
+   and 4. A RoboTaxi made with Silver Spring and 4 reports Silver Spring and 4.
+
 **FR-5. Follow a route**
 
 A vehicle shall drive the route it is given for a trip, from the first
@@ -185,15 +206,17 @@ A Taxi with no driver shall not move when it is given a route.
 
 **FR-6. Status queries**
 
-The system shall answer a query for a vehicle's status and location, and for
-the driver of a Taxi.
+The system shall answer a query for a vehicle's status and location, for the
+driver of a Taxi, and for the operating zone and automation level of a
+RoboTaxi.
 
 :Rationale: Dispatchers and passengers need to know where vehicles are and
    who drives them.
 :Priority: Should
 :Verification: Test
-:Acceptance: A query returns the current status, the current location and,
-   for a Taxi, the driver.
+:Acceptance: A query returns the current status, the current location, for a
+   Taxi the driver, and for a RoboTaxi the operating zone and the automation
+   level.
 
 **FR-7. Event log**
 
@@ -664,7 +687,7 @@ the one on that slide or frame.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Steps 4 and 6. ``702run week9_playground 84`` (Fleet and
+     - Live Coding Steps 4 and 6. ``702run week9_playground 89`` (Fleet and
        Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
@@ -673,9 +696,16 @@ the one on that slide or frame.
      - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
        ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
        checked, drives 500 m``.
+   * - FR-4.3
+     - Yes: ``RoboTaxi``'s constructor, with ``"College Park"`` and 4 as
+       defaults; ``RoboTaxi::get_operating_zone``,
+       ``RoboTaxi::get_automation_level``.
+     - Measured: a RoboTaxi made with only its maximum speed reports
+       ``College Park 4``; one made with ``"Silver Spring"`` and 4 reports
+       ``Silver Spring 4``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_appendix xxvii`` (A Route for One Call) prints
+     - ``702run week9_appendix xxvi`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -687,7 +717,7 @@ the one on that slide or frame.
      -
    * - FR-9.1, FR-9.2
      - Yes: ``Route::add``, ``Route::length``.
-     - ``702run week9_appendix xxiv`` (Each Route Has Its Own Positions)
+     - ``702run week9_appendix xxiii`` (Each Route Has Its Own Positions)
        prints ``500 900``: a route of 500 m and a longer one of 900 m.
    * - FR-9.3
      - No.
@@ -711,7 +741,7 @@ the one on that slide or frame.
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_appendix xxxix`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_appendix xxxviii`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.

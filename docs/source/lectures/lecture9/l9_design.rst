@@ -22,7 +22,7 @@ names.
 ====================================================
 
 .. figure:: /_static/images/l9/model_full_members.png
-   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with plus RoboTaxi(double) and plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : int, plus RoboTaxi(double, string = "College Park", int = 4), plus get_operating_zone() : const string&, plus get_automation_level() : int and plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
@@ -60,8 +60,9 @@ method that changes them) and the requirements it serves.
    * - ``RoboTaxi``
      - A vehicle that drives itself. Its ``drive`` checks the sensors first: with
        no sensor, it stays parked. ``final``.
-     - ``Vehicle``'s. It adds no data member.
-     - FR-3, FR-4.2
+     - ``Vehicle``'s. Its zone and its level are set by the constructor and
+       never change.
+     - FR-3, FR-4.2, FR-4.3
    * - ``Taxi``
      - A vehicle that a person drives. Its ``drive`` checks the driver first:
        with an empty name, it stays parked. ``final``.
@@ -210,7 +211,23 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
 ``RoboTaxi``
 ------------
 
-``final``, derived from ``Vehicle`` with ``public`` inheritance. It adds no data member: the sensors are ``Vehicle``'s.
+``final``, derived from ``Vehicle`` with ``public`` inheritance. It adds two data members; the sensors are ``Vehicle``'s.
+
+**Data members**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Member
+     - Type
+     - Meaning
+   * - ``operating_zone_``
+     - ``std::string``
+     - The area it may drive in. ``"College Park"`` by default.
+   * - ``automation_level_``
+     - ``int``
+     - Its SAE J3016 level of driving automation. 4 by default.
 
 **Methods**
 
@@ -221,9 +238,15 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
    * - Method
      - What it does
      - Throws
-   * - ``explicit RoboTaxi(double max_speed)``
-     - Passes the maximum speed to ``Vehicle``. Starts parked, with no sensor.
+   * - ``explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park", int automation_level = 4)``
+     - Passes the maximum speed to ``Vehicle``, moves the zone into ``operating_zone_`` and sets ``automation_level_``. Starts parked, with no sensor.
      - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
+   * - ``const std::string& get_operating_zone() const noexcept``
+     - Returns ``operating_zone_``.
+     - none
+   * - ``int get_automation_level() const noexcept``
+     - Returns ``automation_level_``.
+     - none
    * - ``void drive(const Route& route) const override``
      - With no sensor, prints ``RoboTaxi: no sensor, stays parked``. Otherwise prints the number of sensors checked and the route's length: ``RoboTaxi: 1 sensor checked, drives 500 m``.
      - none
@@ -599,7 +622,7 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
    struct Position;        // x, y in m
    class Route;            // waypoints of one trip
    class Vehicle;          // abstract base class
-   class RoboTaxi;         // drives itself, final
+   class RoboTaxi;         // a zone and a level, drives itself, final
    class Taxi;             // has a driver, final
    class Fleet;            // shares its vehicles
    class Passenger;        // rides one vehicle, owns none
@@ -670,6 +693,9 @@ check for each one.
    * - FR-4.1, FR-4.2
      - ``Vehicle::add_sensor``, ``Vehicle::sensor_count``, ``Sensor``,
        ``SensorType``; ``RoboTaxi::drive`` checks ``sensor_count()`` first.
+   * - FR-4.3
+     - ``RoboTaxi``'s constructor, with ``"College Park"`` and 4 as defaults;
+       ``RoboTaxi::get_operating_zone``, ``RoboTaxi::get_automation_level``.
    * - FR-5, FR-5.1
      - ``Vehicle::drive(const Route&)``; ``Taxi::drive`` checks for an empty
        driver name.
