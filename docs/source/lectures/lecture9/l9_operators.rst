@@ -4,7 +4,7 @@
 Operator Overloading
 ====================================================
 
-This page is **required reading** after the Lecture 9 class. It is not presented in class. A slide of Lecture 9, in Compile-Time Polymorphism, links to it. In class, the compiler picks one of several functions with the same name from the types of the arguments. This page applies the same rule to operators: you write a function named ``operator<<`` or ``operator<``, and the compiler calls it when it sees ``<<`` or ``<`` with your type. You write three operators for the classes of the robotaxi program: ``operator<<`` to print a ``Position``, and ``operator<`` and ``operator>`` to compare two ``Route`` objects by length.
+This page is **required reading** after the Lecture 9 class. It is not presented in class. A slide of Lecture 9, in Compile-Time Polymorphism, links to it. In class, the compiler picks one of several functions with the same name from the types of the arguments. This page applies the same rule to operators: you write a function named ``operator<<`` or ``operator<``, and the compiler calls it when it sees ``<<`` or ``<`` with your type. You write three operators for the classes of the ride service program: ``operator<<`` to print a ``Position``, and ``operator<`` and ``operator>`` to compare two ``Route`` objects by length.
 
 .. dropdown:: Code for This Page
    :icon: terminal

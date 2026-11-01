@@ -4,7 +4,7 @@
 Lecture 9 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``auto`` against a pointer to the base class, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
+This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
 
 Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do (One Namespace: ``fleet``). ``maya_ride`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
@@ -252,27 +252,33 @@ Multiple Choice (Questions 1 to 11)
 .. admonition:: Question 8
    :class: hint
 
-   What does this program print?
+   What does this program print? No sensor is added to the ``RoboTaxi``.
 
    .. code-block:: cpp
 
-      std::vector<std::unique_ptr<Vehicle>> vehicles;
-      auto robotaxi{std::make_unique<RoboTaxi>(13.4)};
-      vehicles.push_back(std::move(robotaxi));
-      std::cout << vehicles.size() << ' ' << std::boolalpha
-                << (robotaxi == nullptr) << '\n';
+      auto robotaxi{std::make_shared<RoboTaxi>(13.4)};
+      auto taxi{std::make_shared<Taxi>(13.4, "Ana")};
+      const std::vector<std::shared_ptr<Vehicle>> today{robotaxi, taxi};
+      for (const std::shared_ptr<Vehicle>& vehicle : today) {
+        vehicle->drive(maya_ride);
+      }
 
-   A. ``1 true``
-   B. ``1 false``
-   C. Nothing: ``auto`` deduces ``std::unique_ptr<RoboTaxi>``, which cannot go into a vector of ``std::unique_ptr<Vehicle>``.
-   D. Nothing: only ``emplace_back`` accepts it.
+   A. ``RoboTaxi: no sensor, stays parked``, then ``Taxi: Ana drives 500 m``
+   B. ``RoboTaxi: 0 sensors checked, drives 500 m``, then ``Taxi: Ana drives 500 m``
+   C. Nothing: a ``std::shared_ptr<RoboTaxi>`` cannot go into a vector of ``std::shared_ptr<Vehicle>``.
+   D. Nothing: ``Vehicle`` is abstract, so there can be no ``std::shared_ptr<Vehicle>``.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **A.** ``1 true``
+      **A.**
 
-      ``auto`` does deduce ``std::unique_ptr<RoboTaxi>``. But a ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``, so ``push_back``, ``emplace_back`` and a ``std::unique_ptr<Vehicle>`` parameter all accept it. The move leaves ``robotaxi`` null. Use ``auto`` while the code needs the ``RoboTaxi`` type, then move the pointer.
+      .. code-block:: text
+
+         RoboTaxi: no sensor, stays parked
+         Taxi: Ana drives 500 m
+
+      A ``std::shared_ptr<RoboTaxi>`` converts to a ``std::shared_ptr<Vehicle>``, as in ``fleet.add(robotaxi)`` on the slide Fleet and Passenger Do Not Change, so C is wrong. No ``Vehicle`` object can be created, but pointers to an abstract class can, so D is wrong. ``drive`` is ``virtual``, so each call runs the ``drive`` of the dynamic type. ``RoboTaxi::drive`` checks ``sensor_count()`` first (FR-4): with no sensor, the robotaxi stays parked and drives nothing, so B is wrong.
 
 .. admonition:: Question 9
    :class: hint

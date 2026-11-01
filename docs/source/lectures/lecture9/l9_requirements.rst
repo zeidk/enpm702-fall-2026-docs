@@ -4,9 +4,9 @@
 L9 Requirements
 ====================================================
 
-**Robotaxi Fleet Software: Software Requirements Specification**
+**Ride Service Software: Software Requirements Specification**
 
-This document states the requirements of the robotaxi fleet software that
+This document states the requirements of the ride service software that
 we build in class. The :doc:`lecture page <l9_lecture>` says what
 each kind of requirement is, and how the nouns and verbs of a requirement give
 the classes and methods.
@@ -18,7 +18,7 @@ the classes and methods.
 1.1 Purpose
 ----------------------------------------------------
 
-This specification states what the robotaxi fleet software shall do and how
+This specification states what the ride service software shall do and how
 well it shall do it, so that the design, the code and the tests can be checked
 against one list. It is written for the developers who build the software and
 for the reviewers who accept it. How the software meets these requirements is
@@ -506,7 +506,7 @@ console are separate products: this specification says what the software gives
 them and takes from them, not how they look.
 
 .. figure:: /_static/images/l9/use_cases.png
-   :alt: A UML use case diagram. A rectangle labeled Robotaxi fleet software holds eight ovals, the use cases: Request a ride (FR-1), Board and leave a vehicle (FR-12), Query a vehicle's status (FR-6), Drive a Taxi (FR-3), Add and remove vehicles (FR-10), Assign a driver (FR-11), Read the event log (FR-7) and Send sensor readings (FR-8). Outside the rectangle are four stick figures, the actors. On the left, Passenger, joined by lines to Request a ride, Board and leave a vehicle and Query a vehicle's status; below it, Driver, joined to Drive a Taxi. On the right, Operator, joined to Query a vehicle's status, Add and remove vehicles, Assign a driver and Read the event log; below it, Sensor, marked hardware, joined to Send sensor readings.
+   :alt: A UML use case diagram. A rectangle labeled Ride service software holds eight ovals, the use cases: Request a ride (FR-1), Board and leave a vehicle (FR-12), Query a vehicle's status (FR-6), Drive a Taxi (FR-3), Add and remove vehicles (FR-10), Assign a driver (FR-11), Read the event log (FR-7) and Send sensor readings (FR-8). Outside the rectangle are four stick figures, the actors. On the left, Passenger, joined by lines to Request a ride, Board and leave a vehicle and Query a vehicle's status; below it, Driver, joined to Drive a Taxi. On the right, Operator, joined to Query a vehicle's status, Add and remove vehicles, Assign a driver and Read the event log; below it, Sensor, marked hardware, joined to Send sensor readings.
    :align: center
    :width: 70%
 
@@ -648,8 +648,8 @@ The first release is accepted when:
 ====================================================
 
 The course code, ``project/week9``, meets part of this specification. A
-``702run`` command runs the code of one slide; its output is the one on that
-slide.
+``702run`` command runs the code of one slide or appendix frame; its output is
+the one on that slide or frame.
 
 .. list-table::
    :header-rows: 1
@@ -664,18 +664,18 @@ slide.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Steps 4 and 6. ``702run week9_playground 98`` (Fleet and
+     - Live Coding Steps 4 and 6. ``702run week9_playground 83`` (Fleet and
        Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
      - Yes: ``Vehicle::add_sensor``; ``RoboTaxi::drive`` checks
        ``sensor_count()`` first.
-     - ``702run week9_appendix x`` (RoboTaxi and Taxi) prints
+     - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
        ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
        checked, drives 500 m``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_playground 48`` (A Route for One Call) prints
+     - ``702run week9_appendix xxvii`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -687,14 +687,14 @@ slide.
      -
    * - FR-9.1, FR-9.2
      - Yes: ``Route::add``, ``Route::length``.
-     - The Composition section of the lecture: a route of 500 m and a longer
-       one of 900 m.
+     - ``702run week9_appendix xxiv`` (Each Route Has Its Own Positions)
+       prints ``500 900``: a route of 500 m and a longer one of 900 m.
    * - FR-9.3
      - No.
      -
    * - FR-10.1 to FR-10.5
      - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
-     - Live Coding Step 2. ``702run week9_playground 35`` (The Vehicles
+     - Live Coding Step 2. ``702run week9_playground 33`` (The Vehicles
        Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
        adding the same vehicle twice gives a size of 1, and removing an
        unknown id returns ``false``.
@@ -711,7 +711,7 @@ slide.
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_playground 99`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_appendix xxxix`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
