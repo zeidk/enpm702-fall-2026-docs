@@ -6,7 +6,7 @@ Lecture 9 Quiz
 
 This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``auto`` against a pointer to the base class, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
 
-Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do (One Namespace: ``fleet``). ``trip`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
+Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do (One Namespace: ``fleet``). ``maya_ride`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
 .. note::
 
@@ -218,7 +218,7 @@ Multiple Choice (Questions 1 to 11)
       }
 
       RoboTaxi robotaxi{13.4};
-      start_shift(robotaxi, trip);
+      start_shift(robotaxi, maya_ride);
 
    A. ``Vehicle: drives 500 m``
    B. ``RoboTaxi: drives itself 500 m``
@@ -235,19 +235,19 @@ Multiple Choice (Questions 1 to 11)
 .. admonition:: Question 7
    :class: hint
 
-   Two classes have the same two ``double`` data members. ``Plain`` has no ``virtual`` method; ``Poly`` has a ``virtual`` destructor and a ``virtual`` method. With g++ on the course's 64-bit Linux, what does ``std::cout << sizeof(Plain) << ' ' << sizeof(Poly) << '\n';`` print?
+   A ``Garage`` class holds the robotaxis parked in it. The same robotaxis are in the fleet, and while a robotaxi is parked the garage must keep it alive, even if the fleet removes it. Following the chart of Choosing a Relationship and Its C++, which data member does ``Garage`` get?
 
-   A. ``16 16``
-   B. ``16 24``
-   C. ``16 32``
-   D. ``24 24``
+   A. ``std::vector<RoboTaxi> parked_;``
+   B. ``std::vector<std::unique_ptr<RoboTaxi>> parked_;``
+   C. ``std::vector<std::shared_ptr<RoboTaxi>> parked_;``
+   D. ``std::vector<std::weak_ptr<RoboTaxi>> parked_;``
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B.** ``16 24``
+      **C.** ``std::vector<std::shared_ptr<RoboTaxi>> parked_;``
 
-      Two ``double``\ s take 16 bytes. g++ stores one hidden pointer in each object of a polymorphic class, to the table of its class's ``virtual`` methods (the vtable): 8 bytes more, however many ``virtual`` methods the class has. The C++ standard leaves this to the compiler, which is why the question names g++.
+      A robotaxi is not a kind of garage, and the garage keeps it, so the chart asks: can a robotaxi exist without the garage? Yes: it belongs to the fleet too. Must the garage keep it alive? Yes. That is aggregation, a ``std::shared_ptr``. A and B make the garage the only owner (composition); D keeps nothing alive (association). The ``std::vector`` comes from the multiplicity: a garage holds any number of robotaxis.
 
 .. admonition:: Question 8
    :class: hint
@@ -349,7 +349,7 @@ Multiple Choice (Questions 1 to 11)
       }  // namespace fleet
 
       int main() {
-        Route trip;          // 1
+        Route maya_ride;     // 1
         fleet::Route back;   // 2
         using fleet::Route;
         Route next;          // 3
@@ -410,14 +410,14 @@ True/False (Questions 12 to 16)
 .. admonition:: Question 14
    :class: hint
 
-   **True or False**: In the lecture's discussion "Which drive() Runs?", ``Vehicle::drive`` is ``virtual`` with a body, ``RoboTaxi`` overrides it, and ``ref`` is a ``Vehicle&`` bound to a ``RoboTaxi``. Then ``ref.Vehicle::drive(trip);`` runs ``RoboTaxi::drive``, because ``drive`` is ``virtual``.
+   **True or False**: ``taxi`` is a ``Taxi`` and ``Vehicle* pointer{&taxi};`` compiles. Then ``Taxi* back{pointer};`` compiles too, because ``pointer`` points to a ``Taxi``.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
       **False.**
 
-      Naming the class, ``Vehicle::drive``, turns off the virtual call: the line runs ``Vehicle::drive`` and prints ``Vehicle: drives 500 m``. This is how an override calls the base's version on purpose. ``ref.drive(trip);``, without the class name, runs ``RoboTaxi::drive``.
+      From derived to base, the compiler converts on its own: a ``Taxi`` is always a ``Vehicle``. From base to derived, it does not: the compiler knows only that ``pointer`` points to a ``Vehicle``, which could be a ``RoboTaxi``. g++ says ``error: invalid conversion from 'Vehicle*' to 'Taxi*'``.
 
 .. admonition:: Question 15
    :class: hint

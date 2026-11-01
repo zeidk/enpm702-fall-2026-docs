@@ -29,8 +29,8 @@ This lecture covers advanced object-oriented programming in C++, on the robotaxi
    l9_lecture
    l9_requirements
    l9_design
+   l9_operators
    l9_shell
-   l9_exercises
    l9_quiz
    l9_references
 
@@ -46,12 +46,12 @@ Before the Next Lecture
 
 **RWA3** is posted today and is due on **Nov 17**.
 
-- **Before the end of class**: upload your three Live Coding files on Canvas. If you watch the recording, upload them before Nov 10.
-- The :doc:`C++ exercise <l9_exercises>` is **graded**. Hand it in on Canvas before the next lecture.
+- **Before the end of class**: upload every file of ``live/include`` and ``live/src`` on Canvas. If you watch the recording, upload them before Nov 10. The Live Coding is this week's exercise: L9 has no C++ exercise on this site. Steps 6 and 7 are homework, not collected.
 - The :doc:`shell exercises <l9_shell>` and the :doc:`quiz <l9_quiz>` are for your own practice. They are **not** collected.
 
 **Required reading, after class:**
 
+- :doc:`Operator Overloading <l9_operators>`: ``operator<<`` for ``Position``, and ``operator<`` and ``operator>`` for ``Route``, with the program ``week9_operators``.
 - `C++ Core Guidelines: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_
 - `cppreference: virtual function specifier <https://en.cppreference.com/w/cpp/language/virtual>`_
 

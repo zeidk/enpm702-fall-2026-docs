@@ -81,7 +81,7 @@ Lecture 9 References
 .. dropdown:: C++ Core Guidelines Rules
    :class-container: sd-border-success
 
-   The rules the slides and their notes cite, with their titles as the Guidelines write them. The section `C.hier: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_ is required reading on the Before the Next Lecture slide and recommended reading on the Next Class slide.
+   The rules the slides and their notes cite, with their titles as the Guidelines write them. The section `C.hier: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_ is required reading on the Before the Next Lecture slide and on the Next Class slide.
 
    - `C.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-five>`_: If you define or ``=delete`` any copy, move, or destructor function, define or ``=delete`` them all
    - `C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`_: A base class destructor should be either public and virtual, or protected and non-virtual
@@ -103,11 +103,20 @@ Lecture 9 References
    - `OMG: Unified Modeling Language <https://www.omg.org/spec/UML/>`_: the specification of UML, cited on the Design divider.
 
 
+.. dropdown:: Required Reading
+   :class-container: sd-border-success
+
+   The Before the Next Lecture slide and the Next Class slide list these three, to read after class:
+
+   - `C++ Core Guidelines: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_
+   - `cppreference: virtual function specifier <https://en.cppreference.com/w/cpp/language/virtual>`_
+   - :doc:`Operator Overloading <l9_operators>`, the reading page of this lecture
+
+
 .. dropdown:: Recommended Reading
    :class-container: sd-border-success
 
-   The Next Class slide recommends these three:
+   The Next Class slide recommends these two:
 
    - `cppreference: Derived classes <https://en.cppreference.com/w/cpp/language/derived_class>`_
-   - `C++ Core Guidelines, C.hier: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_
    - Stroustrup, *The C++ Programming Language* (4th edition, 2013)

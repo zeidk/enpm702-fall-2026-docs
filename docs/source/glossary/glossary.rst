@@ -2142,6 +2142,14 @@ L9: OOP Advanced
       ``final`` on its methods. Core Guidelines C.139: use it sparingly.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Forward Declaration
+      A declaration of a class's name only, with no body: ``class Vehicle;``.
+      It is enough for a pointer, a reference or a ``std::weak_ptr`` member;
+      a by-value member or a call needs the full class. Two headers that
+      need each other each declare the other class this way, and the
+      ``.cpp`` file that needs the full class includes its header.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
    Inheritance
       A derived class is built from a base class, with ``class Derived :
       public Base``. It gets the base's members and adds its own, and every
@@ -2158,11 +2166,31 @@ L9: OOP Advanced
       the ``rides`` arrow: a passenger rides at most one vehicle at a time.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
+   Operator Overloading
+      Writing a function named ``operator`` followed by an operator's symbol,
+      so that the operator works with your type: ``a < b`` calls
+      ``a.operator<(b)`` for a member, or ``operator<(a, b)`` for a free
+      function. At least one operand must be a class or an enumeration, and
+      ``.``, ``.*``, ``::`` and ``?:`` cannot be overloaded. ``operator<<``
+      for a stream is a free function that returns the stream.
+      :doc:`L9 reading </lectures/lecture9/l9_operators>`
+
    override
       Written after a derived method's parameter list and its ``const``. The
       compiler checks that the method overrides a ``virtual`` method of a
       base class, and stops with an error if it does not, so a typo in the
       name or a missing ``const`` cannot pass silently.
+      :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Owner
+      An owner of an object decides when the object is destroyed. While at
+      least one owner holds the object, the object stays alive. "Keeps it
+      alive" means "is one of its owners". A ``std::unique_ptr`` is the only
+      owner of its object; each copy of a ``std::shared_ptr`` is one more
+      owner, and the object is destroyed when the last one lets go. A
+      ``std::weak_ptr`` observes an object without owning it. Composition has
+      one owner, aggregation shares ownership, and association and dependency
+      own nothing. See **Ownership**.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Polymorphism
@@ -2223,6 +2251,13 @@ L9: OOP Advanced
       A word between « and » in a UML box that says what kind of type the box
       is: «struct» for a ``struct``, «enumeration» for an ``enum class``.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
+
+   Three-Way Comparison
+      The C++20 operator ``<=>``: ``a <=> b`` says whether ``a`` is less
+      than, equal to, greater than, or incomparable with ``b``. When a class
+      writes ``operator<=>``, the compiler uses it for ``<``, ``>``, ``<=``
+      and ``>=``.
+      :doc:`L9 reading </lectures/lecture9/l9_operators>`
 
    UML Class Diagram
       A drawing of a program's classes. Each box is a class: its name, then

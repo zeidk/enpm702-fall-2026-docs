@@ -300,7 +300,9 @@ it found one.
 :Acceptance: Removing an id in the fleet reduces the size by 1 and reports
    success. Removing an unknown id reports failure and changes nothing.
 
-**FR-10.5. The fleet does not own its vehicles**
+.. _fr-10-5:
+
+**FR-10.5. The fleet does not own its vehicles alone**
 
 A vehicle removed from the Fleet, or whose Fleet is destroyed, shall stay
 usable by the rest of the program.
@@ -662,18 +664,18 @@ slide.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Step 4. ``702run week9_playground 105`` (The Whole
-       Program) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
+     - Live Coding Steps 4 and 6. ``702run week9_playground 98`` (Fleet and
+       Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
      - Yes: ``Vehicle::add_sensor``; ``RoboTaxi::drive`` checks
        ``sensor_count()`` first.
-     - ``702run week9_appendix vii`` (RoboTaxi and Taxi) prints
+     - ``702run week9_appendix x`` (RoboTaxi and Taxi) prints
        ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
        checked, drives 500 m``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_playground 47`` (A Route for One Call) prints
+     - ``702run week9_playground 48`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -692,7 +694,7 @@ slide.
      -
    * - FR-10.1 to FR-10.5
      - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
-     - Live Coding Step 2. ``702run week9_playground 34`` (The Vehicles
+     - Live Coding Step 2. ``702run week9_playground 35`` (The Vehicles
        Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
        adding the same vehicle twice gives a size of 1, and removing an
        unknown id returns ``false``.
@@ -705,11 +707,11 @@ slide.
    * - FR-12.1 to FR-12.4
      - Yes: ``Passenger::board``, ``Passenger::leave``; the passenger holds a
        ``std::weak_ptr<Vehicle>``.
-     - Live Coding Step 1. ``702run week9_playground 26`` (Two Separate
+     - Live Coding Step 1. ``702run week9_playground 25`` (Two Separate
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_playground 106`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_playground 99`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.

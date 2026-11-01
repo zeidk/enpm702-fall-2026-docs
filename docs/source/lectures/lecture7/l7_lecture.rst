@@ -94,7 +94,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   A slide whose code leaks or has undefined behavior, such as slide 83, runs only when you ask for it by number: ``702run week7_playground 83``. A full run skips it.
+   A slide whose code leaks or has undefined behavior, such as slide 83, runs only when you ask for it by number: ``702run week7_playground 84``. A full run skips it.
 
 .. note::
 
@@ -1496,6 +1496,19 @@ Step 3c: The Scope Ends
 - 3c: ``cyclist``'s scope ends, and its destructor runs.
 - ``cyclist`` was the last owner, so the count drops to 0: the object is destroyed and the allocation freed.
 
+Three Ways the Count Goes Down
+""""""""""""""""""""""""""""""
+
+.. figure:: /_static/images/l7/av_shared_ptr_let_go_summary.png
+   :alt: Three panels, one per way a std::shared_ptr owner lets go, each with its code and the use_count before and after. The scope ends (2, 3c): when hazard's scope ends, the count goes from 2 to 1 and the Obstacle stays; when cyclist's scope ends, from 1 to 0 and the Obstacle is deleted. Assignment (3a), cyclist = std::make_shared<Obstacle>(2, ...): the old Obstacle's count goes from 1 to 0 and it is deleted; the new Obstacle has count 1 and cyclist owns it. reset() (3b), cyclist.reset(): the count goes from 1 to 0, the Obstacle is deleted, and cyclist now holds nullptr.
+   :align: center
+   :width: 100%
+
+   The three ways an owner lets go, with ``use_count`` before and after.
+
+- Each way subtracts 1 from ``use_count``: the scope ends, the owner is assigned another pointer, or it calls ``reset()``.
+- When the count reaches 0, the last owner deletes the ``Obstacle`` object and the allocation is freed.
+
 Deletion by the Last Owner
 """"""""""""""""""""""""""
 
@@ -1507,7 +1520,7 @@ Deletion by the Last Owner
    hazards.clear();  // the last owner deletes the Obstacle
 
 - The hazard list keeps the ``Obstacle`` object alive after the tracker lets go. That is what the raw pointer of `A Hazard in Two Lists`_ could not do.
-- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 76`` ends with no LeakSanitizer report.
+- Whichever list lets go last deletes the ``Obstacle`` object, and nothing leaks: ``702run week7_playground 77`` ends with no LeakSanitizer report.
 
 Passing and Returning
 """""""""""""""""""""
@@ -1640,7 +1653,7 @@ Cyclic Reference, Measured
    SUMMARY: AddressSanitizer: 160 byte(s) leaked in 2 allocation(s).
 
 - An **indirect leak** is LeakSanitizer's name for leaked memory reachable only from other leaked memory.
-- ``702run week7_playground 83``: lines 37 and 38 are the two ``std::make_shared`` calls.
+- ``702run week7_playground 84``: lines 37 and 38 are the two ``std::make_shared`` calls.
 - 80 bytes each, one allocation: a ``Towing`` (48 + 16) and its 16-byte control block.
 
 Breaking It
@@ -1656,7 +1669,7 @@ Breaking It
    b->other = a;  // a's count stays 1
 
 - A ``std::weak_ptr`` made from a ``std::shared_ptr`` does not add to the count.
-- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 84``: no LeakSanitizer report.
+- When ``a`` and ``b`` go out of scope, both counts reach 0 and both ``Towing`` objects are deleted. ``702run week7_playground 85``: no LeakSanitizer report.
 
 .. note::
 
@@ -1681,7 +1694,7 @@ Breaking It
 
 - A ``std::weak_ptr`` has no ``->`` and no ``*``. ``lock()`` returns an owning ``std::shared_ptr``, or an empty one if the object is gone.
 - While ``target`` exists, it is one more owner, so the ``Obstacle`` object cannot be deleted in the middle of ``show``.
-- ``702run week7_playground 85``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
+- ``702run week7_playground 86``: ``obstacle 2: 4 m/s``, then, after the tracker and the planner let go, ``the obstacle is gone``.
 
 See `A Dashboard of weak_ptr`_ under Further Reading.
 
@@ -1736,7 +1749,7 @@ Exercise 5: Use Counts
    b.reset();                             // 6
 
 - After each numbered line: how many ``std::shared_ptr``\ s own the ``Obstacle`` object, and is ``shown`` expired?
-- Check: ``702run week7_playground 88``.
+- Check: ``702run week7_playground 89``.
 
 Choosing a Pointer
 ------------------

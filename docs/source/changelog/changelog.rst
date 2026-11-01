@@ -63,6 +63,22 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      constructor.
    - **Lecture 9**: the PlantUML source of the slides' UML diagrams is in
      ``project/week9/uml``.
+   - **Lecture 9** has no C++ exercise page: the Live Coding is the week's
+     exercise, as in Lecture 8.
+   - **Lecture 9**, after a review of every part: Owners Keep Objects Alive
+     defines owner and keeping alive; Nouns and Classes and Verbs and Links
+     show the requirements that give each class; two slides on headers that
+     include each other and the forward declaration that fixes it; Operators
+     Are Overloaded Functions, with a new required reading, Operator
+     Overloading; The Sizes in the Report; The Reason for Each final. Several
+     slides moved to Further Reading (the full class diagram, PlantUML, the
+     code folders, Multiple Inheritance, Generalization and Specialization,
+     protected and private Inheritance, A Base Member in the List, the auto
+     slides, The Cost of virtual, A final Method). Every ``702run`` number
+     follows the slides.
+   - **Lecture 9 quiz**: the route is ``maya_ride``; Questions 7 and 14 now
+     test main-deck material (choosing a relationship, and converting a base
+     pointer to a derived one).
    - **Lecture 9**: when a relationship needs a smart pointer: A std::weak_ptr,
      or a Plain Pointer (association), Shared Ownership Needs std::shared_ptr
      (aggregation), and one line each for dependency and inheritance. Vehicle
