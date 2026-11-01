@@ -430,7 +430,7 @@ An ``enum class`` in ``sensor_type.hpp`` with three values: ``lidar`` (light det
 ``AutomationLevel``
 -------------------
 
-An ``enum class`` in ``automation_level.hpp`` with six values, ``level_0`` to ``level_5``: the six levels of driving automation of SAE J3016, Level 0 to Level 5 (see `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__, and the Definitions of the :doc:`L9 Requirements <l9_requirements>`). FR-4.3 allows these six levels and no other. The constructor's parameter has the type ``AutomationLevel``, so code that passes a number, such as 7, as the level does not compile. A cast compiles, ``static_cast<AutomationLevel>(7)``, and ``RoboTaxi``'s constructor rejects it with ``std::invalid_argument``. Its underlying type is ``int``: 4 bytes with g++ 13.3.
+An ``enum class`` in ``automation_level.hpp`` with six values, ``level_0`` to ``level_5``: the six levels of driving automation of SAE J3016, Level 0 to Level 5 (see `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__, and the Definitions of the :doc:`L9 Requirements <l9_requirements>`). FR-4.3 allows these six levels and no other. The constructor's parameter has the type ``AutomationLevel``, so code that passes a number, such as 7, as the level does not compile. A cast compiles, ``static_cast<AutomationLevel>(7)``, and ``RoboTaxi``'s constructor rejects it with ``std::invalid_argument``. The check runs before ``Vehicle``'s constructor, so a rejected ``RoboTaxi`` takes no id. Its underlying type is ``int``: 4 bytes with g++ 13.3.
 
 ``Route``
 ---------
@@ -644,15 +644,16 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
 
    namespace fleet {
 
-   enum class SensorType;  // lidar, camera, radar
-   class Sensor;           // id, type, range
-   struct Position;        // x, y in m
-   class Route;            // waypoints of one trip
-   class Vehicle;          // abstract base class
-   class RoboTaxi;         // a zone and a level, drives itself, final
-   class Taxi;             // has a driver, final
-   class Fleet;            // shares its vehicles
-   class Passenger;        // rides one vehicle, owns none
+   enum class SensorType;       // lidar, camera, radar
+   enum class AutomationLevel;  // level_0 to level_5 (SAE J3016)
+   class Sensor;                // id, type, range
+   struct Position;             // x, y in m
+   class Route;                 // waypoints of one trip
+   class Vehicle;               // abstract base class
+   class RoboTaxi;              // a zone and a level, drives itself, final
+   class Taxi;                  // has a driver, final
+   class Fleet;                 // shares its vehicles
+   class Passenger;             // rides one vehicle, owns none
 
    }  // namespace fleet
 
