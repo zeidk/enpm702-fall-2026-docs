@@ -197,7 +197,8 @@ the zone College Park and Level 4.
 :Acceptance: A RoboTaxi made with only its maximum speed reports College Park
    and Level 4. A RoboTaxi made with Silver Spring and Level 4 reports Silver
    Spring and Level 4. A level outside 0 to 5 cannot be given: code that
-   passes a number, such as 7, as the level does not compile.
+   passes a number, such as 7, as the level does not compile, and a level
+   cast from 7 is rejected with ``std::invalid_argument``.
 
 **FR-4.4. Change the operating zone**
 
@@ -463,8 +464,10 @@ unchanged. The rules are:
 - NFR-2.2: a vehicle's speed is from 0 to its maximum speed;
 - NFR-2.3: a distance added to a vehicle's mileage is at least 0 m;
 - NFR-2.4: a sensor's range is at least 0 m;
-- NFR-2.5: a passenger's name is not empty (FR-12.4);
-- NFR-2.6: a fleet holds no null vehicle (FR-10.2).
+- NFR-2.5: a sensor's type is lidar, camera or radar;
+- NFR-2.6: a robotaxi's automation level is Level 0 to Level 5 (FR-4.3);
+- NFR-2.7: a passenger's name is not empty (FR-12.4);
+- NFR-2.8: a fleet holds no null vehicle (FR-10.2).
 
 :Rationale: An object that keeps its rule never needs to be checked again by
    the code that uses it.
@@ -730,7 +733,8 @@ the one on that slide or frame.
    * - FR-4.3
      - Yes: ``RoboTaxi``'s constructor, with ``"College Park"`` and
        ``AutomationLevel::level_4`` as defaults; the level is an
-       ``AutomationLevel``, ``level_0`` to ``level_5``;
+       ``AutomationLevel``, ``level_0`` to ``level_5``, and the constructor
+       throws for any other value;
        ``RoboTaxi::get_operating_zone``,
        ``RoboTaxi::get_automation_level``.
      - Measured, with the level printed as a number
@@ -739,6 +743,9 @@ the one on that slide or frame.
        ``AutomationLevel::level_4`` reports ``Silver Spring 4``.
        ``RoboTaxi{13.4, "College Park", 7}`` does not compile (g++ 13.3:
        no matching function for call).
+       ``RoboTaxi{13.4, "College Park", static_cast<AutomationLevel>(7)}``
+       compiles and throws ``std::invalid_argument`` with
+       ``unknown automation level``.
    * - FR-4.4
      - Yes: ``RoboTaxi::change_zone``.
      - Measured: a RoboTaxi made with only its maximum speed reports
@@ -765,7 +772,7 @@ the one on that slide or frame.
      -
    * - FR-10.1 to FR-10.5
      - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
-     - Live Coding Step 2. ``702run week9_playground 33`` (The Vehicles
+     - Live Coding Step 2. ``702run week9_playground 34`` (The Vehicles
        Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
        adding the same vehicle twice gives a size of 1, and removing an
        unknown id returns ``false``.
@@ -780,7 +787,7 @@ the one on that slide or frame.
    * - FR-12.1 to FR-12.4
      - Yes: ``Passenger::board``, ``Passenger::leave``; the passenger holds a
        ``std::weak_ptr<Vehicle>``.
-     - Live Coding Step 1. ``702run week9_playground 25`` (Two Separate
+     - Live Coding Step 1. ``702run week9_playground 26`` (Two Separate
        Lifetimes) prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
@@ -788,7 +795,11 @@ the one on that slide or frame.
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
-     - The constructors and methods of ``project/week9/common``.
+     - The constructors and methods of ``project/week9/common``. Measured:
+       ``Sensor{1, SensorType::radar, -1.0}`` throws with
+       ``range must be at least 0``, and
+       ``Sensor{1, static_cast<SensorType>(7)}`` throws with
+       ``unknown sensor type``.
    * - NFR-3
      - Yes, apart from the slides in ``undefined/``, which show such a bug on
        purpose and run only when asked for by number.

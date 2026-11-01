@@ -95,6 +95,7 @@ One Class per File
          ├── include/
          │   ├── vehicle.hpp
          │   ├── sensor.hpp
+         │   ├── sensor_type.hpp
          │   ├── automation_level.hpp
          │   ├── route.hpp
          │   ├── position.hpp
@@ -114,8 +115,8 @@ One Class per File
 
    .. grid-item::
 
-      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class. ``Position``, a ``struct`` with no method, and ``AutomationLevel``, an enumeration, have only a header.
-      - ``Vehicle``, ``Sensor``, ``AutomationLevel``, ``Route`` and ``Position`` are given: you read them, you do not write them. You write the other four.
+      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class. ``Position``, a ``struct`` with no method, and the enumerations ``SensorType`` and ``AutomationLevel`` have only a header.
+      - ``Vehicle``, ``Sensor``, ``SensorType``, ``AutomationLevel``, ``Route`` and ``Position`` are given: you read them, you do not write them. You write the other four.
       - You find a class by its file name. A change to a class's header recompiles only the files that include it; a change to its ``.cpp`` recompiles that file alone: a change to ``taxi.cpp`` recompiles only ``taxi.cpp``.
       - A derived class gets its own files too: ``robotaxi.hpp`` includes ``vehicle.hpp``, because ``RoboTaxi`` needs its base. ``vehicle.hpp`` includes none of its derived classes: a base class does not know the classes derived from it.
       - So a new kind of vehicle adds two files and changes no other class. ``CMakeLists.txt`` names every source file, so it gains the new ``.cpp``, and ``main.cpp`` changes if it makes the new vehicle.
@@ -535,31 +536,49 @@ An **association** is a relationship between two classes whose objects can be li
 Passenger and Vehicle in the Class Diagram
 """"""""""""""""""""""""""""""""""""""""""
 
-.. grid:: 1 1 2 2
-   :gutter: 2
+.. image:: /_static/images/l9/decide_relationship_association.png
+   :alt: The decision chart of Choosing a Relationship, with the path to Association highlighted: the four questions on the path and the answers taken are dark orange and bold, and the Association box is light orange. Is an A a kind of B? No. Does A use B without keeping it? No. Can B exist without A? Yes. Must A keep B alive? No. That leads to the box Association: std::weak_ptr<B>; Passenger rides a Vehicle. Each branch ends at its box. The other four boxes show only their names, Inheritance, Dependency, Composition and Aggregation, in black, and all arrows are black.
+   :align: center
+   :width: 80%
 
-   .. grid-item::
-      :columns: 12 12 4 4
-      :child-direction: column
-      :child-align: center
+----
 
-      .. image:: /_static/images/l9/model_l9_association_only.png
-         :alt: A UML class diagram with only two boxes, Passenger and Vehicle, both light orange with dark orange lines. Passenger has a circled C, for a class, and Vehicle, in italics, a circled A, for an abstract class. An orange arrow labeled rides runs from Passenger to Vehicle, with 0..* at Passenger and 0..1 at Vehicle.
-         :align: center
-         :width: 100%
+.. image:: /_static/images/l9/model_l9_association_only.png
+   :alt: A UML class diagram with only two boxes, Passenger and Vehicle, both light orange with dark orange lines. Passenger has a circled C, for a class, and Vehicle, in italics, a circled A, for an abstract class. An orange arrow labeled rides runs from Passenger to Vehicle, with 0..* at Passenger and 0..1 at Vehicle.
+   :align: center
+   :width: 40%
 
-   .. grid-item::
-      :columns: 12 12 8 8
+The four answers on the path, from the top, and the requirement behind each:
 
-      .. image:: /_static/images/l9/decide_relationship_association.png
-         :alt: The decision chart of Choosing a Relationship, with the path to Association highlighted: the four questions on the path and the answers taken are dark orange and bold, and the Association box is light orange. Is an A a kind of B? No. Does A use B without keeping it? No. Can B exist without A? Yes. Must A keep B alive? No. That leads to the box Association: std::weak_ptr<B>; Passenger rides a Vehicle. Each branch ends at its box. The other four boxes show only their names, Inheritance, Dependency, Composition and Aggregation, in black, and all arrows are black.
-         :align: center
-         :width: 100%
+1. No. A passenger is "A person who rides a vehicle" (:doc:`Definitions <l9_requirements>`).
+2. No. A passenger keeps the vehicle it boards (FR-12.1) until it leaves (FR-12.2).
+3. Yes. A vehicle is in the fleet (FR-10.1) before a passenger boards it.
+4. No. "Boarding shall not keep a vehicle alive" (:ref:`FR-12.3 <fr-12-3>`).
 
-- A ``Passenger`` rides a ``Vehicle``: the arrow labeled ``rides``. The chart's answers lead to association: a passenger is not a kind of vehicle, keeps it, the vehicle exists without the passenger, and the passenger need not keep it alive.
 - The first new class is ``Passenger``, and the first kind of line is the plain arrow between ``Passenger`` and ``Vehicle``.
-- A ``Sensor`` has a ``SensorType``: an association too. ``type_`` is a plain ``SensorType`` member, not a pointer: an enumeration value is copied.
 - After the full boxes, we write the class and check in a run that a passenger never keeps the vehicle alive.
+
+A Sensor Has a SensorType
+"""""""""""""""""""""""""
+
+.. image:: /_static/images/l9/decide_relationship_sensortype.png
+   :alt: The decision chart of Choosing a Relationship, with the path to Association highlighted: the four questions on the path and the answers taken are dark orange and bold, and the Association box is light orange. Is an A a kind of B? No. Does A use B without keeping it? No. Can B exist without A? Yes. Must A keep B alive? No. That leads to the box Association: a SensorType member; Sensor has a SensorType. Each branch ends at its box. The other four boxes show only their names, Inheritance, Dependency, Composition and Aggregation, in black, and all arrows are black.
+   :align: center
+   :width: 80%
+
+----
+
+.. image:: /_static/images/l9/model_l9_sensortype_only.png
+   :alt: A UML class diagram with only two boxes, Sensor and SensorType, both light orange with dark orange lines. Sensor has a circled C, for a class, and SensorType, marked enumeration, a circled E, for an enumeration. An orange arrow labeled has type runs from Sensor to SensorType, with 1 at SensorType.
+   :align: center
+   :width: 40%
+
+The same four questions, for ``Sensor`` and ``SensorType``, lead to association too:
+
+1. No. A sensor is "mounted on a vehicle" (:doc:`Definitions <l9_requirements>`). A type is a value.
+2. No. A sensor keeps its type, one of "lidar, camera and radar" (FR-4.1).
+3. Yes. The three types are values that exist on their own (FR-4.1, NFR-2.5).
+4. No. No one owns a value: ``type_`` is a plain copy, not a ``std::weak_ptr``.
 
 A Passenger Rides a Vehicle
 """""""""""""""""""""""""""
@@ -641,7 +660,7 @@ Two Separate Lifetimes
 - A ``std::shared_ptr`` would make ``maya`` an owner: the car could not be destroyed while maya holds it, even after the fleet removes it. That breaks FR-12.3: a car outside the fleet, still carrying a passenger.
 - Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.
 - A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
-- Run: ``702run week9_playground 25``.
+- Run: ``702run week9_playground 26``.
 
 See `Before reset, in Memory`_ and `After reset, in Memory`_ under Further Reading.
 
@@ -824,7 +843,7 @@ The Vehicles Outlive the Fleet
 
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
 - The last line is the acceptance test of :ref:`FR-10.5 <fr-10-5>`: after the fleet is destroyed, a vehicle it held still answers ``get_max_speed()``.
-- Run: ``702run week9_playground 33``.
+- Run: ``702run week9_playground 34``.
 
 Live Coding: Step 2
 """""""""""""""""""
@@ -1129,7 +1148,7 @@ A RoboTaxi in Memory
 - Sizes, measured with g++ 13.3: the ``Vehicle`` part is 88 bytes, ``operating_zone_`` (a ``std::string``) 32 and ``automation_level_`` (an ``AutomationLevel``, an ``int`` underneath) 4. Then 4 bytes of padding make the size a multiple of 8: 88 + 32 + 4 + 4 = 128.
 - Whether ``RoboTaxi``'s methods can use a member by name depends on its access specifier in ``Vehicle``. ``-`` marks ``private``, as in the class diagram: the member is there, but reachable only through ``Vehicle``'s ``public`` or ``protected`` methods (`private Stays private`_).
 - ``next_id_`` is ``static``: one counter for the class, in no object.
-- Run: ``702run week9_playground 50``. It prints each member through ``Vehicle``'s ``public`` methods, then the two sizes: ``88 128``.
+- Run: ``702run week9_playground 51``. It prints each member through ``Vehicle``'s ``public`` methods, then the two sizes: ``88 128``.
 
 A Taxi through a Pointer
 """"""""""""""""""""""""
@@ -1148,7 +1167,7 @@ A Taxi through a Pointer
 - ``std::make_unique`` makes the ``Taxi`` on the heap, with no ``new``. On the stack, ``taxi`` is one pointer of 8 bytes: a ``std::unique_ptr<Taxi>``.
 - The ``Taxi`` starts with its ``Vehicle`` part (88 bytes), then its own ``private`` member ``driver_name_``, a ``std::string`` (32 bytes): 88 + 32 = 120.
 - ``taxi`` holds the address where both start.
-- Run: ``702run week9_playground 51``. It prints ``8 120``, then ``white``.
+- Run: ``702run week9_playground 52``. It prints ``8 120``, then ``white``.
 
 See `Inside a Taxi Object`_ under Further Reading.
 
@@ -1179,7 +1198,7 @@ Uncommented, the line ``vehicle.assign_driver("Ben");`` gives:
 - ``assign_driver`` is a ``Taxi`` method that ``Vehicle`` does not have. The compiler checks a call through ``vehicle`` against ``Vehicle``'s members only, so ``assign_driver`` can be called through ``taxi`` and not through ``vehicle``. The object is still a ``Taxi``: ``set_speed`` through ``vehicle`` changed ``taxi`` (10).
 - A reference is bound once: ``vehicle`` refers to ``taxi`` for its whole life.
 - A ``Vehicle`` copy of ``taxi``, not a reference, keeps only its ``Vehicle`` part: slicing (`Slicing`_).
-- Run: ``702run week9_playground 52``.
+- Run: ``702run week9_playground 53``.
 
 .. note::
 
@@ -1215,7 +1234,7 @@ Uncommented, the line ``pointer->change_zone("Silver Spring");`` gives:
 - As with a reference, the compiler checks a call through ``pointer`` against ``Vehicle``'s members only. ``change_zone``, a ``RoboTaxi`` method, can be called through ``robotaxi`` and not through ``pointer``. ``set_speed`` through ``pointer`` changed ``robotaxi`` (10).
 - Unlike a reference, a pointer can change: the same ``pointer`` then points to ``taxi``.
 - So ``Fleet``'s ``std::vector<std::shared_ptr<Vehicle>>`` holds robotaxis and taxis.
-- Run: ``702run week9_playground 53``.
+- Run: ``702run week9_playground 54``.
 
 .. note::
 
@@ -1256,7 +1275,7 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
 - ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
-- Run: ``702run week9_playground 55``.
+- Run: ``702run week9_playground 56``.
 
 private Stays private
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1283,22 +1302,23 @@ protected Data
 
    class RoboTaxi : public Vehicle {  // speed_ is protected now
     public:
-     explicit RoboTaxi(
-         double max_speed, std::string operating_zone = "College Park",
-         AutomationLevel automation_level = AutomationLevel::level_4)
-         : Vehicle{max_speed},
-           operating_zone_{std::move(operating_zone)},
-           automation_level_{automation_level} {}
+     // ... constructor and members
      void speed_up() { speed_ = 20.0; }  // compiles: no check
-
-    private:
-     std::string operating_zone_;        // the area it may drive in
-     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
-- With ``speed_`` ``protected``, this compiles. For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 20. Every derived class can now break ``Vehicle``'s invariant.
-- The rule for assignments stays: **every data member is** ``private``, or the assignment gets 0. Use ``protected`` for methods meant only for derived classes, as ``log_event`` in `protected Members`_.
-- Run: ``702run week9_playground 57``. It prints ``20 13.4``: the speed, then the maximum speed.
+   RoboTaxi robotaxi{13.4};
+   robotaxi.speed_up();
+   std::cout << robotaxi.get_speed() << ' '
+             << robotaxi.get_max_speed() << '\n';
+
+It prints:
+
+.. code-block:: text
+
+   20 13.4
+
+- For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 20. Every derived class can now break ``Vehicle``'s invariant.
+- Run: ``702run week9_playground 58``. It prints ``20 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -1311,18 +1331,9 @@ Through Vehicle's public Methods
 
    class RoboTaxi : public Vehicle {  // speed_ is private
     public:
-     explicit RoboTaxi(
-         double max_speed, std::string operating_zone = "College Park",
-         AutomationLevel automation_level = AutomationLevel::level_4)
-         : Vehicle{max_speed},
-           operating_zone_{std::move(operating_zone)},
-           automation_level_{automation_level} {}
+     // ... constructor and members
      void slow_down() { set_speed(get_speed() / 2.0); }
      void speed_up() { set_speed(20.0); }  // throws
-
-    private:
-     std::string operating_zone_;        // the area it may drive in
-     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
    RoboTaxi car_a{13.4};
@@ -1344,10 +1355,14 @@ It prints:
    speed must be from 0 to the maximum speed
    5
 
-- ``RoboTaxi`` cannot name ``speed_``, so it uses ``Vehicle``'s ``public`` methods, as any other code does. ``slow_down`` reads the speed with ``get_speed()`` and writes half of it with ``set_speed()``: 10 / 2 = 5.
+- To use a base class's data, a derived class goes through the base's getters and setters: ``RoboTaxi`` calls ``get_speed()`` and ``set_speed()``, as any other code does. ``slow_down`` reads the speed with ``get_speed()`` and writes half of it with ``set_speed()``: 10 / 2 = 5.
 - ``speed_up``, the same method as in `protected Data`_, now goes through the check: 20 is above 13.4, so ``set_speed`` throws and the speed stays 5. Only ``Vehicle`` checks the rule.
-- A method meant only for derived classes is ``protected``, as ``log_event`` is. The data stays ``private``.
 - Run: ``702run week9_playground 59``.
+
+.. admonition:: Access in a class hierarchy
+   :class: important
+
+   Keep the base class's data members ``private``. Make a method ``protected`` when only derived classes need it. A derived class reaches the base's data through the base's getters and setters. In assignments, every data member is ``private``, or the assignment gets 0.
 
 Constructors and Inheritance
 """"""""""""""""""""""""""""
@@ -2409,7 +2424,12 @@ A Base Member in the List
        AutomationLevel automation_level = AutomationLevel::level_4)
        : max_speed_{max_speed},  // does not compile
          operating_zone_{std::move(operating_zone)},
-         automation_level_{automation_level} {}
+         automation_level_{automation_level} {
+     if (automation_level_ < AutomationLevel::level_0 ||
+         automation_level_ > AutomationLevel::level_5) {
+       throw std::invalid_argument{"unknown automation level"};
+     }
+   }
 
 .. code-block:: text
 

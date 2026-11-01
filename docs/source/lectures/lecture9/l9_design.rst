@@ -61,8 +61,9 @@ method that changes them) and the requirements it serves.
      - A vehicle that drives itself. Its ``drive`` checks the sensors first: with
        no sensor, it stays parked. ``change_zone`` moves it to another area.
        ``final``.
-     - ``Vehicle``'s. Its level is set by the constructor and never changes.
-     - FR-3, FR-4.2, FR-4.3, FR-4.4
+     - ``Vehicle``'s. Its level is ``level_0`` to ``level_5``, set by the
+       constructor, and never changes.
+     - FR-3, FR-4.2, FR-4.3, FR-4.4, NFR-2
    * - ``Taxi``
      - A vehicle that a person drives. Its ``drive`` checks the driver first:
        with an empty name, it stays parked. ``assign_driver`` changes the
@@ -81,17 +82,20 @@ method that changes them) and the requirements it serves.
    * - ``Sensor``
      - One lidar, camera or radar on a vehicle. ``Vehicle::add_sensor`` picks
        its id.
-     - The range is at least 0.
-     - FR-4.1
+     - The type is ``lidar``, ``camera`` or ``radar``; the range is at
+       least 0.
+     - FR-4.1, NFR-2
    * - ``SensorType``
      - What kind a sensor is: ``lidar``, ``camera`` or ``radar``. An
-       ``enum class``.
-     - None: any of the three values is valid.
+       ``enum class``, in ``sensor_type.hpp``.
+     - None of its own. ``Sensor``'s constructor rejects a value that is not
+       one of the three.
      - FR-4.1
    * - ``AutomationLevel``
      - The level of driving automation of a robotaxi, as SAE J3016 defines
        it: ``level_0`` to ``level_5``. An ``enum class``.
-     - None: any of the six values is valid.
+     - None of its own. ``RoboTaxi``'s constructor rejects a value that is
+       not one of the six.
      - FR-4.3
    * - ``Route``
      - The waypoints of one trip, in order, and their length: the sum of the
@@ -246,7 +250,7 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
      - Throws
    * - ``explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park", AutomationLevel automation_level = AutomationLevel::level_4)``
      - Passes the maximum speed to ``Vehicle``, moves the zone into ``operating_zone_`` and sets ``automation_level_``. Starts parked, with no sensor.
-     - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
+     - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``), or if ``automation_level`` is not ``level_0`` to ``level_5``
    * - ``const std::string& get_operating_zone() const noexcept``
      - Returns ``operating_zone_``.
      - none
@@ -407,7 +411,7 @@ It writes no constructor: the compiler's default one makes an empty fleet.
      - Throws
    * - ``explicit Sensor(int id, SensorType type = SensorType::lidar, double range = 100.0)``
      - Sets the id, the type and the range. By default a lidar that sees 100 m, a value chosen for the examples.
-     - ``std::invalid_argument`` if ``range`` is less than 0
+     - ``std::invalid_argument`` if ``type`` is not ``lidar``, ``camera`` or ``radar``, or if ``range`` is less than 0
    * - ``int get_id() const``
      - Returns the id.
      - none
@@ -421,12 +425,12 @@ It writes no constructor: the compiler's default one makes an empty fleet.
 ``SensorType``
 --------------
 
-An ``enum class`` with three values: ``lidar`` (light detection and ranging), ``camera`` (a video camera) and ``radar`` (radio detection and ranging).
+An ``enum class`` in ``sensor_type.hpp`` with three values: ``lidar`` (light detection and ranging), ``camera`` (a video camera) and ``radar`` (radio detection and ranging). ``sensor.hpp`` includes it. Code that passes a number, such as 7, as the type does not compile. A cast compiles: ``static_cast<SensorType>(7)`` is a value of the type that names no enumerator, because the type holds every value of its underlying type, ``int`` (C++20 [dcl.enum] paragraph 8). ``Sensor``'s constructor rejects it with ``std::invalid_argument``.
 
 ``AutomationLevel``
 -------------------
 
-An ``enum class`` in ``automation_level.hpp`` with six values, ``level_0`` to ``level_5``: the six levels of driving automation of SAE J3016, Level 0 to Level 5 (see `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__, and the Definitions of the :doc:`L9 Requirements <l9_requirements>`). FR-4.3 allows these six levels and no other. The constructor's parameter has the type ``AutomationLevel``, so code that passes a number, such as 7, as the level does not compile. Its underlying type is ``int``: 4 bytes with g++ 13.3.
+An ``enum class`` in ``automation_level.hpp`` with six values, ``level_0`` to ``level_5``: the six levels of driving automation of SAE J3016, Level 0 to Level 5 (see `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__, and the Definitions of the :doc:`L9 Requirements <l9_requirements>`). FR-4.3 allows these six levels and no other. The constructor's parameter has the type ``AutomationLevel``, so code that passes a number, such as 7, as the level does not compile. A cast compiles, ``static_cast<AutomationLevel>(7)``, and ``RoboTaxi``'s constructor rejects it with ``std::invalid_argument``. Its underlying type is ``int``: 4 bytes with g++ 13.3.
 
 ``Route``
 ---------
@@ -738,5 +742,5 @@ check for each one.
    * - NFR-1
      - ``Fleet`` and ``Passenger`` name only ``Vehicle``.
    * - NFR-2
-     - The constructors of ``Vehicle``, ``Sensor`` and ``Passenger``,
+     - The constructors of ``Vehicle``, ``Sensor``, ``RoboTaxi`` and ``Passenger``,
        ``Vehicle::set_speed``, ``Vehicle::add_mileage`` and ``Fleet::add``.
