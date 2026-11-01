@@ -121,6 +121,11 @@ One Class per File
       - So a new kind of vehicle adds two files and changes no other class. ``CMakeLists.txt`` names every source file, so it gains the new ``.cpp``, and ``main.cpp`` changes if it makes the new vehicle.
       - ``main.cpp`` includes the headers it uses.
 
+.. admonition:: Why one class per file
+   :class: important
+
+   Each class has a header and a source file, named after it. A change to a class's header recompiles only the files that include it, and a change to its ``.cpp`` recompiles that file alone. A new kind of vehicle adds two files and one line in ``CMakeLists.txt``, and changes no other class.
+
 One Namespace: ``fleet``
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
