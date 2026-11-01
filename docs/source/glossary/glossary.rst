@@ -1755,10 +1755,12 @@ L8: OOP Basics
 .. glossary::
 
    Abstraction
-      Code that uses an object calls its methods and does not need to know
-      how the object stores its data. In L8, ``Vehicle`` changes its data
-      members from m/s to km/h, and the code that calls ``set_speed`` and
-      ``get_speed`` does not change.
+      One of the four principles of OOP: a class hides how it does its work
+      behind what it offers. Code that uses an object calls its methods and
+      does not need to know how the object stores its data. In L8,
+      ``Vehicle`` changes its data members from m/s to km/h, and the code
+      that calls ``set_speed`` and ``get_speed`` does not change. L9's
+      abstract classes go one step further: see **Abstract Class**.
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    Access Specifier
@@ -2036,9 +2038,10 @@ L9: OOP Advanced
 .. glossary::
 
    Abstract Class
-      A class with at least one pure virtual method. No object of it can be
-      created; references and pointers to it are fine, and they refer to an
-      object of a derived class. L9's ``Vehicle`` is abstract: ``Vehicle
+      A class with at least one pure virtual method. It declares what every
+      derived class must do, and leaves how to each one. No object of it can
+      be created; references and pointers to it are fine, and they refer to
+      an object of a derived class. L9's ``Vehicle`` is abstract: ``Vehicle
       vehicle{13.4};`` does not compile. UML writes its name in italics.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
@@ -2199,9 +2202,10 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Polymorphism
-      One piece of code works with objects of different classes. C++ picks
-      the function a call runs either when it compiles the code
-      (compile-time polymorphism) or while the program runs (runtime
+      One of the four principles of OOP, with encapsulation, abstraction and
+      inheritance. It lets one piece of code work with objects of different
+      classes. C++ picks the function a call runs either when it compiles the
+      code (compile-time polymorphism) or while the program runs (runtime
       polymorphism).
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
@@ -2215,7 +2219,9 @@ L9: OOP Advanced
    Pure virtual Method
       A ``virtual`` method declared with ``= 0``:
       ``virtual void drive(const Route& route) const = 0;``. The class gives
-      it no body, and a class with one is abstract.
+      it no body, and a class with one is abstract. Every derived class must
+      override it before you can create objects of that class; a derived
+      class that does not override it is abstract too.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Redefinition
@@ -2297,7 +2303,7 @@ L9: OOP Advanced
 
 .. raw:: html
 
-   <p class="glossary-also">Also used here: <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Namespace" target="_blank" rel="noopener">Namespace</a> (L2), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7), <a href="#term-using-Declaration" target="_blank" rel="noopener">using Declaration</a> (L2).</p>
+   <p class="glossary-also">Also used here: <a href="#term-Abstraction" target="_blank" rel="noopener">Abstraction</a> (L8), <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Namespace" target="_blank" rel="noopener">Namespace</a> (L2), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7), <a href="#term-using-Declaration" target="_blank" rel="noopener">using Declaration</a> (L2).</p>
 
 
 .. _g-vc:

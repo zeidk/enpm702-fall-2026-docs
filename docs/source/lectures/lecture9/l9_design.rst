@@ -22,7 +22,7 @@ names.
 ====================================================
 
 .. figure:: /_static/images/l9/model_full_members.png
-   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : int, plus RoboTaxi(double, string = "College Park", int = 4), plus get_operating_zone() : const string&, plus get_automation_level() : int and plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the ride service program with ten boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string = "College Park", AutomationLevel = level_4), plus get_operating_zone() : const string&, plus get_automation_level() : AutomationLevel, plus change_zone(string) : void and plus drive(const Route&) : void; an arrow labeled has level runs from it to AutomationLevel, marked enumeration, at the far right, with level_0 to level_5, the AutomationLevel end named minus automation_level_ with 1. Below RoboTaxi, Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. RoboTaxi and Taxi each join Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
@@ -59,15 +59,16 @@ method that changes them) and the requirements it serves.
      - FR-3, FR-4.1, FR-5, NFR-1, NFR-2
    * - ``RoboTaxi``
      - A vehicle that drives itself. Its ``drive`` checks the sensors first: with
-       no sensor, it stays parked. ``final``.
-     - ``Vehicle``'s. Its zone and its level are set by the constructor and
-       never change.
-     - FR-3, FR-4.2, FR-4.3
+       no sensor, it stays parked. ``change_zone`` moves it to another area.
+       ``final``.
+     - ``Vehicle``'s. Its level is set by the constructor and never changes.
+     - FR-3, FR-4.2, FR-4.3, FR-4.4
    * - ``Taxi``
      - A vehicle that a person drives. Its ``drive`` checks the driver first:
-       with an empty name, it stays parked. ``final``.
+       with an empty name, it stays parked. ``assign_driver`` changes the
+       driver. ``final``.
      - ``Vehicle``'s. An empty ``driver_name_`` means no driver.
-     - FR-3, FR-5.1
+     - FR-3, FR-5.1, FR-11
    * - ``Fleet``
      - The company's vehicles, shared with the rest of the program. It names
        only ``Vehicle``, never ``RoboTaxi`` or ``Taxi``.
@@ -87,6 +88,11 @@ method that changes them) and the requirements it serves.
        ``enum class``.
      - None: any of the three values is valid.
      - FR-4.1
+   * - ``AutomationLevel``
+     - The level of driving automation of a robotaxi, as SAE J3016 defines
+       it: ``level_0`` to ``level_5``. An ``enum class``.
+     - None: any of the six values is valid.
+     - FR-4.3
    * - ``Route``
      - The waypoints of one trip, in order, and their length: the sum of the
        straight segments.
@@ -226,8 +232,8 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
      - ``std::string``
      - The area it may drive in. ``"College Park"`` by default.
    * - ``automation_level_``
-     - ``int``
-     - Its SAE J3016 level of driving automation. 4 by default.
+     - ``AutomationLevel``
+     - Its SAE J3016 level of driving automation, ``level_0`` to ``level_5``. ``AutomationLevel::level_4`` by default.
 
 **Methods**
 
@@ -238,14 +244,17 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
    * - Method
      - What it does
      - Throws
-   * - ``explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park", int automation_level = 4)``
+   * - ``explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park", AutomationLevel automation_level = AutomationLevel::level_4)``
      - Passes the maximum speed to ``Vehicle``, moves the zone into ``operating_zone_`` and sets ``automation_level_``. Starts parked, with no sensor.
      - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
    * - ``const std::string& get_operating_zone() const noexcept``
      - Returns ``operating_zone_``.
      - none
-   * - ``int get_automation_level() const noexcept``
+   * - ``AutomationLevel get_automation_level() const noexcept``
      - Returns ``automation_level_``.
+     - none
+   * - ``void change_zone(std::string operating_zone)``
+     - Moves the new zone into ``operating_zone_``, in place of the old one (FR-4.4). ``Vehicle`` has no such method.
      - none
    * - ``void drive(const Route& route) const override``
      - With no sensor, prints ``RoboTaxi: no sensor, stays parked``. Otherwise prints the number of sensors checked and the route's length: ``RoboTaxi: 1 sensor checked, drives 500 m``.
@@ -281,6 +290,9 @@ Abstract: no ``Vehicle`` object can be made, only a ``RoboTaxi`` or a ``Taxi``.
    * - ``Taxi(double max_speed, std::string driver_name)``
      - Passes the maximum speed to ``Vehicle``, and moves the name into ``driver_name_``. Starts parked.
      - ``std::invalid_argument`` if ``max_speed`` is not greater than 0 (from ``Vehicle``)
+   * - ``void assign_driver(std::string driver_name)``
+     - Moves the new name into ``driver_name_``, in place of the old one. An empty name removes the driver, and the taxi then stays parked (FR-11, FR-5.1). ``Vehicle`` has no such method.
+     - none
    * - ``void drive(const Route& route) const override``
      - With no driver, prints ``Taxi: no driver, stays parked``. Otherwise prints the driver and the route's length: ``Taxi: Ana drives 500 m``.
      - none
@@ -411,6 +423,11 @@ It writes no constructor: the compiler's default one makes an empty fleet.
 
 An ``enum class`` with three values: ``lidar`` (light detection and ranging), ``camera`` (a video camera) and ``radar`` (radio detection and ranging).
 
+``AutomationLevel``
+-------------------
+
+An ``enum class`` in ``automation_level.hpp`` with six values, ``level_0`` to ``level_5``: the six levels of driving automation of SAE J3016, Level 0 to Level 5 (see `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__, and the Definitions of the :doc:`L9 Requirements <l9_requirements>`). FR-4.3 allows these six levels and no other. The constructor's parameter has the type ``AutomationLevel``, so code that passes a number, such as 7, as the level does not compile. Its underlying type is ``int``: 4 bytes with g++ 13.3.
+
 ``Route``
 ---------
 
@@ -510,11 +527,17 @@ the far end when the first class is destroyed.
      - ``Vehicle`` keeps nothing of the route after the call.
      - FR-5, TC-7
    * - ``Sensor`` and ``SensorType``
-     - No line: the member ``type_`` in ``Sensor``'s box shows the link
-     - ``SensorType type_``, a value
-     - A ``SensorType`` is a value from a fixed list, not an object that
-       ``Sensor`` refers to.
+     - Association: an arrow labeled ``has type`` to ``SensorType``, ``-type_ 1``
+     - ``SensorType type_``, a plain value, not a pointer
+     - A ``SensorType`` value exists without any ``Sensor`` and is copied, so
+       ``Sensor`` keeps it by value.
      - FR-4.1
+   * - ``RoboTaxi`` and ``AutomationLevel``
+     - Association: arrow labeled has level to ``AutomationLevel``, 1 at ``AutomationLevel``
+     - ``AutomationLevel automation_level_``, a value
+     - An ``AutomationLevel`` is a value from a fixed list, not an object that
+       ``RoboTaxi`` refers to.
+     - FR-4.3
    * - ``RoboTaxi``, ``Taxi`` and ``Vehicle``
      - Inheritance: hollow triangle at ``Vehicle``
      - ``class RoboTaxi final : public Vehicle``, and the same for ``Taxi``
@@ -694,8 +717,11 @@ check for each one.
      - ``Vehicle::add_sensor``, ``Vehicle::sensor_count``, ``Sensor``,
        ``SensorType``; ``RoboTaxi::drive`` checks ``sensor_count()`` first.
    * - FR-4.3
-     - ``RoboTaxi``'s constructor, with ``"College Park"`` and 4 as defaults;
+     - ``RoboTaxi``'s constructor, with ``"College Park"`` and
+       ``AutomationLevel::level_4`` as defaults; ``AutomationLevel``;
        ``RoboTaxi::get_operating_zone``, ``RoboTaxi::get_automation_level``.
+   * - FR-4.4
+     - ``RoboTaxi::change_zone``.
    * - FR-5, FR-5.1
      - ``Vehicle::drive(const Route&)``; ``Taxi::drive`` checks for an empty
        driver name.
@@ -704,6 +730,8 @@ check for each one.
    * - FR-10.1 to FR-10.5
      - ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``; ``vehicles_`` holds
        ``std::shared_ptr<Vehicle>``.
+   * - FR-11
+     - ``Taxi::assign_driver``; an empty name removes the driver.
    * - FR-12.1 to FR-12.4
      - ``Passenger`` and its constructor, ``Passenger::board``,
        ``Passenger::leave``; ``ride_`` is a ``std::weak_ptr<Vehicle>``.

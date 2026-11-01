@@ -57,10 +57,26 @@ Section 8 traces each requirement to the course code: which ones the code of
    * - Operating zone
      - The area a RoboTaxi may drive in, for example College Park.
    * - Level of driving automation
-     - How much of the driving the system does, from Level 0 (no driving
-       automation) to Level 5 (full driving automation), as SAE J3016 defines
-       the levels. A RoboTaxi of this system is Level 4 (high driving
-       automation).
+     - How much of the driving the system does. SAE J3016 defines six levels
+       of driving automation, Level 0 to Level 5, and no other. Its September
+       2026 version, `SAE J3016_202609 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__,
+       gives each level a short descriptor:
+
+       - "Level 0: No driving automation"
+       - "Level 1: Driver support for steering OR speed, with continual driver
+         supervision necessary and driver intervention when needed"
+       - "Level 2: Driver support for steering AND speed, with continual
+         driver supervision necessary and driver intervention when needed"
+       - "Level 3: Automated driving under defined conditions, with human
+         driving needed following an alert or evident vehicle malfunction"
+       - "Level 4: Automated driving under defined conditions, with human
+         driving not needed to mitigate risk"
+       - "Level 5: Automated driving under all conditions in which humans can
+         drive, with human driving not needed"
+
+       SAE notes that these descriptors are not the definitions of the
+       levels; the standard defines them in its Sections 4 and 5. A RoboTaxi
+       of this system is Level 4 by default.
    * - Taxi
      - A vehicle driven by a person, its driver.
    * - Fleet
@@ -170,15 +186,30 @@ A RoboTaxi with no sensor shall not move when it is given a route.
 **FR-4.3. Operating zone and automation level**
 
 Each RoboTaxi shall record its operating zone and its level of driving
-automation. A RoboTaxi made without them shall have the zone College Park and
-Level 4.
+automation. The level shall be one of the six levels of driving automation,
+Level 0 to Level 5, and nothing else. A RoboTaxi made without them shall have
+the zone College Park and Level 4.
 
 :Rationale: A robotaxi is approved for one area and one level of driving
    automation; dispatch needs both.
 :Priority: Must
 :Verification: Test
 :Acceptance: A RoboTaxi made with only its maximum speed reports College Park
-   and 4. A RoboTaxi made with Silver Spring and 4 reports Silver Spring and 4.
+   and Level 4. A RoboTaxi made with Silver Spring and Level 4 reports Silver
+   Spring and Level 4. A level outside 0 to 5 cannot be given: code that
+   passes a number, such as 7, as the level does not compile.
+
+**FR-4.4. Change the operating zone**
+
+The system shall let the operating zone of a RoboTaxi be changed after the
+RoboTaxi is made.
+
+:Rationale: A robotaxi can be approved for a new area, or sent to an area that
+   needs more vehicles, without being replaced.
+:Priority: Should
+:Verification: Test
+:Acceptance: A RoboTaxi made with College Park reports Silver Spring after
+   its zone is changed to Silver Spring.
 
 **FR-5. Follow a route**
 
@@ -687,7 +718,7 @@ the one on that slide or frame.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Steps 4 and 6. ``702run week9_playground 89`` (Fleet and
+     - Live Coding Steps 4 and 6. ``702run week9_playground 88`` (Fleet and
        Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
@@ -697,12 +728,22 @@ the one on that slide or frame.
        ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
        checked, drives 500 m``.
    * - FR-4.3
-     - Yes: ``RoboTaxi``'s constructor, with ``"College Park"`` and 4 as
-       defaults; ``RoboTaxi::get_operating_zone``,
+     - Yes: ``RoboTaxi``'s constructor, with ``"College Park"`` and
+       ``AutomationLevel::level_4`` as defaults; the level is an
+       ``AutomationLevel``, ``level_0`` to ``level_5``;
+       ``RoboTaxi::get_operating_zone``,
        ``RoboTaxi::get_automation_level``.
+     - Measured, with the level printed as a number
+       (``static_cast<int>``): a RoboTaxi made with only its maximum speed
+       reports ``College Park 4``; one made with ``"Silver Spring"`` and
+       ``AutomationLevel::level_4`` reports ``Silver Spring 4``.
+       ``RoboTaxi{13.4, "College Park", 7}`` does not compile (g++ 13.3:
+       no matching function for call).
+   * - FR-4.4
+     - Yes: ``RoboTaxi::change_zone``.
      - Measured: a RoboTaxi made with only its maximum speed reports
-       ``College Park 4``; one made with ``"Silver Spring"`` and 4 reports
-       ``Silver Spring 4``.
+       ``College Park``, and ``Silver Spring`` after
+       ``change_zone("Silver Spring")``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
      - ``702run week9_appendix xxvi`` (A Route for One Call) prints
@@ -732,8 +773,10 @@ the one on that slide or frame.
      - No.
      -
    * - FR-11
-     - No: a Taxi gets its driver's name when it is made.
-     -
+     - Yes: ``Taxi::assign_driver``. An empty name removes the driver.
+     - Measured: a Taxi made with ``"Ana"`` prints ``Taxi: Ben drives 500 m``
+       after ``assign_driver("Ben")``, and ``Taxi: no driver, stays parked``
+       after ``assign_driver("")``.
    * - FR-12.1 to FR-12.4
      - Yes: ``Passenger::board``, ``Passenger::leave``; the passenger holds a
        ``std::weak_ptr<Vehicle>``.

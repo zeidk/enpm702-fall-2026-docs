@@ -49,7 +49,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week9_playground``.
-5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 71``.
+5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 70``.
 
 **Where the Classes Are**
 
@@ -71,7 +71,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
-      702run week9_playground 71         # only the code of slide 71
+      702run week9_playground 70         # only the code of slide 70
       702run week9_appendix xi           # only appendix frame xi (11 works too)
       live9                              # build and run the classes you write in class
 
@@ -79,7 +79,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   The slide whose code has undefined behavior, slide 81, runs only when you ask for it by number: ``702run week9_playground 81``. A full run skips it.
+   The slide whose code has undefined behavior, slide 80, runs only when you ask for it by number: ``702run week9_playground 80``. A full run skips it.
 
 One Class per File
 ^^^^^^^^^^^^^^^^^^
@@ -95,6 +95,7 @@ One Class per File
          ├── include/
          │   ├── vehicle.hpp
          │   ├── sensor.hpp
+         │   ├── automation_level.hpp
          │   ├── route.hpp
          │   ├── position.hpp
          │   ├── passenger.hpp
@@ -113,8 +114,8 @@ One Class per File
 
    .. grid-item::
 
-      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class. ``Position``, a ``struct`` with no method, has only a header.
-      - ``Vehicle``, ``Sensor``, ``Route`` and ``Position`` are given: you read them, you do not write them. You write the other four.
+      - Each class has a header, with its declaration, and a source file, with its method bodies, both named after the class. ``Position``, a ``struct`` with no method, and ``AutomationLevel``, an enumeration, have only a header.
+      - ``Vehicle``, ``Sensor``, ``AutomationLevel``, ``Route`` and ``Position`` are given: you read them, you do not write them. You write the other four.
       - You find a class by its file name. A change to a class's header recompiles only the files that include it; a change to its ``.cpp`` recompiles that file alone: a change to ``taxi.cpp`` recompiles only ``taxi.cpp``.
       - A derived class gets its own files too: ``robotaxi.hpp`` includes ``vehicle.hpp``, because ``RoboTaxi`` needs its base. ``vehicle.hpp`` includes none of its derived classes: a base class does not know the classes derived from it.
       - So a new kind of vehicle adds two files and changes no other class. ``CMakeLists.txt`` names every source file, so it gains the new ``.cpp``, and ``main.cpp`` changes if it makes the new vehicle.
@@ -242,7 +243,7 @@ The Program We Will Build
 -------------------------
 
 .. figure:: /_static/images/l9/model_full.png
-   :alt: A UML class diagram of the ride service program, with class names only, in nine boxes; every box and line is black. Vehicle, its name in italics, is in the middle. On the left, Fleet joins Vehicle by a line with an open diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor; an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far upper right, with 1 at SensorType. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the ride service program, with class names only, in ten boxes; every box and line is black. Vehicle, its name in italics, is in the middle. On the left, Fleet joins Vehicle by a line with an open diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor; an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far upper right, with 1 at SensorType. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle. An arrow labeled has level runs from RoboTaxi to AutomationLevel, marked enumeration, at its right, with 1 at AutomationLevel.
    :align: center
    :width: 100%
 
@@ -266,7 +267,7 @@ Four Kinds of Requirement
 - A **constraint** limits the choices: "the code is C++20".
 - A **success criterion** says how we check the result: "every test passes".
 
-The ride service program has twelve functional requirements, FR-1 to FR-12. Today's code uses six of them: FR-3, FR-4, FR-5, FR-9, FR-10 and FR-12. See :doc:`L9 Requirements <l9_requirements>`.
+The ride service program has twelve functional requirements, FR-1 to FR-12. Today's code uses seven of them: FR-3, FR-4, FR-5, FR-9, FR-10, FR-11 and FR-12. See :doc:`L9 Requirements <l9_requirements>`.
 
 Design
 ------
@@ -281,13 +282,14 @@ From Requirements to Classes
 Nouns and Classes
 """"""""""""""""""
 
-Today's code meets six requirements. Read each one for its nouns and its verbs. The program shall:
+Today's code meets seven requirements. Read each one for its nouns and its verbs. The program shall:
 
 - **FR-3**: let each kind of vehicle, a RoboTaxi or a Taxi, drive in its own way.
 - **FR-4**: give each RoboTaxi one or more Sensors.
 - **FR-5**: let a Vehicle follow a Route.
 - **FR-9**: let a Route be built from several waypoints.
 - **FR-10**: let a Fleet add and remove vehicles.
+- **FR-11**: let a driver be assigned to a Taxi and removed from it.
 - **FR-12**: let a Passenger board and leave a vehicle.
 
 Then:
@@ -327,7 +329,7 @@ The Class Diagram, with Every Member
 """"""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_full_members.png
-   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : int, plus RoboTaxi(double, string = "College Park", int = 4), plus get_operating_zone() : const string&, plus get_automation_level() : int and plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the ride service program with ten boxes, each listing its data members and methods, and the line ends also name the data member that holds the class at that end; every box and line is black. In the middle, Vehicle, its name in italics, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, Fleet with minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. an arrow labeled has type runs from Sensor to SensorType, marked enumeration, at the far right, with lidar, camera and radar, the SensorType end named minus type_ with 1. A dashed arrow labeled uses runs from Vehicle to Route, with minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double; a line labeled has with a filled diamond at Route joins Route to Position, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string = "College Park", AutomationLevel = level_4), plus get_operating_zone() : const string&, plus get_automation_level() : AutomationLevel, plus change_zone(string) : void and plus drive(const Route&) : void; an arrow labeled has level runs from it to AutomationLevel, marked enumeration, at the far right, with level_0 to level_5, the AutomationLevel end named minus automation_level_ with 1. Below RoboTaxi, Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. RoboTaxi and Taxi each join Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
@@ -527,7 +529,7 @@ Passenger and Vehicle in the Class Diagram
 """"""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_association.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Passenger, Vehicle and the arrow labeled rides between them, with 0..* at Passenger and 0..1 at Vehicle, are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Passenger, Vehicle and the arrow labeled rides between them, with 0..* at Passenger and 0..1 at Vehicle, are orange; everything else is grey.
    :align: center
    :width: 100%
 
@@ -719,7 +721,7 @@ Fleet and Vehicle in the Class Diagram
 """"""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_aggregation.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Fleet, Vehicle and the line labeled holds between them, with its open diamond at Fleet, 1 at Fleet and 0..* at Vehicle, are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Fleet, Vehicle and the line labeled holds between them, with its open diamond at Fleet, 1 at Fleet and 0..* at Vehicle, are orange; everything else is grey.
    :align: center
    :width: 100%
 
@@ -824,7 +826,7 @@ Two Compositions in the Class Diagram
 """""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_composition.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Vehicle, Sensor, Route and Position, the owns line between Vehicle and Sensor and the has line between Route and Position, with their filled diamonds and numbers, are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Vehicle, Sensor, Route and Position, the owns line between Vehicle and Sensor and the has line between Route and Position, with their filled diamonds and numbers, are orange; everything else is grey.
    :align: center
    :width: 100%
 
@@ -908,7 +910,7 @@ Vehicle and Route in the Class Diagram
 """"""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_dependency.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Vehicle, Route and the dashed arrow labeled uses between them are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Vehicle, Route and the dashed arrow labeled uses between them are orange; everything else is grey.
    :align: center
    :width: 100%
 
@@ -957,6 +959,65 @@ Inheritance
 - UML joins the two classes by a line with a hollow triangle at the base class.
 - What every kind of vehicle shares (an id, the speeds and their check, the sensors) is written once, in ``Vehicle``.
 
+Writing Inheritance in C++
+""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   class Derived
+       : public Base {
+     // public: public
+     // protected:
+     //   protected
+   };
+
+.. code-block:: cpp
+
+   class Derived
+       : protected Base {
+     // public: protected
+     // protected:
+     //   protected
+   };
+
+.. code-block:: cpp
+
+   class Derived
+       : private Base {
+     // public: private
+     // protected:
+     //   private
+   };
+
+- ``Base`` is the base class and ``Derived`` the derived class. Each comment says what ``Base``'s ``public`` and ``protected`` members become in ``Derived``: ``public: protected`` means that ``Base``'s ``public`` members are ``protected`` in ``Derived``.
+- ``Base``'s ``private`` members are in every ``Derived`` object, but ``Derived``'s methods can never use them.
+- This course uses only ``public`` inheritance: a ``RoboTaxi`` is a ``Vehicle`` for any code.
+
+See `protected and private Inheritance`_ under Further Reading.
+
+No Specifier Means private Inheritance
+""""""""""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   // no public before Vehicle
+   class RoboTaxi : Vehicle {
+     // ...
+   };
+   RoboTaxi robotaxi{13.4};
+   robotaxi.get_speed();  // an error
+
+.. code-block:: text
+
+   error: 'double Vehicle::get_speed() const' is inaccessible within this context
+   error: 'Vehicle' is not an accessible base of 'RoboTaxi'
+
+- With no access specifier, the base of a class defined with ``class`` is ``private``: ``Vehicle``'s ``public`` methods become ``private`` in ``RoboTaxi``. Always write ``public``.
+
+.. note::
+
+   "In the absence of an access-specifier for a base class, ``public`` is assumed when the derived class is defined with the class-key ``struct`` and ``private`` is assumed when the class is defined with the class-key ``class``". C++20 **[class.access.base]** (11.9.2) paragraph 2.
+
 Generalization and Specialization
 """""""""""""""""""""""""""""""""
 
@@ -965,14 +1026,14 @@ Generalization and Specialization
 **2. Specialization**: starting from a base class, and writing a derived class for objects that need more: top-down.
 
 .. figure:: /_static/images/l9/generalization.png
-   :alt: A class diagram with some of the members of each class. On top, Vehicle, with minus max_speed_ : double, minus speed_ : double, minus sensors_ : vector<unique_ptr<Sensor>>, plus set_speed(double) : void, plus add_sensor(SensorType, double) : int, and plus drive(const Route&) : void. Below it, RoboTaxi, with minus operating_zone_ : string, minus automation_level_ : int, plus RoboTaxi(double, string, int) and plus drive(const Route&) : void, and Taxi, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle. A thick arrow on the left, tagged 1, points up. A thick arrow on the right, tagged 2, points down.
+   :alt: A class diagram with some of the members of each class. On top, Vehicle, with minus max_speed_ : double, minus speed_ : double, minus sensors_ : vector<unique_ptr<Sensor>>, plus set_speed(double) : void, plus add_sensor(SensorType, double) : int, and plus drive(const Route&) : void. Below it, RoboTaxi, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string, AutomationLevel), plus change_zone(string) : void and plus drive(const Route&) : void, and Taxi, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle. A thick arrow on the left, tagged 1, points up. A thick arrow on the right, tagged 2, points down.
    :align: center
    :width: 70%
 
    1: generalization, bottom-up. 2: specialization, top-down.
 
 - 1, generalization: if ``RoboTaxi`` and ``Taxi`` had been written first, each with its own speeds, its own sensors and its own speed check, what they share would move up into a new class, ``Vehicle``.
-- 2, specialization: ``Vehicle`` came first, so ``RoboTaxi`` and ``Taxi`` derive from it, and each box lists only what it adds: a constructor and its own ``drive``, for ``RoboTaxi`` its operating zone and its level of driving automation, and for ``Taxi`` the driver's name. `Discussion: Add a RoboBus`_ specializes ``Vehicle`` once more.
+- 2, specialization: ``Vehicle`` came first, so ``RoboTaxi`` and ``Taxi`` derive from it, and each box lists only what it adds: a constructor and its own ``drive``, for ``RoboTaxi`` its operating zone, its level of driving automation and ``change_zone``, and for ``Taxi`` the driver's name and ``assign_driver``. `Discussion: Add a RoboBus`_ specializes ``Vehicle`` once more.
 - Both directions end with the same diagram: the shared members in the base class, and a hollow triangle at the base.
 
 Single Inheritance
@@ -1003,7 +1064,7 @@ RoboTaxi and Taxi in the Class Diagram
 """"""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_inheritance.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Vehicle, RoboTaxi, Taxi and the two lines with a hollow triangle at Vehicle are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Vehicle, RoboTaxi, Taxi and the two lines with a hollow triangle at Vehicle are orange; everything else is grey.
    :align: center
    :width: 100%
 
@@ -1018,14 +1079,15 @@ A RoboTaxi and a Taxi Are Vehicles
 """"""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_inheritance_members.png
-   :alt: A UML class diagram with three boxes, each listing its members; every box and line is orange. On the left, Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : int, plus RoboTaxi(double, string = "College Park", int = 4), plus get_operating_zone() : const string&, plus get_automation_level() : int and plus drive(const Route&) : void, and below it Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string) and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram with three boxes, each listing its members; every box and line is orange. On the left, Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string = "College Park", AutomationLevel = level_4), plus get_operating_zone() : const string&, plus get_automation_level() : AutomationLevel, plus change_zone(string) : void and plus drive(const Route&) : void, and below it Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
    ``Vehicle``, ``RoboTaxi`` and ``Taxi`` with every member: a line with a hollow triangle at ``Vehicle`` from each derived class.
 
 - The three boxes of `RoboTaxi and Taxi in the Class Diagram`_, with every member. The boxes of ``RoboTaxi`` and ``Taxi`` are short: a derived class lists only what it adds. Every ``Vehicle`` member is theirs too, through the hollow triangle.
-- ``RoboTaxi`` adds ``operating_zone_`` and ``automation_level_``, a constructor with a default for each (``"College Park"`` and 4), a getter for each, and its own ``drive``. ``Taxi`` adds ``driver_name_``, a constructor that takes the name, and its own ``drive``. You write both in Step 3, each in its own files.
+- ``RoboTaxi`` adds ``operating_zone_`` and ``automation_level_``, a constructor with a default for each (``"College Park"`` and ``AutomationLevel::level_4``), a getter for each, ``change_zone`` and its own ``drive``. ``Taxi`` adds ``driver_name_``, a constructor that takes the name, ``assign_driver`` and its own ``drive``. ``change_zone`` and ``assign_driver`` are methods that ``Vehicle`` does not have. You write both classes in Step 3, each in its own files.
+- ``automation_level_`` is an ``AutomationLevel``, an enumeration of the six levels of driving automation, ``level_0`` to ``level_5``, defined in ``automation_level.hpp``. See `SAE J3016 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__.
 - Their own ``drive`` comes later, in `Polymorphism`_. ``#`` marks a ``protected`` member: see `protected Members`_.
 
 A RoboTaxi in Memory
@@ -1036,17 +1098,17 @@ A RoboTaxi in Memory
    RoboTaxi car_a{13.4};
 
 .. figure:: /_static/images/l9/robotaxi_memory.png
-   :alt: A blue Stack box under the name tag car_a holds one object in two parts. The first part, captioned Vehicle part, has six rows, each name marked with a minus sign for private: id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). The second part, captioned RoboTaxi part, has two rows, also marked private: operating_zone_ "College Park" and automation_level_ 4. Under it, a gray dashed row reads 4 bytes of padding. A measuring line under all of it reads 128 bytes.
+   :alt: A blue Stack box under the name tag car_a holds one object in two parts. The first part, captioned Vehicle part, has six rows, each name marked with a minus sign for private: id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). The second part, captioned RoboTaxi part, has two rows, also marked private: operating_zone_ "College Park" and automation_level_ level_4. Under it, a gray dashed row reads 4 bytes of padding. A measuring line under all of it reads 128 bytes.
    :align: center
    :width: 40%
 
    ``car_a`` on the stack: the ``Vehicle`` part, then the ``RoboTaxi`` part with its two data members.
 
 - A derived object contains every data member of its base class: ``car_a`` holds the six of ``Vehicle``, then the two that ``RoboTaxi`` adds.
-- Sizes, measured with g++ 13.3: the ``Vehicle`` part is 88 bytes, ``operating_zone_`` (a ``std::string``) 32 and ``automation_level_`` (an ``int``) 4. Then 4 bytes of padding make the size a multiple of 8: 88 + 32 + 4 + 4 = 128.
+- Sizes, measured with g++ 13.3: the ``Vehicle`` part is 88 bytes, ``operating_zone_`` (a ``std::string``) 32 and ``automation_level_`` (an ``AutomationLevel``, an ``int`` underneath) 4. Then 4 bytes of padding make the size a multiple of 8: 88 + 32 + 4 + 4 = 128.
 - Whether ``RoboTaxi``'s methods can use a member by name depends on its access specifier in ``Vehicle``. ``-`` marks ``private``, as in the class diagram: the member is there, but reachable only through ``Vehicle``'s ``public`` or ``protected`` methods (`private Stays private`_).
 - ``next_id_`` is ``static``: one counter for the class, in no object.
-- Run: ``702run week9_playground 48``. It prints each member through ``Vehicle``'s ``public`` methods, then the two sizes: ``88 128``.
+- Run: ``702run week9_playground 50``. It prints each member through ``Vehicle``'s ``public`` methods, then the two sizes: ``88 128``.
 
 A Taxi through a Pointer
 """"""""""""""""""""""""
@@ -1065,7 +1127,7 @@ A Taxi through a Pointer
 - ``std::make_unique`` makes the ``Taxi`` on the heap, with no ``new``. On the stack, ``taxi`` is one pointer of 8 bytes: a ``std::unique_ptr<Taxi>``.
 - The ``Taxi`` starts with its ``Vehicle`` part (88 bytes), then its own ``private`` member ``driver_name_``, a ``std::string`` (32 bytes): 88 + 32 = 120.
 - ``taxi`` holds the address where both start.
-- Run: ``702run week9_playground 49``. It prints ``8 120``, then ``white``.
+- Run: ``702run week9_playground 51``. It prints ``8 120``, then ``white``.
 
 See `Inside a Taxi Object`_ under Further Reading.
 
@@ -1075,22 +1137,28 @@ A Base Class Reference to a Derived Object
 .. code-block:: cpp
 
    Taxi taxi{13.4, "Ana"};
+   taxi.assign_driver("Ben");  // a Taxi method
    Vehicle& vehicle{taxi};  // no cast needed
+   // vehicle.assign_driver("Ben");  // does not compile
    vehicle.set_speed(10.0);
    std::cout << taxi.get_speed() << '\n';
-   std::cout << &taxi << '\n' << &vehicle << '\n';
 
 .. code-block:: text
 
    10
-   0x7ffc124f08b0
-   0x7ffc124f08b0
 
-- Read ``Vehicle& vehicle{taxi};`` as "``vehicle`` is a ``Vehicle`` reference to ``taxi``". A reference is another name for an object: nothing is copied, and the two addresses are the same. The addresses are from one run; they change from run to run.
+Uncommented, the line ``vehicle.assign_driver("Ben");`` gives:
+
+.. code-block:: text
+
+   error: 'class Vehicle' has no member named 'assign_driver'
+
+- Read ``Vehicle& vehicle{taxi};`` as "``vehicle`` is a ``Vehicle`` reference to ``taxi``". A reference is another name for an object: nothing is copied.
 - No cast is needed because a ``Taxi`` is a ``Vehicle``. The reference refers to the ``Vehicle`` part at the start of ``taxi``, its **base subobject**.
-- The compiler checks a call through ``vehicle`` against ``Vehicle``'s members only, and nothing that only ``Taxi`` has. The object is still a ``Taxi``: ``set_speed`` through ``vehicle`` changed ``taxi`` (10).
+- ``assign_driver`` is a ``Taxi`` method that ``Vehicle`` does not have. The compiler checks a call through ``vehicle`` against ``Vehicle``'s members only, so ``assign_driver`` can be called through ``taxi`` and not through ``vehicle``. The object is still a ``Taxi``: ``set_speed`` through ``vehicle`` changed ``taxi`` (10).
 - A reference is bound once: ``vehicle`` refers to ``taxi`` for its whole life.
-- Run: ``702run week9_playground 50``.
+- A ``Vehicle`` copy of ``taxi``, not a reference, keeps only its ``Vehicle`` part: slicing (`Slicing`_).
+- Run: ``702run week9_playground 52``.
 
 .. note::
 
@@ -1103,27 +1171,30 @@ A Base Class Pointer to a Derived Object
 
 .. code-block:: cpp
 
-   Taxi taxi{13.4, "Ana"};
    RoboTaxi robotaxi{13.4};
-   Vehicle* pointer{&taxi};  // no cast needed
-   std::cout << std::boolalpha << (pointer == &taxi) << '\n';
-   pointer = &robotaxi;  // now robotaxi
-   std::cout << (pointer == &robotaxi) << '\n';
+   robotaxi.change_zone("Silver Spring");  // a RoboTaxi method
+   Vehicle* pointer{&robotaxi};  // no cast needed
+   // pointer->change_zone("Silver Spring");  // does not compile
    pointer->set_speed(10.0);
    std::cout << robotaxi.get_speed() << '\n';
-   pointer = nullptr;  // now no object
+   Taxi taxi{13.4, "Ana"};
+   pointer = &taxi;  // now taxi
 
 .. code-block:: text
 
-   true
-   true
    10
 
-- Read ``Vehicle* pointer{&taxi};`` as "``pointer`` is a ``Vehicle`` pointer to ``taxi``": it holds the address of the ``Vehicle`` part of ``taxi``. No cast: a ``Taxi`` is a ``Vehicle``.
-- Unlike a reference, a pointer can change: the same ``pointer`` then points to ``robotaxi``, and at the end to no object.
-- As with a reference, the compiler checks a call through ``pointer`` against ``Vehicle``'s members only. ``set_speed`` changed ``robotaxi`` (10).
+Uncommented, the line ``pointer->change_zone("Silver Spring");`` gives:
+
+.. code-block:: text
+
+   error: 'class Vehicle' has no member named 'change_zone'
+
+- Read ``Vehicle* pointer{&robotaxi};`` as "``pointer`` is a ``Vehicle`` pointer to ``robotaxi``": it holds the address of the ``Vehicle`` part of ``robotaxi``. No cast: a ``RoboTaxi`` is a ``Vehicle``.
+- As with a reference, the compiler checks a call through ``pointer`` against ``Vehicle``'s members only. ``change_zone``, a ``RoboTaxi`` method, can be called through ``robotaxi`` and not through ``pointer``. ``set_speed`` through ``pointer`` changed ``robotaxi`` (10).
+- Unlike a reference, a pointer can change: the same ``pointer`` then points to ``taxi``.
 - So ``Fleet``'s ``std::vector<std::shared_ptr<Vehicle>>`` holds robotaxis and taxis.
-- Run: ``702run week9_playground 51``.
+- Run: ``702run week9_playground 53``.
 
 .. note::
 
@@ -1164,7 +1235,7 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
 - ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
-- Run: ``702run week9_playground 53``.
+- Run: ``702run week9_playground 55``.
 
 private Stays private
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1191,21 +1262,22 @@ protected Data
 
    class RoboTaxi : public Vehicle {  // speed_ is protected now
     public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
+     explicit RoboTaxi(
+         double max_speed, std::string operating_zone = "College Park",
+         AutomationLevel automation_level = AutomationLevel::level_4)
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
      void speed_up() { speed_ = 20.0; }  // compiles: no check
 
     private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
+     std::string operating_zone_;        // the area it may drive in
+     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
 - With ``speed_`` ``protected``, this compiles. For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 20. Every derived class can now break ``Vehicle``'s invariant.
 - The rule for assignments stays: **every data member is** ``private``, or the assignment gets 0. Use ``protected`` for methods meant only for derived classes, as ``log_event`` in `protected Members`_.
-- Run: ``702run week9_playground 55``. It prints ``20 13.4``: the speed, then the maximum speed.
+- Run: ``702run week9_playground 57``. It prints ``20 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -1218,8 +1290,9 @@ Through Vehicle's public Methods
 
    class RoboTaxi : public Vehicle {  // speed_ is private
     public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
+     explicit RoboTaxi(
+         double max_speed, std::string operating_zone = "College Park",
+         AutomationLevel automation_level = AutomationLevel::level_4)
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
@@ -1227,8 +1300,8 @@ Through Vehicle's public Methods
      void speed_up() { set_speed(20.0); }  // throws
 
     private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
+     std::string operating_zone_;        // the area it may drive in
+     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
    RoboTaxi car_a{13.4};
@@ -1253,45 +1326,7 @@ It prints:
 - ``RoboTaxi`` cannot name ``speed_``, so it uses ``Vehicle``'s ``public`` methods, as any other code does. ``slow_down`` reads the speed with ``get_speed()`` and writes half of it with ``set_speed()``: 10 / 2 = 5.
 - ``speed_up``, the same method as in `protected Data`_, now goes through the check: 20 is above 13.4, so ``set_speed`` throws and the speed stays 5. Only ``Vehicle`` checks the rule.
 - A method meant only for derived classes is ``protected``, as ``log_event`` is. The data stays ``private``.
-- Run: ``702run week9_playground 57``.
-
-public Inheritance
-~~~~~~~~~~~~~~~~~~
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 60
-
-   * - In ``Vehicle``
-     - In ``RoboTaxi``, with ``: public``
-   * - ``public``
-     - ``public``
-   * - ``protected``
-     - ``protected``
-   * - ``private``
-     - there, but not usable
-
-.. code-block:: cpp
-
-   // no public before Vehicle
-   class RoboTaxi : Vehicle {
-     // ...
-   };
-   RoboTaxi robotaxi{13.4};
-   robotaxi.get_speed();  // an error
-
-.. code-block:: text
-
-   error: 'double Vehicle::get_speed() const' is inaccessible within this context
-   error: 'Vehicle' is not an accessible base of 'RoboTaxi'
-
-- With no access specifier, the base of a class defined with ``class`` is ``private``: ``Vehicle``'s ``public`` methods become ``private`` in ``RoboTaxi``. Always write ``public``.
-
-.. note::
-
-   "In the absence of an access-specifier for a base class, ``public`` is assumed when the derived class is defined with the class-key ``struct`` and ``private`` is assumed when the class is defined with the class-key ``class``". C++20 **[class.access.base]** (11.9.2) paragraph 2.
-
-See `protected and private Inheritance`_ under Further Reading.
+- Run: ``702run week9_playground 59``.
 
 Constructors and Inheritance
 """"""""""""""""""""""""""""
@@ -1309,36 +1344,12 @@ For ``Taxi``:
    Taxi(double max_speed, std::string driver_name)
        : Vehicle{max_speed}, driver_name_{std::move(driver_name)} {}
 
-- Each constructor sets up its own class's members: ``Vehicle``'s constructor checks the maximum speed and takes the next id, and ``Taxi``'s sets ``driver_name_``.
+.. admonition:: Each class sets up its own members
+   :class: important
 
-Without the Base Class Initializer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   Each constructor sets up its own class's members: ``Vehicle``'s constructor checks the maximum speed and takes the next id, and ``Taxi``'s sets ``driver_name_``.
 
-.. code-block:: cpp
-
-   class RoboTaxi : public Vehicle {
-    public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
-         : operating_zone_{std::move(operating_zone)},
-           automation_level_{automation_level} {}  // does not compile
-
-    private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
-   };
-
-.. code-block:: text
-
-   error: no matching function for call to 'Vehicle::Vehicle()'
-   note: candidate: 'Vehicle::Vehicle(double, double)'
-   note:   candidate expects 2 arguments, 0 provided
-   note: candidate: 'Vehicle::Vehicle(double, const std::string&)'
-   note:   candidate expects 2 arguments, 0 provided
-
-- With no base class initializer, C++ builds the base part with the base's default constructor. ``Vehicle`` has none: every ``Vehicle`` needs a maximum speed. The output is cut: g++ lists more candidates after these two.
-- The ``Vehicle`` part must exist before the ``RoboTaxi`` constructor's body runs, so the body is too late to call ``Vehicle``'s constructor.
-- Naming a base member in the list fails too: see `A Base Member in the List`_, under Further Reading.
+See `A Base Member in the List`_ under Further Reading.
 
 Construction and Destruction Order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1380,7 +1391,7 @@ Live Coding: Step 3
 Polymorphism
 ------------
 
-**Polymorphism** lets one piece of code work with objects of different classes. C++ picks the function a call runs either when it compiles the code or while the program runs.
+**Polymorphism** is one of the four principles of OOP, with encapsulation, abstraction and inheritance. It lets one piece of code work with objects of different classes. C++ picks the function a call runs either when it compiles the code or while the program runs.
 
 See `cppreference: virtual function specifier <https://en.cppreference.com/w/cpp/language/virtual>`__.
 
@@ -1405,8 +1416,9 @@ Compile-Time Polymorphism
    };
    class RoboTaxi : public Vehicle {
     public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
+     explicit RoboTaxi(
+         double max_speed, std::string operating_zone = "College Park",
+         AutomationLevel automation_level = AutomationLevel::level_4)
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
@@ -1415,8 +1427,8 @@ Compile-Time Polymorphism
      }
 
     private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
+     std::string operating_zone_;        // the area it may drive in
+     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
 Where the Compiler Looks for a Method
@@ -1461,30 +1473,17 @@ Redefinition
 - The compiler finds ``RoboTaxi::drive`` first and stops looking, so ``Vehicle::drive`` is **hidden**: ``robotaxi.drive(...)`` never reaches it.
 - Run: ``702run week9_playground 67``.
 
-Operators Are Overloaded Functions
-""""""""""""""""""""""""""""""""""
-
-- ``a < b`` on objects calls a function named ``operator<``: ``a.operator<(b)`` for a member, ``operator<(a, b)`` for a free function.
-- The compiler picks the ``operator<<`` whose parameters match the types of the operands, as for any overloaded function.
-- ``operator<<`` for a stream is a free function, because the stream is the left operand. It returns the stream, so ``<<`` can be chained.
-
-.. code-block:: cpp
-
-   std::ostream& operator<<(std::ostream& out, const Position& p) {
-     out << '(' << p.x << ", " << p.y << ')';
-     return out;
-   }
-   const Position end{300.0, 400.0};
-   std::cout << end << '\n';  // (300, 400)
-
-- Run: ``702run week9_operators print``.
-
-Required reading: :doc:`Operator Overloading <l9_operators>`.
-
 Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^
 
-**Runtime polymorphism**: the method a call runs is picked while the program runs, from the class of the object. A call through a base reference or pointer then runs the derived class's own method. C++ does it with ``virtual`` methods.
+**Runtime polymorphism**: the method a call runs is picked while the program runs, from the class of the object. A call through a base reference or pointer then runs the derived class's own method.
+
+.. admonition:: Three Conditions for Runtime Polymorphism
+   :class: important
+
+   1. A derived class inherits from a base class with ``public``: ``RoboTaxi`` from ``Vehicle``.
+   2. The base class declares the method ``virtual``, and the derived class overrides it: ``drive``.
+   3. The call goes through a base reference or pointer: ``Vehicle&`` or ``Vehicle*``. A ``Vehicle`` object copied from a ``RoboTaxi`` is sliced (`Slicing`_): it is a plain ``Vehicle``.
 
 The Challenge
 """""""""""""
@@ -1526,7 +1525,7 @@ Through a Base Reference
 The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``. The **dynamic type** is the class of the object it refers to while the program runs: ``RoboTaxi``, then ``Taxi``.
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
-- Run: ``702run week9_playground 71``.
+- Run: ``702run week9_playground 70``.
 
 See `What Runtime Polymorphism Needs`_ under Further Reading.
 
@@ -1545,20 +1544,21 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
 
    class RoboTaxi : public Vehicle {
     public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
+     explicit RoboTaxi(
+         double max_speed, std::string operating_zone = "College Park",
+         AutomationLevel automation_level = AutomationLevel::level_4)
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
      void drive(const Route& route) const override { /* as before */ }
 
     private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
+     std::string operating_zone_;        // the area it may drive in
+     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
 - A derived method with the same name, parameters and ``const`` **overrides** the ``virtual`` one. ``override`` is explained in `override`_, the destructor in `virtual Destructors`_.
-- You make ``drive`` ``virtual`` in Step 4, at the end of this part.
+- You make ``drive`` ``virtual`` in Step 4, after the ``override`` part.
 
 See `The Cost of virtual`_ under Further Reading.
 
@@ -1587,16 +1587,9 @@ Slicing
 
 - 24 of the 56 bytes are copied: ``driver_name_`` is left behind, and the copy's dynamic type is ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
 - These are the ``runtime::`` classes of `virtual Methods in the Base Class`_: 24 bytes for ``Vehicle``, plus the 32-byte ``std::string`` of ``Taxi``.
-- Run: ``702run week9_playground 74``.
+- Run: ``702run week9_playground 73``.
 
 See `Copying a Vehicle of the Design`_ and `Discussion: Which drive() Runs?`_ under Further Reading.
-
-Live Coding: Step 4
-"""""""""""""""""""
-
-**10 minutes, in class, on your own.** The instructions are on the slides.
-
-See `Step 4: One Function for Every Vehicle`_ and `auto or a Base Pointer`_ under Further Reading.
 
 override
 ^^^^^^^^
@@ -1607,16 +1600,17 @@ override
 
    class RoboTaxi : public Vehicle {
     public:
-     explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                       int automation_level = 4)
+     explicit RoboTaxi(
+         double max_speed, std::string operating_zone = "College Park",
+         AutomationLevel automation_level = AutomationLevel::level_4)
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
      void drive(const Route& route) const override;  // must override
 
     private:
-     std::string operating_zone_;  // the area it may drive in
-     int automation_level_;        // SAE J3016 level of driving automation
+     std::string operating_zone_;        // the area it may drive in
+     AutomationLevel automation_level_;  // SAE J3016 level
    };
 
 - ``RoboTaxi::drive`` is ``virtual`` too, without the keyword. C++20 **[class.virtual]** (11.7.2) paragraph 1: "A non-static member function is a virtual function if it is first declared with the keyword virtual or if it overrides a virtual member function declared in a base class".
@@ -1646,7 +1640,7 @@ A Typo That Compiles
             was hidden [-Woverloaded-virtual=]
    note:   by 'void RoboTaxi::drive(const Route&)'
 
-- Run: ``702run week9_playground 78``.
+- Run: ``702run week9_playground 76``.
 
 override Catches Both
 """""""""""""""""""""
@@ -1668,6 +1662,13 @@ override Catches Both
 .. note::
 
    "If a virtual function is marked with the virt-specifier ``override`` and does not override a member function of a base class, the program is ill-formed". C++20 **[class.virtual]** (11.7.2) paragraph 5.
+
+Live Coding: Step 4
+"""""""""""""""""""
+
+**10 minutes, in class, on your own.** The instructions are on the slides.
+
+See `Step 4: One Function for Every Vehicle`_ and `auto or a Base Pointer`_ under Further Reading.
 
 virtual Destructors
 ^^^^^^^^^^^^^^^^^^^
@@ -1710,7 +1711,7 @@ Deleting through a Base Pointer
    ~Vehicle
 
 - At the closing brace, ``std::unique_ptr<Vehicle>`` deletes through a ``Vehicle*``, and ``~Vehicle`` is not ``virtual``, so only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
-- Run: ``702run week9_playground 81``. It prints the two lines above, then AddressSanitizer stops the run:
+- Run: ``702run week9_playground 80``. It prints the two lines above, then AddressSanitizer stops the run:
 
 .. code-block:: text
 
@@ -1754,7 +1755,7 @@ The Sizes in the Report
 2. ``Taxi`` adds a ``std::string`` (32 bytes): 24 + 32 = 56 bytes.
 3. The name has 19 characters, more than the 15 a g++ ``std::string`` keeps inside itself, so it is on the heap, and only ``~Taxi`` would free it.
 
-- In Step 5, the design's ``Vehicle`` has six data members: 96 and 128 bytes.
+- With the design's ``Vehicle`` (six data members): 96 and 128 bytes.
 - The sizes were measured with ``sizeof`` in g++ 13.3, with the course flags.
 
 See `Discussion: Who Needs a virtual Destructor?`_ under Further Reading.
@@ -1769,27 +1770,26 @@ See `Step 5: With a virtual Destructor`_ under Further Reading.
 Abstraction
 -----------
 
-An **abstract class** declares what every derived class must do, and leaves how to each one. No object of an abstract class can be created.
+**Abstraction**, one of the four principles of OOP, hides how a class does its work behind what it offers. An **abstract class** declares what every derived class must do, and leaves how to each one. You make a class abstract by giving it at least one **pure** ``virtual`` **method** (`Pure virtual Methods`_). No object of an abstract class can be created.
 
 See `cppreference: Abstract class <https://en.cppreference.com/w/cpp/language/abstract_class>`__.
 
 Pure virtual Methods
 ^^^^^^^^^^^^^^^^^^^^
 
-A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``. The class gives it no body, and a class with one is abstract.
+A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``. The class gives it no body, and a class with one is abstract. Every derived class must override it before you can create objects of that class; a derived class that does not override it is abstract too.
 
 .. code-block:: cpp
 
    class Vehicle {  // abstract
     public:
-     explicit Vehicle(double max_speed,
-                      const std::string& color = "white");
      virtual ~Vehicle() = default;
      virtual void drive(const Route& route) const = 0;  // no body
-     // ... id, speeds, color, mileage, sensors
+     // ... constructors, id, speeds, color, mileage, sensors
    };
 
-- A ``Vehicle`` that is neither a ``RoboTaxi`` nor a ``Taxi`` has no way to drive, so ``Vehicle::drive`` has no body that makes sense. FR-3 says the same: each kind of vehicle drives in its own way.
+- FR-3: each kind of vehicle drives in its own way, so ``Vehicle::drive`` has no body that makes sense.
+- Only the methods each derived class must do its own way are pure virtual. In ``Vehicle``, only ``drive`` is: ``set_speed`` and ``get_speed`` keep one body for every vehicle.
 - UML sets an abstract class's name in italics: ``Vehicle`` on the class diagram.
 
 .. note::
@@ -1869,7 +1869,7 @@ Fleet and Passenger Do Not Change
    Taxi: Ana drives 500 m
 
 - ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
-- Run: ``702run week9_playground 89``.
+- Run: ``702run week9_playground 88``.
 
 See `Discussion: Add a RoboBus`_ under Further Reading.
 
@@ -1881,6 +1881,29 @@ The final Keyword
 See `cppreference: final specifier <https://en.cppreference.com/w/cpp/language/final>`__.
 
 See `final in the Class Diagram`_ under Further Reading.
+
+final Class and final Method
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 42 42
+
+   * -
+     - ``final`` class
+     - ``final`` method
+   * - Syntax
+     - ``class RoboTaxi final : public Vehicle``
+     - ``void drive(const Route& route) const final;`` in a ``Taxi`` that is not ``final``
+   * - What it stops
+     - Every class deriving from ``RoboTaxi``, such as ``SuperRoboTaxi``
+     - A class derived from ``Taxi``, such as ``NightTaxi``, overriding ``drive``. It can still derive from ``Taxi``.
+   * - The error
+     - ``cannot derive from 'final' base 'RoboTaxi' in derived type 'SuperRoboTaxi'``
+     - ``virtual function '...NightTaxi::drive(...) const' overriding final function``
+   * - Why use it
+     - A derived class could override ``drive`` and skip the sensor check (`The Reason for Each final`_).
+     - The design has none. It keeps one method fixed while the class stays open to deriving (`A final Method`_).
 
 virtual, override and final
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2018,7 +2041,7 @@ All Twelve Requirements
    * - FR-12
      - support passengers boarding and leaving, which updates the vehicle.
 
-- Today's code covers FR-3, FR-4, FR-5, FR-9 (building a route, not optimizing it), FR-10 and FR-12, listed with their code on :doc:`L9 Requirements <l9_requirements>`.
+- Today's code covers FR-3, FR-4, FR-5, FR-9 (building a route, not optimizing it), FR-10, FR-11 and FR-12, listed with their code on :doc:`L9 Requirements <l9_requirements>`.
 
 Back to `Requirements`_.
 
@@ -2298,15 +2321,16 @@ protected and private Inheritance
 
    C++20 **[class.access.base]** (11.9.2) paragraph 1 states the ``public`` and ``protected`` rows of each column. Its footnote 112 gives the ``private`` row: private members of a base class "remain inaccessible even to derived classes", unless the base class declares the derived class a friend.
 
-Back to `public Inheritance`_.
+Back to `Writing Inheritance in C++`_.
 
 A Base Member in the List
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: cpp
 
-   explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                     int automation_level = 4)
+   explicit RoboTaxi(
+       double max_speed, std::string operating_zone = "College Park",
+       AutomationLevel automation_level = AutomationLevel::level_4)
        : max_speed_{max_speed},  // does not compile
          operating_zone_{std::move(operating_zone)},
          automation_level_{automation_level} {}
@@ -2320,7 +2344,7 @@ A Base Member in the List
 - A member initializer list names only the class's own members and its base classes. ``max_speed_`` belongs to ``Vehicle``, so only ``Vehicle``'s constructor can initialize it.
 - With ``max_speed_`` ``protected``, the second and third errors stay.
 
-Back to `Without the Base Class Initializer`_.
+Back to `Constructors and Inheritance`_.
 
 auto or a Base Pointer
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -2722,7 +2746,7 @@ final in the Class Diagram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l9/model_l9_final.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi and Taxi, joined by the same lines. Only the RoboTaxi and Taxi boxes, each marked final, are orange; everything else is grey.
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Only the RoboTaxi and Taxi boxes, each marked final, are orange; everything else is grey.
    :align: center
    :width: 100%
 

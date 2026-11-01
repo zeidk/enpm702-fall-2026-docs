@@ -110,8 +110,9 @@ Multiple Choice (Questions 1 to 11)
 
       class RoboTaxi : public Vehicle {
        public:
-        explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                          int automation_level = 4)
+        explicit RoboTaxi(
+            double max_speed, std::string operating_zone = "College Park",
+            AutomationLevel automation_level = AutomationLevel::level_4)
             : Vehicle{max_speed},
               operating_zone_{std::move(operating_zone)},
               automation_level_{automation_level} {
@@ -120,8 +121,8 @@ Multiple Choice (Questions 1 to 11)
         ~RoboTaxi() { std::cout << "~RoboTaxi\n"; }
 
        private:
-        std::string operating_zone_;  // the area it may drive in
-        int automation_level_;        // SAE J3016 level of driving automation
+        std::string operating_zone_;        // the area it may drive in
+        AutomationLevel automation_level_;  // SAE J3016 level
         Lidar lidar_;
       };
 
@@ -213,8 +214,9 @@ Multiple Choice (Questions 1 to 11)
 
       class RoboTaxi : public Vehicle {
        public:
-        explicit RoboTaxi(double max_speed, std::string operating_zone = "College Park",
-                          int automation_level = 4)
+        explicit RoboTaxi(
+            double max_speed, std::string operating_zone = "College Park",
+            AutomationLevel automation_level = AutomationLevel::level_4)
             : Vehicle{max_speed},
               operating_zone_{std::move(operating_zone)},
               automation_level_{automation_level} {}
@@ -223,8 +225,8 @@ Multiple Choice (Questions 1 to 11)
         }
 
        private:
-        std::string operating_zone_;  // the area it may drive in
-        int automation_level_;        // SAE J3016 level of driving automation
+        std::string operating_zone_;        // the area it may drive in
+        AutomationLevel automation_level_;  // SAE J3016 level
       };
 
       void start_shift(const Vehicle& vehicle, const Route& route) {
