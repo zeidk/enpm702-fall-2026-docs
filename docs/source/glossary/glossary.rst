@@ -2046,11 +2046,11 @@ L9: OOP Advanced
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Aggregation
-      An association between a whole and its parts, in which the whole does
-      not own its parts alone. A part can exist before the whole, after it,
-      and in more than one whole. In C++, a
-      ``std::shared_ptr`` member: a ``Fleet`` holds its vehicles. UML draws an
-      open diamond at the whole.
+      An association between a whole and its parts: the whole is an object
+      that groups other objects, its parts. The whole does not own its parts
+      alone: a part can exist before the whole, after it, and in more than one
+      whole. In C++, a ``std::shared_ptr`` member: a ``Fleet`` (the whole)
+      holds its vehicles (the parts). UML draws an open diamond at the whole.
       :doc:`L9 </lectures/lecture9/l9_lecture>`
 
    Association

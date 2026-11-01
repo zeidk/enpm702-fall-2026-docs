@@ -631,39 +631,38 @@ See `Before reset, in Memory`_ and `After reset, in Memory`_ under Further Readi
 Two Headers That Include Each Other
 """""""""""""""""""""""""""""""""""
 
-If ``A`` keeps a list of ``B`` objects and each ``B`` refers back to its ``A``, the association is two-way, and each header would include the other.
+If ``A`` refers to a ``B`` and the ``B`` refers back to its ``A``, the association is two-way, and each header would include the other.
 
 .. code-block:: cpp
    :caption: a.hpp
 
+   // a.hpp
    #pragma once
-   #include <vector>
    #include "b.hpp"
    class A {
      // ...
     private:
-     std::vector<const B*> bs_;
+     B* b_;
    };
 
 .. code-block:: cpp
    :caption: b.hpp
    :linenos:
 
+   // b.hpp
    #pragma once
-   #include <memory>
    #include "a.hpp"
    class B {
      // ...
     private:
-     std::weak_ptr<A> a_;
+     A* a_;
    };
 
-A ``main.cpp`` that includes ``a.hpp`` first stops with these two errors, the first of three (g++ 13.3):
+A ``main.cpp`` that includes ``a.hpp`` first stops with this error, the only one (g++ 13.3):
 
 .. code-block:: text
 
-   b.hpp:7:17: error: 'A' was not declared in this scope
-   b.hpp:7:18: error: template argument 1 is invalid
+   b.hpp:7:3: error: 'A' does not name a type
 
 - ``a.hpp`` includes ``b.hpp``, which includes ``a.hpp`` again. ``#pragma once`` skips that copy, so ``B`` is compiled before ``A`` is declared.
 - The code is in ``project/week9/cycle``. This version, with its errors, is in a comment in ``project/week9/CMakeLists.txt``.
@@ -676,31 +675,30 @@ A **forward declaration** is a class's name only, with no body: ``class B;``. As
 .. code-block:: cpp
    :caption: a.hpp
 
+   // a.hpp
    #pragma once
-   #include <vector>
    class B;  // the name only
    class A {
      // ...
     private:
-     std::vector<const B*> bs_;
+     B* b_;
    };
 
 .. code-block:: cpp
    :caption: b.hpp
 
+   // b.hpp
    #pragma once
-   #include <memory>
    class A;  // the name only
    class B {
      // ...
     private:
-     std::weak_ptr<A> a_;
+     A* a_;
    };
 
-- The ``#include "a.hpp"`` moves to ``b.cpp``: its ``link`` calls ``a->add(*this)``, and a call needs the full class. Without the ``#include``, g++ stops there with "invalid use of incomplete type".
-- ``// ...`` stands for each class's ``public`` method, ``add`` and ``link``. The files in ``project/week9/cycle`` have them.
-- A pointer, a reference or a ``std::weak_ptr`` member needs only the name. A by-value member or a call needs the full class.
-- Two ``std::shared_ptr`` members that point at each other keep both objects alive forever, a leak. So one side is a ``std::weak_ptr``.
+- The ``#include "a.hpp"`` moves to ``b.cpp``: its ``link`` calls ``a->set_b(this)``, and a call needs the full class. Without the ``#include``, g++ stops there with "invalid use of incomplete type".
+- ``// ...`` stands for each class's ``public`` method, ``set_b`` and ``link``. The files in ``project/week9/cycle`` have them.
+- A pointer or a reference member needs only the name. A by-value member or a call needs the full class.
 - Run: ``702run week9_cycle``. It prints ``built``.
 
 Live Coding: Step 1
@@ -713,7 +711,7 @@ See `Step 1: A Passenger Rides a Vehicle`_ under Further Reading.
 Aggregation
 ^^^^^^^^^^^
 
-An **aggregation** is an association between a whole and its parts, in which the whole does not own its parts alone. A part can exist before the whole, after it, and in more than one whole.
+An **aggregation** is an association between a whole and its parts: the **whole** is an object that groups other objects, its **parts**. A ``Fleet`` is a whole, and its vehicles are its parts. The whole does not own its parts alone: a part can exist before the whole, after it, and in more than one whole.
 
 - How it differs from a plain association: a plain association has no whole and no parts, and neither object keeps the other alive. Here the whole is one of the owners: a ``Fleet`` keeps its vehicles alive.
 - In UML, a line with an open diamond at the whole. A vehicle can move from one fleet to another, and it is not scrapped when a fleet closes.
