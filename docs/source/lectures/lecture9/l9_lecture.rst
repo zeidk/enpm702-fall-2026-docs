@@ -758,7 +758,7 @@ A Fleet Holds Vehicles
 """"""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_aggregation_members.png
-   :alt: A UML class diagram with only two boxes, Fleet on the left and Vehicle on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: C for a class, on Fleet, and A for the abstract Vehicle. Fleet has minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool and plus size() : size_t. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. A line labeled holds joins them, with an open diamond at Fleet; 1 is above the line next to the diamond, and minus vehicles_ 0..* is under the line at Vehicle.
+   :alt: A UML class diagram with only two boxes, Fleet on the left and Vehicle on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: C for a class, on both Fleet and Vehicle. Fleet has minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool and plus size() : size_t. Vehicle has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. A line labeled holds joins them, with an open diamond at Fleet; 1 is above the line next to the diamond, and minus vehicles_ 0..* is under the line at Vehicle.
    :align: center
    :width: 100%
 
@@ -1119,7 +1119,7 @@ Single Inheritance
 - A derived box lists only what it adds. The rest comes from ``Animal``.
 
 .. figure:: /_static/images/l9/elephant_bird.png
-   :alt: A drawing of a small blue bird standing on the ground beside a large grey elephant with tusks, on a pale background.
+   :alt: A watercolor drawing of a small blue bird with an orange breast, standing on wet ground in front of a large grey elephant with tusks, which lowers its trunk toward the bird. Tufts of dry grass grow on both sides, under a pale sky.
    :align: center
    :width: 30%
 
