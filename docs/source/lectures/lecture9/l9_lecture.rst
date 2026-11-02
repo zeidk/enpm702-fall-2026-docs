@@ -49,7 +49,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week9_playground``.
-5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 74``.
+5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 77``.
 
 **Where the Classes Are**
 
@@ -71,7 +71,7 @@ Code for This Lecture
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
-      702run week9_playground 74         # only the code of slide 74
+      702run week9_playground 77         # only the code of slide 77
       702run week9_appendix x           # only appendix frame xi (11 works too)
       live9                              # build and run the classes you write in class
 
@@ -79,7 +79,7 @@ Code for This Lecture
 
    Code that does not compile is in the programs, commented out: uncomment it to get the slide's error.
 
-   The slide whose code has undefined behavior, slide 84, runs only when you ask for it by number: ``702run week9_playground 84``. A full run skips it.
+   The slide whose code has undefined behavior, slide 88, runs only when you ask for it by number: ``702run week9_playground 88``. A full run skips it.
 
 One Class per File
 ^^^^^^^^^^^^^^^^^^
@@ -1132,17 +1132,17 @@ Multiple Inheritance
 """"""""""""""""""""
 
 .. figure:: /_static/images/l9/multiple_inheritance.png
-   :alt: A UML class diagram. On top, two boxes side by side: Animal, with minus has_tail_, minus has_wings_ and minus has_horns_, each a bool, and the method plus can_fly() : bool; and Human, with minus is_bipedal_ : bool and the method plus speak() : void. Below them, MythicalCreature, with minus powers_ : vector<string> and plus use_power(power : string) : void. MythicalCreature joins each of the two boxes by a line with a hollow triangle at the box above.
+   :alt: A UML class diagram. On top, three boxes side by side: Lion, with minus leg_count_ : int and plus run() : void; Human, with plus speak() : void; and Bird, with minus wing_span_ : double and plus can_fly() : bool. Below them, Sphinx, with minus riddle_ : string and plus ask_riddle() : void. Sphinx joins each of the three boxes by a line with a hollow triangle at the box above.
    :align: center
    :width: 55%
 
-   Multiple inheritance: MythicalCreature has two base classes.
+   Multiple inheritance: Sphinx has three base classes.
 
 - **Multiple inheritance**: a class derives from more than one base class, separated by commas.
-- A ``MythicalCreature``, such as a sphinx, is an ``Animal`` and a ``Human``. It gets the ``public`` members of both. A ``MythicalCreature`` object holds the data of both, and its code can call the ``public`` methods of both: ``can_fly`` from ``Animal``, ``speak`` from ``Human``. The data stays ``private`` to each base class.
+- A sphinx is a creature of myth with the body of a lion and the head of a human, often with the wings of a bird. This ``Sphinx`` is a ``Lion``, a ``Human`` and a ``Bird``: it gets the ``public`` members of all three. A ``Sphinx`` object holds the data of all three, and its code can call the ``public`` methods of each: ``run`` from ``Lion``, ``speak`` from ``Human``, ``can_fly`` from ``Bird``. The data stays ``private`` to each base class.
 
-.. figure:: /_static/images/l9/sphinx.png
-   :alt: An engraving of a winged sphinx: a human head with long hair on a lion's body, with feathered wings and a curled tail, one front paw resting on a ball.
+.. figure:: /_static/images/l9/sphynx.jpeg
+   :alt: A colored engraving of a winged sphinx in profile, facing left, on aged paper: a human head with long golden hair on a lion's body, with large feathered wings and a curled tail, one front paw resting on a ball.
    :align: center
    :width: 35%
 
@@ -1150,7 +1150,7 @@ Multiple Inheritance
 
 .. note::
 
-   We use single inheritance in class. In assignments and projects, you may also use multiple inheritance, always with ``public``.
+   We use single inheritance in this lecture. In assignments and projects, you may also use multiple inheritance, always with ``public``.
 
 See `Multiple Inheritance, the Code`_ under Further Reading.
 
@@ -1234,6 +1234,27 @@ A Taxi through a Pointer
 
 See `Inside a Taxi Object`_ under Further Reading.
 
+Where the Compiler Looks for a Method
+"""""""""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   RoboTaxi robotaxi{13.4};
+   robotaxi.set_speed(10.0);  // Vehicle's
+   std::cout << robotaxi.get_speed() << '\n';
+
+.. code-block:: text
+
+   10
+
+When a method is called on an object of a derived class:
+
+1. The compiler looks for the method in the class of the variable, the type written in the code.
+2. If it is not there, it looks in the base class, then in the base's base.
+3. It calls the first one it finds.
+
+- ``RoboTaxi`` writes no ``set_speed`` and no ``get_speed``, so both are found in ``Vehicle``. Compiled with g++ 13.3, it prints ``10``.
+
 A Base Class Reference to a Derived Object
 """"""""""""""""""""""""""""""""""""""""""
 
@@ -1241,38 +1262,58 @@ A Base Class Reference to a Derived Object
 
    Taxi taxi{13.4, "Ana"};
    taxi.assign_driver("Ben");  // a Taxi method
-   Vehicle& vehicle{taxi};  // no cast needed
-   // vehicle.assign_driver("Ben");  // does not compile
-   vehicle.set_speed(10.0);
+   Vehicle& base_ref{taxi};  // no cast needed
+   // base_ref.assign_driver("Ben");  // does not compile
+   base_ref.set_speed(10.0);
    std::cout << taxi.get_speed() << '\n';
 
 .. code-block:: text
 
    10
 
-Uncommented, the line ``vehicle.assign_driver("Ben");`` gives:
+Uncommented, the line ``base_ref.assign_driver("Ben");`` gives:
 
 .. code-block:: text
 
    error: 'class Vehicle' has no member named 'assign_driver'
 
-- Read ``Vehicle& vehicle{taxi};`` as "``vehicle`` is a ``Vehicle`` reference to ``taxi``". A reference is another name for an object: nothing is copied.
-- No cast is needed because a ``Taxi`` is a ``Vehicle``. The reference refers to the ``Vehicle`` part at the start of ``taxi``, its **base subobject**.
-- ``assign_driver`` is a ``Taxi`` method that ``Vehicle`` does not have. The compiler checks a call through ``vehicle`` against ``Vehicle``'s members only, so ``assign_driver`` can be called through ``taxi`` and not through ``vehicle``. The object is still a ``Taxi``: ``set_speed`` through ``vehicle`` changed ``taxi`` (10).
-- A reference is bound once: ``vehicle`` refers to ``taxi`` for its whole life.
+- Read ``Vehicle& base_ref{taxi};`` as "``base_ref`` is a ``Vehicle`` reference to ``taxi``". A reference is another name for an object: nothing is copied.
+- No cast is needed because a ``Taxi`` is a ``Vehicle``.
+- Through ``base_ref``, only ``Vehicle``'s methods compile: ``set_speed`` does, and it changes ``taxi`` (10); ``assign_driver``, a ``Taxi`` method, does not. The object is still a ``Taxi``.
+- A reference is bound once: ``base_ref`` refers to ``taxi`` for its whole life.
 - A ``Vehicle`` copy of ``taxi``, not a reference, keeps only its ``Vehicle`` part: slicing (`Slicing`_).
-- Run: ``702run week9_playground 57``.
+- Run: ``702run week9_playground 58``.
+
+.. important::
+
+   **Why a base class reference.** A function written once, with a ``const Vehicle&`` parameter, accepts a ``Taxi`` or a ``RoboTaxi``: it binds as ``base_ref`` does (`Through a Base Reference`_).
+
+See `Inside a Taxi Object`_ under Further Reading.
+
+base_ref in Memory
+""""""""""""""""""
+
+.. figure:: /_static/images/l9/taxi_ref_memory.png
+   :alt: A blue Stack box under the name tag taxi holds one object in two parts. The first part, captioned Vehicle part, has six rows, each name marked with a minus sign for private: id_ 1, max_speed_ 13.4, speed_ 10.0, color_ "white", mileage_ 0.0 and sensors_ (empty). The second part, captioned Taxi part, has one row: driver_name_ "Ben", also marked private. A measuring line under both parts reads 120 bytes. On the left, a second name tag, base_ref, is joined by a line to a bracket that spans only the six rows of the Vehicle part.
+   :align: center
+   :width: 50%
+
+   ``Vehicle& base_ref{taxi};``, after the code of `A Base Class Reference to a Derived Object`_.
+
+- ``taxi`` is one 120-byte object: its ``Vehicle`` part (88 bytes), then ``driver_name_`` (32).
+- The ``Vehicle`` part is ``taxi``'s **base subobject**. ``base_ref`` is a second name for it: nothing is copied.
+- ``driver_name_`` is outside that part: through ``base_ref``, the compiler allows only ``Vehicle``'s members.
+- The ``Vehicle`` part comes first, so ``base_ref`` starts at the same address as ``taxi`` (measured with g++ 13.3).
 
 .. note::
 
    "the reference is bound to the initializer expression lvalue ... (or, in either case, to the appropriate base class subobject of the object)". C++20 standard, [dcl.init.ref] 9.4.3, paragraph 5.1.
 
-See `Inside a Taxi Object`_ under Further Reading.
-
 A Base Class Pointer to a Derived Object
 """"""""""""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
+   :emphasize-lines: 3, 8
 
    RoboTaxi robotaxi{13.4};
    robotaxi.change_zone("Silver Spring");  // a RoboTaxi method
@@ -1294,10 +1335,26 @@ Uncommented, the line ``pointer->change_zone("Silver Spring");`` gives:
    error: 'class Vehicle' has no member named 'change_zone'
 
 - Read ``Vehicle* pointer{&robotaxi};`` as "``pointer`` is a ``Vehicle`` pointer to ``robotaxi``": it holds the address of the ``Vehicle`` part of ``robotaxi``. No cast: a ``RoboTaxi`` is a ``Vehicle``.
-- As with a reference, the compiler checks a call through ``pointer`` against ``Vehicle``'s members only. ``change_zone``, a ``RoboTaxi`` method, can be called through ``robotaxi`` and not through ``pointer``. ``set_speed`` through ``pointer`` changed ``robotaxi`` (10).
-- Unlike a reference, a pointer can change: the same ``pointer`` then points to ``taxi``.
-- So ``Fleet``'s ``std::vector<std::shared_ptr<Vehicle>>`` holds robotaxis and taxis.
-- Run: ``702run week9_playground 58``.
+- Through ``pointer``, only ``Vehicle``'s methods compile: ``set_speed`` does, and it changes ``robotaxi`` (10); ``change_zone``, a ``RoboTaxi`` method, does not.
+- Run: ``702run week9_playground 60``.
+
+.. important::
+
+   **Why a base class pointer.** One pointer type holds the address of any kind of vehicle: a ``Fleet`` holds robotaxis and taxis as ``std::shared_ptr<Vehicle>``.
+
+pointer in Memory
+"""""""""""""""""
+
+.. figure:: /_static/images/l9/base_ptr_memory.png
+   :alt: Three blue Stack boxes side by side. On the left, under the name tag robotaxi, one object in two blocks: Vehicle part, 88 bytes, then RoboTaxi part, 40 bytes, 4 of padding; a measuring line under them reads 128 bytes. In the middle, under the name tag pointer, one field, (ptr), with a measuring line that reads 8 bytes. On the right, under the name tag taxi, one object in two blocks: Vehicle part, 88 bytes, then Taxi part, 32 bytes; a measuring line reads 120 bytes. From the pointer field, a gray dashed arrow tagged 1 runs left to the Vehicle part of robotaxi, and a blue arrow tagged 2 runs right to the Vehicle part of taxi.
+   :align: center
+   :width: 100%
+
+   The code of `A Base Class Pointer to a Derived Object`_ in memory.
+
+- 1: ``Vehicle* pointer{&robotaxi};`` holds the address of ``robotaxi``'s ``Vehicle`` part. Gray: the value it held before.
+- 2: after ``pointer = &taxi;``, it holds the address of ``taxi``'s ``Vehicle`` part. Unlike a reference, a pointer can change.
+- Each ``Vehicle`` part comes first, so ``pointer`` holds the address where the whole object starts (measured with g++ 13.3). ``pointer`` itself is 8 bytes, whatever it points to.
 
 .. note::
 
@@ -1338,7 +1395,7 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
 - ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
-- Run: ``702run week9_playground 60``.
+- Run: ``702run week9_playground 63``.
 
 private Stays private
 ~~~~~~~~~~~~~~~~~~~~~
@@ -1381,7 +1438,7 @@ It prints:
    20 13.4
 
 - For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 20. Every derived class can now break ``Vehicle``'s invariant.
-- Run: ``702run week9_playground 62``. It prints ``20 13.4``: the speed, then the maximum speed.
+- Run: ``702run week9_playground 65``. It prints ``20 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -1420,7 +1477,7 @@ It prints:
 
 - To use a base class's data, a derived class goes through the base's getters and setters: ``RoboTaxi`` calls ``get_speed()`` and ``set_speed()``, as any other code does. ``slow_down`` reads the speed with ``get_speed()`` and writes half of it with ``set_speed()``: 10 / 2 = 5.
 - ``speed_up``, the same method as in `protected Data`_, now goes through the check: 20 is above 13.4, so ``set_speed`` throws and the speed stays 5. Only ``Vehicle`` checks the rule.
-- Run: ``702run week9_playground 63``.
+- Run: ``702run week9_playground 66``.
 
 .. admonition:: Access in a class hierarchy
    :class: important
@@ -1473,7 +1530,7 @@ Construction and Destruction Order
    after the scope
 
 - The base is built first, so ``RoboTaxi``'s constructor can use ``Vehicle``'s methods. Destruction runs in reverse: ``~RoboTaxi`` first, while the ``Vehicle`` part still exists.
-- Run: ``702run week9_playground 66``.
+- Run: ``702run week9_playground 69``.
 
 .. note::
 
@@ -1530,27 +1587,6 @@ Compile-Time Polymorphism
      AutomationLevel automation_level_;  // SAE J3016 level
    };
 
-Where the Compiler Looks for a Method
-"""""""""""""""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   RoboTaxi robotaxi{13.4};
-   robotaxi.set_speed(10.0);  // Vehicle's
-   std::cout << robotaxi.get_speed() << '\n';
-
-.. code-block:: text
-
-   10
-
-When a method is called on an object of a derived class:
-
-1. The compiler looks for the method in the class of the variable, the type written in the code.
-2. If it is not there, it looks in the base class, then in the base's base.
-3. It calls the first one it finds.
-
-- ``RoboTaxi`` writes no ``set_speed`` and no ``get_speed``, so both are found in ``Vehicle``. These calls use the full ``Vehicle`` of the project, not the short one in `Compile-Time Polymorphism`_ (compiled with g++ 13.3; it prints ``10``).
-
 Redefinition
 """"""""""""
 
@@ -1570,7 +1606,7 @@ Redefinition
 **Redefinition**: a derived class **redefines** a base method when it writes a method with the same name.
 
 - The compiler finds ``RoboTaxi::drive`` first and stops looking, so ``Vehicle::drive`` is **hidden**: ``robotaxi.drive(...)`` never reaches it.
-- Run: ``702run week9_playground 71``.
+- Run: ``702run week9_playground 74``.
 
 Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^
@@ -1624,7 +1660,7 @@ Through a Base Reference
 The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``. The **dynamic type** is the class of the object it refers to while the program runs: ``RoboTaxi``, then ``Taxi``.
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
-- Run: ``702run week9_playground 74``.
+- Run: ``702run week9_playground 77``.
 
 See `What Runtime Polymorphism Needs`_ under Further Reading.
 
@@ -1686,7 +1722,7 @@ Slicing
 
 - 24 of the 56 bytes are copied: ``driver_name_`` is left behind, and the copy's dynamic type is ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
 - These are the ``runtime::`` classes of `virtual Methods in the Base Class`_: 24 bytes for ``Vehicle``, plus the 32-byte ``std::string`` of ``Taxi``.
-- Run: ``702run week9_playground 77``.
+- Run: ``702run week9_playground 80``.
 
 See `Copying a Vehicle of the Design`_ and `Discussion: Which drive() Runs?`_ under Further Reading.
 
@@ -1739,7 +1775,7 @@ A Typo That Compiles
             was hidden [-Woverloaded-virtual=]
    note:   by 'void RoboTaxi::drive(const Route&)'
 
-- Run: ``702run week9_playground 80``.
+- Run: ``702run week9_playground 83``.
 
 override Catches Both
 """""""""""""""""""""
@@ -1810,7 +1846,7 @@ Deleting through a Base Pointer
    ~Vehicle
 
 - At the closing brace, ``std::unique_ptr<Vehicle>`` deletes through a ``Vehicle*``, and ``~Vehicle`` is not ``virtual``, so only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
-- Run: ``702run week9_playground 84``. It prints the two lines above, then AddressSanitizer stops the run:
+- Run: ``702run week9_playground 88``. It prints the two lines above, then AddressSanitizer stops the run:
 
 .. code-block:: text
 
@@ -1968,7 +2004,7 @@ Fleet and Passenger Do Not Change
    Taxi: Ana drives 500 m
 
 - ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
-- Run: ``702run week9_playground 92``.
+- Run: ``702run week9_playground 97``.
 
 See `Discussion: Add a RoboBus`_ under Further Reading.
 
@@ -2331,41 +2367,44 @@ Multiple Inheritance, the Code
 
 .. code-block:: cpp
 
-   class Animal {
+   class Lion {
     public:
-     explicit Animal(
-         bool has_wings);
-     bool can_fly() const;
+     void run() const;
     private:
-     bool has_tail_{true};
-     bool has_wings_{false};
-     bool has_horns_{false};
+     int leg_count_{4};
    };
 
    class Human {
     public:
      void speak() const;
-    private:
-     bool is_bipedal_{true};
    };
 
-   class MythicalCreature
-       : public Animal, public Human {
+   class Bird {
     public:
-     MythicalCreature(bool has_wings,
-         std::vector<std::string> powers)
-         : Animal{has_wings},
-           powers_{std::move(powers)} {}
-     void use_power(
-         const std::string& power) const;
-
+     explicit Bird(
+         double wing_span);
+     bool can_fly() const;
     private:
-     std::vector<std::string> powers_;
+     double wing_span_;
    };
 
-- The base classes are separated by commas. The constructor passes ``has_wings`` to ``Animal``'s constructor: ``Animal``'s data stays ``private``.
-- A ``const Animal&`` and a ``const Human&`` can both refer to a ``MythicalCreature``.
-- Run: ``702run week9_appendix x``. A sphinx with wings and the power ``riddle`` prints ``true`` for ``can_fly`` through the ``const Animal&``, ``Human: speaks`` through the ``const Human&``, then ``uses riddle``.
+   class Sphinx : public Lion,
+                  public Human,
+                  public Bird {
+    public:
+     Sphinx(double wing_span,
+            std::string riddle)
+         : Bird{wing_span},
+           riddle_{std::move(riddle)} {}
+     void ask_riddle() const;
+    private:
+     std::string riddle_;
+   };
+
+- The base classes are separated by commas, each with ``public``.
+- The constructor passes ``wing_span`` to ``Bird``'s constructor: ``Bird``'s data stays ``private``.
+- A ``const Lion&``, a ``const Human&`` and a ``const Bird&`` can each refer to a ``Sphinx``.
+- Run: ``702run week9_appendix x``. A sphinx with a 2.5 m wing span prints ``Lion: runs on 4 legs`` through the ``const Lion&``, ``Human: speaks`` through the ``const Human&``, ``true`` for ``can_fly`` through the ``const Bird&``, then ``Sphinx: What walks on four legs in the morning?``.
 
 Back to `Multiple Inheritance`_.
 
