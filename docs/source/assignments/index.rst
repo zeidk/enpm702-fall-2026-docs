@@ -25,7 +25,7 @@ demonstrating why each new C++ feature improves the codebase.
 
 .. note::
 
-   Only **RWA1** and **RWA2** are published so far. The other rows here,
+   Only **RWA1**, **RWA2** and **RWA3** are published so far. The other rows here,
    and the group projects below, are the plan for the semester. Each one
    becomes a link when that assignment is released.
 
@@ -49,7 +49,7 @@ demonstrating why each new C++ feature improves the codebase.
      - Oct 9
      - Oct 23
      - 2 weeks
-   * - RWA3
+   * - :doc:`RWA3 <rwa3>`
      - Smart Pointers and OOP
      - Nov 3
      - Nov 17
@@ -91,11 +91,11 @@ in Gazebo. GP2 extends the GP1 deliverable.
 
    rwa1
    rwa2
+   rwa3
 
 ..
    Hidden for now. Uncomment an entry when that assignment is rewritten,
    and restore its row in the table above.
 
-   rwa3
    gp1
    gp2
