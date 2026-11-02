@@ -7,25 +7,63 @@ RWA3: Smart Pointers and OOP
 Overview
 --------
 
-In this assignment you **redesign** the search-and-rescue simulator
-using object-oriented principles. You will create a class hierarchy for
-rescue robots and sensors, manage object lifetimes with smart pointers,
-and apply polymorphism so that different robot types exhibit distinct
-search behaviors, all without a single raw ``new`` or ``delete``.
+In this assignment you build a small object-oriented program of your own.
+You choose one of three themes, and you do what Lecture 9 did for the ride
+service program: you write the requirements, you design the classes and
+draw the class diagram, and you write the code that meets them.
 
-This assignment continues a deliberate progression. In RWA1 every object
-lived on the stack: fixed-size arrays, pointers, and references, with no
-dynamic allocation at all. In RWA2 you moved to STL containers
-(``std::vector`` and ``std::array``) and organized your logic into
-functions. RWA3 takes the next step: you now design real objects with
-behavior and you give those objects **dynamic lifetimes**. Because the
-number of robots and sensors is decided at run time, these objects must
-be heap-allocated. Rather than reaching for raw ``new`` and ``delete``,
-you express dynamic allocation **exclusively through smart pointers**
-(``std::unique_ptr``, ``std::shared_ptr``, and ``std::weak_ptr``, created
-with ``std::make_unique`` and ``std::make_shared``). The smart pointers
-own the heap memory and release it automatically, which is how dynamic
-allocation is handled safely in modern C++.
+The theme gives you a world, not a design. You decide which classes
+exist, what each one holds, and how they are related. The report explains
+each decision, and the code shows that it works: your program must show
+**inheritance**, **polymorphism**, **abstraction**, **aggregation** and
+**composition**.
+
+Everything in this assignment comes from Lectures 7 to 9: smart pointers
+(Lecture 7), classes (Lecture 8), and relationships, inheritance and
+polymorphism (Lecture 9).
+
+.. important::
+
+   **Posted Tue, Nov 3, due Tue, Nov 17.** Start with the requirements
+   (R1). The design (R2) comes from them, and the code (R3 to R5) comes
+   from the design.
+
+
+.. admonition:: Using AI on this assignment
+   :class: important
+
+   RWA3 is graded on your own decisions, so its rule is **stricter than
+   the course AI policy** from :doc:`Lecture 1 </lectures/lecture1/l1_lecture>`:
+   a tool may help you understand, debug and test your work, but it may
+   not produce any part of it.
+
+   * You **may** use a tool such as TerpAI, ChatGPT, Claude, Gemini or
+     Copilot to:
+
+     * explain a concept from the lectures, for example what a
+       ``virtual`` destructor does or when to use ``std::shared_ptr``;
+     * explain a compiler error or a Valgrind report;
+     * suggest how to find a bug in code **you** wrote;
+     * suggest test cases for a class **you** wrote;
+     * review code **you** wrote and point out problems, which you then
+       fix yourself.
+
+   * You **may not** use a tool to write any part of what you hand in: no
+     requirement or definition, no class diagram or PlantUML, no
+     relationship table or decision chart answer, no class, method or
+     ``main.cpp`` code, no test program (including the ungraded ones of the
+     Tips: you write those yourself), and no Doxygen comment. Code
+     completion that fills in more than the rest of the name you are
+     typing (a suggested line or function) counts as generated code: turn
+     it off for this assignment. Generated work is not allowed in RWA3,
+     even when you disclose it.
+   * You **must** say at the top of your ``README.md`` which tool you used
+     and what for, in two or three sentences. Disclosing an allowed use
+     carries no penalty. Undisclosed use is a violation of the Code of
+     Academic Integrity.
+   * You are responsible for every line you hand in, and you may be asked
+     to walk through any part of your project and say where each decision
+     came from.
 
 
 Learning Objectives
@@ -33,458 +71,321 @@ Learning Objectives
 
 After completing this assignment you will be able to:
 
-1. Design class hierarchies with inheritance.
-2. Apply encapsulation with proper access specifiers.
-3. Use **virtual functions** for runtime polymorphism.
-4. Manage object lifetimes with ``std::unique_ptr`` and
-   ``std::shared_ptr``.
-5. Implement proper constructors, destructors, and reason about
-   the **Rule of Five**.
-6. Apply ``const``-correctness throughout a multi-class project.
+1. Write requirements for a program: definitions, functional and
+   non-functional requirements, each with its acceptance test.
+2. Choose the relationship between two classes from the requirements, and
+   the C++ that implements it.
+3. Draw a UML class diagram of your design.
+4. Write a class hierarchy with an abstract base class whose derived
+   classes override its ``virtual`` methods, and call them through a
+   pointer to the base class.
+5. Implement aggregation with ``std::shared_ptr`` and composition with
+   ``std::unique_ptr`` or a member held by value.
+
+
+Themes
+------
+
+Choose **one** theme. Each one describes a world: what is in it, what
+happens in it, and which values make no sense. The examples are there to
+start you off. Which classes exist, and their names, are your decisions:
+you may leave out an example or add your own.
+
+.. dropdown:: Theme A: Drone Fleet
+   :open:
+
+   The search-and-rescue team from RWA1 and RWA2 now runs a fleet of
+   drones of more than one kind. A **quadrotor** hovers, so it scans a
+   small area closely, in a spiral, but its battery lasts only a short
+   flight. A **fixed-wing** drone cannot hover; it covers long distances
+   in straight passes across a sector. A **tethered** drone stays on a
+   cable above the base and relays radio messages. Every drone flies its
+   search pattern and reports what it saw, and each kind does both in its
+   own way.
+
+   Each drone is built with its own parts: a battery, with a capacity and
+   a charge level, a set of motors, and sensors such as a thermal camera
+   or a lidar. These parts belong to one drone only, and they are scrapped
+   with it.
+
+   The team plans **missions**: a mission searches one sector, and the
+   team assigns drones to it. A drone flies one mission at a time. When a
+   mission ends, its drones are not scrapped: they return to the base and
+   join the next mission.
+
+   Values that make no sense: a charge level outside 0 to 100 %, a speed
+   or a flight distance below 0, a drone without a name or an id, a
+   mission with no sector.
+
+   Your program could: build a small fleet, assign drones to a mission,
+   fly every drone of the mission once, move the drones of a finished
+   mission to a new one, and print each drone's report.
+
+.. dropdown:: Theme B: Video Game Monsters
+   :open:
+
+   A dungeon video game is about a **hero** who fights monsters. In a fight,
+   the hero and the monsters take turns. Each one can **attack** another,
+   **block** an attack, **take damage**, and **die** when its health reaches
+   0. The hero has a name, a health level with a maximum, an attack power
+   and a defense.
+
+   Monsters come in different kinds, and each kind takes damage in its own
+   way. A **vampire** dodges an attack 30 % of the time: the attack misses,
+   and the vampire loses no health. A **werewolf** resists attacks: an
+   attack removes less health from it than from other monsters, for
+   example half. A **troll** regenerates: at the start of each of its
+   turns, it gets back some of the health it lost, never more than its
+   maximum.
+
+   The hero and each monster have parts of their own: the hero's weapon
+   and shield, and each monster's statistics (health, attack, defense) and
+   the loot it drops when it dies. These belong to one character only, and
+   they disappear with it.
+
+   The dungeon has **rooms**, and each room holds the monsters in it. A
+   monster can wander from one room to another. When the hero clears a
+   room or leaves it, the monsters that are still alive are not destroyed:
+   they stay in the dungeon and can be met again in another room.
+
+   Values that make no sense: health below 0 or above its maximum, an
+   attack power or a defense below 0, a dodge chance outside 0 to 100 %, a
+   hero, a monster or a room without a name.
+
+   Your program could: put the hero in a room with one monster of each
+   kind, run the fight turn by turn until the hero or every monster is
+   dead, print what each attack does (a hit, a dodge, a blocked or a
+   resisted attack), and move a monster that is still alive to another
+   room.
+
+   A hint for the vampire: a 30 % chance needs random numbers. Use
+   ``<random>`` with a fixed seed, for example ``std::mt19937
+   generator{42};``, so every run gives the same fight. A fight you can
+   repeat is a fight you can test.
+
+.. dropdown:: Theme C: Planetary Rover Mission
+   :open:
+
+   A space agency explores a planet with vehicles of different kinds. A
+   **lander** stays where it set down; it measures the weather and
+   deploys instruments around it. A **rover** drives a few hundred meters
+   a day, and it drills and collects rock samples. An **orbiter** circles
+   the planet, takes pictures of the surface, and relays data to Earth.
+   Every vehicle carries out its plan for the day (a *sol*, a day on the
+   planet), and each kind does it in its own way.
+
+   Each vehicle is built with its instruments, such as a rover's arm,
+   drill and cameras, and with its power source, solar panels or a
+   radioisotope generator. These belong to that vehicle only, and they are
+   lost with it.
+
+   The agency runs **missions**: a mission has a name, a landing site and
+   the vehicles assigned to it. When a mission ends, the vehicles that
+   still work are not lost: the agency assigns them to the next mission,
+   for example an extended mission at the same site.
+
+   Values that make no sense: a power level outside 0 to 100 %, a drive
+   distance or a sample mass below 0, a vehicle without a name, a mission
+   without a site.
+
+   Your program could: set up a mission with one vehicle of each kind,
+   run one sol for every vehicle, collect a sample, end the mission and
+   move the working vehicles to an extended one, and print a status
+   report.
 
 
 Requirements
 ------------
 
-.. dropdown:: R1: Class Design
-   :open:
-
-   Create a ``Robot`` **base class** with:
-
-   * **Attributes** (``private``): ``id_`` (``int``), ``callsign_``
-     (``std::string``), ``x_position_``, ``y_position_``
-     (``double``), ``battery_level_`` (``double``).
-   * **Public interface**: ``move()``, ``report_status()``, getters,
-     and setters where appropriate.
-   * A **default constructor** and a **parameterized constructor**
-     using a member initialization list.
-   * A **virtual destructor**.
-
-   **Step by step**
-
-   1. Declare the class in ``robot.hpp`` with the five private
-      attributes listed above. Give each attribute a sensible default
-      member initializer.
-   2. Provide a defaulted default constructor and a parameterized
-      constructor that initializes all five attributes through a
-      member initialization list (no assignment inside the body).
-   3. Declare a ``virtual`` destructor so that derived objects are
-      destroyed correctly through a ``Robot`` pointer.
-   4. Declare ``move(double dx, double dy)`` and
-      ``report_status() const`` as ``virtual`` so derived classes can
-      override them. ``report_status()`` returns a ``std::string``.
-   5. Provide ``const`` getters for every attribute and setters only
-      where mutation is meaningful (for example battery level, but not
-      ``id_``). Define the method bodies in ``robot.cpp``.
-
-   **Acceptance criteria**
-
-   * The base ``move()`` updates ``x_position_`` and ``y_position_`` and
-     decreases ``battery_level_``.
-   * The base ``report_status()`` returns a human-readable summary that
-     includes the callsign, position, and battery level.
-   * Every method that does not modify the object is marked ``const``.
-
-   .. code-block:: cpp
-
-      // robot.hpp (illustrative skeleton, not a solution)
-      class Robot {
-       public:
-          Robot() = default;
-
-          Robot(int id, const std::string& callsign,
-                double x, double y, double battery);
-
-          virtual ~Robot() = default;
-
-          // Polymorphic interface (override in derived classes).
-          virtual void move(double dx, double dy);
-          virtual std::string report_status() const;
-
-          // Getters (const) and selected setters.
-          int get_id() const;
-          const std::string& get_callsign() const;
-          double get_battery_level() const;
-          void set_battery_level(double level);
-
-       private:
-          int id_{0};
-          std::string callsign_;
-          double x_position_{0.0};
-          double y_position_{0.0};
-          double battery_level_{100.0};
-      };
-
-      // robot.cpp
-      Robot::Robot(int id, const std::string& callsign,
-                   double x, double y, double battery) {
-          // TODO: initialize all members with a member
-          //       initialization list (not assignment in the body).
-      }
-
-      void Robot::move(double dx, double dy) {
-          // TODO: update x_position_/y_position_ and reduce
-          //       battery_level_ to reflect movement cost.
-      }
-
-      std::string Robot::report_status() const {
-          // TODO: build and return a summary string containing the
-          //       callsign, current position, and battery level.
-      }
-
-.. dropdown:: R2: Inheritance
-   :open:
-
-   Create three derived classes, each with distinct characteristics:
-
-   .. grid:: 3
-      :gutter: 3
-
-      .. grid-item-card:: GroundRobot
-         :class-header: sd-bg-info sd-text-white
-
-         * Tracked crawler for rubble.
-         * Slow but can enter tight voids.
-         * Overrides ``move()``, short, careful steps.
-         * Overrides ``report_status()``, includes void-access depth.
-
-      .. grid-item-card:: AerialDrone
-         :class-header: sd-bg-success sd-text-white
-
-         * Flies above the debris field.
-         * Fast coverage, fast battery drain.
-         * Overrides ``move()``, long range, faster drain.
-         * Overrides ``report_status()``, includes altitude.
-
-      .. grid-item-card:: CanineRobot
-         :class-header: sd-bg-warning sd-text-white
-
-         * Legged "rescue dog" platform.
-         * Traverses stairs and uneven terrain.
-         * Overrides ``move()``, agile over obstacles.
-         * Overrides ``report_status()``, includes terrain rating.
-
-   **Step by step**
-
-   1. Each derived class publicly inherits from ``Robot``
-      (``public Robot``) and lives in its own header/source pair
-      (for example ``ground_robot.hpp`` / ``ground_robot.cpp``).
-   2. Each derived class adds one type-specific private attribute:
-      ``GroundRobot`` has ``void_access_depth_``, ``AerialDrone`` has
-      ``altitude_``, and ``CanineRobot`` has ``terrain_rating_``.
-   3. Each constructor forwards the common parameters to the ``Robot``
-      base constructor through the member initialization list, then
-      initializes its own attribute.
-   4. Each derived class **overrides** ``move()`` and
-      ``report_status()`` using the ``override`` keyword. The behavior
-      must differ per type (see the cards above): for example the
-      drone covers more distance and drains battery faster, while the
-      ground robot takes short, careful steps.
-
-   **Acceptance criteria**
-
-   * All three derived classes compile and can be instantiated.
-   * ``report_status()`` for each type includes the base information
-     **plus** that type's extra attribute (void-access depth, altitude,
-     or terrain rating).
-   * The ``override`` keyword is present on every overriding method.
-
-   .. code-block:: cpp
-
-      // ground_robot.hpp (illustrative skeleton; repeat the same shape
-      // for AerialDrone and CanineRobot with their own attributes)
-      class GroundRobot : public Robot {
-       public:
-          GroundRobot(int id, const std::string& callsign,
-                      double x, double y, double battery,
-                      double void_access_depth);
-
-          void move(double dx, double dy) override;
-          std::string report_status() const override;
-
-       private:
-          double void_access_depth_{2.0};
-      };
-
-      // ground_robot.cpp
-      GroundRobot::GroundRobot(int id, const std::string& callsign,
-                               double x, double y, double battery,
-                               double void_access_depth) {
-          // TODO: forward id/callsign/x/y/battery to the Robot base
-          //       constructor, then initialize void_access_depth_.
-      }
-
-      void GroundRobot::move(double dx, double dy) {
-          // TODO: implement short, careful steps with the appropriate
-          //       battery cost for a ground crawler.
-      }
-
-      std::string GroundRobot::report_status() const {
-          // TODO: return the base status plus the void-access depth.
-      }
-
-.. dropdown:: R3: Polymorphism
-   :open:
-
-   * Store all robots in a
-     ``std::vector<std::unique_ptr<Robot>>``.
-   * Call ``move()`` and ``report_status()`` through base-class
-     pointers.
-   * Demonstrate **runtime polymorphism**: each robot type produces
-     different output from the same function call.
-
-   **Step by step**
-
-   1. Create a ``std::vector<std::unique_ptr<Robot>>``.
-   2. Populate it with at least one instance of each derived type,
-      constructing each with ``std::make_unique`` so ownership moves
-      into the vector (no raw ``new``).
-   3. Iterate over the vector with a range-based ``for`` loop using a
-      ``const auto&`` reference to each ``std::unique_ptr``.
-   4. Through the base-class pointer, call ``move()`` and then print
-      ``report_status()``.
-
-   **Acceptance criteria**
-
-   * The same line of code (``robot->report_status()``) produces
-     different output depending on the actual robot type, confirming
-     dynamic dispatch through ``virtual`` methods.
-   * No object is copied out of the vector; access is through the
-     ``unique_ptr`` only.
-
-   .. code-block:: cpp
-
-      // main.cpp (illustrative skeleton)
-      std::vector<std::unique_ptr<Robot>> robots;
-
-      // TODO: push_back one std::make_unique<...> for each derived
-      //       type (GroundRobot, AerialDrone, CanineRobot) with
-      //       suitable constructor arguments.
-
-      for (const auto& robot : robots) {
-          // TODO: call move(...) then print report_status() through
-          //       the base-class pointer to demonstrate polymorphism.
-      }
-
-.. dropdown:: R4: Smart Pointers
-   :open:
-
-   Arrange ownership deliberately:
-
-   * Use ``std::unique_ptr`` for **exclusive ownership** of robots
-     (the ``CommandCenter`` class owns each robot).
-   * Use ``std::shared_ptr`` for **shared sensors**, multiple
-     robots may rely on the same fixed sensor (e.g., a beacon dropped
-     in a sector).
-   * Use ``std::weak_ptr`` for **non-owning references** (e.g., a
-     robot holds a weak reference to a sensor it does not own).
-   * There must be **no** raw ``new`` or ``delete`` anywhere in
-     your code.
-
-   **Step by step**
-
-   1. Create a sensor with ``std::make_shared`` so its lifetime is
-      reference-counted.
-   2. Give ``Robot`` a way to hold a non-owning reference to a sensor.
-      Store it as a ``std::weak_ptr`` so a robot never keeps a sensor
-      alive on its own, and provide ``set_sensor(...)`` that accepts a
-      ``std::shared_ptr`` and stores it as a ``weak_ptr``.
-   3. Point more than one robot at the **same** shared sensor and
-      confirm the reference count behaves as expected.
-   4. Before using a ``weak_ptr``, call ``lock()`` and check the
-      result; only read the sensor if the lock succeeds.
-
-   **Acceptance criteria**
-
-   * Robots own no sensor outright: dropping all shared owners frees
-     the sensor even while a robot still holds a ``weak_ptr``.
-   * A locked ``weak_ptr`` is always validated before dereferencing.
-   * ``grep`` for ``new`` and ``delete`` finds no raw allocation.
-
-   .. code-block:: cpp
-
-      // Illustrative skeleton (not a solution).
-
-      // A shared sensor beacon placed in a sector.
-      auto thermal_beacon{
-          std::make_shared<ThermalSensor>(/* TODO: ctor args */)};
-
-      // TODO: hand the same shared_ptr to multiple robots via
-      //       set_sensor(...); each robot stores it as a weak_ptr.
-
-      // TODO: obtain a weak_ptr to the beacon, lock() it, and only
-      //       read() the sensor when the lock succeeds.
-
-.. dropdown:: R5: CommandCenter Class
-   :open:
-
-   Create a ``CommandCenter`` class that manages the entire mission:
-
-   * Owns robots via ``std::vector<std::unique_ptr<Robot>>``.
-   * Methods:
-
-     - ``add_robot(std::unique_ptr<Robot> robot)``
-     - ``remove_robot(int id)``
-     - ``find_robot(int id) const``
-     - ``print_all_robots() const``
-
-   * Apply ``const``-correctness: mark every method and parameter
-     that does not modify state as ``const``.
-
-   **Step by step**
-
-   1. Store the fleet in a private
-      ``std::vector<std::unique_ptr<Robot>>`` member.
-   2. ``add_robot`` takes the ``std::unique_ptr<Robot>`` **by value**
-      and ``std::move``-s it into the vector, transferring ownership
-      into the ``CommandCenter``.
-   3. ``remove_robot`` erases the robot whose ``get_id()`` matches the
-      given ``id``.
-   4. ``find_robot`` returns a non-owning observer (a ``Robot*`` or a
-      reference) to the matching robot, or a null result if none
-      matches; it must not transfer ownership and must be ``const``.
-   5. ``print_all_robots`` iterates the fleet and prints each robot's
-      ``report_status()``; it is ``const``.
-
-   **Acceptance criteria**
-
-   * Ownership of every robot lives in the ``CommandCenter`` and
-     nowhere else.
-   * ``find_robot`` and ``print_all_robots`` do not modify the fleet
-     and are declared ``const``.
-   * Removing a robot destroys it (the ``unique_ptr`` releases its
-     memory automatically).
-
-   .. code-block:: cpp
-
-      // command_center.hpp (illustrative skeleton)
-      class CommandCenter {
-       public:
-          void add_robot(std::unique_ptr<Robot> robot);
-          void remove_robot(int id);
-          Robot* find_robot(int id) const;   // non-owning observer
-          void print_all_robots() const;
-
-       private:
-          std::string mission_name_{"Default Mission"};
-          std::vector<std::unique_ptr<Robot>> robots_;
-      };
-
-      // command_center.cpp
-      void CommandCenter::add_robot(std::unique_ptr<Robot> robot) {
-          // TODO: std::move the unique_ptr into robots_.
-      }
-
-      void CommandCenter::remove_robot(int id) {
-          // TODO: erase the robot whose get_id() == id.
-      }
-
-      Robot* CommandCenter::find_robot(int id) const {
-          // TODO: return a non-owning pointer to the match, or nullptr.
-      }
-
-      void CommandCenter::print_all_robots() const {
-          // TODO: print report_status() for every owned robot.
-      }
-
-.. dropdown:: R6: Sensor Hierarchy
-   :open:
-
-   Create a ``Sensor`` base class with derived types:
-
-   * ``ThermalSensor``, ``read()`` returns a temperature value
-     (used to detect body heat).
-   * ``GasSensor``, ``read()`` returns a gas concentration (ppm).
-   * ``read()`` is a **virtual** method that returns different data
-     per sensor type.
-   * Sensors are shared among robots via ``std::shared_ptr``.
-
-   **Step by step**
-
-   1. Make ``Sensor`` an **abstract base class**: declare
-      ``read()`` as a pure virtual method (``= 0``) returning
-      ``double``, and give ``Sensor`` a ``virtual`` destructor.
-   2. Store a ``location_`` string and expose it through a ``const``
-      getter.
-   3. ``ThermalSensor`` overrides ``read()`` to return a temperature
-      near a stored baseline; ``GasSensor`` overrides ``read()`` to
-      return a gas concentration in ppm. Each derived class forwards
-      ``location`` to the ``Sensor`` base constructor.
-   4. Always create sensors with ``std::make_shared`` so they can be
-      shared (see R4).
-
-   **Acceptance criteria**
-
-   * ``Sensor`` cannot be instantiated directly (it is abstract).
-   * Calling ``read()`` through a ``Sensor`` pointer dispatches to the
-     correct derived implementation.
-   * Each derived ``read()`` uses the ``override`` keyword.
-
-   .. code-block:: cpp
-
-      // sensor.hpp (illustrative skeleton)
-      class Sensor {
-       public:
-          explicit Sensor(const std::string& location);
-          virtual ~Sensor() = default;
-
-          virtual double read() const = 0;   // pure virtual
-          const std::string& get_location() const;
-
-       private:
-          std::string location_;
-      };
-
-      class ThermalSensor : public Sensor {
-       public:
-          ThermalSensor(const std::string& location, double baseline);
-          double read() const override;
-
-       private:
-          double baseline_{36.5};
-      };
-
-      class GasSensor : public Sensor {
-       public:
-          GasSensor(const std::string& location, double baseline_ppm);
-          double read() const override;
-
-       private:
-          double baseline_ppm_{0.0};
-      };
-
-      // sensor.cpp
-      double ThermalSensor::read() const {
-          // TODO: return a temperature near baseline_ (e.g. simulate a
-          //       small variation around stored body-heat baseline).
-      }
-
-      double GasSensor::read() const {
-          // TODO: return a gas concentration in ppm.
-      }
+.. dropdown:: R1: The Requirements (Report, Part 1)
+
+   Write the requirements of your program, in the format of the
+   :doc:`L9 Requirements </lectures/lecture9/l9_requirements>` page.
+
+   1. **Definitions**: a table of the terms of your world, one sentence
+      each. Every class of your design is named here.
+   2. **Functional requirements**: at least 8, numbered ``FR-1``,
+      ``FR-2``, and so on. Each one says what the system *shall* do, in
+      one or two sentences, with a **Rationale** and an **Acceptance**
+      line: the check that shows the code meets it.
+   3. **Non-functional requirements**: at least 2, numbered ``NFR-1``,
+      ``NFR-2``. One of them lists the values your objects reject, as
+      NFR-2 does on the L9 page: a broken rule throws
+      ``std::invalid_argument``.
+   4. The requirements say **what** the program does, never **how**: no
+      class names that the definitions do not have, no C++.
+
+.. dropdown:: R2: The Design (Report, Part 2)
+
+   Turn the requirements into classes, in the format of the
+   :doc:`L9 Design </lectures/lecture9/l9_design>` page.
+
+   1. **Class diagram**: one UML class diagram of the whole design, written
+      in PlantUML. The ``.plantuml`` source goes in ``uml/``, and the
+      diagram goes in the report. Each box lists its data members and its
+      methods, with ``-``, ``+`` or ``#``. Each line shows its kind of
+      relationship and, for an association, an aggregation or a
+      composition, its multiplicity at each end.
+   2. **Relationship table**: one row per line of the diagram, with the
+      two classes, the relationship, the requirement it comes from, and
+      the C++ that implements it (for example ``std::shared_ptr<Drone>``
+      in a ``std::vector``).
+   3. **Why each relationship**: for each line, walk the decision chart of
+      Lecture 9 (`Choosing a Relationship and Its C++
+      <../lectures/lecture9/l9_lecture.html#choosing-a-relationship-and-its-c>`__) and give each
+      answer with the requirement or definition behind it, as Lecture 9
+      does for ``Passenger`` and ``Vehicle``.
+
+.. dropdown:: R3: Inheritance, Polymorphism and Abstraction
+
+   1. One base class with **at least two** derived classes, each derived
+      with ``public``.
+   2. At least one ``virtual`` method in the base class that **each**
+      derived class overrides, marked ``override``.
+   3. The base class has a ``virtual`` destructor.
+   4. The base class keeps its data members ``private``. A derived class
+      sets them through the base class constructor, in its member
+      initializer list, and reads them through the base class's methods.
+   5. Each derived class adds at least one data member or method that the
+      base class does not have.
+   6. The base class is **abstract**: at least one of its methods is pure
+      ``virtual`` (``= 0``), so no object of the base class can be made.
+   7. Optional: mark ``final`` what nothing should derive from.
+
+.. dropdown:: R4: Aggregation and Composition
+
+   1. At least one **aggregation**: a whole holds parts that it shares
+      with the rest of the program, as ``std::shared_ptr``. A part
+      outlives its whole.
+   2. At least one **composition**: a whole owns parts that are made and
+      destroyed with it, as ``std::unique_ptr`` or as members held by
+      value.
+   3. No raw ``new`` and no ``delete``: ``std::make_shared`` and
+      ``std::make_unique`` make every object on the heap.
+   4. Optional: an association (``std::weak_ptr`` or a plain pointer that
+      does not own) or a dependency (a parameter, no member).
+
+.. dropdown:: R5: Project, Build and main
+
+   1. The layout of `Deliverables`_. One class per header and source file
+      (``robot_arm.hpp`` and ``robot_arm.cpp``), and every class in one
+      namespace of your choice.
+   2. Constructors are defined in the class. Every other method is
+      declared in the header and defined in the ``.cpp`` file.
+   3. ``CMakeLists.txt`` builds an executable named ``rwa3`` with
+      ``CMAKE_CXX_STANDARD`` 20 and ``-Wall -Wextra``. The build prints no
+      warning.
+   4. Every file starts with a Doxygen ``@file`` comment with ``@author``
+      and ``@brief``. Every class and every method in a header has a
+      Doxygen comment, and ``docs/Doxyfile`` uses relative paths.
+   5. ``src/main.cpp`` is the starter file below, with each ``TODO``
+      replaced by the code it describes. The program runs to the end, and
+      Valgrind reports no leak and no error: paste the last lines of its
+      output into ``README.md``.
+
+
+The Starter main.cpp
+--------------------
+
+Download :download:`main.cpp </_static/files/rwa3/main.cpp>`. It compiles
+as given and prints its four section headers. Once your classes are
+written, each section uses them to show one part of your design.
+
+.. literalinclude:: /_static/files/rwa3/main.cpp
+   :language: cpp
+
+
+How Your Documentation Is Graded
+--------------------------------
+
+Documentation is worth **10 %** on its own (see the rubric). R5 asks for
+the comments to be **there**; this grade is for whether they **help**: a
+reader who sees only your headers and the Doxygen pages should be able to
+use every class correctly without opening a ``.cpp`` file.
+
+1. **Every class** has a ``@brief`` that says what it is in your world,
+   in the words of your Definitions (R1).
+2. **Every method**: its ``@brief`` says what it does, in terms of the
+   world ("Flies the search pattern over the sector"), not of the code
+   ("Loops over ``waypoints_``").
+3. **Every** ``@param`` says what the value means, its unit when it has
+   one, and any limit on it. **Every** ``@return`` says what the result
+   means, and **every** ``@throw`` says which value is rejected.
+4. **Every data member** has a ``///`` comment: what it holds, its unit,
+   its limits, and, for a smart pointer, whether the class owns the object
+   alone, shares it, or only refers to it.
+5. **Other comments** explain *why*, not *what*. No commented-out code,
+   and no comment that no longer matches the code under it.
+
+A comment that only repeats the names gets no credit:
+
+.. code-block:: cpp
+
+   /**
+    * @brief add_mileage function.
+    * @param meters meters
+    */
+   void add_mileage(double meters);
+
+This one, from the ride service program of Lecture 9, tells a caller what
+they need to know:
+
+.. code-block:: cpp
+
+   /**
+    * @brief Adds the distance of a trip to the mileage.
+    * @param meters The trip's distance, in m. At least 0: the mileage never goes down.
+    * @throw std::invalid_argument if @p meters is less than 0.
+    */
+   void add_mileage(double meters);
 
 
 Deliverables
 ------------
 
+Submit **one zip file** on Canvas, named after the folder it contains:
+``rwa3_firstname_lastname.zip``, for example
+``rwa3_bjarne_stroustrup.zip``.
+
+.. code-block:: text
+
+   rwa3_firstname_lastname/
+   ├── CMakeLists.txt
+   ├── README.md
+   ├── report.pdf           # R1 and R2
+   ├── docs/
+   │   └── Doxyfile
+   ├── uml/
+   │   └── design.plantuml  # the class diagram of R2
+   ├── include/             # one header per class
+   └── src/                 # one source file per class, and main.cpp
+
 .. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 25 75
+   :class: compact-table
 
-   * - Item
+   * - File
      - Description
-   * - Header files (``.hpp``)
-     - One header per class (``robot.hpp``, ``ground_robot.hpp``,
-       ``command_center.hpp``, ``sensor.hpp``, etc.).
-   * - Source files (``.cpp``)
-     - Corresponding implementations and ``main.cpp``.
-   * - ``CMakeLists.txt``
-     - Build configuration targeting C++20 or later.
-   * - UML class diagram
-     - Shows the full class hierarchy and relationships.
-   * - Valgrind output
-     - Demonstrates zero memory leaks (even though you use smart
-       pointers, this confirms correct usage).
+   * - ``report.pdf``
+     - Part 1, the requirements (R1). Part 2, the design (R2): the class
+       diagram, the relationship table, and the decision chart answers.
+   * - ``uml/design.plantuml``
+     - The PlantUML source of the class diagram in the report.
+   * - ``include/``, ``src/``
+     - One header and one source file per class, and ``src/main.cpp``.
+   * - ``CMakeLists.txt``, ``docs/Doxyfile``
+     - The build (R5) and the Doxygen configuration.
+   * - ``README.md``
+     - Your theme, how to build and run, the last lines of your Valgrind
+       output, and your AI disclosure if you used a tool.
+
+.. warning::
+
+   Do **not** include the ``build/`` directory, the pages Doxygen
+   generates (``docs/html``, ``docs/latex``), editor folders such as
+   ``.vscode/``, or the compiled executable. A submission that does not
+   build cannot be graded.
 
 
 Grading Rubric
@@ -492,54 +393,151 @@ Grading Rubric
 
 .. list-table::
    :header-rows: 1
-   :widths: 35 15 50
+   :widths: 32 12 56
+   :class: compact-table
 
    * - Category
      - Weight
      - Criteria
-   * - OOP Design
-     - 30 %
-     - Proper class hierarchy, encapsulation, access specifiers,
-       constructors with member initialization lists.
-   * - Smart Pointer Usage
-     - 25 %
-     - Correct use of ``unique_ptr``, ``shared_ptr``, and
-       ``weak_ptr``; no raw ``new`` / ``delete``.
-   * - Polymorphism
-     - 20 %
-     - Virtual methods produce distinct behavior per derived class
-       when called through base-class pointers.
-   * - Code Quality
+   * - R1: Requirements
      - 15 %
-     - ``const``-correctness, ``snake_case`` naming, uniform
-       initialization, ``'\n'`` usage.
+     - The definitions, at least 8 functional and 2 non-functional
+       requirements, each testable through its acceptance line, and none
+       that names code.
+   * - R2: Design
+     - 20 %
+     - A class diagram that matches the code, a relationship table that
+       links each line to a requirement, and decision chart answers that
+       the requirements support.
+   * - R3: Inheritance, polymorphism and abstraction
+     - 25 %
+     - The hierarchy, the abstract base class, the overridden
+       ``virtual`` method called through the base class in section 1 of
+       ``main``, the ``virtual`` destructor, and ``private`` base data.
+   * - R4: Aggregation and composition
+     - 20 %
+     - The ``std::shared_ptr`` whole whose part outlives it (section 2),
+       the owned parts destroyed with their whole (section 3), and no raw
+       ``new`` or ``delete``.
+   * - R5: Project, build and main
+     - 10 %
+     - The layout, one class per file, a build with no warnings, every
+       section of ``main`` filled in, the rejected value of section 4, and
+       a clean Valgrind run.
    * - Documentation
      - 10 %
-     - Doxygen comments, UML diagram, inline comments for
-       non-obvious logic.
+     - Doxygen comments on every file, class and method, and comments
+       that explain why.
+
+Code that ignores the course conventions loses marks in the requirement
+where it appears: uniform initialization, ``snake_case``, names that say
+what the value is, and ``'\n'`` rather than ``std::endl``.
 
 
 Tips
 ----
 
-.. admonition:: Design Before You Code
+.. admonition:: Requirements first, then the diagram, then the code
    :class: tip
 
-   Sketch your UML class diagram first. Deciding which class owns
-   which resource *before* writing code prevents painful refactors
-   later.
+   Write the acceptance line of each requirement first: if you cannot say
+   how to check a requirement, it is not a requirement yet. Then draw the
+   diagram. A line you cannot justify with the decision chart is a line to
+   remove. Six to ten classes are enough to show every relationship.
 
-.. admonition:: One Class at a Time
+.. admonition:: Test each class on its own before you test them together
    :class: tip
 
-   Implement and test the ``Robot`` base class before creating any
-   derived classes. Then add one derived class, test polymorphism,
-   and repeat.
+   Write the classes that hold no other class first (a battery, a set of
+   statistics, an instrument), then the base class and its derived
+   classes, then the classes that hold the others. After each class, test
+   it alone before you use it anywhere else:
 
-.. admonition:: Smart Pointer Cheat Sheet
+   * Write, yourself, a short program that makes one object, calls each of its
+     methods, and prints what each one returns. Check every printed value
+     against what you expected.
+   * Try each value your requirements forbid, and check that the class
+     throws ``std::invalid_argument``.
+   * Run it under Valgrind (or build it with ``-fsanitize=address``), so a
+     leak or a wrong ``delete`` shows up while the class is still small.
+
+   A test program is one more ``add_executable`` line in
+   ``CMakeLists.txt``, for example ``test_battery`` built from
+   ``tests/test_battery.cpp`` and the class's own ``.cpp`` file. You may
+   keep these programs in a ``tests/`` folder; they are not graded. When
+   every class passes on its own, a failure in ``main`` comes from how the
+   classes work together, not from inside one of them.
+
+.. admonition:: Build after every class
    :class: tip
 
-   * **unique_ptr**, sole owner, cannot be copied, can be moved.
-   * **shared_ptr**, reference-counted, multiple owners.
-   * **weak_ptr**, observes a ``shared_ptr`` without affecting
-     its reference count.
+   Get the project building with an empty ``main`` and one class, then
+   add the next class. A link error such as ``undefined reference`` means
+   a method is declared but not defined, or its ``.cpp`` file is missing
+   from ``CMakeLists.txt``.
+
+.. admonition:: Follow the conventions
+   :class: tip
+
+   * Uniform initialization: ``int count{0};``, not ``int count = 0;``
+   * ``snake_case``: ``battery_level``, not ``batteryLevel``
+   * ``'\n'``, never ``std::endl``
+
+.. admonition:: Use Lecture 9 as your model
+   :class: tip
+
+   Read the ride service program again: its
+   :doc:`requirements </lectures/lecture9/l9_requirements>`, its
+   :doc:`design </lectures/lecture9/l9_design>`, and its code in
+   ``project/week9``. Your report follows the same steps for your own
+   world.
+
+
+References
+----------
+
+The **C++ Core Guidelines** are the rules this course grades against.
+These are the ones that apply to RWA3. Read the short entry behind each
+link before you write the matching requirement.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 84
+   :class: compact-table
+
+   * - Rule
+     - Says
+   * - `C.2 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-struct>`_
+     - Use ``class`` if the class has an invariant; use ``struct`` if the
+       data members can vary independently.
+   * - `C.9 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-private>`_
+     - Minimize exposure of members.
+   * - `C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`_
+     - A base class destructor should be either public and virtual, or
+       protected and non-virtual.
+   * - `C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`_
+     - Use class hierarchies to represent concepts with inherent
+       hierarchical structure (only).
+   * - `C.128 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-override>`_
+     - Virtual functions should specify exactly one of ``virtual``,
+       ``override``, or ``final``.
+   * - `C.133 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-protected>`_
+     - Avoid ``protected`` data.
+   * - `R.11 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-newdelete>`_
+     - Avoid calling ``new`` and ``delete`` explicitly.
+   * - `R.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-owner>`_
+     - Use ``unique_ptr`` or ``shared_ptr`` to represent ownership.
+   * - `R.21 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-unique>`_
+     - Prefer ``unique_ptr`` over ``shared_ptr`` unless you need to share
+       ownership.
+   * - `R.22 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-make_shared>`_
+     - Use ``make_shared()`` to make ``shared_ptr``\ s.
+   * - `R.23 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rr-make_unique>`_
+     - Use ``make_unique()`` to make ``unique_ptr``\ s.
+   * - `SF.5 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-consistency>`_
+     - A ``.cpp`` file must include the header file(s) that defines its
+       interface.
+   * - `ES.20 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-always>`_
+     - Always initialize an object.
+   * - `NL.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rl-camel>`_
+     - Prefer ``underscore_style`` names.
