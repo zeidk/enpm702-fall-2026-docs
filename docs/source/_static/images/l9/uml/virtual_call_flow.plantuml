@@ -1,0 +1,31 @@
+@startuml virtual_call_flow
+' L9 reading page virtual Methods in Depth: how the call vehicle.drive(route) is resolved,
+' with vehicle a const Vehicle& to a RoboTaxi. Rendered to ../virtual_call_flow.png at
+' 300 dpi on white, with the VS Code extension's plantuml.jar.
+!theme mono
+skinparam backgroundColor white
+skinparam defaultFontName "Fira Sans"
+skinparam defaultFontSize 17
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam dpi 300
+start
+:""vehicle.drive(route)""
+""vehicle"" is a ""const Vehicle&""
+to a ""RoboTaxi"";
+if (Is ""drive"" virtual
+in ""Vehicle""?) then (no)
+  :**Static binding**
+The compiler calls the version
+of the static type, ""Vehicle"":
+""Vehicle::drive"" runs;
+else (yes)
+  :**Dynamic binding**
+1. Read the object's hidden pointer:
+it points to ""RoboTaxi""'s vtable;
+  :2. Read the ""drive"" entry
+of that vtable: ""RoboTaxi::drive"";
+  :3. Call it: ""RoboTaxi::drive"" runs;
+endif
+stop
+@enduml

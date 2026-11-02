@@ -23,12 +23,15 @@ Lecture 9 References
 .. dropdown:: Lecture 9 Bibliography
    :class-container: sd-border-success
 
-   The References frame of the L9 slides lists these four sources.
+   The References frame of the L9 slides lists these seven sources.
 
+   - Alex. *Early binding and late binding* (Learn C++, lesson 25.5). 2024. `https://www.learncpp.com/cpp-tutorial/early-binding-and-late-binding/ <https://www.learncpp.com/cpp-tutorial/early-binding-and-late-binding/>`_
+   - Bjarne Stroustrup. *C++ Glossary*. 2012. `https://www.stroustrup.com/glossary.html <https://www.stroustrup.com/glossary.html>`_
    - Bjarne Stroustrup. *The C++ Programming Language*. 4th edition. Addison-Wesley, 2013. ISBN 978-0321563842.
    - ISO/IEC. *ISO/IEC 14882:2020: Programming languages, C++*. International Organization for Standardization, Geneva, Switzerland, 2020. Working draft N4861 is freely available from the ISO C++ committee. The slides quote this standard by section name, for example [class.access.base], [class.virtual] and [expr.delete].
    - Bjarne Stroustrup and Herb Sutter. *C++ Core Guidelines*. 2024. `https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines>`_
    - cppreference.com contributors. *cppreference.com*. 2026. Community reference for the C++ language and standard library. `https://en.cppreference.com/w/ <https://en.cppreference.com/w/>`_
+   - Standard C++ Foundation. *C++ FAQ: Inheritance, virtual functions*. `https://isocpp.org/wiki/faq/virtual-functions <https://isocpp.org/wiki/faq/virtual-functions>`_
 
 
 .. dropdown:: cppreference Links
@@ -106,11 +109,12 @@ Lecture 9 References
 .. dropdown:: Required Reading
    :class-container: sd-border-success
 
-   The Before the Next Lecture slide and the Next Class slide list these three, to read after class:
+   To read after class: the Before the Next Lecture and Next Class slides list all four.
 
    - `C++ Core Guidelines: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_
    - `cppreference: virtual function specifier <https://en.cppreference.com/w/cpp/language/virtual>`_
-   - :doc:`Operator Overloading <l9_operators>`, the reading page of this lecture
+   - :doc:`Operator Overloading <l9_operators>`, a reading page of this lecture
+   - :doc:`virtual Methods in Depth <l9_virtual>`, a reading page of this lecture: the vtable and ``virtual`` destructors
 
 
 .. dropdown:: Recommended Reading

@@ -1,0 +1,31 @@
+@startuml virtual_delete_flow
+' L9 reading page virtual Methods in Depth: what happens when a std::unique_ptr<Vehicle>
+' that owns a Taxi deletes it through a Vehicle*. Measured with g++ 13.3 and
+' AddressSanitizer on 2026-11-02 (the small Vehicle: two doubles and a virtual drive).
+' Rendered to ../virtual_delete_flow.png at 300 dpi on white.
+!theme mono
+skinparam backgroundColor white
+skinparam defaultFontName "Fira Sans"
+skinparam defaultFontSize 17
+skinparam shadowing false
+skinparam ArrowThickness 1.5
+skinparam dpi 300
+start
+:""delete"" through a ""Vehicle*""
+that points to a ""Taxi"";
+if (Is ""~Vehicle"" virtual?) then (yes)
+  :1. ""~Taxi"" runs, then
+""driver_name_"" is destroyed;
+  :2. ""~Vehicle"" runs;
+  :3. The whole ""Taxi"" is freed.
+AddressSanitizer reports nothing;
+else (no)
+  #FFF3E0:**Undefined behavior**
+With g++: only ""~Vehicle"" runs,
+and AddressSanitizer reports
+""new-delete-type-mismatch"":
+56 bytes allocated,
+deleted as 24 bytes;
+endif
+stop
+@enduml

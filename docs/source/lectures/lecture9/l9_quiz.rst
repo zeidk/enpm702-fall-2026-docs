@@ -4,7 +4,7 @@
 Lecture 9 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture.
+This quiz covers the key concepts from Lecture 9: OOP Advanced. Topics include class relationships (association, aggregation, composition, dependency), multiplicity, inheritance with ``public``, ``protected`` and base class initializers, construction order, compile-time and runtime polymorphism, ``override``, ``virtual`` destructors, abstract and concrete classes, ``final``, and namespaces. No question uses the Further Reading part of the lecture. Question 9 uses the required reading :doc:`virtual Methods in Depth <l9_virtual>`.
 
 Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger`` are the classes of ``project/week9/common``: ``Vehicle`` is abstract, with ``virtual void drive(const Route& route) const = 0;`` and ``virtual ~Vehicle() = default;``; ``RoboTaxi`` and ``Taxi`` are ``final`` and override ``drive``; ``Fleet`` holds ``std::shared_ptr<Vehicle>``; ``Passenger`` holds a ``std::weak_ptr<Vehicle>``. These classes are in the namespace ``fleet``; the snippets leave out ``fleet::``, as the lecture's listings do (One Namespace: ``fleet``). ``maya_ride`` is the 500 m route of the lecture. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
@@ -299,7 +299,7 @@ Multiple Choice (Questions 1 to 11)
 .. admonition:: Question 9
    :class: hint
 
-   ``Vehicle`` and ``Taxi`` are the classes of the lecture's slide "Deleting through a Base Pointer": ``~Vehicle`` is **not** ``virtual``, and both destructors print their names. The program is built with AddressSanitizer. Which destructors run, and what does AddressSanitizer report?
+   ``Vehicle`` and ``Taxi`` are the classes of "Deleting through a Base Pointer" on the reading page :doc:`virtual Methods in Depth <l9_virtual>`: ``~Vehicle`` is **not** ``virtual``, and both destructors print their names. The program is built with AddressSanitizer. Which destructors run, and what does AddressSanitizer report?
 
    .. code-block:: cpp
 

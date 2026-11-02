@@ -7,7 +7,7 @@ L9: OOP Advanced
 Overview
 --------
 
-This lecture covers advanced object-oriented programming in C++, on the ride service program. A warm-up asks you to improve a ``Vehicle`` class with what you already know. The lecture then opens with the UML class diagram of the whole program and comes back to it, with the part being built in orange, before each new piece. A **design** comes first: requirements say what the program must do, their nouns and verbs give the classes and methods, and a **UML class diagram** draws them. Every class of the program is in the namespace ``fleet``. The lecture then names each line of the diagram: a ``Passenger`` rides a ``Vehicle`` (association, ``std::weak_ptr``), a ``Fleet`` holds vehicles it shares (aggregation, ``std::shared_ptr``), a ``Vehicle`` owns its ``Sensor``\ s and a ``Route`` its ``Position``\ s (composition), a ``Vehicle`` uses a ``Route`` for one call (dependency), and a ``RoboTaxi`` and a ``Taxi`` are vehicles (inheritance, with ``protected``, base class initializers and construction order). **Polymorphism** follows: compile-time (redefinition, static types) and runtime (``virtual``, ``override``), slicing, and ``virtual`` destructors, measured with AddressSanitizer. The lecture ends with **abstraction**, an abstract ``Vehicle`` with a pure ``virtual`` ``drive``, concrete classes that override it, and ``final``. In class, you write ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi`` and change the ``Vehicle`` you already wrote in seven Live Coding steps: Step 1 with me, Steps 2 to 5 on your own; Steps 6 and 7 are homework, not collected. The other discussions, with their answers, are in the Further Reading part of the lecture page.
+This lecture covers advanced object-oriented programming in C++, on the ride service program. A warm-up asks you to improve a ``Vehicle`` class with what you already know. The lecture then opens with the UML class diagram of the whole program and comes back to it, with the part being built in orange, before each new piece. A **design** comes first: requirements say what the program must do, their nouns and verbs give the classes and methods, and a **UML class diagram** draws them. Every class of the program is in the namespace ``fleet``. The lecture then names each line of the diagram: a ``Passenger`` rides a ``Vehicle`` (association, ``std::weak_ptr``), a ``Fleet`` holds vehicles it shares (aggregation, ``std::shared_ptr``), a ``Vehicle`` owns its ``Sensor``\ s and a ``Route`` its ``Position``\ s (composition), a ``Vehicle`` uses a ``Route`` for one call (dependency), and a ``RoboTaxi`` and a ``Taxi`` are vehicles (inheritance, with slicing, ``protected``, base class initializers and construction order). **Polymorphism** follows: compile-time (redefinition, static types, and why overloads cannot meet the challenge) and runtime in three steps (``public`` inheritance, ``virtual`` and ``override``, a base reference or pointer). The vtable and ``virtual`` destructors are on the reading page :doc:`virtual Methods in Depth <l9_virtual>`. The lecture ends with **abstraction**, an abstract ``Vehicle`` with a pure ``virtual`` ``drive``, concrete classes that override it, and ``final``. In class, you write ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi`` and change the ``Vehicle`` you already wrote in six Live Coding steps: Steps 1 to 3 with me, Step 4 on your own; Steps 5 and 6 are homework, not collected. The other discussions, with their answers, are in the Further Reading part of the lecture page.
 
 .. admonition:: Learning Objectives
    :class: learning-objectives
@@ -30,6 +30,7 @@ This lecture covers advanced object-oriented programming in C++, on the ride ser
    l9_requirements
    l9_design
    l9_operators
+   l9_virtual
    l9_shell
    l9_quiz
    l9_references
@@ -37,7 +38,7 @@ This lecture covers advanced object-oriented programming in C++, on the ride ser
 Before Class
 ------------
 
-Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>`, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type Step 1 with me, in ``project/week9/live``, and write Steps 2 to 5 on your own; Steps 6 and 7 are homework, not collected. You upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts toward Participation, as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
+Follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>`, and run the script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9``. In class you type Steps 1 to 3 with me, in ``project/week9/live``, and write Step 4 on your own; Steps 5 and 6 are homework, not collected. You upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts as the L9 exercise (exercises are 5% of the grade), as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
 
 Class starts with **Quiz 4**, which includes questions on the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`. Read it before you come.
 
@@ -46,12 +47,13 @@ Before the Next Lecture
 
 **RWA3** is posted today and is due on **Nov 17**.
 
-- **Before the end of class**: upload every file of ``live/include`` and ``live/src`` on Canvas. If you watch the recording, upload them before Nov 10. The Live Coding is this week's exercise: L9 has no C++ exercise on this site. Steps 6 and 7 are homework, not collected.
+- **Before the end of class**: upload every file of ``live/include`` and ``live/src`` on Canvas. If you watch the recording, upload them before Nov 10. The Live Coding is this week's exercise: L9 has no C++ exercise on this site. Steps 5 and 6 are homework, not collected.
 - The :doc:`shell exercises <l9_shell>` and the :doc:`quiz <l9_quiz>` are for your own practice. They are **not** collected.
 
 **Required reading, after class:**
 
 - :doc:`Operator Overloading <l9_operators>`: ``operator<<`` for ``Position``, and ``operator<`` and ``operator>`` for ``Route``, with the program ``week9_operators``.
+- :doc:`virtual Methods in Depth <l9_virtual>`: the vtable, the cost of ``virtual``, and ``virtual`` destructors.
 - `C++ Core Guidelines: Class hierarchies (OOP) <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#ss-hier>`_
 - `cppreference: virtual function specifier <https://en.cppreference.com/w/cpp/language/virtual>`_
 

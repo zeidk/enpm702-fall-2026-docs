@@ -19,10 +19,10 @@ The `Further Reading`_ part, at the end of this page, is the appendix of the sli
 Upload Your Live Coding
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-You type Step 1 with me, in ``project/week9/live``. You write **Steps 2 to 5** on your own, in the time each step gives: 10 minutes for Steps 2, 3 and 4, and 5 for Step 5. Steps 6 and 7 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
+You type Steps 1 to 3 with me, in ``project/week9/live``. You write **Step 4** on your own, in 15 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
 - **Before the end of class**, upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas.
-- It counts toward **Participation** (5% of the grade), as complete or incomplete. Complete means the code builds and you wrote Steps 2 to 5. I do not grade it for correctness.
+- It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Step 4. I do not grade it for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (GitHub Copilot included), in class or after. Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 10**. The same rules apply.
 - The finished code is posted after Nov 10, the deadline for those who watch the recording.
@@ -51,6 +51,7 @@ Code for This Lecture
 4. Build and run the classes you write in the Live Coding steps: ``live9``. Load it in class with ``source ~/Downloads/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture8/l8_setup>` shows.
 5. The two headers that include each other (`A Forward Declaration Breaks the Cycle`_): ``702run week9_cycle``.
 6. The reading :doc:`Operator Overloading <l9_operators>`: ``702run week9_operators``.
+7. The reading :doc:`virtual Methods in Depth <l9_virtual>`: the vtable and ``virtual`` destructors.
 
 **Where the Classes Are**
 
@@ -324,7 +325,7 @@ A **UML class diagram** is a drawing of a program's classes. Each box is a class
    * - «struct», «enumeration»
      - A **stereotype**: what kind of type the box is, a ``struct`` or an ``enum class``
    * - «final»
-     - No class derives from this one (`Live Coding: Step 7`_)
+     - No class derives from this one (`Live Coding: Step 6`_)
    * - ``-ride_  0..1`` at a line's end
      - The data member that holds the class at that end, as in the box, and how many (`Multiplicity`_)
 
@@ -865,7 +866,7 @@ The Vehicles Outlive the Fleet
 Live Coding: Step 2
 """""""""""""""""""
 
-**10 minutes, in class, on your own.** The instructions are on the slides.
+**In class, with me.** The instructions are on the slides.
 
 Composition
 ^^^^^^^^^^^
@@ -1405,6 +1406,49 @@ Not the Other Way
 - From derived to base, the compiler converts on its own: a ``Taxi`` is always a ``Vehicle``.
 - From base to derived, it does not: a ``Vehicle`` is not always a ``Taxi``. The compiler knows only that ``pointer`` points to a ``Vehicle``; it could be a ``RoboTaxi``.
 
+Slicing
+"""""""
+
+**Slicing**: copying a derived object into an object of its base class copies only the base part. The copy is a plain ``Vehicle``.
+
+.. code-block:: cpp
+
+   // Small Vehicle: two doubles, no virtual method
+   Taxi taxi{13.4, "Ana"};
+   Vehicle copy{taxi};  // not a reference
+   copy.drive(maya_ride);
+   std::vector<Vehicle> parked;
+   parked.push_back(taxi);  // sliced too
+   parked[0].drive(maya_ride);
+   std::cout << sizeof(Vehicle) << ' '
+             << sizeof(Taxi) << '\n';
+
+.. code-block:: text
+
+   Vehicle: drives 500 m
+   Vehicle: drives 500 m
+   16 48
+
+- 16 of the 48 bytes are copied: ``driver_name_`` is left behind, and the copy is a plain ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
+
+See `Copying a Vehicle of the Design`_ under Further Reading.
+
+Slicing in Memory
+"""""""""""""""""
+
+.. figure:: /_static/images/l9/slicing_memory.png
+   :alt: Two blue Stack boxes side by side. On the left, under the name tag taxi, one object in two parts. The first part, captioned Vehicle part, has two rows, each name marked with a minus sign for private: max_speed_ 13.4 and speed_ 0.0. The second part, captioned Taxi part, has one row: driver_name_ "Ana", marked private, with tag 2 beside it. A measuring line under taxi reads 48 bytes. On the right, under the name tag copy, one part, captioned Vehicle part, with two rows: max_speed_ 13.4 and speed_ 0.0. A measuring line under copy reads 16 bytes. A blue arrow tagged 1 runs from the Vehicle part of taxi to the Vehicle part of copy.
+   :align: center
+   :width: 80%
+
+   ``Vehicle copy{taxi};``: only the ``Vehicle`` part is copied.
+
+1. Copying ``taxi`` into ``copy`` copies the values of the ``Vehicle`` part: ``max_speed_`` and ``speed_``.
+2. ``driver_name_`` is left behind: ``copy`` has no ``Taxi`` part, 16 of the 48 bytes.
+
+- ``copy`` is a plain ``Vehicle``: ``copy.drive`` runs ``Vehicle::drive``.
+- With a ``virtual`` method, ``copy`` also gets its own hidden pointer to ``Vehicle``'s table: :doc:`virtual Methods in Depth <l9_virtual>`.
+
 protected Members
 """""""""""""""""
 
@@ -1585,7 +1629,7 @@ See `Discussion: What Prints First?`_ under Further Reading.
 Live Coding: Step 3
 """""""""""""""""""
 
-**10 minutes, in class, on your own.** The instructions are on the slides.
+**In class, with me.** The instructions are on the slides.
 
 
 Polymorphism
@@ -1600,7 +1644,10 @@ See `drive in the Class Diagram`_ under Further Reading.
 Compile-Time Polymorphism
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-**Compile-time polymorphism**: the compiler picks the function a call runs from the types written in the code.
+**Compile-time polymorphism**: the compiler picks the function a call runs from the types written in the code. Also called **static polymorphism** (Stroustrup, *C++ Glossary*); picking the function at compile time is **static binding** (*Learn C++*, lesson 25.5).
+
+Examples
+""""""""
 
 Overloaded functions:
 
@@ -1622,86 +1669,43 @@ One operator, several types:
 
 In each call, the types of the arguments pick the function: ``print(int)`` or ``print(double)``, the ``+`` of ``int`` or the ``+`` of ``std::string`` (measured with g++ 13.3: ``int 3``, ``double 2.5``, ``3 go!``). A derived class that redefines a method is a third case, in the next sections.
 
-The Vehicle, RoboTaxi and Taxi of This Part
-"""""""""""""""""""""""""""""""""""""""""""
-
-``drive`` is not ``virtual`` here: ``RoboTaxi`` and ``Taxi`` redefine it.
-
-.. code-block:: cpp
-
-   class Vehicle {  // only what these slides need
-    public:
-     explicit Vehicle(double max_speed) : max_speed_{max_speed} {}
-     void drive(const Route& route) const;
-    private:
-     double max_speed_;
-     double speed_{0.0};
-   };
-   class RoboTaxi : public Vehicle {
-    public:
-     explicit RoboTaxi(
-         double max_speed, std::string operating_zone = "College Park",
-         AutomationLevel automation_level = AutomationLevel::level_4)
-         : Vehicle{max_speed},
-           operating_zone_{std::move(operating_zone)},
-           automation_level_{automation_level} {}
-     void drive(const Route& route) const;  // redefines Vehicle::drive
-
-    private:
-     std::string operating_zone_;        // the area it may drive in
-     AutomationLevel automation_level_;  // SAE J3016 level
-   };
-   class Taxi : public Vehicle {
-    public:
-     Taxi(double max_speed, std::string driver_name)
-         : Vehicle{max_speed}, driver_name_{std::move(driver_name)} {}
-     void drive(const Route& route) const;  // redefines Vehicle::drive
-
-    private:
-     std::string driver_name_;
-   };
-
 Redefinition
 """"""""""""
 
+**Redefinition**: a derived class **redefines** a base method when it writes a method with the same name. In this part, ``drive`` is not ``virtual``.
+
+``vehicle.cpp``, ``robotaxi.cpp`` and ``taxi.cpp``:
+
 .. code-block:: cpp
 
-   // vehicle.cpp and robotaxi.cpp
    void Vehicle::drive(const Route& route) const {
      std::cout << "Vehicle: drives " << route.length() << " m\n";
    }
    void RoboTaxi::drive(const Route& route) const {
      std::cout << "RoboTaxi: drives itself " << route.length() << " m\n";
    }
+   void Taxi::drive(const Route& route) const {
+     std::cout << "Taxi: " << driver_name_ << " drives " << route.length() << " m\n";
+   }
+
+``main.cpp``:
 
 .. code-block:: cpp
 
-   // Taxi redefines drive() too: it prints its driver's name.
+   Vehicle vehicle{13.4};
    RoboTaxi robotaxi{13.4};
    Taxi taxi{13.4, "Ana"};
-   robotaxi.drive(maya_ride);  // maya_ride: the 500 m route
+   vehicle.drive(maya_ride);  // maya_ride: the 500 m route
+   robotaxi.drive(maya_ride);
    taxi.drive(maya_ride);
 
 .. code-block:: text
 
+   Vehicle: drives 500 m
    RoboTaxi: drives itself 500 m
    Taxi: Ana drives 500 m
 
-**Redefinition**: a derived class **redefines** a base method when it writes a method with the same name.
-
-- The compiler finds ``RoboTaxi::drive`` first and stops looking, so ``Vehicle::drive`` is **hidden**: ``robotaxi.drive(...)`` never reaches it.
-
-Runtime Polymorphism
-^^^^^^^^^^^^^^^^^^^^
-
-**Runtime polymorphism**: the method a call runs is picked while the program runs, from the class of the object. A call through a base reference or pointer then runs the derived class's own method.
-
-.. admonition:: Three Conditions for Runtime Polymorphism
-   :class: important
-
-   1. A derived class inherits from a base class with ``public``: ``RoboTaxi`` from ``Vehicle``.
-   2. The base class declares the method ``virtual``, and the derived class overrides it: ``drive``.
-   3. The call goes through a base reference or pointer: ``Vehicle&``, ``Vehicle*``, or a smart pointer such as ``std::shared_ptr<Vehicle>``, whose ``->`` gives a ``Vehicle*``. A ``Vehicle`` object copied from a ``RoboTaxi`` is sliced (`Slicing`_): it is a plain ``Vehicle``.
+- Because ``RoboTaxi`` and ``Taxi`` redefine ``drive``, the compiler finds their own ``drive`` first and stops looking. ``Vehicle::drive`` is **hidden**: ``robotaxi.drive(...)`` and ``taxi.drive(...)`` never reach it.
 
 The Challenge: Two Vectors
 """"""""""""""""""""""""""
@@ -1733,8 +1737,6 @@ The Challenge: Two Vectors
 - ``by_value`` holds copies of the ``Vehicle`` parts only: slicing (`Slicing`_). Each copy is a ``Vehicle``, so ``Vehicle::drive`` runs.
 - ``by_pointer`` keeps the objects themselves, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive``. `The Challenge: A Base Reference`_ shows why.
 
-See `One Overload per Class`_ and `Scalability and Redundancy`_ under Further Reading.
-
 The Challenge: A Base Reference
 """""""""""""""""""""""""""""""
 
@@ -1757,10 +1759,68 @@ The **static type** of an expression is the type written in the code: ``vehicle`
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
 
-See `What Runtime Polymorphism Needs`_ under Further Reading.
+Overloads Cannot Meet the Challenge
+"""""""""""""""""""""""""""""""""""
 
-virtual Methods in the Base Class
-"""""""""""""""""""""""""""""""""
+We try compile-time polymorphism: one ``start_shift`` overload per class.
+
+.. code-block:: cpp
+
+   void start_shift(const RoboTaxi& robotaxi, const Route& route);
+   void start_shift(const Taxi& taxi, const Route& route);
+   for (const Vehicle* vehicle : by_pointer) {  // by_pointer of the challenge
+     start_shift(*vehicle, maya_ride);
+   }
+
+.. code-block:: text
+
+   error: no matching function for call to 'start_shift(const Vehicle&, Route&)'
+
+- The compiler picks an overload from the static type, before the program runs. ``*vehicle`` has static type ``const Vehicle``, and no overload takes a ``Vehicle``.
+- Each new class needs one more overload, and the code that calls it changes too: NFR-1 says it must not.
+
+.. important::
+
+   The class of each object is known only while the program runs, so the method must be picked then: runtime polymorphism.
+
+See `One Overload per Class`_ and `Scalability and Redundancy`_ under Further Reading.
+
+Runtime Polymorphism
+^^^^^^^^^^^^^^^^^^^^
+
+**Runtime polymorphism**: the method a call runs is picked while the program runs, from the class of the object. A call through a base reference or pointer then runs the derived class's own method. Also called **dynamic polymorphism** (Stroustrup, *C++ Glossary*); picking the method at run time is **dynamic binding** (*C++ FAQ: Inheritance, virtual functions*).
+
+.. admonition:: Three Conditions for Runtime Polymorphism
+   :class: important
+
+   1. A derived class inherits from a base class with ``public``. For instance: ``RoboTaxi`` from ``Vehicle``.
+   2. The base class declares the method ``virtual``, and the derived class overrides it: ``drive``.
+   3. The call goes through a base reference or pointer: ``Vehicle&``, ``Vehicle*``, or a smart pointer such as ``std::shared_ptr<Vehicle>``, whose ``->`` gives a ``Vehicle*``. A ``Vehicle`` object copied from a ``RoboTaxi`` is sliced (`Slicing`_): it is a plain ``Vehicle``.
+
+Step 1: ``public`` Inheritance
+""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   class RoboTaxi : public Vehicle { /* ... */ };
+   void start_shift(const Vehicle& vehicle, const Route& route);
+   start_shift(robotaxi, maya_ride);  // binds as a const Vehicle&
+
+- With ``public``, any code may treat a ``RoboTaxi`` as a ``Vehicle``: ``main``, ``start_shift`` and ``Fleet`` do.
+- With ``private``, only the methods of ``RoboTaxi`` may; with ``protected``, the methods of its derived classes too. There, a ``const Vehicle&`` to the object still runs ``RoboTaxi::drive``. Outside, the same ``start_shift`` call does not compile (g++ 13.3):
+
+.. code-block:: text
+
+   error: 'Vehicle' is an inaccessible base of 'RoboTaxi'
+
+.. important::
+
+   The design calls ``drive`` through a ``Vehicle`` from outside the classes, so it needs ``public`` inheritance.
+
+See `When protected and private Inheritance Make Sense`_ under Further Reading.
+
+Step 2: A ``virtual`` Method in the Base Class
+""""""""""""""""""""""""""""""""""""""""""""""
 
 A ``virtual`` **method** is a method declared ``virtual`` in a base class. A call through a base reference or pointer runs the version of the dynamic type, picked while the program runs. This is **runtime polymorphism**.
 
@@ -1768,67 +1828,26 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
 
    class Vehicle {
     public:
-     virtual ~Vehicle() = default;  // why: virtual Destructors
+     virtual ~Vehicle() = default;  // why: virtual Methods in Depth
      virtual void drive(const Route& route) const;  // body in vehicle.cpp
    };
 
-   class RoboTaxi : public Vehicle {
-    public:
-     explicit RoboTaxi(
-         double max_speed, std::string operating_zone = "College Park",
-         AutomationLevel automation_level = AutomationLevel::level_4)
-         : Vehicle{max_speed},
-           operating_zone_{std::move(operating_zone)},
-           automation_level_{automation_level} {}
-     void drive(const Route& route) const override;  // body in robotaxi.cpp
-
-    private:
-     std::string operating_zone_;        // the area it may drive in
-     AutomationLevel automation_level_;  // SAE J3016 level
-   };
-
-- A derived method with the same name, parameters and ``const`` **overrides** the ``virtual`` one. ``override`` is explained in `override`_, the destructor in `virtual Destructors`_.
-- You make ``drive`` ``virtual`` in Step 4, after the ``override`` part.
+- You make ``drive`` ``virtual`` in Live Coding Step 4, after the ``override`` sections.
 
 .. admonition:: The cost of runtime polymorphism
    :class: important
 
-   A ``virtual`` call costs a little more than a direct call: it first reads a hidden table of the class's ``virtual`` methods, and the compiler usually cannot replace the call with the method's body. Each object also holds an 8-byte pointer to that table: 16 bytes become 24 (`The Cost of virtual`_). Make a method ``virtual`` only when a derived class overrides it.
+   A ``virtual`` call costs a little more than a direct call: it first reads a hidden table of the class's ``virtual`` methods, and the compiler usually cannot replace the call with the method's body. Each object also holds an 8-byte pointer to that table: 16 bytes become 24 (:doc:`virtual Methods in Depth <l9_virtual>`). Make a method ``virtual`` only when a derived class overrides it.
 
-See `The Cost of virtual`_ under Further Reading.
+Step 2: Overriding and ``override``
+"""""""""""""""""""""""""""""""""""
 
-Slicing
-"""""""
+**Overriding**: a derived method with the same name, parameters and ``const`` as a ``virtual`` method of its base class **overrides** it.
 
-**Slicing**: copying a derived object into an object of its base class copies only the base part. The copy is a plain ``Vehicle``.
+``override``: optional, written after a derived method's parameter list and its ``const``. Without it, a matching method still overrides. With it, the compiler checks that the method overrides a ``virtual`` method of a base class, and stops with an error if it does not: a safety check.
 
-.. code-block:: cpp
-
-   // Small Vehicle: two doubles, virtual drive
-   Taxi taxi{13.4, "Ana"};
-   Vehicle copy{taxi};  // not a reference
-   copy.drive(maya_ride);
-   std::vector<Vehicle> parked;
-   parked.push_back(taxi);  // sliced too
-   parked[0].drive(maya_ride);
-   std::cout << sizeof(Vehicle) << ' '
-             << sizeof(Taxi) << '\n';
-
-.. code-block:: text
-
-   Vehicle: drives 500 m
-   Vehicle: drives 500 m
-   24 56
-
-- 24 of the 56 bytes are copied: ``driver_name_`` is left behind, and the copy's dynamic type is ``Vehicle``. Rule: `Core Guidelines ES.63 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-slice>`__, "Don't slice".
-- These are the ``runtime::`` classes of `virtual Methods in the Base Class`_: 24 bytes for ``Vehicle``, plus the 32-byte ``std::string`` of ``Taxi``.
-
-See `Copying a Vehicle of the Design`_ and `Discussion: Which drive() Runs?`_ under Further Reading.
-
-override
-^^^^^^^^
-
-``override`` is written after a derived method's parameter list and its ``const``. The compiler checks that the method overrides a ``virtual`` method of a base class, and stops with an error if it does not.
+RoboTaxi Marks drive override
+"""""""""""""""""""""""""""""
 
 .. code-block:: cpp
 
@@ -1896,109 +1915,39 @@ override Catches Both
 
    "If a virtual function is marked with the virt-specifier ``override`` and does not override a member function of a base class, the program is ill-formed". C++20 **[class.virtual]** (11.7.2) paragraph 5.
 
+Step 3: A Base Reference or Pointer
+"""""""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   void start_shift(const Vehicle& vehicle, const Route& route) {
+     vehicle.drive(route);
+   }
+   start_shift(robotaxi, maya_ride);
+   start_shift(taxi, maya_ride);
+   std::vector<Vehicle*> by_pointer{&robotaxi, &taxi};
+   for (const Vehicle* vehicle : by_pointer) {
+     vehicle->drive(maya_ride);
+   }
+
+.. code-block:: text
+
+   RoboTaxi: drives itself 500 m
+   Taxi: Ana drives 500 m
+   RoboTaxi: drives itself 500 m
+   Taxi: Ana drives 500 m
+
+- This is the code of the challenge (`The Challenge: Two Vectors`_ and `The Challenge: A Base Reference`_). With ``drive`` ``virtual``, the dynamic type picks: each object runs its own ``drive``.
+- A copy is not a reference: a ``Taxi`` copied into a ``Vehicle`` is sliced (`Slicing`_). How a ``virtual`` call finds its method: :doc:`virtual Methods in Depth <l9_virtual>`.
+
 Live Coding: Step 4
 """""""""""""""""""
 
-**10 minutes, in class, on your own.** The instructions are on the slides.
+**15 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
 
-See `Step 4: One Function for Every Vehicle`_ and `auto or a Base Pointer`_ under Further Reading.
+Step 4 is the last step of the exercise: upload your Live Coding files on Canvas (`Upload Your Live Coding`_).
 
-virtual Destructors
-^^^^^^^^^^^^^^^^^^^
-
-A ``virtual`` **destructor** is a destructor declared ``virtual`` in the base class. Deleting a derived object through a base pointer then runs the derived destructor first, then the base destructor.
-
-.. code-block:: cpp
-
-   class Vehicle {
-    public:
-     virtual ~Vehicle() = default;
-     // ...
-   };
-
-- With ``= default`` (the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`), the compiler writes the body, which here does nothing. What matters is ``virtual``.
-- The destructors you already wrote gave back what an object owns. The question now is which destructor runs.
-
-.. note::
-
-   In a ``delete``, if the static type differs from the dynamic type, "the static type shall be a base class of the dynamic type of the object to be deleted and the static type shall have a virtual destructor or the behavior is undefined". C++20 **[expr.delete]** (7.6.2.8) paragraph 3.
-
-Deleting through a Base Pointer
-"""""""""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   {
-     // A small Vehicle: two doubles and a virtual drive.
-     // ~Vehicle is not virtual. Both destructors print their names.
-     std::unique_ptr<Vehicle> vehicle{
-         std::make_unique<Taxi>(13.4, "Ana Maria Rodrigues")};
-     vehicle->drive(maya_ride);
-   }  // vehicle's destructor runs delete on a Vehicle*
-
-**Output:**
-
-.. code-block:: text
-
-   Taxi: Ana Maria Rodrigues drives 500 m
-   ~Vehicle
-
-- At the closing brace, ``std::unique_ptr<Vehicle>`` deletes through a ``Vehicle*``, and ``~Vehicle`` is not ``virtual``, so only ``~Vehicle`` runs. ``~Taxi`` never runs, and neither does the destructor of its ``std::string``: undefined behavior (`virtual Destructors`_).
-- Built with AddressSanitizer, this code prints the two lines above, then AddressSanitizer stops the run:
-
-.. code-block:: text
-
-   ERROR: AddressSanitizer: new-delete-type-mismatch on 0x... in thread T0:
-     object passed to delete has wrong type:
-     size of the allocated type:   56 bytes;
-     size of the deallocated type: 24 bytes.
-
-**With that check off** (``ASAN_OPTIONS=new_delete_type_mismatch=0``):
-
-.. code-block:: text
-
-   ERROR: LeakSanitizer: detected memory leaks
-   Direct leak of 20 byte(s) in 1 object(s) allocated from:
-   SUMMARY: AddressSanitizer: 20 byte(s) leaked in 1 allocation(s).
-
-- The stack traces are cut.
-- 56 bytes were allocated for a ``Taxi``, and ``delete`` freed them as a 24-byte ``Vehicle``.
-- The 20 bytes that leak are the driver's name: 19 characters and the ``'\0'`` that ends them, never freed because ``~Taxi`` never ran.
-- The course flags do not catch this at compile time: with ``-Wall -Wextra``, g++ gives no warning. With ``-Wnon-virtual-dtor``, it warns: ``'class Vehicle' has virtual functions and accessible non-virtual destructor``.
-
-The Sizes in the Report
-"""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   class Vehicle {  // small: two doubles, one virtual method
-    public:
-     ~Vehicle();  // not virtual
-     virtual void drive(const Route& route) const;
-    private:
-     double max_speed_;
-     double speed_{0.0};
-   };
-   class Taxi : public Vehicle {  // also ~Taxi and drive
-    private:
-     std::string driver_name_;
-   };
-
-1. ``Vehicle``: two doubles (16 bytes) and the vtable pointer (8 bytes, `The Cost of virtual`_): 24 bytes.
-2. ``Taxi`` adds a ``std::string`` (32 bytes): 24 + 32 = 56 bytes.
-3. The name has 19 characters, more than the 15 a g++ ``std::string`` keeps inside itself, so it is on the heap, and only ``~Taxi`` would free it.
-
-- With the design's ``Vehicle`` (six data members): 96 and 128 bytes.
-- The sizes were measured with ``sizeof`` in g++ 13.3, with the course flags.
-
-See `Discussion: Who Needs a virtual Destructor?`_ under Further Reading.
-
-Live Coding: Step 5
-"""""""""""""""""""
-
-**5 minutes, in class, on your own.** The instructions are on the slides.
-
-See `Step 5: With a virtual Destructor`_ under Further Reading.
+See `auto or a Base Pointer`_ under Further Reading.
 
 Abstraction
 -----------
@@ -2029,12 +1978,12 @@ A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``.
 
    "A class is an abstract class if it has at least one pure virtual function". C++20 **[class.abstract]** (11.7.3) paragraph 2.
 
-Live Coding: Step 6
+Live Coding: Step 5
 """""""""""""""""""
 
 **Homework, not collected.** The instructions are on the slides.
 
-See `Step 6: No Vehicle Objects`_ and `Step 6: RoboTaxi and Taxi`_ under Further Reading.
+See `Step 5: No Vehicle Objects`_ and `Step 5: RoboTaxi and Taxi`_ under Further Reading.
 
 Concrete Classes
 ^^^^^^^^^^^^^^^^
@@ -2101,7 +2050,7 @@ Fleet and Passenger Do Not Change
    RoboTaxi: 2 sensors checked, drives 500 m
    Taxi: Ana drives 500 m
 
-- ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 6 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
+- ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 5 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
 
 See `Discussion: Add a RoboBus`_ under Further Reading.
 
@@ -2185,12 +2134,12 @@ The Reason for Each final
 
 See `Discussion: A Keyword for Each Method`_ under Further Reading.
 
-Live Coding: Step 7
+Live Coding: Step 6
 ^^^^^^^^^^^^^^^^^^^
 
 **Homework, not collected.** The instructions are on the slides.
 
-See `Step 7: A final Class`_ under Further Reading.
+See `Step 6: A final Class`_ under Further Reading.
 
 Further Reading
 ---------------
@@ -2208,41 +2157,40 @@ The sections below come from the appendix of the slides. They are **not presente
      - `All Twelve Requirements`_ (ii)
      - The full list, FR-1 to FR-12
    * - Live Coding
-     - `What the Live Coding Replaces`_ (iii to viii)
-     - The finished code of Steps 1 and 4 to 7, with its output
+     - `What the Live Coding Replaces`_ (iii to vi)
+     - The finished code of Steps 1, 5 and 6, with its output
    * - The final Keyword
-     - `A final Method`_ (ix)
+     - `A final Method`_ (vii)
      - A method that no derived class can override, in a class that is not final
    * - Class Relationships
-     - `Multiple Inheritance, the Code`_ (x)
+     - `Multiple Inheritance, the Code`_ (viii)
      - A class with two base classes, in C++
    * - Class Relationships
-     - `protected and private Inheritance`_ (xi)
+     - `protected and private Inheritance`_ (ix)
      - The access of each base member for each keyword
    * - Class Relationships
-     - `When protected and private Inheritance Make Sense`_ (xii to xiii)
+     - `When protected and private Inheritance Make Sense`_ (x to xi)
      - When each keyword fits, with an example, and what the isocpp FAQ and the Google C++ Style Guide advise
    * - Class Relationships
-     - `A Base Member in the List`_ (xiv)
+     - `A Base Member in the List`_ (xii)
      - Why a derived constructor cannot set a base member
    * - Polymorphism
-     - `auto or a Base Pointer`_ (xv to xviii)
+     - `auto or a Base Pointer`_ (xiii to xvi)
      - The type ``auto`` deduces for a pointer, and what each static type allows
    * - Polymorphism
-     - `Copying a Vehicle of the Design`_ (xix)
+     - `Copying a Vehicle of the Design`_ (xvii)
      - Why the copy fails, and how to delete it
-   * - Polymorphism
-     - `The Cost of virtual`_ (xx)
-     - The hidden vtable pointer: what it adds to each object and to each call
    * - Each part
-     - `Verbs and Links`_ (xxi to xxxiii)
+     - `Verbs and Links`_ (xviii to xxix)
      - More code, memory pictures and UML for the slides of each part, in the order of the lecture
    * - Discussions
-     - `Discussions`_ (xxxiv to xl)
+     - `Discussions`_ (xxx to xxxiv)
      - The questions of the discussions, with their answers
    * - Live Coding
-     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xli to xlii)
+     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xxxv to xxxvi)
      - Code to copy for Step 2: ``std::find`` and ``std::erase_if`` on a vector of numbers
+
+The vtable, the cost of ``virtual``, ``virtual`` destructors and their discussions are on the reading page :doc:`virtual Methods in Depth <l9_virtual>`.
 
 All Twelve Requirements
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -2294,35 +2242,21 @@ Step 1: A Passenger Rides a Vehicle
 
    The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
-Step 4: One Function for Every Vehicle
-""""""""""""""""""""""""""""""""""""""
-
-.. note::
-
-   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
-
-Step 5: With a virtual Destructor
-"""""""""""""""""""""""""""""""""
-
-.. note::
-
-   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
-
-Step 6: No Vehicle Objects
+Step 5: No Vehicle Objects
 """"""""""""""""""""""""""
 
 .. note::
 
    The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
-Step 6: RoboTaxi and Taxi
+Step 5: RoboTaxi and Taxi
 """""""""""""""""""""""""
 
 .. note::
 
    The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
-Step 7: A final Class
+Step 6: A final Class
 """""""""""""""""""""
 
 .. note::
@@ -2394,7 +2328,7 @@ Multiple Inheritance, the Code
 - The base classes are separated by commas, each with ``public``.
 - The constructor passes ``wing_span`` to ``Bird``'s constructor: ``Bird``'s data stays ``private``.
 - A ``const Lion&``, a ``const Human&`` and a ``const Bird&`` can each refer to a ``Sphinx``.
-- Run: ``702run week9_appendix x``. A sphinx with a 2.5 m wing span prints ``Lion: runs on 4 legs`` through the ``const Lion&``, ``Human: speaks`` through the ``const Human&``, ``true`` for ``can_fly`` through the ``const Bird&``, then ``Sphinx: What walks on four legs in the morning?``.
+- Run: ``702run week9_appendix viii``. A sphinx with a 2.5 m wing span prints ``Lion: runs on 4 legs`` through the ``const Lion&``, ``Human: speaks`` through the ``const Human&``, ``true`` for ``can_fly`` through the ``const Bird&``, then ``Sphinx: What walks on four legs in the morning?``.
 
 Back to `Multiple Inheritance`_.
 
@@ -2503,7 +2437,7 @@ protected and private Inheritance, the Code
 - With ``private``, ``NightShuttle`` cannot call ``check()``, and outside code cannot see the base.
 - With ``protected`` instead, ``start_late()`` compiles and prints ``go``; outside code still cannot see the base (g++ 13.3: ``'PreTripCheck' is an inaccessible base of 'NightShuttle'``).
 - The destructor of ``PreTripCheck`` is ``protected`` and non-virtual, one of the two choices of `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__. Outside code cannot delete a ``Shuttle`` through a ``PreTripCheck*``.
-- Run: ``702run week9_appendix xiii`` (after Nov 10).
+- Run: ``702run week9_appendix xi`` (after Nov 10).
 
 Back to `When protected and private Inheritance Make Sense`_.
 
@@ -2573,7 +2507,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. With the design's ``RoboTaxi``, ``robotaxi->get_operating_zone()`` compiles and ``vehicle->get_operating_zone()`` does not.
-- Run: ``702run week9_appendix xvi``.
+- Run: ``702run week9_appendix xiv``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2597,7 +2531,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and the parameter of ``hand_over`` all accept it.
 - Each ``std::unique_ptr`` is the only owner of its vehicle. ``Fleet`` shares its vehicles, so it holds ``std::shared_ptr<Vehicle>`` instead.
-- Run: ``702run week9_appendix xvii``.
+- Run: ``702run week9_appendix xv``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2661,29 +2595,6 @@ Copying a Vehicle of the Design
    "A polymorphic class should suppress public copy/move". Rule: `Core Guidelines C.67 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-copy-virtual>`__.
 
 Back to `Slicing`_.
-
-The Cost of virtual
-^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: cpp
-
-   using Plain = compile_time::Vehicle;  // no virtual method
-   using Poly = runtime::Vehicle;        // virtual methods
-   std::cout << sizeof(Plain) << ' ' << sizeof(Poly) << '\n';  // 16 24
-   std::cout << std::boolalpha << std::is_polymorphic_v<Plain> << ' '
-             << std::is_polymorphic_v<Poly> << '\n';  // false true
-
-- ``compile_time::Vehicle`` (`Compile-Time Polymorphism`_) and ``runtime::Vehicle`` (`virtual Methods in the Base Class`_), (``week9_appendix`` runs copies of them), have the same data members, ``max_speed_`` and ``speed_``. The polymorphic one is 8 bytes larger: g++ stores a hidden pointer in it, to a table of its class's ``virtual`` methods, the **vtable**. The C++ standard leaves this to the compiler.
-- ``nm -C appendix.cpp.o`` lists ``vtable for (anonymous namespace)::runtime::Vehicle`` (g++ 13.3). Without ``-C`` (demangle), ``nm`` prints the linker's name, ``_ZTVN12_GLOBAL__N_17runtime7VehicleE``. The object file is in ``build/project/week9/CMakeFiles/week9_appendix.dir/appendix/src/``.
-- A ``virtual`` call reads that table first, so it costs a little more than a direct call.
-- A **polymorphic class** is one that "declares or inherits a virtual function" (C++20 **[class.virtual]** (11.7.2) paragraph 1).
-- Run: ``702run week9_appendix xx``.
-
-.. note::
-
-   "Redundant ``virtual`` increases run-time and object-code size". Rule: `Core Guidelines C.132 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-virtual>`__, "Don't make a function ``virtual`` without reason".
-
-Back to `virtual Methods in the Base Class`_.
 
 Verbs and Links
 ^^^^^^^^^^^^^^^
@@ -2750,7 +2661,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_appendix xxiv``.
+- Run: ``702run week9_appendix xxi``.
 
 Back to `Exclusive Ownership Needs std::unique_ptr`_.
 
@@ -2835,7 +2746,7 @@ Here ``Vehicle`` is the concrete class you already have; the Abstraction section
 - This ``drive`` prints the length and the time, length / speed: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``maya_ride`` is destroyed; the ``Vehicle`` kept nothing of it.
 - A dependency needs no smart pointer: a reference parameter. Core Guidelines `F.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-smart>`__: "For general use, take ``T*`` or ``T&`` arguments rather than smart pointers".
-- Run: ``702run week9_appendix xxvii``.
+- Run: ``702run week9_appendix xxiv``.
 
 Back to `A Vehicle Uses a Route`_.
 
@@ -2860,7 +2771,7 @@ The **base subobject**: the whole ``Vehicle`` at the start of every ``Taxi`` obj
 
 - A ``Taxi`` object starts with its base subobject: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120.
 - ``RoboTaxi`` adds a ``std::string`` (32 bytes) and an ``int`` (4 bytes), then 4 bytes of padding: 88 + 32 + 4 + 4 = 128.
-- Run: ``702run week9_appendix xxviii``.
+- Run: ``702run week9_appendix xxv``.
 
 Back to `A Base Class Reference to a Derived Object`_.
 
@@ -2900,9 +2811,9 @@ One Overload per Class
    Taxi: Ana drives 500 m
 
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
-- Run: ``702run week9_appendix xxx``.
+- Run: ``702run week9_appendix xxvii``.
 
-Back to `The Challenge: Two Vectors`_.
+Back to `Overloads Cannot Meet the Challenge`_.
 
 
 Scalability and Redundancy
@@ -2916,19 +2827,7 @@ Scalability and Redundancy
 
    We need one function that takes any ``Vehicle``, and still runs each object's own ``drive``.
 
-Back to `The Challenge: Two Vectors`_.
-
-
-What Runtime Polymorphism Needs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-1. **Inheritance**: ``RoboTaxi`` and ``Taxi`` derive from ``Vehicle``. Done.
-2. **A base reference or pointer** to the object: ``Vehicle&``, ``Vehicle*``, ``std::unique_ptr<Vehicle>`` or ``std::shared_ptr<Vehicle>``. ``start_shift`` has a ``const Vehicle&``. Done.
-3. **A virtual method** in the base class. Not yet.
-
-- With 1 and 2 only, the static type picks: ``Vehicle::drive`` runs for both, as in `The Challenge: A Base Reference`_.
-
-Back to `The Challenge: A Base Reference`_.
+Back to `Overloads Cannot Meet the Challenge`_.
 
 
 final in the Class Diagram
@@ -3015,7 +2914,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxxv``.
+   - Run: ``702run week9_appendix xxxi``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -3047,62 +2946,6 @@ Use the questions of the chart in `Choosing a Relationship and Its C++`_, in ord
 Back to `Choosing a Relationship and Its C++`_.
 
 
-Discussion: Which drive() Runs?
-"""""""""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   // Vehicle::drive is virtual, and RoboTaxi overrides it.
-   RoboTaxi robotaxi{13.4};
-   Vehicle& ref{robotaxi};
-   Vehicle* ptr{&robotaxi};
-   Vehicle copy{robotaxi};
-
-   robotaxi.drive(maya_ride);  // 1
-   ref.drive(maya_ride);       // 2
-   ptr->drive(maya_ride);      // 3
-   copy.drive(maya_ride);      // 4
-
-For each line: ``Vehicle::drive`` or ``RoboTaxi::drive``? Give the static type and the dynamic type.
-
-.. dropdown:: Answers
-   :class-container: sd-border-success
-
-   1. ``RoboTaxi::drive``. The static type and the dynamic type are both ``RoboTaxi``.
-   2. ``RoboTaxi::drive``. The static type is ``Vehicle``, the dynamic type is ``RoboTaxi``, and ``drive`` is ``virtual``.
-   3. ``RoboTaxi::drive``, for the same reason, through a ``Vehicle*``.
-   4. ``Vehicle::drive``. ``copy`` is a ``Vehicle`` object, sliced: its static type and its dynamic type are both ``Vehicle``.
-
-   ``702run week9_appendix xxxvii`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` once.
-
-Back to `Slicing`_.
-
-
-Discussion: Who Needs a virtual Destructor?
-"""""""""""""""""""""""""""""""""""""""""""
-
-Which of these classes of the design needs ``virtual ~ClassName() = default;``?
-
-1. ``Vehicle``, the base of ``RoboTaxi`` and ``Taxi``.
-2. ``Sensor`` and ``Route``.
-3. ``Fleet``, which has no ``virtual`` method and no derived class.
-
-A class with a ``virtual`` method gets a ``virtual`` destructor: code can then delete a derived object through a pointer to it. Rule: `Core Guidelines C.127 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-dtor>`__.
-
-.. dropdown:: Answers
-   :class-container: sd-border-success
-
-   1. Yes: ``Vehicle`` has a ``virtual`` method. A ``std::unique_ptr<Vehicle>`` or a ``std::shared_ptr<Vehicle>`` can own a ``RoboTaxi``, and its ``delete`` goes through ``Vehicle``.
-   2. No: ``Sensor`` and ``Route`` have no ``virtual`` method, and no class derives from them, so nothing deletes them through a base pointer. A ``virtual`` destructor there would add the 8-byte vtable pointer of `The Cost of virtual`_ for nothing.
-   3. No, for the same reason: ``Fleet`` has no ``virtual`` method, and no class derives from it.
-
-   C.127 says: "A class with a virtual function should have a virtual or protected destructor". ``RoboTaxi`` and ``Taxi`` need nothing written: their destructors are already ``virtual``, because they override ``Vehicle``'s.
-
-   ``702run week9_appendix xxxviii`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
-
-Back to `The Sizes in the Report`_.
-
-
 Discussion: Add a RoboBus
 """""""""""""""""""""""""
 
@@ -3117,7 +2960,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxix`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxiii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -3173,7 +3016,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xli``.
+- Run: ``702run week9_appendix xxxv``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3197,4 +3040,4 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xlii``.
+- Run: ``702run week9_appendix xxxvi``.
