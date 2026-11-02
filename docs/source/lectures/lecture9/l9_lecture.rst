@@ -590,6 +590,27 @@ Choosing the Type of ``ride_``
 - A ``std::weak_ptr`` owns nothing and can tell. That is why ``ride_`` is a ``std::weak_ptr``. `Two Separate Lifetimes`_ runs it.
 - A plain pointer is safe only when the object it points to surely outlives the pointer. If a ``Sensor`` kept a pointer to the ``Vehicle`` that owns it, that pointer could be plain.
 
+Why Not a ``Vehicle`` or a ``Vehicle&`` for ``ride_``
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+``ride_`` could also be a ``Vehicle`` or a ``Vehicle&``. With our ``Vehicle``, neither compiles (g++ 13.3):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 22 62
+
+   * - Type of ``ride_``
+     - What it holds
+     - Why it fails
+   * - ``Vehicle``
+     - The passenger's own copy of a car
+     - A passenger is made before boarding, with no car, and ``Vehicle`` has no default constructor: "no matching function for call to ``Vehicle::Vehicle()``". A copy is also not the fleet's car: retiring the car would not end the ride.
+   * - ``Vehicle&``
+     - Another name for the fleet's car
+     - A reference must be bound in the constructor: "uninitialized reference member". After that it always names the same car: ``leave()`` cannot empty it, and if the car is destroyed, it dangles like ``Vehicle*``.
+
+- In ``board()``, ``ride_ = vehicle;`` does not pick another car for either type: it copies one ``Vehicle`` into another. That fails too: ``sensors_`` holds ``std::unique_ptr``, which cannot be copied.
+
 Two Separate Lifetimes
 """"""""""""""""""""""
 
