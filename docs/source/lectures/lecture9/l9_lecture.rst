@@ -1438,9 +1438,11 @@ private Stays private
 
    class RoboTaxi : public Vehicle {  // the Vehicle you wrote: speed_ is private
     public:
-     void go() { speed_ = get_max_speed(); }  // does not compile
+     void go();
      // ...
    };
+   // robotaxi.cpp
+   void RoboTaxi::go() { speed_ = get_max_speed(); }  // does not compile
 
 .. code-block:: text
 
@@ -1457,8 +1459,10 @@ protected Data
    class RoboTaxi : public Vehicle {  // speed_ is protected now
     public:
      // ... constructor and members
-     void speed_up() { speed_ = 20.0; }  // compiles: no check
+     void speed_up();
    };
+   // robotaxi.cpp
+   void RoboTaxi::speed_up() { speed_ = 100.0; }  // compiles: no check
 
    RoboTaxi robotaxi{13.4};
    robotaxi.speed_up();
@@ -1469,10 +1473,10 @@ It prints:
 
 .. code-block:: text
 
-   20 13.4
+   100 13.4
 
-- For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 20. Every derived class can now break ``Vehicle``'s invariant.
-- This code prints ``20 13.4``: the speed, then the maximum speed.
+- For a ``RoboTaxi`` built with a maximum speed of 13.4, ``get_speed()`` then returns 100. Every derived class can now break ``Vehicle``'s invariant.
+- This code prints ``100 13.4``: the speed, then the maximum speed.
 
 .. note::
 
@@ -1486,9 +1490,12 @@ Through Vehicle's public Methods
    class RoboTaxi : public Vehicle {  // speed_ is private
     public:
      // ... constructor and members
-     void slow_down() { set_speed(get_speed() / 2.0); }
-     void speed_up() { set_speed(20.0); }  // throws
+     void slow_down();
+     void speed_up();
    };
+   // robotaxi.cpp
+   void RoboTaxi::slow_down() { set_speed(get_speed() / 2.0); }
+   void RoboTaxi::speed_up() { set_speed(20.0); }  // throws
 
    RoboTaxi car_a{13.4};
    car_a.set_speed(10.0);
@@ -1595,14 +1602,37 @@ Compile-Time Polymorphism
 
 **Compile-time polymorphism**: the compiler picks the function a call runs from the types written in the code.
 
+Overloaded functions:
+
+.. code-block:: cpp
+
+   void print(int value);
+   void print(double value);
+
+   print(3);    // int 3
+   print(2.5);  // double 2.5
+
+One operator, several types:
+
+.. code-block:: cpp
+
+   int sum{1 + 2};  // 3
+   std::string word{
+       std::string{"go"} + "!"};  // go!
+
+In each call, the types of the arguments pick the function: ``print(int)`` or ``print(double)``, the ``+`` of ``int`` or the ``+`` of ``std::string`` (measured with g++ 13.3: ``int 3``, ``double 2.5``, ``3 go!``). A derived class that redefines a method is a third case, in the next sections.
+
+The Vehicle and RoboTaxi of This Part
+"""""""""""""""""""""""""""""""""""""
+
+``drive`` is not ``virtual`` here: ``RoboTaxi`` redefines it.
+
 .. code-block:: cpp
 
    class Vehicle {  // only what these slides need
     public:
      explicit Vehicle(double max_speed) : max_speed_{max_speed} {}
-     void drive(const Route& route) const {
-       std::cout << "Vehicle: drives " << route.length() << " m\n";
-     }
+     void drive(const Route& route) const;
     private:
      double max_speed_;
      double speed_{0.0};
@@ -1615,14 +1645,20 @@ Compile-Time Polymorphism
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
-     void drive(const Route& route) const {  // redefines Vehicle::drive
-       std::cout << "RoboTaxi: drives itself " << route.length() << " m\n";
-     }
+     void drive(const Route& route) const;  // redefines Vehicle::drive
 
     private:
      std::string operating_zone_;        // the area it may drive in
      AutomationLevel automation_level_;  // SAE J3016 level
    };
+
+   // vehicle.cpp and robotaxi.cpp
+   void Vehicle::drive(const Route& route) const {
+     std::cout << "Vehicle: drives " << route.length() << " m\n";
+   }
+   void RoboTaxi::drive(const Route& route) const {
+     std::cout << "RoboTaxi: drives itself " << route.length() << " m\n";
+   }
 
 Redefinition
 """"""""""""
@@ -1722,7 +1758,7 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
    class Vehicle {
     public:
      virtual ~Vehicle() = default;  // why: virtual Destructors
-     virtual void drive(const Route& route) const { /* as before */ }
+     virtual void drive(const Route& route) const;  // body in vehicle.cpp
    };
 
    class RoboTaxi : public Vehicle {
@@ -1733,7 +1769,7 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
          : Vehicle{max_speed},
            operating_zone_{std::move(operating_zone)},
            automation_level_{automation_level} {}
-     void drive(const Route& route) const override { /* as before */ }
+     void drive(const Route& route) const override;  // body in robotaxi.cpp
 
     private:
      std::string operating_zone_;        // the area it may drive in
@@ -2125,10 +2161,12 @@ The Reason for Each final
    class FastRoboTaxi : public RoboTaxi {  // if RoboTaxi were not final
     public:
      // ... a constructor
-     void drive(const Route& route) const override {
-       std::cout << "FastRoboTaxi: drives " << route.length() << " m\n";
-     }  // no sensor check: it drives with 0 sensors
+     void drive(const Route& route) const override;
    };
+   // fast_robotaxi.cpp: no sensor check, it drives with 0 sensors
+   void FastRoboTaxi::drive(const Route& route) const {
+     std::cout << "FastRoboTaxi: drives " << route.length() << " m\n";
+   }
 
 - ``RoboTaxi::drive`` keeps FR-4: with no sensor, the robotaxi stays parked. A class derived from ``RoboTaxi`` could override ``drive`` and skip that check, so ``RoboTaxi`` is ``final``.
 - ``Taxi`` is ``final`` for the same reason: in ``project/week9/common``, its ``drive`` stays parked when the taxi has no driver.
@@ -2412,22 +2450,24 @@ protected and private Inheritance, the Code
    class PreTripCheck {
     protected:
      ~PreTripCheck() = default;
-     void check() const {
-       std::cout << (ok() ? "go\n"
-                          : "stop\n");
-     }
+     void check() const;
      virtual bool ok() const = 0;
    };
 
    class Shuttle
        : private PreTripCheck {
     public:
-     void start() const { check(); }
+     void start() const;
     private:
-     bool ok() const override {
-       return true;
-     }
+     bool ok() const override;
    };
+
+   void PreTripCheck::check() const {
+     std::cout << (ok() ? "go\n"
+                        : "stop\n");
+   }
+   void Shuttle::start() const { check(); }
+   bool Shuttle::ok() const { return true; }
 
 ``shuttle.start()`` prints ``go``. Neither of these compiles with the ``private`` base:
 
@@ -2436,10 +2476,11 @@ protected and private Inheritance, the Code
    class NightShuttle
        : public Shuttle {
     public:
-     void start_late() const {
-       check();
-     }
+     void start_late() const;
    };
+   void NightShuttle::start_late() const {
+     check();
+   }
    // outside the classes
    PreTripCheck& as_check{shuttle};
 
