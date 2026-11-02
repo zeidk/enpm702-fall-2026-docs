@@ -19,7 +19,7 @@ The `Further Reading`_ part, at the end of this page, is the appendix of the sli
 Upload Your Live Coding
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Step 4** on your own, in 15 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
+Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Step 4** on your own, in 10 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
 - **Before the end of class**, upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas.
 - It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Step 4. I do not grade it for correctness.
@@ -207,39 +207,7 @@ It compiles with no warning. It is neither safe nor efficient. With what you alr
 - Work in pairs for three minutes: find every line you would change, and say what goes wrong without the change.
 - Hints, if you are stuck: what does ``Vehicle car_a = 13.4;`` do? What is the speed of a new car? Can you call ``get_speed`` on a ``const Vehicle&``?
 
-Owners Keep Objects Alive
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-An **owner** of an object decides when the object is destroyed. While at least one owner holds the object, the object stays alive. "Keeps it alive" means "is one of its owners".
-
-.. grid:: 1 1 2 2
-   :gutter: 2
-
-   .. grid-item::
-
-      .. code-block:: cpp
-
-         auto car_a{std::make_unique<Vehicle>(13.4)};
-         auto car_b{std::make_shared<Vehicle>(13.4)};
-         auto copy_b{car_b};  // a second owner
-         std::weak_ptr<Vehicle> watcher{car_b};
-         std::cout << std::boolalpha << car_b.use_count()
-                   << ' ' << watcher.expired() << '\n';
-         car_b.reset();
-         copy_b.reset();  // the last owner lets go
-         std::cout << watcher.expired() << '\n';
-
-   .. grid-item::
-
-      .. code-block:: text
-
-         2 false
-         true
-
-- ``car_a`` is the only owner of its ``Vehicle``: a ``std::unique_ptr`` cannot be copied, so its object has one owner.
-- ``car_b`` and ``copy_b`` own one ``Vehicle`` together. Each copy of a ``std::shared_ptr`` is one more owner, so ``use_count()`` is 2. ``watcher``, a ``std::weak_ptr``, only observes the object: it does not count, and ``expired()`` is false while an owner remains.
-- After ``car_b.reset()`` the ``Vehicle`` lives on, because ``copy_b`` still owns it. After ``copy_b.reset()``, the last owner has let go: the ``Vehicle`` is destroyed and ``expired()`` is true.
-- Composition has one owner, aggregation shares ownership, and association and dependency own nothing.
+See `Owners Keep Objects Alive`_ under Further Reading.
 
 The Program We Will Build
 -------------------------
@@ -659,90 +627,7 @@ Two Separate Lifetimes
 
 See `Before reset, in Memory`_ and `After reset, in Memory`_ under Further Reading.
 
-Two Headers That Include Each Other
-"""""""""""""""""""""""""""""""""""
-
-If ``A`` refers to a ``B`` and the ``B`` refers back to its ``A``, the association is two-way, and each header would include the other.
-
-.. code-block:: cpp
-   :caption: a.hpp
-
-   // a.hpp
-   #pragma once
-   #include "b.hpp"
-   class A {
-     // ...
-    private:
-     B* b_;
-   };
-
-.. code-block:: cpp
-   :caption: b.hpp
-   :linenos:
-
-   // b.hpp
-   #pragma once
-   #include "a.hpp"
-   class B {
-     // ...
-    private:
-     A* a_;
-   };
-
-A ``main.cpp`` that includes ``a.hpp`` first stops with this error, the only one (g++ 13.3):
-
-.. code-block:: text
-
-   b.hpp:7:3: error: 'A' does not name a type
-
-- ``a.hpp`` includes ``b.hpp``, which includes ``a.hpp`` again. ``#pragma once`` skips that copy, so ``B`` is compiled before ``A`` is declared.
-- The code is in ``project/week9/cycle``. This version, with its errors, is in a comment in ``project/week9/CMakeLists.txt``.
-
-A Forward Declaration Breaks the Cycle
-""""""""""""""""""""""""""""""""""""""
-
-A **forward declaration** is a class's name only, with no body: ``class B;``. As a function declaration lets two functions call each other, it lets two classes refer to each other.
-
-.. code-block:: cpp
-   :caption: a.hpp
-
-   #pragma once
-   class B;  // name only
-   class A {
-    public:
-     void set_b(B* b);
-    private:
-     B* b_{nullptr};
-   };
-
-.. code-block:: cpp
-   :caption: b.hpp
-
-   #pragma once
-   class A;  // name only
-   class B {
-    public:
-     void link(A* a);
-    private:
-     A* a_{nullptr};
-   };
-
-.. code-block:: cpp
-   :caption: b.cpp
-
-   #include "b.hpp"
-   #include "a.hpp"
-   void B::link(A* a) {
-     a_ = a;
-     a->set_b(this);
-   }
-
-.. important::
-
-   A pointer or a reference member needs only the class's name, so ``a.hpp`` and ``b.hpp`` include nothing. A by-value member or a method call needs the full class: ``link`` calls ``a->set_b(this)``, so ``b.cpp`` includes ``a.hpp``.
-
-- Without ``#include "a.hpp"`` in ``b.cpp``, g++ stops at that call with "invalid use of incomplete type".
-- Run: ``702run week9_cycle``. It prints ``built``.
+See `Two Headers That Include Each Other`_ under Further Reading.
 
 Code Review: Step 1
 """""""""""""""""""
@@ -1971,48 +1856,7 @@ RoboTaxi Marks drive override
 
    "Virtual functions should specify exactly one of ``virtual``, ``override``, or ``final``". Rule: `Core Guidelines C.128 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-override>`__. In the base: ``virtual``. In a derived class: ``override``.
 
-A Typo That Compiles
-""""""""""""""""""""
-
-.. code-block:: cpp
-
-   class RoboTaxi : public Vehicle {
-    public:
-     void drvie(const Route& route) const;  // mistake 1: a typo
-     void drive(const Route& route);        // mistake 2: no const
-   };
-   start_shift(robotaxi, maya_ride);  // prints Vehicle: drives 500 m
-
-- Neither line overrides ``drive``: each one declares a new method of ``RoboTaxi``, so ``Vehicle::drive`` runs.
-- Mistake 1: g++ gives no warning. Mistake 2: the name matches, the ``const`` does not. It compiles; ``-Wall`` only warns:
-
-.. code-block:: text
-
-   warning: 'virtual void Vehicle::drive(const Route&) const'
-            was hidden [-Woverloaded-virtual=]
-   note:   by 'void RoboTaxi::drive(const Route&)'
-
-
-override Catches Both
-"""""""""""""""""""""
-
-.. code-block:: cpp
-
-   void drvie(const Route& route) const override;  // does not compile
-   void drive(const Route& route) override;        // does not compile
-
-.. code-block:: text
-
-   error: 'void RoboTaxi::drvie(const Route&) const' marked 'override',
-          but does not override
-   error: 'void RoboTaxi::drive(const Route&)' marked 'override',
-          but does not override
-
-- Both mistakes now stop the build, on the line that has them. Without ``override``, mistake 1 showed only as a wrong line of output.
-
-.. note::
-
-   "If a virtual function is marked with the virt-specifier ``override`` and does not override a member function of a base class, the program is ill-formed". C++20 **[class.virtual]** (11.7.2) paragraph 5.
+See `A Typo That Compiles`_ under Further Reading.
 
 Step 3: A Base Reference or Pointer
 """""""""""""""""""""""""""""""""""
@@ -2042,7 +1886,7 @@ Step 3: A Base Reference or Pointer
 Live Coding: Step 4
 """""""""""""""""""
 
-**15 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
+**10 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
 
 Step 4 is the last step of the exercise: upload your Live Coding files on Canvas (`Upload Your Live Coding`_).
 
@@ -2312,6 +2156,15 @@ The sections below come from the appendix of the slides. They are **not presente
    * - Live Coding
      - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xxxiv to xxxv)
      - Code to copy for Step 2: ``std::find`` and ``std::erase_if`` on a vector of numbers
+   * - Warm-Up
+     - `Owners Keep Objects Alive`_ (xxxvi)
+     - Who deletes an object
+   * - Class Relationships
+     - `Two Headers That Include Each Other`_ (xxxvii to xxxviii)
+     - A forward declaration
+   * - Polymorphism
+     - `A Typo That Compiles`_ (xxxix to xl)
+     - What ``override`` catches
 
 The vtable, the cost of ``virtual``, ``virtual`` destructors and their discussions are on the reading page :doc:`virtual Methods in Depth <l9_virtual>`.
 
@@ -3148,3 +3001,170 @@ std::erase_if on a Vector
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
 - Run: ``702run week9_appendix xxxv``.
+
+Owners Keep Objects Alive
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An **owner** of an object decides when the object is destroyed. While at least one owner holds the object, the object stays alive. "Keeps it alive" means "is one of its owners".
+
+.. grid:: 1 1 2 2
+   :gutter: 2
+
+   .. grid-item::
+
+      .. code-block:: cpp
+
+         auto car_a{std::make_unique<Vehicle>(13.4)};
+         auto car_b{std::make_shared<Vehicle>(13.4)};
+         auto copy_b{car_b};  // a second owner
+         std::weak_ptr<Vehicle> watcher{car_b};
+         std::cout << std::boolalpha << car_b.use_count()
+                   << ' ' << watcher.expired() << '\n';
+         car_b.reset();
+         copy_b.reset();  // the last owner lets go
+         std::cout << watcher.expired() << '\n';
+
+   .. grid-item::
+
+      .. code-block:: text
+
+         2 false
+         true
+
+- ``car_a`` is the only owner of its ``Vehicle``: a ``std::unique_ptr`` cannot be copied, so its object has one owner.
+- ``car_b`` and ``copy_b`` own one ``Vehicle`` together. Each copy of a ``std::shared_ptr`` is one more owner, so ``use_count()`` is 2. ``watcher``, a ``std::weak_ptr``, only observes the object: it does not count, and ``expired()`` is false while an owner remains.
+- After ``car_b.reset()`` the ``Vehicle`` lives on, because ``copy_b`` still owns it. After ``copy_b.reset()``, the last owner has let go: the ``Vehicle`` is destroyed and ``expired()`` is true.
+- Composition has one owner, aggregation shares ownership, and association and dependency own nothing.
+
+Back to `Discussion: Improve This Class`_.
+
+Two Headers That Include Each Other
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If ``A`` refers to a ``B`` and the ``B`` refers back to its ``A``, the association is two-way, and each header would include the other.
+
+.. code-block:: cpp
+   :caption: a.hpp
+
+   // a.hpp
+   #pragma once
+   #include "b.hpp"
+   class A {
+     // ...
+    private:
+     B* b_;
+   };
+
+.. code-block:: cpp
+   :caption: b.hpp
+   :linenos:
+
+   // b.hpp
+   #pragma once
+   #include "a.hpp"
+   class B {
+     // ...
+    private:
+     A* a_;
+   };
+
+A ``main.cpp`` that includes ``a.hpp`` first stops with this error, the only one (g++ 13.3):
+
+.. code-block:: text
+
+   b.hpp:7:3: error: 'A' does not name a type
+
+- ``a.hpp`` includes ``b.hpp``, which includes ``a.hpp`` again. ``#pragma once`` skips that copy, so ``B`` is compiled before ``A`` is declared.
+- The code is in ``project/week9/cycle``. This version, with its errors, is in a comment in ``project/week9/CMakeLists.txt``.
+
+A Forward Declaration Breaks the Cycle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A **forward declaration** is a class's name only, with no body: ``class B;``. As a function declaration lets two functions call each other, it lets two classes refer to each other.
+
+.. code-block:: cpp
+   :caption: a.hpp
+
+   #pragma once
+   class B;  // name only
+   class A {
+    public:
+     void set_b(B* b);
+    private:
+     B* b_{nullptr};
+   };
+
+.. code-block:: cpp
+   :caption: b.hpp
+
+   #pragma once
+   class A;  // name only
+   class B {
+    public:
+     void link(A* a);
+    private:
+     A* a_{nullptr};
+   };
+
+.. code-block:: cpp
+   :caption: b.cpp
+
+   #include "b.hpp"
+   #include "a.hpp"
+   void B::link(A* a) {
+     a_ = a;
+     a->set_b(this);
+   }
+
+.. important::
+
+   A pointer or a reference member needs only the class's name, so ``a.hpp`` and ``b.hpp`` include nothing. A by-value member or a method call needs the full class: ``link`` calls ``a->set_b(this)``, so ``b.cpp`` includes ``a.hpp``.
+
+- Without ``#include "a.hpp"`` in ``b.cpp``, g++ stops at that call with "invalid use of incomplete type".
+- Run: ``702run week9_cycle``. It prints ``built``.
+
+Back to `Two Separate Lifetimes`_.
+
+A Typo That Compiles
+^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   class RoboTaxi : public Vehicle {
+    public:
+     void drvie(const Route& route) const;  // mistake 1: a typo
+     void drive(const Route& route);        // mistake 2: no const
+   };
+   start_shift(robotaxi, maya_ride);  // prints Vehicle: drives 500 m
+
+- Neither line overrides ``drive``: each one declares a new method of ``RoboTaxi``, so ``Vehicle::drive`` runs.
+- Mistake 1: g++ gives no warning. Mistake 2: the name matches, the ``const`` does not. It compiles; ``-Wall`` only warns:
+
+.. code-block:: text
+
+   warning: 'virtual void Vehicle::drive(const Route&) const'
+            was hidden [-Woverloaded-virtual=]
+   note:   by 'void RoboTaxi::drive(const Route&)'
+
+override Catches Both
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   void drvie(const Route& route) const override;  // does not compile
+   void drive(const Route& route) override;        // does not compile
+
+.. code-block:: text
+
+   error: 'void RoboTaxi::drvie(const Route&) const' marked 'override',
+          but does not override
+   error: 'void RoboTaxi::drive(const Route&)' marked 'override',
+          but does not override
+
+- Both mistakes now stop the build, on the line that has them. Without ``override``, mistake 1 showed only as a wrong line of output.
+
+.. note::
+
+   "If a virtual function is marked with the virt-specifier ``override`` and does not override a member function of a base class, the program is ill-formed". C++20 **[class.virtual]** (11.7.2) paragraph 5.
+
+Back to `RoboTaxi Marks drive override`_.
