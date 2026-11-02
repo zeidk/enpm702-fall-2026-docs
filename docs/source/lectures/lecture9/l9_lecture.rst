@@ -53,7 +53,7 @@ Code for This Lecture
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
 4. Build it: ``702build week9_playground``.
-5. Run every slide: ``702run week9_playground``. Run only one slide, for example `Through a Base Reference`_: ``702run week9_playground 77``.
+5. Run every slide: ``702run week9_playground``. Run only one slide, for example `The Challenge: A Base Reference`_: ``702run week9_playground 77``.
 
 **Where the Classes Are**
 
@@ -1290,7 +1290,7 @@ Uncommented, the line ``base_ref.assign_driver("Ben");`` gives:
 
 .. important::
 
-   **Why a base class reference.** A function written once, with a ``const Vehicle&`` parameter, accepts a ``Taxi`` or a ``RoboTaxi``: it binds as ``base_ref`` does (`Through a Base Reference`_).
+   **Why a base class reference.** A function written once, with a ``const Vehicle&`` parameter, accepts a ``Taxi`` or a ``RoboTaxi``: it binds as ``base_ref`` does (`The Challenge: A Base Reference`_).
 
 See `Inside a Taxi Object`_ under Further Reading.
 
@@ -1622,10 +1622,10 @@ Runtime Polymorphism
 
    1. A derived class inherits from a base class with ``public``: ``RoboTaxi`` from ``Vehicle``.
    2. The base class declares the method ``virtual``, and the derived class overrides it: ``drive``.
-   3. The call goes through a base reference or pointer: ``Vehicle&`` or ``Vehicle*``. A ``Vehicle`` object copied from a ``RoboTaxi`` is sliced (`Slicing`_): it is a plain ``Vehicle``.
+   3. The call goes through a base reference or pointer: ``Vehicle&``, ``Vehicle*``, or a smart pointer such as ``std::shared_ptr<Vehicle>``, whose ``->`` gives a ``Vehicle*``. A ``Vehicle`` object copied from a ``RoboTaxi`` is sliced (`Slicing`_): it is a plain ``Vehicle``.
 
-The Challenge
-"""""""""""""
+The Challenge: Two Vectors
+""""""""""""""""""""""""""
 
 .. note::
 
@@ -1652,13 +1652,13 @@ The Challenge
    Vehicle: drives 500 m
 
 - ``by_value`` holds copies of the ``Vehicle`` parts only: slicing (`Slicing`_). Each copy is a ``Vehicle``, so ``Vehicle::drive`` runs.
-- ``by_pointer`` keeps the objects themselves, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive``. `Through a Base Reference`_ shows why.
+- ``by_pointer`` keeps the objects themselves, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive``. `The Challenge: A Base Reference`_ shows why.
 - Run: ``702run week9_playground 76``.
 
 See `One Overload per Class`_ and `Scalability and Redundancy`_ under Further Reading.
 
-Through a Base Reference
-""""""""""""""""""""""""
+The Challenge: A Base Reference
+"""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
 
@@ -2797,7 +2797,7 @@ One Overload per Class
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
 - Run: ``702run week9_appendix xxix``.
 
-Back to `The Challenge`_.
+Back to `The Challenge: Two Vectors`_.
 
 
 Scalability and Redundancy
@@ -2811,7 +2811,7 @@ Scalability and Redundancy
 
    We need one function that takes any ``Vehicle``, and still runs each object's own ``drive``.
 
-Back to `The Challenge`_.
+Back to `The Challenge: Two Vectors`_.
 
 
 What Runtime Polymorphism Needs
@@ -2821,9 +2821,9 @@ What Runtime Polymorphism Needs
 2. **A base reference or pointer** to the object: ``Vehicle&``, ``Vehicle*``, ``std::unique_ptr<Vehicle>`` or ``std::shared_ptr<Vehicle>``. ``start_shift`` has a ``const Vehicle&``. Done.
 3. **A virtual method** in the base class. Not yet.
 
-- With 1 and 2 only, the static type picks: ``Vehicle::drive`` runs for both, as in `Through a Base Reference`_.
+- With 1 and 2 only, the static type picks: ``Vehicle::drive`` runs for both, as in `The Challenge: A Base Reference`_.
 
-Back to `Through a Base Reference`_.
+Back to `The Challenge: A Base Reference`_.
 
 
 final in the Class Diagram
