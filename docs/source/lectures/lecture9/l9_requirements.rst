@@ -721,8 +721,8 @@ the one on that slide or frame.
    * - FR-3
      - Yes: ``Vehicle::drive`` is pure ``virtual``; ``RoboTaxi::drive`` and
        ``Taxi::drive`` override it.
-     - Live Coding Steps 4 and 6. ``702run week9_playground 97`` (Fleet and
-       Passenger Do Not Change) prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
+     - Live Coding Steps 4 and 6. The code of the slide Fleet and
+       Passenger Do Not Change prints ``RoboTaxi: 2 sensors checked, drives 500 m`` and
        ``Taxi: Ana drives 500 m``.
    * - FR-4.1, FR-4.2
      - Yes: ``Vehicle::add_sensor``; ``RoboTaxi::drive`` checks
@@ -772,8 +772,8 @@ the one on that slide or frame.
      -
    * - FR-10.1 to FR-10.5
      - Yes: ``Fleet::add``, ``Fleet::remove``, ``Fleet::size``.
-     - Live Coding Step 2. ``702run week9_playground 35`` (The Vehicles
-       Outlive the Fleet) prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
+     - Live Coding Step 2. The code of the slide The Vehicles
+       Outlive the Fleet prints ``2 2``, ``1 1`` and ``1 13.4``. Measured:
        adding the same vehicle twice gives a size of 1, and removing an
        unknown id returns ``false``.
    * - FR-10.6
@@ -787,8 +787,8 @@ the one on that slide or frame.
    * - FR-12.1 to FR-12.4
      - Yes: ``Passenger::board``, ``Passenger::leave``; the passenger holds a
        ``std::weak_ptr<Vehicle>``.
-     - Live Coding Step 1. ``702run week9_playground 26`` (Two Separate
-       Lifetimes) prints ``1``, ``1`` and ``true``.
+     - Live Coding Step 1. The code of the slide Two Separate
+       Lifetimes prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
      - ``702run week9_appendix xxxviii`` (Discussion: Add a RoboBus) prints
@@ -801,9 +801,9 @@ the one on that slide or frame.
        ``Sensor{1, static_cast<SensorType>(7)}`` throws with
        ``unknown sensor type``.
    * - NFR-3
-     - Yes, apart from the slides in ``undefined/``, which show such a bug on
-       purpose and run only when asked for by number.
-     - ``week9_live``, ``week9_playground`` and ``week9_appendix`` are built
+     - Yes, apart from the slide Deleting through a Base Pointer, which shows
+       such a bug on purpose.
+     - ``week9_live`` and ``week9_appendix`` are built
        with both sanitizers. After Live Coding Step 5, ``live9`` runs
        ``week9_live`` with no report.
    * - NFR-4
