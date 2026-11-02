@@ -43,6 +43,10 @@ Code for This Lecture
 
 **live** holds the classes you write in the Live Coding steps: ``live9`` builds and runs them. Load it in class with ``source ~/Downloads/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture8/l8_setup>` shows.
 
+.. important::
+
+   ``week9_playground`` and ``week9_appendix`` hold the finished classes of the Live Coding steps, so their folders (**common**, **playground**, **appendix** and **undefined**) join the repository after the Live Coding deadline, Nov 10. Until then, ``git pull`` gives you **live**, **cycle**, **operators** and **uml**.
+
 **Run a Slide's Code**
 
 1. Get the code: ``git pull``.
@@ -56,7 +60,7 @@ Code for This Lecture
 - **common** holds every class of the diagram: ``Sensor``, ``SensorType``, ``Position`` and ``Route``, and today's ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``Fleet`` and ``Passenger``. Each section file writes the earlier versions its slides need.
 - The code with undefined behavior is in the **undefined** folder, built with AddressSanitizer. It runs only when you ask for its slide by number.
 - **uml** holds the PlantUML file of the diagram.
-- The code of the appendix is in the **appendix** folder. Run appendix frame xi with ``702run week9_appendix x``.
+- The code of the appendix is in the **appendix** folder. Run appendix frame x with ``702run week9_appendix x``.
 
 .. dropdown:: How to Run the Code
    :icon: terminal
@@ -72,7 +76,7 @@ Code for This Lecture
       702rebuild                         # once after you pull: a fresh build/
       702run week9_playground            # the code of every slide, in order
       702run week9_playground 77         # only the code of slide 77
-      702run week9_appendix x           # only appendix frame xi (11 works too)
+      702run week9_appendix x            # only appendix frame x (10 works too)
       live9                              # build and run the classes you write in class
 
    After you edit a file, build again before you run: ``702build week9_playground`` builds one program, ``702build`` builds all of them.
@@ -1625,17 +1629,31 @@ The Challenge
 
 .. note::
 
-   **Challenge**: drive robotaxis and taxis the same way, although each one drives differently.
+   **Challenge**: one loop drives robotaxis and taxis, and each runs its own ``drive``. A new kind of vehicle needs no change to the loop (NFR-1).
 
 .. code-block:: cpp
 
-   for (const auto& vehicle : vehicles) {  // a Fleet's vehicles
-     vehicle->drive(maya_ride);  // each its own drive
+   RoboTaxi robotaxi{13.4};
+   Taxi taxi{13.4, "Ana"};
+   std::vector<Vehicle> by_value{robotaxi, taxi};
+   for (const auto& vehicle : by_value) {
+     vehicle.drive(maya_ride);
+   }
+   std::vector<Vehicle*> by_pointer{&robotaxi, &taxi};
+   for (const Vehicle* vehicle : by_pointer) {
+     vehicle->drive(maya_ride);
    }
 
-- One function, or one loop, drives every vehicle.
-- Each vehicle runs its own ``drive``: a ``RoboTaxi`` prints that it drives itself, and a ``Taxi`` prints its driver's name.
-- A new vehicle class, such as a robot bus, needs no change to that code (NFR-1).
+.. code-block:: text
+
+   Vehicle: drives 500 m
+   Vehicle: drives 500 m
+   Vehicle: drives 500 m
+   Vehicle: drives 500 m
+
+- ``by_value`` holds copies of the ``Vehicle`` parts only: slicing (`Slicing`_). Each copy is a ``Vehicle``, so ``Vehicle::drive`` runs.
+- ``by_pointer`` keeps the objects themselves, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive``. `Through a Base Reference`_ shows why.
+- Run: ``702run week9_playground 76``.
 
 See `One Overload per Class`_ and `Scalability and Redundancy`_ under Further Reading.
 
@@ -2186,158 +2204,49 @@ Back to `Requirements`_.
 What the Live Coding Replaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The finished code of Steps 1 and 4 to 7, with its output, in six appendix frames.
+The finished code of the Live Coding steps, with its output, appears in this section after the Live Coding deadline, Nov 10.
 
 Step 1: A Passenger Rides a Vehicle
 """""""""""""""""""""""""""""""""""
 
-.. code-block:: cpp
+.. note::
 
-   class Passenger {
-    public:
-     explicit Passenger(std::string name) : name_{std::move(name)} {
-       if (name_.empty()) {
-         throw std::invalid_argument{"a passenger has a name"};
-       }
-     }
-     void board(const std::shared_ptr<Vehicle>& vehicle);
-     void leave() noexcept;
-    private:
-     std::string name_;
-     std::weak_ptr<Vehicle> ride_;  // does not own the Vehicle
-   };
-
-- ``board`` and ``leave`` are defined in ``passenger.cpp``: ``board`` stores the pointer in ``ride_``, and ``leave`` resets it.
-- ``Vehicle`` is the class given in ``vehicle.hpp``. The program keeps each ``Vehicle`` in a ``std::shared_ptr``, so a ``std::weak_ptr`` can refer to it without owning it.
-
-Back to `Live Coding: Step 1`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 Step 4: One Function for Every Vehicle
 """"""""""""""""""""""""""""""""""""""
 
-.. code-block:: cpp
+.. note::
 
-   void start_shift(const Vehicle& vehicle,
-                    const Route& route) {
-     vehicle.drive(route);
-   }
-
-   start_shift(robotaxi, maya_ride);
-   start_shift(taxi, maya_ride);
-
-.. code-block:: text
-
-   RoboTaxi: drives itself 500 m
-   Taxi: Ana drives 500 m
-
-- The same ``start_shift`` as in `Through a Base Reference`_. Only ``virtual`` changed, and each object now runs its own ``drive``.
-- ``start_shift`` serves every class derived from ``Vehicle``, including classes written after it.
-
-Back to `Live Coding: Step 4`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 Step 5: With a virtual Destructor
 """""""""""""""""""""""""""""""""
 
-.. code-block:: cpp
-
-   class Vehicle {
-    public:
-     virtual ~Vehicle() {
-       std::cout << "~Vehicle\n";
-     }
-     // ...
-   };
-   // Taxi and the rest of the
-   // code do not change.
-
-.. code-block:: text
-
-   Taxi: Ana Maria Rodrigues drives 500 m
-   ~Taxi
-   ~Vehicle
-
-- The ``delete`` of `Deleting through a Base Pointer`_ now runs ``~Taxi``, then ``~Vehicle``. Built with AddressSanitizer: no error, no leak.
-- ``~Taxi`` overrides ``~Vehicle`` although the names differ ([class.virtual], 11.7.2 paragraph 7).
-
 .. note::
 
-   "A base class destructor should be either public and virtual, or protected and non-virtual". Rule: `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__.
-
-Back to `Live Coding: Step 5`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 Step 6: No Vehicle Objects
 """"""""""""""""""""""""""
 
-.. code-block:: cpp
+.. note::
 
-   Vehicle vehicle{13.4};  // does not compile
-
-.. code-block:: text
-
-   error: cannot declare variable 'vehicle' to be of abstract type 'Vehicle'
-   note:   because the following virtual functions are pure within 'Vehicle':
-   note:     'virtual void Vehicle::drive(const Route&) const'
-
-.. code-block:: cpp
-
-   RoboTaxi robotaxi{13.4};
-   robotaxi.add_sensor(SensorType::lidar, 100.0);
-   const Vehicle& vehicle{robotaxi};  // a reference to Vehicle is fine
-   vehicle.drive(maya_ride);
-
-.. code-block:: text
-
-   RoboTaxi: 1 sensor checked, drives 500 m
-
-- References and pointers to ``Vehicle`` are fine: they refer to a ``RoboTaxi`` or a ``Taxi``. Slicing cannot be written now: ``Vehicle copy{robotaxi};`` gives the same first error.
-
-Back to `Live Coding: Step 6`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 Step 6: RoboTaxi and Taxi
 """""""""""""""""""""""""
 
-.. code-block:: cpp
+.. note::
 
-   RoboTaxi robotaxi{13.4};
-   robotaxi.drive(maya_ride);
-   robotaxi.add_sensor(SensorType::lidar, 100.0);
-   robotaxi.drive(maya_ride);
-   Taxi taxi{13.4, "Ana"};
-   taxi.drive(maya_ride);
-
-.. code-block:: text
-
-   RoboTaxi: no sensor, stays parked
-   RoboTaxi: 1 sensor checked, drives 500 m
-   Taxi: Ana drives 500 m
-
-- ``Taxi`` overrides ``drive`` too: it prints its driver's name, as in `Redefinition`_.
-- Both are concrete: each overrides ``drive``.
-
-Back to `Live Coding: Step 6`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 Step 7: A final Class
 """""""""""""""""""""
 
-.. code-block:: cpp
-
-   class RoboTaxi final : public Vehicle {
-     // ...
-   };
-
-   class SuperRoboTaxi : public RoboTaxi {};  // does not compile
-
-.. code-block:: text
-
-   error: cannot derive from 'final' base 'RoboTaxi' in derived type 'SuperRoboTaxi'
-
-- ``RoboTaxi`` and ``Taxi`` are ``final`` in ``project/week9/common``: each ``drive`` has a check that no override may skip (`The Reason for Each final`_).
-
 .. note::
 
-   "If a class is marked with the class-virt-specifier ``final`` and it appears as a class-or-decltype in a base-clause (11.7), the program is ill-formed". C++20 [class.pre], 11.1 paragraph 5.
-
-Back to `Live Coding: Step 7`_.
+   The finished code of this Live Coding step appears here after the Live Coding deadline, Nov 10.
 
 A final Method
 ^^^^^^^^^^^^^^
