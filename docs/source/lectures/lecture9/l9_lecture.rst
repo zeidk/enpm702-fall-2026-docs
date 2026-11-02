@@ -1743,6 +1743,11 @@ A ``virtual`` **method** is a method declared ``virtual`` in a base class. A cal
 - A derived method with the same name, parameters and ``const`` **overrides** the ``virtual`` one. ``override`` is explained in `override`_, the destructor in `virtual Destructors`_.
 - You make ``drive`` ``virtual`` in Step 4, after the ``override`` part.
 
+.. admonition:: The cost of runtime polymorphism
+   :class: important
+
+   A ``virtual`` call costs a little more than a direct call: it first reads a hidden table of the class's ``virtual`` methods, and the compiler usually cannot replace the call with the method's body. Each object also holds an 8-byte pointer to that table: 16 bytes become 24 (`The Cost of virtual`_). Make a method ``virtual`` only when a derived class overrides it.
+
 See `The Cost of virtual`_ under Further Reading.
 
 Slicing
