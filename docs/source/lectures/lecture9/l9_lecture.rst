@@ -1134,19 +1134,31 @@ No Specifier Means private Inheritance
 
    "In the absence of an access-specifier for a base class, ``public`` is assumed when the derived class is defined with the class-key ``struct`` and ``private`` is assumed when the class is defined with the class-key ``class``". C++20 **[class.access.base]** (11.9.2) paragraph 2.
 
-Generalization
-""""""""""""""
+Generalization: Three Classes Repeat Members
+""""""""""""""""""""""""""""""""""""""""""""
 
 **Generalization**: starting from classes you already have, and moving what they share up into a new base class: bottom-up.
 
-.. figure:: /_static/images/l9/generalization_steps.png
-   :alt: On the left, three class boxes side by side, with no line between them: Elephant, Tiger and Rhinoceros. Each lists minus species_, minus weight_ and one member of its own (minus trunk_length_, minus stripe_count_, minus horn_count_), then plus eat(), plus make_sound(sound) and one method of its own (plus use_trunk(), plus hunt(), plus charge()). In each box, the four members the three share are shaded orange. A thick arrow points right, to a class diagram: Animal on top, with the four orange members, and below it Elephant, Tiger and Rhinoceros, each with only its own two members, each joined to Animal by a line with a hollow triangle at Animal.
+.. figure:: /_static/images/l9/generalization_before.png
+   :alt: Three class boxes side by side, with no line between them: Elephant, Tiger and Rhinoceros. Each lists minus species_, minus weight_ and one member of its own (minus trunk_length_, minus stripe_count_, minus horn_count_), then plus eat(), plus make_sound(sound) and one method of its own (plus use_trunk(), plus hunt(), plus charge()). In each box, the four members the three share are shaded orange.
    :align: center
-   :width: 100%
+   :width: 90%
 
-   Generalization: the shared members move up into ``Animal``.
+   Three classes that each write the same members.
 
-- Orange: the members ``Elephant``, ``Tiger`` and ``Rhinoceros`` each wrote. They move up into ``Animal``, written once.
+- Orange: the members ``Elephant``, ``Tiger`` and ``Rhinoceros`` each wrote, the same in all three.
+
+Generalization: The Shared Members Move Up
+""""""""""""""""""""""""""""""""""""""""""
+
+.. figure:: /_static/images/l9/generalization_after.png
+   :alt: A class diagram: Animal on top, with minus species_, minus weight_, plus eat() and plus make_sound(sound), all four shaded orange. Below it, Elephant (minus trunk_length_, plus use_trunk()), Tiger (minus stripe_count_, plus hunt()) and Rhinoceros (minus horn_count_, plus charge()), each joined to Animal by a line with a hollow triangle at Animal.
+   :align: center
+   :width: 70%
+
+   The shared members move up into ``Animal``.
+
+- Orange: the shared members move up into a new base class, ``Animal``, written once.
 - Each derived class keeps only what it adds.
 
 Specialization
