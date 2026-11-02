@@ -1622,10 +1622,10 @@ One operator, several types:
 
 In each call, the types of the arguments pick the function: ``print(int)`` or ``print(double)``, the ``+`` of ``int`` or the ``+`` of ``std::string`` (measured with g++ 13.3: ``int 3``, ``double 2.5``, ``3 go!``). A derived class that redefines a method is a third case, in the next sections.
 
-The Vehicle and RoboTaxi of This Part
-"""""""""""""""""""""""""""""""""""""
+The Vehicle, RoboTaxi and Taxi of This Part
+"""""""""""""""""""""""""""""""""""""""""""
 
-``drive`` is not ``virtual`` here: ``RoboTaxi`` redefines it.
+``drive`` is not ``virtual`` here: ``RoboTaxi`` and ``Taxi`` redefine it.
 
 .. code-block:: cpp
 
@@ -1651,6 +1651,20 @@ The Vehicle and RoboTaxi of This Part
      std::string operating_zone_;        // the area it may drive in
      AutomationLevel automation_level_;  // SAE J3016 level
    };
+   class Taxi : public Vehicle {
+    public:
+     Taxi(double max_speed, std::string driver_name)
+         : Vehicle{max_speed}, driver_name_{std::move(driver_name)} {}
+     void drive(const Route& route) const;  // redefines Vehicle::drive
+
+    private:
+     std::string driver_name_;
+   };
+
+Redefinition
+""""""""""""
+
+.. code-block:: cpp
 
    // vehicle.cpp and robotaxi.cpp
    void Vehicle::drive(const Route& route) const {
@@ -1659,9 +1673,6 @@ The Vehicle and RoboTaxi of This Part
    void RoboTaxi::drive(const Route& route) const {
      std::cout << "RoboTaxi: drives itself " << route.length() << " m\n";
    }
-
-Redefinition
-""""""""""""
 
 .. code-block:: cpp
 
