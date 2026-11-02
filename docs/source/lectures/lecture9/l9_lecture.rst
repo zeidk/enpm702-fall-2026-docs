@@ -19,7 +19,7 @@ The `Further Reading`_ part, at the end of this page, is the appendix of the sli
 Upload Your Live Coding
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-You type Steps 1 to 3 with me, in ``project/week9/live``. You write **Step 4** on your own, in 15 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
+Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Step 4** on your own, in 15 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
 - **Before the end of class**, upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas.
 - It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Step 4. I do not grade it for correctness.
@@ -253,7 +253,7 @@ The Program We Will Build
 
 - A box is a class, a line is a relationship: today's lecture says what each kind of line means. Later copies show the part being built in orange.
 - This is the class diagram of the whole program, with nothing in grey. We already wrote ``Vehicle``, its ``Sensor``\ s, ``Position`` and a small ``Route``.
-- Today you write the rest: ``Passenger`` with me, then ``Fleet``, ``RoboTaxi`` and ``Taxi`` on your own, and we name each kind of line between the boxes. ``Vehicle`` changes too: by the end, its ``drive`` is abstract, which is why its name is in italics.
+- Today the rest is given and we review it together: ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi``; you then write Step 4, and we name each kind of line between the boxes. ``Vehicle`` changes too: by the end, its ``drive`` is abstract, which is why its name is in italics.
 - The diagram comes back at the start of each part, with the piece we are about to build in orange.
 
 Requirements
@@ -552,7 +552,7 @@ The four answers on the path, from the top, and the requirement behind each:
 4. No. "Boarding shall not keep a vehicle alive" (:ref:`FR-12.3 <fr-12-3>`).
 
 - The first new class is ``Passenger``, and the first kind of line is the plain arrow between ``Passenger`` and ``Vehicle``.
-- After the full boxes, we write the class and check in a run that a passenger never keeps the vehicle alive.
+- After the full boxes, we review the class and check in a run that a passenger never keeps the vehicle alive.
 
 A Sensor has type SensorType
 """"""""""""""""""""""""""""
@@ -587,7 +587,7 @@ A Passenger Rides a Vehicle
    ``Passenger`` and ``Vehicle`` with every member: the arrow labeled ``rides``, its ``Vehicle`` end named ``-ride_``.
 
 - ``0..1`` at ``Vehicle``: a passenger rides at most one vehicle, so ``ride_`` is one ``std::weak_ptr``, not a container. ``0..*`` at ``Passenger`` needs no member: the arrow is one-way.
-- The same two boxes as in `Passenger rides Vehicle`_, with every member. ``Passenger`` is what we write in Step 1: a name, a constructor, ``board`` and ``leave``.
+- The same two boxes as in `Passenger rides Vehicle`_, with every member. ``Passenger`` is what we review in Step 1: a name, a constructor, ``board`` and ``leave``.
 - ``ride_`` is in ``Passenger``'s box, with its type, ``std::weak_ptr<Vehicle>``. Its name is at the ``Vehicle`` end of the arrow too: the line says which data member holds the vehicle.
 - ``Vehicle``'s box is the class you are given, in ``vehicle.hpp`` and ``vehicle.cpp``, with the id and the static counter ``next_id_``. ``drive`` is in italics: `Abstraction`_ makes it pure ``virtual``. Step 1 does not touch ``Vehicle``.
 
@@ -744,10 +744,10 @@ A **forward declaration** is a class's name only, with no body: ``class B;``. As
 - Without ``#include "a.hpp"`` in ``b.cpp``, g++ stops at that call with "invalid use of incomplete type".
 - Run: ``702run week9_cycle``. It prints ``built``.
 
-Live Coding: Step 1
+Code Review: Step 1
 """""""""""""""""""
 
-**10 minutes, in class, with me.** The instructions are on the slides.
+**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
 
 See `Step 1: A Passenger Rides a Vehicle`_ under Further Reading.
 
@@ -799,7 +799,7 @@ A Fleet Holds Vehicles
    ``Fleet`` and ``Vehicle`` with every member: the line labeled ``holds``, its ``Vehicle`` end named ``-vehicles_``.
 
 - ``0..*`` at ``Vehicle``: a fleet holds any number of vehicles, so ``vehicles_`` is a ``std::vector``, with one ``std::shared_ptr<Vehicle>`` per vehicle.
-- The same two boxes as in `Fleet holds Vehicle`_, with every member. In Step 2, the class ``Fleet`` is given, and you write the bodies of ``add``, ``remove`` and ``size``.
+- The same two boxes as in `Fleet holds Vehicle`_, with every member. In Step 2, ``Fleet`` and the bodies of ``add``, ``remove`` and ``size`` are given, and we review them together.
 - ``vehicles_`` is in ``Fleet``'s box, with its type, a ``std::vector`` of ``std::shared_ptr<Vehicle>``. Its name is at the ``Vehicle`` end of the line too.
 - ``Vehicle``'s box does not change in Step 2. ``Fleet`` needs only ``get_id``, to remove a vehicle by its id.
 
@@ -863,10 +863,10 @@ The Vehicles Outlive the Fleet
 - Inside the scope, ``car_a`` and the fleet share the first ``Vehicle``: 2 owners. ``remove`` lets go of the second one, and it lives on with 1 owner. So does the first, after the fleet is gone.
 - The last line is the acceptance test of :ref:`FR-10.5 <fr-10-5>`: after the fleet is destroyed, a vehicle it held still answers ``get_max_speed()``.
 
-Live Coding: Step 2
+Code Review: Step 2
 """""""""""""""""""
 
-**In class, with me.** The instructions are on the slides.
+**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
 
 Composition
 ^^^^^^^^^^^
@@ -1266,7 +1266,7 @@ A RoboTaxi and a Taxi Are Vehicles
    ``Vehicle``, ``RoboTaxi`` and ``Taxi`` with every member: a line with a hollow triangle at ``Vehicle`` from each derived class.
 
 - The three boxes of `RoboTaxi and Taxi Are Vehicles`_, with every member. The boxes of ``RoboTaxi`` and ``Taxi`` are short: a derived class lists only what it adds. Every ``Vehicle`` member is theirs too, through the hollow triangle.
-- ``RoboTaxi`` adds ``operating_zone_`` and ``automation_level_``, a constructor with a default for each (``"College Park"`` and ``AutomationLevel::level_4``), a getter for each, ``change_zone`` and its own ``drive``. ``Taxi`` adds ``driver_name_``, a constructor that takes the name, ``assign_driver`` and its own ``drive``. ``change_zone`` and ``assign_driver`` are methods that ``Vehicle`` does not have. You write both classes in Step 3, each in its own files.
+- ``RoboTaxi`` adds ``operating_zone_`` and ``automation_level_``, a constructor with a default for each (``"College Park"`` and ``AutomationLevel::level_4``), a getter for each, ``change_zone`` and its own ``drive``. ``Taxi`` adds ``driver_name_``, a constructor that takes the name, ``assign_driver`` and its own ``drive``. ``change_zone`` and ``assign_driver`` are methods that ``Vehicle`` does not have. Both classes are given for Step 3, each in its own files, and we review them together.
 - ``automation_level_`` is an ``AutomationLevel``, an enumeration of the six levels of driving automation, ``level_0`` to ``level_5``, defined in ``automation_level.hpp``. See `SAE J3016 <https://saemobilus.sae.org/standards/j3016_202609-taxonomy-definitions-terms-related-driving-automation-systems-road-motor-vehicles>`__.
 - Their own ``drive`` comes later, in `Polymorphism`_. ``#`` marks a ``protected`` member: see `protected Members`_.
 
@@ -1713,10 +1713,10 @@ Construction and Destruction Order
 
 See `Discussion: What Prints First?`_ under Further Reading.
 
-Live Coding: Step 3
+Code Review: Step 3
 """""""""""""""""""
 
-**In class, with me.** The instructions are on the slides.
+**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
 
 
 Polymorphism
@@ -2150,7 +2150,7 @@ Fleet and Passenger Do Not Change
    RoboTaxi: 2 sensors checked, drives 500 m
    Taxi: Ana drives 500 m
 
-- ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Live Coding: Step 1`_ and `Live Coding: Step 2`_). Step 5 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
+- ``Fleet`` and ``Passenger`` are the classes of Steps 1 and 2 (`Code Review: Step 1`_ and `Code Review: Step 2`_). Step 5 made ``Vehicle`` abstract and changed not one line of them: they name only ``Vehicle``.
 
 See `Discussion: Add a RoboBus`_ under Further Reading.
 
@@ -3033,7 +3033,7 @@ Use the questions of the chart in `Choosing a Relationship and Its C++`_, in ord
 
    1. Aggregation: a ``std::shared_ptr`` in the fleet.
    2. Composition: a ``std::unique_ptr``, as in ``Vehicle``.
-   3. Association: the driver exists without the taxi, so a ``Driver`` class would be held by a ``std::weak_ptr``. The ``Taxi`` class you wrote in `Live Coding: Step 3`_ keeps only the driver's name, a ``std::string``.
+   3. Association: the driver exists without the taxi, so a ``Driver`` class would be held by a ``std::weak_ptr``. The ``Taxi`` class of `Code Review: Step 3`_ keeps only the driver's name, a ``std::string``.
    4. Composition: the meter goes with the taxi, so a plain ``Meter`` member is enough.
    5. This one can be argued. The station does not decide when a robotaxi is destroyed, so it is not composition. If it only looks at them, it is an association; if it keeps them alive while they charge, it is an aggregation.
    6. A dependency: a ``plan`` method takes the map as a parameter, and the fleet keeps no map.
