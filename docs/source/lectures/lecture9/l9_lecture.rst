@@ -1058,13 +1058,13 @@ Generalization: The Shared Members Move Up
 """"""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/generalization_after.png
-   :alt: A class diagram: Animal on top, with minus species_, minus weight_, plus eat() and plus make_sound(sound), all four shaded orange. Below it, Elephant (minus trunk_length_, plus use_trunk()), Tiger (minus stripe_count_, plus hunt()) and Rhinoceros (minus horn_count_, plus charge()), each joined to Animal by a line with a hollow triangle at Animal.
+   :alt: A class diagram: Animal on top, with minus species_, minus weight_, plus eat() and plus make_sound(sound), all four shaded light gray. Below it, Elephant (minus trunk_length_, plus use_trunk()), Tiger (minus stripe_count_, plus hunt()) and Rhinoceros (minus horn_count_, plus charge()), each joined to Animal by a line with a hollow triangle at Animal.
    :align: center
    :width: 70%
 
    The shared members move up into ``Animal``.
 
-- Orange: the shared members move up into a new base class, ``Animal``, written once.
+- Gray: the shared members move up into a new base class, ``Animal``, written once.
 - Each derived class keeps only what it adds.
 
 Specialization
@@ -1073,13 +1073,13 @@ Specialization
 **Specialization**: starting from a base class, and writing a derived class for objects that need more: top-down.
 
 .. figure:: /_static/images/l9/specialization_steps.png
-   :alt: On the left, one class box: Animal, with minus species_, minus weight_, plus eat() and plus make_sound(sound). A thick arrow points right, to a class diagram: the same Animal on top, and below it Elephant, Tiger and Rhinoceros, each joined to Animal by a line with a hollow triangle at Animal. Each derived box lists only what it adds, shaded blue: minus trunk_length_ and plus use_trunk() for Elephant, minus stripe_count_ and plus hunt() for Tiger, minus horn_count_ and plus charge() for Rhinoceros.
+   :alt: On the left, one class box: Animal, with minus species_, minus weight_, plus eat() and plus make_sound(sound). A thick arrow points right, to a class diagram: the same Animal on top, and below it Elephant, Tiger and Rhinoceros, each joined to Animal by a line with a hollow triangle at Animal. Each derived box lists only what it adds, shaded light gray: minus trunk_length_ and plus use_trunk() for Elephant, minus stripe_count_ and plus hunt() for Tiger, minus horn_count_ and plus charge() for Rhinoceros.
    :align: center
    :width: 90%
 
    Specialization: each derived class adds to ``Animal``.
 
-- Blue: what each derived class adds to ``Animal``. Everything else it gets from ``Animal``.
+- Gray: what each derived class adds to ``Animal``. Everything else it gets from ``Animal``.
 
 Generalization and Specialization
 """""""""""""""""""""""""""""""""
