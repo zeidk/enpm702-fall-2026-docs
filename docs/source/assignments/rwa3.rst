@@ -535,6 +535,183 @@ Tips
    world.
 
 
+Troubleshooting
+---------------
+
+Problems you may meet while you write the classes, what each one looks like,
+and how to fix it. The messages are g++ 13.3's, with the course's flags; the
+examples use a ``Robot`` base class and a ``Rover`` derived class. Read the
+**first** error a build prints: the ones after it often come from it.
+
+.. dropdown:: Two headers that include each other
+
+   **What you see:** a class that is plainly declared is unknown, for example
+
+   .. code-block:: text
+
+      b.hpp:7:3: error: 'A' does not name a type
+
+   **Why:** ``a.hpp`` includes ``b.hpp``, and ``b.hpp`` includes ``a.hpp``.
+   ``#pragma once`` skips the second copy, so one class is compiled before
+   the other is declared. This happens with a two-way association, for
+   example a ``Hero`` that keeps its ``Monster`` target while the
+   ``Monster`` keeps its ``Hero``.
+
+   **Fix:** in a header that only names the other class (a pointer or a
+   reference to it), write a forward declaration, ``class A;``, instead of
+   the ``#include``, and include the other header in the ``.cpp`` file. See
+   "Two Headers That Include Each Other" in the Further Reading of the
+   :doc:`Lecture 9 page </lectures/lecture9/l9_lecture>`.
+
+.. dropdown:: Two objects that own each other (a std::shared_ptr cycle)
+
+   **What you see:** the program builds and runs, then a leak report at
+   the end of a run with ``-fsanitize=address``, although no ``new`` is
+   written anywhere:
+
+   .. code-block:: text
+
+      ERROR: LeakSanitizer: detected memory leaks
+      Indirect leak of 80 byte(s) in 1 object(s) allocated from:
+
+   **Why:** two objects hold a ``std::shared_ptr`` to each other. Each
+   keeps the other's count at 1, so neither count reaches 0 and neither
+   object is deleted.
+
+   **Fix:** decide which side owns. The other side watches with a
+   ``std::weak_ptr`` and calls ``lock()`` when it needs the object. In a
+   class diagram, a line that does not keep the other object alive is an
+   association, not an aggregation. See "Cyclic Reference" and "Breaking
+   It" in :doc:`Lecture 7 </lectures/lecture7/l7_lecture>`.
+
+.. dropdown:: The base class's method runs instead of the derived one
+
+   **What you see:** a call through a base reference or pointer prints
+   the base class's line, and ``-Wall`` warns:
+
+   .. code-block:: text
+
+      warning: 'virtual void Robot::move() const' was hidden [-Woverloaded-virtual=]
+      note:   by 'void Rover::move()'
+
+   **Why:** either the base method is not ``virtual``, or the derived
+   method differs from it (here the ``const`` is missing), so it is a new
+   method instead of an override.
+
+   **Fix:** make the base method ``virtual``, and write ``override`` on
+   every derived method that should override. ``override`` turns this
+   mistake into an error:
+
+   .. code-block:: text
+
+      error: 'void Rover::move()' marked 'override', but does not override
+
+.. dropdown:: undefined reference to `vtable for ...`
+
+   **What you see:** the compiler accepts every file, and the link fails:
+
+   .. code-block:: text
+
+      undefined reference to `vtable for Robot'
+
+   **Why:** a ``virtual`` method of that class is declared but never
+   defined, or its ``.cpp`` file is not in ``CMakeLists.txt``. g++ writes
+   the class's table of ``virtual`` methods next to that missing
+   definition, so the table is missing too.
+
+   **Fix:** define every ``virtual`` method that is not pure
+   (``= 0``), and list every ``.cpp`` file in ``add_executable``.
+
+.. dropdown:: Cannot make an object of the base class
+
+   **What you see:**
+
+   .. code-block:: text
+
+      error: cannot declare variable 'r' to be of abstract type 'Robot'
+
+   **Why:** ``Robot`` has a pure ``virtual`` method, so it is abstract: no
+   object of it can be made. A derived class that does not override every
+   pure ``virtual`` method is abstract too.
+
+   **Fix:** make objects of the derived classes, and hold them through a
+   ``Robot&``, a ``Robot*`` or a smart pointer to ``Robot``. If the error
+   names a derived class, look for a pure ``virtual`` method it does not
+   override.
+
+.. dropdown:: no matching function for call to the base constructor
+
+   **What you see:**
+
+   .. code-block:: text
+
+      error: no matching function for call to 'Robot::Robot()'
+
+   **Why:** the derived constructor does not say which base constructor to
+   use, and the base class has no default constructor.
+
+   **Fix:** call the base constructor first in the member initializer
+   list: ``Rover() : Robot{1.0} {}``.
+
+.. dropdown:: A base member is private within this context
+
+   **What you see:**
+
+   .. code-block:: text
+
+      error: 'double Robot::max_speed_' is private within this context
+
+   **Why:** a derived class cannot use the ``private`` members of its base
+   class.
+
+   **Fix:** use the base class's ``public`` methods, or give it a
+   ``protected`` method for what only derived classes may do. Keep data
+   members ``private`` (Core Guidelines C.133).
+
+.. dropdown:: A std::unique_ptr that does not copy
+
+   **What you see:** a long message whose first line is
+
+   .. code-block:: text
+
+      error: no matching function for call to 'std::unique_ptr<Robot>::unique_ptr(<brace-enclosed initializer list>)'
+
+   **Why:** a ``std::unique_ptr`` is the only owner of its object, so it
+   cannot be copied, for example into a ``std::vector`` or into a second
+   ``std::unique_ptr``.
+
+   **Fix:** hand the object over with ``std::move``, or pass it by
+   reference when the other code only uses it.
+
+.. dropdown:: A delete through a base pointer is reported
+
+   **What you see:** with ``-fsanitize=address``, a run stops with
+
+   .. code-block:: text
+
+      ERROR: AddressSanitizer: new-delete-type-mismatch
+
+   **Why:** a ``std::unique_ptr<Robot>`` (or a ``delete``) destroys a
+   ``Rover`` through a ``Robot*``, and ``Robot``'s destructor is not
+   ``virtual``. Only the ``Robot`` part is destroyed: undefined behavior.
+
+   **Fix:** give the base class ``virtual ~Robot() = default;`` (Core
+   Guidelines C.35). See :doc:`virtual Methods in Depth </lectures/lecture9/l9_virtual>`.
+
+.. dropdown:: Derived objects in a vector act like base objects
+
+   **What you see:** no error. The objects of a ``std::vector<Robot>``
+   all run ``Robot``'s methods, and their own data members are gone.
+
+   **Why:** ``push_back`` copies only the ``Robot`` part of a ``Rover``:
+   slicing.
+
+   **Fix:** store pointers: ``std::vector<std::unique_ptr<Robot>>`` when
+   the vector owns the objects, ``std::vector<std::shared_ptr<Robot>>``
+   when they are shared. See "Slicing" in the
+   :doc:`Lecture 9 page </lectures/lecture9/l9_lecture>`.
+
+
 References
 ----------
 
