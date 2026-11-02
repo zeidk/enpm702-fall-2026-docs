@@ -580,7 +580,7 @@ A Passenger Rides a Vehicle
 """""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_association_members.png
-   :alt: A UML class diagram with only two boxes, Passenger on the left and Vehicle on the right, each listing its data members and methods; both boxes and the arrow are orange. Each class name has a circled letter before it: C for a class, on Passenger, and A for the abstract Vehicle. Passenger has minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. An arrow labeled rides runs from Passenger to Vehicle, 0..* at Passenger and 0..1 at Vehicle, the Vehicle end named minus ride_.
+   :alt: A UML class diagram with only two boxes, Passenger on the left and Vehicle on the right, each listing its data members and methods; both boxes and the arrow are orange. Each class name has a circled letter before it: C for a class, on both Passenger and Vehicle. Passenger has minus name_ : string, minus ride_ : weak_ptr of Vehicle, plus Passenger(string), plus board(shared_ptr of Vehicle) : void and plus leave() : void. Vehicle, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. An arrow labeled rides runs from Passenger to Vehicle, 0..* at Passenger and 0..1 at Vehicle, the Vehicle end named minus ride_.
    :align: center
    :width: 100%
 
@@ -792,7 +792,7 @@ A Fleet Holds Vehicles
 """"""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_aggregation_members.png
-   :alt: A UML class diagram with only two boxes, Fleet on the left and Vehicle on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: C for a class, on both Fleet and Vehicle. Fleet has minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool and plus size() : size_t. Vehicle has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. A line labeled holds joins them, with an open diamond at Fleet; 1 is above the line next to the diamond, and minus vehicles_ 0..* is under the line at Vehicle.
+   :alt: A UML class diagram with only two boxes, Fleet on the left and Vehicle on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: C for a class, on both Fleet and Vehicle. Fleet has minus vehicles_ : vector of shared_ptr of Vehicle, plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool and plus size() : size_t. Vehicle has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. A line labeled holds joins them, with an open diamond at Fleet; 1 is above the line next to the diamond, and minus vehicles_ 0..* is under the line at Vehicle.
    :align: center
    :width: 100%
 
@@ -942,7 +942,7 @@ A Vehicle Owns Its Sensors
 """"""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_composition_sensor_members.png
-   :alt: A UML class diagram with two boxes, Vehicle on the left and Sensor on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: A for the abstract Vehicle, and C for a class, on Sensor. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double. A line labeled owns joins Vehicle to Sensor, with a filled diamond at Vehicle; 1 is above the line next to the diamond, and minus sensors_ 0..* is under the line at Sensor.
+   :alt: A UML class diagram with two boxes, Vehicle on the left and Sensor on the right, each listing its members; both boxes and the line are orange. Each class name has a circled letter before it: C for a class, on both Vehicle and Sensor. Vehicle, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double. A line labeled owns joins Vehicle to Sensor, with a filled diamond at Vehicle; 1 is above the line next to the diamond, and minus sensors_ 0..* is under the line at Sensor.
    :align: center
    :width: 100%
 
@@ -1024,7 +1024,7 @@ A Vehicle Uses a Route
 """"""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_dependency_members.png
-   :alt: A UML class diagram with only two boxes, Vehicle on the left and Route on the right, each listing its members; both boxes and the arrow are orange. Each class name has a circled letter before it: A for the abstract Vehicle, and C for a class, on Route. Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. Route has minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double. A dashed arrow labeled uses runs from Vehicle to Route.
+   :alt: A UML class diagram with only two boxes, Vehicle on the left and Route on the right, each listing its members; both boxes and the arrow are orange. Each class name has a circled letter before it: C for a class, on both Vehicle and Route. Vehicle, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. Route has minus waypoints_ : vector of Position, plus add(Position) : void and plus length() : double. A dashed arrow labeled uses runs from Vehicle to Route.
    :align: center
    :width: 100%
 
@@ -1048,16 +1048,31 @@ Inheritance
    class Derived : protected Base { /* what Derived adds */ };
    class Derived : private Base { /* what Derived adds */ };
 
-.. figure:: /_static/images/l9/inheritance_kinds.png
-   :alt: Three UML panels side by side, one per kind of inheritance, each headed by its syntax: class Derived : public Base, class Derived : protected Base, class Derived : private Base. In each, a Base box lists plus start() : void, hash log_event() : void and minus check() : void, and a Derived box below it joins Base by a line with a hollow triangle at Base. With public inheritance, Derived lists plus start() and hash log_event(). With protected inheritance, hash start() and hash log_event(). With private inheritance, minus start() and minus log_event(). In all three, Derived lists check() in grey as not accessible.
-   :align: center
-   :width: 100%
+.. list-table:: What each member of ``Base`` becomes in ``Derived``
+   :header-rows: 1
+   :widths: 31 23 23 23
 
-   What ``start()``, ``log_event()`` and ``check()`` of ``Base`` become in ``Derived``, for each kind of inheritance.
+   * - Member of ``Base``
+     - ``: public Base``
+     - ``: protected Base``
+     - ``: private Base``
+   * - ``public`` ``start()``
+     - ``public``
+     - ``protected``
+     - ``private``
+   * - ``protected`` ``log_event()``
+     - ``protected``
+     - ``protected``
+     - ``private``
+   * - ``private`` ``check()``
+     - not accessible
+     - not accessible
+     - not accessible
+
+Each cell is the access the inherited member has in ``Derived``. ``Derived`` does not write these methods again: it gets them from ``Base``.
 
 - The keyword before the base class's name sets the kind of inheritance. With ``public``, ``start()`` stays public; with ``protected``, it becomes protected; with ``private``, both methods become private. ``check()`` is private in ``Base``, so ``Derived`` never reaches it, whatever the keyword.
 - This course uses ``public``. `protected and private Inheritance`_, under Further Reading, has the full table.
-- UML joins the two classes by a line with a hollow triangle at the base class.
 - What every kind of vehicle shares (an id, the speeds and their check, the sensors) is written once, in ``Vehicle``.
 
 Writing Inheritance in C++
@@ -1118,6 +1133,35 @@ No Specifier Means private Inheritance
 .. note::
 
    "In the absence of an access-specifier for a base class, ``public`` is assumed when the derived class is defined with the class-key ``struct`` and ``private`` is assumed when the class is defined with the class-key ``class``". C++20 **[class.access.base]** (11.9.2) paragraph 2.
+
+Generalization
+""""""""""""""
+
+**Generalization**: starting from classes you already have, and moving what they share up into a new base class: bottom-up.
+
+.. figure:: /_static/images/l9/generalization_steps.png
+   :alt: On the left, three class boxes side by side, with no line between them: Elephant, Tiger and Rhinoceros. Each lists minus species_, minus weight_ and one member of its own (minus trunk_length_, minus stripe_count_, minus horn_count_), then plus eat(), plus make_sound(sound) and one method of its own (plus use_trunk(), plus hunt(), plus charge()). In each box, the four members the three share are shaded orange. A thick arrow points right, to a class diagram: Animal on top, with the four orange members, and below it Elephant, Tiger and Rhinoceros, each with only its own two members, each joined to Animal by a line with a hollow triangle at Animal.
+   :align: center
+   :width: 100%
+
+   Generalization: the shared members move up into ``Animal``.
+
+- Orange: the members ``Elephant``, ``Tiger`` and ``Rhinoceros`` each wrote. They move up into ``Animal``, written once.
+- Each derived class keeps only what it adds.
+
+Specialization
+""""""""""""""
+
+**Specialization**: starting from a base class, and writing a derived class for objects that need more: top-down.
+
+.. figure:: /_static/images/l9/specialization_steps.png
+   :alt: On the left, one class box: Animal, with minus species_, minus weight_, plus eat() and plus make_sound(sound). A thick arrow points right, to a class diagram: the same Animal on top, and below it Elephant, Tiger and Rhinoceros, each joined to Animal by a line with a hollow triangle at Animal. Each derived box lists only what it adds, shaded blue: minus trunk_length_ and plus use_trunk() for Elephant, minus stripe_count_ and plus hunt() for Tiger, minus horn_count_ and plus charge() for Rhinoceros.
+   :align: center
+   :width: 90%
+
+   Specialization: each derived class adds to ``Animal``.
+
+- Blue: what each derived class adds to ``Animal``. Everything else it gets from ``Animal``.
 
 Generalization and Specialization
 """""""""""""""""""""""""""""""""
@@ -1215,7 +1259,7 @@ A RoboTaxi and a Taxi Are Vehicles
 """"""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l9/model_l9_inheritance_members.png
-   :alt: A UML class diagram with three boxes, each listing its members; every box and line is orange. Each class name has a circled letter before it: A for the abstract Vehicle, and C for a class, on RoboTaxi and Taxi. On the left, Vehicle, its name in italics, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void in italics, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, RoboTaxi, marked final, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string = "College Park", AutomationLevel = level_4), plus get_operating_zone() : const string&, plus get_automation_level() : AutomationLevel, plus change_zone(string) : void, the underlined minus check_level(AutomationLevel) : void and plus drive(const Route&) : void, and below it Taxi, marked final, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram with three boxes, each listing its members; every box and line is orange. Each class name has a circled letter before it: C for a class, on Vehicle, RoboTaxi and Taxi. On the left, Vehicle, has the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double and minus sensors_ : vector of unique_ptr of Sensor, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor&, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the right, RoboTaxi, with minus operating_zone_ : string, minus automation_level_ : AutomationLevel, plus RoboTaxi(double, string = "College Park", AutomationLevel = level_4), plus get_operating_zone() : const string&, plus get_automation_level() : AutomationLevel, plus change_zone(string) : void, the underlined minus check_level(AutomationLevel) : void and plus drive(const Route&) : void, and below it Taxi, with minus driver_name_ : string, plus Taxi(double, string), plus assign_driver(string) : void and plus drive(const Route&) : void. Each joins Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
@@ -1377,7 +1421,7 @@ pointer in Memory
 """""""""""""""""
 
 .. figure:: /_static/images/l9/base_ptr_memory.png
-   :alt: Three blue Stack boxes side by side. On the left, under the name tag robotaxi, one object in two blocks: Vehicle part, 88 bytes, then RoboTaxi part, 40 bytes, 4 of padding; a measuring line under them reads 128 bytes. In the middle, under the name tag pointer, one field, (ptr), with a measuring line that reads 8 bytes. On the right, under the name tag taxi, one object in two blocks: Vehicle part, 88 bytes, then Taxi part, 32 bytes; a measuring line reads 120 bytes. From the pointer field, a gray dashed arrow tagged 1 runs left to the Vehicle part of robotaxi, and a blue arrow tagged 2 runs right to the Vehicle part of taxi.
+   :alt: Three blue Stack boxes side by side. On the left, under the name tag robotaxi, one object in two blocks: Vehicle part, 88 bytes, then RoboTaxi part, 40 bytes, 4 of padding, gray and dashed, with tag 3 beside it; a measuring line under them reads 128 bytes. In the middle, under the name tag pointer, one field, (ptr), with a measuring line that reads 8 bytes. On the right, under the name tag taxi, one object in two blocks: Vehicle part, 88 bytes, then Taxi part, 32 bytes, gray and dashed, with tag 3 beside it; a measuring line reads 120 bytes. From the pointer field, a gray dashed arrow tagged 1 runs left to the Vehicle part of robotaxi, and a blue arrow tagged 2 runs right to the Vehicle part of taxi.
    :align: center
    :width: 100%
 
@@ -1385,11 +1429,29 @@ pointer in Memory
 
 - 1: ``Vehicle* pointer{&robotaxi};`` holds the address of ``robotaxi``'s ``Vehicle`` part. Gray: the value it held before.
 - 2: after ``pointer = &taxi;``, it holds the address of ``taxi``'s ``Vehicle`` part. Unlike a reference, a pointer can change.
+- 3: the ``RoboTaxi`` and ``Taxi`` parts, gray, are in memory, but code through ``pointer`` cannot reach them: its type is ``Vehicle*``, so only ``Vehicle``'s members compile.
 - Each ``Vehicle`` part comes first, so ``pointer`` holds the address where the whole object starts (measured with g++ 13.3). ``pointer`` itself is 8 bytes, whatever it points to.
 
 .. note::
 
    "The result of the conversion is a pointer to the base class subobject of the derived class object". C++20 standard, [conv.ptr] 7.3.11, paragraph 3.
+
+A Base Class Smart Pointer to a Derived Object
+""""""""""""""""""""""""""""""""""""""""""""""
+
+.. code-block:: cpp
+
+   std::unique_ptr<Vehicle> owner{std::make_unique<RoboTaxi>(13.4)};
+   owner->set_speed(10.0);  // a Vehicle method
+   // owner->change_zone("Silver Spring");  // does not compile
+   std::shared_ptr<Vehicle> shared{std::make_shared<Taxi>(13.4, "Ana")};
+   shared->set_speed(5.0);
+
+- It works as with a raw pointer: a ``RoboTaxi*`` converts to a ``Vehicle*``, so a ``std::unique_ptr<RoboTaxi>`` converts to a ``std::unique_ptr<Vehicle>``, and a ``std::shared_ptr<Taxi>`` to a ``std::shared_ptr<Vehicle>``. Only ``Vehicle``'s methods compile.
+- The two differ when they delete the object:
+
+  - ``shared``, made by ``std::make_shared<Taxi>``, remembers the ``Taxi``: ``~Taxi`` runs, then ``~Vehicle``.
+  - ``owner`` deletes through a ``Vehicle*``. Without a ``virtual`` destructor, only the ``Vehicle`` part is deleted: undefined behavior, and AddressSanitizer reports ``new-delete-type-mismatch``. Live Coding Step 4 adds that destructor (why: :doc:`virtual Methods in Depth <l9_virtual>`).
 
 Not the Other Way
 """""""""""""""""
@@ -1448,6 +1510,31 @@ Slicing in Memory
 
 - ``copy`` is a plain ``Vehicle``: ``copy.drive`` runs ``Vehicle::drive``.
 - With a ``virtual`` method, ``copy`` also gets its own hidden pointer to ``Vehicle``'s table: :doc:`virtual Methods in Depth <l9_virtual>`.
+
+Summary: Base References and Slicing
+""""""""""""""""""""""""""""""""""""
+
+.. admonition:: A Base Class Reference or Pointer to a Derived Object
+   :class: tip
+
+   - No cast: a ``Taxi`` is a ``Vehicle``, so a ``Vehicle&``, a ``Vehicle*``, a ``std::unique_ptr<Vehicle>`` or a ``std::shared_ptr<Vehicle>`` can refer to it.
+   - It refers to the object itself, not a copy, but only ``Vehicle``'s members compile through it.
+   - A reference is bound once; a pointer can move to another object.
+   - Not the other way: a ``Vehicle*`` does not convert to a ``Taxi*``.
+
+.. admonition:: Slicing
+   :class: tip
+
+   - Copying a ``Taxi`` into a ``Vehicle`` (``Vehicle copy{taxi};`` or ``push_back`` into a ``std::vector<Vehicle>``) copies only the ``Vehicle`` part.
+   - The copy is a plain ``Vehicle``: ``driver_name_`` is left behind.
+   - To keep the whole object, use a reference or a pointer. Rule: Core Guidelines ES.63, "Don't slice".
+
+   .. code-block:: cpp
+
+      Vehicle& base_ref{taxi};  // refers to taxi: nothing is copied
+      Vehicle* pointer{&taxi};  // holds taxi's address: nothing is copied
+      std::vector<std::shared_ptr<Vehicle>> vehicles;
+      vehicles.push_back(std::make_shared<Taxi>(13.4, "Ana"));  // the whole Taxi
 
 protected Members
 """""""""""""""""
@@ -1972,11 +2059,24 @@ A **pure** ``virtual`` **method** is a ``virtual`` method declared with ``= 0``.
 
 - FR-3: each kind of vehicle drives in its own way, so ``Vehicle::drive`` has no body that makes sense.
 - Only the methods each derived class must do its own way are pure virtual. In ``Vehicle``, only ``drive`` is: ``set_speed`` and ``get_speed`` keep one body for every vehicle.
-- UML sets an abstract class's name in italics: ``Vehicle`` on the class diagram.
+- UML sets an abstract class's name in italics: `An Abstract Class in the Class Diagram`_.
 
 .. note::
 
    "A class is an abstract class if it has at least one pure virtual function". C++20 **[class.abstract]** (11.7.3) paragraph 2.
+
+An Abstract Class in the Class Diagram
+""""""""""""""""""""""""""""""""""""""
+
+.. figure:: /_static/images/l9/model_l9_abstract.png
+   :alt: A UML class diagram of the ride service program, names only. Every box and line is gray except Vehicle, light orange with an orange border. Vehicle's name is in italics, with a circled A before it; every other class has a circled C, and SensorType and AutomationLevel a circled E. Fleet holds Vehicle (open diamond at Fleet, 1 to 0..*), Passenger rides Vehicle (0..* to 0..1), Vehicle owns Sensor (filled diamond at Vehicle, 1 to 0..*), Vehicle uses Route (dashed arrow), Route has Position, marked struct (filled diamond at Route, 1 to 0..*), Sensor has type SensorType and RoboTaxi has level AutomationLevel (arrows, 1 at the far end). RoboTaxi and Taxi each join Vehicle by a line with a hollow triangle at Vehicle.
+   :align: center
+   :width: 100%
+
+   ``Vehicle`` drawn as an abstract class.
+
+- UML sets an abstract class's name in italics: ``Vehicle``. PlantUML also marks it with a circled A instead of a C.
+- Until now the diagrams drew ``Vehicle`` as a plain class: it had no pure ``virtual`` method yet.
 
 Live Coding: Step 5
 """""""""""""""""""
@@ -2061,7 +2161,18 @@ The final Keyword
 
 See `cppreference: final specifier <https://en.cppreference.com/w/cpp/language/final>`__.
 
-See `final in the Class Diagram`_ under Further Reading.
+final in the Class Diagram
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l9/model_l9_final.png
+   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Each class name has a circled letter before it: A for the abstract Vehicle, E for the enumerations SensorType and AutomationLevel, and C for a class on every other box, Position included. Only the RoboTaxi and Taxi boxes, each marked final, are orange; everything else is grey.
+   :align: center
+   :width: 100%
+
+   ``RoboTaxi`` and ``Taxi`` are each marked «final».
+
+- ``RoboTaxi`` and ``Taxi`` are marked «final»: the course's notation.
+- «final» is not a standard UML stereotype. UML 2.5.1 calls the property isFinalSpecialization ("If true, the Classifier cannot be specialized", 9.9.4), gives it no notation, and has no «final» in its standard stereotypes (22.3, Table 22.1).
 
 final Class and final Method
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2181,13 +2292,13 @@ The sections below come from the appendix of the slides. They are **not presente
      - `Copying a Vehicle of the Design`_ (xvii)
      - Why the copy fails, and how to delete it
    * - Each part
-     - `Verbs and Links`_ (xviii to xxix)
+     - `Verbs and Links`_ (xviii to xxviii)
      - More code, memory pictures and UML for the slides of each part, in the order of the lecture
    * - Discussions
-     - `Discussions`_ (xxx to xxxiv)
+     - `Discussions`_ (xxix to xxxiii)
      - The questions of the discussions, with their answers
    * - Live Coding
-     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xxxv to xxxvi)
+     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xxxiv to xxxv)
      - Code to copy for Step 2: ``std::find`` and ``std::erase_if`` on a vector of numbers
 
 The vtable, the cost of ``virtual``, ``virtual`` destructors and their discussions are on the reading page :doc:`virtual Methods in Depth <l9_virtual>`.
@@ -2830,22 +2941,6 @@ Scalability and Redundancy
 Back to `Overloads Cannot Meet the Challenge`_.
 
 
-final in the Class Diagram
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l9/model_l9_final.png
-   :alt: The same UML class diagram of the ride service program, with class names only: Fleet, Passenger, Vehicle, Sensor, SensorType, Route, Position, RoboTaxi, Taxi and AutomationLevel, joined by the same lines, and RoboTaxi to AutomationLevel by an arrow labeled has level. Each class name has a circled letter before it: A for the abstract Vehicle, E for the enumerations SensorType and AutomationLevel, and C for a class on every other box, Position included. Only the RoboTaxi and Taxi boxes, each marked final, are orange; everything else is grey.
-   :align: center
-   :width: 100%
-
-   ``RoboTaxi`` and ``Taxi`` are each marked «final».
-
-- ``RoboTaxi`` and ``Taxi`` are marked «final»: the course's notation.
-- «final» is not a standard UML stereotype. UML 2.5.1 calls the property isFinalSpecialization ("If true, the Classifier cannot be specialized", 9.9.4), gives it no notation, and has no «final» in its standard stereotypes (22.3, Table 22.1).
-
-Back to `The final Keyword`_.
-
-
 Discussions
 ^^^^^^^^^^^
 
@@ -2914,7 +3009,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxxi``.
+   - Run: ``702run week9_appendix xxx``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -2960,7 +3055,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxiii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -3016,7 +3111,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xxxv``.
+- Run: ``702run week9_appendix xxxiv``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3040,4 +3135,4 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xxxvi``.
+- Run: ``702run week9_appendix xxxv``.
