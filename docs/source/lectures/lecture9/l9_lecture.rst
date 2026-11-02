@@ -19,10 +19,10 @@ The `Further Reading`_ part, at the end of this page, is the appendix of the sli
 Upload Your Live Coding
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Step 4** on your own, in 10 minutes. Steps 5 and 6 are homework, not collected. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
+Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Steps 4, 5 and 6** in class, on your own: 10 minutes for Step 4, 5 minutes each for Steps 5 and 6. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture8/l8_setup>` and run the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``.
 
-- **Before the end of class**, upload every file of ``live/include`` and ``live/src`` to the L9 Live Coding assignment on Canvas.
-- It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Step 4. I do not grade it for correctness.
+- **Before the end of class**, after Step 6, zip the ``live`` folder: in ``project/week9``, run ``zip -r live.zip live`` (if ``zip`` is missing: ``sudo apt install zip``). Upload ``live.zip`` to the L9 Live Coding assignment on Canvas.
+- It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Steps 4, 5 and 6. I do not grade it for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (GitHub Copilot included), in class or after. Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 10**. The same rules apply.
 - The finished code is posted after Nov 10, the deadline for those who watch the recording.
@@ -1046,13 +1046,13 @@ Generalization: Three Classes Repeat Members
 **Generalization**: starting from classes you already have, and moving what they share up into a new base class: bottom-up.
 
 .. figure:: /_static/images/l9/generalization_before.png
-   :alt: Three class boxes side by side, with no line between them: Elephant, Tiger and Rhinoceros. Each lists minus species_, minus weight_ and one member of its own (minus trunk_length_, minus stripe_count_, minus horn_count_), then plus eat(), plus make_sound(sound) and one method of its own (plus use_trunk(), plus hunt(), plus charge()). In each box, the four members the three share are shaded orange.
+   :alt: Three class boxes side by side, with no line between them: Elephant, Tiger and Rhinoceros. Each lists minus species_, minus weight_ and one member of its own (minus trunk_length_, minus stripe_count_, minus horn_count_), then plus eat(), plus make_sound(sound) and one method of its own (plus use_trunk(), plus hunt(), plus charge()). In each box, the four members the three share are shaded light gray.
    :align: center
    :width: 90%
 
    Three classes that each write the same members.
 
-- Orange: the members ``Elephant``, ``Tiger`` and ``Rhinoceros`` each wrote, the same in all three.
+- Gray: the members ``Elephant``, ``Tiger`` and ``Rhinoceros`` each wrote, the same in all three.
 
 Generalization: The Shared Members Move Up
 """"""""""""""""""""""""""""""""""""""""""
@@ -1161,9 +1161,9 @@ RoboTaxi and Taxi Are Vehicles
 ----
 
 .. image:: /_static/images/l9/model_l9_inheritance_only.png
-   :alt: A UML class diagram with only three boxes, Vehicle on the left, RoboTaxi and Taxi on the right, all light orange with dark orange lines, each with a circled C, for a class. RoboTaxi and Taxi each join Vehicle by an orange line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram with only three boxes in one row, RoboTaxi on the left, Vehicle in the middle and Taxi on the right, all light orange with dark orange lines, each with a circled C, for a class. RoboTaxi and Taxi each join Vehicle by an orange line with a hollow triangle at Vehicle.
    :align: center
-   :width: 40%
+   :width: 70%
 
 The answer on the path, and the requirement behind it:
 
@@ -1204,7 +1204,7 @@ A RoboTaxi in Memory
 
 - A derived object contains every data member of its base class: ``car_a`` holds the six of ``Vehicle``, then the two that ``RoboTaxi`` adds.
 - Sizes, measured with g++ 13.3: the ``Vehicle`` part is 88 bytes, ``operating_zone_`` (a ``std::string``) 32 and ``automation_level_`` (an ``AutomationLevel``, an ``int`` underneath) 4. Then 4 bytes of padding make the size a multiple of 8: 88 + 32 + 4 + 4 = 128.
-- Whether ``RoboTaxi``'s methods can use a member by name depends on its access specifier in ``Vehicle``. ``-`` marks ``private``, as in the class diagram: the member is there, but reachable only through ``Vehicle``'s ``public`` or ``protected`` methods (`private Stays private`_).
+- Whether ``RoboTaxi``'s methods can use a member by name depends on its access specifier in ``Vehicle``. ``-`` marks ``private``, as in the class diagram: the member is there, but ``RoboTaxi``'s methods cannot name it. It is still needed: ``Vehicle``'s methods, such as ``set_speed``, use it for each ``RoboTaxi``, and ``RoboTaxi``'s methods reach it through ``Vehicle``'s ``public`` or ``protected`` methods (`private Stays private`_).
 - ``next_id_`` is ``static``: one counter for the class, in no object.
 - This code prints each member through ``Vehicle``'s ``public`` methods, then the two sizes: ``88 128``.
 
@@ -1760,7 +1760,7 @@ The Challenge: A Base Reference
    Vehicle: drives 500 m
    Vehicle: drives 500 m
 
-The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``. The **dynamic type** is the class of the object it refers to while the program runs: ``RoboTaxi``, then ``Taxi``.
+The **static type** of an expression is the type written in the code: ``vehicle`` is a ``const Vehicle&``.
 
 - The compiler sees only the static type, so it calls ``Vehicle::drive`` for both. Each object's own ``drive`` is lost.
 
@@ -1792,6 +1792,8 @@ See `One Overload per Class`_ and `Scalability and Redundancy`_ under Further Re
 
 Runtime Polymorphism
 ^^^^^^^^^^^^^^^^^^^^
+
+The **dynamic type** of an expression is the class of the object it refers to while the program runs. In ``start_shift`` (`The Challenge: A Base Reference`_), ``vehicle`` has static type ``const Vehicle&``, and dynamic type ``RoboTaxi``, then ``Taxi``.
 
 **Runtime polymorphism**: the method a call runs is picked while the program runs, from the class of the object. A call through a base reference or pointer then runs the derived class's own method. Also called **dynamic polymorphism** (Stroustrup, *C++ Glossary*); picking the method at run time is **dynamic binding** (*C++ FAQ: Inheritance, virtual functions*).
 
@@ -1909,8 +1911,6 @@ Live Coding: Step 4
 
 **10 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
 
-Step 4 is the last step of the exercise: upload your Live Coding files on Canvas (`Upload Your Live Coding`_).
-
 See `auto or a Base Pointer`_ under Further Reading.
 
 Abstraction
@@ -1958,7 +1958,7 @@ An Abstract Class in the Class Diagram
 Live Coding: Step 5
 """""""""""""""""""
 
-**Homework, not collected.** The instructions are on the slides.
+**5 minutes, in class, on your own.** The instructions are on the slides.
 
 See `Step 5: No Vehicle Objects`_ and `Step 5: RoboTaxi and Taxi`_ under Further Reading.
 
@@ -2125,7 +2125,7 @@ See `Discussion: A Keyword for Each Method`_ under Further Reading.
 Live Coding: Step 6
 ^^^^^^^^^^^^^^^^^^^
 
-**Homework, not collected.** The instructions are on the slides.
+**5 minutes, in class, on your own.** The instructions are on the slides. Then zip the ``live`` folder and upload ``live.zip`` on Canvas (`Upload Your Live Coding`_).
 
 See `Step 6: A final Class`_ under Further Reading.
 
@@ -2434,7 +2434,7 @@ protected and private Inheritance, the Code
 - With ``private``, ``NightShuttle`` cannot call ``check()``, and outside code cannot see the base.
 - With ``protected`` instead, ``start_late()`` compiles and prints ``go``; outside code still cannot see the base (g++ 13.3: ``'PreTripCheck' is an inaccessible base of 'NightShuttle'``).
 - The destructor of ``PreTripCheck`` is ``protected`` and non-virtual, one of the two choices of `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__. Outside code cannot delete a ``Shuttle`` through a ``PreTripCheck*``.
-- Run: ``702run week9_appendix xi`` (after Nov 10).
+- Run: ``702run week9_appendix xii`` (after Nov 10).
 
 Back to `When protected and private Inheritance Make Sense`_.
 
@@ -2504,7 +2504,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. With the design's ``RoboTaxi``, ``robotaxi->get_operating_zone()`` compiles and ``vehicle->get_operating_zone()`` does not.
-- Run: ``702run week9_appendix xiv``.
+- Run: ``702run week9_appendix xv``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2528,7 +2528,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and the parameter of ``hand_over`` all accept it.
 - Each ``std::unique_ptr`` is the only owner of its vehicle. ``Fleet`` shares its vehicles, so it holds ``std::shared_ptr<Vehicle>`` instead.
-- Run: ``702run week9_appendix xv``.
+- Run: ``702run week9_appendix xvi``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2658,7 +2658,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_appendix xxi``.
+- Run: ``702run week9_appendix xxiii``.
 
 Back to `Exclusive Ownership Needs std::unique_ptr`_.
 
@@ -2743,7 +2743,7 @@ Here ``Vehicle`` is the concrete class you already have; the Abstraction section
 - This ``drive`` prints the length and the time, length / speed: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``maya_ride`` is destroyed; the ``Vehicle`` kept nothing of it.
 - A dependency needs no smart pointer: a reference parameter. Core Guidelines `F.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-smart>`__: "For general use, take ``T*`` or ``T&`` arguments rather than smart pointers".
-- Run: ``702run week9_appendix xxiv``.
+- Run: ``702run week9_appendix xxvi``.
 
 Back to `A Vehicle Uses a Route`_.
 
@@ -2768,7 +2768,7 @@ The **base subobject**: the whole ``Vehicle`` at the start of every ``Taxi`` obj
 
 - A ``Taxi`` object starts with its base subobject: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120.
 - ``RoboTaxi`` adds a ``std::string`` (32 bytes) and an ``int`` (4 bytes), then 4 bytes of padding: 88 + 32 + 4 + 4 = 128.
-- Run: ``702run week9_appendix xxv``.
+- Run: ``702run week9_appendix xxvii``.
 
 Back to `A Base Class Reference to a Derived Object`_.
 
@@ -2808,7 +2808,7 @@ One Overload per Class
    Taxi: Ana drives 500 m
 
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
-- Run: ``702run week9_appendix xxvii``.
+- Run: ``702run week9_appendix xxx``.
 
 Back to `Overloads Cannot Meet the Challenge`_.
 
@@ -2895,7 +2895,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxx``.
+   - Run: ``702run week9_appendix xxxiii``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -2941,7 +2941,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxv`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -2997,7 +2997,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xxxiv``.
+- Run: ``702run week9_appendix xxxvii``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3021,7 +3021,7 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xxxv``.
+- Run: ``702run week9_appendix xxxviii``.
 
 Owners Keep Objects Alive
 ^^^^^^^^^^^^^^^^^^^^^^^^^
