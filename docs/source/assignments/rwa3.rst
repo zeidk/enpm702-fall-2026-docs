@@ -278,21 +278,63 @@ Requirements
    4. Every file starts with a Doxygen ``@file`` comment with ``@author``
       and ``@brief``. Every class and every method in a header has a
       Doxygen comment, and ``docs/Doxyfile`` uses relative paths.
-   5. ``src/main.cpp`` is the starter file below, with each ``TODO``
-      replaced by the code it describes. The program runs to the end, and
+   5. ``src/main.cpp`` is the starter's (`The Starter Project`_), with each
+      ``TODO`` replaced by the code it describes. The program runs to the end, and
       Valgrind reports no leak and no error: paste the last lines of its
       output into ``README.md``.
 
 
-The Starter main.cpp
---------------------
+The Starter Project
+-------------------
 
-Download :download:`main.cpp </_static/files/rwa3/main.cpp>`. It compiles
-as given and prints its four section headers. Once your classes are
-written, each section uses them to show one part of your design.
+The starter is in the course repository, in
+`project/rwa3_starter <https://github.com/zeidk/enpm702-fall-2026-cpp/tree/main/project/rwa3_starter>`__.
+It has the layout of `Deliverables`_, a ``CMakeLists.txt`` that builds
+``rwa3``, the ``main.cpp`` of R5, a ``Doxyfile``, a PlantUML file and a
+``README.md`` to fill in.
 
-.. literalinclude:: /_static/files/rwa3/main.cpp
-   :language: cpp
+1. Get it: go to the course repository and pull.
+
+   .. code-block:: bash
+
+      enpm702        # go to the repository, load the 702 commands
+      git pull
+
+2. Copy the starter out of the repository, under the name of your
+   submission. Work in this copy, never in the course repository: the next
+   ``git pull`` would collide with your changes.
+
+   .. code-block:: bash
+
+      cp -r project/rwa3_starter ~/rwa3_firstname_lastname
+
+3. Build and run it. It compiles as given and prints the four section
+   headers of ``main.cpp``.
+
+   .. code-block:: bash
+
+      cd ~/rwa3_firstname_lastname
+      cmake -S . -B build
+      cmake --build build
+      ./build/rwa3
+
+4. Open the folder in VS Code: ``code .``
+5. For each class, add its header to ``include/`` and its source file to
+   ``src/``, and add the source file to ``add_executable`` in
+   ``CMakeLists.txt``. Build again after each class (see `Tips`_).
+6. Fill in each section of ``src/main.cpp``: replace each ``TODO`` with the
+   code it describes.
+7. Before you submit:
+
+   .. code-block:: bash
+
+      cmake --build build                             # no warning
+      valgrind --leak-check=full ./build/rwa3         # no leak, no error
+      cd docs && doxygen Doxyfile                     # pages in docs/html
+
+   Paste the last lines of Valgrind's output into ``README.md``, delete
+   ``include/README.md``, and zip the folder without ``build/`` and
+   ``docs/html/`` (`Deliverables`_).
 
 
 How Your Documentation Is Graded

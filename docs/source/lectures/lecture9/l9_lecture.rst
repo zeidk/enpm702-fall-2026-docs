@@ -1426,6 +1426,11 @@ A ``protected`` **member** is a member that the class's own methods and the meth
 - A method of ``RoboTaxi`` can call ``log_event("starts")``, which prints ``vehicle 1: starts``. The same call in ``main`` does not compile: g++ says ``'void Vehicle::log_event(const std::string&) const' is protected within this context``.
 - ``protected`` is the third access specifier, after ``public`` and ``private``. UML marks it with ``#``.
 
+.. admonition:: Question
+   :class: hint
+
+   Why not make ``log_event`` ``public``?
+
 private Stays private
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -1511,6 +1516,11 @@ It prints:
    :class: important
 
    Keep the base class's data members ``private``. Make a method ``protected`` when only derived classes need it. A derived class reaches the base's data through the base's getters and setters. In assignments, every data member is ``private``, or the assignment gets 0.
+
+.. admonition:: Question
+   :class: hint
+
+   What if a getter should be usable in derived classes, but not outside them, as in ``main``?
 
 Constructors and Inheritance
 """"""""""""""""""""""""""""
@@ -2156,28 +2166,28 @@ The sections below come from the appendix of the slides. They are **not presente
      - `protected and private Inheritance`_ (xi)
      - The access of each base member for each keyword
    * - Class Relationships
-     - `When protected and private Inheritance Make Sense`_ (xii)
+     - `When protected and private Inheritance Make Sense`_ (xii to xiii)
      - When each keyword fits, with an example, and what the isocpp FAQ and the Google C++ Style Guide advise
    * - Class Relationships
-     - `A Base Member in the List`_ (xiii)
+     - `A Base Member in the List`_ (xiv)
      - Why a derived constructor cannot set a base member
    * - Polymorphism
-     - `auto or a Base Pointer`_ (xiv to xvii)
+     - `auto or a Base Pointer`_ (xv to xviii)
      - The type ``auto`` deduces for a pointer, and what each static type allows
    * - Polymorphism
-     - `Copying a Vehicle of the Design`_ (xviii)
+     - `Copying a Vehicle of the Design`_ (xix)
      - Why the copy fails, and how to delete it
    * - Polymorphism
-     - `The Cost of virtual`_ (xix)
+     - `The Cost of virtual`_ (xx)
      - The hidden vtable pointer: what it adds to each object and to each call
    * - Each part
-     - `Verbs and Links`_ (xx to xxxii)
+     - `Verbs and Links`_ (xxi to xxxiii)
      - More code, memory pictures and UML for the slides of each part, in the order of the lecture
    * - Discussions
-     - `Discussions`_ (xxxiii to xxxix)
+     - `Discussions`_ (xxxiv to xl)
      - The questions of the discussions, with their answers
    * - Live Coding
-     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xl to xli)
+     - `std::find on a Vector`_ and `std::erase_if on a Vector`_ (xli to xlii)
      - Code to copy for Step 2: ``std::find`` and ``std::erase_if`` on a vector of numbers
 
 All Twelve Requirements
@@ -2370,44 +2380,14 @@ Back to `Writing Inheritance in C++`_.
 When protected and private Inheritance Make Sense
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: cpp
+The ride service checks every vehicle before a trip. A class ``PreTripCheck`` already does it: its ``check()`` prints ``go`` or ``stop``, from the answer to one pure ``virtual`` question, ``ok()``.
 
-   class PreTripCheck {
-    protected:
-     ~PreTripCheck() = default;
-     void check() const {
-       std::cout << (ok() ? "go\n" : "stop\n");
-     }
-     virtual bool ok() const = 0;
-   };
+1. A ``Shuttle`` wants to reuse ``check()`` and answer ``ok()`` its own way. Only a derived class can override ``ok()``: a ``PreTripCheck`` member could not.
+2. But a ``Shuttle`` is not a pre-trip check. With ``public``, outside code could use every ``Shuttle`` as a ``PreTripCheck``.
+3. ``private`` inheritance gives both: ``Shuttle`` uses the code and overrides ``ok()``, and only ``Shuttle`` knows its base. It reads "is implemented in terms of", not "is a".
+4. ``protected`` inheritance: the same, when the classes derived from ``Shuttle`` must call ``check()`` too.
 
-   class Shuttle : private PreTripCheck {
-    public:
-     void start() const { check(); }
-
-    private:
-     bool ok() const override { return true; }
-   };
-
-   Shuttle shuttle;
-   shuttle.start();
-
-Output:
-
-.. code-block:: text
-
-   go
-
-- Use ``private`` inheritance when three things hold:
-
-  1. A class ``Shuttle`` reuses the code of a class ``PreTripCheck``.
-  2. That code calls a function that ``Shuttle`` overrides, or ``Shuttle`` needs the ``protected`` members of ``PreTripCheck``. Here ``check()`` calls the pure virtual ``ok()``, and ``Shuttle`` overrides ``ok()``.
-  3. A ``Shuttle`` is not a kind of ``PreTripCheck``.
-- Outside code cannot use a ``Shuttle`` as a ``PreTripCheck``. ``const PreTripCheck& base{shuttle};`` does not compile. g++ 13.3 says ``'PreTripCheck' is an inaccessible base of 'Shuttle'``.
-- Use ``protected`` inheritance in the same case, when the classes derived from ``Shuttle`` also need to use ``PreTripCheck``. The "is a" is then visible to the classes derived from ``Shuttle``, and still hidden from outside code.
-- In every other case, use a member (composition): ``Shuttle`` holds the object it needs as a data member. This course uses only ``public`` inheritance.
-- The destructor of ``PreTripCheck`` is ``protected`` and non-virtual, one of the two choices of `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__. Outside code cannot delete a ``Shuttle`` through a ``PreTripCheck*``.
-- Run: ``702run week9_appendix xii``.
+In every other case, use a member (composition): ``Shuttle`` holds the object it needs as a data member. This course uses only ``public`` inheritance. The code is in `protected and private Inheritance, the Code`_.
 
 .. note::
 
@@ -2418,6 +2398,57 @@ Output:
    "All inheritance should be public. If you want to do private inheritance, you should be including an instance of the base class as a member instead". Rule: `Google C++ Style Guide <https://google.github.io/styleguide/cppguide.html#Inheritance>`__.
 
 Back to `Writing Inheritance in C++`_.
+
+protected and private Inheritance, the Code
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   class PreTripCheck {
+    protected:
+     ~PreTripCheck() = default;
+     void check() const {
+       std::cout << (ok() ? "go\n"
+                          : "stop\n");
+     }
+     virtual bool ok() const = 0;
+   };
+
+   class Shuttle
+       : private PreTripCheck {
+    public:
+     void start() const { check(); }
+    private:
+     bool ok() const override {
+       return true;
+     }
+   };
+
+``shuttle.start()`` prints ``go``. Neither of these compiles with the ``private`` base:
+
+.. code-block:: cpp
+
+   class NightShuttle
+       : public Shuttle {
+    public:
+     void start_late() const {
+       check();
+     }
+   };
+   // outside the classes
+   PreTripCheck& as_check{shuttle};
+
+.. code-block:: text
+
+   error: 'void PreTripCheck::check() const' is private within this context
+   error: 'PreTripCheck' is an inaccessible base of 'Shuttle'
+
+- With ``private``, ``NightShuttle`` cannot call ``check()``, and outside code cannot see the base.
+- With ``protected`` instead, ``start_late()`` compiles and prints ``go``; outside code still cannot see the base (g++ 13.3: ``'PreTripCheck' is an inaccessible base of 'NightShuttle'``).
+- The destructor of ``PreTripCheck`` is ``protected`` and non-virtual, one of the two choices of `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__. Outside code cannot delete a ``Shuttle`` through a ``PreTripCheck*``.
+- Run: ``702run week9_appendix xiii`` (after Nov 10).
+
+Back to `When protected and private Inheritance Make Sense`_.
 
 A Base Member in the List
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2485,7 +2516,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. With the design's ``RoboTaxi``, ``robotaxi->get_operating_zone()`` compiles and ``vehicle->get_operating_zone()`` does not.
-- Run: ``702run week9_appendix xv``.
+- Run: ``702run week9_appendix xvi``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2509,7 +2540,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and the parameter of ``hand_over`` all accept it.
 - Each ``std::unique_ptr`` is the only owner of its vehicle. ``Fleet`` shares its vehicles, so it holds ``std::shared_ptr<Vehicle>`` instead.
-- Run: ``702run week9_appendix xvi``.
+- Run: ``702run week9_appendix xvii``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2589,7 +2620,7 @@ The Cost of virtual
 - ``nm -C appendix.cpp.o`` lists ``vtable for (anonymous namespace)::runtime::Vehicle`` (g++ 13.3). Without ``-C`` (demangle), ``nm`` prints the linker's name, ``_ZTVN12_GLOBAL__N_17runtime7VehicleE``. The object file is in ``build/project/week9/CMakeFiles/week9_appendix.dir/appendix/src/``.
 - A ``virtual`` call reads that table first, so it costs a little more than a direct call.
 - A **polymorphic class** is one that "declares or inherits a virtual function" (C++20 **[class.virtual]** (11.7.2) paragraph 1).
-- Run: ``702run week9_appendix xix``.
+- Run: ``702run week9_appendix xx``.
 
 .. note::
 
@@ -2662,7 +2693,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_appendix xxiii``.
+- Run: ``702run week9_appendix xxiv``.
 
 Back to `Exclusive Ownership Needs std::unique_ptr`_.
 
@@ -2747,7 +2778,7 @@ Here ``Vehicle`` is the concrete class you already have; the Abstraction section
 - This ``drive`` prints the length and the time, length / speed: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``maya_ride`` is destroyed; the ``Vehicle`` kept nothing of it.
 - A dependency needs no smart pointer: a reference parameter. Core Guidelines `F.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-smart>`__: "For general use, take ``T*`` or ``T&`` arguments rather than smart pointers".
-- Run: ``702run week9_appendix xxvi``.
+- Run: ``702run week9_appendix xxvii``.
 
 Back to `A Vehicle Uses a Route`_.
 
@@ -2772,7 +2803,7 @@ The **base subobject**: the whole ``Vehicle`` at the start of every ``Taxi`` obj
 
 - A ``Taxi`` object starts with its base subobject: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120.
 - ``RoboTaxi`` adds a ``std::string`` (32 bytes) and an ``int`` (4 bytes), then 4 bytes of padding: 88 + 32 + 4 + 4 = 128.
-- Run: ``702run week9_appendix xxvii``.
+- Run: ``702run week9_appendix xxviii``.
 
 Back to `A Base Class Reference to a Derived Object`_.
 
@@ -2812,7 +2843,7 @@ One Overload per Class
    Taxi: Ana drives 500 m
 
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
-- Run: ``702run week9_appendix xxix``.
+- Run: ``702run week9_appendix xxx``.
 
 Back to `The Challenge: Two Vectors`_.
 
@@ -2927,7 +2958,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxxiv``.
+   - Run: ``702run week9_appendix xxxv``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -2985,7 +3016,7 @@ For each line: ``Vehicle::drive`` or ``RoboTaxi::drive``? Give the static type a
    3. ``RoboTaxi::drive``, for the same reason, through a ``Vehicle*``.
    4. ``Vehicle::drive``. ``copy`` is a ``Vehicle`` object, sliced: its static type and its dynamic type are both ``Vehicle``.
 
-   ``702run week9_appendix xxxvi`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` once.
+   ``702run week9_appendix xxxvii`` prints ``RoboTaxi: drives itself 500 m`` three times, then ``Vehicle: drives 500 m`` once.
 
 Back to `Slicing`_.
 
@@ -3010,7 +3041,7 @@ A class with a ``virtual`` method gets a ``virtual`` destructor: code can then d
 
    C.127 says: "A class with a virtual function should have a virtual or protected destructor". ``RoboTaxi`` and ``Taxi`` need nothing written: their destructors are already ``virtual``, because they override ``Vehicle``'s.
 
-   ``702run week9_appendix xxxvii`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
+   ``702run week9_appendix xxxviii`` prints ``std::has_virtual_destructor_v`` for six classes: ``true`` for ``Vehicle``, ``RoboTaxi`` and ``Taxi``, ``false`` for ``Sensor``, ``Route`` and ``Fleet``.
 
 Back to `The Sizes in the Report`_.
 
@@ -3029,7 +3060,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxviii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxix`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -3085,7 +3116,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xl``.
+- Run: ``702run week9_appendix xli``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3109,4 +3140,4 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xli``.
+- Run: ``702run week9_appendix xlii``.
