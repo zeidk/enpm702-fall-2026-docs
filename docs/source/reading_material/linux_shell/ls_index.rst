@@ -33,5 +33,5 @@ common shell types, shell configuration files, aliases, and functions.
 .. note::
 
    Hands-on **shell exercises** are part of every lecture (beginning in
-   Lecture 1) and are submitted on Canvas for participation credit. This
+   Lecture 1). They are not graded. This
    reading module provides the concepts those exercises build on.

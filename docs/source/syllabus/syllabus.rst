@@ -23,7 +23,7 @@ Grade Breakdown
    * - Quizzes (5)
      - 25%
      - 100
-   * - Participation/Engagement
+   * - Exercises (8)
      - 5%
      - 20
    * - **Total**
@@ -34,9 +34,9 @@ Grade Breakdown
 
    The course is graded out of **400 points** (each component is scored
    on this scale to simplify grading); final letter grades are computed
-   from the percentages above. **Participation** is earned by actively
-   engaging in class discussions or by submitting weekly exercise
-   solutions on Canvas.
+   from the percentages above. **Exercises** are the C++ exercise sets of
+   Lectures 2 to 7 and the Live Coding uploads of Lectures 8 and 9, each
+   graded out of 20. The eight count equally.
 
 
 .. _course-schedule:

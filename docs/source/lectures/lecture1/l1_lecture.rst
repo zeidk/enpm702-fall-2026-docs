@@ -154,8 +154,7 @@ The Weekly Cycle
 Every lecture has a companion page in this documentation.
 
 - **Lecture notes and references**: what was covered, in written form.
-- **C++ exercises**: **graded**. Submitting them is one of the two
-  routes to participation credit.
+- **C++ exercises**: **graded**. They are 5% of your grade.
 - **Shell exercises**: **not graded**, but recommended. The terminal is
   where you will spend the second half of this course.
 - **Self-check quiz**: a way to find the gaps before a graded quiz
@@ -287,7 +286,7 @@ Assessments
    * - Quizzes (5)
      - 100
      - 25%
-   * - Participation
+   * - Exercises (8)
      - 20
      - 5%
    * - **Total**
@@ -396,28 +395,17 @@ Quizzes
 - No AI assistance, and no makeups.
 
 
-Participation and Engagement
+Exercise Grade
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-20 points, earned week by week rather than as a single total.
+20 points, from eight graded exercises.
 
-- **Two equivalent routes**, credited each week: engage in class
-  discussion, **or** submit that week's exercise solutions on
+- The eight exercises are the C++ exercise sets of Lectures 2 to 7 and
+  the Live Coding uploads of Lectures 8 and 9.
+- Each one is graded out of 20, and the eight count equally: each is
+  2.5 of the 20 points.
+- Each one is due before the start of the following lecture, on
   ELMS-Canvas.
-- The exercise route exists deliberately, so that students for whom
-  speaking up in a large lecture is not the best way to learn are not
-  disadvantaged.
-- **Score**: :math:`20 \times (\text{weeks credited} / 14)`, about 1.43
-  points per week. There are 14 lecture weeks, since Week 7 is Fall
-  Break.
-- Solutions count only when submitted **before the start of the
-  following lecture**. Week 15 solutions are due December 11.
-
-.. warning::
-
-   **A bulk upload scores zero**, regardless of how many weeks it
-   covers or how good the work is. The point of this component is
-   continuous practice, and a late batch does not serve that purpose.
 
 
 Grading and Policies
@@ -468,7 +456,7 @@ Late Work
 
 - RWAs and Group Projects: accepted up to **48 hours** late with a
   **20% penalty**, not accepted after that.
-- Quizzes and participation cannot be made up.
+- Quizzes cannot be made up.
 - Extensions for documented excused absences under University policy.
 - Contact me **before** a deadline, not after.
 
@@ -738,9 +726,9 @@ Exercises
 
 Besides the lecture material, every lecture page includes two kinds of
 hands-on practice: **Shell exercises** and **C++ exercises**. The C++
-exercises are **graded**, and submitting them on Canvas before the start
-of the following lecture is one of the two routes to **participation**
-credit (see the :doc:`syllabus </syllabus/syllabus>`). The shell
+exercises are **graded**: you submit them on Canvas before the start of
+the following lecture, and they are 5% of your grade (see the
+:doc:`syllabus </syllabus/syllabus>`). The shell
 exercises are **not graded**, but they are strongly recommended.
 
 .. grid:: 1 2 2 2
@@ -761,16 +749,14 @@ exercises are **not graded**, but they are strongly recommended.
         Short C++ programming exercises tied to each lecture's topic.
         They **begin in Lecture 2** (Lecture 1 has no C++ exercises) and
         let you practice each new language feature by writing and running
-        real code before applying it in the RWAs. They are **graded**,
-        and submitting them is one of the two routes to participation
-        credit.
+        real code before applying it in the RWAs. They are **graded**.
 
 .. note::
 
    Work through the exercises after each lecture on your own machine.
    Experimenting with code is the fastest way to internalize the
-   concepts, and submitting your C++ solutions on Canvas counts toward
-   your **participation** grade.
+   concepts, and your C++ solutions on Canvas count toward your
+   **exercise** grade.
 
 
 C++ Overview

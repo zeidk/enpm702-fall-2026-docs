@@ -32,8 +32,9 @@ polymorphism (Lecture 9).
 
    RWA3 is graded on your own decisions, so its rule is **stricter than
    the course AI policy** from :doc:`Lecture 1 </lectures/lecture1/l1_lecture>`:
-   a tool may help you understand, debug and test your work, but it may
-   not produce any part of it.
+   a tool may help you understand, debug and test your work, but apart
+   from test programs and Doxygen comments, it may not produce any part
+   of it.
 
    * You **may** use a tool such as TerpAI, ChatGPT, Claude, Gemini or
      Copilot to:
@@ -44,17 +45,22 @@ polymorphism (Lecture 9).
      * suggest how to find a bug in code **you** wrote;
      * suggest test cases for a class **you** wrote;
      * review code **you** wrote and point out problems, which you then
-       fix yourself.
+       fix yourself;
+     * write test programs for the classes **you** wrote, such as the
+       ungraded ones of the `Tips`_;
+     * write Doxygen comments for the code **you** wrote. Check that each
+       comment says what the code does: you hand them in, and the
+       Documentation grade covers them.
 
    * You **may not** use a tool to write any part of what you hand in: no
      requirement or definition, no class diagram or PlantUML, no
      relationship table or decision chart answer, no class, method or
-     ``main.cpp`` code, no test program (including the ungraded ones of the
-     Tips: you write those yourself), and no Doxygen comment. Code
+     ``main.cpp`` code, and no comment other than a Doxygen comment. Code
      completion that fills in more than the rest of the name you are
      typing (a suggested line or function) counts as generated code: turn
-     it off for this assignment. Generated work is not allowed in RWA3,
-     even when you disclose it.
+     it off while you write your classes and ``main.cpp``. Apart from
+     test programs and Doxygen comments, generated work is not allowed in
+     RWA3, even when you disclose it.
    * You **must** say at the top of your ``README.md`` which tool you used
      and what for, in two or three sentences. Disclosing an allowed use
      carries no penalty. Undisclosed use is a violation of the Code of
@@ -86,11 +92,16 @@ Themes
 
 Choose **one** theme. Each one describes a world: what is in it, what
 happens in it, and which values make no sense. The examples are there to
-start you off. Which classes exist, and their names, are your decisions:
-you may leave out an example or add your own.
+start you off. Which classes exist, and their names, are your decisions.
 
 .. dropdown:: Theme A: Drone Fleet
    :open:
+
+   .. figure:: /_static/images/rwa3/theme_a_drones.jpeg
+      :align: center
+      :alt: A black-and-white comic panel of a mountain valley. At the bottom left is a base camp with tents, a helipad and four people. A tethered quadrotor hovers high above the camp on a cable and sends out radio waves. A fixed-wing drone with two engines crosses the top right, labeled VWOOOM!, and dashed straight passes run across the valley. In the middle, a quadrotor labeled WHIRRR! flies a dotted spiral over the rocks at the lower right, and its camera beam shows a glowing person crouched among the rocks. A box at the bottom right reads "Every drone flies its own pattern."
+
+      Image generated with Google Gemini.
 
    The search-and-rescue team from RWA1 and RWA2 now runs a fleet of
    drones of more than one kind. A **quadrotor** hovers, so it scans a
@@ -121,6 +132,12 @@ you may leave out an example or add your own.
 
 .. dropdown:: Theme B: Video Game Monsters
    :open:
+
+   .. figure:: /_static/images/rwa3/theme_b_monsters.jpeg
+      :align: center
+      :alt: A black-and-white manga panel in a stone dungeon lit by wall torches. On the left, a young hero with a cape, a round wooden shield and a sword swings at three monsters. The sword passes through a vampire, labeled MISS!, who leaves a faded copy of himself as he dodges. The blade hits a snarling werewolf, labeled CLANG!. Behind them, a troll raises a club, with sparkles around it and a bar labeled REGEN above it. Health bars float over the vampire and the werewolf. A dark monster stands in an arched doorway at the back, and coins and a potion lie on the floor. A box at the bottom left reads "Every monster takes damage in its own way."
+
+      Image generated with Google Gemini.
 
    A dungeon video game is about a **hero** who fights monsters. In a fight,
    the hero and the monsters take turns. Each one can **attack** another,
@@ -163,6 +180,12 @@ you may leave out an example or add your own.
 
 .. dropdown:: Theme C: Planetary Rover Mission
    :open:
+
+   .. figure:: /_static/images/rwa3/theme_c_rovers.jpeg
+      :align: center
+      :alt: A black-and-white comic panel on a cratered planet under a black sky with stars and a small Earth. In front, a six-wheeled rover drills into a boulder with its arm, labeled KRRRRK!, next to a sample tube, and its wheel tracks curve back across the ground. Behind it, a lander stands on four legs with two round solar panels and a weather mast, with two small instruments on the ground beside it. At the top right, an orbiter with solar panels and a dish sends signals toward Earth, labeled BEEP BEEP, and shines a beam on the surface. A box at the top left reads "Sol 42. Every vehicle carries out its plan."
+
+      Image generated with Google Gemini.
 
    A space agency explores a planet with vehicles of different kinds. A
    **lander** stays where it set down; it measures the weather and
@@ -291,11 +314,12 @@ It has the layout of `Deliverables`_, a ``CMakeLists.txt`` that builds
 ``rwa3``, the ``main.cpp`` of R5, a ``Doxyfile``, a PlantUML file and a
 ``README.md`` to fill in.
 
-1. Get it: go to the course repository and pull.
+1. Get it: go to your clone of the course repository and pull. If you
+   cloned it somewhere else, use that folder.
 
    .. code-block:: bash
 
-      enpm702        # go to the repository, load the 702 commands
+      cd ~/enpm702_cpp/enpm702-fall-2026-cpp
       git pull
 
 2. Copy the starter out of the repository, under the name of your
@@ -306,33 +330,102 @@ It has the layout of `Deliverables`_, a ``CMakeLists.txt`` that builds
 
       cp -r project/rwa3_starter ~/rwa3_firstname_lastname
 
-3. Build and run it. It compiles as given and prints the four section
-   headers of ``main.cpp``.
-
-   .. code-block:: bash
-
-      cd ~/rwa3_firstname_lastname
-      cmake -S . -B build
-      cmake --build build
-      ./build/rwa3
-
-4. Open the folder in VS Code: ``code .``
-5. For each class, add its header to ``include/`` and its source file to
+3. Build and run it, in a terminal (`Build in a Terminal`_) or in VS Code
+   (`Build in VS Code`_). Both build the same ``CMakeLists.txt`` into
+   ``build/``, so you can switch between them. The starter compiles as
+   given and prints the four section headers of ``main.cpp``.
+4. For each class, add its header to ``include/`` and its source file to
    ``src/``, and add the source file to ``add_executable`` in
    ``CMakeLists.txt``. Build again after each class (see `Tips`_).
-6. Fill in each section of ``src/main.cpp``: replace each ``TODO`` with the
+5. Fill in each section of ``src/main.cpp``: replace each ``TODO`` with the
    code it describes.
-7. Before you submit:
+6. Before you submit, follow `Before You Submit`_.
+
+Build in a Terminal
+^^^^^^^^^^^^^^^^^^^
+
+The starter has a script, ``rwa3.sh``, that runs the commands for you. It
+uses only ``cmake``, ``g++``, ``valgrind``, ``doxygen`` and ``zip``, and
+nothing from your ``~/.bashrc``, so it works in any terminal. Run it from
+the project folder:
+
+.. code-block:: bash
+
+   cd ~/rwa3_firstname_lastname
+   ./rwa3.sh run
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+   :class: compact-table
+
+   * - Command
+     - What it does
+   * - ``./rwa3.sh build``
+     - Configures the project the first time, then compiles it.
+   * - ``./rwa3.sh run``
+     - Compiles, then runs ``./build/rwa3``.
+   * - ``./rwa3.sh check``
+     - Rebuilds from scratch and prints the number of warnings, then runs
+       the program under Valgrind. It stops with an error when Valgrind
+       finds a leak or an error.
+   * - ``./rwa3.sh docs``
+     - Generates the Doxygen pages in ``docs/html``.
+   * - ``./rwa3.sh zip``
+     - Makes ``rwa3_firstname_lastname.zip`` next to the project folder,
+       without ``build/``, ``docs/html``, ``docs/latex`` and ``.vscode/``.
+       It refuses while the folder is still named ``rwa3_starter`` or
+       ``include/README.md`` is still there.
+   * - ``./rwa3.sh clean``
+     - Deletes ``build/``, ``docs/html`` and ``docs/latex``.
+
+If the terminal says ``Permission denied``, run ``chmod +x rwa3.sh`` once.
+
+.. dropdown:: The commands the script runs
+
+   You can also type them yourself, from the project folder:
 
    .. code-block:: bash
 
-      cmake --build build                             # no warning
-      valgrind --leak-check=full ./build/rwa3         # no leak, no error
-      cd docs && doxygen Doxyfile                     # pages in docs/html
+      cmake -S . -B build                        # configure, once
+      cmake --build build                        # compile
+      ./build/rwa3                               # run
+      valgrind --leak-check=full ./build/rwa3    # check for leaks
+      cd docs && doxygen Doxyfile                # pages in docs/html
 
-   Paste the last lines of Valgrind's output into ``README.md``, delete
-   ``include/README.md``, and zip the folder without ``build/`` and
-   ``docs/html/`` (`Deliverables`_).
+Build in VS Code
+^^^^^^^^^^^^^^^^
+
+VS Code builds with the **CMake Tools** extension, as in the
+:doc:`VSCode and CMake </reading_material/vscode_cmake/vcm_index>` reading.
+
+1. Open the project folder on its own: ``code ~/rwa3_firstname_lastname``,
+   or *File > Open Folder*. Open this folder, not the course repository:
+   CMake Tools follows one project at a time.
+2. Open the Command Palette (``Ctrl + Shift + P``) and run
+   *CMake: Configure*. If VS Code asks for a compiler kit, choose GCC.
+3. Run *CMake: Build*. The build output, warnings included, appears in the
+   Output panel.
+4. From now on, the play button (▶) at the bottom of the window builds and
+   runs ``rwa3``. The bug icon next to it runs it under ``gdb``.
+5. Valgrind, Doxygen and the zip have no button. Open a terminal in VS Code
+   (*Terminal > New Terminal*), which starts in the project folder, and use
+   the script: ``./rwa3.sh check``, ``./rwa3.sh docs`` and
+   ``./rwa3.sh zip``.
+
+Before You Submit
+^^^^^^^^^^^^^^^^^
+
+1. Delete ``include/README.md``.
+2. Check the build and the memory, and paste the last lines of Valgrind's
+   output into ``README.md``:
+
+   .. code-block:: bash
+
+      ./rwa3.sh check      # 0 warnings, then no leak and no error
+
+3. Generate the Doxygen pages and read them once: ``./rwa3.sh docs``.
+4. Make the zip (`Deliverables`_): ``./rwa3.sh zip``.
 
 
 How Your Documentation Is Graded
@@ -392,6 +485,7 @@ Submit **one zip file** on Canvas, named after the folder it contains:
    rwa3_firstname_lastname/
    ├── CMakeLists.txt
    ├── README.md
+   ├── rwa3.sh              # from the starter
    ├── report.pdf           # R1 and R2
    ├── docs/
    │   └── Doxyfile
@@ -493,7 +587,7 @@ Tips
    classes, then the classes that hold the others. After each class, test
    it alone before you use it anywhere else:
 
-   * Write, yourself, a short program that makes one object, calls each of its
+   * Write a short program that makes one object, calls each of its
      methods, and prints what each one returns. Check every printed value
      against what you expected.
    * Try each value your requirements forbid, and check that the class

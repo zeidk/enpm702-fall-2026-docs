@@ -40,8 +40,8 @@ Each lecture page contains the following sections:
 
         C++ programming exercises for the lecture topic. Students
         practice the concepts covered in the lecture by writing and
-        running code. Solutions can be submitted on Canvas for
-        participation credit.
+        running code. From Lecture 2 to Lecture 7, you submit your
+        solutions on Canvas, and they are graded.
 
     .. grid-item-card:: Quiz
         :class-card: sd-border-info

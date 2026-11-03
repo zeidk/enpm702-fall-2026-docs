@@ -27,8 +27,8 @@ you should work through before the semester begins.
    - Understand the course structure, objectives, and grading policies.
    - Identify the software tools used in this course (Ubuntu, VSCode,
      ROS 2, Git, Valgrind, Doxygen) and the required toolchain versions.
-   - Explain how shell and C++ exercises contribute to your
-     participation grade, and apply the course AI-disclosure policy.
+   - Explain how the C++ exercises count toward your grade, and apply
+     the course AI-disclosure policy.
    - Place the major C++ standards on a timeline and explain why this
      course targets C++20.
    - Trace a program from source through the preprocessor, compiler,
@@ -71,7 +71,7 @@ Next Steps
     instructor this week rather than next week.
   - Complete the Lecture 1 :doc:`shell exercises <l1_shell>` and
     :doc:`self-check quiz <l1_quiz>`. Lecture 1 has no C++ exercises,
-    so there is nothing to submit for participation credit this week.
+    so there is nothing to submit this week.
   - Self-study reading, if not already done: **Linux Shell**, **VSCode
     and CMake**, **Version Control**.
   - **Flow Control and Operations** is due before Sep 15.
