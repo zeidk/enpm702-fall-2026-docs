@@ -1861,20 +1861,6 @@ A ``static`` **data member** belongs to the class, not to an object: there is on
 
 See `cppreference: static members <https://en.cppreference.com/w/cpp/language/static>`__.
 
-One Counter for Every Vehicle
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l8/model_l8_static.png
-   :alt: A UML class diagram of the ride service program, with class names only, in nine boxes. Vehicle is in the middle. On the left, Fleet joins Vehicle by a line with a hollow diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor, and a dashed arrow runs from Sensor to SensorType, marked enumeration. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle. The Vehicle box is purple; every other box and line is grey.
-   :align: center
-   :width: 100%
-
-   ``Vehicle`` gets ``next_id_``.
-
-- Every ``Vehicle`` needs its own id, so the fleet can tell two vehicles apart.
-- ``Vehicle`` (purple) gets ``next_id_``, one counter for the whole class, not one in each object. The diagram shows class names only, so ``next_id_`` is not drawn. When a UML diagram shows members, it underlines a static one.
-- The constructor sets ``id_`` from the counter, then adds 1 to the counter.
-
 Two Vehicles, the Same Id
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1907,7 +1893,7 @@ Two Vehicles, the Same Id
 
 - The first try: the counter ``next_id_`` is an ordinary data member that starts at 1. The constructor copies it into ``id_``, then adds 1.
 - Each object has its own ``next_id_``, so every counter starts at 1 and every ``Vehicle`` gets id 1: a fleet cannot tell two vehicles apart. Adding 1 to ``car_a``'s counter does nothing for ``car_b``.
-- Run: ``702run week8_playground 92``.
+- Run: ``702run week8_playground 91``.
 
 One Counter for the Class
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1936,7 +1922,7 @@ One Counter for the Class
 - ``get_next_id()`` is a ``static`` method, so ``Vehicle::get_next_id()`` can be called before any ``Vehicle`` exists: it is 1.
 - ``next_id_++`` gives the counter's value first and adds 1 after. So ``car_a`` gets id 1 and the counter becomes 2; then ``car_b`` gets id 2, and ``get_next_id()`` is 3.
 - ``inline`` (C++17) lets the header give the counter its first value. `The Counter's First Value`_ shows where it goes without ``inline``.
-- Run: ``702run week8_playground 93``.
+- Run: ``702run week8_playground 92``.
 
 The Counter's First Value
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1953,7 +1939,7 @@ The Counter's First Value
 
 - Without ``inline``, the counter takes two steps. Step 1, in the class: ``static int next_id_;`` declares it, with no value. Step 2, in ``vehicle.cpp``, at the top of the file, outside every function: ``int Vehicle::next_id_{1};`` defines it once and gives it its first value.
 - In one step, ``static int next_id_{1};`` in the class, it does not compile: g++ 13.3 says "ISO C++ forbids in-class initialization of non-const static member".
-- Run: ``702run week8_playground 94``.
+- Run: ``702run week8_playground 93``.
 
 .. _l8-static-method:
 
@@ -1979,7 +1965,7 @@ A ``static`` Method Has No ``this``
 - ``Vehicle::get_next_id()`` is called on the class, with no object, so the method has no ``this``.
 - ``speed_`` belongs to one ``Vehicle`` object. A ``static`` method has no ``this`` to find ``speed_`` through, so ``get_speed_kmh()`` does not compile.
 - A ``static`` method can be called on a ``const`` object too, because it has no ``this`` to make ``const``.
-- Run: ``702run week8_playground 95``.
+- Run: ``702run week8_playground 94``.
 
 .. note::
 
@@ -2025,7 +2011,7 @@ A Method That Uses No Member
 
 - ``mph_to_mps`` reads no data member, neither an object's nor a ``static`` one, so it needs no ``this``: make it ``static``, and call it on the class. 30 mph is 13.4112 m/s, and no ``Vehicle`` exists.
 - First ask whether it belongs in the class at all. A function that needs no member can live outside the class, in a header of its own (`When Not to Use a Class`_, Core Guidelines C.4). Keep it a ``static`` method when it is part of what the class offers, or a ``private`` helper of the class's own methods.
-- Run: ``702run week8_playground 97``.
+- Run: ``702run week8_playground 96``.
 
 Discussion: One per Object, or One for the Class?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
