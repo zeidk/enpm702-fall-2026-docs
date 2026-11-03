@@ -465,7 +465,7 @@ True / False
 
    **False**
 
-   *Explanation:* Disclosure covers RWAs, Group Projects, and weekly exercises. Quizzes permit open notes, the book, and online references, but no AI assistance and no makeups.
+   *Explanation:* Disclosure covers RWAs, Group Projects, and weekly exercises. Quizzes are closed book: the honor pledge allows no notes, slides, books, websites, compiler or AI tool, and quizzes have no makeups.
 
 
 .. admonition:: Question 24

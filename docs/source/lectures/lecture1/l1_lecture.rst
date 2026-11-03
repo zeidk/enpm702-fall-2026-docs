@@ -496,9 +496,9 @@ Academic Integrity and AI
      - No
      - No
    * - Quizzes
-     - Yes
-     - Yes
-     - Yes
+     - No
+     - No
+     - No
      - No
      - No
      - No
@@ -509,6 +509,16 @@ Academic Integrity and AI
      - Yes
      - Yes
      - Yes
+
+.. important::
+
+   Quizzes are closed book. Before each quiz, you accept an honor pledge on
+   Canvas: "I pledge on my honor that I have not given or received any
+   unauthorized assistance on this examination". For a quiz, unauthorized
+   means notes, slides, books or websites; a compiler, or an AI tool; and help
+   from another person. The pledge also says: "I will not share or discuss the
+   questions or the answers with any other student". Answering False, or
+   breaking the pledge, gives a grade of zero on that quiz.
 
 - Some assignments are collected through **Turnitin** on ELMS.
 - Course assistance sites such as CourseHero are **not** permitted
