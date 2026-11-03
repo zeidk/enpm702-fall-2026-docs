@@ -120,6 +120,11 @@ Each requirement has:
 2. Functional Requirements
 ====================================================
 
+A **functional requirement** says what the software does: one behavior, such
+as an input it accepts, an action it takes or an output it gives. FR-1 is one:
+the system accepts a ride request. A test can show whether the software has
+that behavior.
+
 2.1 Ride Requests and Dispatch
 ----------------------------------------------------
 
@@ -441,6 +446,11 @@ The system shall reject a Passenger with an empty name.
 
 3. Non-Functional Requirements
 ====================================================
+
+A **non-functional requirement** says how well the software does what the
+functional requirements ask. It names a quality, not a behavior: how easy the
+code is to change (NFR-1), how fast it runs (NFR-5), how safe it is (NFR-7).
+It still has a statement with **shall** and a check, as Section 1.4 says.
 
 **NFR-1. Extensibility**
 
