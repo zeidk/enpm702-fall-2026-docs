@@ -112,6 +112,11 @@ start you off. Which classes exist, and their names, are your decisions.
    search pattern and reports what it saw, and each kind does both in its
    own way.
 
+   Numbers you can use, chosen for this example: one spiral scan uses 15 %
+   of a quadrotor's charge, a fixed-wing drone uses 2 % of its charge per
+   kilometer of straight pass, and a tethered drone gets its power through
+   the cable, so its charge does not go down.
+
    Each drone is built with its own parts: a battery, with a capacity and
    a charge level, a set of motors, and sensors such as a thermal camera
    or a lidar. These parts belong to one drone only, and they are scrapped
@@ -195,6 +200,12 @@ start you off. Which classes exist, and their names, are your decisions.
    Every vehicle carries out its plan for the day (a *sol*, a day on the
    planet), and each kind does it in its own way.
 
+   Numbers you can use, chosen for this example: a rover uses 5 % of its
+   power for every 100 m it drives and 10 % for each drill, solar panels
+   give back 30 % at the start of each sol (never above 100 %), and a
+   vehicle with a radioisotope generator keeps the same power level every
+   sol.
+
    Each vehicle is built with its instruments, such as a rover's arm,
    drill and cameras, and with its power source, solar panels or a
    radioisotope generator. These belong to that vehicle only, and they are
@@ -213,6 +224,18 @@ start you off. Which classes exist, and their names, are your decisions.
    run one sol for every vehicle, collect a sample, end the mission and
    move the working vehicles to an extended one, and print a status
    report.
+
+.. admonition:: How much logic your program needs
+   :class: note
+
+   Keep the logic small. Each method changes one or two values, checks a
+   rule, and prints what happened: a drone's charge goes down by a fixed
+   amount, a monster's health goes down by the damage. You do not need a
+   full simulation, user input or real physics. The grade is for the
+   structure of R3 and R4, the values your objects reject, and the output
+   of the four sections of ``main``. The numbers in the themes are
+   examples: use them, or choose your own and state them in your
+   requirements.
 
 
 Requirements
