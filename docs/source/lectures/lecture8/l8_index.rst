@@ -37,7 +37,7 @@ This lecture covers the basics of object-oriented programming (OOP) in C++, arou
 Before Class
 ------------
 
-Follow :doc:`Setup Before Class <l8_setup>`. In class you write Step 1 with me and Steps 2 to 6 on your own, and you upload the code on Canvas before the end of class. That upload counts as the L8 exercise (exercises are 5% of the grade), as complete or incomplete, and no AI is allowed. The lecture page's Upload Your Live Coding section has the rules.
+Follow :doc:`Setup Before Class <l8_setup>`. In class you write Step 1 with me and Steps 2 to 6 on your own, and you upload the code on Canvas before the end of class. That upload counts as the L8 exercise (exercises are 5% of the grade), and no AI is allowed. Class reached Step 4, so it is scored on Steps 2 to 4. The lecture page's Upload Your Live Coding section has the rules.
 
 Before the Next Lecture
 -----------------------

@@ -21,7 +21,7 @@ Upload Your Live Coding
 You type Step 1 with me, in ``project/week8/live``. You write **Steps 2 to 6** on your own, in the time each step gives: 5 minutes for Step 2, 15 for Step 5, 10 for the others. In class, I walk around and help, but I do not show the answers: the recording would give them away.
 
 - **Before the end of class**, upload ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp`` to the L8 Live Coding assignment on Canvas.
-- It counts as the L8 exercise (exercises are **5%** of the grade), as complete or incomplete. Complete means the code builds and you wrote Steps 2 to 6. The upload is not graded for correctness.
+- It counts as the L8 exercise (exercises are **5%** of the grade). Class reached Step 4, so it is scored on Steps 2 to 4, 4 points each, out of 12 and scaled to 20. A step earns its points when you wrote it, whether or not the code builds, and part of them when you wrote part of it. Steps 5 and 6 get feedback but no points. The upload is not graded for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (Copilot included). Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 - The finished code is posted after Nov 3.
