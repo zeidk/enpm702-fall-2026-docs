@@ -1939,6 +1939,9 @@ Live Coding: Step 4
 
 **10 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
 
+- ``RoboTaxi`` and ``Taxi`` each declare their own ``drive``, marked ``override``: ``void drive(const Route& route) const override;``. Its body goes in ``robotaxi.cpp`` and ``taxi.cpp``.
+- ``virtual`` and ``override`` go only on the declaration, in the class. The definition in the ``.cpp`` repeats neither: ``void Taxi::drive(const Route& route) const``. Written on a definition outside the class, ``virtual`` gives ``'virtual' outside class declaration`` and ``override`` gives ``virt-specifiers in 'drive' not allowed outside a class definition``.
+
 See `auto or a Base Pointer`_ under Further Reading.
 
 Abstraction
