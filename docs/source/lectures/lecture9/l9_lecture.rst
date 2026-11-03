@@ -646,9 +646,37 @@ Two Separate Lifetimes
 - Could ``remove`` check ``use_count()`` and refuse when it is above 1? The count counts every owner, not passengers. In Step 2, ``car_b.use_count()`` is 2 just before ``remove``, with no passenger: ``main`` holds one copy and the fleet the other.
 - A plain pointer or a reference does not own the car either, but it cannot tell when the car is destroyed: the next use reads freed memory. A ``std::weak_ptr`` refers to the car without owning it, and it can check first.
 
-See `Before reset, in Memory`_ and `After reset, in Memory`_ under Further Reading.
-
 See `Two Headers That Include Each Other`_ under Further Reading.
+
+Before reset, in Memory
+"""""""""""""""""""""""
+
+.. figure:: /_static/images/l9/step1_memory_1.png
+   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked (ptr). maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 1 and weak_ptrs 2, then a Vehicle object with id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). Solid green arrows run from car_a's object field to the Vehicle object and from its control field to the control block. Dashed orange arrows run from ride_.object to the Vehicle object and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
+   :align: center
+   :width: 90%
+
+   This code in memory, after ``std::weak_ptr<Vehicle> watcher{car_a};``.
+
+- ``make_shared`` made one allocation of 104 bytes, measured with g++ 13.3: a 16-byte control block first, then the 88-byte ``Vehicle`` right after it.
+- Each smart pointer on the stack holds two pointers: one to the object, one to the control block.
+- Solid arrows: ``car_a``, the only owner. ``use_count`` is 1.
+- Dashed arrows: ``ride_`` and ``watcher``, two weak pointers. They point at the same object and control block, but they do not own it. The control block counts them: 2.
+
+After reset, in Memory
+""""""""""""""""""""""
+
+.. figure:: /_static/images/l9/step1_memory_2.png
+   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked nullptr, with no arrows. maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 0 and weak_ptrs 2, then a gray dashed block under the caption Vehicle, marked destroyed: its memory stays allocated until the last weak_ptr goes. Dashed orange arrows run from ride_.object to the gray block and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
+   :align: center
+   :width: 90%
+
+   The same code after ``car_a.reset();``.
+
+- ``reset`` empties ``car_a``: both its pointers are null, and ``use_count`` drops to 0. With no owner left, the ``Vehicle`` is destroyed.
+- The control block stays and still counts 2 weak pointers. That is how ``watcher.expired()`` can answer ``true``: it reads the control block, not the destroyed object.
+- The object and its control block are one allocation, so the object's memory stays too: "the memory occupied by T persists until all weak owners get destroyed as well" (`cppreference, std::make_shared <https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared>`__, Notes). Traced with g++ 13.3: nothing is freed at ``reset`` or at ``leave``.
+- ``maya.leave()`` empties ``ride_``. The 104 bytes are freed when ``watcher`` goes, at the end of the scope.
 
 Code Review: Step 1
 """""""""""""""""""
@@ -2607,42 +2635,6 @@ Verbs and Links
 Back to `Nouns and Classes`_.
 
 
-Before reset, in Memory
-^^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l9/step1_memory_1.png
-   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked (ptr). maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 1 and weak_ptrs 2, then a Vehicle object with id_ 1, max_speed_ 13.4, speed_ 0.0, color_ "white", mileage_ 0.0 and sensors_ (empty). Solid green arrows run from car_a's object field to the Vehicle object and from its control field to the control block. Dashed orange arrows run from ride_.object to the Vehicle object and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
-   :align: center
-   :width: 90%
-
-   This code in memory, after ``std::weak_ptr<Vehicle> watcher{car_a};``.
-
-- ``make_shared`` made one allocation of 104 bytes, measured with g++ 13.3: a 16-byte control block first, then the 88-byte ``Vehicle`` right after it.
-- Each smart pointer on the stack holds two pointers: one to the object, one to the control block.
-- Solid arrows: ``car_a``, the only owner. ``use_count`` is 1.
-- Dashed arrows: ``ride_`` and ``watcher``, two weak pointers. They point at the same object and control block, but they do not own it. The control block counts them: 2.
-
-Back to `Two Separate Lifetimes`_.
-
-
-After reset, in Memory
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l9/step1_memory_2.png
-   :alt: On the left, three blue Stack boxes under name tags car_a, maya and watcher. car_a holds two fields, object and control, each marked nullptr, with no arrows. maya holds name_, "Maya", then ride_.object and ride_.control, each marked (ptr). watcher holds object and control, each marked (ptr). On the right, a red Heap box holds one allocation, measured as 104 bytes: a control block with use_count 0 and weak_ptrs 2, then a gray dashed block under the caption Vehicle, marked destroyed: its memory stays allocated until the last weak_ptr goes. Dashed orange arrows run from ride_.object to the gray block and from ride_.control to the control block; dashed dark blue arrows do the same from watcher's object and control fields.
-   :align: center
-   :width: 90%
-
-   The same code after ``car_a.reset();``.
-
-- ``reset`` empties ``car_a``: both its pointers are null, and ``use_count`` drops to 0. With no owner left, the ``Vehicle`` is destroyed.
-- The control block stays and still counts 2 weak pointers. That is how ``watcher.expired()`` can answer ``true``: it reads the control block, not the destroyed object.
-- The object and its control block are one allocation, so the object's memory stays too: "the memory occupied by T persists until all weak owners get destroyed as well" (`cppreference, std::make_shared <https://en.cppreference.com/w/cpp/memory/shared_ptr/make_shared>`__, Notes). Traced with g++ 13.3: nothing is freed at ``reset`` or at ``leave``.
-- ``maya.leave()`` empties ``ride_``. The 104 bytes are freed when ``watcher`` goes, at the end of the scope.
-
-Back to `Two Separate Lifetimes`_.
-
-
 Each Route Has Its Own Positions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2658,7 +2650,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_appendix xxiii``.
+- Run: ``702run week9_appendix xxi``.
 
 Back to `Exclusive Ownership Needs std::unique_ptr`_.
 
@@ -2743,7 +2735,7 @@ Here ``Vehicle`` is the concrete class you already have; the Abstraction section
 - This ``drive`` prints the length and the time, length / speed: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``maya_ride`` is destroyed; the ``Vehicle`` kept nothing of it.
 - A dependency needs no smart pointer: a reference parameter. Core Guidelines `F.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-smart>`__: "For general use, take ``T*`` or ``T&`` arguments rather than smart pointers".
-- Run: ``702run week9_appendix xxvi``.
+- Run: ``702run week9_appendix xxiv``.
 
 Back to `A Vehicle Uses a Route`_.
 
@@ -2768,7 +2760,7 @@ The **base subobject**: the whole ``Vehicle`` at the start of every ``Taxi`` obj
 
 - A ``Taxi`` object starts with its base subobject: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120.
 - ``RoboTaxi`` adds a ``std::string`` (32 bytes) and an ``int`` (4 bytes), then 4 bytes of padding: 88 + 32 + 4 + 4 = 128.
-- Run: ``702run week9_appendix xxvii``.
+- Run: ``702run week9_appendix xxv``.
 
 Back to `A Base Class Reference to a Derived Object`_.
 
@@ -2808,7 +2800,7 @@ One Overload per Class
    Taxi: Ana drives 500 m
 
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
-- Run: ``702run week9_appendix xxx``.
+- Run: ``702run week9_appendix xxviii``.
 
 Back to `Overloads Cannot Meet the Challenge`_.
 
@@ -2895,7 +2887,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxxiii``.
+   - Run: ``702run week9_appendix xxxi``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -2941,7 +2933,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxv`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxiii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -2997,7 +2989,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xxxvii``.
+- Run: ``702run week9_appendix xxxv``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3021,7 +3013,7 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xxxviii``.
+- Run: ``702run week9_appendix xxxvi``.
 
 Owners Keep Objects Alive
 ^^^^^^^^^^^^^^^^^^^^^^^^^

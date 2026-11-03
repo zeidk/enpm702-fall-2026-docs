@@ -753,7 +753,7 @@ the one on that slide or frame.
        ``change_zone("Silver Spring")``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_appendix xxvi`` (A Route for One Call) prints
+     - ``702run week9_appendix xxiv`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -765,7 +765,7 @@ the one on that slide or frame.
      -
    * - FR-9.1, FR-9.2
      - Yes: ``Route::add``, ``Route::length``.
-     - ``702run week9_appendix xxiii`` (Each Route Has Its Own Positions)
+     - ``702run week9_appendix xxi`` (Each Route Has Its Own Positions)
        prints ``500 900``: a route of 500 m and a longer one of 900 m.
    * - FR-9.3
      - No.
@@ -791,7 +791,7 @@ the one on that slide or frame.
        Lifetimes prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_appendix xxxv`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_appendix xxxiii`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
