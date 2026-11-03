@@ -6,7 +6,7 @@ Lecture 8 Quiz
 
 This quiz covers the key concepts from Lecture 8: OOP Basics. Topics include classes and objects, when a type is a ``struct`` and when a ``class``, encapsulation, accessors and mutators, ``noexcept``, constructors and ``explicit``, the ``this`` pointer, and destructors. Question 9 uses the required reading, :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`. No question uses the Further Reading part of the lecture (the appendix of the slides).
 
-Unless a question shows its own class, ``Vehicle`` is the class of ``project/week8/common/include/vehicle.hpp``: ``explicit Vehicle(double max_speed, const std::string& color = "white")``, ``Vehicle(double max_speed, double speed)``, a ``set_speed`` that throws ``std::invalid_argument`` when the speed is not from 0 to the maximum speed, and ``const`` accessors. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
+Unless a question shows its own class, ``Vehicle`` is the class of ``project/week8/playground/include/vehicle.hpp``: ``explicit Vehicle(double max_speed, const std::string& color = "white")``, ``Vehicle(double max_speed, double speed)``, a ``set_speed`` that throws ``std::invalid_argument`` when the speed is not from 0 to the maximum speed, and ``const`` accessors. Each snippet is part of a full program. Every output shown was measured with g++ 13.3, with ``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``.
 
 .. note::
 

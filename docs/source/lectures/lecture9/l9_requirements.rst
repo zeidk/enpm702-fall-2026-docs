@@ -644,7 +644,7 @@ sensor hardware (FR-8).
      - Language
      - The software shall be written in C++20, with only the standard
        library, and built with CMake and g++, as set up in
-       :doc:`Setup Before Class </lectures/lecture8/l8_setup>`.
+       :doc:`Setup Before Class </lectures/lecture9/l9_setup>`.
    * - TC-2
      - Namespace
      - Every class shall be in the namespace ``fleet``.

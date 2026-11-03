@@ -26,7 +26,7 @@ Lecture 8 References
    The References frame of the L8 slides lists these four sources.
 
    - Bjarne Stroustrup. *The C++ Programming Language*. 4th edition. Addison-Wesley, 2013. ISBN 978-0321563842.
-   - ISO/IEC. *ISO/IEC 14882:2020: Programming languages, C++*. International Organization for Standardization, Geneva, Switzerland, 2020. Working draft N4861 is freely available from the ISO C++ committee. The slides quote this standard by section name, for example [class.access] and [expr.prim.this].
+   - ISO/IEC. *ISO/IEC 14882:2020: Programming languages, C++*. International Organization for Standardization, Geneva, Switzerland, 2020. Working draft N4861 is freely available from the ISO C++ committee. The slides quote this standard by section name, for example [class.access] and [class.static.mfct].
    - Bjarne Stroustrup and Herb Sutter. *C++ Core Guidelines*. 2024. `https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines>`_
    - cppreference.com contributors. *cppreference.com*. 2026. Community reference for the C++ language and standard library. `https://en.cppreference.com/w/ <https://en.cppreference.com/w/>`_
 

@@ -2012,7 +2012,7 @@ L8: OOP Basics
       :doc:`L8 </lectures/lecture8/l8_lecture>`
 
    static Method
-      A method called on the class, as in ``Vehicle::next_id()``, with no
+      A method called on the class, as in ``Vehicle::get_next_id()``, with no
       object. It has no ``this``, so without an object it can use only the
       ``static`` members.
       In the Further Reading part of L8.

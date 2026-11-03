@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
-# enpm702_setup.sh: compile and run a lecture's live coding program.
+# enpm702_setup.sh: compile and run the live coding programs of L8 and L9.
 #
-# Before class, run it once. It checks that the program compiles and runs:
-#     bash enpm702_setup.sh        # week 8 (week8_live), the default
-#     bash enpm702_setup.sh 9      # week 9 (week9_live)
+# Before class, run it once. It checks that each program compiles and runs:
+#     bash enpm702_setup.sh        # weeks 8 and 9 (week8_live, week9_live)
+#     bash enpm702_setup.sh 9      # week 9 only (week9_live)
 #
-# In class, load it into your terminal once, then type live8 after each step:
+# In class, load it into your terminal once, then type live8 or live9 after
+# each step:
 #     source enpm702_setup.sh
 #     live8                        # build week8_live; if it compiles, run it
 #     live9                        # the same for week9_live
 #
 # It changes no file in the repository.
-
 # The folder where you cloned the course repository. If you cloned it somewhere
-# else, change the path between the quotes, for example:
+# else, change the path between the quotes on line 18, for example:
 #     ENPM702_LIVE_WS="$HOME/courses/enpm702-fall-2026-cpp"
 ENPM702_LIVE_WS="$HOME/enpm702_cpp/enpm702-fall-2026-cpp"
 ENPM702_LIVE_LINE=18    # the line above: the messages below name it
 
 # Build week<N>_live. The compiler's output goes to the file $2; returns 1 to 3
-# for each kind of failure, 0 when the program is built.
+# for each kind of failure, 0 when the program is built. When CMake does not
+# know the target yet (a week just enabled in CMakeLists.txt), it configures
+# again once and retries.
 _enpm702_live_build() {
     local target="week${1}_live"
     if [ ! -f "$ENPM702_LIVE_WS/CMakeLists.txt" ]; then
@@ -29,7 +31,15 @@ _enpm702_live_build() {
         cmake -S "$ENPM702_LIVE_WS" -B "$ENPM702_LIVE_WS/build" -DCMAKE_BUILD_TYPE=Debug \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON > "$2" 2>&1 || return 2
     fi
-    cmake --build "$ENPM702_LIVE_WS/build" --target "$target" > "$2" 2>&1 || return 3
+    if cmake --build "$ENPM702_LIVE_WS/build" --target "$target" > "$2" 2>&1; then
+        return 0
+    fi
+    if grep -q "No rule to make target" "$2"; then
+        cmake -S "$ENPM702_LIVE_WS" -B "$ENPM702_LIVE_WS/build" > "$2" 2>&1 || return 2
+        cmake --build "$ENPM702_LIVE_WS/build" --target "$target" > "$2" 2>&1 || return 3
+        return 0
+    fi
+    return 3
 }
 
 # Print the path of the program week<N>_live under build/.
@@ -76,49 +86,91 @@ if [ "$_enpm702_live_sourced" = 1 ]; then
     return 0
 fi
 
-# --- Run with bash: check that the program compiles and runs -----------------
-week="${1:-8}"
-case "$week" in
-    ''|*[!0-9]*) echo "usage: bash enpm702_setup.sh [week number]"; exit 2 ;;
+# --- Run with bash: check that the programs compile and run ------------------
+case "${1:-}" in
+    '') weeks="8 9" ;;
+    *[!0-9]*) echo "usage: bash enpm702_setup.sh [week number]"; exit 2 ;;
+    *) weeks="$1" ;;
 esac
-target="week${week}_live"
-log="$(mktemp)"
 
-echo "ENPM702: compile and run $target"
-_enpm702_live_build "$week" "$log"
-rc=$?
-if [ "$rc" -eq 1 ]; then
-    echo "  FIX   no ENPM702 repository at $ENPM702_LIVE_WS"
-    echo "        Change line $ENPM702_LIVE_LINE of this script to the folder where you cloned it."
-elif [ "$rc" -eq 2 ]; then
-    echo "  ok    repository at $ENPM702_LIVE_WS"
-    echo "  FIX   cmake could not configure the repository"
-elif [ "$rc" -eq 3 ]; then
-    echo "  ok    repository at $ENPM702_LIVE_WS"
-    echo "  ok    configured"
-    echo "  FIX   $target did not build"
+# Colors and symbols in a terminal; plain text in a file, a pipe, or with NO_COLOR.
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    bold=$'\e[1m'; dim=$'\e[2m'; red=$'\e[31m'; green=$'\e[32m'
+    yellow=$'\e[33m'; cyan=$'\e[36m'; reset=$'\e[0m'; clear_line=$'\r\e[K'
+    ok_mark="${green}✔${reset}"; fix_mark="${red}✘${reset}"
+    tty=1
 else
-    echo "  ok    repository at $ENPM702_LIVE_WS"
-    echo "  ok    configured"
-    echo "  ok    built $target"
+    bold=""; dim=""; red=""; green=""; yellow=""; cyan=""; reset=""; clear_line=""
+    ok_mark="ok "; fix_mark="FIX"
+    tty=0
+fi
+
+ok()   { echo "    $ok_mark $*"; }
+fix()  { echo "    $fix_mark ${red}$*${reset}"; }
+show_log() {
+    echo "      ${dim}last lines of the output:${reset}"
+    tail -n 15 "$1" | sed "s/^/      ${dim}│${reset} /"
+}
+
+repo_shown="${ENPM702_LIVE_WS/#$HOME/\~}"
+echo
+echo "  ${cyan}╭──────────────────────────────────────────────╮${reset}"
+echo "  ${cyan}│${reset}  ${bold}ENPM702${reset} · Live Coding setup check           ${cyan}│${reset}"
+echo "  ${cyan}╰──────────────────────────────────────────────╯${reset}"
+echo
+echo "  ${bold}Repository${reset}  $repo_shown"
+
+if [ ! -f "$ENPM702_LIVE_WS/CMakeLists.txt" ]; then
+    fix "no ENPM702 repository in this folder"
+    echo "      Change line $ENPM702_LIVE_LINE of this script to the folder where you cloned it."
+    echo
+    exit 1
+fi
+ok "repository found"
+
+failed=0
+for week in $weeks; do
+    target="week${week}_live"
+    log="$(mktemp)"
+    echo
+    echo "  ${bold}Lecture $week${reset} ${dim}·${reset} $target"
+    [ "$tty" = 1 ] && printf "    ${yellow}…${reset} building"
+    start=$SECONDS
+    _enpm702_live_build "$week" "$log"
+    rc=$?
+    seconds=$((SECONDS - start))
+    printf "%s" "$clear_line"
+    if [ "$rc" -eq 2 ]; then
+        fix "CMake could not configure the repository"
+        show_log "$log"; failed=1; rm -f "$log"; continue
+    elif [ "$rc" -eq 3 ]; then
+        fix "$target did not build"
+        show_log "$log"; failed=1; rm -f "$log"; continue
+    fi
+    ok "built $target ${dim}(${seconds} s)${reset}"
     exe="$(_enpm702_live_exe "$week")"
     if [ -n "$exe" ] && "$exe" > "$log" 2>&1; then
-        echo "  ok    ran $target"
-        rm -f "$log"
-        echo
-        echo "Ready for class. In class, type these two lines once in your terminal:"
-        echo "    source $0"
-        echo "    live$week"
-        echo "and type live$week again after each step."
-        exit 0
+        ok "ran $target"
+    else
+        fix "$target did not run"
+        show_log "$log"; failed=1
     fi
-    echo "  FIX   $target did not run"
-fi
-if [ "$rc" -ge 2 ] || [ -s "$log" ]; then
-    echo "        last lines of the output:"
-    tail -n 15 "$log" | sed 's/^/        | /'
-fi
-rm -f "$log"
+    rm -f "$log"
+done
+
 echo
-echo "Fix the line above, then run this script again."
-exit 1
+if [ "$failed" -ne 0 ]; then
+    echo "  $fix_mark ${bold}Fix the lines marked above, then run this script again.${reset}"
+    echo
+    exit 1
+fi
+echo "  $ok_mark ${bold}Ready for class.${reset}"
+echo
+echo "  In class, type this once in your terminal:"
+echo "      ${cyan}source $0${reset}"
+echo "  Then, after each step:"
+for week in $weeks; do
+    echo "      ${cyan}live$week${reset}    ${dim}Lecture $week${reset}"
+done
+echo
+exit 0

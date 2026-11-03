@@ -13,15 +13,15 @@ Learning Objectives
 6. Use members that give back their own memory, such as ``std::unique_ptr``, so a class needs no destructor of its own.
 7. Use the ``this`` pointer.
 
-We write one ``Vehicle`` in six Live Coding steps: Step 1 together (`Live Coding: Step 1`_), Steps 2 to 6 on your own. The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
+We write one ``Vehicle`` in five Live Coding steps: Step 1 together (`Live Coding: Step 1`_), Steps 2 to 5 on your own. The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
 
 Upload Your Live Coding
 -----------------------
 
-You type Step 1 with me, in ``project/week8/live``. You write **Steps 2 to 6** on your own, in the time each step gives: 5 minutes for Step 2, 15 for Step 5, 10 for the others. In class, I walk around and help, but I do not show the answers: the recording would give them away.
+You type Step 1 with me, in ``project/week8/live``. You write **Steps 2 to 5** on your own, in the time each step gives: 5 minutes for Step 2, 15 for Step 5, 10 for Steps 3 and 4. In class, I walk around and help, but I do not show the answers: the recording would give them away.
 
 - **Before the end of class**, upload ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp`` to the L8 Live Coding assignment on Canvas.
-- It counts as the L8 exercise (exercises are **5%** of the grade). Class reached Step 4, so it is scored on Steps 2 to 4, 4 points each, out of 12 and scaled to 20. A step earns its points when you wrote it, whether or not the code builds, and part of them when you wrote part of it. Steps 5 and 6 get feedback but no points. The upload is not graded for correctness.
+- It counts as the L8 exercise (exercises are **5%** of the grade). Class reached Step 4, so it is scored on Steps 2 to 4, 4 points each, out of 12 and scaled to 20. A step earns its points when you wrote it, whether or not the code builds, and part of them when you wrote part of it. Step 5 gets feedback but no points. The upload is not graded for correctness.
 - **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (Copilot included). Code written with AI gets **0**.
 - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 - The finished code is posted after Nov 3.
@@ -47,17 +47,17 @@ The Class Diagram
 ^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l8/model_l8_members.png
-   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods. In the middle, Vehicle, purple, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor &, plus drive(const Route&) : void, the underlined plus next_id() : int, and the protected hash log_event(const string&) : void. On the left, grey: Fleet with plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, purple: Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a purple line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. A purple dashed arrow runs from Sensor to SensorType, purple, marked enumeration, with lidar, camera and radar. A purple dashed arrow labeled uses runs from Vehicle to Route, purple, with plus add(Position) : void and plus length() : double; a purple line labeled has with a filled diamond at Route joins Route to Position, purple, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, grey: RoboTaxi, marked final, with plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
+   :alt: A UML class diagram of the ride service program with nine boxes, each listing its data members and methods. In the middle, Vehicle, purple, with the data members minus id_ : int, the underlined minus next_id_ : int, minus max_speed_ : double, minus speed_ : double, minus color_ : string, minus mileage_ : double, and the methods plus Vehicle(double, const string& = "white"), plus Vehicle(double, double), plus get_id() : int, plus get_color() : const string&, plus get_max_speed() : double, plus get_speed() : double, plus set_speed(double) : void, plus get_mileage() : double, plus add_mileage(double) : void, plus add_sensor(SensorType, double) : int, plus sensor_count() : size_t, plus get_sensors() : const vector of unique_ptr of Sensor &, plus drive(const Route&) : void, the underlined plus get_next_id() : int, and the protected hash log_event(const string&) : void. On the left, grey: Fleet with plus add(shared_ptr of Vehicle) : void, plus remove(int) : bool, plus size() : size_t; a line labeled holds with an open diamond at Fleet joins it to Vehicle, 1 to 0..*, the Vehicle end named minus vehicles_. Below it, Passenger with minus name_ : string, plus board(shared_ptr of Vehicle) : void and plus leave() : void; an arrow labeled rides runs to Vehicle, 0..* to 0..1, the Vehicle end named minus ride_. Top right, purple: Sensor with minus id_ : int, minus type_ : SensorType, minus range_ : double, plus Sensor(int, SensorType = lidar, double = 100.0), plus get_id() : int, plus get_type() : SensorType and plus get_range() : double; a purple line labeled owns with a filled diamond at Vehicle joins them, 1 to 0..*, the Sensor end named minus sensors_. A purple dashed arrow runs from Sensor to SensorType, purple, marked enumeration, with lidar, camera and radar. A purple dashed arrow labeled uses runs from Vehicle to Route, purple, with plus add(Position) : void and plus length() : double; a purple line labeled has with a filled diamond at Route joins Route to Position, purple, marked struct, with plus x : double and plus y : double, 1 to 0..*, the Position end named minus waypoints_. Lower right, grey: RoboTaxi, marked final, with plus drive(const Route&) : void, and Taxi, marked final, with minus driver_name_ : string and plus drive(const Route&) : void; each joins Vehicle by a line with a hollow triangle at Vehicle.
    :align: center
    :width: 100%
 
    The ride service program as a UML class diagram, with every data member and method. Purple: L8's part of the program.
 
-- Each box is a type: a class, a «struct» (``Position``) or an «enumeration» (``SensorType``), with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, ``#`` a ``protected`` one (L9), and underlining a ``static`` one (`static Members`_, under Further Reading). The types are C++ types.
+- Each box is a type: a class, a «struct» (``Position``) or an «enumeration» (``SensorType``), with its name, data members and methods. A minus sign marks a ``private`` member, a plus sign a ``public`` one, ``#`` a ``protected`` one (L9), and underlining a ``static`` one (`static Members`_). The types are C++ types.
 - Each line is a relationship (L9). A member that a line stands for, such as ``sensors_``, is named at the line's end, not in the box: ``vehicles_`` and ``ride_`` at the ``Vehicle`` end of the lines from ``Fleet`` and ``Passenger``, ``sensors_`` at the ``Sensor`` end, and ``waypoints_`` at the ``Position`` end.
 - This is the whole program we build in L8 and L9. This is the only time in L8 the diagram shows all of it. From here on (`Class Names Only`_) it shows the class names only, and each member comes in the section that builds it.
 - Today we build the purple part: ``Vehicle``, its ``Sensor``\ s with their ``SensorType``, and the ``Position`` struct. ``Route`` is purple too, because ``drive`` takes one; it holds ``Position``\ s, and it is ready in the course code. The grey part, ``Fleet``, ``Passenger``, ``RoboTaxi`` and ``Taxi``, comes in L9, with the meaning of each kind of line.
-- The diagram comes back three times: ``Vehicle`` (`Vehicle in the Class Diagram`_), ``Sensor`` and ``Position`` (`Sensor and Position in the Class Diagram`_), and ``Vehicle`` and the ``Sensor``\ s it owns (`Vehicle Owns Its Sensors`_). Static members are in the appendix, for reading on your own.
+- The diagram comes back twice: ``Vehicle`` (`Vehicle in the Class Diagram`_), and ``Sensor`` and ``Position`` (`Sensor and Position in the Class Diagram`_). Static members come at the end of the lecture (`static Members`_).
 
 Class Names Only
 ^^^^^^^^^^^^^^^^
@@ -82,8 +82,7 @@ Code for This Lecture
    ├── playground/
    ├── live/
    ├── appendix/
-   ├── common/
-   └── undefined/
+   └── rule_of_five/
 
 **live** holds the class you write in the Live Coding steps: ``live8`` builds and runs it.
 
@@ -97,7 +96,7 @@ Code for This Lecture
 
 **Where the Classes Are**
 
-- **common** holds what L8 builds from the class diagram: ``Vehicle``, ``Sensor`` with its ``SensorType``, ``Position``, and a small ``Route`` for ``drive``.
+- **live** also holds ``Sensor`` with its ``SensorType``, ``Position``, and a small ``Route`` for ``drive``. **playground** holds the finished ``Vehicle`` that its slides run.
 - For the **appendix**, the `Further Reading`_ part of this page: ``702build week8_appendix``, then ``702run week8_appendix ii`` runs appendix frame ii, `One Definition in Many Files`_.
 - For the required reading, :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`: the **rule_of_five** folder, one file per part of the reading. ``702build week8_rule_of_five``, then ``702run week8_rule_of_five five`` runs the part ``five``. It is built with AddressSanitizer, and the parts that leak or free memory twice run only when asked for by name.
 
@@ -139,6 +138,7 @@ Procedural:
 
 .. code-block:: cpp
 
+   // main.cpp
    struct VehicleData {
      double max_speed{13.4};
      double speed{0.0};
@@ -153,6 +153,7 @@ Object-oriented:
 
 .. code-block:: cpp
 
+   // main.cpp
    class Vehicle {
     public:
      void set_speed(double speed);
@@ -217,7 +218,7 @@ When Not to Use a Class
 
 - **No rule between the data members**: use a ``struct``. Any ``x`` and any ``y`` make a ``Position``, so it is a ``struct`` (C.2). `Struct or Class`_ comes back to it.
 - **A function that needs no private member**: keep it outside the class. A function that computes the distance between two ``Position`` objects reads only public members, so it stays a plain function (C.4). Such a function couples less to the class and has fewer ways to change the object. The distance example is chosen for this page.
-- **Nothing to keep between calls**: a function is enough (L5). A class pays off when an object holds data that must stay valid.
+- **Nothing to keep between calls**: a function is enough. A class pays off when an object holds data that must stay valid.
 
 .. note::
 
@@ -235,7 +236,7 @@ Vehicle in the Class Diagram
 
 - We start with one box of the diagram, ``Vehicle``. Its data members are the maximum speed, the speed, the color and the mileage; its methods read and change them.
 - We chose 13.4 m/s for its maximum speed in the examples, about 30 mph (30 × 0.44704 = 13.41).
-- By the end of `The this Pointer`_ we have written most of this box. The sensors come in `Destructors`_, and the id and its static counter are in the appendix (`static Members`_, under Further Reading).
+- By the end of `The this Pointer`_ we have written most of this box. The sensors come in `Destructors`_, and the id and its static counter in `static Members`_.
 - The grey boxes are the rest of the program. We build them in L9.
 
 Class
@@ -260,6 +261,7 @@ The Parts of a Class
 .. code-block:: cpp
    :linenos:
 
+   // main.cpp
    class Vehicle {  // a first version
     public:
      void set_speed(double speed);
@@ -272,11 +274,11 @@ The Parts of a Class
      double mileage_{0.0};     // m driven
    };
 
-- Line 1 starts with ``class``, then the name, in PascalCase.
-- Lines 2 and 6 are **access specifiers**. Each applies to the members below it, up to the next one.
-- Lines 3 and 4 declare the methods. `Accessors`_ explains the ``const`` on line 4.
-- Lines 7 to 10 declare the data members, each with a default value for now (`Constructor with Parameters`_).
-- On line 11, ``;`` ends the class, as it ends a ``struct`` (L6).
+- Line 2 starts with ``class``, then the name, in PascalCase.
+- Lines 3 and 7 are **access specifiers**. Each applies to the members below it, up to the next one.
+- Lines 4 and 5 declare the methods. `Accessors`_ explains the ``const`` on line 5.
+- Lines 8 to 11 declare the data members, each with a default value for now (`Constructor with Parameters`_).
+- On line 12, ``;`` ends the class, as it ends a ``struct``.
 
 .. note::
 
@@ -299,6 +301,7 @@ An **object** is one car built from the blueprint: a piece of memory that holds 
 
 .. code-block:: cpp
 
+   // main.cpp
    Vehicle car_a;
    Vehicle car_b;
 
@@ -375,7 +378,7 @@ Live Coding: Step 2
 You have **5 minutes** to make one object on the stack and one on the heap, in the Step 2 block of ``live/src/main.cpp``, with the class of Step 1. You write this step on your own:
 
 1. Make ``car_a`` on the stack and set its speed to 12.
-2. Make ``car_b`` on the heap with ``std::make_unique<Vehicle>()`` (L7) and set its speed to 10.
+2. Make ``car_b`` on the heap with ``std::make_unique<Vehicle>()`` and set its speed to 10.
 3. Print each speed. Call a method with ``.`` on an object and with ``->`` through a pointer.
 
 Build and run: ``live8``. The block prints:
@@ -405,16 +408,16 @@ An object goes on the stack unless one of two reasons sends it to the heap.
      - The stack. It is destroyed at the end of the scope.
      - ``Vehicle car_a;``
    * - 2\. It must live on after the scope that made it.
-     - The heap, owned by a ``std::unique_ptr`` (L7).
+     - The heap, owned by a ``std::unique_ptr``.
      - ``auto car_b{std::make_unique<Vehicle>()};``
    * - 3\. It is very large.
-     - The heap, inside a ``std::vector``, which keeps its elements on the heap (L4).
+     - The heap, inside a ``std::vector``, which keeps its elements on the heap.
      - A lidar scan or a camera image.
 
 - The Step 2 block made ``car_a`` on the stack and ``car_b`` on the heap. Both work, so you need a rule for picking one. The stack is the default, and two reasons send an object to the heap.
 - Row 1: ``car_a`` lives inside one function. At the closing brace it is destroyed and its memory is free. Nothing has to be given back.
-- Row 2: the object must outlive the block that made it. A ``std::unique_ptr`` from L7 owns it and decides when it ends. If the caller only needs the value, returning it by value works too, as in L5.
-- Row 3: the stack is small. ``ulimit -s`` prints its size in kilobytes, 16384 (16 MiB) on the PC used for the slides. A camera image or a lidar scan goes in a ``std::vector``, and the vector keeps its elements on the heap, as in L4.
+- Row 2: the object must outlive the block that made it. A ``std::unique_ptr`` owns it and decides when it ends. If the caller only needs the value, returning it by value works too.
+- Row 3: the stack is small. ``ulimit -s`` prints its size in kilobytes, 16384 (16 MiB) on the PC used for the slides. A camera image or a lidar scan goes in a ``std::vector``, and the vector keeps its elements on the heap.
 
 .. note::
 
@@ -519,11 +522,17 @@ The Sensor Class
 
 .. code-block:: cpp
 
+   // sensor.hpp
    enum class SensorType { lidar, camera, radar };
    class Sensor {
     public:
      explicit Sensor(int id, SensorType type = SensorType::lidar,
-                     double range = 100.0);
+                     double range = 100.0)
+         : id_{id}, type_{type}, range_{range} {
+       if (range_ < 0.0) {
+         throw std::invalid_argument{"range must be at least 0"};
+       }
+     }
      [[nodiscard]] int get_id() const noexcept;
      [[nodiscard]] SensorType get_type() const noexcept;
      [[nodiscard]] double get_range() const noexcept;
@@ -533,7 +542,7 @@ The Sensor Class
      double range_;     // m, at least 0
    };
 
-- ``SensorType`` is a scoped enumeration (L2). We chose the defaults: ``Sensor{1}`` is a 100 m lidar.
+- ``SensorType`` is a scoped enumeration. We chose the defaults: ``Sensor{1}`` is a 100 m lidar.
 - The other parts come later: ``const`` methods (`Accessors`_), ``[[nodiscard]]`` (:ref:`l8-nodiscard`), ``noexcept`` (:ref:`l8-noexcept`), constructors (`Constructors`_), the range check (`The Range Check`_) and ``explicit`` (:ref:`l8-explicit`).
 - Run: ``702run week8_playground 27``.
 
@@ -542,6 +551,7 @@ Default Access
 
 .. code-block:: cpp
 
+   // main.cpp
    struct Position {  // no access specifier
      double x{0.0};
      double y{0.0};
@@ -572,15 +582,16 @@ A Rule Nothing Checks
 
 .. code-block:: cpp
 
-   struct VehicleData {
+   // main.cpp
+   struct Vehicle {
      double max_speed{13.4};  // m/s
      double speed{0.0};       // m/s, must stay from 0 to max_speed
    };
 
-   VehicleData data;
-   data.speed = 20.0;  // compiles: any code can break the rule
-   std::cout << data.speed << " > "
-             << data.max_speed << '\n';  // 20 > 13.4
+   Vehicle vehicle;
+   vehicle.speed = 20.0;  // compiles: any code can break the rule
+   std::cout << vehicle.speed << " > "
+             << vehicle.max_speed << '\n';  // 20 > 13.4
 
 - As a ``struct``, the vehicle's rule is only a comment. Any line of the program can set a speed above the maximum.
 - As a ``class``, ``speed_`` is ``private``. Only ``Vehicle``'s own methods can change it, so ``set_speed`` can check every change (`Mutators`_).
@@ -616,7 +627,7 @@ Discussion: Struct or Class?
 Parts of the robotaxi's software. For each one: ``struct`` or ``class``? If a class, what rule must its members keep?
 
 1. A GPS fix: latitude, longitude, and the time it was taken.
-2. A battery level: a percentage (L6).
+2. A battery level: a percentage.
 3. A lane: the y of its left edge and the y of its right edge, in m.
 4. The color of a car on the screen: red, green and blue, each from 0 to 255.
 5. A trajectory: a list of poses, each with the time the robotaxi should reach it.
@@ -629,7 +640,7 @@ Who would break each rule by mistake: the code that reads the data, or the code 
    If nobody can state a rule, it is a struct.
 
    1. The GPS fix: a class. Latitude must be from −90 to 90 degrees, and longitude from −180 to 180: a latitude of 1,000,000 is no place on Earth. There is no rule between the two, but each has its own range, like the battery level. In C.2, members that vary independently can each take any value, like ``Position``'s ``x`` and ``y``.
-   2. The battery level: a class, the example from L6's appendix. The rule is from 0 to 100, and a setter checks it.
+   2. The battery level: a class. The rule is from 0 to 100, and a setter checks it.
    3. The lane: a class. The left edge must be to the left of the right edge, so the two members must agree.
    4. The color: a struct, if each member is a ``std::uint8_t``. The type already keeps each value from 0 to 255, and the three values vary independently. A range rule can sometimes go into the type instead of a class.
    5. The trajectory: a class. The times must go up, so adding a pose must check the time of the last one.
@@ -658,6 +669,7 @@ An **access specifier** is a label in a class, ``public:``, ``private:`` or ``pr
 
 .. code-block:: cpp
 
+   // main.cpp
    class Vehicle {
     public:  // any code may call these
      void set_speed(double speed);
@@ -748,7 +760,7 @@ A **method defined outside the class**: the class declares the method. Its body 
 
    return_type ClassName::method_name(parameters) { body }
 
-- The class goes in a header, ``vehicle.hpp``. The bodies of its methods go in a source file, ``vehicle.cpp``: the split of L5's header files.
+- The class goes in a header, ``vehicle.hpp``. The bodies of its methods go in a source file, ``vehicle.cpp``, as for any header file.
 - ``::`` is the scope resolution operator, the same one as in ``std::cout``.
 
 Live Coding: Step 3
@@ -756,7 +768,7 @@ Live Coding: Step 3
 
 **10 minutes, on your own.** Move the class to ``live/include/vehicle.hpp`` and the bodies of its methods to ``live/src/vehicle.cpp``.
 
-1. In ``vehicle.hpp``: ``#pragma once`` (L5), then the class, with only the declarations of its two methods.
+1. In ``vehicle.hpp``: ``#pragma once``, then the class, with only the declarations of its two methods.
 2. In ``vehicle.cpp``: the two bodies, named ``Vehicle::set_speed`` and ``Vehicle::get_speed``.
 3. Delete the class from ``main.cpp``, which already includes ``vehicle.hpp``. The output does not change.
 4. Delete the ``Vehicle::`` before ``set_speed``, build, and read the error. Then put it back.
@@ -791,6 +803,7 @@ Changing the Inside
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
      // public: the same two declarations
     private:
@@ -804,10 +817,11 @@ Changing the Inside
 
 .. code-block:: cpp
 
+   // vehicle.cpp
    void Vehicle::set_speed(double speed) {
      speed_kmh_ = speed * 3.6;
    }
-   double Vehicle::get_speed() {
+   double Vehicle::get_speed() const {
      return speed_kmh_ / 3.6;
    }
 
@@ -822,7 +836,8 @@ A Body in the Class
 
 .. code-block:: cpp
 
-   class Vehicle {  // in vehicle.hpp
+   // vehicle.hpp
+   class Vehicle {
     public:
      double get_speed() const { return speed_; }  // body here
      void set_speed(double speed);  // body in vehicle.cpp
@@ -857,6 +872,7 @@ A **const method** is a method with ``const`` after its parameter list. It promi
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    double get_speed() const {
      return speed_;
    }
@@ -875,6 +891,7 @@ A **const method** is a method with ``const`` after its parameter list. It promi
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    [[nodiscard]] double get_speed() const noexcept {
      return speed_;
    }
@@ -887,7 +904,7 @@ A **const method** is a method with ``const`` after its parameter list. It promi
             'double Vehicle::get_speed() const',
             declared with attribute 'nodiscard' [-Wunused-result]
 
-- ``[[nodiscard]]`` (L5): ignoring an accessor's result is almost always a mistake, so the compiler warns.
+- ``[[nodiscard]]``: ignoring an accessor's result is almost always a mistake, so the compiler warns.
 
 .. _l8-noexcept:
 
@@ -917,6 +934,7 @@ Discussion: Returning a Reference
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    // returns a reference to speed_
    double& get_speed() { return speed_; }
 
@@ -934,6 +952,7 @@ Returning a Large Member
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      [[nodiscard]] const std::string& get_color() const noexcept {
@@ -943,11 +962,14 @@ Returning a Large Member
      std::string color_{"white"};
    };
 
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a;
    std::cout << car_a.get_color() << '\n';  // prints white
 
 - ``get_speed`` returns a ``double`` by value (:ref:`l8-nodiscard`): a copy of 8 bytes costs no more than a reference.
-- A copy of a ``std::string`` copies every character, so a large member is returned by ``const&`` (L5): no copy, and the caller cannot change it.
+- A copy of a ``std::string`` copies every character, so a large member is returned by ``const&``: no copy, and the caller cannot change it.
 - The reference is valid only while the ``Vehicle`` object lives (`Discussion: Returning a Reference`_).
 - Run: ``702run week8_playground 50``.
 
@@ -958,6 +980,7 @@ A **mutator that checks** tests the new value against the invariant. If the valu
 
 .. code-block:: cpp
 
+   // vehicle.cpp
    void Vehicle::set_speed(double speed) {
      if (speed < 0.0 || speed > max_speed_) {
        throw std::invalid_argument{
@@ -966,7 +989,7 @@ A **mutator that checks** tests the new value against the invariant. If the valu
      speed_ = speed;
    }
 
-- ``std::invalid_argument`` is in ``<stdexcept>``, as in the :doc:`Exception Handling reading </reading_material/exception_handling/eh_index>` that L6 assigned.
+- ``std::invalid_argument`` is in ``<stdexcept>``, as the :doc:`Exception Handling reading </reading_material/exception_handling/eh_index>` explains.
 - The test comes first: ``speed_`` changes only when the new value is allowed.
 
 Live Coding: Step 4
@@ -1015,6 +1038,7 @@ A Getter and Setter That Add Nothing
 
 .. code-block:: cpp
 
+   // position.hpp
    class Position {  // no rule about x
     public:
      double get_x() const { return x_; }
@@ -1059,6 +1083,7 @@ A **default constructor** is a constructor that can be called with no arguments.
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {  // the first version: no constructor declared
      // ...
     private:
@@ -1068,6 +1093,9 @@ A **default constructor** is a constructor that can be called with no arguments.
      double mileage_{0.0};     // default member initializer
    };
 
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a;  // the compiler's default constructor runs
 
 .. note::
@@ -1079,6 +1107,7 @@ A User-Defined Default Constructor
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      Vehicle() {  // a user-defined default constructor
@@ -1091,6 +1120,10 @@ A User-Defined Default Constructor
      std::string color_{"white"};
      double mileage_{0.0};
    };
+
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a;  // prints a new Vehicle: white, 13.4 m/s
 
 - It has the class's name, no parameters and no return type. When its body starts, the members already hold their default values.
@@ -1106,6 +1139,7 @@ A Member with No Initializer
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
      // ...
     private:
@@ -1114,6 +1148,10 @@ A Member with No Initializer
      std::string color_{"white"};
      double mileage_{0.0};
    };
+
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle a;    // a.speed_ has an indeterminate value
    Vehicle b{};  // the { } sets every member to zero first: 0
 
@@ -1132,6 +1170,7 @@ A **constructor with parameters** takes the values the object starts from. Here 
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      Vehicle(double max_speed, const std::string& color = "white") {
@@ -1153,6 +1192,7 @@ Two Kinds of Default Values
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      Vehicle(double max_speed, const std::string& color = "white") {
@@ -1164,11 +1204,15 @@ Two Kinds of Default Values
      std::string color_;    // set by the constructor
      double mileage_{0.0};  // default member initializer
    };
+
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a{13.4};          // white: the default argument
    Vehicle car_b{13.4, "blue"};  // blue
 
 - A **default member initializer**, in the class body, gives a member its value when no constructor sets it: every vehicle starts at speed 0 and mileage 0.
-- A **default argument** (L5), in the parameter list, gives a parameter its value when the caller leaves it out. The caller picks the color, so it is a parameter; most cars are white, so it has a default.
+- A **default argument**, in the parameter list, gives a parameter its value when the caller leaves it out. The caller picks the color, so it is a parameter; most cars are white, so it has a default.
 - Run: ``702run week8_playground 61``.
 
 The Default Argument in the Header
@@ -1179,13 +1223,15 @@ The Default Argument in the Header
    // vehicle.hpp: the declaration holds the default argument
    Vehicle(double max_speed, const std::string& color = "white");
 
+.. code-block:: cpp
+
    // vehicle.cpp: the definition does not repeat it
    Vehicle::Vehicle(double max_speed, const std::string& color) {
      // the assignments and the check
    }
 
 - A constructor can also be split into ``vehicle.hpp`` and ``vehicle.cpp``, like a method (`Live Coding: Step 3`_). The default argument is then written once, in the header: the code that creates a ``Vehicle`` sees only the header.
-- Writing ``= "white"`` again in ``vehicle.cpp`` does not compile, as in L5:
+- Writing ``= "white"`` again in ``vehicle.cpp`` does not compile:
 
 .. code-block:: text
 
@@ -1203,6 +1249,7 @@ Discussion: Which Lines Compile?
 
 .. code-block:: cpp
 
+   // main.cpp
    Vehicle car_a{13.4};
    Vehicle car_b{13.4, "blue"};
    Vehicle parked_car;
@@ -1285,6 +1332,7 @@ Assignment in the Body: the Code
 
 .. code-block:: cpp
 
+   // paper_tray.hpp
    class PaperTray {
     public:
      PaperTray() { std::cout << "PaperTray(): letter\n"; }
@@ -1295,6 +1343,7 @@ Assignment in the Body: the Code
 
 .. code-block:: cpp
 
+   // printer.hpp
    class Printer {
     public:
      Printer(const std::string& paper_size) {
@@ -1348,6 +1397,7 @@ Assignment Fails for a ``const`` Member
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      Vehicle(double max_speed, const std::string& color = "white") {
@@ -1394,10 +1444,14 @@ The List Fixes Both Problems
 
 .. code-block:: cpp
 
-   // Printer, with its member PaperTray tray_
+   // printer.hpp, in the class
    Printer(const std::string& paper_size) : tray_{paper_size} {
      std::cout << "Printer constructor body\n";
    }
+
+.. code-block:: cpp
+
+   // main.cpp
    Printer office_printer{"A4"};
 
 .. code-block:: text
@@ -1407,7 +1461,7 @@ The List Fixes Both Problems
 
 .. code-block:: cpp
 
-   // Vehicle, with const double max_speed_
+   // vehicle.hpp, in the class, with const double max_speed_
    Vehicle(double max_speed, const std::string& color = "white")
        : max_speed_{max_speed}, color_{color} {}
 
@@ -1435,6 +1489,7 @@ The Range Check
 
 .. code-block:: cpp
 
+   // main.cpp
    try {
      Sensor radar{3, SensorType::radar, -5.0};
    } catch (const std::invalid_argument& e) {
@@ -1454,6 +1509,7 @@ Declaration Order
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      Vehicle(double max_speed, double speed)
@@ -1484,6 +1540,7 @@ Discussion: Spot the Bug
 .. code-block:: cpp
    :linenos:
 
+   // following_gap.hpp
    class FollowingGap {  // the robotaxi's gap to the car ahead
     public:
      FollowingGap(double speed): time_{2.0}, distance_{time_ * speed} {}
@@ -1503,7 +1560,7 @@ Discussion: Spot the Bug
 .. dropdown:: Answers
    :class-container: sd-border-success
 
-   - It does not return 24. ``distance_`` is declared first, on line 10, so it is created first, whatever the order of the list. It reads ``time_``, which has no value yet: undefined behavior.
+   - It does not return 24. ``distance_`` is declared first, on line 11, so it is created first, whatever the order of the list. It reads ``time_``, which has no value yet: undefined behavior.
    - A reviewer reads the list left to right and sees ``time_`` first, so the bug is easy to miss. g++ catches it at ``-O0``: ``will be initialized after [-Wreorder]``, and ``member 'FollowingGap::time_' is used uninitialized [-Wuninitialized]``. This is why the course builds with ``-Wall -Wextra``.
    - Two fixes: compute ``distance_`` from the parameter, ``distance_{2.0 * speed}``, or declare ``time_`` first. The fixed class prints 24: ``702run week8_playground 73`` runs the first fix.
 
@@ -1515,8 +1572,9 @@ Discussion: Spot the Bug
 An **explicit constructor**, a constructor marked ``explicit``, runs only when the code names the class. Without ``explicit``, a constructor that can be called with one argument also turns a value of its parameter's type into an object, wherever an object is expected.
 
 .. code-block:: cpp
-   :emphasize-lines: 3, 4
+   :emphasize-lines: 4, 5
 
+   // vehicle.hpp
    class Vehicle {
     public:
      explicit Vehicle(double max_speed,
@@ -1539,6 +1597,7 @@ A Conversion Nobody Asked For
 
 .. code-block:: cpp
 
+   // main.cpp
    void show(const Vehicle& vehicle) {
      std::cout << vehicle.get_max_speed() << ' '
                << vehicle.get_speed() << '\n';
@@ -1626,7 +1685,7 @@ One Copy of the Code
    The figure of `Two Objects in Memory`_: two objects, one copy of the methods.
 
 - Each object has its own data members. ``set_speed`` and ``get_speed`` exist once, in the code (`Two Objects in Memory`_).
-- ``car_a.set_speed(12.0)`` and ``car_b.set_speed(10.0)`` run the same ``set_speed``. The call passes the object's address as ``this``: the address of ``car_a`` in the first call, of ``car_b`` in the second.
+- ``car_a.set_speed(12.0)`` and ``car_b.set_speed(10.0)`` run the same ``set_speed``. Each call also passes a hidden pointer, ``this``, to the object it was called on: ``car_a`` in the first call, ``car_b`` in the second. It plays the role of ``self`` in Python, but you do not write it in the parameter list.
 - So when ``set_speed`` writes ``speed_``, the call tells it which ``speed_``. `One Method, Many Objects`_ prints both addresses to show they match.
 
 One Method, Many Objects
@@ -1634,12 +1693,16 @@ One Method, Many Objects
 
 .. code-block:: cpp
 
+   // vehicle.cpp
    void Vehicle::set_speed(double speed) {
      std::cout << "this:   " << this << '\n';
      // ... the check of the mutator ...
      speed_ = speed;  // means this->speed_
    }
 
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a{13.4};
    std::cout << "&car_a: " << &car_a << '\n';
    car_a.set_speed(12.0);
@@ -1671,13 +1734,8 @@ The Type of ``this``
      - ``const Vehicle*``
      - No
 
-- Both types are checked with ``static_assert`` and ``std::is_same_v`` in ``playground/src/const_and_this.cpp``.
-- In ``const Vehicle*``, the ``const`` is on the ``Vehicle``, not on the pointer: ``speed_ = 1.0;`` in ``get_speed`` gives ``assignment of member 'Vehicle::speed_' in read-only object``.
-- The pointer never changes either: ``this`` is a prvalue (L7), like ``13.4``, so ``this = nullptr;`` gives ``lvalue required as left operand of assignment``.
-
-.. note::
-
-   In a method of a class X, "the expression ``this`` is a prvalue of type pointer to *cv-qualifier-seq* X": ``const X*`` in a ``const`` method. C++20 **[expr.prim.this]** (7.5.2) paragraph 2.
+- In a ``const`` method, ``this`` points to a ``const Vehicle``: the method cannot change a data member. ``speed_ = 1.0;`` in ``get_speed`` does not compile.
+- ``this`` itself cannot be changed: ``this = nullptr;`` does not compile in any method.
 
 .. _l8-return-this:
 
@@ -1686,11 +1744,15 @@ Returning ``*this``
 
 .. code-block:: cpp
 
+   // vehicle.cpp
    Vehicle& Vehicle::speed_up(double step) {
      set_speed(speed_ + step);  // the check runs here
      return *this;              // the object itself
    }
 
+.. code-block:: cpp
+
+   // main.cpp
    Vehicle car_a{13.4, 12.0};
    car_a.speed_up(0.5).speed_up(0.5);
    std::cout << car_a.get_speed() << '\n';  // 13
@@ -1718,20 +1780,6 @@ Rule: `Core Guidelines C.31 <https://isocpp.github.io/CppCoreGuidelines/CppCoreG
 
    **Reading Instead of an Exercise.** L8 has no C++ exercise. After class, read :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`. **Quiz 4**, at the start of Lecture 9 on Nov 3, includes questions on it.
 
-Vehicle Owns Its Sensors
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. figure:: /_static/images/l8/model_l8_composition.png
-   :alt: A UML class diagram of the ride service program, with class names only, in nine boxes. Vehicle is in the middle. On the left, Fleet joins Vehicle by a line with a hollow diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor, and a dashed arrow runs from Sensor to SensorType, marked enumeration. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle. Vehicle, Sensor and the owns line between them, with its diamond, 1 and 0..*, are purple; everything else is grey.
-   :align: center
-   :width: 100%
-
-   The filled diamond says that a ``Vehicle`` owns its ``Sensor``\ s.
-
-- ``Vehicle`` owns its sensors: that is the filled diamond. L9 gives it its name, composition. Today we look at what it means in code.
-- In C++, owning means the ``Vehicle`` gives the memory back when its lifetime ends. First we see when a destructor runs (`Destructor`_). Then a ``std::unique_ptr`` owns each ``Sensor`` (`Live Coding: Step 6`_), and the destructor the compiler writes gives the memory back.
-- At the end, a ``std::vector`` of ``std::unique_ptr`` is the ``sensors_`` of the diagram, and the class needs no destructor of its own. A ``Vehicle`` that calls ``new`` and ``delete`` itself, and the five functions it must then write, are in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading.
-
 Destructor
 ^^^^^^^^^^
 
@@ -1739,6 +1787,7 @@ Destructor
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      ~Vehicle() {  // prints, to show when it runs
@@ -1748,7 +1797,7 @@ Destructor
    };
 
 - This ``Vehicle`` owns no memory by hand: its ``std::string`` gives back its own. So this destructor only prints.
-- A class in this course never calls ``new`` and ``delete`` itself: a ``std::unique_ptr`` member owns the heap memory (`Live Coding: Step 6`_).
+- A class in this course never calls ``new`` and ``delete`` itself: a ``std::unique_ptr`` member owns the heap memory (`When to Write a Destructor`_).
 
 .. note::
 
@@ -1759,6 +1808,7 @@ When It Runs
 
 .. code-block:: cpp
 
+   // main.cpp
    {
      Vehicle car_a{13.4, 12.0};
      Vehicle car_b{13.4, 10.0};
@@ -1779,30 +1829,19 @@ When It Runs
 
 - The ``Vehicle`` of `Destructor`_: its destructor prints the speed.
 - At the end of a scope, objects are destroyed in the reverse order they were created: ``car_b``, then ``car_a``.
-- A heap object is destroyed when its owner lets go: here ``reset()`` (L7).
+- A heap object is destroyed when its owner lets go: here ``reset()``.
 - The destructor, two copies and two moves are five of the six **special member functions**; the default constructor is the sixth. The rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, required after class, say when a class writes these five.
-- Run: ``702run week8_playground 88``.
+- Run: ``702run week8_playground 87``.
 
-Live Coding: Step 6
-"""""""""""""""""""
+When to Write a Destructor
+""""""""""""""""""""""""""
 
-**10 minutes, on your own.** Each ``Vehicle`` owns its sensors through ``std::unique_ptr``, and the class writes no destructor: each ``std::unique_ptr`` deletes its ``Sensor``.
+- **No destructor** when no member needs cleanup by hand. A basic type, such as ``double``, holds nothing to give back. An RAII object, such as a ``std::string``, a ``std::vector``, a ``std::unique_ptr`` or a ``std::shared_ptr``, gives back what it holds in its own destructor. The destructor the compiler writes destroys each member, so ``Vehicle`` writes none: that is the **rule of zero**.
+- **A destructor** when the class holds a resource by hand: memory it got with ``new``, or a file it opened. The destructor gives it back. The class then also needs its own copies and moves, or a copy frees the same memory twice: the **rule of five**.
 
-1. In the header, the data member ``sensors_``, a ``std::vector<std::unique_ptr<Sensor>>``. ``Sensor`` is the course's, in ``common/include/sensor.hpp``.
-2. ``int add_sensor(SensorType type, double range)`` creates a ``Sensor`` with the next id, 1, 2, and so on, and returns that id.
-3. ``sensor_count`` returns ``sensors_.size()``, and ``get_sensors`` returns ``sensors_`` by ``const&`` (`Returning a Large Member`_).
-4. Uncomment the Step 6 block: a 100 m lidar and an 80 m camera.
+.. note::
 
-Build and run: ``live8``. The Step 6 block prints:
-
-.. code-block:: text
-
-   [Step 6]
-   2 sensors
-   1 100
-   2 80
-
-- The Step 1 block now prints 80 for ``sizeof(Vehicle)``, not 56: the ``std::vector`` in the object adds 24 bytes with g++. The ``Sensor``\ s are on the heap.
+   Both rules, with code that leaks and code that frees twice, are in the required reading: :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>`.
 
 Summary
 ^^^^^^^
@@ -1812,14 +1851,218 @@ Summary
 - A class whose members give back their own memory, such as ``std::unique_ptr``, needs no destructor of its own. The rule of zero and the rule of five, in the :doc:`Rule of Five and Rule of Zero <l8_rule_of_five>` reading, say when a class writes one.
 
 
+static Members
+--------------
+
+A ``static`` **data member** belongs to the class, not to an object: there is one, shared by every object. A ``static`` **method** is called on the class, and it has no ``this``.
+
+- Every member so far belongs to one object: each ``Vehicle`` has its own speed and its own color. A ``static`` member belongs to the class instead.
+- A ``static`` method is called on the class itself, as ``Vehicle::get_next_id()``. No object is involved, so it has no ``this``.
+
+See `cppreference: static members <https://en.cppreference.com/w/cpp/language/static>`__.
+
+One Counter for Every Vehicle
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l8/model_l8_static.png
+   :alt: A UML class diagram of the ride service program, with class names only, in nine boxes. Vehicle is in the middle. On the left, Fleet joins Vehicle by a line with a hollow diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor, and a dashed arrow runs from Sensor to SensorType, marked enumeration. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle. The Vehicle box is purple; every other box and line is grey.
+   :align: center
+   :width: 100%
+
+   ``Vehicle`` gets ``next_id_``.
+
+- Every ``Vehicle`` needs its own id, so the fleet can tell two vehicles apart.
+- ``Vehicle`` (purple) gets ``next_id_``, one counter for the whole class, not one in each object. The diagram shows class names only, so ``next_id_`` is not drawn. When a UML diagram shows members, it underlines a static one.
+- The constructor sets ``id_`` from the counter, then adds 1 to the counter.
+
+Two Vehicles, the Same Id
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :emphasize-lines: 6, 9
+
+   // vehicle.hpp
+   class Vehicle {
+    public:
+     explicit Vehicle(double max_speed,
+                      const std::string& color = "white")
+         : id_{next_id_++}, max_speed_{max_speed}, color_{color} {}
+     [[nodiscard]] int get_id() const noexcept { return id_; }
+    private:
+     int next_id_{1};  // one counter in each object
+     int id_;
+     double max_speed_;
+     double speed_{0.0};
+     std::string color_;
+     double mileage_{0.0};
+   };
+
+.. code-block:: cpp
+
+   // main.cpp
+   Vehicle car_a{13.4};
+   Vehicle car_b{13.4};
+   std::cout << car_a.get_id() << '\n';  // 1
+   std::cout << car_b.get_id() << '\n';  // 1
+
+- The first try: the counter ``next_id_`` is an ordinary data member that starts at 1. The constructor copies it into ``id_``, then adds 1.
+- Each object has its own ``next_id_``, so every counter starts at 1 and every ``Vehicle`` gets id 1: a fleet cannot tell two vehicles apart. Adding 1 to ``car_a``'s counter does nothing for ``car_b``.
+- Run: ``702run week8_playground 92``.
+
+One Counter for the Class
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+   :emphasize-lines: 8, 10
+
+   // vehicle.hpp
+   class Vehicle {
+    public:
+     explicit Vehicle(double max_speed,
+                      const std::string& color = "white")
+         : id_{next_id_++}, max_speed_{max_speed}, color_{color} {}
+     [[nodiscard]] int get_id() const noexcept { return id_; }
+     [[nodiscard]] static int get_next_id() noexcept { return next_id_; }
+    private:
+     inline static int next_id_{1};  // one counter for the class
+     int id_;
+     double max_speed_;
+     double speed_{0.0};
+     std::string color_;
+     double mileage_{0.0};
+   };
+
+- ``static``: one ``next_id_`` for the class, stored in no object. Every constructor call takes the next number from it.
+- ``get_next_id()`` is a ``static`` method, so ``Vehicle::get_next_id()`` can be called before any ``Vehicle`` exists: it is 1.
+- ``next_id_++`` gives the counter's value first and adds 1 after. So ``car_a`` gets id 1 and the counter becomes 2; then ``car_b`` gets id 2, and ``get_next_id()`` is 3.
+- ``inline`` (C++17) lets the header give the counter its first value. `The Counter's First Value`_ shows where it goes without ``inline``.
+- Run: ``702run week8_playground 93``.
+
+The Counter's First Value
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // vehicle.hpp, in the class, without inline
+   static int next_id_;  // declared only
+
+.. code-block:: cpp
+
+   // vehicle.cpp, outside every function
+   int Vehicle::next_id_{1};  // defined once: the first value
+
+- Without ``inline``, the counter takes two steps. Step 1, in the class: ``static int next_id_;`` declares it, with no value. Step 2, in ``vehicle.cpp``, at the top of the file, outside every function: ``int Vehicle::next_id_{1};`` defines it once and gives it its first value.
+- In one step, ``static int next_id_{1};`` in the class, it does not compile: g++ 13.3 says "ISO C++ forbids in-class initialization of non-const static member".
+- Run: ``702run week8_playground 94``.
+
+.. _l8-static-method:
+
+A ``static`` Method Has No ``this``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // main.cpp
+   std::cout << Vehicle::get_next_id() << '\n';  // on the class, no object
+
+.. code-block:: cpp
+
+   // vehicle.hpp
+   static double get_speed_kmh() noexcept {  // in Vehicle: an error
+     return speed_ * 3.6;
+   }
+
+.. code-block:: text
+
+   error: invalid use of member 'Vehicle::speed_' in static member function
+
+- ``Vehicle::get_next_id()`` is called on the class, with no object, so the method has no ``this``.
+- ``speed_`` belongs to one ``Vehicle`` object. A ``static`` method has no ``this`` to find ``speed_`` through, so ``get_speed_kmh()`` does not compile.
+- A ``static`` method can be called on a ``const`` object too, because it has no ``this`` to make ``const``.
+- Run: ``702run week8_playground 95``.
+
+.. note::
+
+   "A static member function does not have a ``this`` pointer". C++20 **[class.static.mfct]** (11.4.8.1) paragraph 2 (a note).
+
+.. important::
+
+   A ``static`` data member: one for the class, shared by every object. A ``static`` method: called on the class, with no ``this``, so it can use only ``static`` members.
+
+Methods With and Without ``this``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l8/static_members.png
+   :alt: On the left, two panels one above the other, each a rounded name tag over a blue box with a stack icon and the word Stack. The upper tag reads car_a; its box holds two fields: id_ with 1 (int) and speed_ with 12.0 (double). The lower tag reads car_b; its box holds id_ with 2 (int) and speed_ with 10.0 (double). On the upper right, a green box with the word Code holds three methods: set_speed(), get_id() and static get_next_id(). From each Stack box, two blue arrows run right, one to set_speed() and one to get_id(); a black tag 1 sits between the two panels, by these arrows. No arrow from an object reaches static get_next_id(), which has a black tag 3 at its left. On the lower right, an orange box with the words Static storage holds one field, next_id_ with 3 (int), with a black tag 2 at its left; one orange arrow leaves static get_next_id() on its right, runs down beside the boxes and enters next_id_ from the right.
+   :align: center
+   :width: 100%
+
+Each object has its own ``id_`` and ``speed_``; the methods exist once, in the code.
+
+1. ``this``: ``set_speed`` and ``get_id`` get the object they are called on, ``car_a`` in one call and ``car_b`` in the other.
+2. ``next_id_``, a ``static`` data member: one for the class, in no object.
+3. ``get_next_id``, a ``static`` method: no ``this``, so it reaches only ``static`` members.
+
+A Method That Uses No Member
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: cpp
+
+   // vehicle.hpp, in the class Vehicle
+   [[nodiscard]] static double mph_to_mps(double mph) noexcept;
+
+.. code-block:: cpp
+
+   // vehicle.cpp
+   double Vehicle::mph_to_mps(double mph) noexcept {
+     return mph * 0.44704;
+   }
+
+.. code-block:: cpp
+
+   // main.cpp
+   std::cout << Vehicle::mph_to_mps(30.0) << '\n';  // 13.4112: no object
+
+- ``mph_to_mps`` reads no data member, neither an object's nor a ``static`` one, so it needs no ``this``: make it ``static``, and call it on the class. 30 mph is 13.4112 m/s, and no ``Vehicle`` exists.
+- First ask whether it belongs in the class at all. A function that needs no member can live outside the class, in a header of its own (`When Not to Use a Class`_, Core Guidelines C.4). Keep it a ``static`` method when it is part of what the class offers, or a ``private`` helper of the class's own methods.
+- Run: ``702run week8_playground 97``.
+
+Discussion: One per Object, or One for the Class?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Should each of these be a ``static`` member, or one per object?
+
+1. In ``Vehicle``: how many ``Vehicle`` objects exist right now.
+2. In ``Vehicle``: the ``Sensor``\ s it owns.
+3. In ``Vehicle``: the maximum speed.
+4. In ``Vehicle``: the number of m/s in one mph, 0.44704.
+5. In ``Vehicle``: a method that turns mph into m/s.
+
+The test: does the answer change from one object to the next?
+
+.. dropdown:: Answers
+   :class-container: sd-border-success
+
+   1. Static: one count for the class, raised in the constructor and lowered in the destructor.
+   2. Not static: each vehicle has its own sensors.
+   3. Not static: two vehicles can have two different maximum speeds.
+   4. The same for every object, so it belongs to the class: a static constant.
+   5. It uses no member, so it can be a static method, or a plain function outside the class.
+
+Summary
+^^^^^^^
+
+- A ``static`` data member belongs to the class: there is one, shared by every object.
+- A counter in each object gave every ``Vehicle`` id 1. An ``inline static`` counter is one for the class, and the header gives its first value.
+- A ``static`` method is called on the class and has no ``this``, so without an object it can use only the ``static`` members.
+
 Further Reading
 ---------------
 
-The sections below are the appendix of the slides. They are **not presented** in the lecture. Read them on your own. The appendix has three parts:
+The sections below are the appendix of the slides. They are **not presented** in the lecture. Read them on your own. The appendix has two parts:
 
 1. **One Definition in Many Files** (frames ii to iv): why a function defined in a header must be ``inline``, and what ``inline`` does not promise, from `One Definition in Many Files`_ to :ref:`l8-inline-hint`.
 2. `const Objects`_ (frames v to x): what a ``const`` object cannot do, and a ``const`` reference.
-3. `static Members`_ (frames xi to xvii): one id counter for the whole class, and a ``static`` method.
 
 Each section names the appendix frame it comes from. Build the appendix program with ``702build week8_appendix``; each section that has code names its ``702run week8_appendix`` command.
 
@@ -1854,7 +2097,7 @@ Appendix frame ii, from `A Body in the Class`_.
    }  // prints 43.2 36
 
 - ``#include`` copies the header into each file, so ``a.cpp`` and ``main.cpp`` define ``kmh`` the same way. ``#pragma once`` only stops a second copy in one file.
-- Without ``inline``, the program does not link, as in L5 (g++ 13.3, output cut):
+- Without ``inline``, the program does not link (g++ 13.3, output cut):
 
 .. code-block:: text
 
@@ -1940,6 +2183,7 @@ Calling a Mutator
 
 .. code-block:: cpp
 
+   // main.cpp
    const Vehicle logged_car{13.4, 12.0};
    std::cout << logged_car.get_speed() << '\n';  // 12
    logged_car.set_speed(10.0);  // does not compile
@@ -1959,6 +2203,7 @@ Through a ``const`` Reference
 
 .. code-block:: cpp
 
+   // vehicle.hpp
    class Vehicle {
     public:
      double get_speed() { return speed_; }  // const left out
@@ -1970,6 +2215,9 @@ Through a ``const`` Reference
      double mileage_{0.0};  // m driven
    };
 
+.. code-block:: cpp
+
+   // main.cpp
    void show(const Vehicle& vehicle) {
      std::cout << vehicle.get_speed() << '\n';  // does not compile
    }
@@ -1978,7 +2226,7 @@ Through a ``const`` Reference
 
    error: passing 'const Vehicle' as 'this' argument discards qualifiers [-fpermissive]
 
-- A ``const Vehicle&`` parameter (L5) sees the object as ``const``, so the same rule applies. ``show`` of `A Conversion Nobody Asked For`_ compiles only because the accessors are ``const``.
+- A ``const Vehicle&`` parameter sees the object as ``const``, so the same rule applies. ``show`` of `A Conversion Nobody Asked For`_ compiles only because the accessors are ``const``.
 - That is the reason for Con.2 (`Accessors`_): a method that changes nothing must say so, or no ``const&`` can call it.
 
 Discussion: Will It Compile?
@@ -1986,6 +2234,7 @@ Discussion: Will It Compile?
 
 .. code-block:: cpp
 
+   // main.cpp
    void show(const Vehicle& vehicle);
    const Vehicle logged_car{13.4, 12.0};
    Vehicle car_a{13.4};
@@ -2020,130 +2269,3 @@ Summary: const Objects
 - A ``const`` object cannot change after its constructor ends: no data member can change, and no method that is not ``const`` can run on it.
 - A plain reference or pointer cannot refer to it, so no other name can change it.
 - A ``const&`` parameter sees the object as ``const`` too, so a method that changes nothing must be ``const`` (Con.2).
-
-static Members
-^^^^^^^^^^^^^^
-
-Appendix frames xi to xvii, from `The Class Diagram`_. A ``static`` **data member** belongs to the class, not to an object: there is one, shared by every object. A ``static`` **method** is called on the class, and it has no ``this``.
-
-See `cppreference: static members <https://en.cppreference.com/w/cpp/language/static>`__.
-
-One Counter for Every Vehicle
-"""""""""""""""""""""""""""""
-
-.. figure:: /_static/images/l8/model_l8_static.png
-   :alt: A UML class diagram of the ride service program, with class names only, in nine boxes. Vehicle is in the middle. On the left, Fleet joins Vehicle by a line with a hollow diamond at Fleet, labeled holds, 1 at Fleet and 0..* at Vehicle; below it, Passenger has an arrow labeled rides to Vehicle, 0..* at Passenger and 0..1 at Vehicle. To the upper right, Sensor joins Vehicle by a line with a filled diamond at Vehicle, labeled owns, 1 at Vehicle and 0..* at Sensor, and a dashed arrow runs from Sensor to SensorType, marked enumeration. To the right, a dashed arrow labeled uses runs from Vehicle to Route, and Route joins Position, marked struct, by a line with a filled diamond at Route, labeled has, 1 at Route and 0..* at Position. Lower right, RoboTaxi and Taxi, both marked final, each have a line with a hollow triangle at Vehicle. The Vehicle box is purple; every other box and line is grey.
-   :align: center
-   :width: 100%
-
-   ``Vehicle`` gets ``next_id_``.
-
-- Every ``Vehicle`` needs its own id, so the fleet can tell two vehicles apart.
-- ``Vehicle`` (purple) gets ``next_id_``, one counter for the whole class, not one in each object. The diagram shows class names only, so ``next_id_`` is not drawn. When a UML diagram shows members, it underlines a static one.
-- The constructor sets ``id_`` from the counter, then adds 1 to the counter.
-
-Two Vehicles, the Same Id
-"""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   class Vehicle {
-    public:
-     explicit Vehicle(double max_speed,
-                      const std::string& color = "white")
-         : id_{next_id_++}, max_speed_{max_speed}, color_{color} {}
-     [[nodiscard]] int get_id() const noexcept { return id_; }
-    private:
-     int next_id_{1};  // one counter in each object
-     int id_;
-     double max_speed_;
-     double speed_{0.0};
-     std::string color_;
-     double mileage_{0.0};
-   };
-
-   Vehicle car_a{13.4};
-   Vehicle car_b{13.4};
-   std::cout << car_a.get_id() << ' '
-             << car_b.get_id() << '\n';  // 1 1
-
-- Each object has its own ``next_id_``, so every ``Vehicle`` gets id 1, and a fleet cannot tell two vehicles apart.
-- Run: ``702run week8_appendix xiii``.
-
-One Counter for the Class
-"""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   class Vehicle {
-    public:
-     explicit Vehicle(double max_speed,
-                      const std::string& color = "white")
-         : id_{next_id_++}, max_speed_{max_speed}, color_{color} {}
-     [[nodiscard]] int get_id() const noexcept { return id_; }
-     [[nodiscard]] static int next_id() noexcept { return next_id_; }
-    private:
-     inline static int next_id_{1};  // one counter for the class
-     int id_;
-     double max_speed_;
-     double speed_{0.0};
-     std::string color_;
-     double mileage_{0.0};
-   };
-
-- ``Vehicle::next_id()`` is 1 before any ``Vehicle`` exists: the counter belongs to the class. Then ``car_a`` gets id 1, ``car_b`` id 2, and ``next_id()`` is 3.
-- ``inline`` (C++17) lets the header give the counter its first value.
-- Run: ``702run week8_appendix xiv``.
-
-.. _l8-static-method:
-
-A ``static`` Method Has No ``this``
-"""""""""""""""""""""""""""""""""""
-
-.. code-block:: cpp
-
-   std::cout << Vehicle::next_id() << '\n';  // on the class, no object
-
-   static std::size_t count() noexcept {  // in Vehicle: an error
-     return sensors_.size();
-   }
-
-.. code-block:: text
-
-   error: invalid use of member 'Vehicle::sensors_' in static member function
-
-- ``sensors_`` belongs to one ``Vehicle`` object. A ``static`` method is called with no object, so there is no ``this`` to find ``sensors_`` through. Without an object, it can use only the ``static`` members.
-- A ``static`` method can be called on a ``const`` object too: it has no ``this``.
-
-.. note::
-
-   "A static member function does not have a ``this`` pointer". C++20 **[class.static.mfct]** (11.4.8.1) paragraph 2 (a note).
-
-Discussion: One per Object, or One for the Class?
-"""""""""""""""""""""""""""""""""""""""""""""""""
-
-Should each of these be a ``static`` member, or one per object?
-
-1. In ``Vehicle``: how many ``Vehicle`` objects exist right now.
-2. In ``Vehicle``: the ``Sensor``\ s it owns.
-3. In ``Vehicle``: the maximum speed.
-4. In ``Vehicle``: the number of m/s in one mph, 0.44704.
-5. In ``Vehicle``: a method that turns mph into m/s.
-
-The test: does the answer change from one object to the next?
-
-.. dropdown:: Answers
-   :class-container: sd-border-success
-
-   1. Static: one count for the class, raised in the constructor and lowered in the destructor.
-   2. Not static: each vehicle has its own sensors.
-   3. Not static: two vehicles can have two different maximum speeds.
-   4. The same for every object, so it belongs to the class: a static constant.
-   5. It uses no member, so it can be a static method, or a plain function outside the class.
-
-Summary: static Members
-"""""""""""""""""""""""
-
-- A ``static`` data member belongs to the class: there is one, shared by every object.
-- A counter in each object gave every ``Vehicle`` id 1. An ``inline static`` counter is one for the class, and the header gives its first value.
-- A ``static`` method is called on the class and has no ``this``, so without an object it can use only the ``static`` members.

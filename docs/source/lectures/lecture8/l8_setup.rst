@@ -4,14 +4,14 @@
 Setup Before Class
 ====================================================
 
-In Lecture 8 you write Step 1 of the Live Coding with me and Steps 2 to 6 on your own, and you upload the code on Canvas before the end of class. Class time is for writing code, so get your workspace ready **before class**.
+In Lecture 8 you write Step 1 of the Live Coding with me and Steps 2 to 5 on your own, and you upload the code on Canvas before the end of class. Class time is for writing code, so get your workspace ready **before class**.
 
 .. important::
 
    The code you upload at the end of class is graded.
 
    - **What you upload:** ``vehicle.hpp``, ``vehicle.cpp`` and ``main.cpp``, from ``project/week8/live``, to the L8 Live Coding assignment on Canvas, before the end of class.
-   - **How it is graded:** as the L8 exercise (exercises are 5% of the grade). Class reached Step 4, so the score counts **Steps 2 to 4**, 4 points each, out of 12 and scaled to 20. A step earns its 4 points when you wrote it, whether or not the code builds, and part of them when you wrote part of it. Steps 5 and 6 get feedback but no points.
+   - **How it is graded:** as the L8 exercise (exercises are 5% of the grade). Class reached Step 4, so the score counts **Steps 2 to 4**, 4 points each, out of 12 and scaled to 20. A step earns its 4 points when you wrote it, whether or not the code builds, and part of them when you wrote part of it. Step 5 gets feedback but no points.
    - **No AI:** you write the code yourself. No chatbot, and no AI in VS Code (GitHub Copilot or any other AI extension): turn it off before class. Code written with AI gets **0**.
    - **Watching the recording?** Upload before the next lecture, on **Nov 3**. The same rules apply.
 
@@ -52,7 +52,7 @@ Step 2: Compile and Run, Once
 
 1. Download the script: :download:`enpm702_setup.sh <enpm702_setup.sh>`.
 
-2. Run it. It does not change any file in the repository: it only compiles and runs the live coding program, ``week8_live``.
+2. Run it. It does not change any file in the repository: it only compiles and runs the live coding programs of Lectures 8 and 9, ``week8_live`` and ``week9_live``.
 
    .. code-block:: bash
 
@@ -66,20 +66,34 @@ Step 2: Compile and Run, Once
 
    Save the file, then run the script again.
 
-3. Read the output. Each line says ``ok`` or ``FIX``. When all is well, it looks like this:
+3. Read the output. Each check has a green ✔ when it passed, or a red ✘ and the lines to fix (``ok`` and ``FIX`` when the output is not a terminal). When all is well, it looks like this:
 
    .. code-block:: text
 
-      ENPM702: compile and run week8_live
-        ok    repository at /home/you/enpm702_cpp/enpm702-fall-2026-cpp
-        ok    configured
-        ok    built week8_live
-        ok    ran week8_live
+        ╭──────────────────────────────────────────────╮
+        │  ENPM702 · Live Coding setup check           │
+        ╰──────────────────────────────────────────────╯
 
-      Ready for class. In class, type these two lines once in your terminal:
-          source /home/you/Downloads/enpm702_setup.sh
-          live8
-      and type live8 again after each step.
+        Repository  ~/enpm702_cpp/enpm702-fall-2026-cpp
+          ✔ repository found
+
+        Lecture 8 · week8_live
+          ✔ built week8_live (1 s)
+          ✔ ran week8_live
+
+        Lecture 9 · week9_live
+          ✔ built week9_live (4 s)
+          ✔ ran week9_live
+
+        ✔ Ready for class.
+
+        In class, type this once in your terminal:
+            source /home/you/Downloads/enpm702_setup.sh
+        Then, after each step:
+            live8    Lecture 8
+            live9    Lecture 9
+
+   The times are those of a first build on the instructor's PC; yours depend on your computer.
 
 In Class: ``live8``
 -------------------
@@ -115,7 +129,7 @@ Common Fixes
    * - cmake could not configure the repository
      - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
    * - ``week8_live`` did not build, with ``No rule to make target 'week8_live'``
-     - Pull the latest code, and enable week 8 in ``CMakeLists.txt`` (Step 1).
+     - Pull the latest code, and enable week 8 in ``CMakeLists.txt`` (Step 1). Then configure again, so that CMake sees the change: ``702configure``, or ``cmake -S . -B build`` in the repository.
    * - ``week8_live`` did not build, or did not compile, with compiler errors
      - Read the first error: it names the file and the line. If you did not change that file, run ``git status`` in the repository. If the lines do not tell you what to do, send them to me before class.
    * - ``live8: command not found``
@@ -123,4 +137,4 @@ Common Fixes
    * - ``702run: command not found``
      - Type ``enpm702`` first, or use ``live8``.
 
-Lecture 9 uses the same script with the week number: ``bash ~/Downloads/enpm702_setup.sh 9`` before class, and ``live9`` in class.
+Lecture 9 uses the same script: it already checks ``week9_live``, and in class you type ``live9``.

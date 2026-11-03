@@ -234,7 +234,7 @@ This ``Vehicle`` holds one ``Sensor`` only, before the lecture gives it a ``std:
      // Vehicle copy{moved};  // does not compile: the copy constructor is deleted
    }
 
-The ``Sensor`` is the lecture's class, in ``common/include/sensor.hpp``. It has three data members: ``id_``, ``type_`` (a ``SensorType``: lidar, camera or radar) and ``range_``, how far it sees, in m.
+The ``Sensor`` is the lecture's class, in ``live/include/sensor.hpp``. It has three data members: ``id_``, ``type_`` (a ``SensorType``: lidar, camera or radar) and ``range_``, how far it sees, in m.
 
 ``sensor_`` (line 31) is a ``std::unique_ptr<Sensor>``, a smart pointer from ``<memory>``. It holds the address of a ``Sensor`` on the heap, and it follows two rules:
 
@@ -290,7 +290,7 @@ Comment line 38 out again before you go on.
 
    **A class with a std::unique_ptr member is move-only.** You can move it, but you cannot copy it. The compiler enforces one owner per ``Sensor`` for you, without one line of code in the class.
 
-The ``Vehicle`` of the lecture, whose ``sensors_`` is a ``std::vector<std::unique_ptr<Sensor>>``, follows the same rule. It writes none of the five, and copying it does not compile (Live Coding: Step 6 of the :doc:`lecture page <l8_lecture>`).
+A ``Vehicle`` that owns its sensors through a ``std::vector<std::unique_ptr<Sensor>>``, as the class diagram of the :doc:`lecture page <l8_lecture>` shows, follows the same rule. It writes none of the five, and copying it does not compile.
 
 A Class That Owns Memory
 ------------------------
