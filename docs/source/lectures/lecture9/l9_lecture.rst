@@ -32,23 +32,25 @@ Code for This Lecture
 
 .. code-block:: text
 
-   project/week9/
-   ├── CMakeLists.txt
-   ├── live/
-   ├── cycle/
-   ├── operators/
-   └── uml/
+   project/
+   ├── enpm702_setup.sh
+   └── week9/
+       ├── CMakeLists.txt
+       ├── live/
+       ├── cycle/
+       ├── operators/
+       └── uml/
 
 .. important::
 
-   **appendix** and **common** hold the finished classes of the Live Coding steps, so they join the repository after the Live Coding deadline, Nov 10.
+   **appendix**, **common**, **playground** and **undefined** hold the finished classes of the Live Coding steps or use them, so they join the repository after the Live Coding deadline, Nov 10.
 
-**Build and Run**
+**Build and Run**, from the repository's top folder
 
 1. Get the code: ``git pull``.
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
-4. Build and run the classes you write in the Live Coding steps: ``live9``. Load it in class with ``source ~/Downloads/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture9/l9_setup>` shows.
+4. Build and run the classes you write in the Live Coding steps: ``live9``. Load it in class with ``source project/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture9/l9_setup>` shows.
 5. The two headers that include each other (`A Forward Declaration Breaks the Cycle`_): ``702run week9_cycle``.
 6. The reading :doc:`Operator Overloading <l9_operators>`: ``702run week9_operators``.
 7. The reading :doc:`virtual Methods in Depth <l9_virtual>`: the vtable and ``virtual`` destructors.
@@ -57,7 +59,7 @@ Code for This Lecture
 
 - **live** holds the classes you write in the Live Coding steps.
 - **uml** holds the PlantUML file of the class diagram.
-- After Nov 10, **common** holds every class of the diagram, and ``702run week9_appendix`` followed by a roman number, such as ``x``, runs the code of an appendix page.
+- After Nov 10, **common** holds every class of the diagram. ``playground9 63`` runs the code of slide 63 (load it with the same ``source`` line as ``live9``), and ``702run week9_appendix`` followed by a roman number, such as ``x``, runs the code of an appendix page.
 
 .. dropdown:: How to Run the Code
    :icon: terminal

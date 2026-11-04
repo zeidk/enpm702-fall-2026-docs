@@ -50,21 +50,19 @@ Do these yourself, before class. The script in Step 2 does none of them.
 Step 2: Compile and Run, Once
 -----------------------------
 
-1. Download the script: :download:`enpm702_setup.sh <../lecture8/enpm702_setup.sh>`. It is the script of Lecture 8; if you already have it in ``~/Downloads``, use that copy.
-
-2. Run it. It does not change any file in the repository: it only compiles and runs the live coding programs of Lectures 8 and 9, ``week8_live`` and ``week9_live``. To check only Lecture 9, add the week number: ``bash ~/Downloads/enpm702_setup.sh 9``.
+1. Go to the repository's top folder. The script is in it, in ``project/enpm702_setup.sh``, since the pull of Step 1. If your clone is somewhere else, use that folder:
 
    .. code-block:: bash
 
-      bash ~/Downloads/enpm702_setup.sh
+      cd ~/enpm702_cpp/enpm702-fall-2026-cpp
 
-   The script looks for the repository in ``~/enpm702_cpp/enpm702-fall-2026-cpp``. If you cloned it somewhere else, open ``enpm702_setup.sh`` in VS Code and change **line 18**, between the quotes, to the folder where you cloned it. For example, for a clone in ``~/courses``:
+2. Run it. It does not change any file in the repository: it only compiles and runs the live coding programs of Lectures 8 and 9, ``week8_live`` and ``week9_live``. To check only Lecture 9, add the week number: ``bash project/enpm702_setup.sh 9``.
 
    .. code-block:: bash
 
-      ENPM702_LIVE_WS="$HOME/courses/enpm702-fall-2026-cpp"
+      bash project/enpm702_setup.sh
 
-   Save the file, then run the script again.
+   The script finds the repository from its own place in ``project/``, so it works wherever you cloned it.
 
 3. Read the output. Each check has a green ✔ when it passed, or a red ✘ and the lines to fix (``ok`` and ``FIX`` when the output is not a terminal). When all is well, it looks like this:
 
@@ -77,32 +75,32 @@ Step 2: Compile and Run, Once
         Repository  ~/enpm702_cpp/enpm702-fall-2026-cpp
           ✔ repository found
 
-        Lecture 8 · week8_live
+        week8_live
           ✔ built week8_live (1 s)
           ✔ ran week8_live
 
-        Lecture 9 · week9_live
-          ✔ built week9_live (4 s)
+        week9_live
+          ✔ built week9_live (3 s)
           ✔ ran week9_live
 
         ✔ Ready for class.
 
-        In class, type this once in your terminal:
-            source /home/you/Downloads/enpm702_setup.sh
+        In class, type this once in your terminal, from the repository's top folder:
+            source project/enpm702_setup.sh
         Then, after each step:
-            live8    Lecture 8
-            live9    Lecture 9
+            live8            Lecture 8
+            live9            Lecture 9
 
    The times are those of a first build on the instructor's PC; yours depend on your computer.
 
 In Class: ``live9``
 -------------------
 
-In class, load the script into your terminal once, with ``source`` instead of ``bash``:
+In class, load the script into your terminal once, from the repository's top folder, with ``source`` instead of ``bash``:
 
 .. code-block:: bash
 
-   source ~/Downloads/enpm702_setup.sh
+   source project/enpm702_setup.sh
 
 This gives the terminal the command ``live9``. After each step, save your files and type:
 
@@ -125,7 +123,9 @@ Common Fixes
    * - The message says
      - What to do
    * - no ENPM702 repository
-     - Clone the repository (Step 1), or change line 18 of the script to the folder where you cloned it.
+     - Clone the repository (Step 1), and keep the script in its ``project/`` folder.
+   * - ``No such file or directory``, for ``project/enpm702_setup.sh``
+     - Pull the latest code (Step 1), then run the command from the repository's top folder.
    * - cmake could not configure the repository
      - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
    * - ``week9_live`` did not build, with ``No rule to make target 'week9_live'``
@@ -133,6 +133,6 @@ Common Fixes
    * - ``week9_live`` did not build, or did not compile, with compiler errors
      - Read the first error: it names the file and the line. If you did not change that file, run ``git status`` in the repository. If the lines do not tell you what to do, send them to me before class.
    * - ``live9: command not found``
-     - Type ``source ~/Downloads/enpm702_setup.sh`` in that terminal first.
+     - In that terminal, from the repository's top folder, type ``source project/enpm702_setup.sh`` first.
    * - ``702run: command not found``
      - Type ``enpm702`` first, or use ``live9``.

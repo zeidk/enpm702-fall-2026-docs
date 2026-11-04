@@ -39,7 +39,7 @@ This lecture covers advanced object-oriented programming in C++, on the ride ser
 Before Class
 ------------
 
-Follow :doc:`Setup Before Class <l9_setup>`: it runs the script with the week number, ``bash ~/Downloads/enpm702_setup.sh 9``. In class we review Steps 1 to 3, given in ``project/week9/live``, and you write Steps 4, 5 and 6 in class, on your own. After Step 6, you zip the ``live`` folder and upload ``live.zip`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts as the L9 exercise (exercises are 5% of the grade), as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
+Follow :doc:`Setup Before Class <l9_setup>`: from the repository's top folder, it runs the script with the week number, ``bash project/enpm702_setup.sh 9``. In class we review Steps 1 to 3, given in ``project/week9/live``, and you write Steps 4, 5 and 6 in class, on your own. After Step 6, you zip the ``live`` folder and upload ``live.zip`` to the L9 Live Coding assignment on Canvas before the end of class. The upload counts as the L9 exercise (exercises are 5% of the grade), as complete or incomplete, and no AI is allowed. The rules are in :ref:`Upload Your Live Coding <l9-upload-live-coding>`.
 
 Class starts with **Quiz 4**, which includes questions on the reading :doc:`Rule of Five and Rule of Zero </lectures/lecture8/l8_rule_of_five>`. Read it before you come.
 
