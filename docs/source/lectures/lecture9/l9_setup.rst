@@ -69,7 +69,7 @@ Step 2: Compile and Run, Once
    .. code-block:: text
 
         ╭──────────────────────────────────────────────╮
-        │  ENPM702 · Live Coding setup check           │
+        │  ENPM702 · Setup check                       │
         ╰──────────────────────────────────────────────╯
 
         Repository  ~/enpm702_cpp/enpm702-fall-2026-cpp
