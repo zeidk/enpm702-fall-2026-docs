@@ -785,7 +785,7 @@ Build and run: ``live8``. Item 4 gives:
 Abstraction
 """""""""""
 
-**Abstraction** means that code that uses an object calls its ``public`` methods. It does not need to know how the object stores its data or how the methods do their work.
+**Data abstraction** means that code that uses an object calls its ``public`` methods. It does not need to know how the object stores its data or how the methods do their work.
 
 .. figure:: /_static/images/l8/coffee_machine.png
    :alt: Drawing of an espresso machine with dials and buttons on its front panel, two coffee holders with handles, and three glasses of coffee on the drip tray.
@@ -827,7 +827,7 @@ Changing the Inside
 
 - The data members now hold km/h: 48.24 is 13.4 × 3.6. The method bodies convert, so the methods still take and give m/s.
 - The speed calls of `Live Coding: Step 1`_ did not change: they still print ``12 10``.
-- That is **abstraction**: the calling code depends on the methods, not on how the data is stored.
+- That is **data abstraction**: the calling code depends on the methods, not on how the data is stored.
 - With ``public`` members, every line that read ``speed_`` would now fail to compile.
 - Run: ``702run week8_playground 41``.
 
@@ -857,7 +857,7 @@ Summary
 - Data members are ``private``, and code outside the class goes through ``public`` methods, so the methods keep the invariant.
 - The class goes in a header, ``vehicle.hpp``. Its method bodies go in ``vehicle.cpp``, each named with ``Vehicle::``.
 - In a UML class box, ``+`` marks a ``public`` member, ``-`` a ``private`` one and ``#`` a ``protected`` one.
-- Callers depend on the methods, not on how the data is stored, so the inside can change: that is abstraction.
+- Callers depend on the methods, not on how the data is stored, so the inside can change: that is data abstraction.
 
 
 Accessors and Mutators

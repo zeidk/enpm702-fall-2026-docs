@@ -1962,7 +1962,7 @@ See `auto or a Base Pointer`_ under Further Reading.
 Abstraction
 -----------
 
-**Abstraction**, one of the four principles of OOP, hides how a class does its work behind what it offers. An **abstract class** declares what every derived class must do, and leaves how to each one. You make a class abstract by giving it at least one **pure** ``virtual`` **method** (`Pure virtual Methods`_). No object of an abstract class can be created.
+**Abstraction**, one of the four principles of OOP, hides how a class does its work behind what it offers. ``Vehicle`` already uses **data abstraction**: its data members are ``private``, and other code calls its ``public`` methods. An **abstract class** goes further: it declares what every derived class must do, and leaves how to each one. Polymorphism, from the last section, lets a call through a ``Vehicle`` pointer or reference run the derived class's method. You make a class abstract by giving it at least one **pure** ``virtual`` **method** (`Pure virtual Methods`_). No object of an abstract class can be created.
 
 See `cppreference: Abstract class <https://en.cppreference.com/w/cpp/language/abstract_class>`__.
 

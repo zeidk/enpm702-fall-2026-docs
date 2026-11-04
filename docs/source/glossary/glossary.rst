@@ -1756,8 +1756,9 @@ L8: OOP Basics
 
    Abstraction
       One of the four principles of OOP: a class hides how it does its work
-      behind what it offers. Code that uses an object calls its methods and
-      does not need to know how the object stores its data. In L8,
+      behind what it offers. In **data abstraction**, code that uses an object
+      calls its methods and does not need to know how the object stores its
+      data. In L8,
       ``Vehicle`` changes its data members from m/s to km/h, and the code
       that calls ``set_speed`` and ``get_speed`` does not change. L9's
       abstract classes go one step further: see **Abstract Class**.
