@@ -462,8 +462,7 @@ Before You Submit
 
       ./rwa3.sh check      # 0 warnings, then no leak and no error
 
-3. Generate the Doxygen pages and read them once: ``./rwa3.sh docs``.
-4. Make the zip (`Deliverables`_): ``./rwa3.sh zip``.
+3. Make the zip (`Deliverables`_): ``./rwa3.sh zip``.
 
 
 How Your Documentation Is Graded
