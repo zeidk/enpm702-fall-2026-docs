@@ -1749,26 +1749,39 @@ The Challenge: Two Vectors
 
 .. code-block:: cpp
 
-   RoboTaxi robotaxi{13.4};
-   Taxi taxi{13.4, "Ana"};
-   std::vector<Vehicle> by_value{robotaxi, taxi};
+   std::vector<Vehicle> by_value;
+   by_value.push_back(RoboTaxi{15.0});
+   by_value.push_back(Taxi{13.4, "David"});
    for (const auto& vehicle : by_value) {
      vehicle.drive(maya_ride);
    }
+
+   RoboTaxi robotaxi{13.4};
+   Taxi taxi{13.4, "Ana"};
    std::vector<Vehicle*> by_pointer{&robotaxi, &taxi};
    for (const Vehicle* vehicle : by_pointer) {
      vehicle->drive(maya_ride);
    }
 
+The first loop prints:
+
 .. code-block:: text
 
    Vehicle: drives 500 m
    Vehicle: drives 500 m
+
+``by_value`` keeps only the ``Vehicle`` parts: slicing (`Slicing`_). Each element is a ``Vehicle``, so ``Vehicle::drive`` runs.
+
+The second loop prints:
+
+.. code-block:: text
+
    Vehicle: drives 500 m
    Vehicle: drives 500 m
 
-- ``by_value`` holds copies of the ``Vehicle`` parts only: slicing (`Slicing`_). Each copy is a ``Vehicle``, so ``Vehicle::drive`` runs.
-- ``by_pointer`` keeps the objects themselves, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive``. `The Challenge: A Base Reference`_ shows why.
+``by_pointer`` keeps the whole objects, but through a ``Vehicle*`` the compiler calls ``Vehicle::drive`` (`A Base Class Pointer to a Derived Object`_).
+
+Why temporaries: a ``Vehicle`` owns its sensors through ``std::unique_ptr``, so ``push_back`` can move it, not copy it. ``by_value.push_back(robotaxi)`` would copy ``robotaxi`` and does not compile.
 
 The Challenge: A Base Reference
 """""""""""""""""""""""""""""""
