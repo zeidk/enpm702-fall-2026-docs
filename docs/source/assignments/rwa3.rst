@@ -97,11 +97,16 @@ start you off. Which classes exist, and their names, are your decisions.
 .. dropdown:: Theme A: Drone Fleet
    :open:
 
-   .. figure:: /_static/images/rwa3/theme_a_drones.jpeg
-      :align: center
-      :alt: A black-and-white comic panel of a mountain valley. At the bottom left is a base camp with tents, a helipad and four people. A tethered quadrotor hovers high above the camp on a cable and sends out radio waves. A fixed-wing drone with two engines crosses the top right, labeled VWOOOM!, and dashed straight passes run across the valley. In the middle, a quadrotor labeled WHIRRR! flies a dotted spiral over the rocks at the lower right, and its camera beam shows a glowing person crouched among the rocks. A box at the bottom right reads "Every drone flies its own pattern."
+   .. raw:: html
 
-      Image generated with Google Gemini.
+      <figure class="align-center">
+        <video controls autoplay muted loop playsinline preload="metadata" width="100%"
+               poster="../_static/videos/rwa3/theme_a_drones_poster.jpg"
+               aria-label="A 30-second looping animation of a mountain valley, seen from above at an angle. A white quadrotor with a red top hovers over the base camp on a cable and sends out blue radio waves. A white fixed-wing drone with blue engines flies straight passes back and forth across the valley along a dashed track, labeled VWOOOM!. An orange quadrotor, labeled WHIRRR!, flies a dotted spiral over a boulder field. When its yellow camera beam reaches a person crouched among the rocks, the person lights up. A box reads &quot;Every drone flies its own pattern&quot;.">
+          <source src="../_static/videos/rwa3/theme_a_drones.mp4" type="video/mp4">
+        </video>
+        <figcaption>The tethered drone relays radio over the camp, the fixed-wing drone sweeps the valley in straight passes, and the quadrotor spirals over the rocks until its camera finds the missing hiker.</figcaption>
+      </figure>
 
    The search-and-rescue team from RWA1 and RWA2 now runs a fleet of
    drones of more than one kind. A **quadrotor** hovers, so it scans a
@@ -138,11 +143,16 @@ start you off. Which classes exist, and their names, are your decisions.
 .. dropdown:: Theme B: Video Game Monsters
    :open:
 
-   .. figure:: /_static/images/rwa3/theme_b_monsters.jpeg
-      :align: center
-      :alt: A black-and-white manga panel in a stone dungeon lit by wall torches. On the left, a young hero with a cape, a round wooden shield and a sword swings at three monsters. The sword passes through a vampire, labeled MISS!, who leaves a faded copy of himself as he dodges. The blade hits a snarling werewolf, labeled CLANG!. Behind them, a troll raises a club, with sparkles around it and a bar labeled REGEN above it. Health bars float over the vampire and the werewolf. A dark monster stands in an arched doorway at the back, and coins and a potion lie on the floor. A box at the bottom left reads "Every monster takes damage in its own way."
+   .. raw:: html
 
-      Image generated with Google Gemini.
+      <figure class="align-center">
+        <video controls autoplay muted loop playsinline preload="metadata" width="100%"
+               poster="../_static/videos/rwa3/theme_b_monsters_poster.jpg"
+               aria-label="A 30-second looping animation of a stone dungeon lit by wall torches, seen from above at an angle. Each character has a row of five hearts. A young hero with a cape, a sword and a round shield attacks three monsters in turn. The sword passes through a vampire, who dodges and leaves a faded copy of himself: MISS!, no heart lost. The sword hits a werewolf, which resists and loses one heart instead of two: CLANG!. The sword hits a troll, which loses two hearts, then gets half a heart back with green sparkles: REGEN +½. The troll&#39;s club then breaks through the hero&#39;s shield, and the hero loses one heart. A dark monster with glowing eyes watches from an archway. A box reads &quot;Every monster takes damage in its own way&quot;.">
+          <source src="../_static/videos/rwa3/theme_b_monsters.mp4" type="video/mp4">
+        </video>
+        <figcaption>The hero attacks each monster in turn. The vampire dodges and loses no heart, the werewolf resists and loses one heart instead of two, and the troll loses two hearts, then gets half a heart back. The troll&#39;s club costs the hero one heart.</figcaption>
+      </figure>
 
    A dungeon video game is about a **hero** who fights monsters. In a fight,
    the hero and the monsters take turns. Each one can **attack** another,
@@ -186,11 +196,16 @@ start you off. Which classes exist, and their names, are your decisions.
 .. dropdown:: Theme C: Planetary Rover Mission
    :open:
 
-   .. figure:: /_static/images/rwa3/theme_c_rovers.jpeg
-      :align: center
-      :alt: A black-and-white comic panel on a cratered planet under a black sky with stars and a small Earth. In front, a six-wheeled rover drills into a boulder with its arm, labeled KRRRRK!, next to a sample tube, and its wheel tracks curve back across the ground. Behind it, a lander stands on four legs with two round solar panels and a weather mast, with two small instruments on the ground beside it. At the top right, an orbiter with solar panels and a dish sends signals toward Earth, labeled BEEP BEEP, and shines a beam on the surface. A box at the top left reads "Sol 42. Every vehicle carries out its plan."
+   .. raw:: html
 
-      Image generated with Google Gemini.
+      <figure class="align-center">
+        <video controls autoplay muted loop playsinline preload="metadata" width="100%"
+               poster="../_static/videos/rwa3/theme_c_rovers_poster.jpg"
+               aria-label="A 30-second looping animation of a patch of a cratered red planet under a black, starry sky with a small Earth, seen from above at an angle. A six-wheeled rover drives a curved path and leaves wheel tracks, stops at a boulder, drills it with its arm (KRRRRK!), sets down a sample tube, and drives back. A lander on four legs with two round solar panels spins its weather mast beside two instruments on the ground. An orbiter circles overhead, sweeps a pale beam over the surface and sends signals to Earth (BEEP BEEP). A box reads &quot;Sol 42. Every vehicle carries out its plan&quot;.">
+          <source src="../_static/videos/rwa3/theme_c_rovers.mp4" type="video/mp4">
+        </video>
+        <figcaption>The rover drives to a boulder, drills it, leaves a sample tube and drives back. The lander measures the weather, and the orbiter sends its data to Earth.</figcaption>
+      </figure>
 
    A space agency explores a planet with vehicles of different kinds. A
    **lander** stays where it set down; it measures the weather and
@@ -875,3 +890,7 @@ link before you write the matching requirement.
      - Always initialize an object.
    * - `NL.10 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rl-camel>`_
      - Prefer ``underscore_style`` names.
+
+.. raw:: html
+
+   <p><small>The three theme animations on this page were made with Claude.</small></p>
