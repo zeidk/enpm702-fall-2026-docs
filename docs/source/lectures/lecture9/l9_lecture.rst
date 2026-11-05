@@ -14,52 +14,40 @@ Learning Objectives
 
 The `Further Reading`_ part, at the end of this page, is the appendix of the slides. It is not presented. Read it on your own.
 
-.. _l9-upload-live-coding:
-
-Upload Your Live Coding
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Steps 1 to 3 are given in ``project/week9/live``: we review them together. You write **Steps 4, 5 and 6** in class, on your own: 10 minutes for Step 4, 5 minutes each for Steps 5 and 6. In class, I walk around and help, but I do not show the answers: the recording would give them away. Get your workspace ready before class: follow :doc:`Setup Before Class </lectures/lecture9/l9_setup>`.
-
-- **Before the end of class**, after Step 6, zip the ``live`` folder: in ``project/week9``, run ``zip -r live.zip live`` (if ``zip`` is missing: ``sudo apt install zip``). Upload ``live.zip`` to the L9 Live Coding assignment on Canvas.
-- It counts as the **L9 exercise** (exercises are 5% of the grade, 2.5 points each), as complete or incomplete. Complete means the code builds and you wrote Steps 4, 5 and 6. I do not grade it for correctness.
-- **No AI**: write the code yourself, with neither a chatbot nor the AI in VS Code (GitHub Copilot included), in class or after. Code written with AI gets **0**.
-- **Watching the recording?** Upload before the next lecture, on **Nov 10**. The same rules apply.
-- The finished code is posted after Nov 10, the deadline for those who watch the recording.
-
 Code for This Lecture
 ^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: text
 
    project/
-   ├── enpm702_setup.sh
    └── week9/
        ├── CMakeLists.txt
-       ├── live/
-       ├── cycle/
-       ├── operators/
-       └── uml/
-
-.. important::
-
-   **appendix**, **common**, **playground** and **undefined** hold the finished classes of the Live Coding steps or use them, so they join the repository after the Live Coding deadline, Nov 10.
+       ├── week9.sh
+       ├── ride_service/
+       ├── playground/
+       │   ├── include/
+       │   ├── src/
+       │   ├── not_compiling/
+       │   ├── operators/
+       │   ├── cycle/
+       │   └── uml/
 
 **Build and Run**, from the repository's top folder
 
 1. Get the code: ``git pull``.
 2. In the top-level ``CMakeLists.txt`` (repository root), check that ``add_subdirectory(project/week9)`` is not commented out.
 3. Configure: ``702configure``.
-4. Build and run the classes you write in the Live Coding steps: ``live9``. Load it in class with ``source project/enpm702_setup.sh``, as :doc:`Setup Before Class </lectures/lecture9/l9_setup>` shows.
-5. The two headers that include each other (`A Forward Declaration Breaks the Cycle`_): ``702run week9_cycle``.
-6. The reading :doc:`Operator Overloading <l9_operators>`: ``702run week9_operators``.
-7. The reading :doc:`virtual Methods in Depth <l9_virtual>`: the vtable and ``virtual`` destructors.
+4. Once per terminal: ``source project/week9/week9.sh``, as :doc:`Setup Before Class </lectures/lecture9/l9_setup>` shows.
+5. Build every week-9 program and run the ride service: ``week9``. The code of a slide: ``week9 62`` runs the code of slide 62, and ``week9 xii`` the code of appendix page xii.
+6. The two headers that include each other (`A Forward Declaration Breaks the Cycle`_): ``702run week9_cycle``.
+7. The reading :doc:`Operator Overloading <l9_operators>`: ``702run week9_operators``.
+8. The reading :doc:`virtual Methods in Depth <l9_virtual>`: the vtable and ``virtual`` destructors.
 
 **Where the Classes Are**
 
-- **live** holds the classes you write in the Live Coding steps.
-- **uml** holds the PlantUML file of the class diagram.
-- After Nov 10, **common** holds every class of the diagram. ``playground9 63`` runs the code of slide 63 (load it with the same ``source`` line as ``live9``), and ``702run week9_appendix`` followed by a roman number, such as ``x``, runs the code of an appendix page.
+- **ride_service** holds the classes of the ride service. In class, we add ``virtual``, ``override`` and ``final`` to them.
+- **playground** holds every class of the diagram, finished (in ``include`` and ``src``), and the code of every slide and appendix page. The code of the slides that do not compile is in ``playground/not_compiling``, outside every build; ``playground/README.md`` lists each file with its error. ``playground/operators`` and ``playground/cycle`` hold the two smaller programs.
+- **playground/uml** holds the PlantUML files of the diagrams.
 
 .. dropdown:: How to Run the Code
    :icon: terminal
@@ -73,7 +61,9 @@ Code for This Lecture
       enpm702                            # go to the repository, load the 702 commands
       git pull                           # get this week's code
       702rebuild                         # once after you pull: a fresh build/
-      live9                              # build and run the classes you write in class
+      702run week9_ride_service          # the classes of the ride service
+      702run week9_playground 62         # the code of slide 62
+      702run week9_playground xii        # the code of appendix page xii
       702run week9_cycle                 # the two headers that include each other
       702run week9_operators             # the reading Operator Overloading
 
@@ -89,7 +79,7 @@ One Class per File
 
       .. code-block:: text
 
-         live/
+         ride_service/
          ├── include/
          │   ├── vehicle.hpp
          │   ├── sensor.hpp
@@ -169,9 +159,9 @@ Every class of the program is in the namespace ``fleet``. ``Vehicle``, ``Route``
            waypoints_.push_back(waypoint);
          }
 
-- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Or it names the namespace in front of each method, ``fleet::Route::add``. After that name, the compiler looks in ``Route`` and then in ``fleet``, so ``Position`` needs no prefix. Every file of ``project/week9/common`` does the same, and so does every file of the live code. The comment after the last brace says which brace closes the namespace.
+- The header puts the class inside ``namespace fleet``. The source file opens ``fleet`` again and defines the methods there. Or it names the namespace in front of each method, ``fleet::Route::add``. After that name, the compiler looks in ``Route`` and then in ``fleet``, so ``Position`` needs no prefix. Every file of ``project/week9/playground`` does the same, and so does every file of the live code. The comment after the last brace says which brace closes the namespace.
 - Inside the namespace, ``Route`` uses ``Position`` with no prefix: both are in ``fleet``.
-- Outside ``fleet``, as in ``live/src/main.cpp``, write ``fleet::Route``. The listings on this page leave ``fleet::`` out.
+- Outside ``fleet``, as in ``ride_service/src/main.cpp``, write ``fleet::Route``. The listings on this page leave ``fleet::`` out.
 
 .. admonition:: Namespaces are lowercase
    :class: important
@@ -223,7 +213,7 @@ The Program We Will Build
 
 - A box is a class, a line is a relationship: today's lecture says what each kind of line means. Later copies show the part being built in orange.
 - This is the class diagram of the whole program, with nothing in grey. We already wrote ``Vehicle``, its ``Sensor``\ s, ``Position`` and a small ``Route``.
-- Today the rest is given and we review it together: ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi``; you then write Step 4, and we name each kind of line between the boxes. ``Vehicle`` changes too: by the end, its ``drive`` is abstract, which is why its name is in italics.
+- Today the rest is given and we review it together: ``Passenger``, ``Fleet``, ``RoboTaxi`` and ``Taxi``; we then write Step 4 together, and we name each kind of line between the boxes. ``Vehicle`` changes too: by the end, its ``drive`` is abstract, which is why its name is in italics.
 - The diagram comes back at the start of each part, with the piece we are about to build in orange.
 
 Requirements
@@ -311,7 +301,7 @@ The Class Diagram, with Every Member
 
 - Read one box, ``Vehicle``: the name on top, in italics, which means abstract; then the data members, each ``name : type``; then the methods.
 - A minus sign is ``private``, a plus sign ``public``. ``next_id_`` is underlined: a ``static`` member. ``drive`` is in italics too: a pure ``virtual`` method, which `Abstraction`_ explains.
-- Every member here is in ``project/week9/common``, with the same name.
+- Every member here is in ``project/week9/playground``, with the same name.
 
 .. admonition:: Write the classes from the diagram
    :class: important
@@ -396,11 +386,11 @@ Two boxes of the design, in PlantUML:
 - A class is written like a C++ class, with UML's ``+``, ``-`` and ``: type``.
 - A line is written between two class names: ``-->`` is an arrow, ``o--`` an open diamond, ``*--`` a filled diamond, ``<|--`` a hollow triangle, ``..>`` a dashed arrow.
 - The VS Code extension draws the file as you type (``Alt+D``).
-- The whole diagram is ``project/week9/uml/robotaxi_model.plantuml``.
+- The whole diagram is ``project/week9/playground/uml/robotaxi_model.plantuml``.
 
 .. note::
 
-   The PlantUML source of the UML diagrams on the slides is in `project/week9/uml <https://github.com/zeidk/enpm702-fall-2026-cpp/tree/main/project/week9/uml>`__. See `PlantUML: class diagrams <https://plantuml.com/class-diagram>`__.
+   The PlantUML source of the UML diagrams on the slides is in `project/week9/playground/uml <https://github.com/zeidk/enpm702-fall-2026-cpp/tree/main/project/week9/playground/uml>`__. See `PlantUML: class diagrams <https://plantuml.com/class-diagram>`__.
 
 
 Class Relationships
@@ -683,7 +673,7 @@ After reset, in Memory
 Code Review: Step 1
 """""""""""""""""""
 
-**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
+**Given, reviewed in class.** The code is in ``project/week9/ride_service``; the slides list what to look at.
 
 See `Step 1: A Passenger Rides a Vehicle`_ under Further Reading.
 
@@ -802,7 +792,7 @@ The Vehicles Outlive the Fleet
 Code Review: Step 2
 """""""""""""""""""
 
-**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
+**Given, reviewed in class.** The code is in ``project/week9/ride_service``; the slides list what to look at.
 
 Composition
 ^^^^^^^^^^^
@@ -885,7 +875,7 @@ A Vehicle Owns Its Sensors
    ``Vehicle`` and ``Sensor`` with every member: the line labeled ``owns``.
 
 - ``Sensor``'s ``type_`` is a ``SensorType``, the enumeration. Its box is not in this diagram, because no composition involves it.
-- Nothing here is new code: ``Vehicle``, ``Sensor``, ``Route`` and ``Position`` are all in ``project/week9/common`` already.
+- Nothing here is new code: ``Vehicle``, ``Sensor``, ``Route`` and ``Position`` are all in ``project/week9/playground`` already.
 
 Exclusive Ownership Needs std::unique_ptr
 """""""""""""""""""""""""""""""""""""""""
@@ -1664,7 +1654,7 @@ See `Discussion: What Prints First?`_ under Further Reading.
 Code Review: Step 3
 """""""""""""""""""
 
-**Given, reviewed in class.** The code is in ``project/week9/live``; the slides list what to look at.
+**Given, reviewed in class.** The code is in ``project/week9/ride_service``; the slides list what to look at.
 
 
 Polymorphism
@@ -1952,9 +1942,9 @@ Step 3: A Base Reference or Pointer
 Live Coding: Step 4
 """""""""""""""""""
 
-**10 minutes, in class, on your own.** The instructions are on the slides: make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
+**10 minutes, in class, with me.** The instructions are on the slides: we make ``drive`` ``virtual``, so one loop drives a ``RoboTaxi`` and a ``Taxi``, each with its own ``drive``, and we give ``Vehicle`` a ``virtual`` destructor. Why a ``virtual`` destructor: :doc:`virtual Methods in Depth <l9_virtual>`.
 
-- ``RoboTaxi`` and ``Taxi`` each declare their own ``drive``, marked ``override``: ``void drive(const Route& route) const override;``. Its body goes in ``robotaxi.cpp`` and ``taxi.cpp``.
+- ``RoboTaxi`` and ``Taxi`` already declare their own ``drive``: we mark it ``override``: ``void drive(const Route& route) const override;``.
 - ``virtual`` and ``override`` go only on the declaration, in the class. The definition in the ``.cpp`` repeats neither: ``void Taxi::drive(const Route& route) const``. Written on a definition outside the class, ``virtual`` gives ``'virtual' outside class declaration`` and ``override`` gives ``virt-specifiers in 'drive' not allowed outside a class definition``.
 
 See `auto or a Base Pointer`_ under Further Reading.
@@ -2004,7 +1994,7 @@ An Abstract Class in the Class Diagram
 Live Coding: Step 5
 """""""""""""""""""
 
-**5 minutes, in class, on your own.** The instructions are on the slides.
+**5 minutes, in class, with me.** The instructions are on the slides.
 
 See `Step 5: No Vehicle Objects`_ and `Step 5: RoboTaxi and Taxi`_ under Further Reading.
 
@@ -2163,7 +2153,7 @@ The Reason for Each final
    }
 
 - ``RoboTaxi::drive`` keeps FR-4: with no sensor, the robotaxi stays parked. A class derived from ``RoboTaxi`` could override ``drive`` and skip that check, so ``RoboTaxi`` is ``final``.
-- ``Taxi`` is ``final`` for the same reason: in ``project/week9/common``, its ``drive`` stays parked when the taxi has no driver.
+- ``Taxi`` is ``final`` for the same reason: in ``project/week9/playground``, its ``drive`` stays parked when the taxi has no driver.
 - This passes the test of `virtual, override and final`_: deriving would break a requirement.
 
 See `Discussion: A Keyword for Each Method`_ under Further Reading.
@@ -2171,7 +2161,7 @@ See `Discussion: A Keyword for Each Method`_ under Further Reading.
 Live Coding: Step 6
 ^^^^^^^^^^^^^^^^^^^
 
-**5 minutes, in class, on your own.** The instructions are on the slides. Then zip the ``live`` folder and upload ``live.zip`` on Canvas (`Upload Your Live Coding`_).
+**5 minutes, in class, with me.** The instructions are on the slides.
 
 See `Step 6: A final Class`_ under Further Reading.
 
@@ -2371,7 +2361,7 @@ Multiple Inheritance, the Code
 - The base classes are separated by commas, each with ``public``.
 - The constructor passes ``wing_span`` to ``Bird``'s constructor: ``Bird``'s data stays ``private``.
 - A ``const Lion&``, a ``const Human&`` and a ``const Bird&`` can each refer to a ``Sphinx``.
-- Run: ``702run week9_appendix viii``. A sphinx with a 2.5 m wing span prints ``Lion: runs on 4 legs`` through the ``const Lion&``, ``Human: speaks`` through the ``const Human&``, ``true`` for ``can_fly`` through the ``const Bird&``, then ``Sphinx: What walks on four legs in the morning?``.
+- Run: ``702run week9_playground viii``. A sphinx with a 2.5 m wing span prints ``Lion: runs on 4 legs`` through the ``const Lion&``, ``Human: speaks`` through the ``const Human&``, ``true`` for ``can_fly`` through the ``const Bird&``, then ``Sphinx: What walks on four legs in the morning?``.
 
 Back to `Multiple Inheritance`_.
 
@@ -2480,7 +2470,7 @@ protected and private Inheritance, the Code
 - With ``private``, ``NightShuttle`` cannot call ``check()``, and outside code cannot see the base.
 - With ``protected`` instead, ``start_late()`` compiles and prints ``go``; outside code still cannot see the base (g++ 13.3: ``'PreTripCheck' is an inaccessible base of 'NightShuttle'``).
 - The destructor of ``PreTripCheck`` is ``protected`` and non-virtual, one of the two choices of `Core Guidelines C.35 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rc-dtor-virtual>`__. Outside code cannot delete a ``Shuttle`` through a ``PreTripCheck*``.
-- Run: ``702run week9_appendix xii`` (after Nov 10).
+- Run: ``702run week9_playground xii``.
 
 Back to `When protected and private Inheritance Make Sense`_.
 
@@ -2550,7 +2540,7 @@ Two Pointers, Two Static Types
 
 - A ``std::unique_ptr<Vehicle>`` can own any kind of vehicle, one after the other. A ``std::unique_ptr<RoboTaxi>`` owns robotaxis only.
 - The compiler checks every name against the static type. With the design's ``RoboTaxi``, ``robotaxi->get_operating_zone()`` compiles and ``vehicle->get_operating_zone()`` does not.
-- Run: ``702run week9_appendix xv``.
+- Run: ``702run week9_playground xv``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2574,7 +2564,7 @@ From auto into a Vector of Vehicles
 
 - A ``std::unique_ptr<RoboTaxi>`` that is moved converts to a ``std::unique_ptr<Vehicle>``: ``push_back``, ``emplace_back`` and the parameter of ``hand_over`` all accept it.
 - Each ``std::unique_ptr`` is the only owner of its vehicle. ``Fleet`` shares its vehicles, so it holds ``std::shared_ptr<Vehicle>`` instead.
-- Run: ``702run week9_appendix xvi``.
+- Run: ``702run week9_playground xvi``.
 
 Back to `Live Coding: Step 4`_.
 
@@ -2615,7 +2605,7 @@ Copying a Vehicle of the Design
 
 .. code-block:: cpp
 
-   Taxi taxi{13.4, "Ana"};      // project/week9/common
+   Taxi taxi{13.4, "Ana"};      // project/week9/playground
    Taxi copy{taxi};             // does not compile
    Taxi moved{std::move(taxi)};  // does not compile either
 
@@ -2668,7 +2658,7 @@ Each Route Has Its Own Positions
 
 - Positions in m, chosen for this example: from the pickup (0, 0) to Maya's stop (300, 400) is 500 m, the long side of a 300, 400, 500 right triangle. Ana's stop is 400 m straight down, at (300, 0): 500 + 400 = 900.
 - The copy has its own ``Position`` values: adding Ana's stop to ``shared_ride`` leaves ``maya_ride`` at 500 m. A part belongs to one whole.
-- Run: ``702run week9_appendix xxi``.
+- Run: ``702run week9_playground xxi``.
 
 Back to `Exclusive Ownership Needs std::unique_ptr`_.
 
@@ -2753,7 +2743,7 @@ Here ``Vehicle`` is the concrete class you already have; the Abstraction section
 - This ``drive`` prints the length and the time, length / speed: 500 / 10 = 50 s, 200 / 10 = 20 s. The speed, 10 m/s, is chosen for this example.
 - ``maya_ride`` is destroyed; the ``Vehicle`` kept nothing of it.
 - A dependency needs no smart pointer: a reference parameter. Core Guidelines `F.7 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-smart>`__: "For general use, take ``T*`` or ``T&`` arguments rather than smart pointers".
-- Run: ``702run week9_appendix xxiv``.
+- Run: ``702run week9_playground xxiv``.
 
 Back to `A Vehicle Uses a Route`_.
 
@@ -2778,7 +2768,7 @@ The **base subobject**: the whole ``Vehicle`` at the start of every ``Taxi`` obj
 
 - A ``Taxi`` object starts with its base subobject: 88 bytes with g++. Then its own member, a ``std::string``, 32 bytes on the second line: 88 + 32 = 120.
 - ``RoboTaxi`` adds a ``std::string`` (32 bytes) and an ``int`` (4 bytes), then 4 bytes of padding: 88 + 32 + 4 + 4 = 128.
-- Run: ``702run week9_appendix xxv``.
+- Run: ``702run week9_playground xxv``.
 
 Back to `A Base Class Reference to a Derived Object`_.
 
@@ -2818,7 +2808,7 @@ One Overload per Class
    Taxi: Ana drives 500 m
 
 - ``start_shift(robotaxi, maya_ride)`` and ``start_shift(taxi, maya_ride)`` each pick their overload, and each vehicle drives its own way.
-- Run: ``702run week9_appendix xxviii``.
+- Run: ``702run week9_playground xxviii``.
 
 Back to `Overloads Cannot Meet the Challenge`_.
 
@@ -2905,7 +2895,7 @@ Discussion: What Prints First?
    - The base first, then the members in the order they are declared, then the body. Destruction is the reverse.
    - ``meter_`` has no initializer in the list, and it is still built before the body: every member is built before the body runs, whether the list names it or not.
    - Swapping the two initializers changes nothing in the output. g++ warns ``'Taxi::driver_name_' will be initialized after [-Wreorder]``, then ``base 'Vehicle'``. The order comes from the class, not from the list, as for members.
-   - Run: ``702run week9_appendix xxxi``.
+   - Run: ``702run week9_playground xxxi``.
 
 Back to `Construction and Destruction Order`_.
 
@@ -2951,7 +2941,7 @@ The company adds a robot bus with 30 seats and a maximum speed of 11.2 m/s, abou
    :class-container: sd-border-success
 
    1. ``class RoboBus : public Vehicle``, with a constructor that passes the maximum speed to ``Vehicle`` and sets ``seats_``, and ``drive(const Route&) const override``. The seats need a rule, more than 0, so the constructor checks it.
-   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_appendix xxxiii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
+   2. None. NFR-1: adding a vehicle kind changes no line of ``Fleet`` or ``Passenger``. ``Fleet`` stores ``std::shared_ptr<Vehicle>``. ``702run week9_playground xxxiii`` adds a ``RoboBus`` to a ``Fleet`` and prints ``RoboBus: 30 seats, drives 500 m``.
    3. ``RoboBus`` is abstract, and creating one stops the build, as in `Forgetting One Override`_.
    4. Only if a robot bus is a robotaxi. It is a bus, so it derives from ``Vehicle``. Rule: `Core Guidelines C.120 <https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rh-domain>`__, "Use class hierarchies to represent concepts with inherent hierarchical structure (only)". The design marks ``RoboTaxi`` ``final``, as `The final Keyword`_ shows.
 
@@ -3007,7 +2997,7 @@ std::find on a Vector
 
 - ``std::find`` is in ``<algorithm>``. It returns an iterator to the first element equal to the value, or ``end()`` when there is none.
 - In ``Fleet``, the elements are ``std::shared_ptr<Vehicle>``, so ``std::find`` compares the pointers.
-- Run: ``702run week9_appendix xxxv``.
+- Run: ``702run week9_playground xxxv``.
 
 std::erase_if on a Vector
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3031,7 +3021,7 @@ std::erase_if on a Vector
 
 - The ``std::erase_if`` for a vector is in ``<vector>`` (C++20). The lambda gets each element and returns ``true`` for the ones to erase.
 - In ``Fleet``, the lambda takes ``const std::shared_ptr<Vehicle>& vehicle`` and returns ``vehicle->get_id() == id``.
-- Run: ``702run week9_appendix xxxvi``.
+- Run: ``702run week9_playground xxxvi``.
 
 Owners Keep Objects Alive
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3106,7 +3096,7 @@ A ``main.cpp`` that includes ``a.hpp`` first stops with this error, the only one
    b.hpp:7:3: error: 'A' does not name a type
 
 - ``a.hpp`` includes ``b.hpp``, which includes ``a.hpp`` again. ``#pragma once`` skips that copy, so ``B`` is compiled before ``A`` is declared.
-- The code is in ``project/week9/cycle``. This version, with its errors, is in a comment in ``project/week9/CMakeLists.txt``.
+- The code is in ``project/week9/playground/cycle``. This version, with its error, is in ``project/week9/playground/not_compiling/appendix_xxxviii_cycle``.
 
 A Forward Declaration Breaks the Cycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

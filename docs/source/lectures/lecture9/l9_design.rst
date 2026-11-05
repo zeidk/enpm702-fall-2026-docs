@@ -14,7 +14,7 @@ behind it. The notation (``+``, ``-``, ``#``, the lines and the numbers at
 their ends) is in the :doc:`lecture page <l9_lecture>`: Reading a Class Box,
 Six Relationships and Multiplicity.
 
-Every class described here is in ``project/week9/common``, with the same
+Every class described here is in ``project/week9/playground``, with the same
 names.
 
 
@@ -115,7 +115,7 @@ constructor checks the rule. A type with no rule to check, such as
 3. Class Specifications
 ====================================================
 
-Each data member and each method of each class, as in ``project/week9/common``.
+Each data member and each method of each class, as in ``project/week9/playground``.
 The data members of a class are ``private``; only ``Position``, a ``struct``,
 has ``public`` ones. Every method that only returns a value is
 ``[[nodiscard]]`` and ``noexcept``, apart from ``Route::length``, which is not
@@ -556,7 +556,7 @@ the far end when the first class is destroyed.
 The class diagram shows what each class is. A UML **sequence diagram** shows
 what the objects do in one run: who calls whom, in which order. This one is the
 run of the example program in `7. Implementation Guidance`_, with the classes of
-``project/week9/common``.
+``project/week9/playground``.
 
 .. figure:: /_static/images/l9/sequence_example.png
    :alt: A UML sequence diagram with seven participants along the top, from left to right: main(), maya_ride : Route, robotaxi : RoboTaxi, : Sensor, taxi : Taxi, company : Fleet and maya : Passenger. robotaxi, the Sensor, taxi and maya start lower down, at the message that creates them. A vertical line runs down from each. From top to bottom, solid arrows from main(): add(Position{0.0, 0.0}) and add(Position{300.0, 400.0}) to maya_ride; make_shared<RoboTaxi>(13.4), which creates robotaxi; add_sensor(lidar, 100.0) to robotaxi, which sends make_unique<Sensor>(1, lidar, 100.0) to create the Sensor, and returns 1 to main() on a dashed arrow; make_shared<Taxi>(13.4, "Ana"), which creates taxi; add(robotaxi), add(taxi) and size() to company, which returns 2; Passenger{"Maya"}, which creates maya; board(robotaxi) to maya; drive(maya_ride) to robotaxi, which calls sensor_count() on itself and length() on maya_ride, which returns 500; leave() to maya; drive(maya_ride) to taxi, which calls length() on maya_ride, which returns 500. A narrow bar on robotaxi and taxi marks each method while it runs.
@@ -657,7 +657,7 @@ run of the example program in `7. Implementation Guidance`_, with the classes of
 
    }  // namespace fleet
 
-**Example usage.** This program uses the classes of ``project/week9/common``:
+**Example usage.** This program uses the classes of ``project/week9/playground``:
 
 .. code-block:: cpp
 

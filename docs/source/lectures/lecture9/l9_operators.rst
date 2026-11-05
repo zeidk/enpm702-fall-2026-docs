@@ -11,9 +11,9 @@ This page is **required reading** after the Lecture 9 class. It is not presented
    :class-container: sd-border-primary
    :class-title: sd-font-weight-bold
 
-   The code of this page is one program in the course repository, ``week9_operators``, in the folder ``project/week9/operators/``. Each part of the page has its own source file in ``operators/src/``, named after the part's **key**: the code of :ref:`l9op-print` is in ``print.cpp``, and its key is ``print``. Each listing on this page shows the line numbers of its file, so "line 21" under ``print.cpp`` is line 21 of ``print.cpp``.
+   The code of this page is one program in the course repository, ``week9_operators``, in the folder ``project/week9/playground/operators/``. Each part of the page has its own source file in ``operators/src/``, named after the part's **key**: the code of :ref:`l9op-print` is in ``print.cpp``, and its key is ``print``. Each listing on this page shows the line numbers of its file, so "line 21" under ``print.cpp`` is line 21 of ``print.cpp``.
 
-   ``Position`` and ``Route`` are the classes of ``project/week9/common``, in the namespace ``fleet``, with the operators of this page added. The program keeps its own copy of both, in ``operators/include`` and ``operators/src``, so it builds on its own. Each file of `Common Mistakes`_ has its own small ``Position`` or ``Route``, in a namespace named after the key, so that it does not clash with ``fleet``'s. A compiler message names a class with its namespace: ``member_output::Position``.
+   ``Position`` and ``Route`` are the classes of ``project/week9/playground``, in the namespace ``fleet``, with the operators of this page added. The program keeps its own copy of both, in ``operators/include`` and ``operators/src``, so it builds on its own. Each file of `Common Mistakes`_ has its own small ``Position`` or ``Route``, in a namespace named after the key, so that it does not clash with ``fleet``'s. A compiler message names a class with its namespace: ``member_output::Position``.
 
    Build the program, then run one part by its key, with the ``702`` commands of the :doc:`lecture page <l9_lecture>`:
 
@@ -115,7 +115,7 @@ Paragraph 7 sets two more limits:
 ``operator<<`` for ``Position``
 -------------------------------
 
-``std::cout << p`` does not compile for a ``Position`` until you write the function it calls. Here is the ``Position`` of ``project/week9/common``, with that function declared next to it:
+``std::cout << p`` does not compile for a ``Position`` until you write the function it calls. Here is the ``Position`` of ``project/week9/playground``, with that function declared next to it:
 
 .. code-block:: cpp
    :caption: ``operators/include/position.hpp``, lines 14 to 25
@@ -255,7 +255,7 @@ A ``Route`` is shorter than another when its ``length()`` is smaller. ``operator
      return other < *this;  // a > b is b < a
    }
 
-``add`` and ``length`` are those of ``project/week9/common``: ``length()`` adds up the straight distance between each waypoint and the next.
+``add`` and ``length`` are those of ``project/week9/playground``: ``length()`` adds up the straight distance between each waypoint and the next.
 
 Member or Free
 ^^^^^^^^^^^^^^

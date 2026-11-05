@@ -737,7 +737,7 @@ the one on that slide or frame.
    * - FR-4.1, FR-4.2
      - Yes: ``Vehicle::add_sensor``; ``RoboTaxi::drive`` checks
        ``sensor_count()`` first.
-     - ``702run week9_appendix v`` (RoboTaxi and Taxi) prints
+     - ``702run week9_playground v`` (RoboTaxi and Taxi) prints
        ``RoboTaxi: no sensor, stays parked``, then ``RoboTaxi: 1 sensor
        checked, drives 500 m``.
    * - FR-4.3
@@ -763,7 +763,7 @@ the one on that slide or frame.
        ``change_zone("Silver Spring")``.
    * - FR-5
      - Yes: ``Vehicle::drive(const Route&)``.
-     - ``702run week9_appendix xxiv`` (A Route for One Call) prints
+     - ``702run week9_playground xxiv`` (A Route for One Call) prints
        ``500 m at 10 m/s: 50 s``.
    * - FR-5.1
      - Yes: ``Taxi::drive`` checks for an empty driver name.
@@ -775,7 +775,7 @@ the one on that slide or frame.
      -
    * - FR-9.1, FR-9.2
      - Yes: ``Route::add``, ``Route::length``.
-     - ``702run week9_appendix xxi`` (Each Route Has Its Own Positions)
+     - ``702run week9_playground xxi`` (Each Route Has Its Own Positions)
        prints ``500 900``: a route of 500 m and a longer one of 900 m.
    * - FR-9.3
      - No.
@@ -801,21 +801,21 @@ the one on that slide or frame.
        Lifetimes prints ``1``, ``1`` and ``true``.
    * - NFR-1
      - Yes, for ``Fleet``: a new kind joins it unchanged.
-     - ``702run week9_appendix xxxiii`` (Discussion: Add a RoboBus) prints
+     - ``702run week9_playground xxxiii`` (Discussion: Add a RoboBus) prints
        ``RoboBus: 30 seats, drives 500 m``.
    * - NFR-2
      - Yes: every rule throws ``std::invalid_argument``.
-     - The constructors and methods of ``project/week9/common``. Measured:
+     - The constructors and methods of ``project/week9/playground``. Measured:
        ``Sensor{1, SensorType::radar, -1.0}`` throws with
        ``range must be at least 0``, and
        ``Sensor{1, static_cast<SensorType>(7)}`` throws with
        ``unknown sensor type``.
    * - NFR-3
-     - Yes, apart from the slide Deleting through a Base Pointer, which shows
-       such a bug on purpose.
-     - ``week9_live`` and ``week9_appendix`` are built
-       with both sanitizers. After Live Coding Step 5, ``live9`` runs
-       ``week9_live`` with no report.
+     - Yes, apart from the slide A Base Class Smart Pointer to a Derived
+       Object, which shows such a bug on purpose.
+     - ``week9_ride_service`` is built with both sanitizers, and
+       ``week9_playground`` is linked with them. After Live Coding Step 5, ``week9`` runs
+       ``week9_ride_service`` with no report.
    * - NFR-4
      - Yes.
      - ``702build`` on ``project/week9``.
@@ -828,4 +828,4 @@ the one on that slide or frame.
      -
    * - TC-1 to TC-8
      - Yes.
-     - Inspection of ``project/week9/common``.
+     - Inspection of ``project/week9/playground``.

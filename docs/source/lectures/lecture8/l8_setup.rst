@@ -50,26 +50,26 @@ Do these yourself, before class. The script in Step 2 does none of them.
 Step 2: Compile and Run, Once
 -----------------------------
 
-1. Go to the repository's top folder. The script is in it, in ``project/enpm702_setup.sh``, since the pull of Step 1. If your clone is somewhere else, use that folder:
+1. Go to the repository's top folder. The script is in ``project/week8/week8.sh``, since the pull of Step 1. If your clone is somewhere else, use that folder:
 
    .. code-block:: bash
 
       cd ~/enpm702_cpp/enpm702-fall-2026-cpp
 
-2. Run it. It does not change any file in the repository: it only compiles and runs the live coding programs of Lectures 8 and 9, ``week8_live`` and ``week9_live``.
+2. Run it. It does not change any file in the repository: it only compiles and runs the live coding program of Lecture 8, ``week8_live``.
 
    .. code-block:: bash
 
-      bash project/enpm702_setup.sh
+      bash project/week8/week8.sh
 
-   The script finds the repository from its own place in ``project/``, so it works wherever you cloned it.
+   The script finds the repository from its own place in ``project/week8``, so it works wherever you cloned it.
 
 3. Read the output. Each check has a green ✔ when it passed, or a red ✘ and the lines to fix (``ok`` and ``FIX`` when the output is not a terminal). When all is well, it looks like this:
 
    .. code-block:: text
 
         ╭──────────────────────────────────────────────╮
-        │  ENPM702 · Setup check                       │
+        │  ENPM702 · Week 8 check                      │
         ╰──────────────────────────────────────────────╯
 
         Repository  ~/enpm702_cpp/enpm702-fall-2026-cpp
@@ -79,17 +79,12 @@ Step 2: Compile and Run, Once
           ✔ built week8_live (1 s)
           ✔ ran week8_live
 
-        week9_live
-          ✔ built week9_live (3 s)
-          ✔ ran week9_live
-
         ✔ Ready for class.
 
         In class, type this once in your terminal, from the repository's top folder:
-            source project/enpm702_setup.sh
+            source project/week8/week8.sh
         Then, after each step:
-            live8            Lecture 8
-            live9            Lecture 9
+            live8
 
    The times are those of a first build on the instructor's PC; yours depend on your computer.
 
@@ -100,7 +95,7 @@ In class, load the script into your terminal once, from the repository's top fol
 
 .. code-block:: bash
 
-   source project/enpm702_setup.sh
+   source project/week8/week8.sh
 
 This gives the terminal one new command, ``live8``. After each step, save your files and type:
 
@@ -123,8 +118,8 @@ Common Fixes
    * - The message says
      - What to do
    * - no ENPM702 repository
-     - Clone the repository (Step 1), and keep the script in its ``project/`` folder.
-   * - ``No such file or directory``, for ``project/enpm702_setup.sh``
+     - Clone the repository (Step 1), and keep the script in its ``project/week8/`` folder.
+   * - ``No such file or directory``, for ``project/week8/week8.sh``
      - Pull the latest code (Step 1), then run the command from the repository's top folder.
    * - cmake could not configure the repository
      - Install the tools (Step 1). If ``cmake`` is installed, read the lines printed under the ``FIX`` line.
@@ -133,8 +128,8 @@ Common Fixes
    * - ``week8_live`` did not build, or did not compile, with compiler errors
      - Read the first error: it names the file and the line. If you did not change that file, run ``git status`` in the repository. If the lines do not tell you what to do, send them to me before class.
    * - ``live8: command not found``
-     - In that terminal, from the repository's top folder, type ``source project/enpm702_setup.sh`` first.
+     - In that terminal, from the repository's top folder, type ``source project/week8/week8.sh`` first.
    * - ``702run: command not found``
      - Type ``enpm702`` first, or use ``live8``.
 
-Lecture 9 uses the same script: it already checks ``week9_live``, and in class you type ``live9``.
+Lecture 9 has its own script, ``project/week9/week9.sh``: :doc:`Setup Before Class </lectures/lecture9/l9_setup>` of Lecture 9.
