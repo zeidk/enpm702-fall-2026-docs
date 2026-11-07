@@ -128,12 +128,12 @@ scheduled.
    * - Week 11
      - Nov 10
      -
-     - ROS 2, Foundations (Publisher, Subscriber, Custom Interfaces)
+     - ROS 2, Foundations (Nodes, Publisher, Subscriber)
      - Submit Lecture 10 exercises
    * - Week 12
      - Nov 17
      -
-     - ROS 2, Configuration and Orchestration (Parameters, Launch Files, Executors)
+     - ROS 2, Configuration and Orchestration (Custom Interfaces, Parameters, Launch Files, Executors)
      - | Submit Lecture 11 exercises
        | :assignment:`RWA3 due, GP1 posted`
    * - Week 13
