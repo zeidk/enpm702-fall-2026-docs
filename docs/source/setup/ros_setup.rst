@@ -65,10 +65,15 @@ install it.
 .. note::
 
    On Ubuntu 24.04, install **Jazzy**: the course code, the lecture
-   commands and the Group Projects use it. With another distribution,
-   replace ``jazzy`` with its name in every command on this page (for
-   example ``ros-humble-desktop`` and ``/opt/ros/humble``), and expect
-   some lecture code to need changes.
+   commands and the Group Projects use it. You can install it either way:
+
+   - follow the official guide linked in the table (**Jazzy on Ubuntu**), or
+   - follow the steps on this page, from `Set Locale`_ to `Gazebo
+     (Simulation)`_: they are the official guide's steps, plus Gazebo and
+     the course workspace.
+
+   On Ubuntu 22.04, follow :ref:`setup-ros-jammy` instead (or the
+   **Humble on Ubuntu** guide in the table).
 
 
 Set Locale
@@ -135,86 +140,151 @@ Install Development Tools
 Configure Your Shell
 --------------------
 
-Add the ROS 2 setup script to your shell configuration file so that
-ROS 2 is available in every new terminal session.
+.. admonition:: What ``source`` does, and why ROS 2 needs it
+   :class: important
 
-**For Bash users** (``~/.bashrc``):
+   ``source file`` runs the commands of ``file`` **in the current terminal**.
+   Running the same file as a program, ``bash file``, starts a second shell,
+   and every setting it makes disappears when that shell ends. On the course
+   laptop, ``ros2`` was still not found after ``bash
+   /opt/ros/jazzy/setup.bash``, and was found after ``source
+   /opt/ros/jazzy/setup.bash``.
 
-.. code-block:: bash
+   A ``setup.bash`` file sets **environment variables**: settings that the
+   terminal passes to every program it starts. On the course laptop:
 
-   echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-   source ~/.bashrc
+   - ``/opt/ros/jazzy/setup.bash`` adds the ROS 2 commands to ``PATH`` (so
+     the terminal finds ``ros2``), the ROS 2 libraries to ``LD_LIBRARY_PATH``
+     (so your nodes can load them), sets ``AMENT_PREFIX_PATH`` to
+     ``/opt/ros/jazzy`` (where ``ros2 run`` looks for packages) and
+     ``ROS_DISTRO`` to ``jazzy``.
+   - ``~/ros2_ws/install/setup.bash`` puts your workspace in front of
+     ``/opt/ros/jazzy`` in ``AMENT_PREFIX_PATH``, so ``ros2 run`` finds your
+     packages too. This is why ROS 2 is sourced first and the workspace
+     second: the workspace is the overlay, on top of ROS 2, the underlay.
 
-**For Zsh users** (``~/.zshrc``):
+   These settings last only in that terminal. A new terminal starts without
+   them, which is why ``ros_env`` goes in ``~/.bashrc``: Bash runs that file
+   in every new terminal (Zsh runs ``~/.zshrc``).
 
-.. code-block:: bash
+Every terminal you use for ROS 2 needs three things: ROS 2 sourced, tab
+completion for ``colcon`` (the build tool), and your workspace sourced. The
+``ros_env`` function does all three. You add it to your shell configuration
+file once, and it runs in every new terminal. It works in Bash and in Zsh.
 
-   echo "source /opt/ros/jazzy/setup.zsh" >> ~/.zshrc
-   source ~/.zshrc
+1. Open ``~/.bashrc`` (Zsh users: ``~/.zshrc``) in a text editor, for
+   example VS Code:
 
-Verify the installation:
+   .. code-block:: bash
 
-.. code-block:: bash
+      code ~/.bashrc
 
-   ros2 --help
+2. Paste these lines at the bottom of the file and save it:
 
-.. warning::
+   .. code-block:: bash
 
-   You must source the setup file in **every terminal** you use for
-   ROS 2 development. Adding it to your shell configuration file
-   automates this.
+      # ros_env sources ROS 2, turns on colcon's tab completion, then sources
+      # your workspace, in the current terminal.
+      ros_env() {
+        local distro="${1:-jazzy}"
+        local ws="${2:-$HOME/ros2_ws}"
+        local sh="bash"
+        [ -n "$ZSH_VERSION" ] && sh="zsh"
+        if [ ! -f "/opt/ros/$distro/setup.$sh" ]; then
+          echo "ros_env: ROS 2 $distro is not installed in /opt/ros/$distro"
+          return 1
+        fi
+        source "/opt/ros/$distro/setup.$sh"
+        local complete="/usr/share/colcon_argcomplete/hook/colcon-argcomplete.$sh"
+        [ -f "$complete" ] && source "$complete"
+        if [ -f "$ws/install/setup.$sh" ]; then
+          source "$ws/install/setup.$sh"
+          echo "ros_env: ROS 2 $distro and the workspace $ws"
+        else
+          echo "ros_env: ROS 2 $distro; $ws is not built yet (run colcon build in it)"
+        fi
+      }
+      ros_env   # set ROS 2 and the workspace in every new terminal
 
+3. Open a new terminal. Your workspace does not exist yet, so ``ros_env``
+   prints the line below. That is expected: we fix it in `ROS 2 Workspace`_,
+   where you build the workspace.
 
-Configure colcon
-^^^^^^^^^^^^^^^^
+   .. code-block:: text
 
-``colcon`` is the build tool used for ROS 2 workspaces. Add
-autocompletion to your shell:
+      ros_env: ROS 2 jazzy; /home/<you>/ros2_ws is not built yet (run colcon build in it)
 
-**For Bash users:**
+4. Check that ROS 2 works:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+      ros2 --help
 
-**For Zsh users:**
+How to call it, in any terminal:
 
-.. code-block:: bash
+.. list-table::
+   :header-rows: 1
+   :widths: 35 65
 
-   echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh" >> ~/.zshrc
+   * - Command
+     - What it sources
+   * - ``ros_env``
+     - ROS 2 Jazzy, then the workspace ``~/ros2_ws``
+   * - ``ros_env humble``
+     - ROS 2 Humble (Ubuntu 22.04), then ``~/ros2_ws``
+   * - ``ros_env jazzy ~/my_ws``
+     - ROS 2 Jazzy, then another workspace, ``~/my_ws``
+
+- After ``colcon build`` adds a new package, run ``ros_env`` again in that
+  terminal so it finds the package.
+- On Ubuntu 22.04, change the last line you pasted to ``ros_env humble``.
+
+.. dropdown:: Manual alternative: three lines instead of the function
+
+   Use either the function or these three lines, not both.
+
+   **Bash** (``~/.bashrc``):
+
+   .. code-block:: bash
+
+      echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+      echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
+      echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+
+   **Zsh** (``~/.zshrc``):
+
+   .. code-block:: bash
+
+      echo "source /opt/ros/jazzy/setup.zsh" >> ~/.zshrc
+      echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh" >> ~/.zshrc
+      echo "source ~/ros2_ws/install/setup.zsh" >> ~/.zshrc
+
+   Until you build the workspace (next section), the third line prints an
+   error in every new terminal, because ``~/ros2_ws/install`` does not exist
+   yet.
 
 
 ROS 2 Workspace
 ---------------
 
-Create and build a ROS 2 workspace:
+Create and build your workspace, then run ``ros_env`` so this terminal finds
+it:
 
 .. code-block:: bash
 
    mkdir -p ~/ros2_ws/src
    cd ~/ros2_ws
    colcon build
-   source install/setup.bash
+   ros_env
 
-Add the workspace overlay to your shell configuration file:
+``ros_env`` now prints:
 
-**For Bash users:**
+.. code-block:: text
 
-.. code-block:: bash
+   ros_env: ROS 2 jazzy and the workspace /home/<you>/ros2_ws
 
-   echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
-
-**For Zsh users:**
-
-.. code-block:: bash
-
-   echo "source ~/ros2_ws/install/setup.zsh" >> ~/.zshrc
-
-.. note::
-
-   After making changes to your ``~/.bashrc`` or ``~/.zshrc``, either
-   open a new terminal or run ``source ~/.bashrc`` (or ``source
-   ~/.zshrc``) to apply the changes.
+With the manual alternative, run ``source install/setup.bash`` instead of
+``ros_env``.
 
 
 Verify ROS 2
@@ -248,6 +318,39 @@ Harmonic**, the version the `Gazebo installation guide for ROS
 Jazzy. On Jazzy, Gazebo comes from the ROS 2 repository you added above, so
 you do not add a separate Gazebo repository.
 
+Each ROS 2 distribution has one recommended Gazebo version:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 18 25 35
+
+   * - ROS 2 distribution
+     - Ubuntu
+     - Gazebo (recommended)
+     - Command that starts Gazebo
+   * - Humble Hawksbill
+     - 22.04
+     - Fortress (LTS)
+     - ``ign gazebo``
+   * - **Jazzy Jalisco (this course)**
+     - 24.04
+     - **Harmonic (LTS)**
+     - ``gz sim``
+   * - Kilted Kaiju
+     - 24.04
+     - Ionic
+     - ``gz sim``
+   * - Lyrical Luth
+     - 26.04
+     - Jetty (LTS)
+     - ``gz sim``
+
+The pairs come from the `ROS 2 and Gazebo compatibility table
+<https://gazebosim.org/docs/latest/ros_installation/>`__ (checked November 6,
+2026), which marks every other pair as possible with caution or not possible.
+Fortress still uses the older command ``ign gazebo``; later versions use
+``gz sim``.
+
 1. Install Gazebo with ``ros_gz``, the packages that connect it to ROS 2:
 
    .. code-block:: bash
@@ -278,22 +381,72 @@ you do not add a separate Gazebo repository.
    line yourself.
 
 
+.. _setup-ros-jammy:
+
+If Your Computer Has Ubuntu 22.04
+---------------------------------
+
+ROS 2 Jazzy has no packages for Ubuntu 22.04. On 22.04, install **ROS 2
+Humble** and **Gazebo Fortress**, the pair recommended for Humble. The course
+code is built and tested on Jazzy only: Humble may need changes, so move to
+Ubuntu 24.04 when you can.
+
+1. Do `Set Locale`_ and `Add the ROS 2 Repository`_ above as written. The
+   ``ros2-apt-source`` command reads your Ubuntu version and adds the
+   repository for 22.04.
+
+2. Update every package first. On 22.04, installing ROS 2 on a system that was
+   not upgraded can remove critical system packages (``systemd`` and ``udev``),
+   as the `Humble installation guide
+   <https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html>`__
+   warns:
+
+   .. code-block:: bash
+
+      sudo apt update
+      sudo apt upgrade
+
+3. Install ROS 2 Humble, its development tools and Gazebo Fortress:
+
+   .. code-block:: bash
+
+      sudo apt install ros-humble-desktop ros-dev-tools
+      sudo apt install ros-humble-ros-gz
+
+4. In every command of this page and of the lectures, write ``humble`` where it
+   says ``jazzy``. In ``~/.bashrc``, the last line of the ``ros_env`` block
+   (see `Configure Your Shell`_) becomes:
+
+   .. code-block:: bash
+
+      ros_env humble
+
+   Then do `ROS 2 Workspace`_ and `Verify ROS 2`_ above, with the same change.
+
+5. Open a new terminal and start Gazebo Fortress with its demo world:
+
+   .. code-block:: bash
+
+      ign gazebo shapes.sdf
+
+   A window opens with a few shapes. Close it to stop Gazebo.
+
+
 Summary of Shell Configuration
 -------------------------------
 
-After completing the setup, your ``~/.bashrc`` (or ``~/.zshrc``)
-should contain these lines at the bottom:
+After completing the setup, the bottom of your ``~/.bashrc`` (or
+``~/.zshrc``) holds the ``ros_env`` function and the line that runs it:
 
 .. code-block:: bash
 
-   # ROS 2 Jazzy
-   source /opt/ros/jazzy/setup.bash
+   ros_env() {
+     ...
+   }
+   ros_env
 
-   # colcon autocompletion
-   source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
-
-   # ROS 2 workspace overlay
-   source ~/ros2_ws/install/setup.bash
+With the manual alternative, it holds the three ``source`` lines instead,
+never both.
 
 .. tip::
 
@@ -302,5 +455,4 @@ should contain these lines at the bottom:
    .. code-block:: bash
 
       alias cb='cd ~/ros2_ws && colcon build'
-      alias cbs='cd ~/ros2_ws && colcon build && source install/setup.bash'
-      alias sw='source ~/ros2_ws/install/setup.bash'
+      alias cbs='cd ~/ros2_ws && colcon build && ros_env'
