@@ -457,8 +457,9 @@ Three jobs come up day to day. Run each one from
        and build. After that, ``git pull`` before you start and ``git push``
        when you finish
 
-.. admonition:: Appendix: ``git merge --no-edit upstream/main``
-   :class: note
+.. dropdown:: More detail: ``git merge --no-edit upstream/main``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1

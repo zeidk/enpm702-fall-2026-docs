@@ -37,8 +37,9 @@ Build it from the workspace's top folder, then run one of its three executables 
    source install/setup.bash
    ros2 run robotaxi_demo robotaxi
 
-.. admonition:: Appendix: ``colcon build`` and ``ros2 run``
-   :class: note
+.. dropdown:: More detail: ``colcon build`` and ``ros2 run``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1
@@ -716,8 +717,9 @@ Look inside a Running System: the ros2 Command-Line Tools
 
 4. ``rqt_graph``: the computation graph, drawn in a window.
 
-.. admonition:: Appendix: ``ros2 topic list -t``
-   :class: note
+.. dropdown:: More detail: ``ros2 topic list -t``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1
@@ -949,8 +951,9 @@ Create a Package: ros2 pkg create
    ros2 pkg create robotaxi_demo --build-type ament_cmake \
      --dependencies rclcpp geometry_msgs
 
-.. admonition:: Appendix: ``ros2 pkg create``
-   :class: note
+.. dropdown:: More detail: ``ros2 pkg create``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1
@@ -1039,8 +1042,9 @@ What package.xml Is Used For
 1. **Build order:** ``colcon`` builds a package after the packages it depends on.
 2. **Installing what is missing:** from the workspace's top folder, ``rosdep install --from-paths src --ignore-src -y`` installs every ``<depend>`` that is not installed yet. In our workspace it printed ``All required rosdeps installed successfully``.
 
-   .. admonition:: Appendix: ``rosdep install --from-paths src --ignore-src -y``
-      :class: note
+   .. dropdown:: More detail: ``rosdep install --from-paths src --ignore-src -y``
+      :class-container: more-detail
+      :icon: info
 
       .. list-table::
          :header-rows: 1
@@ -1594,8 +1598,9 @@ A field can itself be a message: ``stamp`` is a ``builtin_interfaces/Time``, wit
 - ``ros2 interface list``: every interface. On the course laptop, 752: messages, services and actions.
 - ``ros2 interface list -m``: only the messages, 491 of them.
 
-  .. admonition:: Appendix: ``ros2 interface list -m``
-     :class: note
+  .. dropdown:: More detail: ``ros2 interface list -m``
+     :class-container: more-detail
+     :icon: info
 
      .. list-table::
         :header-rows: 1
@@ -1740,8 +1745,9 @@ Send a Message from the Terminal: ros2 topic pub
    publisher: beginning loop
    publishing #1: geometry_msgs.msg.Point(x=7.0, y=4.0, z=0.0)
 
-.. admonition:: Appendix: ``ros2 topic pub``
-   :class: note
+.. dropdown:: More detail: ``ros2 topic pub``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1
@@ -1971,8 +1977,9 @@ In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(r
    y: 0.0
    z: 0.0
 
-.. admonition:: Appendix: ``ros2 topic echo --once``
-   :class: note
+.. dropdown:: More detail: ``ros2 topic echo --once``
+   :class-container: more-detail
+   :icon: info
 
    .. list-table::
       :header-rows: 1
