@@ -37,6 +37,22 @@ Build it from the workspace's top folder, then run one of its three executables 
    source install/setup.bash
    ros2 run robotaxi_demo robotaxi
 
+.. admonition:: Appendix: ``colcon build`` and ``ros2 run``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``--help``)
+      * - ``--packages-select robotaxi_demo``
+        - "Only process a subset of packages": ``colcon`` builds ``robotaxi_demo`` and no other package of ``src``.
+      * - ``robotaxi_demo`` (``ros2 run``)
+        - "Name of the ROS package".
+      * - ``robotaxi`` (``ros2 run``)
+        - "Name of the executable": one of the package's three, ``hello``, ``robotaxi`` or ``dispatcher``.
+
 .. _l10-pre-reading:
 
 Pre-Reading
@@ -700,6 +716,18 @@ Look inside a Running System: the ros2 Command-Line Tools
 
 4. ``rqt_graph``: the computation graph, drawn in a window.
 
+.. admonition:: Appendix: ``ros2 topic list -t``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``ros2 topic list --help``)
+      * - ``-t``, ``--show-types``
+        - "Additionally show the topic type": each topic is followed by its message type, in brackets.
+
 Inspect the Talker and the Listener from a Third Terminal
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -921,6 +949,22 @@ Create a Package: ros2 pkg create
    ros2 pkg create robotaxi_demo --build-type ament_cmake \
      --dependencies rclcpp geometry_msgs
 
+.. admonition:: Appendix: ``ros2 pkg create``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``ros2 pkg create --help``)
+      * - ``robotaxi_demo``
+        - "The package name". The command makes a folder of that name in the current folder, here ``src``.
+      * - ``--build-type ament_cmake``
+        - "The build type to process the package with". The choices are ``cmake``, ``ament_cmake``, ``ament_cargo`` and ``ament_python``; ``ament_cmake`` is the one for C++.
+      * - ``--dependencies rclcpp geometry_msgs``
+        - "list of dependencies": the packages ours uses, written into ``package.xml`` and ``CMakeLists.txt``.
+
 .. code-block:: text
 
    robotaxi_demo/
@@ -994,6 +1038,24 @@ What package.xml Is Used For
 
 1. **Build order:** ``colcon`` builds a package after the packages it depends on.
 2. **Installing what is missing:** from the workspace's top folder, ``rosdep install --from-paths src --ignore-src -y`` installs every ``<depend>`` that is not installed yet. In our workspace it printed ``All required rosdeps installed successfully``.
+
+   .. admonition:: Appendix: ``rosdep install --from-paths src --ignore-src -y``
+      :class: note
+
+      .. list-table::
+         :header-rows: 1
+         :widths: 32 68
+
+         * - Argument
+           - Meaning (from ``rosdep --help``)
+         * - ``install``
+           - "download and install the dependencies of a given package or packages".
+         * - ``--from-paths src``
+           - The arguments are "paths to be searched": rosdep acts on every package it finds in ``src``, so you do not name each one.
+         * - ``--ignore-src``
+           - ``-i``, ``--ignore-packages-from-source``: "ignore keys that are found to be catkin or ament packages" in the sourced workspaces or in the ``--from-paths`` folders, so rosdep does not try to install your own packages with ``apt``.
+         * - ``-y``
+           - ``--default-yes``: "Tell the package manager to default to y", so ``apt`` does not stop to ask before each install.
 3. **The package index:** `index.ros.org <https://index.ros.org>`_ reads the same fields when a package is published.
 
 **The fields to fill in**
@@ -1531,6 +1593,18 @@ A field can itself be a message: ``stamp`` is a ``builtin_interfaces/Time``, wit
 
 - ``ros2 interface list``: every interface. On the course laptop, 752: messages, services and actions.
 - ``ros2 interface list -m``: only the messages, 491 of them.
+
+  .. admonition:: Appendix: ``ros2 interface list -m``
+     :class: note
+
+     .. list-table::
+        :header-rows: 1
+        :widths: 32 68
+
+        * - Argument
+          - Meaning (from ``ros2 interface list --help``)
+        * - ``-m``, ``--only-msgs``
+          - "Print out only the message types". ``-s`` gives only the services, ``-a`` only the actions.
 - ``ros2 interface package std_msgs``: the 30 types of one package.
 
 Find a Type, and Get a Template for It
@@ -1665,6 +1739,24 @@ Send a Message from the Terminal: ros2 topic pub
 
    publisher: beginning loop
    publishing #1: geometry_msgs.msg.Point(x=7.0, y=4.0, z=0.0)
+
+.. admonition:: Appendix: ``ros2 topic pub``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``ros2 topic pub --help``)
+      * - ``--once`` (``-1``)
+        - "Publish one message and exit".
+      * - ``/robotaxi/position``
+        - "Name of the ROS topic to publish to".
+      * - ``geometry_msgs/msg/Point``
+        - "Type of the ROS message".
+      * - ``"{x: 7.0, y: 4.0}"``
+        - "Values to fill the message with in YAML format"; a field left out keeps its default value.
 
 - The fields are written as ``{name: value}``. A field you leave out keeps 0.0, here ``z``. A string: ``"data: 'Hello World'"``; an integer: ``"data: 42"``; a boolean: ``"data: true"``.
 - ``--once`` (or ``-1``) sends one message and stops. Without it, the command sends one message per second until :kbd:`Ctrl+C`.
@@ -1878,6 +1970,20 @@ In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(r
    x: 13.0
    y: 0.0
    z: 0.0
+
+.. admonition:: Appendix: ``ros2 topic echo --once``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``ros2 topic echo --help``)
+      * - ``/robotaxi/position``
+        - The topic whose messages are printed.
+      * - ``--once``
+        - "Print the first message received and then exit".
 
 .. admonition:: Conclusion
    :class: tip

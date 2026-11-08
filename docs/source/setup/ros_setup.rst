@@ -11,8 +11,7 @@ course code is built and tested on.
 Checklist
 ---------
 
-Before the first ROS 2 lecture, do these five steps on your laptop. Each one
-links to its section below.
+Before the first ROS 2 lecture, do these five steps on your laptop.
 
 1. Install ROS 2: from `Which ROS 2 Distribution`_ to `Install Development
    Tools`_. On Ubuntu 22.04, follow `If Your Computer Has Ubuntu 22.04`_.
@@ -65,12 +64,12 @@ Then find your row:
      - Lyrical Luth
      - LTS
      - May 2031
-     - `Lyrical on Ubuntu <https://docs.ros.org/en/lyrical/Installation/Ubuntu-Install-Debs.html>`__
+     - `Lyrical on Ubuntu <https://docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html>`__
 
 The dates come from the `ROS 2 distributions page
-<https://docs.ros.org/en/jazzy/Releases.html>`__ and `REP 2000
-<https://www.ros.org/reps/rep-2000.html>`__ (checked November 6, 2026).
-An **LTS** (long-term support) distribution comes out in an even year and
+<https://docs.ros.org/en/jazzy/Releases.html>`__ (checked November 8, 2026).
+`REP 2000 <https://www.ros.org/reps/rep-2000.html>`__ gives the support rules;
+it ends Kilted one month earlier, in November 2026. An **LTS** (long-term support) distribution comes out in an even year and
 is supported for 5 years. A non-LTS distribution comes out in an odd year
 and is supported for 1.5 years. Iron Irwini, an older non-LTS distribution
 for Ubuntu 22.04, reached its end of life on December 4, 2024: do not
@@ -145,6 +144,18 @@ This installs ROS 2, RViz, demos, and tutorials.
 
 Install Development Tools
 -------------------------
+
+On Ubuntu 24.04, first check the apt sources, as the official Jazzy guide
+warns: with only the base ``noble`` suite, ``ros-dev-tools`` can hit
+"dependency conflicts".
+
+.. code-block:: bash
+
+   grep Suites /etc/apt/sources.list.d/ubuntu.sources
+
+If the line does not include ``noble-updates`` and ``noble-backports``, edit
+that file so it reads ``Suites: noble noble-updates noble-backports``, then run
+``sudo apt clean && sudo apt update && sudo apt full-upgrade -y``. Then:
 
 .. code-block:: bash
 
@@ -233,8 +244,7 @@ file once, and it runs in every new terminal. It works in Bash and in Zsh.
       enpm702_env   # set ROS 2 and the workspace in every new terminal
 
 4. Open a new terminal. Your workspace does not exist yet, so ``enpm702_env``
-   prints the line below. That is expected: we fix it in `ROS 2 Workspace`_,
-   where you build the workspace.
+   prints the line below. That is expected: `ROS 2 Workspace`_ builds it.
 
    .. code-block:: text
 
@@ -346,17 +356,25 @@ The course code is in the repository
 `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`__,
 one folder per lecture (``L10`` to ``L14``). The packages of each lecture
 appear in its folder as the course goes on. You keep your own **private**
-copy of it on GitHub, so your work stays yours, and you get new course code
-from the course repository. Your clone has two remotes (names for GitHub
+copy of it on GitHub and get new course code from the course repository. Your clone has two remotes (names for GitHub
 repositories):
 
 - ``origin``: your private repository. ``git push`` and ``git pull`` use it.
 - ``upstream``: the course repository. You only get code from it.
 
 A fork would not work here: GitHub makes a fork of a public repository
-public. Before you start, set up your GitHub SSH key, as the
-:doc:`Version Control reading </reading_material/version_control/vc_index>`
-shows: ``git push`` to your repository needs it.
+public. Before you start, on each computer you use:
+
+- Set up your GitHub SSH key, as the
+  :doc:`Version Control reading </reading_material/version_control/vc_index>`
+  shows: ``git push`` to your repository needs it.
+- Tell Git your name and email once. Without them, your first ``git commit``
+  stops with ``*** Please tell me who you are.``
+
+  .. code-block:: bash
+
+     git config --global user.name "Your Name"
+     git config --global user.email "you@umd.edu"
 
 1. **Create your private repository.** On GitHub, click **New repository**.
    Name it ``enpm702-fall-2026-ros``, choose **Private**, and leave it empty:
@@ -428,19 +446,33 @@ Three jobs come up day to day. Run each one from
      - ``git add <files>``, then ``git commit -m "what you changed"``, then
        ``git push``
    * - The course repository has new code (a new lecture package)
-     - ``git fetch upstream``, then ``git merge upstream/main``, then
-       ``git push`` (so your repository on GitHub has it too), then
+     - ``git fetch upstream``, then ``git merge --no-edit upstream/main``,
+       then ``git push`` (so your repository on GitHub has it too), then
        ``colcon build`` in ``~/ros2_ws``
    * - You work on another computer
      - The first time, clone your own repository there
        (``git clone git@github.com:<you>/enpm702-fall-2026-ros.git`` in
-       ``~/ros2_ws/src``), add ``upstream`` with
+       ``~/ros2_ws/src``, with an SSH key on that computer), add ``upstream`` with
        ``git remote add upstream https://github.com/rubixcubic/enpm702-fall-2026-ros.git``,
        and build. After that, ``git pull`` before you start and ``git push``
        when you finish
 
-Commit your own changes before ``git merge upstream/main``. If Git reports a
-conflict, the Version Control reading shows how to resolve it.
+.. admonition:: Appendix: ``git merge --no-edit upstream/main``
+   :class: note
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 32 68
+
+      * - Argument
+        - Meaning (from ``git help merge``)
+      * - ``upstream/main``
+        - The course repository's ``main``, as ``git fetch upstream`` last downloaded it.
+      * - ``--no-edit``
+        - "accept the auto-generated message". Without it, Git first opens an editor for the merge message; save and close it to finish the merge.
+
+Commit your own changes before ``git merge``. If Git reports a conflict, the
+Version Control reading shows how to resolve it.
 
 
 Verify ROS 2
@@ -461,7 +493,7 @@ Open two terminals and run:
    ros2 run demo_nodes_cpp listener
 
 You should see the talker publishing messages and the listener
-receiving them. Press ``Ctrl + C`` in both terminals to stop.
+receiving them. Press :kbd:`Ctrl+C` in both terminals to stop.
 
 
 Gazebo (Simulation)
@@ -551,7 +583,7 @@ Ubuntu 24.04 when you can.
    ``ros2-apt-source`` command reads your Ubuntu version and adds the
    repository for 22.04.
 
-2. Update every package first. On 22.04, installing ROS 2 on a system that was
+2. If you skipped ``sudo apt upgrade`` above, run it now. On 22.04, installing ROS 2 on a system that was
    not upgraded can remove critical system packages (``systemd`` and ``udev``),
    as the `Humble installation guide
    <https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html>`__
@@ -606,7 +638,7 @@ never both.
 
 .. tip::
 
-   You can add helpful aliases to your shell configuration file:
+   Two shortcuts for your shell configuration file:
 
    .. code-block:: bash
 
