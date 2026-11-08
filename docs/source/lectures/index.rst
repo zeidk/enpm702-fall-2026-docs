@@ -41,7 +41,8 @@ Each lecture page contains the following sections:
         C++ programming exercises for the lecture topic. Students
         practice the concepts covered in the lecture by writing and
         running code. From Lecture 2 to Lecture 7, you submit your
-        solutions on Canvas, and they are graded.
+        solutions on Canvas, and they are graded. From Lecture 10, they
+        are ROS Exercises, written as ROS 2 nodes.
 
     .. grid-item-card:: Quiz
         :class-card: sd-border-info

@@ -12,9 +12,7 @@ Unless a question shows its own classes, ``Vehicle``, ``RoboTaxi``, ``Taxi``, ``
 
    **Instructions:**
 
-   - Answer all questions to the best of your ability.
    - Multiple choice questions have exactly one correct answer.
-   - True/False questions require you to determine if the statement is correct.
    - Click the dropdown after each question to reveal the answer.
 
 

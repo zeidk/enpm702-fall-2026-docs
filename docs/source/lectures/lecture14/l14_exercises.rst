@@ -1,5 +1,5 @@
 ====================================================
-C++ Exercises
+ROS Exercises
 ====================================================
 
 These exercises reinforce the autonomy-architecture concepts from

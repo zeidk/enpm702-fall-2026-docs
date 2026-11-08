@@ -2363,8 +2363,8 @@ L10: ROS 2 Foundations
 
    Launch File
       A file that lists the nodes to start and their settings, so ``ros2
-      launch`` starts them all with one command. It is written in Python, XML
-      or YAML.
+      launch`` starts them all with one command. Written in Python, XML or
+      YAML.
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Message
@@ -2372,6 +2372,11 @@ L10: ROS 2 Foundations
       such as ``geometry_msgs/msg/Point``, is written in a ``.msg`` file, and
       each field has a name and a type. In C++, a message is a struct:
       ``msg.x`` reads and writes the field ``x``.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Middleware
+      Software that finds other programs and moves data between them. In
+      ROS 2, the middleware is DDS, under ``rmw``.
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Monolithic Architecture
@@ -2415,9 +2420,8 @@ L10: ROS 2 Foundations
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    rclcpp
-      The ROS Client Library for C++: the library for writing ROS 2 nodes in
-      C++, with one header, ``<rclcpp/rclcpp.hpp>``, and one namespace,
-      ``rclcpp::``.
+      The ROS Client Library for C++, for writing ROS 2 nodes: one header,
+      ``<rclcpp/rclcpp.hpp>``, and one namespace, ``rclcpp::``.
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    ROS 2
@@ -2433,9 +2437,8 @@ L10: ROS 2 Foundations
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Serialization
-      Turning a message into bytes, to send it. DDS serializes each message,
-      and the receiving side turns the bytes back into a message
-      (deserialization).
+      Turning a message into bytes, to send it. DDS does it for each message;
+      the receiving side turns the bytes back (deserialization).
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Service

@@ -20,7 +20,7 @@ References
         ``rclcpp_action``. CLI tools for inspecting and calling
         services and actions are also covered.
 
-        **Before next class**: complete the C++ exercises on services
+        **Before next class**: complete the ROS exercises on services
         and actions, and the quiz. Prepare your workspace with the
         ``robot_interfaces`` package built and ready.
 

@@ -2,15 +2,13 @@
 Quiz
 ====================================================
 
-This quiz covers Lecture 10: ROS 2 Foundations. Topics include the four rules of a topic, running and inspecting nodes, the build files of a package, spinning, messages, and the robotaxi's publisher and subscriber.
+The questions cover the four rules of a topic, running and inspecting nodes, the build files of a package, spinning, messages, and the robotaxi's publisher and subscriber.
 
 .. note::
 
    **Instructions:**
 
-   - Answer all questions to the best of your ability.
    - Multiple choice questions have exactly one correct answer.
-   - True/False questions require you to determine if the statement is correct.
    - Click the dropdown after each question to reveal the answer.
 
 
@@ -38,7 +36,7 @@ Multiple Choice (Questions 1 to 10)
 
    **C**
 
-   Rule 1: a publisher and a subscriber connect only when they use the same topic name. With different names, the dispatcher receives nothing, and no error is printed. The robotaxi goes on publishing (rule 3).
+   Rule 1: a publisher and a subscriber connect only when they use the same topic name. The robotaxi goes on publishing (rule 3).
 
 
 .. admonition:: Question 2
@@ -59,7 +57,7 @@ Multiple Choice (Questions 1 to 10)
 
    **B**
 
-   Rule 3: a publisher does not wait for subscribers. Message 1 was published before the listener existed, and with the default durability (volatile) the publisher keeps nothing for a subscriber that joins late.
+   Rule 3: a publisher does not wait for subscribers. With the default durability (volatile), it keeps nothing for a subscriber that joins late.
 
 
 .. admonition:: Question 3
@@ -210,7 +208,7 @@ Multiple Choice (Questions 1 to 10)
 
    **A**
 
-   The constructor logs the line, then ``main`` goes on to ``rclcpp::shutdown`` and returns. In the lecture, the program ended after 0.3 s. Without spinning, no callback ever runs.
+   The constructor logs the line, then ``main`` goes on to ``rclcpp::shutdown`` and returns: in the lecture, after 0.3 s. No callback ever runs.
 
 
 .. admonition:: Question 10
@@ -250,7 +248,7 @@ True or False (Questions 11 to 15)
 
    **False**
 
-   Rule 3: the robotaxi publishes every 0.5 s, whether or not a node listens. With no subscriber, each message is delivered to no one (scenario 1).
+   Rule 3: the robotaxi publishes every 0.5 s, whether or not a node listens; with no subscriber, each message reaches no one (scenario 1).
 
 
 .. admonition:: Question 12
@@ -276,7 +274,7 @@ True or False (Questions 11 to 15)
 
    **False**
 
-   Rule 2: a publisher and a subscriber connect only when the message type is the same. With the same name and different types, nothing arrives.
+   Rule 2: a publisher and a subscriber connect only when the message type is the same.
 
 
 .. admonition:: Question 14

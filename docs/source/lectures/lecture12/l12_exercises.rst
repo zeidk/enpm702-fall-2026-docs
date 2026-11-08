@@ -1,5 +1,5 @@
 ====================================================
-C++ Exercises
+ROS Exercises
 ====================================================
 
 These exercises reinforce the concepts covered in Lecture 12: ROS 2

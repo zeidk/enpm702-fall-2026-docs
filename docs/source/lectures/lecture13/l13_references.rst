@@ -17,7 +17,7 @@ References
         message, and debugging tools (``view_frames``, ``tf2_echo``,
         RViz2).
 
-        These topics support **GP2**. Complete the C++ exercises on TF2
+        These topics support **GP2**. Complete the ROS exercises on TF2
         and take the quiz before you start GP2's TF2 requirements.
 
 

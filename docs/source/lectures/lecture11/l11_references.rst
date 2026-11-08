@@ -22,7 +22,7 @@ References
         ROS 2 CLI tools for parameter introspection (``list``, ``get``,
         ``set``, ``describe``, ``dump``).
 
-        **Before next class**: complete the C++ exercises on parameters,
+        **Before next class**: complete the ROS exercises on parameters,
         launch files, and executors, and take the quiz.
 
 

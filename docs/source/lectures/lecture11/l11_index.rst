@@ -50,5 +50,5 @@ Next Steps
   - Writing action servers and clients.
   - Choosing between topics, services, and actions.
 
-- Before next class: complete the C++ exercises on parameters, launch files,
+- Before next class: complete the ROS exercises on parameters, launch files,
   and executors, and take the quiz.
