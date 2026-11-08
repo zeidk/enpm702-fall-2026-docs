@@ -290,6 +290,55 @@ How to call it, in any terminal:
    yet.
 
 
+The colcon Build Tool
+---------------------
+
+.. admonition:: Definition: colcon
+   :class: tip
+
+   **colcon** (collective construction) is the command-line tool that builds the packages of a workspace. It works out the build order from their dependencies (`colcon documentation <https://colcon.readthedocs.io>`_).
+
+.. admonition:: What colcon gives you
+   :class: key-box
+
+   - **Any language:** it builds C++ packages, Python packages and others.
+   - **Parallel:** several packages build at the same time.
+   - **Isolated:** each package builds in its own folder, so one cannot break another.
+   - **Extensible:** plugins add build types.
+   - **Cross-platform:** Linux, Windows and macOS.
+
+``ros-dev-tools`` (`Install Development Tools`_) installs colcon. Check it:
+
+.. code-block:: bash
+
+   colcon version-check
+
+It prints one line per part of colcon, such as ``colcon-argcomplete 0.3.3: up-to-date``.
+
+Build Commands
+^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 50 50
+   :class: compact-table
+
+   * - Command
+     - What it builds
+   * - ``colcon build``
+     - Every package in ``src``
+   * - ``colcon build --packages-select robotaxi_demo``
+     - Only ``robotaxi_demo``
+   * - ``colcon build --packages-up-to robotaxi_demo``
+     - ``robotaxi_demo`` and the packages of the workspace it depends on
+   * - ``colcon build --parallel-workers 4``
+     - At most 4 packages at once (the default is the number of CPU cores)
+   * - ``colcon build --symlink-install``
+     - Installs links to files such as launch files instead of copies, so an edit to them needs no new build. C++ code still needs one.
+
+Run every ``colcon`` command from the workspace's top folder (``~/ros2_ws``), never from ``src``.
+
+
 ROS 2 Workspace
 ---------------
 

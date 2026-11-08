@@ -127,7 +127,7 @@ scheduled.
        | :assignment:`RWA3 posted`
    * - Week 11
      - Nov 10
-     - Read :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+     - Read :ref:`L10 Pre-Reading <l10-pre-reading>`
      - ROS 2, Foundations (Nodes, Publisher, Subscriber)
      - Submit Lecture 10 exercises
    * - Week 12

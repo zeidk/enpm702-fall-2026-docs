@@ -2,7 +2,11 @@
 Lecture
 ====================================================
 
-Read the :doc:`l10_prereading` first. This page starts where it ends: it uses its terms (node, process, DDS, workspace, ``colcon build``, the overlay) without defining them again.
+Before Class
+------------
+
+1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
+2. Install ROS 2 Jazzy, as in :doc:`/setup/ros_setup`.
 
 Code for This Lecture
 ---------------------
@@ -33,8 +37,304 @@ Build it from the workspace's top folder, then run one of its three executables 
    source install/setup.bash
    ros2 run robotaxi_demo robotaxi
 
-What This Lecture Uses from the Pre-Reading
--------------------------------------------
+.. _l10-pre-reading:
+
+Pre-Reading
+-----------
+
+Read this part before class: the lecture opens with six slides on it (what ROS is, monolithic and distributed programs, the ROS 2 layers, DDS and ``rclcpp``) and builds on all of it. The workspace, ``colcon`` and ``ros2 pkg create`` are in `Workspace and Development Environment`_.
+
+What ROS Is: Plumbing, Tools, Capabilities, Community
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**ROS 2** (Robot Operating System 2) is a set of libraries and tools for robot software. It is not an operating system: it runs on one, here Ubuntu 24.04.
+
+.. note::
+
+   ROS 2 breaks a large application into smaller programs. It moves the data between them, on one computer or across several, so you write the behavior of the robot and not the networking.
+
+.. figure:: /_static/images/l10/ros_equation.png
+   :alt: The equation ROS equals plumbing plus tools plus capabilities plus community. On the left, a three by three grid of dots and the word ROS, then an equals sign. Then four navy icons joined by plus signs, each with its word below: a faucet, plumbing; a wrench and screwdriver, tools; a person with a check mark, capabilities; a puzzle piece, community.
+   :align: center
+   :width: 90%
+
+   What ROS is made of, in four parts.
+
+- **Plumbing**: the framework that carries data between parts of a robot, with messaging, standard interfaces and several languages.
+- **Tools**: help you build, test and monitor a robot. They add no robot behavior.
+- **Capabilities**: ready-to-use packages, such as manipulation, motion planning and perception.
+- **Community**: the developers, researchers and companies who share code and ideas (`About ROS <https://docs.ros.org/en/jazzy/About-ROS.html>`_).
+
+Where to find ROS 2 online:
+
+- `ros.org <https://www.ros.org/>`_: the project's home page.
+- `ROS 2 Jazzy documentation <https://docs.ros.org/en/jazzy/>`_: the reference for this course.
+- `ROS Index <https://index.ros.org/>`_: every released ROS package.
+- `github.com/ros2 <https://github.com/ros2>`_: the source code.
+
+**Who maintains ROS:** `Open Robotics <https://www.openrobotics.org/>`_, with the community. It is the Open Source Robotics Foundation (OSRF), a US nonprofit founded in 2012, which also makes the Gazebo simulator.
+
+Designed for Robots That Leave the Lab
+""""""""""""""""""""""""""""""""""""""
+
+.. figure:: /_static/images/l10/what_is_ros_for.jpeg
+   :alt: A hand-drawn poster titled ROS 2: designed for robots that leave the lab, built for real-world, commercial and complex environments. Top right, a smiling robot with I love the outside world on its chest walks out of a building marked LAB. Three panels below. Products: a delivery robot hands a box to a man on a city street while a woman pushes a shopping cart; caption: robots that people buy and use, not only research prototypes. Several robots on one network: a drone, two robot arms and a small wheeled robot, labeled nodes and bots, joined by dotted lines to a Wi-Fi router labeled hub; caption: each with many nodes, communicating in complex team environments. Real-time control: smiling packages labeled fast data packets fly along an arrow to a stopwatch marked tick-tock, past a robot arm marked on time; caption: commands that must arrive on time, ensuring safety, accuracy and predictability. Bottom line: ROS 2, empowering the next generation of autonomous systems. Bottom right: based on Macenski et al., 2022.
+   :align: center
+   :width: 100%
+
+   What ROS 2 was designed for: products, several robots on one network, and commands that must arrive on time (based on Macenski et al., 2022).
+
+The Node: the Unit of Computation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Node
+   :class: tip
+
+   A **node** is a program, or a part of one, that does one job and exchanges data with other nodes.
+
+- A full robot runs many nodes: one senses, one filters, one controls, one drives the motors, one logs.
+- Each node is written, tested and started on its own. Different people write them, and each runs at its own rate.
+- Nodes talk only through defined interfaces: topics, services and actions, explained below. The same camera driver runs, unchanged, on another robot with that camera.
+
+The ROS 2 documentation: "each node should do one logical thing" (`Nodes <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Nodes.html>`_). The next parts show why a robot's software is split into nodes, with a robotaxi as the example.
+
+From a File on Disk to a Running Program: the Process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Process
+   :class: tip
+
+   A program that is running. The operating system gives each process its own memory and a number, its **process ID** (pid).
+
+.. figure:: /_static/images/l10/process.png
+   :alt: A box at the top reads ride_service, the executable: a file on disk. Two arrows go down from it, labeled run in terminal 1 and run in terminal 2, to two dashed rounded boxes side by side, labeled process 1 and process 2, each with its own pid. Each dashed box holds two boxes, stack and heap. A red dashed line between the two dashed boxes is labeled no shared memory.
+   :align: center
+   :width: 60%
+
+   One executable, run in two terminals, makes two processes.
+
+- The executable that CMake builds is a file. Run it, and the operating system starts a process.
+- Run it in two terminals: two processes from one file, each with its own stack and heap.
+- A variable or a pointer of one process means nothing to the other.
+- :kbd:`Ctrl+C` in a terminal stops the process running there.
+
+Monolithic: One Program Does Every Job
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Monolithic Architecture
+   :class: tip
+
+   One program, run as one process. Its functions and classes call each other.
+
+.. code-block:: cpp
+   :linenos:
+   :emphasize-lines: 4, 5
+
+   int main() {
+     double x{0.0};
+     for (int step{0}; step < 3; ++step) {
+       x = move_robotaxi(x);
+       double d{distance_to_pickup(x)};
+       std::cout << "x = " << x << ", "
+                 << d << " m to go\n";
+     }
+   }
+
+``move_robotaxi`` adds 1 m. ``distance_to_pickup`` returns the distance to the pickup at 10 m.
+
+.. figure:: /_static/images/l10/monolithic.png
+   :alt: Inside one dashed rounded box, main() on the left. move_robotaxi() sits above it and distance_to_pickup() below it, both shifted to the right. A short straight solid arrow labeled 1: call goes up to move_robotaxi(), and one labeled 2: call goes down to distance_to_pickup(). From the left end of each function, a dashed arrow labeled return bends around the left side back to main().
+   :align: center
+   :width: 45%
+
+   One process (the dashed box). ``main`` calls each function (lines 4 and 5) and waits for it to return.
+
+The program prints:
+
+.. code-block:: text
+
+   x = 1, 9 m to go
+   x = 2, 8 m to go
+   x = 3, 7 m to go
+
+Monolithic: Advantages and Issues
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The robotaxi program above, all in one process.
+
+**Advantages**
+
+- One program to build and run: one executable.
+- A call passes data directly: ``move_robotaxi(x)`` gets ``x`` with no message to copy and send.
+- One debugger session steps through ``main`` and both functions.
+
+**Issues**
+
+- One crash stops every function: a bad pointer in ``distance_to_pickup`` also stops the robotaxi.
+- A change to one function means rebuilding and restarting the whole program.
+- ``main`` waits for each call: if ``distance_to_pickup`` took 2 s, the robotaxi would not move for those 2 s.
+- Both jobs run on one computer: the dispatch office cannot run its part on its own computer.
+
+Distributed: Separate Programs Exchange Messages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Distributed Architecture
+   :class: tip
+
+   Several programs, each run as its own process, on one computer or several. They do not call each other's functions: they send each other messages. ROS 2 works this way: each program is a **node**, and nodes talk within one process, between processes on one computer, or between computers (`Nodes <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Nodes.html>`_).
+
+.. figure:: /_static/images/l10/distributed.png
+   :alt: Two dashed rounded boxes, one around a node named robotaxi and one around a node named dispatcher. An arrow goes from robotaxi to dispatcher, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :align: center
+   :width: 72%
+
+   The robotaxi and the dispatcher as two programs, each in its own process (a dashed box).
+
+Above the arrow, a **topic**: a name that nodes use to exchange one type of message. Below it, the topic's message type.
+
+**Advantages**
+
+- A crash stops only that program.
+- A change rebuilds and restarts one program.
+- Each program runs at its own rate.
+- Programs can run on several computers.
+
+**Issues**
+
+- Each message is copied: about 0.3 ms per message, measured in class with the robotaxi and the dispatcher.
+- A slow receiver misses messages (shown in class with a slow subscriber).
+- More programs to start and watch.
+- Both sides must use the same type.
+
+ROS 2 Is Distributed: Nodes on Two Computers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l10/distributed_ros.png
+   :alt: Two solid gray rounded boxes, one above the other. The top one is labeled Computer 1: in the robotaxi, and holds a dashed box with a node named robotaxi. An arrow labeled publish goes down from robotaxi to a navy box that reads /robotaxi/position, and geometry_msgs/msg/Point. An arrow labeled subscribe goes down from the navy box into the bottom gray box, labeled Computer 2: at the dispatch office, to a node named dispatcher in a dashed box.
+   :align: center
+   :width: 45%
+
+   A gray box is a computer, a dashed box a process.
+
+ROS 2 is distributed: a node "can communicate with other nodes within the same process, in a different process, or on a different machine" (`Nodes <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Nodes.html>`_).
+
+- ``robotaxi`` and ``dispatcher`` run on two computers with no change to their code. The computers share a network and a domain ID (`Discovery in Practice: Domain IDs and Your Network`_).
+- Nodes can also share one process: less overhead, but one crash stops them all (`Composition <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Composition.html>`_).
+- Inside a node, the code is the C++ of the first half of the course: classes, function calls and smart pointers.
+
+What Runs under Your Node: the ROS 2 Layers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: /_static/images/l10/ros2_layers.png
+   :alt: A layered diagram, top to bottom, with a dashed arrow from each layer down to the next. At the top, a wide box, the application layer, holds three boxes: your nodes, robotaxi and dispatcher; topics, services and actions; node tools, parameters, ros2 and rqt. Below it: client libraries, rclcpp for C++ and rclpy for Python, one per language; rcl, the C library every client library shares; rmw, the middleware interface, so a node runs on any DDS; DDS, the middleware, Fast DDS by default, Cyclone DDS or Connext. At the bottom, a wide gray band: the operating system and the network, Ubuntu 24.04, Ethernet and Wi-Fi.
+   :align: center
+   :width: 100%
+
+   The layers under a ROS 2 node, from the application down to the network.
+
+You write only the top layer: your nodes. The layers below let the same node run on any DDS without a code change (``rmw``), and let a C++ node and a Python node exchange the same messages (``rcl``). **Middleware** is software that finds other programs and moves data between them. Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
+
+What DDS Does: Find the Nodes, Move the Messages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: DDS
+   :class: tip
+
+   **DDS** (Data Distribution Service): the industry-standard middleware that moves ROS 2 messages. Jazzy uses eProsima's Fast DDS by default.
+
+.. figure:: /_static/images/l10/dds_jobs.png
+   :alt: Two node boxes, robotaxi on the left and dispatcher on the right, both standing on a wide navy band labeled DDS. Above the nodes, a dashed two-headed arrow between them carries tag 1. Inside the band, a solid arrow runs from under robotaxi to under dispatcher, with tag 2 and a small box reading position. Below the band, under the dispatcher and joined to the band by a line, a small box with tag 3 reads reliable, keep last 10.
+   :align: center
+   :width: 60%
+
+   The three jobs of DDS, numbered 1 to 3 as in the list below.
+
+1. **Discovery**: each program announces what it sends and what it wants. Programs that match find each other. ROS 1 needed a central program for this, the ROS master; DDS removed it (`ROS on DDS <https://design.ros2.org/articles/ros_on_dds.html>`_).
+2. **Transport**: DDS carries each message, here the robotaxi's position, to the dispatcher, on one computer or across a network.
+3. **Quality of Service**: delivery settings. The default resends a lost message (reliable) and keeps the last 10 (`Quality of Service settings <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html>`_).
+
+Discovery in Practice: Domain IDs and Your Network
+""""""""""""""""""""""""""""""""""""""""""""""""""
+
+- By default, a node finds every node it can reach by **multicast** (one message that every computer on the network can receive) and that has the same **domain ID** (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_). The default domain ID is 0.
+- Different domain IDs never see each other: a talker in domain 82 and a listener in 83, and the listener printed nothing in 4 s.
+
+.. note::
+
+   A network that does not pass multicast stops discovery between computers. On eduroam, students' nodes have never appeared on the instructor's laptop, from 2017 to today. Where multicast passes, as on a home router, set your own domain ID, 0 to 101, in ``~/.bashrc``: ``export ROS_DOMAIN_ID=``\ *number*.
+
+Write ROS 2 Code in C++: rclcpp
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: rclcpp
+   :class: tip
+
+   The ROS Client Library for C++: the C++ interface that "provides all of the ROS client functionality like creating nodes, publishers, and subscriptions" (`Client libraries <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Client-Libraries.html>`_). See `rclcpp API (Jazzy) <https://docs.ros.org/en/jazzy/p/rclcpp/>`_.
+
+- One header, ``#include <rclcpp/rclcpp.hpp>``, and one namespace, ``rclcpp::``.
+- In this lecture you use ``rclcpp::init``, ``rclcpp::Node``, ``create_publisher``, ``create_subscription``, ``create_wall_timer``, ``rclcpp::spin`` and ``rclcpp::shutdown``.
+- ``rclcpp`` builds on ``rcl``, the C library that ``rclpy`` (Python) uses too, so a C++ node and a Python node behave the same and exchange the same messages.
+- ``roscpp`` is the C++ library of ROS 1. ROS 2 code uses ``rclcpp``.
+
+Where ROS 2 Is Used
+^^^^^^^^^^^^^^^^^^^
+
+Transportation
+""""""""""""""
+
+.. figure:: /_static/images/l10/autonomous_machines.jpeg
+   :alt: A hand-drawn illustration on cream paper titled Autonomous Transport, subtitled everyday integration and service in our world. Four panels: passenger train, a short train on a railway; autonomous vehicle, a small car with a roof sensor on a road; surroundings vessel, a small boat on the water; drone delivery, a drone carrying a box in flight. Footer: pioneering new ways to serve, assist, and explore.
+   :align: center
+   :width: 80%
+
+- Self-driving cars: Autoware runs on ROS 2 Jazzy (`Autoware installation <https://docs.autoware.org/main/installation/>`_), Apex.AI's Apex.OS is based on ROS 2 (`The Robot Report <https://www.therobotreport.com/apex-os-1-0-available-brings-ros-2-development-self-driving-cars/>`__), and the CARLA simulator has ROS 2 built in (`CARLA 0.10.0 <https://carla.org/2024/12/19/release-0.10.0/>`_).
+- Boats: VRX, the simulator of the RobotX boat competition, runs on ROS 2 (`VRX 2.0 <https://discourse.openrobotics.org/t/announcing-release-2-0-of-the-vrx-simulation-environment/29079>`_).
+- Drones: the PX4 autopilot works with ROS 2 (`PX4 Guide <https://docs.px4.io/main/en/ros2/>`_).
+- No public source shows a driverless train running ROS 2.
+
+Manufacturing
+"""""""""""""
+
+.. figure:: /_static/images/l10/robots_in_manufacturing.jpeg
+   :alt: A hand-drawn illustration on cream paper titled Robots in Manufacturing, subtitled increasing safety and efficiency, side by side with humans. Four panels: industrial robot arms, two yellow arms placing parts on a conveyor belt; inspection camera, a camera on a stand checking a part on the belt next to a pass and OK checklist; collaborative robot, a small arm at a bench next to a person in safety glasses who says thanks; warehouse robot, a low mobile robot carrying a shelf of boxes. Footer: designed for collaborative and busy environments.
+   :align: center
+   :width: 80%
+
+- Robot arms: KUKA and FANUC publish official ROS 2 drivers (`KUKA <https://github.com/kuka-ros>`_, `FANUC <https://www.fanucamerica.com/solutions/ros-2>`_), and Universal Robots maintains its own (`Universal Robots driver <https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver>`_). ABB arms use a driver by PickNik Robotics (`The Robot Report <https://www.therobotreport.com/ros-2-driver-now-available-for-abbs-robot-arms/>`__).
+- Inspection cameras: Basler's official driver runs on ROS 2 Jazzy (`pylon-ros-camera <https://github.com/basler/pylon-ros-camera>`_).
+- Warehouse robots: Robotnik's RB-THERON has a ROS 2-based architecture (`RB-THERON <https://robotnik.eu/products/mobile-robots/rb-theron/>`_).
+
+Specialized Domains
+"""""""""""""""""""
+
+.. figure:: /_static/images/l10/robots_in_specialized_areas.jpeg
+   :alt: A hand-drawn illustration on cream paper titled Robots in Specialized Domains, subtitled expanding capabilities across incredible environments. Five panels: a surgical robot with several thin arms over a patient on an operating table; a planetary rover on rocky ground saying bleep bloop; an autonomous tractor in a crop field; a four-legged inspection robot with a camera scanning rubble next to warning signs; a research robot, a small wheeled robot on a table next to a laptop. Footer: solving unique challenges in everyday and extraordinary worlds.
+   :align: center
+   :width: 80%
+
+- Surgery research: the da Vinci Research Kit (Johns Hopkins) supports ROS 2 (`dVRK wiki <https://github.com/jhu-dvrk/sawIntuitiveResearchKit/wiki/PythonOverROS>`_).
+- Space: NASA JPL's Open Source Rover runs ROS 2 (`osr-rover-code <https://github.com/nasa-jpl/osr-rover-code>`_), and NASA's Astrobee has a ROS 2 branch (`astrobee ros2 <https://github.com/nasa/astrobee/tree/ros2>`_).
+- Legged robots: ANYbotics is moving ANYmal to ROS 2 (`ANYbotics <https://www.anybotics.com/news/anybotics-anymal-first-research-meet-up-japan/>`_), and Spot has a ROS 2 driver by the RAI Institute (`spot_ros2 <https://github.com/bdaiinstitute/spot_ros2>`_).
+- Research: TurtleBot 4, Husarion and Clearpath Husky run ROS 2 (`TurtleBot 4 <https://openrobotics.org/blog/2022/5/3/introducing-the-turtlebot-4>`_, `Husarion <https://husarion.com/blog/panther-ros2-driver/>`_, `Husky <https://clearpathrobotics.com/blog/2022/03/ros-2-now-available-on-husky-ugv/>`_).
+- No checked source shows a tractor running ROS 2.
+
+Emerging Areas
+""""""""""""""
+
+.. figure:: /_static/images/l10/robots_in_emerging_areas.jpeg
+   :alt: A hand-drawn illustration on cream paper titled Robots in Emerging Areas, subtitled everyday integration and service in our world. Four panels: a round robot vacuum circling a living-room floor near a sofa and a plant; a humanoid service robot with a screen on its chest waving to a person at a lobby desk; a security patrol robot shaped like a rounded column, scanning a parking lot at night under a street lamp; an autonomous survey boat with antennas near a rocky coastline, with sonar waves under it. Footer: pioneering new ways to serve, assist, and explore.
+   :align: center
+   :width: 80%
+
+- Home robots: iRobot's Create 3 educational robot is "entirely based on ROS 2" (`Create 3 Docs <https://iroboteducation.github.io/create3_docs/>`_).
+- Service robots: PAL Robotics' humanoid ARI is based on ROS 2 (`ARI <https://docs.pal-robotics.com/edge/ari>`_).
+- Security: Robotnik's RB-WATCHER patrol robot is compatible with ROS 2 (`RB-WATCHER <https://robotnik.eu/products/mobile-robots/rb-watcher/>`_).
+- Survey boats: UNH's Project 11 ocean-mapping software runs on ROS 2 Jazzy (`unh_marine_autonomy <https://github.com/CCOMJHC/unh_marine_autonomy>`_).
+
+Terms This Lecture Uses
+-----------------------
+
+Each term is defined in `Pre-Reading`_ or in `Workspace and Development Environment`_.
 
 .. list-table::
    :header-rows: 1
@@ -103,7 +403,7 @@ The Three Ways on One Robot: a Camera, a Laptop and an Arm
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/three_ways.png
-   :alt: Three white node boxes, camera at the top, planner at the left and arm_controller at the right. An arrow labeled publish goes from camera to a navy box that reads topic, pose, with tag 1 beside it, and an arrow labeled subscribe from the pose box to planner. An arrow goes from planner to a green box that reads service, close gripper, with tag 3 above it, and on to arm_controller. A second arrow goes from planner down to a purple box that reads action, go to pose, with tag 2 below it, and on to arm_controller.
+   :alt: Three node boxes: camera at the top, planner at the left and arm_controller at the right. A navy arrow labeled pose goes from camera down to planner, with tag 1 beside it. From planner to arm_controller, two parallel arrows: the upper one green, labeled close gripper, with tag 3 above it; the lower one purple, labeled go to pose, with tag 2 below it.
    :align: center
    :width: 60%
 
@@ -113,7 +413,7 @@ The Three Ways on One Robot: a Camera, a Laptop and an Arm
 2. **Action** ``go to pose``: ``planner`` sends a goal. ``arm_controller`` reports progress until the arm gets there.
 3. **Service** ``close gripper``: ``planner`` sends one request. ``arm_controller`` closes the gripper and responds once.
 
-Each white box is a node. ``planner`` runs on a laptop.
+Each box is a node, and each arrow carries the name of a topic, a service or an action. ``planner`` runs on a laptop.
 
 The Computation Graph
 ^^^^^^^^^^^^^^^^^^^^^
@@ -167,7 +467,14 @@ The publisher sends when it has data. It does not wait for an answer, and it nev
 A Topic Works Like a Bus
 """"""""""""""""""""""""
 
-The ROS 2 documentation compares publish/subscribe to a **bus** in electronics: shared wires that many devices connect to, so every device reads what one device sends (`Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_). A topic has no wire: DDS gives each subscriber its own copy.
+The ROS 2 documentation compares publish/subscribe to a **bus** in electronics: shared wires that many devices connect to, so every device reads what one device sends (`Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_). A topic has no wire: DDS sends each subscriber its own copy of every message.
+
+.. figure:: /_static/images/l10/computer_buses.png
+   :alt: A computer bus diagram. A box labeled CPU on the left sends three wide arrows to the right: a yellow address bus, a light blue data bus and a pink control bus. Each bus branches down into four boxes labeled RAM, ROM, I/O and Other, so all four connect to the same three buses.
+   :align: center
+   :width: 70%
+
+   A device bus: every device connects to the same wires. Image: `Computer buses <https://commons.wikimedia.org/wiki/File:Computer_buses.svg>`_, by German, Wikimedia Commons, public domain.
 
 One position, from the robotaxi to the dispatcher:
 
@@ -457,7 +764,7 @@ Two Places a Package Comes From: apt or Your Workspace
 
 .. note::
 
-   A source package with the same name as an installed one takes its place when you source your workspace (the overlay, from the :doc:`l10_prereading`).
+   A source package with the same name as an installed one takes its place when you source your workspace (the overlay, `Underlay and Overlay`_).
 
 .. warning::
 
@@ -508,7 +815,129 @@ Resources
 Workspace and Development Environment
 -------------------------------------
 
-In the pre-reading, you built a workspace and created the package ``robotaxi_demo``. This section reads the two files that describe it, ``package.xml`` and ``CMakeLists.txt``, and the commands that use them.
+A **workspace** is a folder that keeps your source code, the build files and the installed packages in one place. One workspace per project, or per ROS version, keeps them apart.
+
+Packages that come with ROS 2 are installed already. Nodes of your own are built in a workspace, then run with the same ``ros2`` tools.
+
+.. code-block:: text
+
+   workspaces/
+   ├── ros2_iron_ws/
+   │   ├── src/
+   │   │   ├── my_robot_bringup/
+   │   │   └── my_robot_description/
+   │   └── build/  install/  log/
+   └── ros2_jazzy_ws/
+       ├── src/
+       │   ├── nav2_experiments/
+       │   └── perception_demos/
+       └── build/  install/  log/
+
+**colcon** is the tool that builds the packages of a workspace. What it does, how to check it and its
+build commands are in `The colcon Build Tool <../../setup/ros_setup.html#the-colcon-build-tool>`_ on
+:doc:`/setup/ros_setup`.
+
+Create a Workspace
+^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+   :linenos:
+
+   # Create the workspace folders
+   mkdir -p ~/ros2_ws/src
+   cd ~/ros2_ws
+
+   # Build, with src still empty
+   colcon build
+
+   # Source the workspace
+   source install/setup.bash
+
+- Line 2: the workspace's name and place are up to you. ROS 2 does not require a path.
+- Line 6: builds every package in ``src``, and makes ``build``, ``install`` and ``log``.
+- Line 9: without this line, ``ros2 run`` does not find the packages you built. Forgetting it is the most common mistake with ROS 2.
+
+.. note::
+
+   The first build of an empty workspace is not wasted: it makes the folders and the setup files, and it checks that your build tools work.
+
+The Workspace Folders
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: text
+
+   ros2_ws/
+   ├── src/
+   ├── build/
+   ├── log/
+   └── install/
+       ├── setup.bash
+       ├── setup.zsh
+       └── ...
+
+- ``src``: the source code of your packages, and of the packages you cloned. The only folder you write in.
+- ``build``: the compiler's intermediate files (object files, CMake's cache).
+- ``log``: the log of each build, for when a build fails.
+- ``install``: the finished products: executables, libraries, headers.
+
+  - Holds ``setup.bash`` and ``setup.zsh``, the files that set up a terminal.
+  - This is what you "source" to use your workspace.
+
+.. note::
+
+   **The build flow:** source code in ``src``, compiled in ``build``, installed in ``install``. The logs go to ``log``. ``colcon`` makes the last three; you can delete them and build again.
+
+Underlay and Overlay
+^^^^^^^^^^^^^^^^^^^^
+
+Several workspaces can stack: each one you source adds a layer on top of the ones before it (`Creating a workspace <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_).
+
+- The ROS 2 installation, ``/opt/ros/jazzy``, is the **underlay**. It gives the terminal ``ros2`` and the installed packages.
+- Your workspace, sourced after it, is the **overlay**: its packages sit on top of the underlay, they do not replace it.
+- When a package is in both layers, the overlay wins. So you can change one package without touching the rest of the installation.
+
+.. code-block:: bash
+
+   source /opt/ros/jazzy/setup.bash      # underlay: ROS 2 itself
+   source ~/ros2_ws/install/setup.bash   # overlay: your packages
+   source ~/dev_ws/install/setup.bash    # a second overlay
+
+.. warning::
+
+   **A terminal that did not source the overlay** finds only the underlay. ``ros2 run robotaxi_demo robotaxi`` prints ``Package 'robotaxi_demo' not found``, even after a build that worked. Source the overlay again after each build that adds a package or an executable. In zsh, source ``setup.zsh``.
+
+Create a Package: ros2 pkg create
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Package
+   :class: tip
+
+   A **package** is one folder of nodes, libraries, settings and launch files that does one thing, such as ``demo_nodes_cpp``. Every package has the same layout, so it is easy to build, share and reuse.
+
+.. code-block:: bash
+   :linenos:
+
+   cd ~/ros2_ws/src
+   ros2 pkg create robotaxi_demo --build-type ament_cmake \
+     --dependencies rclcpp geometry_msgs
+
+.. code-block:: text
+
+   robotaxi_demo/
+   ├── CMakeLists.txt
+   ├── package.xml
+   ├── include/robotaxi_demo/
+   └── src/
+
+- ``ament_cmake``: the build type for C++. It is the default, so the command without ``--build-type`` creates the same package. **ament** is the set of CMake macros ROS 2 adds, such as ``ament_package()``.
+- ``--dependencies``: the packages ours uses. The command writes them into both files.
+- Headers go in ``include/robotaxi_demo``, sources in ``src``.
+
+.. warning::
+
+   A package is always created in the ``src`` folder of the workspace (line 1).
+
+With the workspace built and ``robotaxi_demo`` created, the parts below read the two files that describe it, ``package.xml`` and ``CMakeLists.txt``, and the commands that use them.
 
 Packages in Your Workspace
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -776,7 +1205,7 @@ Step 1: the Header, hello_node.hpp
 
 - Line 6: a ``HelloNode`` is an ``rclcpp::Node`` (public inheritance).
 - Line 8: the base class constructor gets the node's name, ``hello``.
-- Line 9: ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``. The constructor is short, so it stays in the header.
+- Line 9: ``RCLCPP_INFO_STREAM`` logs one line at the INFO level, with ``<<`` as in ``std::cout``. ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``. The constructor is short, so it stays in the header.
 
 Step 2: main, in hello_main.cpp
 """""""""""""""""""""""""""""""
@@ -799,19 +1228,19 @@ Step 2: main, in hello_main.cpp
      rclcpp::shutdown();
    }
 
-- Line 8: starts ROS 2, as before.
-- Lines 9 and 10: make a ``HelloNode`` instead of a plain ``rclcpp::Node``. Its constructor logs the line.
-- Line 11: ``rclcpp::spin`` keeps the node running until :kbd:`Ctrl+C`. The next section explains it. Without this line, the program ends right after the log line.
-- Line 12: stops ROS 2.
+- Line 8: starts ROS 2 and the middleware. Call it before you make any node.
+- Lines 9 and 10: make a ``HelloNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
+- Line 11: ``rclcpp::spin`` keeps the node running until :kbd:`Ctrl+C` (the next section). Without this line, the program ends right after the log line.
+- Line 12: stops ROS 2 and frees what ``init`` set up.
 
-Steps 3 and 4: CMakeLists.txt, then Build and Test
-""""""""""""""""""""""""""""""""""""""""""""""""""
+Step 3: CMakeLists.txt
+""""""""""""""""""""""
 
-**Edit** ``CMakeLists.txt``: the lines of the repository's file for this node.
+**Edit** ``CMakeLists.txt``: the repository's lines for this node. They go after the ``find_package`` lines and before ``ament_package()``.
 
 .. code-block:: cmake
    :linenos:
-   :emphasize-lines: 1, 2, 4
+   :emphasize-lines: 1, 2, 3, 4, 5
 
    include_directories(include)
    add_executable(hello src/hello_main.cpp)
@@ -819,16 +1248,28 @@ Steps 3 and 4: CMakeLists.txt, then Build and Test
    install(TARGETS hello robotaxi dispatcher
      DESTINATION lib/${PROJECT_NAME})
 
-- Line 1: lets ``#include "robotaxi_demo/hello_node.hpp"`` find the header.
-- Line 4: the ``install`` line of the repository names all three executables of the package.
+- Line 1: lets ``#include "robotaxi_demo/hello_node.hpp"`` find the header in ``include``.
+- Line 2: builds the executable ``hello`` from ``src/hello_main.cpp``.
+- Line 3: links ``hello`` to ``rclcpp``, the package it uses.
+- Lines 4 and 5: install the executables "so ``ros2 run`` can find your executable" (`Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_). The repository's line names all three executables of the package.
 
-**Build and run**, from ``~/ros2_ws``: ``colcon build --packages-select robotaxi_demo``, then ``source install/setup.bash``, then ``ros2 run robotaxi_demo hello``.
+Step 4: Build and Test
+""""""""""""""""""""""
+
+**Build and run**, from ``~/ros2_ws``:
+
+.. code-block:: bash
+
+   colcon build --packages-select robotaxi_demo
+   source install/setup.bash
+   ros2 run robotaxi_demo hello
 
 .. code-block:: text
 
    [INFO] [1793942813.858003271] [hello]: Hello from hello
 
-The node prints its line and keeps running. In another terminal, ``ros2 node list`` shows ``/hello``.
+- The line gives the level, the time in seconds since January 1, 1970, the node's name, and the text.
+- The node prints its line and keeps running, because of ``rclcpp::spin``. In another terminal, ``ros2 node list`` shows ``/hello``. :kbd:`Ctrl+C` stops it.
 
 Node Lifecycle and Best Practices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -891,7 +1332,21 @@ Node Spinning
 
 **Spinning** keeps a node alive. The node waits for events, a message that arrives, a timer that is due, a service request, and runs the callback of each one.
 
-The hello node of the last section logged one line and ended. From here on, every node stays alive with ``rclcpp::spin``.
+The ``main`` of the class version of the hello node already calls ``rclcpp::spin``. This section explains what it does, starting with the thread that runs it.
+
+Threads: Who Runs main and the Callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Definition: Thread
+   :class: tip
+
+   A **thread** is "a flow of control within a program that begins with the invocation of a specific top-level function" (`Multi-threaded executions and data races <https://en.cppreference.com/w/cpp/language/multithread>`_). Threads "allow multiple functions to execute concurrently" (`std::thread <https://en.cppreference.com/w/cpp/thread/thread>`_).
+
+- A process starts with one thread, the **main thread**, which runs ``main``.
+- Every thread of a process can reach the same objects: "any thread can potentially access any object and function in the program" (cppreference). Two processes cannot.
+- In ``hello_main.cpp``, the main thread runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
+- While it is inside ``spin``, the main thread runs the node's callbacks. One thread means one callback at a time.
+- A program can start more threads, with ``std::thread`` or a multi-threaded executor, to run callbacks at the same time. That comes in a later lecture.
 
 Why Spin, and How
 ^^^^^^^^^^^^^^^^^
@@ -1214,6 +1669,32 @@ Send a Message from the Terminal: ros2 topic pub
 - The fields are written as ``{name: value}``. A field you leave out keeps 0.0, here ``z``. A string: ``"data: 'Hello World'"``; an integer: ``"data: 42"``; a boolean: ``"data: true"``.
 - ``--once`` (or ``-1``) sends one message and stops. Without it, the command sends one message per second until :kbd:`Ctrl+C`.
 - ``--rate 10`` sends 10 per second. ``--times 5`` sends 5 and stops.
+
+Discussion: Investigate a Program You Did Not Write
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A company lends you its robotaxi simulator. It runs on the lab computer and publishes the state of its robotaxis. You have no source code and no documentation. Your job: a node that warns the dispatcher when a robotaxi's battery is low. Before you write it, which ``ros2`` command answers each question?
+
+1. Is anything running? Which nodes?
+2. Which topic carries the battery level, and with which message type?
+3. Which fields does that type have, and in which units?
+4. Who publishes it, and with which delivery settings?
+5. What do the real values look like?
+6. How often does a message arrive?
+7. Which package must your node depend on?
+
+.. dropdown:: Answers
+   :class-container: sd-border-secondary
+
+   The names in this story are chosen for the example. The commands are the ones of this lecture.
+
+   1. ``ros2 node list``. If nothing shows, the simulator and your terminal do not share a domain ID or a network (`Discovery in Practice: Domain IDs and Your Network`_).
+   2. ``ros2 topic list -t``. Say it shows a battery topic with the type ``sensor_msgs/msg/BatteryState``. ``ros2 node info`` on the simulator's node lists everything it publishes.
+   3. ``ros2 interface show sensor_msgs/msg/BatteryState``. The trap: ``percentage`` is "Charge percentage on 0 to 1 range", and NaN "if unmeasured". Below 20 % means below 0.2, and your node must check for NaN.
+   4. ``ros2 topic info`` with ``--verbose``. It gives the publishing node and its QoS, such as ``Reliability: RELIABLE`` (measured on the talker). Your subscriber must use settings that match.
+   5. ``ros2 topic echo`` with ``--once``: one real message, so you see the actual numbers before you trust the field names.
+   6. ``ros2 topic hz``. The rate tells how fast your callback must be, or messages queue up (scenario 3).
+   7. The first part of the type, ``sensor_msgs``. It goes in ``package.xml`` and ``CMakeLists.txt``, as ``geometry_msgs`` did.
 
 Publishers
 ----------
@@ -1563,6 +2044,45 @@ Run the Complete System
 - The robotaxi logged ``Published x = 0`` at ...784.416393 s. The dispatcher logged x = 0 at ...784.416688 s: 784.416688 − 784.416393 = 0.000295 s. The message took about 0.3 ms, on one computer.
 
 When nothing arrives, check the topic names first: ``ros2 topic list`` shows what each side uses (rule 1).
+
+Discussion: Three Dispatchers That Hear Nothing
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each version builds, runs next to the robotaxi node, and prints nothing (Jazzy). Why? Which ``ros2`` command shows the problem? ``Point`` is ``geometry_msgs::msg::Point``; ``callback`` is the lambda of the dispatcher.
+
+**A.** The constructor:
+
+.. code-block:: cpp
+
+   DispatcherNode() : rclcpp::Node{"dispatcher"} {
+     auto subscription{create_subscription<Point>(
+         "robotaxi/position", 10, callback)};
+   }
+
+**B.** The data member's initializer:
+
+.. code-block:: cpp
+
+   subscription_{create_subscription<Point>(
+       "robotaxi/positon", 10, callback)}
+
+**C.** ``main``, with the correct node:
+
+.. code-block:: cpp
+
+   rclcpp::init(argc, argv);
+   auto node{std::make_shared<DispatcherNode>()};
+   rclcpp::shutdown();
+
+.. dropdown:: Answers
+   :class-container: sd-border-secondary
+
+   All three were run on Jazzy next to the robotaxi node. A correct dispatcher printed x = 4, 5, 6, 7 in the same run, so the silence is real.
+
+   - **A:** ``subscription`` is a local variable. The ``SharedPtr`` is destroyed when the constructor returns, and the subscription with it. ``ros2 node info /dispatcher`` lists only ``/parameter_events`` under Subscribers, and ``ros2 topic info /robotaxi/position`` shows ``Subscription count: 0``. Fix: keep it in a data member, as the repository does.
+   - **B:** a typo, ``positon``. ``ros2 topic list`` shows both ``/robotaxi/position`` and ``/robotaxi/positon``: rule 1, no error, nothing arrives.
+   - **C:** no ``rclcpp::spin``. ``main`` makes the node and ends at once: the run took 0.34 s. No callback ever runs.
+   - A silent subscriber is a name, a lifetime or a missing spin. The ``ros2`` tools tell which.
 
 Publisher-Subscriber Communication
 ----------------------------------

@@ -2324,7 +2324,7 @@ L10: ROS 2 Foundations
       The command-line tool that builds the packages of a ROS 2 workspace
       (collective construction). It works out the build order from their
       dependencies. Run it from the workspace's top folder: ``colcon build``.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Computation Graph
       The network of running ROS 2 nodes and the links between them. The nodes
@@ -2347,19 +2347,19 @@ L10: ROS 2 Foundations
       ROS 2 messages. It finds the nodes (discovery), carries each message
       (transport), and applies the delivery settings (Quality of Service).
       Jazzy uses Fast DDS by default.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Distributed Architecture
       Several programs, each run as its own process, on one computer or
       several. They do not call each other's functions: they send each other
       messages. ROS 2 works this way.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Domain ID
       A number that groups ROS 2 nodes: a node finds only the nodes with the
       same domain ID. The default is 0; set your own, 0 to 101, with ``export
       ROS_DOMAIN_ID=``\ *number*.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Launch File
       A file that lists the nodes to start and their settings, so ``ros2
@@ -2377,18 +2377,18 @@ L10: ROS 2 Foundations
    Monolithic Architecture
       One program, run as one process. Its functions and classes call each
       other.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Node
       A program, or a part of one, that does one job and exchanges data with
       other nodes, through topics, services and actions. In C++, a class
       derived from ``rclcpp::Node``.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Overlay
       A ROS 2 workspace sourced on top of the ROS 2 installation (the
       underlay). When a package is in both, the overlay wins.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Package
       One folder of nodes, libraries, settings and launch files that does one
@@ -2399,7 +2399,7 @@ L10: ROS 2 Foundations
    Process
       A program that is running. The operating system gives each process its
       own memory and a number, its process ID (pid).
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Publisher
       The object a ROS 2 node uses to send messages on one topic. In C++,
@@ -2418,19 +2418,19 @@ L10: ROS 2 Foundations
       The ROS Client Library for C++: the library for writing ROS 2 nodes in
       C++, with one header, ``<rclcpp/rclcpp.hpp>``, and one namespace,
       ``rclcpp::``.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    ROS 2
       Robot Operating System 2: a set of libraries and tools for robot
       software. It is not an operating system: it runs on one, here Ubuntu
       24.04.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    ROS 2 Workspace
       A folder that keeps the source code (``src``), the build files
       (``build``), the installed packages (``install``) and the build logs
       (``log``) of ROS 2 packages in one place.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
    Serialization
       Turning a message into bytes, to send it. DDS serializes each message,
@@ -2457,6 +2457,13 @@ L10: ROS 2 Foundations
       for each message.
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
+   Thread
+      A flow of control within a program that starts at one top-level
+      function. A process starts with one thread, the main thread, which runs
+      ``main``. Inside ``rclcpp::spin``, it runs the node's callbacks, one at a
+      time.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
    Topic
       A name, such as ``/robotaxi/position``, that ROS 2 nodes use to exchange
       messages of one type. A publisher sends messages to it; every subscriber
@@ -2466,7 +2473,7 @@ L10: ROS 2 Foundations
    Underlay
       The ROS 2 installation, ``/opt/ros/jazzy``, under a sourced workspace.
       It gives the terminal ``ros2`` and the installed packages.
-      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
 
 .. raw:: html
 
