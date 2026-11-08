@@ -7,7 +7,7 @@ Read this page before Lecture 10, and do the two steps of `Before Class`_. The l
 Before Class
 ------------
 
-1. A new GitHub repository holds the ROS packages of this course: `zeidk/enpm702-fall-2026-ros <https://github.com/zeidk/enpm702-fall-2026-ros>`_. Clone it into the ``src`` folder of your workspace (`Create a Workspace`_ shows how to make one).
+1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
 2. Install ROS 2 Jazzy, as in :doc:`/setup/ros_setup`.
 
 ROS 2

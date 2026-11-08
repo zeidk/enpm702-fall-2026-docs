@@ -17,7 +17,8 @@ links to its section below.
 1. Install ROS 2: from `Which ROS 2 Distribution`_ to `Install Development
    Tools`_. On Ubuntu 22.04, follow `If Your Computer Has Ubuntu 22.04`_.
 2. Set up your terminal with ``enpm702_env``: `Configure Your Shell`_.
-3. Build your workspace with the course code: `ROS 2 Workspace`_.
+3. Put the course code in your own private repository and build your
+   workspace: `ROS 2 Workspace`_.
 4. Check that ROS 2 works: `Verify ROS 2`_.
 5. Install Gazebo: `Gazebo (Simulation)`_.
 
@@ -292,26 +293,105 @@ How to call it, in any terminal:
 ROS 2 Workspace
 ---------------
 
-Create your workspace, put the course code in its ``src`` folder, build it,
-then run ``enpm702_env`` so this terminal finds it:
+The course code is in the repository
+`rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`__,
+one folder per lecture (``L10`` to ``L14``). The packages of each lecture
+appear in its folder as the course goes on. You keep your own **private**
+copy of it on GitHub, so your work stays yours, and you get new course code
+from the course repository. Your clone has two remotes (names for GitHub
+repositories):
 
-.. code-block:: bash
+- ``origin``: your private repository. ``git push`` and ``git pull`` use it.
+- ``upstream``: the course repository. You only get code from it.
 
-   mkdir -p ~/ros2_ws/src
-   cd ~/ros2_ws/src
-   git clone https://github.com/zeidk/enpm702-fall-2026-ros.git
-   cd ~/ros2_ws
-   colcon build
-   enpm702_env
+A fork would not work here: GitHub makes a fork of a public repository
+public. Before you start, set up your GitHub SSH key, as the
+:doc:`Version Control reading </reading_material/version_control/vc_index>`
+shows: ``git push`` to your repository needs it.
 
-``enpm702_env`` now prints:
+1. **Create your private repository.** On GitHub, click **New repository**.
+   Name it ``enpm702-fall-2026-ros``, choose **Private**, and leave it empty:
+   no README, no ``.gitignore``, no license. A file in it would make your
+   first push fail.
 
-.. code-block:: text
+2. **Clone the course repository** into the ``src`` folder of your workspace:
 
-   enpm702_env: ROS 2 jazzy and the workspace /home/<you>/ros2_ws
+   .. code-block:: bash
 
-With the manual alternative, run ``source install/setup.bash`` instead of
-``enpm702_env``.
+      mkdir -p ~/ros2_ws/src
+      cd ~/ros2_ws/src
+      git clone https://github.com/rubixcubic/enpm702-fall-2026-ros.git
+
+3. **Set the two remotes and push to your repository.** Git names the course
+   repository ``origin`` in your clone. Rename it ``upstream``, then add your
+   private repository as ``origin`` (write your GitHub username in place of
+   ``<you>``):
+
+   .. code-block:: bash
+
+      cd ~/ros2_ws/src/enpm702-fall-2026-ros
+      git remote rename origin upstream
+      git remote add origin git@github.com:<you>/enpm702-fall-2026-ros.git
+      git remote -v
+      git push -u origin main
+
+   ``git remote -v`` prints:
+
+   .. code-block:: text
+
+      origin    git@github.com:<you>/enpm702-fall-2026-ros.git (fetch)
+      origin    git@github.com:<you>/enpm702-fall-2026-ros.git (push)
+      upstream  https://github.com/rubixcubic/enpm702-fall-2026-ros.git (fetch)
+      upstream  https://github.com/rubixcubic/enpm702-fall-2026-ros.git (push)
+
+   ``-u`` makes your repository the default, so from now on ``git push`` and
+   ``git pull`` with no names use ``origin``.
+
+4. **Build the workspace**, then run ``enpm702_env`` so this terminal finds it:
+
+   .. code-block:: bash
+
+      cd ~/ros2_ws
+      colcon build
+      enpm702_env
+
+   Until the first lecture package is published, ``colcon build`` finds
+   nothing to build and ends with ``Summary: 0 packages finished``. It still
+   creates ``build``, ``install`` and ``log``, so ``enpm702_env`` now prints:
+
+   .. code-block:: text
+
+      enpm702_env: ROS 2 jazzy and the workspace /home/<you>/ros2_ws
+
+   With the manual alternative, run ``source install/setup.bash`` instead of
+   ``enpm702_env``.
+
+Three jobs come up day to day. Run each one from
+``~/ros2_ws/src/enpm702-fall-2026-ros``.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - When
+     - Commands
+   * - You changed files and want them saved on GitHub
+     - ``git add <files>``, then ``git commit -m "what you changed"``, then
+       ``git push``
+   * - The course repository has new code (a new lecture package)
+     - ``git fetch upstream``, then ``git merge upstream/main``, then
+       ``git push`` (so your repository on GitHub has it too), then
+       ``colcon build`` in ``~/ros2_ws``
+   * - You work on another computer
+     - The first time, clone your own repository there
+       (``git clone git@github.com:<you>/enpm702-fall-2026-ros.git`` in
+       ``~/ros2_ws/src``), add ``upstream`` with
+       ``git remote add upstream https://github.com/rubixcubic/enpm702-fall-2026-ros.git``,
+       and build. After that, ``git pull`` before you start and ``git push``
+       when you finish
+
+Commit your own changes before ``git merge upstream/main``. If Git reports a
+conflict, the Version Control reading shows how to resolve it.
 
 
 Verify ROS 2
