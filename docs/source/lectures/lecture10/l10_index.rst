@@ -14,6 +14,8 @@ defining custom interfaces (messages and services). By the end of this
 lecture, students will be able to build, run, and inspect ROS 2 nodes
 that communicate over topics.
 
+Before class, read the :doc:`l10_prereading` and do its two steps. The lecture starts from it.
+
 .. admonition:: Learning Objectives
    :class: learning-objectives
 
@@ -33,6 +35,7 @@ that communicate over topics.
    :maxdepth: 2
    :titlesonly:
 
+   l10_prereading
    l10_lecture
    l10_exercises
    l10_quiz

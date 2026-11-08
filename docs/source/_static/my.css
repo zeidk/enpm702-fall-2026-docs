@@ -556,3 +556,65 @@ html[data-theme="dark"] {
   white-space: pre;
   overflow-x: auto;
 }
+
+/* ============================================================
+ * Key box: the docs version of the slides' MyBoxKey
+ *
+ * Usage:
+ *   .. admonition:: Title
+ *      :class: key-box
+ *
+ * The one rule a part of the lecture rests on: a gold gradient, a
+ * yellow frame, a lifted shadow and a star in the title, as in
+ * latex-common's MyBoxKey (KeyGoldTop FFF9E0, KeyGoldBottom FFE89A,
+ * KeyGoldFrame F5C400). The text stays dark on gold for contrast.
+ * ============================================================ */
+
+:root,
+[data-theme="light"] {
+  --key-box-top: #fff9e0;
+  --key-box-bottom: #ffe89a;
+  --key-box-frame: #f5c400;
+  --key-box-title-bg: #ffd34d;
+  --key-box-text: #1f1a00;
+  --key-box-shadow: rgba(122, 92, 0, 0.30);
+}
+
+[data-theme="dark"] {
+  --key-box-top: #3a3216;
+  --key-box-bottom: #4a3d10;
+  --key-box-frame: #d4a800;
+  --key-box-title-bg: #6b5410;
+  --key-box-text: #fff4cc;
+  --key-box-shadow: rgba(0, 0, 0, 0.45);
+}
+
+div.admonition.key-box,
+.admonition.key-box {
+  border: 2px solid var(--key-box-frame);
+  border-radius: 0.6rem;
+  background: linear-gradient(to bottom, var(--key-box-top), var(--key-box-bottom));
+  box-shadow: 0 6px 12px -4px var(--key-box-shadow);
+  color: var(--key-box-text);
+}
+
+div.admonition.key-box > .admonition-title,
+.admonition.key-box > .admonition-title {
+  background-color: var(--key-box-title-bg);
+  color: var(--key-box-text);
+  font-weight: 700;
+}
+
+/* the star, in place of the default admonition bell */
+div.admonition.key-box > .admonition-title::after,
+.admonition.key-box > .admonition-title::after {
+  color: var(--key-box-text);
+  content: "\f005";
+}
+
+div.admonition.key-box p,
+div.admonition.key-box li,
+.admonition.key-box p,
+.admonition.key-box li {
+  color: var(--key-box-text);
+}
