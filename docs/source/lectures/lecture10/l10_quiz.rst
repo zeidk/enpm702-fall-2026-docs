@@ -2,10 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 10: ROS 2 Foundations.
-Topics include ROS 2 architecture, nodes, topics, publishers,
-subscribers, message types, QoS, CLI tools, package creation,
-``colcon`` build, and custom interfaces.
+This quiz covers Lecture 10: ROS 2 Foundations. Topics include the four rules of a topic, running and inspecting nodes, the build files of a package, spinning, messages, and the robotaxi's publisher and subscriber.
 
 .. note::
 
@@ -20,340 +17,289 @@ subscribers, message types, QoS, CLI tools, package creation,
 ----
 
 
-Multiple Choice (Questions 1-10)
+Multiple Choice (Questions 1 to 10)
 ====================================================
 
 .. admonition:: Question 1
    :class: hint
 
-   What is the middleware layer used by ROS 2 for communication?
+   The robotaxi publishes on ``/robotaxi/position``. The dispatcher subscribes to ``/robotaxi/pose``, with the same message type. Both run. What happens?
 
-   A. TCPROS
+   A. The dispatcher receives every position.
 
-   B. ZeroMQ
+   B. The dispatcher receives nothing, and ROS 2 prints an error.
 
-   C. DDS (Data Distribution Service)
+   C. The dispatcher receives nothing, and no error is printed.
 
-   D. gRPC
+   D. The robotaxi stops publishing until a subscriber matches.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, DDS (Data Distribution Service)
+   **C**
 
-   ROS 2 uses DDS as its middleware layer for publish-subscribe
-   communication. DDS provides features like configurable QoS,
-   security, and real-time support. The default implementation in
-   ROS 2 Jazzy is Fast DDS by eProsima.
+   Rule 1: a publisher and a subscriber connect only when they use the same topic name. With different names, the dispatcher receives nothing, and no error is printed. The robotaxi goes on publishing (rule 3).
 
 
 .. admonition:: Question 2
    :class: hint
 
-   Which command creates a new ROS 2 C++ package named ``my_pkg``
-   with a dependency on ``rclcpp``?
+   You start the talker, then the listener 1 s later. The listener's first line is ``I heard: [Hello World: 2]``. Why not message 1?
 
-   A. ``ros2 create pkg my_pkg --type cmake --dep rclcpp``
+   A. The listener drops the first message of every topic.
 
-   B. ``ros2 pkg create --build-type ament_cmake my_pkg --dependencies rclcpp``
+   B. Message 1 was sent before the listener started, and nothing kept it for the listener.
 
-   C. ``colcon create my_pkg --depends rclcpp``
+   C. The talker sends message 1 only to ``ros2 topic echo``.
 
-   D. ``catkin_create_pkg my_pkg rclcpp``
+   D. The listener's queue size is 1.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B**, ``ros2 pkg create --build-type ament_cmake my_pkg --dependencies rclcpp``
+   **B**
 
-   The ``ros2 pkg create`` command is the standard way to create
-   packages. ``--build-type ament_cmake`` specifies a C++ package,
-   and ``--dependencies`` lists the required packages.
+   Rule 3: a publisher does not wait for subscribers. Message 1 was published before the listener existed, and with the default durability (volatile) the publisher keeps nothing for a subscriber that joins late.
 
 
 .. admonition:: Question 3
    :class: hint
 
-   In the following code, what does the argument ``10`` represent?
+   Which command counts the publishers and the subscribers of the topic ``/chatter``?
 
-   .. code-block:: cpp
+   A. ``ros2 topic echo /chatter``
 
-      publisher_ = this->create_publisher<std_msgs::msg::String>("chatter", 10);
+   B. ``ros2 topic hz /chatter``
 
-   A. The maximum message size in bytes
+   C. ``ros2 topic info /chatter``
 
-   B. The timer period in milliseconds
-
-   C. The QoS history depth (queue size)
-
-   D. The number of subscribers allowed
+   D. ``ros2 node list``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, The QoS history depth (queue size)
+   **C**
 
-   The second argument to ``create_publisher`` is the QoS depth,
-   which specifies how many messages to queue if the subscriber is
-   not consuming them fast enough. With ``KEEP_LAST`` history (the
-   default), the system keeps the last 10 messages.
+   ``ros2 topic info /chatter`` printed ``Publisher count: 1`` and ``Subscription count: 1``. ``echo`` prints each message, ``hz`` measures messages per second, and ``ros2 node list`` lists the nodes.
 
 
 .. admonition:: Question 4
    :class: hint
 
-   Which function keeps a ROS 2 node alive and processes callbacks?
+   The robotaxi publishes every 0.5 s. The dispatcher's callback takes 100 ms. What fraction of the time is the dispatcher busy?
 
-   A. ``rclcpp::loop(node)``
+   A. 5%
 
-   B. ``rclcpp::run(node)``
+   B. 20%
 
-   C. ``rclcpp::spin(node)``
+   C. 50%
 
-   D. ``rclcpp::execute(node)``
+   D. 100%
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, ``rclcpp::spin(node)``
+   **B**
 
-   ``rclcpp::spin()`` blocks and processes incoming callbacks (timer
-   callbacks, subscription callbacks, etc.) until the node is shut
-   down or the context is canceled.
+   The callback is busy 100 ms of every 500 ms: 100 / 500 = 20% of the time (scenario 2). It handles each message at once and waits 400 ms for the next.
 
 
 .. admonition:: Question 5
    :class: hint
 
-   What is the purpose of ``std::placeholders::_1`` when creating a
-   subscription with ``std::bind``?
+   The dispatcher's pickup point is at x = 10 m, y = 0 m. You send it ``{x: 4.0, y: 8.0}`` with ``ros2 topic pub``. What does it print?
 
-   A. It specifies the topic name
+   A. ``RoboTaxi at x = 4, 6 m from the pickup``
 
-   B. It is a placeholder for the first argument of the callback (the incoming message)
+   B. ``RoboTaxi at x = 4, 8 m from the pickup``
 
-   C. It sets the QoS depth to 1
+   C. ``RoboTaxi at x = 4, 10 m from the pickup``
 
-   D. It binds the node name to the callback
+   D. ``RoboTaxi at x = 4, 14 m from the pickup``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B**, It is a placeholder for the first argument of the callback
-   (the incoming message)
+   **C**
 
-   When using ``std::bind`` to bind a member function,
-   ``std::placeholders::_1`` reserves a slot for the first argument
-   that will be provided at call time, in this case, the received
-   message.
+   ``std::hypot(10.0 - 4.0, 0.0 - 8.0)``:
+
+   1. The robotaxi is 10 − 4 = 6 m short of the pickup point in x, and 8 m away from it in y.
+   2. 6\ :sup:`2` + 8\ :sup:`2` = 36 + 64 = 100.
+   3. The square root of 100 is 10.
 
 
 .. admonition:: Question 6
    :class: hint
 
-   Where should custom ``.msg`` files be placed in a ROS 2 package?
+   A node makes a timer with ``create_wall_timer`` in its constructor, but keeps it in a local variable, not in a data member. What happens?
 
-   A. In the ``src/`` directory
+   A. The timer runs as usual.
 
-   B. In the ``include/`` directory
+   B. The timer runs once, then stops.
 
-   C. In a ``msg/`` directory within the interface package
+   C. The timer is destroyed at the end of the constructor, and its callback never runs.
 
-   D. In the ``config/`` directory
+   D. The program does not compile.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, In a ``msg/`` directory within the interface package
+   **C**
 
-   Custom message definitions are placed in a ``msg/`` directory
-   inside a dedicated interface package. The
-   ``rosidl_generate_interfaces`` CMake macro generates the C++
-   headers from these ``.msg`` files.
+   ``create_wall_timer`` returns a ``std::shared_ptr``. When the local variable goes out of scope at the end of the constructor, the timer is destroyed. A test node with such a timer printed nothing in 1.5 s. Store the timer in a data member, as ``timer_`` in ``RoboTaxiNode``.
 
 
 .. admonition:: Question 7
    :class: hint
 
-   Which command shows all currently active topics and their message
-   types?
+   You want to use the message type ``geometry_msgs/msg/Point`` in C++. Which header and which class?
 
-   A. ``ros2 topic list -t``
+   A. ``<geometry_msgs/Point.h>`` and ``geometry_msgs::Point``
 
-   B. ``ros2 topic info --all``
+   B. ``<geometry_msgs/msg/point.hpp>`` and ``geometry_msgs::msg::Point``
 
-   C. ``ros2 topic show``
+   C. ``<geometry_msgs/msg/Point.hpp>`` and ``geometry_msgs/msg/Point``
 
-   D. ``ros2 msg list``
+   D. ``<rclcpp/point.hpp>`` and ``rclcpp::Point``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **A**, ``ros2 topic list -t``
+   **B**
 
-   The ``-t`` flag adds the message type next to each topic name.
-   Without ``-t``, only topic names are listed.
+   The header's name is the type's name in snake_case, ``point.hpp``, under ``<package>/msg/``. The C++ class name replaces each ``/`` with ``::``.
 
 
 .. admonition:: Question 8
    :class: hint
 
-   What is the correct way to source a ROS 2 workspace overlay after
-   building?
+   The ``install`` line is missing from ``CMakeLists.txt`` for a node, and the package builds. What does ``ros2 run`` print for that node?
 
-   A. ``source ~/ros2_ws/build/setup.bash``
+   A. ``Package 'robotaxi_demo' not found``
 
-   B. ``source ~/ros2_ws/install/setup.bash``
+   B. ``No executable found``
 
-   C. ``source ~/ros2_ws/src/setup.bash``
+   C. Nothing: the node runs from ``build``.
 
-   D. ``source ~/ros2_ws/devel/setup.bash``
+   D. A compiler error.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B**, ``source ~/ros2_ws/install/setup.bash``
+   **B**
 
-   The ``install/`` directory contains the built artifacts and the
-   ``setup.bash`` script that adds them to your environment. The
-   ``devel/`` directory is a ROS 1 concept and does not exist in
-   ROS 2.
+   ``install`` copies each executable to ``lib/${PROJECT_NAME}`` in the ``install`` folder, where ``ros2 run`` looks for it. With no ``add_executable`` or ``install`` line, ``ros2 run`` prints ``No executable found``. ``Package 'robotaxi_demo' not found`` is the symptom of a terminal that did not source ``install/setup.bash``.
 
 
 .. admonition:: Question 9
    :class: hint
 
-   Which CMake macro is used to generate C++ code from custom ``.msg``
-   files?
+   ``main`` makes a ``HelloNode`` but never calls ``rclcpp::spin``. What happens when you run it?
 
-   A. ``ament_generate_messages()``
+   A. The node logs its first line, and the program ends.
 
-   B. ``rosidl_generate_interfaces()``
+   B. The node runs until :kbd:`Ctrl+C`.
 
-   C. ``add_message_files()``
+   C. The program does not compile.
 
-   D. ``generate_messages()``
+   D. The node logs nothing.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B**, ``rosidl_generate_interfaces()``
+   **A**
 
-   ``rosidl_generate_interfaces()`` is the ROS 2 CMake macro that
-   invokes the ``rosidl`` toolchain to generate C++, Python, and
-   other language bindings from ``.msg``, ``.srv``, and ``.action``
-   files. Options C and D are ROS 1 macros.
+   The constructor logs the line, then ``main`` goes on to ``rclcpp::shutdown`` and returns. In the lecture, the program ended after 0.3 s. Without spinning, no callback ever runs.
 
 
 .. admonition:: Question 10
    :class: hint
 
-   What is the key advantage of ROS 2 over ROS 1 regarding the
-   ``roscore`` process?
+   In scenario 3, the dispatcher keeps a queue of 3 and spends 1.7 s in each callback. The robotaxi publishes every 0.5 s. While one callback runs, x = 7, 8, 9 and 10 arrive. What happens to x = 7?
 
-   A. ROS 2 requires ``roscore`` but it starts automatically
+   A. It waits, and the dispatcher handles it next.
 
-   B. ROS 2 replaces ``roscore`` with ``ros2core``
+   B. It is pushed out of the queue by x = 10 and never handled.
 
-   C. ROS 2 does not require a central master, nodes discover each
-      other through DDS
+   C. The robotaxi sends it again later.
 
-   D. ROS 2 uses multiple ``roscore`` instances for redundancy
+   D. The dispatcher handles it at the same time as x = 8.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, ROS 2 does not require a central master, nodes discover
-   each other through DDS
+   **B**
 
-   ROS 2 uses DDS discovery, which is fully distributed. There is no
-   single point of failure like the ROS 1 master (``roscore``). Nodes
-   automatically discover each other on the network.
+   The queue keeps the last 3 messages. When x = 10 arrives, the queue holds 8, 9 and 10, so x = 7 is dropped. The next callback takes x = 8. In 11 s, the dispatcher handled 7 of the 23 positions.
 
 
 ----
 
 
-True or False (Questions 11-15)
+True or False (Questions 11 to 15)
 ====================================================
 
 .. admonition:: Question 11
    :class: hint
 
-   **True or False:** A ROS 2 topic can have multiple publishers and
-   multiple subscribers at the same time.
+   **True or False:** A publisher waits until a subscriber connects before it publishes.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **True**
+   **False**
 
-   Topics support many-to-many communication. Any number of nodes can
-   publish to a topic, and any number of nodes can subscribe to it.
+   Rule 3: the robotaxi publishes every 0.5 s, whether or not a node listens. With no subscriber, each message is delivered to no one (scenario 1).
 
 
 .. admonition:: Question 12
    :class: hint
 
-   **True or False:** In ROS 2, you must call ``rclcpp::init()``
-   before creating any nodes.
+   **True or False:** The dispatcher can start before the robotaxi.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **True**
 
-   ``rclcpp::init()`` initializes the ROS 2 runtime context. It must
-   be called before creating nodes, publishers, subscribers, or any
-   other ROS 2 entities.
+   Rule 4: a subscriber does not need a publisher. The dispatcher waits, with no error, and its callback runs once a robotaxi starts publishing.
 
 
 .. admonition:: Question 13
    :class: hint
 
-   **True or False:** Custom message types in ROS 2 can only contain
-   primitive types (``int32``, ``float64``, ``string``, etc.) and
-   cannot include other message types as fields.
+   **True or False:** A publisher of ``geometry_msgs/msg/Point`` and a subscriber of ``std_msgs/msg/String`` on the same topic name connect, and the subscriber receives the messages.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **False**
 
-   Custom messages can contain other message types as fields. For
-   example, a custom message can include a ``geometry_msgs/msg/Point``
-   field or another custom message type. This allows building complex,
-   nested data structures.
+   Rule 2: a publisher and a subscriber connect only when the message type is the same. With the same name and different types, nothing arrives.
 
 
 .. admonition:: Question 14
    :class: hint
 
-   **True or False:** The command ``colcon build --packages-select
-   my_package`` builds only the specified package and its
-   dependencies.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False**
-
-   ``--packages-select`` builds **only** the specified package(s), not
-   their dependencies. To build a package along with its dependencies,
-   use ``--packages-up-to my_package`` instead.
-
-
-.. admonition:: Question 15
-   :class: hint
-
-   **True or False:** The ``RCLCPP_INFO`` macro in ROS 2 supports
-   ``printf``-style format strings.
+   **True or False:** ``rclcpp::QoS qos{10};`` already has the settings reliable, volatile and keep last 10.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **True**
 
-   ``RCLCPP_INFO`` and other ROS 2 logging macros accept
-   ``printf``-style format strings. For example:
-   ``RCLCPP_INFO(this->get_logger(), "Count: %d\n", count);``
+   In the lecture, a program compared ``rclcpp::QoS{10}`` with the same object after ``reliable().durability_volatile().keep_last(10)``, using ``==``: equal. The 10 in ``create_publisher`` is the queue size, with the default settings for everything else.
+
+
+.. admonition:: Question 15
+   :class: hint
+
+   **True or False:** ``rclcpp::spin(node)`` runs several callbacks at the same time, each on its own thread.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False**
+
+   ``rclcpp::spin(node)`` uses the single-threaded executor: one callback at a time, on the main thread. A slow callback delays the others.

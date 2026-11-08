@@ -11,132 +11,42 @@ References
 
         **ENPM702 L10: ROS 2 Foundations**
 
-        Covers the fundamentals of ROS 2: architecture (nodes, topics,
-        messages, computation graph), workspace and package creation with
-        ``colcon``, writing publisher and subscriber nodes in C++ using
-        ``rclcpp::Node`` inheritance, standard message types, custom
-        interface definitions (``.msg`` files), and essential CLI tools
-        (``ros2 run``, ``ros2 topic list``, ``ros2 topic echo``,
-        ``ros2 interface show``).
+        The three ways nodes talk, the computation graph, publish and subscribe with its four rules and four patterns, running and inspecting nodes, the files of a package (``package.xml``, ``CMakeLists.txt``), a first node as a function and as a class, spinning, messages, and a publisher and a subscriber on a robotaxi fleet. The background (what ROS 2 is, DDS, nodes and processes, the workspace, ``colcon``) is in the :doc:`l10_prereading`, which lists its own sources.
 
-        **Before next class**: complete the C++ exercises on publishers,
-        subscribers, and custom interfaces, and the quiz. Ensure you can
-        build and run a publisher/subscriber pair in your workspace.
+        **Before next class**: complete the L10 exercises and quiz, and build and run ``robotaxi_demo`` in your own workspace.
 
 
-.. dropdown:: ROS 2 Official Documentation
+.. dropdown:: Required Reading
+    :class-container: sd-border-secondary
+    :open:
+
+    - Open Robotics. `Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_. ROS 2 Documentation: Jazzy, 2024.
+    - Open Robotics. `Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_. ROS 2 Documentation: Jazzy, 2024.
+
+
+.. dropdown:: Recommended Reading
     :class-container: sd-border-secondary
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: ROS 2 Tutorials
-            :link: https://docs.ros.org/en/jazzy/Tutorials.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy: Tutorials**
-
-            Official ROS 2 tutorials covering installation, workspace
-            setup, package creation, nodes, topics, services, actions,
-            and more.
-
-            +++
-
-            - Beginner: CLI Tools
-            - Beginner: Client Libraries
-            - Intermediate and Advanced topics
-
-        .. grid-item-card:: rclcpp API Reference
-            :link: https://docs.ros.org/en/jazzy/p/rclcpp/
-            :class-card: sd-border-secondary
-
-            **rclcpp: ROS 2 C++ Client Library**
-
-            API reference for the ``rclcpp`` library, including
-            ``Node``, ``Publisher``, ``Subscription``, ``Timer``,
-            ``Service``, and other core classes.
-
-            +++
-
-            - ``rclcpp::Node`` class
-            - Publisher and Subscription creation
-            - Timer and callback management
-            - QoS configuration
-
-        .. grid-item-card:: Common Message Types
-            :link: https://docs.ros.org/en/jazzy/p/std_msgs/
-            :class-card: sd-border-secondary
-
-            **std_msgs: Standard Messages**
-
-            Reference for standard ROS 2 message types including
-            ``String``, ``Int32``, ``Float64``, ``Bool``, ``Header``,
-            and other primitive wrappers.
-
-            +++
-
-            - ``std_msgs/msg/String``
-            - ``std_msgs/msg/Int32``
-            - ``geometry_msgs/msg/Twist``
-            - ``sensor_msgs/msg/LaserScan``
-
-        .. grid-item-card:: Custom Interfaces
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html
-            :class-card: sd-border-secondary
-
-            **Creating Custom msg and srv Files**
-
-            Official tutorial for defining custom message and service
-            types, building interface packages with
-            ``rosidl_default_generators``, and using custom interfaces
-            in C++ and Python nodes.
-
-            +++
-
-            - ``.msg`` file syntax
-            - ``rosidl_generate_interfaces`` CMake macro
-            - ``package.xml`` dependencies
-            - Using generated headers in C++
+    - Steven Macenski, Tully Foote, Brian Gerkey, Chris Lalancette and William Woodall. `Robot Operating System 2: Design, architecture, and uses in the wild <https://doi.org/10.1126/scirobotics.abm6074>`_. *Science Robotics*, 7(66), eabm6074, 2022.
 
 
-.. dropdown:: colcon Documentation
+.. dropdown:: Sources Cited in the Lecture
     :class-container: sd-border-secondary
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
+    **ROS 2 Documentation: Jazzy** (Open Robotics, 2024)
 
-        .. grid-item-card:: colcon User Documentation
-            :link: https://colcon.readthedocs.io/en/released/user/quick-start.html
-            :class-card: sd-border-secondary
+    - `ROS 2 Documentation: Jazzy <https://docs.ros.org/en/jazzy/>`_
+    - `Services <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Services.html>`_
+    - `Actions <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Actions.html>`_
+    - `Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_
+    - `Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_
+    - `Different ROS 2 Middleware Vendors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Different-Middleware-Vendors.html>`_
+    - `Logging <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Logging.html>`_
+    - `Executors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html>`_
+    - `Interfaces <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Interfaces.html>`_
+    - `Quality of Service settings <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html>`_
+    - `Creating a workspace <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_
 
-            **colcon: Quick Start**
+    **Fast DDS**
 
-            Guide to using ``colcon`` for building ROS 2 workspaces,
-            including ``colcon build``, ``--packages-select``,
-            ``--packages-up-to``, ``--symlink-install``, and sourcing
-            the install space.
-
-            +++
-
-            - ``colcon build`` usage
-            - Package selection flags
-            - Sourcing the workspace overlay
-            - Build configuration options
-
-        .. grid-item-card:: ament_cmake Documentation
-            :link: https://docs.ros.org/en/jazzy/How-To-Guides/Ament-CMake-Documentation.html
-            :class-card: sd-border-secondary
-
-            **ament_cmake: Build System**
-
-            Reference for the ``ament_cmake`` build system used in
-            ROS 2 C++ packages, covering ``CMakeLists.txt`` structure,
-            ``find_package``, ``ament_target_dependencies``, and
-            executable installation.
-
-            +++
-
-            - ``CMakeLists.txt`` structure
-            - ``find_package`` and dependencies
-            - ``ament_target_dependencies``
-            - Installing executables and libraries
+    - eProsima. `Transport Layer <https://fast-dds.docs.eprosima.com/en/v2.14.0/fastdds/transport/transport.html>`_. Fast DDS 2.14 Documentation, 2024.

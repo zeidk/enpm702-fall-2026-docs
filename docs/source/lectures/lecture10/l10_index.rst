@@ -5,14 +5,7 @@ L10: ROS 2 Foundations
 Overview
 --------
 
-This is the first ROS 2 lecture in ENPM702. Students learn the core
-communication pattern in ROS 2: the publish-subscribe model. The lecture
-covers creating ROS 2 packages with ``colcon``, writing publisher and
-subscriber nodes in C++ using object-oriented programming (inheriting
-from ``rclcpp::Node``), working with standard message types, and
-defining custom interfaces (messages and services). By the end of this
-lecture, students will be able to build, run, and inspect ROS 2 nodes
-that communicate over topics.
+This is the first ROS 2 lecture in ENPM702. It is about topics, the way ROS 2 nodes send each other a stream of data. A fleet of robotaxis runs through the whole lecture: a robotaxi node publishes its position, and a dispatcher node subscribes to it and computes the distance to a pickup point. On the way, the lecture reads the build files of a package, writes a first node as a function and as a class, and shows what spinning does and what happens to messages when a subscriber is slow.
 
 Before class, read the :doc:`l10_prereading` and do its two steps. The lecture starts from it.
 
@@ -21,14 +14,14 @@ Before class, read the :doc:`l10_prereading` and do its two steps. The lecture s
 
    By the end of this lecture, you will be able to:
 
-   - Understand the ROS 2 architecture: nodes, topics, messages, and the computation graph.
-   - Create ROS 2 packages using ``ros2 pkg create`` with ``ament_cmake``.
-   - Build packages with ``colcon build`` and source the overlay workspace.
-   - Write publisher nodes that inherit from ``rclcpp::Node`` and publish messages on topics.
-   - Write subscriber nodes that inherit from ``rclcpp::Node`` and process incoming messages via callbacks.
-   - Use standard message types (``std_msgs``, ``geometry_msgs``) in publisher/subscriber nodes.
-   - Define custom message types (``.msg`` files) in a dedicated interface package.
-   - Use ROS 2 CLI tools to inspect the system: ``ros2 topic list``, ``ros2 topic echo``, ``ros2 topic info``, ``ros2 node list``.
+   - Tell topics, services and actions apart, and read a computation graph.
+   - State the four rules of a topic, and recognize its four patterns.
+   - Start nodes with ``ros2 run`` and ``ros2 launch``, and inspect them with ``ros2 node``, ``ros2 topic`` and ``ros2 interface``.
+   - Read a package's ``package.xml`` and ``CMakeLists.txt``, and say where ``ros2 run`` finds an executable.
+   - Write a node as a class derived from ``rclcpp::Node``, and keep it alive with ``rclcpp::spin``.
+   - Use a standard message type in C++, and declare its package in both build files.
+   - Write a publisher with a timer, and a subscriber with a callback.
+   - Explain what happens to messages with no subscriber, a fast subscriber and a slow one.
 
 .. toctree::
    :hidden:
@@ -44,14 +37,6 @@ Before class, read the :doc:`l10_prereading` and do its two steps. The lecture s
 Next Steps
 ----------
 
-- In the next lecture (**L11: Parameters, Launch Files, Executors**), we will cover:
-
-  - Declaring and using parameters in ROS 2 nodes.
-  - Writing launch files to start multiple nodes.
-  - Understanding executors and callback groups.
-  - Configuring nodes at runtime without recompilation.
-
-- Before next class: complete the C++ exercises on publishers,
-  subscribers, and custom interfaces, and the quiz.
-- Make sure you can build and run a basic publisher/subscriber pair in
-  your ROS 2 workspace.
+- In the next lecture (**L11: ROS 2 Configuration and Orchestration**), we will cover message types of your own, parameters, launch files and executors.
+- Before next class: complete the L10 exercises and quiz, and build and run ``robotaxi_demo`` in your own workspace.
+- Required reading: `Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_ and `Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_.

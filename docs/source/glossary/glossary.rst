@@ -2307,6 +2307,172 @@ L9: OOP Advanced
    <p class="glossary-also">Also used here: <a href="#term-Abstraction" target="_blank" rel="noopener">Abstraction</a> (L8), <a href="#term-Access-Specifier" target="_blank" rel="noopener">Access Specifier</a> (L8), <a href="#term-auto" target="_blank" rel="noopener">auto</a> (L2), <a href="#term-Destructor" target="_blank" rel="noopener">Destructor</a> (L8), <a href="#term-Function-Overloading" target="_blank" rel="noopener">Function Overloading</a> (L5), <a href="#term-Invariant" target="_blank" rel="noopener">Invariant</a> (L8), <a href="#term-LeakSanitizer" target="_blank" rel="noopener">LeakSanitizer</a> (L7), <a href="#term-Member-Initializer-List" target="_blank" rel="noopener">Member Initializer List</a> (L8), <a href="#term-Namespace" target="_blank" rel="noopener">Namespace</a> (L2), <a href="#term-Rule-of-Zero" target="_blank" rel="noopener">Rule of Zero</a> (L8), <a href="#term-Sanitizer" target="_blank" rel="noopener">Sanitizer</a> (L3), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-std-unique_ptr" target="_blank" rel="noopener">std::unique_ptr</a> (L7), <a href="#term-std-weak_ptr" target="_blank" rel="noopener">std::weak_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6), <a href="#term-Undefined-Behavior" target="_blank" rel="noopener">Undefined Behavior</a> (L2), <a href="#term-use_count" target="_blank" rel="noopener">use_count</a> (L7), <a href="#term-using-Declaration" target="_blank" rel="noopener">using Declaration</a> (L2).</p>
 
 
+.. _g-l10:
+
+L10: ROS 2 Foundations
+======================
+
+.. glossary::
+
+   Action
+      A long-running request between ROS 2 nodes. While it runs, it reports
+      its progress (feedback), and the caller can cancel it, as in "Drive to
+      the pickup point."
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   colcon
+      The command-line tool that builds the packages of a ROS 2 workspace
+      (collective construction). It works out the build order from their
+      dependencies. Run it from the workspace's top folder: ``colcon build``.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Computation Graph
+      The network of running ROS 2 nodes and the links between them. The nodes
+      are the vertices; the topics, services and actions are the edges.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   DataReader
+      The DDS object a ROS 2 subscriber makes. It reads the messages of a
+      topic from the network.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   DataWriter
+      The DDS object a ROS 2 publisher makes. It writes the messages of a
+      topic to the network. A DataWriter and a DataReader connect only with
+      the same topic name, the same type, and compatible QoS settings.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   DDS
+      Data Distribution Service: the industry-standard middleware that moves
+      ROS 2 messages. It finds the nodes (discovery), carries each message
+      (transport), and applies the delivery settings (Quality of Service).
+      Jazzy uses Fast DDS by default.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Distributed Architecture
+      Several programs, each run as its own process, on one computer or
+      several. They do not call each other's functions: they send each other
+      messages. ROS 2 works this way.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Domain ID
+      A number that groups ROS 2 nodes: a node finds only the nodes with the
+      same domain ID. The default is 0; set your own, 0 to 101, with ``export
+      ROS_DOMAIN_ID=``\ *number*.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Launch File
+      A file that lists the nodes to start and their settings, so ``ros2
+      launch`` starts them all with one command. It is written in Python, XML
+      or YAML.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Message
+      The data a ROS 2 node sends on a topic, one piece at a time. Its type,
+      such as ``geometry_msgs/msg/Point``, is written in a ``.msg`` file, and
+      each field has a name and a type. In C++, a message is a struct:
+      ``msg.x`` reads and writes the field ``x``.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Monolithic Architecture
+      One program, run as one process. Its functions and classes call each
+      other.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Node
+      A program, or a part of one, that does one job and exchanges data with
+      other nodes, through topics, services and actions. In C++, a class
+      derived from ``rclcpp::Node``.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Overlay
+      A ROS 2 workspace sourced on top of the ROS 2 installation (the
+      underlay). When a package is in both, the overlay wins.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Package
+      One folder of nodes, libraries, settings and launch files that does one
+      thing, such as ``demo_nodes_cpp``. Its ``package.xml`` and
+      ``CMakeLists.txt`` describe it, and ``ros2 pkg create`` makes one.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Process
+      A program that is running. The operating system gives each process its
+      own memory and a number, its process ID (pid).
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Publisher
+      The object a ROS 2 node uses to send messages on one topic. In C++,
+      ``create_publisher`` makes it, and ``publish`` sends a copy of a message
+      to every subscriber.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Quality of Service
+      The delivery settings of a ROS 2 publisher or subscriber (QoS). The
+      default is reliable (a lost message is sent again), volatile (nothing is
+      kept for a late subscriber) and keep last, with the queue size given to
+      ``create_publisher``.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   rclcpp
+      The ROS Client Library for C++: the library for writing ROS 2 nodes in
+      C++, with one header, ``<rclcpp/rclcpp.hpp>``, and one namespace,
+      ``rclcpp::``.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   ROS 2
+      Robot Operating System 2: a set of libraries and tools for robot
+      software. It is not an operating system: it runs on one, here Ubuntu
+      24.04.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   ROS 2 Workspace
+      A folder that keeps the source code (``src``), the build files
+      (``build``), the installed packages (``install``) and the build logs
+      (``log``) of ROS 2 packages in one place.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+   Serialization
+      Turning a message into bytes, to send it. DDS serializes each message,
+      and the receiving side turns the bytes back into a message
+      (deserialization).
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Service
+      A request-response exchange between ROS 2 nodes: one request, one
+      response. The caller waits for the response, so a service must return
+      quickly.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Spinning
+      Keeping a ROS 2 node alive: the node waits for events (a message, a
+      timer, a request) and runs the callback of each one.
+      ``rclcpp::spin(node)`` spins until :kbd:`Ctrl+C`, one callback at a
+      time.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Subscriber
+      The object a ROS 2 node uses to receive the messages of one topic. In
+      C++, ``create_subscription`` makes it, with a callback that runs once
+      for each message.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Topic
+      A name, such as ``/robotaxi/position``, that ROS 2 nodes use to exchange
+      messages of one type. A publisher sends messages to it; every subscriber
+      of it receives them.
+      :doc:`L10 </lectures/lecture10/l10_lecture>`
+
+   Underlay
+      The ROS 2 installation, ``/opt/ros/jazzy``, under a sourced workspace.
+      It gives the terminal ``ros2`` and the installed packages.
+      :doc:`L10 Pre-Reading </lectures/lecture10/l10_prereading>`
+
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-Inheritance" target="_blank" rel="noopener">Inheritance</a> (L9), <a href="#term-Lambda" target="_blank" rel="noopener">Lambda</a> (L6), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6).</p>
+
+
 .. _g-vc:
 
 Reading: Version Control
