@@ -485,11 +485,18 @@ A Topic Works Like a Bus
 The ROS 2 documentation compares publish/subscribe to a **bus** in electronics: shared wires that many devices connect to, so every device reads what one device sends (`Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_). A topic has no wire: DDS sends each subscriber its own copy of every message.
 
 .. figure:: /_static/images/l10/computer_buses.png
-   :alt: A computer bus diagram. A box labeled CPU on the left sends three wide arrows to the right: a yellow address bus, a light blue data bus and a pink control bus. Each bus branches down into four boxes labeled RAM, ROM, I/O and Other, so all four connect to the same three buses.
+   :alt: A computer bus diagram. A tall box labeled CPU on the left. Three wide buses run to the right: a yellow address bus with one arrowhead, pointing away from the CPU, then a light blue data bus and a pink control bus with arrowheads at both ends. Each bus branches down into four boxes labeled RAM, ROM, I/O and Other, so all four connect to the same three buses.
    :align: center
    :width: 70%
 
-   A device bus: every device connects to the same wires. Image: `Computer buses <https://commons.wikimedia.org/wiki/File:Computer_buses.svg>`_, by German, Wikimedia Commons, public domain.
+   A device bus: every device connects to the same wires. Redrawn from `Computer buses <https://commons.wikimedia.org/wiki/File:Computer_buses.svg>`_, by German, Wikimedia Commons, public domain.
+
+.. figure:: /_static/images/l10/topic_copies.png
+   :alt: The node robotaxi on the left. To its right, an empty dashed band with tag 1 and the topic name /robotaxi/position above it. Three separate arrows leave robotaxi, run through the band and turn down, each to its own node below: dispatcher, logger and map_view. Each arrow carries its own small box reading Point, each marked with tag 2.
+   :align: center
+   :width: 70%
+
+   A topic has no wire. (1) The topic: a name, not a wire. (2) One copy of the ``Point`` per subscriber. ``logger`` and ``map_view`` are added for this example.
 
 One position, from the robotaxi to the dispatcher:
 
@@ -1368,31 +1375,6 @@ The Life of a Node, and How to Log
 
 Say what happened and where: ``Camera initialized with resolution 640x480``. The ``_STREAM`` macros take ``<<``, as ``std::cout`` does; ``RCLCPP_INFO`` takes a ``printf`` format instead.
 
-Common Mistakes, and What You See
-"""""""""""""""""""""""""""""""""
-
-Each row was run on purpose, to record the symptom.
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40 60
-   :class: compact-table
-
-   * - Mistake
-     - What you see
-   * - The terminal did not source ``install/setup.bash`` after the build
-     - ``Package 'robotaxi_demo' not found``
-   * - No ``add_executable`` or ``install`` line for the node
-     - ``No executable found``
-   * - No ``rclcpp::spin`` in ``main``
-     - The node logs its first line, and the program ends after 0.3 s
-   * - Two nodes with the same name
-     - ``ros2 node list`` prints ``WARNING: Be aware that there are nodes in the graph that share an exact name``
-   * - A node made before ``rclcpp::init``
-     - The program aborts: ``rclcpp::exceptions::RCLInvalidArgument``, the context is null
-
-Two nodes with one name both run. The warning goes on: this "can have unintended side effects". Give each node its own name.
-
 Node Spinning
 -------------
 
@@ -1414,15 +1396,20 @@ Threads: Who Runs main and the Callbacks
 - While it is inside ``spin``, the main thread runs the node's callbacks. One thread means one callback at a time.
 - A program can start more threads, with ``std::thread`` or a multi-threaded executor, to run callbacks at the same time. That comes in a later lecture.
 
-Why Spin, and How
-^^^^^^^^^^^^^^^^^
+Spinning: the Main Thread Runs the Callbacks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/l10/spin.png
-   :alt: From the left, a wavy line labeled main thread leads to an arrow labeled rclcpp::spin(node) that enters a circle. The circle holds the word callbacks and an arrow that goes around it. From the right of the circle, an arrow labeled with the keys Ctrl and C leaves to a second wavy line labeled main thread.
+**Spinning** is a loop that the main thread runs inside ``rclcpp::spin(node)``.
+
+.. figure:: /_static/images/l10/spin_main_thread.png
+   :alt: On the left, a wavy line labeled main thread, with init, makes the node, leads to an arrow labeled rclcpp::spin(node) that enters a circle. Inside the circle: main thread, then 1. wait for an event, 2. run its callback, 3. repeat; an arrow runs around the circle. From the right of the circle, an arrow marked with the keys Ctrl and C leads to a second wavy line labeled main thread, with rclcpp::shutdown().
    :align: center
    :width: 90%
 
-   ``rclcpp::spin`` takes the main thread into a loop of callbacks until :kbd:`Ctrl+C`.
+   The main thread stays inside ``rclcpp::spin`` until :kbd:`Ctrl+C`, then runs ``rclcpp::shutdown()``.
+
+- ``rclcpp::spin(node)`` makes "a default single-threaded executor" (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_). Its loop runs in the thread that called it, the main thread: "block until work comes in, execute it, and then repeat" (`rclcpp, single_threaded_executor.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors/single_threaded_executor.hpp>`_). Work is a message that arrives, a timer that is due, or a request.
+- One thread runs every callback, one at a time: a slow callback delays the others.
 
 **Why spin?**
 
@@ -1471,7 +1458,9 @@ The ROS 2 documentation: ``rclcpp::spin(node)`` "expands to an instantiation and
 Spinning Alternatives
 ^^^^^^^^^^^^^^^^^^^^^
 
-**Spin some:** run the callbacks that are ready, then do other work.
+``rclcpp::spin(node)`` is the default: it returns only after :kbd:`Ctrl+C`.
+
+**Spin some:** ``rclcpp::spin_some(node)`` runs the callbacks that are ready now, then returns. **Use it when** ``main`` has its own loop with other work.
 
 .. code-block:: cpp
 
@@ -1493,7 +1482,7 @@ Spinning Alternatives
 
 The laps are 100 ms apart: the sleep. ``rclcpp::ok()`` turns false after :kbd:`Ctrl+C`.
 
-**An executor:** the loop as an object, for several nodes or several threads.
+**An executor:** the same loop as an object. **Use it when** one program spins several nodes, or needs several threads (a later lecture).
 
 .. code-block:: cpp
 
@@ -1504,6 +1493,33 @@ The laps are 100 ms apart: the sleep. ``rclcpp::ok()`` turns false after :kbd:`C
 .. note::
 
    Use ``rclcpp::spin`` for a simple node. Use an executor when you spin several nodes or need threads. Executors come in a later lecture.
+
+rclcpp also has ``spin_all``, which runs all the work that is ready within a time limit, and ``spin_until_future_complete``, which spins until one result arrives (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_).
+
+Common Mistakes, and What You See
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each row was run on purpose, to record the symptom.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+   :class: compact-table
+
+   * - Mistake
+     - What you see
+   * - The terminal did not source ``install/setup.bash`` after the build
+     - ``Package 'robotaxi_demo' not found``
+   * - No ``add_executable`` or ``install`` line for the node
+     - ``No executable found``
+   * - No ``rclcpp::spin`` in ``main``
+     - The node logs its first line, and the program ends after 0.3 s
+   * - Two nodes with the same name
+     - ``ros2 node list`` prints ``WARNING: Be aware that there are nodes in the graph that share an exact name``
+   * - A node made before ``rclcpp::init``
+     - The program aborts: ``rclcpp::exceptions::RCLInvalidArgument``, the context is null
+
+Two nodes with one name both run. The warning goes on: this "can have unintended side effects". Give each node its own name.
 
 Messages
 --------
@@ -1798,6 +1814,13 @@ Publishers
 ----------
 
 A **publisher** is the object a node uses to send messages on one topic. One publisher, many subscribers.
+
+.. figure:: /_static/images/l10/publisher_steps.png
+   :alt: A flowchart of the publisher's steps. Three boxes in a row, joined by arrows: tag 1, Create the publisher, with message type, topic name, queue size; tag 2, Create a message and fill its fields; tag 3, Publish, to every subscriber. From the Publish box, an arrow loops back to the second box, with tag 4 and the label Repeat, often from a timer.
+   :align: center
+   :width: 90%
+
+   The publisher's steps: step 1 runs once; steps 2 and 3 repeat.
 
 **The publisher's steps**
 
