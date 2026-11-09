@@ -216,7 +216,7 @@ Above the arrow, a **topic**: a name that nodes use to exchange one type of mess
 
 **Issues**
 
-- Each message is copied: about 0.3 ms per message, measured in class with the robotaxi and the dispatcher.
+- Each message is copied: about 0.2 ms per message, measured with the robotaxi and the dispatcher.
 - A slow receiver misses messages (shown in class with a slow subscriber).
 - More programs to start and watch.
 - Both sides must use the same type.
@@ -249,11 +249,43 @@ What Runs under Your Node: the ROS 2 Layers
 
 **How to read it:** top to bottom, each layer uses the one below it (the dashed arrows). The ROS 2 documentation says the APIs "are stacked such that the typical ROS user will use the client library API, e.g. rclcpp"; the client libraries "use the rcl interface", and "the rcl implementation in turn uses the rmw API" (`Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_).
 
-- You write only the top layer: your nodes.
-- ``rcl``, shared by every client library, lets a C++ node and a Python node exchange the same messages.
-- ``rmw`` lets the same node run on any DDS without a code change.
+You write only the top layer: your nodes.
 
 **Middleware** is software that finds other programs and moves data between them. Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
+
+What Each Layer Does
+^^^^^^^^^^^^^^^^^^^^
+
+Each layer has one job. The last column follows one message from the robotaxi to the dispatcher.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 17 47 36
+   :class: compact-table
+
+   * - Layer
+     - What it does
+     - One message
+   * - Application
+     - Your nodes and the topics, services and actions between them.
+     - ``RoboTaxiNode`` calls ``publisher_->publish(msg)``.
+   * - Client library
+     - The API in your language: nodes, publishers, timers. It also spins: it runs your callbacks. The ROS 2 documentation says ``rcl`` "does not address" the execution model "at all"; each client library provides it.
+     - ``rclcpp`` passes the message to ``rcl``.
+   * - ``rcl``
+     - C code that every client library shares, so client libraries "can be smaller and more consistent with each other". It never talks to DDS directly.
+     - ``rcl`` passes it to ``rmw``.
+   * - ``rmw``
+     - It is "the minimal set of primitive middleware capabilities needed to build ROS on top", with one package per DDS. A node runs on another DDS without a code change.
+     - ``rmw_fastrtps_cpp`` turns it into Fast DDS calls.
+   * - DDS
+     - Finds the other nodes and moves the messages (next section).
+     - Fast DDS sends it to the dispatcher.
+   * - OS and network
+     - Ubuntu runs each node. Ethernet or Wi-Fi joins the computers.
+     - On two computers, it crosses the network.
+
+Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
 
 What DDS Does: Find the Nodes, Move the Messages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1790,32 +1822,6 @@ Send a Message from the Terminal: ros2 topic pub
 - ``--once`` (or ``-1``) sends one message and stops. Without it, the command sends one message per second until :kbd:`Ctrl+C`.
 - ``--rate 10`` sends 10 per second. ``--times 5`` sends 5 and stops.
 
-Discussion: Investigate a Program You Did Not Write
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-A company lends you its robotaxi simulator. It runs on the lab computer and publishes the state of its robotaxis. You have no source code and no documentation. Your job: a node that warns the dispatcher when a robotaxi's battery is low. Before you write it, which ``ros2`` command answers each question?
-
-1. Is anything running? Which nodes?
-2. Which topic carries the battery level, and with which message type?
-3. Which fields does that type have, and in which units?
-4. Who publishes it, and with which delivery settings?
-5. What do the real values look like?
-6. How often does a message arrive?
-7. Which package must your node depend on?
-
-.. dropdown:: Answers
-   :class-container: sd-border-secondary
-
-   The names in this story are chosen for the example. The commands are the ones of this lecture.
-
-   1. ``ros2 node list``. If nothing shows, the simulator and your terminal do not share a domain ID or a network (`Discovery in Practice: Domain IDs and Your Network`_).
-   2. ``ros2 topic list -t``. Say it shows a battery topic with the type ``sensor_msgs/msg/BatteryState``. ``ros2 node info`` on the simulator's node lists everything it publishes.
-   3. ``ros2 interface show sensor_msgs/msg/BatteryState``. The trap: ``percentage`` is "Charge percentage on 0 to 1 range", and NaN "if unmeasured". Below 20 % means below 0.2, and your node must check for NaN.
-   4. ``ros2 topic info`` with ``--verbose``. It gives the publishing node and its QoS, such as ``Reliability: RELIABLE`` (measured on the talker). Your subscriber must use settings that match.
-   5. ``ros2 topic echo`` with ``--once``: one real message, so you see the actual numbers before you trust the field names.
-   6. ``ros2 topic hz``. The rate tells how fast your callback must be, or messages queue up (scenario 3).
-   7. The first part of the type, ``sensor_msgs``. It goes in ``package.xml`` and ``CMakeLists.txt``, as ``geometry_msgs`` did.
-
 Publishers
 ----------
 
@@ -1960,8 +1966,8 @@ In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(r
 
 .. code-block:: text
 
-   [INFO] [1793942784.416393304] [robotaxi]: Published x = 0
-   [INFO] [1793942784.916529421] [robotaxi]: Published x = 1
+   [INFO] [1794204168.548507563] [robotaxi]: Published x = 0
+   [INFO] [1794204169.048440989] [robotaxi]: Published x = 1
 
 **Terminal 2:** ``ros2 topic hz /robotaxi/position``
 
@@ -2003,12 +2009,19 @@ Subscribers
 
 A **subscriber** is the object a node uses to receive the messages of one topic. It runs a callback for each message, so the node reacts to data that other nodes publish.
 
+.. figure:: /_static/images/l10/subscriber_steps.png
+   :alt: A flowchart of the subscriber's steps. Four boxes in a row, joined by arrows: tag 1, Create the subscription, with message type, topic name, queue size, callback; tag 2, Define the callback, it handles one message; tag 3, Spin, wait for a message; tag 4, Run the callback, on that message. From the fourth box, an arrow loops back to Spin, labeled Repeat for each message.
+   :align: center
+   :width: 90%
+
+   The subscriber's steps: steps 3 and 4 repeat for each message.
+
 **The subscriber's steps**
 
 1. **Create the subscription:** message type, topic name, queue size, callback.
 2. **Define the callback:** the function that handles one message.
-3. **Spin:** keep the node alive to receive.
-4. **Process:** the callback runs for each message as it arrives.
+3. **Spin:** wait for a message.
+4. **Run the callback** on that message, then go back to step 3.
 
 **Common uses**
 
@@ -2118,11 +2131,10 @@ The Callback: the Distance to the Pickup Point
    void DispatcherNode::on_position(const geometry_msgs::msg::Point& msg) {
      const double distance{
          std::hypot(pickup_x_ - msg.x, pickup_y_ - msg.y)};
-     RCLCPP_INFO_STREAM(get_logger(), "RoboTaxi at x = " << msg.x << ", "
-                                      << distance << " m from the pickup");
+     RCLCPP_INFO_STREAM(get_logger(), distance << " m from the pickup");
    }
 
-``std::hypot(a, b)``, from ``<cmath>``, is the square root of a\ :sup:`2` + b\ :sup:`2`. For ``{x: 7.0, y: 4.0}``, the robotaxi is 3 m from the pickup in x and 4 m in y: the square root of 9 + 16 is 5, so the dispatcher prints ``RoboTaxi at x = 7, 5 m from the pickup``.
+``std::hypot(a, b)``, from ``<cmath>``, is the square root of a\ :sup:`2` + b\ :sup:`2`. For ``{x: 7.0, y: 4.0}``, the robotaxi is 3 m from the pickup in x and 4 m in y: the square root of 9 + 16 is 5, so the dispatcher prints ``5 m from the pickup``.
 
 .. warning::
 
@@ -2138,9 +2150,9 @@ Run the Complete System
 
 .. code-block:: text
 
-   [INFO] [...784.416688] [dispatcher]: RoboTaxi at x = 0, 10 m from the pickup
-   [INFO] [...784.916901] [dispatcher]: RoboTaxi at x = 1, 9 m from the pickup
-   [INFO] [...785.416755] [dispatcher]: RoboTaxi at x = 2, 8 m from the pickup
+   [INFO] [...168.548705] [dispatcher]: 10 m from the pickup
+   [INFO] [...169.048546] [dispatcher]: 9 m from the pickup
+   [INFO] [...169.548548] [dispatcher]: 8 m from the pickup
 
 **Terminal 3:** ``ros2 topic info /robotaxi/position``
 
@@ -2151,7 +2163,7 @@ Run the Complete System
    Subscription count: 1
 
 - Also in terminal 3: ``ros2 topic list`` shows the topic, ``ros2 topic echo /robotaxi/position`` prints each position, and ``ros2 topic hz /robotaxi/position`` gives 2.000 per second.
-- The robotaxi logged ``Published x = 0`` at ...784.416393 s. The dispatcher logged x = 0 at ...784.416688 s: 784.416688 − 784.416393 = 0.000295 s. The message took about 0.3 ms, on one computer.
+- The robotaxi logged ``Published x = 0`` at ...168.548507 s. The dispatcher logged ``10 m from the pickup`` for it at ...168.548705 s: 168.548705 − 168.548507 = 0.000198 s. The message took about 0.2 ms, on one computer.
 
 When nothing arrives, check the topic names first: ``ros2 topic list`` shows what each side uses (rule 1).
 
@@ -2282,39 +2294,90 @@ The robotaxi publishes at 2 Hz, every 0.5 s, queues of 10 (the code's values). T
 Scenario 3: a Slow Subscriber Loses Messages
 """"""""""""""""""""""""""""""""""""""""""""
 
-A test version of the dispatcher keeps a queue of 3 and spends 1.7 s in each callback (both chosen for this example). The robotaxi publishes every 0.5 s. Measured:
+A test version of the dispatcher keeps a queue of 3 and spends 1.7 s in each callback (both chosen for this example). The robotaxi publishes every 0.5 s. The callback end times and the message each callback takes were measured; a full queue pushes out its oldest message.
 
 .. list-table::
    :header-rows: 1
-   :widths: 24 28 26 22
+   :widths: 14 25 31 30
    :class: compact-table
 
-   * - A callback ends at
-     - Published while it ran
-     - Queue: the last 3
-     - Next one taken
+   * - Time
+     - Publisher
+     - Subscriber's queue
+     - Subscriber's callback
+   * - 0.0 s
+     - Publishes x = 0
+     - [ ] then [0] then [ ]
+     - Starts on x = 0 at once
+   * - 0.5 to 1.5 s
+     - Publishes x = 1, 2, 3
+     - [1, 2, 3]
+     - Still on x = 0
    * - 1.71 s
-     - x = 1, 2, 3
-     - 1, 2, 3
-     - x = 1
+     -
+     - [2, 3]
+     - Finishes x = 0; starts x = 1
+   * - 2.0 to 3.0 s
+     - Publishes x = 4, 5, 6
+     - [4, 5, 6]; x = 2, 3 pushed out
+     - Still on x = 1
    * - 3.41 s
-     - x = 4, 5, 6
-     - 4, 5, 6
-     - x = 4
+     -
+     - [5, 6]
+     - Finishes x = 1; starts x = 4
+   * - 3.5 to 5.0 s
+     - Publishes x = 7 to 10
+     - [8, 9, 10]; x = 5, 6, 7 pushed out
+     - Still on x = 4
    * - 5.11 s
-     - x = 7, 8, 9, 10
-     - 8, 9, 10
-     - x = 8
-   * - 6.81 s
-     - x = 11, 12, 13
-     - 11, 12, 13
-     - x = 11
+     -
+     - [9, 10]
+     - Finishes x = 4; starts x = 8
+
+Scenario 3: What the Slow Subscriber Lost
+"""""""""""""""""""""""""""""""""""""""""
 
 .. admonition:: Conclusion
    :class: tip
 
-   In 11 s the robotaxi published 23 positions, x = 0 to 22. The dispatcher handled 7: x = 0, 1, 4, 8, 11, 15 and 18. At 10.21 s it started on x = 18, published at 9.00 s: 1.2 s old.
+   In 11 s the robotaxi published 23 positions, x = 0 to 22. The dispatcher handled 7 of them. At 10.2 s it started on x = 18, published at 9.0 s: 1.2 s old.
 
-- **Data loss:** x = 7 was pushed out by x = 10 before the callback could take it. Each 1.7 s callback sees 3 or 4 new messages, and keeps 3.
+Each box is one callback: the message it handled and the time it started.
+
+.. figure:: /_static/images/l10/slow_sub_flow.png
+   :alt: Flowchart of seven boxes in a row, joined by arrows: x = 0 at 0.0 s, x = 1 at 1.7 s, x = 4 at 3.4 s, x = 8 at 5.1 s, x = 11 at 6.8 s, x = 15 at 8.5 s, x = 18 at 10.2 s. Under each arrow, the messages pushed out before the next callback: none; 2, 3; 5, 6, 7; 9, 10; 12, 13, 14; 16, 17.
+   :align: center
+   :width: 100%
+
+   The seven callbacks of the slow dispatcher, and the messages pushed out between them.
+
+- **Data loss:** each 1.7 s callback sees 3 or 4 new messages, and the queue keeps 3.
 - **Stale data:** the dispatcher works on a position that is 1.2 s old.
 - **Fixes:** a shorter callback, a lower publish rate, or a larger queue. The larger queue only delays the loss: each message still takes 1.7 s.
+
+Investigate a Program You Did Not Write
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You must write a node that warns the dispatcher when a robotaxi's battery is low. The robotaxi simulator comes with no source code and no documentation. The topic name ``/robotaxi/battery`` is chosen for this example. A ``ros2`` command answers each question:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 38 62
+   :class: compact-table
+
+   * - Question
+     - Command and result
+   * - 1. Which nodes are running?
+     - ``ros2 node list``. If nothing shows, the simulator and your terminal do not share a domain ID or a network (`Discovery in Practice: Domain IDs and Your Network`_).
+   * - 2. Which topic has the battery level?
+     - ``ros2 topic list -t``: its type is ``sensor_msgs/msg/BatteryState``. ``ros2 node info`` on the simulator's node lists everything it publishes.
+   * - 3. Which fields does the type have?
+     - ``ros2 interface show sensor_msgs/msg/BatteryState``: ``percentage`` goes from 0 to 1, NaN if not measured ("Charge percentage on 0 to 1 range (If unmeasured NaN)"). Below 20 % means below 0.2, and your node must check for NaN.
+   * - 4. Who publishes it, and how?
+     - ``ros2 topic info /robotaxi/battery --verbose``: the publishing node and its QoS, such as ``Reliability: RELIABLE``. Your subscriber must use settings that match.
+   * - 5. What do real values look like?
+     - ``ros2 topic echo /robotaxi/battery --once``: one real message, so you see the actual numbers before you trust the field names.
+   * - 6. How often do messages arrive?
+     - ``ros2 topic hz /robotaxi/battery``. The rate tells how fast your callback must be, or messages queue up (scenario 3).
+   * - 7. Which package to depend on?
+     - ``sensor_msgs``, the first part of the type. It goes in ``package.xml`` and ``CMakeLists.txt``, as ``geometry_msgs`` did.

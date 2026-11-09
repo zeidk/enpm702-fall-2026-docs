@@ -107,13 +107,13 @@ Multiple Choice (Questions 1 to 10)
 
    The dispatcher's pickup point is at x = 10 m, y = 0 m. You send it ``{x: 4.0, y: 8.0}`` with ``ros2 topic pub``. What does it print?
 
-   A. ``RoboTaxi at x = 4, 6 m from the pickup``
+   A. ``6 m from the pickup``
 
-   B. ``RoboTaxi at x = 4, 8 m from the pickup``
+   B. ``8 m from the pickup``
 
-   C. ``RoboTaxi at x = 4, 10 m from the pickup``
+   C. ``10 m from the pickup``
 
-   D. ``RoboTaxi at x = 4, 14 m from the pickup``
+   D. ``14 m from the pickup``
 
 .. dropdown:: Answer
    :class-container: sd-border-success

@@ -497,6 +497,49 @@ You should see the talker publishing messages and the listener
 receiving them. Press :kbd:`Ctrl+C` in both terminals to stop.
 
 
+VS Code for ROS 2
+-----------------
+
+VS Code underlines errors and completes names (IntelliSense) only when it
+finds the headers your code includes. For ROS 2 code, those are in
+``/opt/ros/jazzy``. The extension Robot Developer Extensions for ROS 2 writes
+these paths for you. Installing extensions and the ``.vscode`` folder are
+covered in :doc:`/reading_material/vscode_cmake/vcm_index`.
+
+1. Install the C/C++ extension and the ROS 2 extension:
+
+   .. code-block:: bash
+
+      code --install-extension ms-vscode.cpptools
+      code --install-extension ranch-hand-robotics.rde-ros-2
+
+   Marketplace pages: `C/C++ <https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools>`__,
+   `Robot Developer Extensions for ROS 2
+   <https://marketplace.visualstudio.com/items?itemName=Ranch-Hand-Robotics.rde-ros-2>`__.
+
+2. Open your workspace from a terminal where ROS 2 is set up:
+
+   .. code-block:: bash
+
+      enpm702_env
+      code ~/ros2_ws
+
+3. Press :kbd:`Ctrl+Shift+P` and run **ROS2: Update C++ Properties**. It
+   writes ``.vscode/c_cpp_properties.json`` with "ROS installation paths",
+   "Your workspace's package include directories" and "Appropriate compiler
+   settings" (`the extension's IntelliSense page
+   <https://raw.githubusercontent.com/Ranch-Hand-Robotics/rde-ros-2/main/docs/intellisense.md>`__).
+
+4. The command sets the C++ standard to ``c++17`` for Jazzy, and the course
+   compiles with C++20. In ``.vscode/c_cpp_properties.json``, change
+   ``"cppStandard"`` to ``"c++20"``. The command keeps your value when you
+   run it again.
+
+5. Check it: open a ``.cpp`` file that includes ``<rclcpp/rclcpp.hpp>``. The
+   include has no red underline, and :kbd:`Ctrl` + click on it opens the
+   header. Run the command again after you add a package.
+
+
 Gazebo (Simulation)
 -------------------
 
