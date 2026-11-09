@@ -5,31 +5,29 @@ Lecture
 Before Class
 ------------
 
-1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
+1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Its ``L10`` folder is empty: you create this lecture's package in class. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
 2. Install ROS 2 Jazzy, as in :doc:`/setup/ros_setup`.
 
 Code for This Lecture
 ---------------------
 
-The package ``robotaxi_demo`` is in the course's ROS repository, `zeidk/enpm702-fall-2026-ros <https://github.com/zeidk/enpm702-fall-2026-ros>`_, cloned into the ``src`` folder of your workspace:
+The course repository provides no package for this lecture: its ``L10`` folder is empty. You create the package ``robotaxi_demo`` yourself, in that folder, as `Create a Package: ros2 pkg create`_ shows, so your own repository keeps it. By the end of the lecture, it holds the files you write:
 
 .. code-block:: text
 
-   robotaxi_demo/
+   enpm702-fall-2026-ros/L10/robotaxi_demo/
    ├── CMakeLists.txt
    ├── package.xml
    ├── include/robotaxi_demo/
-   │   ├── hello_node.hpp
    │   ├── robotaxi_node.hpp
    │   └── dispatcher_node.hpp
    └── src/
-       ├── hello_main.cpp
        ├── robotaxi_main.cpp
        ├── robotaxi_node.cpp
        ├── dispatcher_main.cpp
        └── dispatcher_node.cpp
 
-Build it from the workspace's top folder, then run one of its three executables (``hello``, ``robotaxi``, ``dispatcher``):
+Build it from the workspace's top folder, then run one of its two executables (``robotaxi``, ``dispatcher``):
 
 .. code-block:: bash
 
@@ -52,7 +50,7 @@ Build it from the workspace's top folder, then run one of its three executables 
       * - ``robotaxi_demo`` (``ros2 run``)
         - "Name of the ROS package".
       * - ``robotaxi`` (``ros2 run``)
-        - "Name of the executable": one of the package's three, ``hello``, ``robotaxi`` or ``dispatcher``.
+        - "Name of the executable": one of the package's two, ``robotaxi`` or ``dispatcher``.
 
 .. _l10-pre-reading:
 
@@ -947,9 +945,11 @@ Create a Package: ros2 pkg create
 .. code-block:: bash
    :linenos:
 
-   cd ~/ros2_ws/src
+   cd ~/ros2_ws/src/enpm702-fall-2026-ros/L10
    ros2 pkg create robotaxi_demo --build-type ament_cmake \
      --dependencies rclcpp geometry_msgs
+   cd ~/ros2_ws
+   colcon build --packages-select robotaxi_demo
 
 .. dropdown:: More detail: ``ros2 pkg create``
    :class-container: more-detail
@@ -962,7 +962,7 @@ Create a Package: ros2 pkg create
       * - Argument
         - Meaning (from ``ros2 pkg create --help``)
       * - ``robotaxi_demo``
-        - "The package name". The command makes a folder of that name in the current folder, here ``src``.
+        - "The package name". The command makes a folder of that name in the current folder, here ``L10``. ``colcon build`` finds it there, because it searches every folder under ``src``.
       * - ``--build-type ament_cmake``
         - "The build type to process the package with". The choices are ``cmake``, ``ament_cmake``, ``ament_cargo`` and ``ament_python``; ``ament_cmake`` is the one for C++.
       * - ``--dependencies rclcpp geometry_msgs``
@@ -1002,7 +1002,7 @@ Package Discovery: the ros2 pkg Commands
    * - ``ros2 pkg list``
      - 501 package names, ``robotaxi_demo`` among them
    * - ``ros2 pkg executables robotaxi_demo``
-     - ``robotaxi_demo dispatcher``, ``robotaxi_demo hello``, ``robotaxi_demo robotaxi``
+     - ``robotaxi_demo dispatcher``, ``robotaxi_demo robotaxi``
    * - ``ros2 pkg prefix robotaxi_demo``
      - ``<workspace>/install/robotaxi_demo``: the overlay
    * - ``ros2 pkg prefix rclcpp``
@@ -1015,7 +1015,7 @@ Package Discovery: the ros2 pkg Commands
 Package Manifest: package.xml
 """""""""""""""""""""""""""""
 
-The first lines of the repository's ``package.xml``:
+The first lines of your ``package.xml``, once you replace its two ``TODO`` lines:
 
 .. code-block:: xml
    :linenos:
@@ -1089,9 +1089,9 @@ Build Configuration: CMakeLists.txt
    * - ``find_package``
      - Finds one package we depend on, such as ``rclcpp``. One line per dependency.
    * - ``add_executable``
-     - Builds the executable ``hello`` from ``src/hello_main.cpp``.
+     - Builds the executable ``robotaxi`` from ``src/robotaxi_main.cpp``.
    * - ``ament_target_dependencies``
-     - Gives ``hello`` the ROS packages it uses: ``rclcpp``.
+     - Gives ``robotaxi`` the ROS packages it uses: ``rclcpp``.
    * - ``install``
      - Copies each executable to ``lib/${PROJECT_NAME}``, where ``ros2 run`` looks for it.
    * - ``ament_package``
@@ -1129,7 +1129,7 @@ Writing Your First Node
 
 The package of the last section has a build file but no code. This section writes a first node, in two forms: a function, then a class.
 
-- **Goal:** a node that prints ``Hello from hello`` in the terminal.
+- **Goal:** a node that prints a line in the terminal: ``Hello from hello`` for the function, ``robotaxi is ready`` for the class.
 - **Concepts:** starting ROS 2, logging, and a clean stop.
 - **Build:** the lines to add to ``CMakeLists.txt``, and ``colcon build``.
 - **Run:** ``ros2 run``.
@@ -1180,7 +1180,7 @@ Understanding the Code
 
 .. note::
 
-   This node runs once and ends: it logs, then ``main`` returns. The nodes of the next sections stay alive with ``rclcpp::spin``. The file is not in the repository: the class of the next part replaces it.
+   This node runs once and ends: it logs, then ``main`` returns. The nodes of the next sections stay alive with ``rclcpp::spin``. You do not keep this file: the class of the next part replaces it.
 
 Build System, Build and Run
 """""""""""""""""""""""""""
@@ -1226,10 +1226,10 @@ A node with publishers, timers and data needs a place to keep them. A class give
 
    Real ROS 2 applications almost always write nodes this way. Learn the pattern now: it is the one the rest of the course uses.
 
-Write the Same Node as a Class
-""""""""""""""""""""""""""""""
+Write a Node as a Class
+"""""""""""""""""""""""
 
-Write the hello node as a class, ``HelloNode``, in a header and a main file.
+Write a node named ``robotaxi`` as a class, ``RoboTaxiNode``, in a header and a main file. The publisher section adds to this same class.
 
 .. list-table::
    :widths: 25 75
@@ -1238,18 +1238,18 @@ Write the hello node as a class, ``HelloNode``, in a header and a main file.
    * - Package
      - ``robotaxi_demo``
    * - Files
-     - ``include/robotaxi_demo/hello_node.hpp``, ``src/hello_main.cpp``
+     - ``include/robotaxi_demo/robotaxi_node.hpp``, ``src/robotaxi_main.cpp``
    * - Node
-     - ``hello``
+     - ``robotaxi``
    * - Executable
-     - ``hello``
+     - ``robotaxi``
 
 **Resource:** `ROS 2 Jazzy: Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
 
-Both files are in the repository, in ``robotaxi_demo``. The next four parts are the four steps: the header, ``main``, ``CMakeLists.txt``, and the build.
+Both files go in your ``robotaxi_demo`` package. The next four parts are the four steps: the header, ``main``, ``CMakeLists.txt``, and the build.
 
-Step 1: the Header, hello_node.hpp
-""""""""""""""""""""""""""""""""""
+Step 1: the Header, robotaxi_node.hpp
+"""""""""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
    :linenos:
@@ -1260,21 +1260,21 @@ Step 1: the Header, hello_node.hpp
 
    namespace robotaxi_demo {
 
-   class HelloNode : public rclcpp::Node {
+   class RoboTaxiNode : public rclcpp::Node {
     public:
-     HelloNode() : rclcpp::Node{"hello"} {
-       RCLCPP_INFO_STREAM(get_logger(), "Hello from " << get_name());
+     RoboTaxiNode() : rclcpp::Node{"robotaxi"} {
+       RCLCPP_INFO_STREAM(get_logger(), get_name() << " is ready");
      }
    };
 
    }  // namespace robotaxi_demo
 
-- Line 6: a ``HelloNode`` is an ``rclcpp::Node`` (public inheritance).
-- Line 8: the base class constructor gets the node's name, ``hello``.
-- Line 9: ``RCLCPP_INFO_STREAM`` logs one line at the INFO level, with ``<<`` as in ``std::cout``. ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``. The constructor is short, so it stays in the header.
+- Line 6: a ``RoboTaxiNode`` is an ``rclcpp::Node`` (public inheritance).
+- Line 8: the base class constructor gets the node's name, ``robotaxi``.
+- Line 9: ``RCLCPP_INFO_STREAM`` logs one line at the INFO level, with ``<<`` as in ``std::cout``. ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``; ``get_name()`` returns ``robotaxi``. The constructor is short, so it stays in the header.
 
-Step 2: main, in hello_main.cpp
-"""""""""""""""""""""""""""""""
+Step 2: main, in robotaxi_main.cpp
+""""""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
    :linenos:
@@ -1284,40 +1284,40 @@ Step 2: main, in hello_main.cpp
 
    #include <rclcpp/rclcpp.hpp>
 
-   #include "robotaxi_demo/hello_node.hpp"
+   #include "robotaxi_demo/robotaxi_node.hpp"
 
    int main(int argc, char** argv) {
      rclcpp::init(argc, argv);
      auto node{std::make_shared<
-       robotaxi_demo::HelloNode>()};
+       robotaxi_demo::RoboTaxiNode>()};
      rclcpp::spin(node);
      rclcpp::shutdown();
    }
 
 - Line 8: starts ROS 2 and the middleware. Call it before you make any node.
-- Lines 9 and 10: make a ``HelloNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
+- Lines 9 and 10: make a ``RoboTaxiNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
 - Line 11: ``rclcpp::spin`` keeps the node running until :kbd:`Ctrl+C` (the next section). Without this line, the program ends right after the log line.
 - Line 12: stops ROS 2 and frees what ``init`` set up.
 
 Step 3: CMakeLists.txt
 """"""""""""""""""""""
 
-**Edit** ``CMakeLists.txt``: the repository's lines for this node. They go after the ``find_package`` lines and before ``ament_package()``.
+**Edit** ``CMakeLists.txt``: the lines for this first version of the node. They go after the ``find_package`` lines and before ``ament_package()``.
 
 .. code-block:: cmake
    :linenos:
    :emphasize-lines: 1, 2, 3, 4, 5
 
    include_directories(include)
-   add_executable(hello src/hello_main.cpp)
-   ament_target_dependencies(hello rclcpp)
-   install(TARGETS hello robotaxi dispatcher
+   add_executable(robotaxi src/robotaxi_main.cpp)
+   ament_target_dependencies(robotaxi rclcpp)
+   install(TARGETS robotaxi
      DESTINATION lib/${PROJECT_NAME})
 
-- Line 1: lets ``#include "robotaxi_demo/hello_node.hpp"`` find the header in ``include``.
-- Line 2: builds the executable ``hello`` from ``src/hello_main.cpp``.
-- Line 3: links ``hello`` to ``rclcpp``, the package it uses.
-- Lines 4 and 5: install the executables "so ``ros2 run`` can find your executable" (`Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_). The repository's line names all three executables of the package.
+- Line 1: lets ``#include "robotaxi_demo/robotaxi_node.hpp"`` find the header in ``include``.
+- Line 2: builds the executable ``robotaxi`` from ``src/robotaxi_main.cpp``. The publisher section adds ``src/robotaxi_node.cpp`` to this line.
+- Line 3: links ``robotaxi`` to ``rclcpp``, the package it uses.
+- Lines 4 and 5: install the executables "so ``ros2 run`` can find your executable" (`Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_). When the package has more executables, list them all on this line.
 
 Step 4: Build and Test
 """"""""""""""""""""""
@@ -1328,14 +1328,14 @@ Step 4: Build and Test
 
    colcon build --packages-select robotaxi_demo
    source install/setup.bash
-   ros2 run robotaxi_demo hello
+   ros2 run robotaxi_demo robotaxi
 
 .. code-block:: text
 
-   [INFO] [1793942813.858003271] [hello]: Hello from hello
+   [INFO] [1794184675.746034542] [robotaxi]: robotaxi is ready
 
 - The line gives the level, the time in seconds since January 1, 1970, the node's name, and the text.
-- The node prints its line and keeps running, because of ``rclcpp::spin``. In another terminal, ``ros2 node list`` shows ``/hello``. :kbd:`Ctrl+C` stops it.
+- The node prints its line and keeps running, because of ``rclcpp::spin``. In another terminal, ``ros2 node list`` shows ``/robotaxi``. :kbd:`Ctrl+C` stops it.
 
 Node Lifecycle and Best Practices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1398,7 +1398,7 @@ Node Spinning
 
 **Spinning** keeps a node alive. The node waits for events, a message that arrives, a timer that is due, a service request, and runs the callback of each one.
 
-The ``main`` of the class version of the hello node already calls ``rclcpp::spin``. This section explains what it does, starting with the thread that runs it.
+The ``main`` of the robotaxi node already calls ``rclcpp::spin``. This section explains what it does, starting with the thread that runs it.
 
 Threads: Who Runs main and the Callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1410,7 +1410,7 @@ Threads: Who Runs main and the Callbacks
 
 - A process starts with one thread, the **main thread**, which runs ``main``.
 - Every thread of a process can reach the same objects: "any thread can potentially access any object and function in the program" (cppreference). Two processes cannot.
-- In ``hello_main.cpp``, the main thread runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
+- In ``robotaxi_main.cpp``, the main thread runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
 - While it is inside ``spin``, the main thread runs the node's callbacks. One thread means one callback at a time.
 - A program can start more threads, with ``std::thread`` or a multi-threaded executor, to run callbacks at the same time. That comes in a later lecture.
 
@@ -1452,12 +1452,12 @@ The Basic Spinning Pattern
    int main(int argc, char** argv) {
      rclcpp::init(argc, argv);
      auto node{std::make_shared<
-       robotaxi_demo::HelloNode>()};
+       robotaxi_demo::RoboTaxiNode>()};
      rclcpp::spin(node);
      rclcpp::shutdown();
    }
 
-This is the ``main`` of every node in the repository, with the class name changed.
+This is the ``main`` of every node in this lecture, with the class name changed.
 
 **What happens during spin**
 
@@ -1702,7 +1702,7 @@ Message Dependencies
 Declare the Message Package in Both Build Files
 """""""""""""""""""""""""""""""""""""""""""""""
 
-To use a message package, name it in ``package.xml`` and in ``CMakeLists.txt``. For ``geometry_msgs``, the repository has:
+To use a message package, name it in ``package.xml`` and in ``CMakeLists.txt``. For ``geometry_msgs``, your package has:
 
 **In** ``package.xml``
 
@@ -1821,7 +1821,7 @@ Creating a Publisher
 Write a Node That Publishes Its Position
 """"""""""""""""""""""""""""""""""""""""
 
-Write a robotaxi node that publishes its position, a ``Point``, on the topic ``robotaxi/position`` every 0.5 s.
+Add a publisher to ``RoboTaxiNode``: the robotaxi publishes its position, a ``Point``, on the topic ``robotaxi/position`` every 0.5 s.
 
 .. list-table::
    :widths: 25 75
@@ -1840,7 +1840,7 @@ Write a robotaxi node that publishes its position, a ``Point``, on the topic ``r
 
    The package already depends on ``geometry_msgs``. For a new package, add the dependency to ``package.xml`` and ``CMakeLists.txt`` first.
 
-The robotaxi drives along a street, the x axis, 1 m every 0.5 s. ``robotaxi_main.cpp`` is ``hello_main.cpp`` with ``RoboTaxiNode`` in place of ``HelloNode``.
+The robotaxi drives along a street, the x axis, 1 m every 0.5 s. ``robotaxi_main.cpp`` does not change. The new method goes in ``robotaxi_node.cpp``.
 
 The Header: a Publisher and a Timer
 """""""""""""""""""""""""""""""""""

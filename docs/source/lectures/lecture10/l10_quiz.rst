@@ -193,7 +193,7 @@ Multiple Choice (Questions 1 to 10)
 .. admonition:: Question 9
    :class: hint
 
-   ``main`` makes a ``HelloNode`` but never calls ``rclcpp::spin``. What happens when you run it?
+   ``main`` makes a ``RoboTaxiNode`` (the first version, which only logs a line) but never calls ``rclcpp::spin``. What happens when you run it?
 
    A. The node logs its first line, and the program ends.
 
