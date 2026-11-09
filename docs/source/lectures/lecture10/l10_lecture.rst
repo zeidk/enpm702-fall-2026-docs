@@ -1911,34 +1911,6 @@ What the Constructor Makes
 
    **Store the timer.** A timer that is not kept in a data member is destroyed at the end of the constructor, and its callback never runs. A test node with such a timer printed nothing in 1.5 s.
 
-Understanding QoS (Quality of Service)
-""""""""""""""""""""""""""""""""""""""
-
-The 10 in ``create_publisher`` is the queue size, with the default settings for everything else. The same settings, written out as a ``rclcpp::QoS`` object (`Quality of Service settings <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Quality-of-Service-Settings.html>`_):
-
-.. code-block:: cpp
-
-   rclcpp::QoS qos{10};  // queue size 10
-   qos.reliable().durability_volatile().keep_last(10);
-   publisher_ = create_publisher<geometry_msgs::msg::Point>(
-       "robotaxi/position", qos);
-
-The second line sets the three settings that ``rclcpp::QoS{10}`` already has; a program compared the two objects with ``==``: equal.
-
-.. list-table::
-   :header-rows: 1
-   :widths: 36 64
-   :class: compact-table
-
-   * - Scenario
-     - Queue behavior
-   * - The subscriber keeps up
-     - Each message is delivered at once; the queue stays empty
-   * - A slow or disconnected subscriber
-     - Messages wait in the queue, up to its size
-   * - The queue is full
-     - The oldest message is dropped (keep last)
-
 Publish Messages
 ^^^^^^^^^^^^^^^^
 

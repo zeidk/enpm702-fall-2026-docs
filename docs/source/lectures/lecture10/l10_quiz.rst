@@ -235,7 +235,7 @@ Multiple Choice (Questions 1 to 10)
 ----
 
 
-True or False (Questions 11 to 15)
+True or False (Questions 11 to 14)
 ====================================================
 
 .. admonition:: Question 11
@@ -278,19 +278,6 @@ True or False (Questions 11 to 15)
 
 
 .. admonition:: Question 14
-   :class: hint
-
-   **True or False:** ``rclcpp::QoS qos{10};`` already has the settings reliable, volatile and keep last 10.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **True**
-
-   In the lecture, a program compared ``rclcpp::QoS{10}`` with the same object after ``reliable().durability_volatile().keep_last(10)``, using ``==``: equal. The 10 in ``create_publisher`` is the queue size, with the default settings for everything else.
-
-
-.. admonition:: Question 15
    :class: hint
 
    **True or False:** ``rclcpp::spin(node)`` runs several callbacks at the same time, each on its own thread.
