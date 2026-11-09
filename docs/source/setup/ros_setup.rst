@@ -183,10 +183,11 @@ Configure Your Shell
      (so your nodes can load them), sets ``AMENT_PREFIX_PATH`` to
      ``/opt/ros/jazzy`` (where ``ros2 run`` looks for packages) and
      ``ROS_DISTRO`` to ``jazzy``.
-   - ``~/ros2_ws/install/setup.bash`` puts your workspace in front of
-     ``/opt/ros/jazzy`` in ``AMENT_PREFIX_PATH``, so ``ros2 run`` finds your
-     packages too. This is why ROS 2 is sourced first and the workspace
-     second: the workspace is the overlay, on top of ROS 2, the underlay.
+   - ``~/ros2_ws/install/setup.bash`` puts the install folder of each of your
+     packages (``~/ros2_ws/install/<package>``) in front of ``/opt/ros/jazzy``
+     in ``AMENT_PREFIX_PATH``, so ``ros2 run`` finds your packages too. This
+     is why ROS 2 is sourced first and the workspace second: the workspace is
+     the overlay, on top of ROS 2, the underlay.
 
    These settings last only in that terminal. A new terminal starts without
    them, which is why ``enpm702_env`` goes in ``~/.bashrc``: Bash runs that file
