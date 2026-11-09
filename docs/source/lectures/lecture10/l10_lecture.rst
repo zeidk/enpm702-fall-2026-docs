@@ -241,13 +241,19 @@ What Runs under Your Node: the ROS 2 Layers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l10/ros2_layers.png
-   :alt: A layered diagram, top to bottom, with a dashed arrow from each layer down to the next. At the top, a wide box, the application layer, holds three boxes: your nodes, robotaxi and dispatcher; topics, services and actions; node tools, parameters, ros2 and rqt. Below it: client libraries, rclcpp for C++ and rclpy for Python, one per language; rcl, the C library every client library shares; rmw, the middleware interface, so a node runs on any DDS; DDS, the middleware, Fast DDS by default, Cyclone DDS or Connext. At the bottom, a wide gray band: the operating system and the network, Ubuntu 24.04, Ethernet and Wi-Fi.
+   :alt: A layered diagram, top to bottom, with a dashed arrow from each layer down to the next. At the top, a wide box, the application layer, holds three boxes: your nodes, RoboTaxiNode and DispatcherNode; topics, services and actions; node tools, parameters, ros2 and rqt. Below it: client libraries, rclcpp for C++ and rclpy for Python, one per language; rcl, the C library every client library shares; rmw, the middleware interface, so a node runs on any DDS; DDS, the middleware, Fast DDS by default, Cyclone DDS or Connext. At the bottom, a wide gray band: the operating system and the network, Ubuntu 24.04, Ethernet and Wi-Fi.
    :align: center
    :width: 100%
 
    The layers under a ROS 2 node, from the application down to the network.
 
-You write only the top layer: your nodes. The layers below let the same node run on any DDS without a code change (``rmw``), and let a C++ node and a Python node exchange the same messages (``rcl``). **Middleware** is software that finds other programs and moves data between them. Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
+**How to read it:** top to bottom, each layer uses the one below it (the dashed arrows). The ROS 2 documentation says the APIs "are stacked such that the typical ROS user will use the client library API, e.g. rclcpp"; the client libraries "use the rcl interface", and "the rcl implementation in turn uses the rmw API" (`Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_).
+
+- You write only the top layer: your nodes.
+- ``rcl``, shared by every client library, lets a C++ node and a Python node exchange the same messages.
+- ``rmw`` lets the same node run on any DDS without a code change.
+
+**Middleware** is software that finds other programs and moves data between them. Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
 
 What DDS Does: Find the Nodes, Move the Messages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2116,11 +2122,7 @@ The Callback: the Distance to the Pickup Point
                                       << distance << " m from the pickup");
    }
 
-``std::hypot(a, b)``, from ``<cmath>``, is the square root of a\ :sup:`2` + b\ :sup:`2`. For the message ``{x: 7.0, y: 4.0}`` of ``ros2 topic pub``:
-
-1. The robotaxi is 10 − 7 = 3 m short of the pickup point in x, and 4 m away from it in y.
-2. 3\ :sup:`2` + 4\ :sup:`2` = 9 + 16 = 25.
-3. The square root of 25 is 5, so the dispatcher prints ``RoboTaxi at x = 7, 5 m from the pickup``.
+``std::hypot(a, b)``, from ``<cmath>``, is the square root of a\ :sup:`2` + b\ :sup:`2`. For ``{x: 7.0, y: 4.0}``, the robotaxi is 3 m from the pickup in x and 4 m in y: the square root of 9 + 16 is 5, so the dispatcher prints ``RoboTaxi at x = 7, 5 m from the pickup``.
 
 .. warning::
 
