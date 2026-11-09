@@ -1564,6 +1564,8 @@ Messages
 
 **Messages** are the data structures that nodes send each other. A message type is written in a ``.msg`` file, and every message on a topic has the topic's type.
 
+A message type is an **interface**: a text description of data that ROS 2 turns into C++ and Python code. There are three kinds: messages (``.msg``) for topics, services (``.srv``) and actions (``.action``). So the command that reads a message type is ``ros2 interface``. The ROS 2 documentation says ROS applications "typically communicate through interfaces of one of three types", and that the description lets ROS tools "automatically generate source code for the interface type in several target languages" (`ROS 2 Jazzy: Interfaces <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Interfaces.html>`_).
+
 .. admonition:: What a message type gives you
    :class: key-box
 
@@ -2381,3 +2383,15 @@ You must write a node that warns the dispatcher when a robotaxi's battery is low
      - ``ros2 topic hz /robotaxi/battery``. The rate tells how fast your callback must be, or messages queue up (scenario 3).
    * - 7. Which package to depend on?
      - ``sensor_msgs``, the first part of the type. It goes in ``package.xml`` and ``CMakeLists.txt``, as ``geometry_msgs`` did.
+
+Recap: the Lecture in One UML Component Diagram
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Each box is a node. The ball is the interface ``robotaxi`` provides (it publishes); the socket is the one ``dispatcher`` requires (it subscribes). The notes hold the rest of the lecture.
+
+.. figure:: /_static/images/l10/l10_recap.png
+   :alt: UML component diagram. Two components in a row, robotaxi : RoboTaxiNode on the left and dispatcher : DispatcherNode on the right. Between them, a ball provided by robotaxi meets a socket required by dispatcher, labeled geometry_msgs/msg/Point on /robotaxi/position. Notes: above robotaxi, derives from rclcpp::Node, a publisher with a queue of 10, a 500 ms timer that fills a Point, then publisher_->publish(msg). Above the interface, a message type is an interface (.msg), both sides use the same topic and type. Above dispatcher, derives from rclcpp::Node, a subscription with a queue of 10, spin runs on_position for each message, a slow callback loses messages. Below robotaxi, package robotaxi_demo holds both nodes, package.xml and CMakeLists.txt declare rclcpp and geometry_msgs, then colcon build, source install/setup.bash, ros2 run. Bottom right, under each node: rclcpp, rcl, rmw, DDS, OS and network; inspect it with ros2 node list, ros2 topic list, echo, hz, info, ros2 interface show.
+   :align: center
+   :width: 100%
+
+   The robotaxi and the dispatcher as a UML component diagram, with the lecture's main points as notes.
