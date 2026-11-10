@@ -240,49 +240,45 @@ ROS 2 is distributed: a node "can communicate with other nodes within the same p
 What Runs under Your Node: the ROS 2 Layers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: /_static/images/l10/ros2_layers.png
-   :alt: A layered diagram, top to bottom, with a dashed arrow from each layer down to the next. At the top, a wide box, the application layer, holds three boxes: your nodes, RoboTaxiNode and DispatcherNode; topics, services and actions; node tools, parameters, ros2 and rqt. Below it: client libraries, rclcpp for C++ and rclpy for Python, one per language; rcl, the C library every client library shares; rmw, the middleware interface, so a node runs on any DDS; DDS, the middleware, Fast DDS by default, Cyclone DDS or Connext. At the bottom, a wide gray band: the operating system and the network, Ubuntu 24.04, Ethernet and Wi-Fi.
+.. figure:: /_static/images/l10/ros2_layers_tags.png
+   :alt: Six boxes stacked top to bottom, with a dashed arrow from each box down to the next and a numbered tag to the left of each. Tag 1, Application: RoboTaxiNode, DispatcherNode. Tag 2, Client libraries: rclcpp for C++, rclpy for Python. Tag 3, rcl: one C library. Tag 4, rmw: the middleware interface. Tag 5, DDS: Fast DDS, Cyclone DDS, Connext, GurumDDS. Tag 6, a gray box, Operating system and network: Ubuntu 24.04, Ethernet, Wi-Fi.
    :align: center
-   :width: 100%
+   :width: 45%
 
-   The layers under a ROS 2 node, from the application down to the network.
+   The layers under a ROS 2 node, numbered 1 to 6 as in the list below.
 
-**How to read it:** top to bottom, each layer uses the one below it (the dashed arrows). The ROS 2 documentation says the APIs "are stacked such that the typical ROS user will use the client library API, e.g. rclcpp"; the client libraries "use the rcl interface", and "the rcl implementation in turn uses the rmw API" (`Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_).
+Each layer uses the one below it (the dashed arrows). The ROS 2 documentation says the APIs "are stacked such that the typical ROS user will use the client library API, e.g. rclcpp"; the client libraries "use the rcl interface", and "the rcl implementation in turn uses the rmw API" (`Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_).
 
-You write only the top layer: your nodes.
+1. **Application**: your nodes, the topics, services and actions between them, and the node tools (parameters, ``ros2``, ``rqt``). You write only the nodes.
+2. **Client library**: your node calls ``rclcpp`` (C++) or ``rclpy`` (Python). The client library also spins: it runs your callbacks. The ROS 2 documentation says ``rcl`` "does not address" the execution model "at all"; each client library provides it.
+3. **rcl**: both client libraries call ``rcl``, one C library they share, so client libraries "can be smaller and more consistent with each other".
+4. **rmw**: ``rcl`` calls ``rmw``, which only declares functions: "the minimal set of primitive middleware capabilities needed to build ROS on top". The ``rmw`` package itself "contains the C headers which define the interface". Each DDS has its own ``rmw`` package that implements those functions, for example ``rmw_fastrtps_cpp`` for Fast DDS. So a node runs on any DDS without a code change.
+5. **DDS**, the **middleware**, does the work: it finds other programs and moves data between them (next section).
+6. **Operating system and network**: Ubuntu runs each node. Ethernet or Wi-Fi joins the computers.
 
-**Middleware** is software that finds other programs and moves data between them. Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
+Follow One Message down the Layers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-What Each Layer Does
-^^^^^^^^^^^^^^^^^^^^
-
-Each layer has one job. The last column follows one message from the robotaxi to the dispatcher.
+The robotaxi publishes one message to the dispatcher. The table follows it down the layers, one row per layer.
 
 .. list-table::
    :header-rows: 1
-   :widths: 17 47 36
+   :widths: 25 75
    :class: compact-table
 
    * - Layer
-     - What it does
-     - One message
+     - What happens to the message
    * - Application
-     - Your nodes and the topics, services and actions between them.
      - ``RoboTaxiNode`` calls ``publisher_->publish(msg)``.
    * - Client library
-     - The API in your language: nodes, publishers, timers. It also spins: it runs your callbacks. The ROS 2 documentation says ``rcl`` "does not address" the execution model "at all"; each client library provides it.
      - ``rclcpp`` passes the message to ``rcl``.
    * - ``rcl``
-     - C code that every client library shares, so client libraries "can be smaller and more consistent with each other". It never talks to DDS directly.
-     - ``rcl`` passes it to ``rmw``.
+     - ``rcl`` passes it to ``rmw``. ``rcl`` never talks to DDS directly.
    * - ``rmw``
-     - It is "the minimal set of primitive middleware capabilities needed to build ROS on top", with one package per DDS. A node runs on another DDS without a code change.
-     - ``rmw_fastrtps_cpp`` turns it into Fast DDS calls.
+     - ``rmw_fastrtps_cpp``, the ``rmw`` package for Fast DDS, turns it into Fast DDS calls.
    * - DDS
-     - Finds the other nodes and moves the messages (next section).
-     - Fast DDS sends it to the dispatcher.
+     - Fast DDS sends it to the dispatcher (next section).
    * - OS and network
-     - Ubuntu runs each node. Ethernet or Wi-Fi joins the computers.
      - On two computers, it crosses the network.
 
 Source: `ROS 2 Jazzy: Internal ROS 2 interfaces <https://docs.ros.org/en/jazzy/Concepts/Advanced/About-Internal-Interfaces.html>`_.
@@ -315,6 +311,46 @@ Discovery in Practice: Domain IDs and Your Network
 .. note::
 
    A network that does not pass multicast stops discovery between computers. On eduroam, students' nodes have never appeared on the instructor's laptop, from 2017 to today. Where multicast passes, as on a home router, set your own domain ID, 0 to 101, in ``~/.bashrc``: ``export ROS_DOMAIN_ID=``\ *number*.
+
+Where DDS Comes From: an OMG Standard, Not Only for Robots
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ROS 2 did not invent DDS: it is an industry standard.
+
+- **A standard.** The Object Management Group (OMG) publishes DDS as a protocol and API (`OMG press release, 2024 <https://www.omg.org/news/releases/pr2024/07-09-24.htm>`_). DDS sends data to every program that asked for it (`DDS 1.4 specification <https://www.omg.org/spec/DDS/>`_).
+- **Vendors for ROS 2.** ROS 2 supports eProsima Fast DDS (the default), Eclipse Cyclone DDS, RTI Connext DDS and GurumNetworks GurumDDS (`Different ROS 2 middleware vendors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Different-Middleware-Vendors.html>`_). GurumDDS has community support only.
+- **Used beyond robots.** 24 industry standards use DDS, such as AUTOSAR (cars), EUROCAE (civil aviation), OpenICE (medical devices) and ROS 2 (`OMG press release, 2024 <https://www.omg.org/news/releases/pr2024/07-09-24.htm>`_).
+- **Why industry uses it.** OMG names three reasons: low latency (little delay), high reliability and scalability (`OMG press release, 2020 <https://www.omg.org/news/releases/pr2020/01-29-20.htm>`_).
+- **Languages.** DDS has standard APIs for C++, Java and other languages (`OMG press release, 2020 <https://www.omg.org/news/releases/pr2020/01-29-20.htm>`_).
+- **Low latency is not real time.** Real time also needs a real-time operating system, and code that is guaranteed to finish each task in time (`Introduction to Real-time Systems <https://design.ros2.org/articles/realtime_background.html>`_).
+- **Ubuntu 24.04 is not real time.** Real time needs Ubuntu's real-time kernel, which makes the scheduler priority-based (`Real-time Ubuntu documentation <https://ubuntu.com/real-time/docs/>`_). On 24.04, you get that kernel through Ubuntu Pro (`Enable Real-time Ubuntu <https://canonical-real-time-ubuntu-documentation.readthedocs-hosted.com/how-to/enable-real-time-ubuntu/>`_), free for personal use on up to 5 machines (`Ubuntu Pro <https://ubuntu.com/pro>`_).
+- **Security.** DDS-Security can secure ROS 2 (`ROS 2 DDS-Security Integration <https://design.ros2.org/articles/ros2_dds_security.html>`_), but security is off by default (`About Security <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Security.html>`_).
+
+.. dropdown:: More detail: turning on ROS 2 security
+   :class-container: more-detail
+   :icon: info
+
+   With security on, DDS encrypts the messages, checks who sent each one, checks that no one changed it on the way, and controls which node may use which topic. Each node needs an **enclave**: a folder of six files with its certificates, its private key and its permissions (`About Security <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Security.html>`_).
+
+   The steps from the ROS 2 tutorial (`Setting up security <https://docs.ros.org/en/jazzy/Tutorials/Advanced/Security/Introducing-ros2-security.html>`_):
+
+   .. code-block:: bash
+
+      # 1. Create a keystore (the certificate authorities)
+      ros2 security create_keystore demo_keystore
+      # 2. Create an enclave for each node
+      ros2 security create_enclave demo_keystore /talker_listener/talker
+      ros2 security create_enclave demo_keystore /talker_listener/listener
+      # 3. Turn security on, in every terminal that runs a node
+      export ROS_SECURITY_KEYSTORE=~/sros2_demo/demo_keystore
+      export ROS_SECURITY_ENABLE=true
+      export ROS_SECURITY_STRATEGY=Enforce
+      # 4. Start each node with its enclave
+      ros2 run demo_nodes_cpp talker --ros-args --enclave /talker_listener/talker
+
+   - ``ROS_SECURITY_ENABLE=true`` is the master switch. The value is case sensitive.
+   - Without ``ROS_SECURITY_STRATEGY=Enforce``, a node whose security files are missing still starts, with no security.
+   - Nodes with security on do not talk to nodes with security off.
 
 Write ROS 2 Code in C++: rclcpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
