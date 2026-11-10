@@ -57,7 +57,7 @@ Build it from the workspace's top folder, then run one of its two executables (`
 Pre-Reading
 -----------
 
-Read this part before class: the lecture opens with nine slides on it (what ROS is and why this course uses it, monolithic and distributed programs, the ROS 2 layers, DDS and ``rclcpp``) and builds on all of it. The workspace, ``colcon`` and ``ros2 pkg create`` are in `Workspace and Development Environment`_.
+Read this part before class: the lecture opens with eight slides on it (what ROS is, monolithic and distributed programs, the ROS 2 layers, DDS and ``rclcpp``) and builds on all of it. The workspace, ``colcon`` and ``ros2 pkg create`` are in `Workspace and Development Environment`_.
 
 What ROS Is: Plumbing, Tools, Capabilities, Community
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -136,20 +136,21 @@ Where to find ROS 2 online:
          - A variable or a pointer of one process means nothing to the other.
          - :kbd:`Ctrl+C` in a terminal stops the process running there.
 
-Why This Course Teaches Robotics with ROS 2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: More detail: Why This Course Teaches Robotics with ROS 2
+   :class-container: more-detail
+   :icon: info
 
-Learn the tools that robot teams use, then reuse their parts instead of writing every part yourself.
+   Learn the tools that robot teams use, then reuse their parts instead of writing every part yourself.
 
-- **Free and modular.** ROS sped up robotics research "with freely-available components and a modular framework" (`Macenski et al., 2022 <https://doi.org/10.1126/scirobotics.abm6074>`_).
-- **Real robots run it.** ROS 2 is used "on space missions, large agriculture equipment, multi-robot fleets, and more" (`Macenski et al., 2023 <https://arxiv.org/abs/2307.15236>`_).
-- **Parts you do not write.** Ready-made packages for manipulation, motion planning and perception (`About ROS <https://docs.ros.org/en/jazzy/About-ROS.html>`_).
-- **A simulator.** Gazebo, from the same organization, lets you "test robots in a virtual environment before using real hardware" (`About ROS <https://docs.ros.org/en/jazzy/About-ROS.html>`_). The group projects run in it.
-- **One skill, several courses at UMD.**
+   - **Free and modular.** ROS sped up robotics research "with freely-available components and a modular framework" (`Macenski et al., 2022 <https://doi.org/10.1126/scirobotics.abm6074>`_).
+   - **Real robots run it.** ROS 2 is used "on space missions, large agriculture equipment, multi-robot fleets, and more" (`Macenski et al., 2023 <https://arxiv.org/abs/2307.15236>`_).
+   - **Parts you do not write.** Ready-made packages for manipulation, motion planning and perception (`About ROS <https://docs.ros.org/en/jazzy/About-ROS.html>`_).
+   - **A simulator.** Gazebo, from the same organization, lets you "test robots in a virtual environment before using real hardware" (`About ROS <https://docs.ros.org/en/jazzy/About-ROS.html>`_). The group projects run in it.
+   - **One skill, several courses at UMD.**
 
-.. note::
+   .. note::
 
-   Other frameworks cover less: OROCOS targets real-time control, MOOS-IvP marine robots, and YARP the communication between processes. A custom framework has no community.
+      Other frameworks cover less: OROCOS targets real-time control, MOOS-IvP marine robots, and YARP the communication between processes. A custom framework has no community.
 
 Monolithic: One Program Does Every Job
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -818,6 +819,7 @@ Look inside a Running System: the ros2 Command-Line Tools
    - ``ros2 interface list`` lists every type. ``ros2 interface show <type>`` prints its fields.
 
 4. ``rqt_graph``: the computation graph, drawn in a window.
+5. ``ros2 doctor``: checks your ROS 2 setup. It ends with "All 5 checks passed" when nothing is wrong; ``ros2 doctor --report`` prints every report.
 
 .. dropdown:: More detail: ``ros2 topic list -t``
    :class-container: more-detail
