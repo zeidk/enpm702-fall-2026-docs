@@ -1505,6 +1505,33 @@ The ROS 2 documentation: ``rclcpp::spin(node)`` "expands to an instantiation and
 
    rclcpp also has ``spin_all``, which runs all the work that is ready within a time limit, and ``spin_until_future_complete``, which spins until one result arrives (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_).
 
+Build and Test: the Node Runs until Ctrl + C
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In ``robotaxi_main.cpp``, remove the ``//`` before ``rclcpp::spin(node)`` and before the log line after it:
+
+.. code-block:: cpp
+
+   rclcpp::spin(node);
+   RCLCPP_INFO(node->get_logger(), "exited the loop...");
+
+Build and run, from ``~/ros2_ws``, then press :kbd:`Ctrl+C`:
+
+.. code-block:: bash
+
+   colcon build --packages-select robotaxi_demo
+   source install/setup.bash
+   ros2 run robotaxi_demo robotaxi_exe
+
+.. code-block:: text
+
+   [INFO] [1794342586.660525330] [robotaxi_node]: robotaxi_node is ready
+   [INFO] [1794342588.480817680] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+   [INFO] [1794342588.481109258] [robotaxi_node]: exited the loop...
+
+- Without ``spin``, the program ended after its first line. Now it keeps running: the main thread waits inside ``spin``.
+- :kbd:`Ctrl+C` makes ``spin`` return: rclcpp logs the second line. Then ``main`` logs "exited the loop..." and runs ``rclcpp::shutdown``.
+
 Common Mistakes, and What You See
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -5,7 +5,7 @@ L10: ROS 2 Foundations
 Overview
 --------
 
-This is the first ROS 2 lecture in ENPM702. It is about topics, the way ROS 2 nodes send each other a stream of data. A fleet of robotaxis runs through the whole lecture: a robotaxi node publishes its position, and a dispatcher node subscribes to it and computes the distance to a pickup point. On the way, the lecture reads the build files of a package, writes a first node as a function and as a class, and shows what spinning does and what happens to messages when a subscriber is slow.
+This is the first ROS 2 lecture in ENPM702. It is about topics, the way ROS 2 nodes send each other a stream of data. A fleet of robotaxis runs through the whole lecture: a robotaxi node publishes its position, and a dispatcher node subscribes to it and computes the distance to a pickup point. On the way, the lecture reads the build files of a package, writes a first node as a class derived from ``rclcpp::Node``, and shows what spinning does and what happens to messages when a subscriber is slow.
 
 Before class, read the Pre-Reading part of the :doc:`l10_lecture` and do the two steps of its Before Class part. The lecture starts from it.
 
