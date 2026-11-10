@@ -5,13 +5,13 @@ Lecture
 Before Class
 ------------
 
-1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Its ``L10`` folder is empty: you create this lecture's package in class. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
+1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Its ``L10`` folder holds this lecture's package, ``robotaxi_demo``. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
 2. Install ROS 2 Jazzy, as in :doc:`/setup/ros_setup`.
 
 Code for This Lecture
 ---------------------
 
-The course repository provides no package for this lecture: its ``L10`` folder is empty. You create the package ``robotaxi_demo`` yourself, in that folder, as `Create a Package: ros2 pkg create`_ shows, so your own repository keeps it. By the end of the lecture, it holds the files you write:
+We have provided this lecture's package, ``robotaxi_demo``, in the ``L10`` folder of the course repository. `Create a Package: ros2 pkg create`_ shows the command we used to create it. Its git history has one commit per step of this lecture, from that command to the subscriber. It holds:
 
 .. code-block:: text
 
@@ -27,13 +27,13 @@ The course repository provides no package for this lecture: its ``L10`` folder i
        ├── dispatcher_main.cpp
        └── dispatcher_node.cpp
 
-Build it from the workspace's top folder, then run one of its two executables (``robotaxi``, ``dispatcher``):
+Build it from the workspace's top folder, then run one of its two executables (``robotaxi_exe``, ``dispatcher_exe``):
 
 .. code-block:: bash
 
    colcon build --packages-select robotaxi_demo
    source install/setup.bash
-   ros2 run robotaxi_demo robotaxi
+   ros2 run robotaxi_demo robotaxi_exe
 
 .. dropdown:: More detail: ``colcon build`` and ``ros2 run``
    :class-container: more-detail
@@ -49,8 +49,8 @@ Build it from the workspace's top folder, then run one of its two executables (`
         - "Only process a subset of packages": ``colcon`` builds ``robotaxi_demo`` and no other package of ``src``.
       * - ``robotaxi_demo`` (``ros2 run``)
         - "Name of the ROS package".
-      * - ``robotaxi`` (``ros2 run``)
-        - "Name of the executable": one of the package's two, ``robotaxi`` or ``dispatcher``.
+      * - ``robotaxi_exe`` (``ros2 run``)
+        - "Name of the executable": one of the package's two, ``robotaxi_exe`` or ``dispatcher_exe``.
 
 .. _l10-pre-reading:
 
@@ -199,7 +199,7 @@ Distributed: Separate Programs Exchange Messages
    Several programs, each run as its own process, on one computer or several. They do not call each other's functions: they send each other messages. ROS 2 works this way: each program is a **node**, and nodes talk within one process, between processes on one computer, or between computers (`Nodes <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Nodes.html>`_).
 
 .. figure:: /_static/images/l10/distributed.png
-   :alt: Two dashed rounded boxes, one around a node named robotaxi and one around a node named dispatcher. An arrow goes from robotaxi to dispatcher, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :alt: Two dashed rounded boxes, one around a node named robotaxi_node and one around a node named dispatcher_node. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 72%
 
@@ -225,7 +225,7 @@ ROS 2 Is Distributed: Nodes on Two Computers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. figure:: /_static/images/l10/distributed_ros.png
-   :alt: Two solid gray rounded boxes, one above the other. The top one is labeled Computer 1: in the robotaxi, and holds a dashed box with a node named robotaxi. An arrow labeled publish goes down from robotaxi to a navy box that reads /robotaxi/position, and geometry_msgs/msg/Point. An arrow labeled subscribe goes down from the navy box into the bottom gray box, labeled Computer 2: at the dispatch office, to a node named dispatcher in a dashed box.
+   :alt: Two solid gray rounded boxes, one above the other. The top one is labeled Computer 1: in the robotaxi, and holds a dashed box with a node named robotaxi_node. An arrow labeled publish goes down from robotaxi_node to a navy box that reads /robotaxi/position, and geometry_msgs/msg/Point. An arrow labeled subscribe goes down from the navy box into the bottom gray box, labeled Computer 2: at the dispatch office, to a node named dispatcher_node in a dashed box.
    :align: center
    :width: 45%
 
@@ -233,7 +233,7 @@ ROS 2 Is Distributed: Nodes on Two Computers
 
 ROS 2 is distributed: a node "can communicate with other nodes within the same process, in a different process, or on a different machine" (`Nodes <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Nodes.html>`_).
 
-- ``robotaxi`` and ``dispatcher`` run on two computers with no change to their code. The computers share a network and a domain ID (`Discovery in Practice: Domain IDs and Your Network`_).
+- ``robotaxi_node`` and ``dispatcher_node`` run on two computers with no change to their code. The computers share a network and a domain ID (`Discovery in Practice: Domain IDs and Your Network`_).
 - Nodes can also share one process: less overhead, but one crash stops them all (`Composition <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Composition.html>`_).
 - Inside a node, the code is the C++ of the first half of the course: classes, function calls and smart pointers.
 
@@ -291,8 +291,8 @@ What DDS Does: Find the Nodes, Move the Messages
 
    **DDS** (Data Distribution Service): the industry-standard middleware that moves ROS 2 messages. Jazzy uses eProsima's Fast DDS by default.
 
-.. figure:: /_static/images/l10/dds_jobs.png
-   :alt: Two node boxes, robotaxi on the left and dispatcher on the right, both standing on a wide navy band labeled DDS. Above the nodes, a dashed two-headed arrow between them carries tag 1. Inside the band, a solid arrow runs from under robotaxi to under dispatcher, with tag 2 and a small box reading position. Below the band, under the dispatcher and joined to the band by a line, a small box with tag 3 reads reliable, keep last 10.
+.. figure:: /_static/images/l10/dds_roles.png
+   :alt: Two node boxes, robotaxi_node on the left and dispatcher_node on the right, both standing on a wide navy band labeled DDS. Above the nodes, a dashed two-headed arrow between them carries tag 1. Inside the band, a solid arrow runs from under robotaxi_node to under dispatcher_node, with tag 2 and a small box reading position. Below the band, under the dispatcher_node and joined to the band by a line, a small box with tag 3 reads reliable, keep last 10.
    :align: center
    :width: 60%
 
@@ -433,7 +433,7 @@ Each term is defined in `Pre-Reading`_ or in `Workspace and Development Environm
    * - Term
      - Meaning
    * - Node
-     - A program, or a part of one, that does one job and exchanges data with other nodes, such as ``robotaxi``.
+     - A program, or a part of one, that does one job and exchanges data with other nodes, such as ``robotaxi_node``.
    * - Process
      - A program that is running, with its own memory and process ID.
    * - Distributed
@@ -547,16 +547,36 @@ The publisher sends when it has data. It does not wait for an answer, and it nev
 .. admonition:: What publish and subscribe gives you
    :class: key-box
 
-   - **Loose coupling:** a node does not need to know that the others exist.
-   - **Scalability:** a new publisher or subscriber joins without a change to the others.
-   - **Fault tolerance:** nodes start and stop on their own.
-   - **Flexible patterns:** one to many, many to one, many to many.
-   - **Quality of Service:** the delivery settings are chosen per publisher and subscriber.
+   - **Loose coupling:** a node knows the topic's name, not the other nodes.
+   - **Scalability:** a new publisher or subscriber uses the same topic; nothing else changes.
+   - **Fault tolerance:** a node can stop; the others keep using the topic.
+   - **Flexible patterns:** a topic can have one or many publishers, and one or many subscribers.
+   - **Quality of Service:** each publisher and subscriber of a topic sets its own delivery.
+
+The Running Example: a Fleet of Robotaxis
+"""""""""""""""""""""""""""""""""""""""""
+
+From here on, the lecture uses one example: a fleet of robotaxis and the office that dispatches them.
+
+.. figure:: /_static/images/l10/robotaxi_graph.png
+   :alt: Two white boxes, robotaxi_node on the left and dispatcher_node on the right. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :align: center
+   :width: 80%
+
+   The robotaxi publishes its position; the dispatcher subscribes to it.
+
+- **Nodes:** each robotaxi is a node, and the dispatcher is a node.
+- **Topics:** names such as ``/robotaxi/position``. A robotaxi publishes on it; the dispatcher subscribes to it.
+- **Messages:** the data, one piece at a time. Here a position of type ``geometry_msgs/msg/Point``: three numbers, ``x``, ``y`` and ``z``.
 
 A Topic Works Like a Bus
 """"""""""""""""""""""""
 
-The ROS 2 documentation compares publish/subscribe to a **bus** in electronics: shared wires that many devices connect to, so every device reads what one device sends (`Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_). A topic has no wire: DDS sends each subscriber its own copy of every message.
+A topic "somewhat resembles a device bus": shared wires that many devices connect to (`Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_).
+
+- **Alike:** any publisher can send on a topic, and "all subscribers in the system will receive the data", as every device sees a bus's wires.
+- **Alike:** nodes "can come and go as needed", as a device joins a bus without rewiring the others.
+- **Different:** a topic has no wire. DDS sends each subscriber its own copy (second figure).
 
 .. figure:: /_static/images/l10/computer_buses.png
    :alt: A computer bus diagram. A tall box labeled CPU on the left. Three wide buses run to the right: a yellow address bus with one arrowhead, pointing away from the CPU, then a light blue data bus and a pink control bus with arrowheads at both ends. Each bus branches down into four boxes labeled RAM, ROM, I/O and Other, so all four connect to the same three buses.
@@ -566,36 +586,23 @@ The ROS 2 documentation compares publish/subscribe to a **bus** in electronics: 
    A device bus: every device connects to the same wires. Redrawn from `Computer buses <https://commons.wikimedia.org/wiki/File:Computer_buses.svg>`_, by German, Wikimedia Commons, public domain.
 
 .. figure:: /_static/images/l10/topic_copies.png
-   :alt: The node robotaxi on the left. To its right, an empty dashed band with tag 1 and the topic name /robotaxi/position above it. Three separate arrows leave robotaxi, run through the band and turn down, each to its own node below: dispatcher, logger and map_view. Each arrow carries its own small box reading Point, each marked with tag 2.
+   :alt: The node robotaxi_node on the left. To its right, an empty dashed band with tag 1 and the topic name /robotaxi/position above it. Three separate arrows leave robotaxi_node, run through the band and turn down, each to its own node below: dispatcher_node, logger_node and map_view_node. Each arrow carries its own small box reading Point, each marked with tag 2.
    :align: center
    :width: 70%
 
-   A topic has no wire. (1) The topic: a name, not a wire. (2) One copy of the ``Point`` per subscriber. ``logger`` and ``map_view`` are added for this example.
+   A topic has no wire. (1) The topic: a name, not a wire. (2) One copy of the ``Point`` per subscriber. ``logger_node`` and ``map_view_node`` are added for this example.
+
+Deliver One Message: Four Steps
+"""""""""""""""""""""""""""""""
 
 One position, from the robotaxi to the dispatcher:
 
 1. **Find.** The two nodes find each other, because they use the same domain ID (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_).
-2. **Match.** DDS connects them, because the topic name and the message type are the same.
+2. **Match.** DDS links the publisher to each subscriber with the same topic name and message type (`Who Connects the Nodes: DDS, Not Your Code`_).
 3. **Send.** DDS turns the ``Point`` into bytes (**serialization**) and sends them with RTPS, the protocol of DDS: over UDP to another computer, or through shared memory on the same computer.
 4. **Receive.** DDS turns the bytes back into a ``Point`` (**deserialization**) and hands it to the dispatcher.
 
 Steps 1 and 2 happen when the nodes start. Steps 3 and 4 happen for every message, every 0.5 s.
-
-The Running Example: a Fleet of Robotaxis
-"""""""""""""""""""""""""""""""""""""""""
-
-The next parts state four rules and four patterns of topics. All of them use one example, a fleet of robotaxis and the office that dispatches them.
-
-.. figure:: /_static/images/l10/robotaxi_graph.png
-   :alt: Two white boxes, robotaxi on the left and dispatcher on the right. An arrow goes from robotaxi to dispatcher, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
-   :align: center
-   :width: 80%
-
-   The robotaxi publishes its position; the dispatcher subscribes to it.
-
-- **Nodes:** each robotaxi is a node, and the dispatcher is a node.
-- **Topics:** names such as ``/robotaxi/position``. A robotaxi publishes on it; the dispatcher subscribes to it.
-- **Messages:** the data, one piece at a time. Here a position of type ``geometry_msgs/msg/Point``: three numbers, ``x``, ``y`` and ``z``.
 
 Four Rules of a Topic
 ^^^^^^^^^^^^^^^^^^^^^
@@ -606,7 +613,7 @@ Rule 1: Publisher and Subscriber Use the Same Topic Name
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/rule_name.png
-   :alt: The node robotaxi on the left, a red dashed box in the middle that reads different names: nothing arrives, and the node dispatcher on the right. An arrow from robotaxi to the box has the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A red dashed arrow from the box to dispatcher has the topic name /robotaxi/pose above it and the message type geometry_msgs/msg/Point below it.
+   :alt: The node robotaxi_node on the left, a red dashed box in the middle that reads different names: nothing arrives, and the node dispatcher_node on the right. An arrow from robotaxi_node to the box has the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A red dashed arrow from the box to dispatcher_node has the topic name /robotaxi/pose above it and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 60%
 
@@ -616,7 +623,7 @@ Rule 2: Publisher and Subscriber Use the Same Message Type
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/rule_type.png
-   :alt: The node robotaxi on the left, a red dashed box in the middle that reads different types: nothing arrives, and the node dispatcher on the right. An arrow from robotaxi to the box has the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A red dashed arrow from the box to dispatcher has the topic name /robotaxi/position above it and the message type std_msgs/msg/String below it.
+   :alt: The node robotaxi_node on the left, a red dashed box in the middle that reads different types: nothing arrives, and the node dispatcher_node on the right. An arrow from robotaxi_node to the box has the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A red dashed arrow from the box to dispatcher_node has the topic name /robotaxi/position above it and the message type std_msgs/msg/String below it.
    :align: center
    :width: 60%
 
@@ -628,14 +635,14 @@ Rule 3: A Publisher Does Not Wait for Subscribers
 The robotaxi publishes every 0.5 s, whether or not a node listens. A dispatcher that starts late gets only the messages sent after it starts.
 
 .. figure:: /_static/images/l10/rule_no_wait_1.png
-   :alt: The node robotaxi on the left. A red dashed arrow goes right to a red dashed box that reads: no subscriber yet, messages are lost. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
+   :alt: The node robotaxi_node on the left. A red dashed arrow goes right to a red dashed box that reads: no subscriber yet, messages are lost. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 70%
 
    Step 1: before the dispatcher starts.
 
 .. figure:: /_static/images/l10/rule_no_wait_2.png
-   :alt: The node robotaxi on the left, an arrow to the node dispatcher on the right, marked started later. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
+   :alt: The node robotaxi_node on the left, an arrow to the node dispatcher_node on the right, marked started later. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 70%
 
@@ -647,14 +654,14 @@ Rule 4: A Subscriber Does Not Need a Publisher
 The dispatcher can start first. It waits, with no error, and its callback runs once a robotaxi starts publishing. So the order in which you start the two nodes does not matter.
 
 .. figure:: /_static/images/l10/rule_no_publisher_1.png
-   :alt: A red dashed box on the left reads: no publisher yet. A red dashed arrow goes right to the node dispatcher, marked waits. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
+   :alt: A red dashed box on the left reads: no publisher yet. A red dashed arrow goes right to the node dispatcher_node, marked waits. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 70%
 
    Step 1: before the robotaxi starts.
 
 .. figure:: /_static/images/l10/rule_no_publisher_2.png
-   :alt: The node robotaxi on the left, marked started later, an arrow to the node dispatcher on the right. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
+   :alt: The node robotaxi_node on the left, marked started later, an arrow to the node dispatcher_node on the right. The topic name /robotaxi/position is above the arrow and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 70%
 
@@ -667,7 +674,7 @@ Pattern 1: One Publisher, Many Subscribers
 """"""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/pattern_one_to_many.png
-   :alt: The node robotaxi on the left. One line goes right from it, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. At a dot the line splits into two arrows: one up to the node dispatcher and one down to the node _ros2cli_84035, marked ros2 topic echo.
+   :alt: The node robotaxi_node on the left. One line goes right from it, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. At a dot the line splits into two arrows: one up to the node dispatcher_node and one down to the node _ros2cli_84035, marked ros2 topic echo.
    :align: center
    :width: 70%
 
@@ -677,7 +684,7 @@ Pattern 2: Many Publishers, One Topic
 """""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/pattern_many_to_one.png
-   :alt: Three nodes on the left, robotaxi_1, robotaxi_2 and robotaxi_3, each with an arrow to the node dispatcher on the right. Along each arrow, the topic name /fleet/position is on one side and the message type geometry_msgs/msg/Point on the other.
+   :alt: Three nodes on the left, robotaxi_1_node, robotaxi_2_node and robotaxi_3_node, each with an arrow to the node dispatcher_node on the right. Along each arrow, the topic name /fleet/position is on one side and the message type geometry_msgs/msg/Point on the other.
    :align: center
    :width: 70%
 
@@ -687,7 +694,7 @@ Pattern 3: One Node, Several Topics
 """""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/pattern_two_topics.png
-   :alt: The node robotaxi at the top, with two straight arrows down at the same angle: one to the node dispatcher, with the topic name /robotaxi/position on one side and the message type geometry_msgs/msg/Point on the other, and one to the node battery_monitor, with the topic name /robotaxi/battery on one side and the message type sensor_msgs/msg/BatteryState on the other.
+   :alt: The node robotaxi_node at the top, with two straight arrows down at the same angle: one to the node dispatcher_node, with the topic name /robotaxi/position on one side and the message type geometry_msgs/msg/Point on the other, and one to the node battery_monitor_node, with the topic name /robotaxi/battery on one side and the message type std_msgs/msg/Float64 on the other.
    :align: center
    :width: 70%
 
@@ -697,7 +704,7 @@ Pattern 4: One Node Publishes and Subscribes
 """"""""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/pattern_both_ways.png
-   :alt: The nodes robotaxi and dispatcher side by side. An arrow goes from robotaxi to dispatcher, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A second arrow, below the first, goes from dispatcher back to robotaxi, with the message type geometry_msgs/msg/Point above it and the topic name /robotaxi/pickup below it.
+   :alt: The nodes robotaxi_node and dispatcher_node side by side. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it. A second arrow, below the first, goes from dispatcher_node back to robotaxi_node, with the message type geometry_msgs/msg/Point above it and the topic name /robotaxi/pickup below it.
    :align: center
    :width: 70%
 
@@ -1013,7 +1020,7 @@ Several workspaces can stack: each one you source adds a layer on top of the one
 
 .. warning::
 
-   **A terminal that did not source the overlay** finds only the underlay. ``ros2 run robotaxi_demo robotaxi`` prints ``Package 'robotaxi_demo' not found``, even after a build that worked. Source the overlay again after each build that adds a package or an executable. In zsh, source ``setup.zsh``.
+   **A terminal that did not source the overlay** finds only the underlay. ``ros2 run robotaxi_demo robotaxi_exe`` prints ``Package 'robotaxi_demo' not found``, even after a build that worked. Source the overlay again after each build that adds a package or an executable. In zsh, source ``setup.zsh``.
 
 Create a Package: ros2 pkg create
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1022,6 +1029,8 @@ Create a Package: ros2 pkg create
    :class: tip
 
    A **package** is one folder of nodes, libraries, settings and launch files that does one thing, such as ``demo_nodes_cpp``. Every package has the same layout, so it is easy to build, share and reuse.
+
+We have provided this lecture's package, ``robotaxi_demo``. Here is the command we used to create it:
 
 .. code-block:: bash
    :linenos:
@@ -1083,7 +1092,7 @@ Package Discovery: the ros2 pkg Commands
    * - ``ros2 pkg list``
      - 501 package names, ``robotaxi_demo`` among them
    * - ``ros2 pkg executables robotaxi_demo``
-     - ``robotaxi_demo dispatcher``, ``robotaxi_demo robotaxi``
+     - ``robotaxi_demo dispatcher_exe``, ``robotaxi_demo robotaxi_exe``
    * - ``ros2 pkg prefix robotaxi_demo``
      - ``<workspace>/install/robotaxi_demo``: the overlay
    * - ``ros2 pkg prefix rclcpp``
@@ -1170,9 +1179,9 @@ Build Configuration: CMakeLists.txt
    * - ``find_package``
      - Finds one package we depend on, such as ``rclcpp``. One line per dependency.
    * - ``add_executable``
-     - Builds the executable ``robotaxi`` from ``src/robotaxi_main.cpp``.
+     - Builds the executable ``robotaxi_exe`` from ``src/robotaxi_main.cpp``.
    * - ``ament_target_dependencies``
-     - Gives ``robotaxi`` the ROS packages it uses: ``rclcpp``.
+     - Gives ``robotaxi_exe`` the ROS packages it uses: ``rclcpp``.
    * - ``install``
      - Copies each executable to ``lib/${PROJECT_NAME}``, where ``ros2 run`` looks for it.
    * - ``ament_package``
@@ -1195,10 +1204,10 @@ The ``install`` command in ``CMakeLists.txt`` says what the package installs and
 ROS 2 Daemon
 ^^^^^^^^^^^^
 
-The first ``ros2`` command starts the **daemon**, a background program that keeps a list of the running nodes, topics, services and actions. The next commands ask it, so they answer at once instead of waiting for discovery.
+The first command that asks about running nodes, such as ``ros2 node list``, starts the **daemon**: a background program that keeps a list of the running nodes, topics, services and actions. The next commands ask it, so they answer at once instead of waiting for discovery. Commands that only read installed files, such as ``ros2 pkg list``, ``ros2 interface show`` or ``ros2 run``, do not start it (checked on Jazzy with ``ros2 daemon status``).
 
 - ``ros2 daemon status`` says whether it runs, for example ``The daemon is not running``.
-- ``ros2 daemon stop`` stops it. The next command starts a fresh one.
+- ``ros2 daemon stop`` stops it. The next such command starts a fresh one.
 - ``ros2 daemon start`` starts it by hand; this is rarely needed.
 
 .. note::
@@ -1208,87 +1217,12 @@ The first ``ros2`` command starts the **daemon**, a background program that keep
 Writing Your First Node
 -----------------------
 
-The package of the last section has a build file but no code. This section writes a first node, in two forms: a function, then a class.
+The package of the last section has a build file but no code. This section writes a first node, as a class.
 
-- **Goal:** a node that prints a line in the terminal: ``Hello from hello`` for the function, ``robotaxi is ready`` for the class.
+- **Goal:** a node that prints ``robotaxi_node is ready`` in the terminal.
 - **Concepts:** starting ROS 2, logging, and a clean stop.
 - **Build:** the lines to add to ``CMakeLists.txt``, and ``colcon build``.
 - **Run:** ``ros2 run``.
-
-Simple Functional Node
-^^^^^^^^^^^^^^^^^^^^^^
-
-Write a Node with No Class
-""""""""""""""""""""""""""
-
-Write a node, without a class of our own, that logs ``Hello from hello`` and ends.
-
-.. list-table::
-   :widths: 25 75
-   :class: compact-table
-
-   * - Package
-     - ``robotaxi_demo``
-   * - File
-     - ``src/hello_function.cpp``
-   * - Node
-     - ``hello``
-   * - Executable
-     - ``hello_function``
-
-**Edit** ``src/hello_function.cpp``:
-
-.. code-block:: cpp
-   :linenos:
-
-   #include <memory>
-   #include <rclcpp/rclcpp.hpp>
-   int main(int argc, char** argv) {
-     rclcpp::init(argc, argv);
-     auto node{std::make_shared<rclcpp::Node>("hello")};
-     RCLCPP_INFO_STREAM(node->get_logger(),
-                        "Hello from " << node->get_name());
-     rclcpp::shutdown();
-   }
-
-Understanding the Code
-""""""""""""""""""""""
-
-- ``rclcpp::init(argc, argv)``: starts ROS 2 and the middleware. It reads the ROS arguments from the command line. Call it before you make any node.
-- ``std::make_shared<rclcpp::Node>("hello")``: makes a node named ``hello``, in a ``std::shared_ptr``. ROS 2 functions such as ``rclcpp::spin`` take the node as a shared pointer. A node's name must be unique on the network.
-- ``RCLCPP_INFO_STREAM(node->get_logger(), ...)``: logs one line at the INFO level, with ``<<`` as ``std::cout``. The node's logger adds the time and the node's name. The other levels are ``DEBUG``, ``WARN``, ``ERROR`` and ``FATAL`` (`Logging <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Logging.html>`_).
-- ``rclcpp::shutdown()``: stops ROS 2 and frees what ``init`` set up. :kbd:`Ctrl+C` also triggers it.
-
-.. note::
-
-   This node runs once and ends: it logs, then ``main`` returns. The nodes of the next sections stay alive with ``rclcpp::spin``. You do not keep this file: the class of the next part replaces it.
-
-Build System, Build and Run
-"""""""""""""""""""""""""""
-
-**Edit** ``CMakeLists.txt``: these lines go after the ``find_package`` lines and before ``ament_package()``.
-
-.. code-block:: cmake
-
-   add_executable(hello_function src/hello_function.cpp)
-   ament_target_dependencies(hello_function rclcpp)
-
-   install(TARGETS hello_function
-     DESTINATION lib/${PROJECT_NAME})
-
-**Build and run**, from ``~/ros2_ws``:
-
-.. code-block:: bash
-
-   colcon build --packages-select robotaxi_demo
-   source install/setup.bash
-   ros2 run robotaxi_demo hello_function
-
-.. code-block:: text
-
-   [INFO] [1793999175.323300565] [hello]: Hello from hello
-
-The line gives the level, the time in seconds since January 1, 1970, the node's name, and the text. Then the program ends: the shell's ``time`` measured 0.3 s from start to end.
 
 Object-Oriented Node Design
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1310,7 +1244,7 @@ A node with publishers, timers and data needs a place to keep them. A class give
 Write a Node as a Class
 """""""""""""""""""""""
 
-Write a node named ``robotaxi`` as a class, ``RoboTaxiNode``, in a header and a main file. The publisher section adds to this same class.
+Write a node named ``robotaxi_node`` as a class, ``RoboTaxiNode``, in a header and a main file. The publisher section adds to this same class.
 
 .. list-table::
    :widths: 25 75
@@ -1321,9 +1255,9 @@ Write a node named ``robotaxi`` as a class, ``RoboTaxiNode``, in a header and a 
    * - Files
      - ``include/robotaxi_demo/robotaxi_node.hpp``, ``src/robotaxi_main.cpp``
    * - Node
-     - ``robotaxi``
+     - ``robotaxi_node``
    * - Executable
-     - ``robotaxi``
+     - ``robotaxi_exe``
 
 **Resource:** `ROS 2 Jazzy: Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_.
 
@@ -1343,7 +1277,7 @@ Step 1: the Header, robotaxi_node.hpp
 
    class RoboTaxiNode : public rclcpp::Node {
     public:
-     RoboTaxiNode() : rclcpp::Node{"robotaxi"} {
+     RoboTaxiNode() : rclcpp::Node{"robotaxi_node"} {
        RCLCPP_INFO_STREAM(get_logger(), get_name() << " is ready");
      }
    };
@@ -1351,8 +1285,8 @@ Step 1: the Header, robotaxi_node.hpp
    }  // namespace robotaxi_demo
 
 - Line 6: a ``RoboTaxiNode`` is an ``rclcpp::Node`` (public inheritance).
-- Line 8: the base class constructor gets the node's name, ``robotaxi``.
-- Line 9: ``RCLCPP_INFO_STREAM`` logs one line at the INFO level, with ``<<`` as in ``std::cout``. ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``; ``get_name()`` returns ``robotaxi``. The constructor is short, so it stays in the header.
+- Line 8: the base class constructor gets the node's name, ``robotaxi_node``.
+- Line 9: ``RCLCPP_INFO_STREAM`` logs one line at the INFO level, with ``<<`` as in ``std::cout``. ``get_logger()`` and ``get_name()`` are public methods inherited from ``rclcpp::Node``; ``get_name()`` returns ``robotaxi_node``. The constructor is short, so it stays in the header.
 
 Step 2: main, in robotaxi_main.cpp
 """"""""""""""""""""""""""""""""""
@@ -1371,13 +1305,13 @@ Step 2: main, in robotaxi_main.cpp
      rclcpp::init(argc, argv);
      auto node{std::make_shared<
        robotaxi_demo::RoboTaxiNode>()};
-     rclcpp::spin(node);
+     //rclcpp::spin(node);
      rclcpp::shutdown();
    }
 
 - Line 8: starts ROS 2 and the middleware. Call it before you make any node.
 - Lines 9 and 10: make a ``RoboTaxiNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
-- Line 11: ``rclcpp::spin`` keeps the node running until :kbd:`Ctrl+C` (the next section). Without this line, the program ends right after the log line.
+- Line 11: ``rclcpp::spin`` is commented out for now; `Node Spinning`_ explains it. Without it, the program ends right after the log line.
 - Line 12: stops ROS 2 and frees what ``init`` set up.
 
 Step 3: CMakeLists.txt
@@ -1390,15 +1324,15 @@ Step 3: CMakeLists.txt
    :emphasize-lines: 1, 2, 3, 4, 5
 
    include_directories(include)
-   add_executable(robotaxi src/robotaxi_main.cpp)
-   ament_target_dependencies(robotaxi rclcpp)
-   install(TARGETS robotaxi
+   add_executable(robotaxi_exe src/robotaxi_main.cpp)
+   ament_target_dependencies(robotaxi_exe rclcpp)
+   install(TARGETS robotaxi_exe
      DESTINATION lib/${PROJECT_NAME})
 
 - Line 1: lets ``#include "robotaxi_demo/robotaxi_node.hpp"`` find the header in ``include``.
-- Line 2: builds the executable ``robotaxi`` from ``src/robotaxi_main.cpp``. The publisher section adds ``src/robotaxi_node.cpp`` to this line.
-- Line 3: links ``robotaxi`` to ``rclcpp``, the package it uses.
-- Lines 4 and 5: install the executables "so ``ros2 run`` can find your executable" (`Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_). When the package has more executables, list them all on this line.
+- Line 2: builds the executable ``robotaxi_exe`` from ``src/robotaxi_main.cpp``. The publisher section adds ``src/robotaxi_node.cpp`` to this line.
+- Line 3: links ``robotaxi_exe`` to ``rclcpp``, the package it uses.
+- Lines 4 and 5: install the executable "so ``ros2 run`` can find your executable" (`Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_). Each executable of the package gets its own ``install`` lines.
 
 Step 4: Build and Test
 """"""""""""""""""""""
@@ -1409,14 +1343,14 @@ Step 4: Build and Test
 
    colcon build --packages-select robotaxi_demo
    source install/setup.bash
-   ros2 run robotaxi_demo robotaxi
+   ros2 run robotaxi_demo robotaxi_exe
 
 .. code-block:: text
 
-   [INFO] [1794184675.746034542] [robotaxi]: robotaxi is ready
+   [INFO] [1794184675.746034542] [robotaxi_node]: robotaxi_node is ready
 
 - The line gives the level, the time in seconds since January 1, 1970, the node's name, and the text.
-- The node prints its line and keeps running, because of ``rclcpp::spin``. In another terminal, ``ros2 node list`` shows ``/robotaxi``. :kbd:`Ctrl+C` stops it.
+- The node prints its line, and the program ends at once: ``main`` does not spin yet. `Node Spinning`_ adds ``rclcpp::spin``, which keeps the node running until :kbd:`Ctrl+C`.
 
 Node Lifecycle and Best Practices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1454,7 +1388,7 @@ Node Spinning
 
 **Spinning** keeps a node alive. The node waits for events, a message that arrives, a timer that is due, a service request, and runs the callback of each one.
 
-The ``main`` of the robotaxi node already calls ``rclcpp::spin``. This section explains what it does, starting with the thread that runs it.
+The ``main`` of the robotaxi node does not spin yet: it logs one line and ends. This section explains spinning, starting with the thread that runs it, and adds ``rclcpp::spin`` to that ``main``.
 
 Threads: Who Runs main and the Callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1466,7 +1400,7 @@ Threads: Who Runs main and the Callbacks
 
 - A process starts with one thread, the **main thread**, which runs ``main``.
 - Every thread of a process can reach the same objects: "any thread can potentially access any object and function in the program" (cppreference). Two processes cannot.
-- In ``robotaxi_main.cpp``, the main thread runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
+- With spinning added, the main thread of ``robotaxi_main.cpp`` runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
 - While it is inside ``spin``, the main thread runs the node's callbacks. One thread means one callback at a time.
 - A program can start more threads, with ``std::thread`` or a multi-threaded executor, to run callbacks at the same time. That comes in a later lecture.
 
@@ -1476,7 +1410,7 @@ Spinning: the Main Thread Runs the Callbacks
 **Spinning** is a loop that the main thread runs inside ``rclcpp::spin(node)``.
 
 .. figure:: /_static/images/l10/spin_main_thread.png
-   :alt: On the left, a wavy line labeled main thread, with init, makes the node, leads to an arrow labeled rclcpp::spin(node) that enters a circle. Inside the circle: main thread, then 1. wait for an event, 2. run its callback, 3. repeat; an arrow runs around the circle. From the right of the circle, an arrow marked with the keys Ctrl and C leads to a second wavy line labeled main thread, with rclcpp::shutdown().
+   :alt: On the left, a wavy line labeled main thread, with init, makes the node, leads to an arrow labeled rclcpp::spin(node) that enters a circle. Inside the circle: main thread, then 1. wait for an event, 2. run its callback, 3. repeat; an arrow runs around the circle. A red X marks the point on the right of the circle where the main thread leaves the loop. From there, an arrow marked with the keys Ctrl and C leads to a second wavy line labeled main thread, with rclcpp::shutdown().
    :align: center
    :width: 90%
 
@@ -1518,7 +1452,7 @@ The Basic Spinning Pattern
      rclcpp::shutdown();
    }
 
-This is the ``main`` of every node in this lecture, with the class name changed.
+This is the ``main`` of every node in this lecture, with the class name changed. In ``robotaxi_main.cpp``, remove the ``//`` before ``rclcpp::spin(node)``.
 
 **What happens during spin**
 
@@ -1529,46 +1463,47 @@ This is the ``main`` of every node in this lecture, with the class name changed.
 
 The ROS 2 documentation: ``rclcpp::spin(node)`` "expands to an instantiation and invocation of the Single-Threaded Executor" (`Executors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html>`_).
 
-Spinning Alternatives
-^^^^^^^^^^^^^^^^^^^^^
+.. dropdown:: More detail: other ways to spin
+   :class-container: more-detail
+   :icon: info
 
-``rclcpp::spin(node)`` is the default: it returns only after :kbd:`Ctrl+C`.
+   ``rclcpp::spin(node)`` is the default: it returns only after :kbd:`Ctrl+C`.
 
-**Spin some:** ``rclcpp::spin_some(node)`` runs the callbacks that are ready now, then returns. **Use it when** ``main`` has its own loop with other work.
+   **Spin some:** ``rclcpp::spin_some(node)`` runs the callbacks that are ready now, then returns. **Use it when** ``main`` has its own loop with other work.
 
-.. code-block:: cpp
+   .. code-block:: cpp
 
-   int laps{0};
-   while (rclcpp::ok() && laps < 5) {
-     rclcpp::spin_some(node);
-     RCLCPP_INFO_STREAM(node->get_logger(),
-       "other work, lap " << laps);
-     std::this_thread::sleep_for(
-       std::chrono::milliseconds{100});
-     ++laps;
-   }
+      int laps{0};
+      while (rclcpp::ok() && laps < 5) {
+        rclcpp::spin_some(node);
+        RCLCPP_INFO_STREAM(node->get_logger(),
+          "other work, lap " << laps);
+        std::this_thread::sleep_for(
+          std::chrono::milliseconds{100});
+        ++laps;
+      }
 
-.. code-block:: text
+   .. code-block:: text
 
-   [...956.587] [loop]: other work, lap 0
-   [...956.688] [loop]: other work, lap 1
-   [...956.788] [loop]: other work, lap 2
+      [...956.587] [loop]: other work, lap 0
+      [...956.688] [loop]: other work, lap 1
+      [...956.788] [loop]: other work, lap 2
 
-The laps are 100 ms apart: the sleep. ``rclcpp::ok()`` turns false after :kbd:`Ctrl+C`.
+   The laps are 100 ms apart: the sleep. ``rclcpp::ok()`` turns false after :kbd:`Ctrl+C`.
 
-**An executor:** the same loop as an object. **Use it when** one program spins several nodes, or needs several threads (a later lecture).
+   **An executor:** the same loop as an object. **Use it when** one program spins several nodes, or needs several threads (a later lecture).
 
-.. code-block:: cpp
+   .. code-block:: cpp
 
-   rclcpp::executors::SingleThreadedExecutor executor;
-   executor.add_node(node);
-   executor.spin();
+      rclcpp::executors::SingleThreadedExecutor executor;
+      executor.add_node(node);
+      executor.spin();
 
-.. note::
+   .. note::
 
-   Use ``rclcpp::spin`` for a simple node. Use an executor when you spin several nodes or need threads. Executors come in a later lecture.
+      Use ``rclcpp::spin`` for a simple node. Use an executor when you spin several nodes or need threads. Executors come in a later lecture.
 
-rclcpp also has ``spin_all``, which runs all the work that is ready within a time limit, and ``spin_until_future_complete``, which spins until one result arrives (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_).
+   rclcpp also has ``spin_all``, which runs all the work that is ready within a time limit, and ``spin_until_future_complete``, which spins until one result arrives (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_).
 
 Common Mistakes, and What You See
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1813,8 +1748,8 @@ To use a message package, name it in ``package.xml`` and in ``CMakeLists.txt``. 
    find_package(rclcpp REQUIRED)
    find_package(geometry_msgs REQUIRED)
 
-   add_executable(robotaxi src/robotaxi_main.cpp src/robotaxi_node.cpp)
-   ament_target_dependencies(robotaxi rclcpp geometry_msgs)
+   add_executable(robotaxi_exe src/robotaxi_main.cpp src/robotaxi_node.cpp)
+   ament_target_dependencies(robotaxi_exe rclcpp geometry_msgs)
 
 - Line 3 finds the package; line 6 links the executable to it. Both are needed, for each message package.
 - ``ros2 pkg create --dependencies rclcpp geometry_msgs`` wrote the ``<depend>`` and ``find_package`` lines.
@@ -1905,9 +1840,9 @@ Add a publisher to ``RoboTaxiNode``: the robotaxi publishes its position, a ``Po
    * - Files
      - ``include/robotaxi_demo/robotaxi_node.hpp``, ``src/robotaxi_node.cpp``, ``src/robotaxi_main.cpp``
    * - Node
-     - ``robotaxi``
+     - ``robotaxi_node``
    * - Executable
-     - ``robotaxi``
+     - ``robotaxi_exe``
 
 .. warning::
 
@@ -1925,11 +1860,11 @@ The Header: a Publisher and a Timer
    class RoboTaxiNode : public rclcpp::Node {
     public:
      RoboTaxiNode()
-         : rclcpp::Node{"robotaxi"},
+         : rclcpp::Node{"robotaxi_node"},
            publisher_{create_publisher<geometry_msgs::msg::Point>(
                "robotaxi/position", 10)},
            timer_{create_wall_timer(std::chrono::milliseconds{500},
-                                    [this]() { publish_position(); })} {}
+               std::bind(&RoboTaxiNode::publish_position, this))} {}
     private:
      void publish_position();
      rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr publisher_;
@@ -1937,7 +1872,7 @@ The Header: a Publisher and a Timer
      double x_{0.0};  // position along the street, in m
    };
 
-The constructor makes a publisher (lines 5 and 6) and a timer (lines 7 and 8). The class keeps both in data members (lines 11 and 12). Above the class, the file includes ``<chrono>``, ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
+The constructor makes a publisher (lines 5 and 6) and a timer (lines 7 and 8). The class keeps both in data members (lines 11 and 12). Above the class, the file includes ``<chrono>``, ``<functional>``, ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
 
 Initialize the Publisher
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1945,21 +1880,72 @@ Initialize the Publisher
 What the Constructor Makes
 """"""""""""""""""""""""""
 
-.. code-block:: cpp
-   :linenos:
+The timer needs a callable to run every 500 ms. The class gives it in one of two ways, and both build and run the same on Jazzy. The slides use ``std::bind``.
 
-   publisher_{create_publisher<geometry_msgs::msg::Point>(
-       "robotaxi/position", 10)},
-   timer_{create_wall_timer(std::chrono::milliseconds{500},
-                            [this]() { publish_position(); })} {}
+.. tab-set::
+
+   .. tab-item:: With std::bind
+
+      .. code-block:: cpp
+         :linenos:
+
+         publisher_{create_publisher<geometry_msgs::msg::Point>(
+             "robotaxi/position", 10)},
+         timer_{create_wall_timer(std::chrono::milliseconds{500},
+             std::bind(&RoboTaxiNode::publish_position, this))} {}
+
+      - Lines 3 and 4: every 500 ms (2 Hz), the timer calls ``publish_position`` on this object. ``std::bind``, from ``<functional>``, joins the method, ``&RoboTaxiNode::publish_position``, to the object to call it on, ``this``.
+
+   .. tab-item:: With a lambda
+
+      .. code-block:: cpp
+         :linenos:
+
+         publisher_{create_publisher<geometry_msgs::msg::Point>(
+             "robotaxi/position", 10)},
+         timer_{create_wall_timer(std::chrono::milliseconds{500},
+                                  [this]() { publish_position(); })} {}
+
+      - Lines 3 and 4: every 500 ms (2 Hz), the timer calls the lambda, and the lambda calls ``publish_position``. ``[this]`` lets the lambda call a method of this object. This version needs no ``<functional>``.
+
+In both versions:
 
 - Lines 1 and 2: a publisher of ``Point`` on the topic ``robotaxi/position``. The 10 is the queue size: up to 10 messages wait for a subscriber that falls behind.
-- Lines 3 and 4: every 500 ms, the timer calls the lambda, and the lambda calls ``publish_position``. ``[this]`` lets the lambda call a method of this object. 500 ms is 2 Hz.
+- Lines 3 and 4: ``create_wall_timer`` takes two arguments (`rclcpp node.hpp, Jazzy <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/node.hpp>`_). The **period**, the "time interval between triggers of the callback": 500 ms, so 2 Hz. The **callback**, what the timer runs each time.
 - ``create_publisher`` and ``create_wall_timer`` are methods inherited from ``rclcpp::Node``. Each returns a ``std::shared_ptr``.
 
 .. warning::
 
    **Store the timer.** A timer that is not kept in a data member is destroyed at the end of the constructor, and its callback never runs. A test node with such a timer printed nothing in 1.5 s.
+
+Hand the Timer a Method: std::bind
+""""""""""""""""""""""""""""""""""
+
+The timer needs something it can call on its own; ``std::bind`` makes one from a method and an object.
+
+- **Why:** the timer runs its callback as ``callback_()``, with no object (`rclcpp timer.hpp, Jazzy <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/timer.hpp>`_). A method runs only on an object: ``this->publish_position()``. Passing ``&RoboTaxiNode::publish_position`` alone does not compile (Jazzy, g++: ``'operator()' is not a member of 'void (robotaxi_demo::RoboTaxiNode::*)()'``).
+- **What:** ``std::bind``, from ``<functional>``, "generates a forwarding call wrapper" (`std::bind <https://en.cppreference.com/w/cpp/utility/functional/bind>`_): a new object that, when called, calls the method on the object you gave it.
+- ``&RoboTaxiNode::publish_position``: which method to call. The ``&`` gives the method's address.
+- ``this``: which object to call it on, this robotaxi.
+- A lambda, ``[this]() { publish_position(); }``, does the same job (the second tab above): ``[this]`` lets its body call a method of this object.
+
+This is the standard C++ ``std::bind``, from ``<functional>``; ROS 2 adds nothing to it.
+
+.. code-block:: cpp
+   :linenos:
+
+   int add(int a, int b) { return a + b; }
+   auto add2{std::bind(add, 2, std::placeholders::_1)};
+   add2(5);  // runs add(2, 5): 7
+
+   auto callback{std::bind(&RoboTaxiNode::publish_position, this)};
+   callback();  // runs this->publish_position()
+
+- The member-function form is the part you may not have seen in plain C++. Simple examples often bind a **free function**, a function that is not a method of a class, such as ``std::bind(add, 2, _1)``, which fixes the first argument (lines 1 to 3).
+- Here it binds a member function: ``&RoboTaxiNode::publish_position`` is a pointer to a method, and ``this`` is bound as the object to call it on. Calling the result runs ``this->publish_position()`` (lines 5 and 6).
+- That is standard C++ too; it would work the same outside ROS, with any class.
+- A placeholder is needed only when a value has to come in at call time, such as the message on the subscriber's ``std::placeholders::_1``.
+- For the timer, ``publish_position`` takes no parameters and the timer passes nothing, so no placeholder is needed.
 
 Publish Messages
 ^^^^^^^^^^^^^^^^
@@ -1998,14 +1984,14 @@ Build and Test the Publisher
 Build, Run the Publisher, Check the Topic
 """""""""""""""""""""""""""""""""""""""""
 
-In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(robotaxi src/robotaxi_main.cpp src/robotaxi_node.cpp)``. Then ``colcon build --packages-select robotaxi_demo`` and ``source install/setup.bash``.
+In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(robotaxi_exe src/robotaxi_main.cpp src/robotaxi_node.cpp)``. Then ``colcon build --packages-select robotaxi_demo`` and ``source install/setup.bash``.
 
-**Terminal 1:** ``ros2 run robotaxi_demo robotaxi``
+**Terminal 1:** ``ros2 run robotaxi_demo robotaxi_exe``
 
 .. code-block:: text
 
-   [INFO] [1794204168.548507563] [robotaxi]: Published x = 0
-   [INFO] [1794204169.048440989] [robotaxi]: Published x = 1
+   [INFO] [1794204168.548507563] [robotaxi_node]: Published x = 0
+   [INFO] [1794204169.048440989] [robotaxi_node]: Published x = 1
 
 **Terminal 2:** ``ros2 topic hz /robotaxi/position``
 
@@ -2086,28 +2072,27 @@ Write a dispatcher node that subscribes to ``robotaxi/position`` and logs, for e
    * - Files
      - ``include/robotaxi_demo/dispatcher_node.hpp``, ``src/dispatcher_node.cpp``, ``src/dispatcher_main.cpp``
    * - Node
-     - ``dispatcher``
+     - ``dispatcher_node``
    * - Executable
-     - ``dispatcher``
+     - ``dispatcher_exe``
 
-The pickup point, at x = 10 m and y = 0 m, is chosen for this example. ``dispatcher_main.cpp`` is the spinning pattern with ``DispatcherNode``, and ``CMakeLists.txt`` gets the same two lines as the publisher, with ``dispatcher`` in place of ``robotaxi``.
+The pickup point, at x = 10 m and y = 0 m, is chosen for this example. ``dispatcher_main.cpp`` is the spinning pattern with ``DispatcherNode``, and ``CMakeLists.txt`` gets the same three commands as the publisher, ``add_executable``, ``ament_target_dependencies`` and ``install``, with ``dispatcher_exe`` in place of ``robotaxi_exe``.
 
 The Header: a Subscription and a Callback
 """""""""""""""""""""""""""""""""""""""""
 
 .. code-block:: cpp
    :linenos:
-   :emphasize-lines: 5, 6, 7, 8, 9, 12
+   :emphasize-lines: 5, 6, 7, 8, 11
 
    class DispatcherNode : public rclcpp::Node {
     public:
      DispatcherNode()
-         : rclcpp::Node{"dispatcher"},
+         : rclcpp::Node{"dispatcher_node"},
            subscription_{create_subscription<geometry_msgs::msg::Point>(
                "robotaxi/position", 10,
-               [this](const geometry_msgs::msg::Point& msg) {
-                 on_position(msg);
-               })} {}
+               std::bind(&DispatcherNode::on_position, this,
+                         std::placeholders::_1))} {}
     private:
      void on_position(const geometry_msgs::msg::Point& msg);
      rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr subscription_;
@@ -2115,7 +2100,7 @@ The Header: a Subscription and a Callback
      double pickup_y_{0.0};   // pickup point, in m
    };
 
-The constructor makes a subscription (lines 5 to 9), kept in a data member (line 12). The file includes ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
+The constructor makes a subscription (lines 5 to 8), kept in a data member (line 11). The file includes ``<functional>``, ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
 
 Initialize the Subscriber
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2123,39 +2108,40 @@ Initialize the Subscriber
 What the Subscription Constructor Makes
 """""""""""""""""""""""""""""""""""""""
 
-.. code-block:: cpp
-   :linenos:
+The callback is made in one of two ways, as for the timer. Both build and print the same lines on Jazzy. The slides use ``std::bind``.
 
-   subscription_{create_subscription<geometry_msgs::msg::Point>(
-       "robotaxi/position", 10,
-       [this](const geometry_msgs::msg::Point& msg) {
-         on_position(msg);
-       })} {}
+.. tab-set::
+
+   .. tab-item:: With std::bind
+
+      .. code-block:: cpp
+         :linenos:
+
+         subscription_{create_subscription<geometry_msgs::msg::Point>(
+             "robotaxi/position", 10,
+             std::bind(&DispatcherNode::on_position, this,
+                       std::placeholders::_1))} {}
+
+      - Lines 3 and 4: ``std::bind`` joins ``on_position`` to this object, as for the timer. ``std::placeholders::_1`` is a slot for the first argument: ``spin`` fills it with the message, and the call becomes ``this->on_position(msg)``. The timer passes no argument, so its ``std::bind`` has no slot.
+
+   .. tab-item:: With a lambda
+
+      .. code-block:: cpp
+         :linenos:
+
+         subscription_{create_subscription<geometry_msgs::msg::Point>(
+             "robotaxi/position", 10,
+             [this](const geometry_msgs::msg::Point& msg) {
+               on_position(msg);
+             })} {}
+
+      - Lines 3 to 5: the lambda takes the message and passes it on to ``on_position``. You see the argument, and there is no slot to count.
+
+In both versions:
 
 - Lines 1 and 2: the same message type and the same topic name as the publisher (rules 1 and 2). The 10 is the queue size: up to 10 messages wait while the callback is busy.
-- Lines 3 to 5: the callback. ``rclcpp::spin`` calls it once for each message, with the message as its argument. The lambda passes it on to ``on_position``. The parameter's type must be the topic's type; a reference avoids a copy.
+- ``rclcpp::spin`` calls the callback once for each message, with the message as its argument. The type of ``on_position``'s parameter must be the topic's type; a reference avoids a copy.
 - Start the dispatcher before the robotaxi or after it: rule 4 says it waits for a publisher.
-
-Hand Over a Method without a Lambda: std::bind
-""""""""""""""""""""""""""""""""""""""""""""""
-
-Many ROS 2 examples write the callback with ``std::bind``, from ``<functional>``. This dispatcher builds and prints the same lines as the lambda version (Jazzy).
-
-.. code-block:: cpp
-   :linenos:
-   :emphasize-lines: 3, 4
-
-   subscription_{create_subscription<geometry_msgs::msg::Point>(
-       "robotaxi/position", 10,
-       std::bind(&DispatcherNode::on_position, this,
-                 std::placeholders::_1))} {}
-
-- ``&DispatcherNode::on_position``: which method to call.
-- ``this``: which object to call it on, this dispatcher.
-- ``std::placeholders::_1``: a slot for the first argument. ``spin`` fills it with the message.
-- ``std::bind`` returns a callable that does what the lambda does: ``this->on_position(msg)``. The timer takes ``std::bind(&RoboTaxiNode::publish_position, this)``, with no slot.
-
-The course code uses the lambda: you see every argument, and there is no slot to count.
 
 Process Messages
 ^^^^^^^^^^^^^^^^
@@ -2184,13 +2170,13 @@ Build and Test the Subscriber
 Run the Complete System
 """""""""""""""""""""""
 
-**Terminal 1:** ``ros2 run robotaxi_demo dispatcher``. **Terminal 2:** ``ros2 run robotaxi_demo robotaxi``.
+**Terminal 1:** ``ros2 run robotaxi_demo dispatcher_exe``. **Terminal 2:** ``ros2 run robotaxi_demo robotaxi_exe``.
 
 .. code-block:: text
 
-   [INFO] [...168.548705] [dispatcher]: 10 m from the pickup
-   [INFO] [...169.048546] [dispatcher]: 9 m from the pickup
-   [INFO] [...169.548548] [dispatcher]: 8 m from the pickup
+   [INFO] [...168.548705] [dispatcher_node]: 10 m from the pickup
+   [INFO] [...169.048546] [dispatcher_node]: 9 m from the pickup
+   [INFO] [...169.548548] [dispatcher_node]: 8 m from the pickup
 
 **Terminal 3:** ``ros2 topic info /robotaxi/position``
 
@@ -2205,6 +2191,41 @@ Run the Complete System
 
 When nothing arrives, check the topic names first: ``ros2 topic list`` shows what each side uses (rule 1).
 
+Who Connects the Nodes: DDS, Not Your Code
+""""""""""""""""""""""""""""""""""""""""""
+
+Your code never names another node. DDS, under your code, makes the links.
+
+1. **Discovery:** each node advertises its presence, and the others "respond to this advertisement with information about themselves so that the appropriate connections can be made" (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_).
+2. **Matching:** a publisher and a subscription with the same topic name, the same type and compatible QoS are linked. Then they communicate "without the need for a tool like the ROS master" (`ROS 2 with DDS <https://design.ros2.org/articles/ros_on_dds.html>`_).
+
+What DDS knows, with the robotaxi and the dispatcher running (output trimmed):
+
+.. code-block:: bash
+
+   ros2 topic info /robotaxi/position --verbose
+
+.. code-block:: text
+
+   Publisher count: 1
+
+   Node name: robotaxi_node
+   Endpoint type: PUBLISHER
+   QoS profile:
+     Reliability: RELIABLE
+
+   Subscription count: 1
+
+   Node name: dispatcher_node
+   Endpoint type: SUBSCRIPTION
+   QoS profile:
+     Reliability: RELIABLE
+
+.. admonition:: Conclusion
+   :class: tip
+
+   The nodes do not know each other; DDS does. A new subscriber is linked when it starts, and no code changes.
+
 Discussion: Three Dispatchers That Hear Nothing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2214,7 +2235,7 @@ Each version builds, runs next to the robotaxi node, and prints nothing (Jazzy).
 
 .. code-block:: cpp
 
-   DispatcherNode() : rclcpp::Node{"dispatcher"} {
+   DispatcherNode() : rclcpp::Node{"dispatcher_node"} {
      auto subscription{create_subscription<Point>(
          "robotaxi/position", 10, callback)};
    }
@@ -2239,7 +2260,7 @@ Each version builds, runs next to the robotaxi node, and prints nothing (Jazzy).
 
    All three were run on Jazzy next to the robotaxi node. A correct dispatcher printed x = 4, 5, 6, 7 in the same run, so the silence is real.
 
-   - **A:** ``subscription`` is a local variable. The ``SharedPtr`` is destroyed when the constructor returns, and the subscription with it. ``ros2 node info /dispatcher`` lists only ``/parameter_events`` under Subscribers, and ``ros2 topic info /robotaxi/position`` shows ``Subscription count: 0``. Fix: keep it in a data member, as the repository does.
+   - **A:** ``subscription`` is a local variable. The ``SharedPtr`` is destroyed when the constructor returns, and the subscription with it. ``ros2 node info /dispatcher_node`` lists only ``/parameter_events`` under Subscribers, and ``ros2 topic info /robotaxi/position`` shows ``Subscription count: 0``. Fix: keep it in a data member, as the repository does.
    - **B:** a typo, ``positon``. ``ros2 topic list`` shows both ``/robotaxi/position`` and ``/robotaxi/positon``: rule 1, no error, nothing arrives.
    - **C:** no ``rclcpp::spin``. ``main`` makes the node and ends at once: the run took 0.34 s. No callback ever runs.
    - A silent subscriber is a name, a lifetime or a missing spin. The ``ros2`` tools tell which.
@@ -2252,7 +2273,7 @@ In DDS, the middleware under ROS 2, two objects carry a topic:
 - A **DataWriter**: made by a ROS 2 publisher. It writes the messages to the network.
 - A **DataReader**: made by a ROS 2 subscriber. It reads the messages from the network.
 
-A DataWriter and a DataReader connect only when they match: the same topic name, the same type, and compatible QoS settings (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_). The three scenarios that follow show what happens to the messages once they match, or when nobody reads.
+A DataWriter and a DataReader connect only when they match: the same topic name, the same type, and compatible QoS settings (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_). The four scenarios that follow show what happens to the messages once they match, or when nobody reads.
 
 Scenario Analysis
 ^^^^^^^^^^^^^^^^^
@@ -2393,6 +2414,61 @@ Each box is one callback: the message it handled and the time it started.
 - **Stale data:** the dispatcher works on a position that is 1.2 s old.
 - **Fixes:** a shorter callback, a lower publish rate, or a larger queue. The larger queue only delays the loss: each message still takes 1.7 s.
 
+Scenario 4: the Publisher's Queue Fills Up
+""""""""""""""""""""""""""""""""""""""""""
+
+With reliable delivery, the default, the publisher keeps each message in its queue until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher stops acknowledging: its process is frozen for 10 s, then resumed. Chosen for this example: 2 Hz, messages of 100 KB (an image), a publisher queue of 10, a subscriber queue of 100. Measured on Jazzy, two test nodes.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 25 32 28
+   :class: compact-table
+
+   * - Time
+     - Publisher
+     - Publisher's queue
+     - Dispatcher
+   * - 0.5 to 2.5 s
+     - Publishes x = 0 to 4
+     - Acknowledged, then removed
+     - Receives x = 0 to 4
+   * - 3.0 to 12.5 s
+     - Publishes x = 5 to 24
+     - Keeps the last 10 not acknowledged; x = 5 to 14 pushed out
+     - Frozen: no acknowledgement
+   * - 12.8 s
+     -
+     - Sends x = 15 to 24 again
+     - Resumes: x = 5, 6, then x = 15 to 24
+
+.. admonition:: Conclusion
+   :class: tip
+
+   The dispatcher lost x = 7 to 14. It got x = 5 and 6 from its computer's receive buffer, and x = 15 to 24 from the publisher's queue of 10.
+
+.. dropdown:: More detail: how the test was run
+   :class-container: more-detail
+   :icon: info
+
+   - Both test nodes use reliable delivery and keep last. Each message is a ``std_msgs/msg/String`` of 100,000 characters that starts with its number x.
+   - The dispatcher's process is frozen with ``kill -STOP <pid>`` 3 s after the publisher starts, and resumed with ``kill -CONT <pid>`` 10 s later. A frozen process cannot read or acknowledge anything.
+   - Both run with ``FASTDDS_BUILTIN_TRANSPORTS=UDPv4``, so the messages go through the network stack, as between two computers. On one computer, Fast DDS can also use shared memory.
+
+Scenario 4: When the Publisher's Queue Fills
+""""""""""""""""""""""""""""""""""""""""""""
+
+The publisher's queue fills when acknowledgements stop coming: a subscriber that is frozen or unreachable, or a network that loses packets.
+
+.. admonition:: What scenario 4 shows
+   :class: key-box
+
+   - **No blocking:** with keep last, the default, "the system will discard the oldest sample to make room for a new one" (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Each ``publish`` returned in under 1 ms.
+   - **The depth decides what survives:** with a publisher queue of 3, the dispatcher got x = 5, 6, then only x = 22 to 24.
+   - **Small messages hide it:** with messages of 10 characters, the same 10 s freeze lost nothing. The receive buffer, 212,992 bytes here, held all of them.
+   - **Keep all:** ``publish`` blocks "until the oldest sample has been acknowledged by all readers and can be removed", up to a maximum blocking time, 100 ms by default, then returns an error (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_).
+
+Scenario 3 filled the subscriber's queue; this one fills the publisher's.
+
 Investigate a Program You Did Not Write
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2423,10 +2499,10 @@ You must write a node that warns the dispatcher when a robotaxi's battery is low
 Recap: the Lecture in One UML Component Diagram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Each box is a node. The ball is the interface ``robotaxi`` provides (it publishes); the socket is the one ``dispatcher`` requires (it subscribes). The notes hold the rest of the lecture.
+Each box is a node. The ball is the interface ``robotaxi_node`` provides (it publishes); the socket is the one ``dispatcher_node`` requires (it subscribes). The notes hold the rest of the lecture.
 
 .. figure:: /_static/images/l10/l10_recap.png
-   :alt: UML component diagram. Two components in a row, robotaxi : RoboTaxiNode on the left and dispatcher : DispatcherNode on the right. Between them, a ball provided by robotaxi meets a socket required by dispatcher, labeled geometry_msgs/msg/Point on /robotaxi/position. Notes: above robotaxi, derives from rclcpp::Node, a publisher with a queue of 10, a 500 ms timer that fills a Point, then publisher_->publish(msg). Above the interface, a message type is an interface (.msg), both sides use the same topic and type. Above dispatcher, derives from rclcpp::Node, a subscription with a queue of 10, spin runs on_position for each message, a slow callback loses messages. Below robotaxi, package robotaxi_demo holds both nodes, package.xml and CMakeLists.txt declare rclcpp and geometry_msgs, then colcon build, source install/setup.bash, ros2 run. Bottom right, under each node: rclcpp, rcl, rmw, DDS, OS and network; inspect it with ros2 node list, ros2 topic list, echo, hz, info, ros2 interface show.
+   :alt: UML component diagram. Two components in a row, robotaxi_node : RoboTaxiNode on the left and dispatcher_node : DispatcherNode on the right. Between them, a ball provided by robotaxi_node meets a socket required by dispatcher_node, labeled geometry_msgs/msg/Point on /robotaxi/position. Notes: above robotaxi_node, derives from rclcpp::Node, a publisher with a queue of 10, a 500 ms timer that fills a Point, then publisher_->publish(msg). Above the interface, a message type is an interface (.msg), both sides use the same topic and type. Above dispatcher_node, derives from rclcpp::Node, a subscription with a queue of 10, spin runs on_position for each message, a slow callback loses messages. Below robotaxi_node, package robotaxi_demo holds both nodes, package.xml and CMakeLists.txt declare rclcpp and geometry_msgs, then colcon build, source install/setup.bash, ros2 run. Bottom right, under each node: rclcpp, rcl, rmw, DDS, OS and network; inspect it with ros2 node list, ros2 topic list, echo, hz, info, ros2 interface show.
    :align: center
    :width: 100%
 

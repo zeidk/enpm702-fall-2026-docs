@@ -52,5 +52,5 @@ Next Steps
   :doc:`Lecture 13 <../lecture13/l13_index>`. Review it alongside this
   lecture, especially before you finish **GP2**.
 
-- Work through the exercises and take the quiz to solidify your
+- Work through the exercise and take the quiz to solidify your
   understanding of how the pieces fit together.

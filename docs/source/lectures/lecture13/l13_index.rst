@@ -38,7 +38,7 @@ spatial reasoning used throughout the autonomy stack.
 Next Steps
 ----------
 
-- TF2 is used extensively in **GP2**. Complete the exercises and quiz
+- TF2 is used extensively in **GP2**. Complete the exercise and quiz
   before you start its TF2 requirements.
 
 - :doc:`Lecture 14 <../lecture14/l14_index>` (Robot Autonomy

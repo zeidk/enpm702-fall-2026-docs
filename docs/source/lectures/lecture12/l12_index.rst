@@ -47,7 +47,7 @@ Next Steps
   - The TF2 transform library and coordinate frames.
   - Broadcasting and listening to transforms.
 
-- Before next class: complete the ROS exercises on services and
+- Before next class: complete the ROS exercise on services and
   actions, and the quiz.
 - Make sure you can build and run a service server/client pair and an
   action server/client pair in your ROS 2 workspace.

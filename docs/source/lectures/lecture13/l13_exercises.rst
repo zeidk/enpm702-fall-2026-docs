@@ -1,15 +1,13 @@
 ====================================================
-ROS Exercises
+ROS Exercise
 ====================================================
 
-These exercises reinforce the concepts covered in Lecture 13: Coordinate
-Frames and Transforms (TF2). Work through them in order, as each exercise
-builds on the previous one. Build and run each program in a ROS 2
-workspace to verify your understanding.
+This exercise uses the concepts of Lecture 13: Coordinate Frames and
+Transforms (TF2). Build and run the program in a ROS 2 workspace.
 
 .. note::
 
-   All exercises require a ROS 2 Jazzy workspace. Build with:
+   The exercise requires a ROS 2 Jazzy workspace. Build with:
 
    .. code-block:: bash
 
@@ -17,62 +15,18 @@ workspace to verify your understanding.
       colcon build --packages-select my_package
       source install/setup.bash
 
+.. note::
+
+   **Naming.** A node's name ends with ``_node`` and its executable's name
+   with ``_exe``. A node class lives in ``<name>_node.hpp`` and
+   ``<name>_node.cpp``, and its ``main`` in ``<name>_main.cpp``.
 
 ----
 
 
-.. dropdown:: Exercise 1: Static Transform Broadcaster
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Broadcast a static transform from ``base_link`` to ``camera_link``.
-
-    **Specification**
-
-    1. Create a ROS 2 node called ``static_camera_broadcaster``.
-    2. Use ``tf2_ros::StaticTransformBroadcaster`` to publish a static
-       transform from ``base_link`` to ``camera_link``.
-    3. The camera is positioned 0.2 m forward (x), 0.0 m to the side (y),
-       and 0.5 m above (z) the base_link.
-    4. The camera has no rotation relative to base_link (identity
-       quaternion).
-    5. Log a message confirming the transform was published.
-    6. Verify with: ``ros2 run tf2_ros tf2_echo base_link camera_link``
-
-.. dropdown:: Exercise 2: Dynamic Transform Broadcaster (Circular Path)
-    :icon: gear
-    :class-container: sd-border-primary
-    :class-title: sd-font-weight-bold
-
-    **Goal**
-
-    Broadcast a dynamic transform that moves a robot in a circular path
-    in the world frame.
-
-    **Specification**
-
-    1. Create a ROS 2 node called ``circular_motion_broadcaster``.
-    2. Use ``tf2_ros::TransformBroadcaster`` to publish the transform
-       from ``world`` to ``base_link`` at 10 Hz.
-    3. The robot should move in a circle of radius 2.0 m centered at the
-       origin:
-
-       - ``x = 2.0 * cos(angle)``
-       - ``y = 2.0 * sin(angle)``
-       - ``z = 0.0``
-
-    4. Increment the angle by 0.05 radians each timer callback.
-    5. Set the rotation quaternion to represent the robot facing the
-       direction of travel (yaw = angle + pi/2). For simplicity, you may
-       use an identity quaternion.
-    6. Verify with: ``ros2 run tf2_ros tf2_echo world base_link``
-
-.. dropdown:: Exercise 3: Transform Listener (Distance Computation)
-    :icon: gear
-    :class-container: sd-border-primary
+.. dropdown:: Exercise: Transform Listener (Distance Computation)
+    :icon: rocket
+    :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
 
     **Goal**
@@ -81,7 +35,7 @@ workspace to verify your understanding.
 
     **Specification**
 
-    1. Create a ROS 2 node called ``distance_calculator``.
+    1. Create a ROS 2 node called ``distance_calculator_node``.
     2. Use ``tf2_ros::Buffer`` and ``tf2_ros::TransformListener`` to
        listen for transforms.
     3. Every second, look up the transform from ``world`` to
@@ -93,5 +47,15 @@ workspace to verify your understanding.
 
     5. Log the distance.
     6. Handle ``tf2::TransformException`` with a warning message.
-    7. Test by running the circular motion broadcaster (Exercise 2) and
-       the static camera broadcaster (Exercise 1) simultaneously.
+    7. Test it without writing a broadcaster: in two other terminals,
+       publish two static transforms with the ``tf2_ros`` command-line
+       tool. The robot stands 2.0 m along x from the world origin, and the
+       camera sits 0.2 m forward and 0.5 m above the robot.
+
+       .. code-block:: bash
+
+          ros2 run tf2_ros static_transform_publisher --x 2.0 --frame-id world --child-frame-id base_link
+          ros2 run tf2_ros static_transform_publisher --x 0.2 --z 0.5 --frame-id base_link --child-frame-id camera_link
+
+    8. Before you run your node, compute the distance it should log. Then
+       compare it with the logged value.

@@ -37,5 +37,5 @@ Next Steps
 ----------
 
 - In the next lecture (**L11: ROS 2 Configuration and Orchestration**), we will cover message types of your own, parameters, launch files and executors.
-- Before next class: complete the L10 exercises and quiz, and build and run ``robotaxi_demo`` in your own workspace.
+- Before next class: complete the L10 exercise and quiz, and build and run ``robotaxi_demo`` in your own workspace.
 - Required reading: `Writing a simple publisher and subscriber (C++) <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html>`_ and `Topics <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Topics.html>`_.

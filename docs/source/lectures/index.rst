@@ -32,7 +32,7 @@ Each lecture page contains the following sections:
         :class-card: sd-border-info
 
         Hands-on Linux shell (Bash) exercises that build progressively
-        across lectures. These prepare students for the terminal-based
+        from Lecture 1 to Lecture 9. These prepare students for the terminal-based
         workflows required in ROS 2 development.
 
     .. grid-item-card:: C++ Exercises
@@ -41,8 +41,8 @@ Each lecture page contains the following sections:
         C++ programming exercises for the lecture topic. Students
         practice the concepts covered in the lecture by writing and
         running code. From Lecture 2 to Lecture 7, you submit your
-        solutions on Canvas, and they are graded. From Lecture 10, they
-        are ROS Exercises, written as ROS 2 nodes.
+        solutions on Canvas, and they are graded. From Lecture 10, each
+        lecture has one ROS exercise, written as ROS 2 nodes.
 
     .. grid-item-card:: Quiz
         :class-card: sd-border-info
@@ -59,8 +59,9 @@ Each lecture page contains the following sections:
 
 .. note::
 
-   Lecture 1 does not include C++ exercises. Shell exercises begin in
-   Lecture 1 and increase in complexity with each subsequent lecture.
+   Lecture 1 does not include C++ exercises. Shell exercises run from
+   Lecture 1 to Lecture 9 and increase in complexity with each lecture.
+   From Lecture 10, the shell commands are assumed known.
 
 .. tip::
 
