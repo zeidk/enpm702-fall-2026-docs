@@ -8,6 +8,12 @@ Before Class
 1. A new GitHub repository holds the ROS packages of this course: `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_. Its ``L10`` folder holds this lecture's package, ``robotaxi_demo``. Clone it into the ``src`` folder of your workspace and push it to your own private GitHub repository, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
 2. Install ROS 2 Jazzy, as in :doc:`/setup/ros_setup`.
 
+In class, I do not explain the shell commands: you learned them in the shell exercises on ReadTheDocs, which every student was asked to do.
+
+.. note::
+
+   Press :kbd:`Tab` while you type a ``ros2`` command. The terminal completes the command and the names of packages, executables, nodes and topics.
+
 Code for This Lecture
 ---------------------
 
