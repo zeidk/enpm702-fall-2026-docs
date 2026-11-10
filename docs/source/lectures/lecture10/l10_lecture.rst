@@ -6,15 +6,7 @@ Before Class
 ------------
 
 1. If you have not done it yet: install ROS 2 Jazzy and set up your copy of the course repository, `rubixcubic/enpm702-fall-2026-ros <https://github.com/rubixcubic/enpm702-fall-2026-ros>`_, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`_ in :doc:`/setup/ros_setup` shows (`Create a Workspace`_ explains what a workspace is).
-2. Get the latest edits of the course repository into your copy, from ``~/ros2_ws/src/enpm702-fall-2026-ros``:
-
-   .. code-block:: bash
-
-      git fetch upstream
-      git merge --no-edit upstream/main
-      git push
-
-   Its ``L10`` folder holds this lecture's package, ``robotaxi_demo``.
+2. Get the latest edits of the course repository into your copy, as `ROS 2 Workspace <../../setup/ros_setup.html#ros-2-workspace>`__ in :doc:`/setup/ros_setup` shows (the row "The course repository has new code"). Its ``L10`` folder holds this lecture's package, ``robotaxi_demo``.
 
 In class, I do not explain the shell commands: you learned them in the shell exercises on ReadTheDocs, which every student was asked to do.
 
@@ -1814,46 +1806,46 @@ To use a message package, name it in ``package.xml`` and in ``CMakeLists.txt``. 
 - Line 3 finds the package; line 6 links the executable to it. Both are needed, for each message package.
 - ``ros2 pkg create --dependencies rclcpp geometry_msgs`` wrote the ``<depend>`` and ``find_package`` lines.
 
-Publishing Test Messages
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-Send a Message from the Terminal: ros2 topic pub
-""""""""""""""""""""""""""""""""""""""""""""""""
-
-``ros2 topic pub`` publishes a message that you write in the terminal. It tests a subscriber before its publisher exists (rule 4).
-
-.. code-block:: bash
-
-   ros2 topic pub --once /robotaxi/position \
-     geometry_msgs/msg/Point "{x: 7.0, y: 4.0}"
-
-.. code-block:: text
-
-   publisher: beginning loop
-   publishing #1: geometry_msgs.msg.Point(x=7.0, y=4.0, z=0.0)
-
-.. dropdown:: More detail: ``ros2 topic pub``
+.. dropdown:: More detail: Publishing Test Messages
    :class-container: more-detail
    :icon: info
 
-   .. list-table::
-      :header-rows: 1
-      :widths: 32 68
+   **Send a Message from the Terminal: ros2 topic pub**
 
-      * - Argument
-        - Meaning (from ``ros2 topic pub --help``)
-      * - ``--once`` (``-1``)
-        - "Publish one message and exit".
-      * - ``/robotaxi/position``
-        - "Name of the ROS topic to publish to".
-      * - ``geometry_msgs/msg/Point``
-        - "Type of the ROS message".
-      * - ``"{x: 7.0, y: 4.0}"``
-        - "Values to fill the message with in YAML format"; a field left out keeps its default value.
+   ``ros2 topic pub`` publishes a message that you write in the terminal. It tests a subscriber before its publisher exists (rule 4).
 
-- The fields are written as ``{name: value}``. A field you leave out keeps 0.0, here ``z``. A string: ``"data: 'Hello World'"``; an integer: ``"data: 42"``; a boolean: ``"data: true"``.
-- ``--once`` (or ``-1``) sends one message and stops. Without it, the command sends one message per second until :kbd:`Ctrl+C`.
-- ``--rate 10`` sends 10 per second. ``--times 5`` sends 5 and stops.
+   .. code-block:: bash
+
+      ros2 topic pub --once /robotaxi/position \
+        geometry_msgs/msg/Point "{x: 7.0, y: 4.0}"
+
+   .. code-block:: text
+
+      publisher: beginning loop
+      publishing #1: geometry_msgs.msg.Point(x=7.0, y=4.0, z=0.0)
+
+   .. dropdown:: More detail: ``ros2 topic pub``
+      :class-container: more-detail
+      :icon: info
+
+      .. list-table::
+         :header-rows: 1
+         :widths: 32 68
+
+         * - Argument
+           - Meaning (from ``ros2 topic pub --help``)
+         * - ``--once`` (``-1``)
+           - "Publish one message and exit".
+         * - ``/robotaxi/position``
+           - "Name of the ROS topic to publish to".
+         * - ``geometry_msgs/msg/Point``
+           - "Type of the ROS message".
+         * - ``"{x: 7.0, y: 4.0}"``
+           - "Values to fill the message with in YAML format"; a field left out keeps its default value.
+
+   - The fields are written as ``{name: value}``. A field you leave out keeps 0.0, here ``z``. A string: ``"data: 'Hello World'"``; an integer: ``"data: 42"``; a boolean: ``"data: true"``.
+   - ``--once`` (or ``-1``) sends one message and stops. Without it, the command sends one message per second until :kbd:`Ctrl+C`.
+   - ``--rate 10`` sends 10 per second. ``--times 5`` sends 5 and stops.
 
 Publishers
 ----------
