@@ -4,7 +4,7 @@
 Lecture 6 Quiz
 ================
 
-This quiz covers the key concepts from Lecture 6: Functions, Advanced. Topics include structs, templates, template type deduction, ``decltype``, ``constexpr`` functions, ``inline``/ODR, function pointers, functors, lambdas, capture clauses, and ``std::function``.
+This quiz covers the key concepts from Lecture 6: Functions, Advanced. Topics include ``struct`` layout, ``std::optional``, structured bindings, function templates and template argument deduction, concepts, lambdas and their captures, and ``std::function``. Questions 1, 5, 8 and 9 come from the Further Reading part of the lecture.
 
 .. note::
 
@@ -17,8 +17,8 @@ This quiz covers the key concepts from Lecture 6: Functions, Advanced. Topics in
 ----
 
 
-Multiple Choice (Questions 1-10)
-===================================
+Multiple Choice (Questions 1 to 10)
+=====================================
 
 .. admonition:: Question 1
    :class: hint
@@ -35,7 +35,7 @@ Multiple Choice (Questions 1-10)
 
       **B. struct members are public by default; class members are private by default.**
 
-      In C++, ``struct`` and ``class`` are nearly identical. Both support methods, inheritance, templates, and all other class features. The sole difference is the default access level.
+      ``struct`` and ``class`` make the same kind of type. Both support methods, inheritance and templates. They differ only in default access: ``public`` for a ``struct``, ``private`` for a ``class``, for members and for base classes. Lecture 6 uses ``struct`` for plain data; classes are Lecture 8.
 
 .. admonition:: Question 2
    :class: hint
@@ -59,7 +59,7 @@ Multiple Choice (Questions 1-10)
 
    Why must template definitions be placed in header files (``.hpp``)?
 
-   A. Because templates are always ``inline``.
+   A. Because the compiler compiles a template once and shares it with every ``.cpp`` file.
    B. Because the compiler needs the full definition to instantiate the template for each type used.
    C. Because the linker cannot resolve template symbols.
    D. Because ``.cpp`` files cannot contain template code.
@@ -108,36 +108,54 @@ Multiple Choice (Questions 1-10)
 .. admonition:: Question 6
    :class: hint
 
-   Which statement about ``constexpr`` functions is correct?
+   ``idle`` is an empty ``std::optional<int>``. What does ``*idle`` do?
 
-   A. A ``constexpr`` function is always evaluated at compile time.
-   B. A ``constexpr`` function can be evaluated at compile time if all arguments are constant expressions.
-   C. A ``constexpr`` function cannot contain local variables (even in C++14).
-   D. A ``constexpr`` function can perform I/O operations.
+   A. It throws ``std::bad_optional_access``.
+   B. It returns ``0``.
+   C. It is undefined behavior.
+   D. It does not compile.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B. A constexpr function can be evaluated at compile time if all arguments are constant expressions.**
+      **C. It is undefined behavior.**
 
-      ``constexpr`` marks a function as *potentially* evaluable at compile time. If called with runtime values, it executes at runtime like a normal function. From C++14 onward, ``constexpr`` functions may contain variables, loops, and conditionals.
+      ``*`` does no check. In the lecture it printed ``0`` with no warning, but the next build may print anything. Check with ``if (idle)`` first, or read with ``idle.value()``, which throws ``std::bad_optional_access`` when the optional is empty, or with ``idle.value_or(-1)``, which gives -1.
 
 .. admonition:: Question 7
    :class: hint
 
-   What is the primary modern purpose of the ``inline`` keyword in C++?
+   With g++ 13 on x86-64, what is ``sizeof(RobotStatus)``?
 
-   A. To force the compiler to inline the function body at every call site.
-   B. To relax the One Definition Rule (ODR), allowing the function to be defined in a header included by multiple translation units.
-   C. To make the function run faster.
-   D. To prevent the function from being called recursively.
+   .. code-block:: cpp
+
+      struct Position { double x; double y; };
+
+      struct RobotStatus {
+        int id;              // 4 bytes
+        double battery_pct;  // 8 bytes
+        Position position;   // 16 bytes
+        bool busy;           // 1 byte
+      };
+
+   A. 29
+   B. 32
+   C. 33
+   D. 40
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B. To relax the One Definition Rule (ODR), allowing the function to be defined in a header included by multiple translation units.**
+      **D. 40**
 
-      Modern compilers decide on their own whether to inline a function. The ``inline`` keyword's primary purpose today is to tell the linker that identical definitions across translation units are intentional and should be merged rather than causing a linker error.
+      The members hold 4 + 8 + 16 + 1 = 29 bytes of data. The compiler adds **padding** so that each ``double`` starts at a multiple of 8:
+
+      1. ``id`` takes bytes 0 to 3.
+      2. Bytes 4 to 7 are padding, so ``battery_pct`` starts at byte 8.
+      3. ``position`` takes bytes 16 to 31, and ``busy`` takes byte 32.
+      4. Bytes 33 to 39 are padding, so that the next ``RobotStatus`` in an array also starts at a multiple of 8.
+
+      32 is the size with the largest members first (``battery_pct``, ``position``, ``id``, ``busy``): the compiler never reorders members for you.
 
 .. admonition:: Question 8
    :class: hint
@@ -181,23 +199,34 @@ Multiple Choice (Questions 1-10)
 .. admonition:: Question 10
    :class: hint
 
-   What is **type erasure** in the context of ``std::function``?
+   What do the two ``std::count_if`` calls return?
 
-   A. Deleting the type information of a variable at runtime.
-   B. Hiding the specific callable type (lambda, functor, function pointer) behind a common interface.
-   C. Converting all callables to function pointers.
-   D. Removing template parameters after instantiation.
+   .. code-block:: cpp
+
+      std::vector<double> battery_pct{82.5, 35.0, 64.0, 18.0};
+      double limit_pct{40.0};
+      auto is_low = [limit_pct](double pct) { return pct < limit_pct; };
+      auto is_low_ref = [&limit_pct](double pct) { return pct < limit_pct; };
+
+      limit_pct = 70.0;
+      std::count_if(battery_pct.begin(), battery_pct.end(), is_low);      // ?
+      std::count_if(battery_pct.begin(), battery_pct.end(), is_low_ref);  // ?
+
+   A. 2 and 2
+   B. 2 and 3
+   C. 3 and 3
+   D. 3 and 2
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **B. Hiding the specific callable type (lambda, functor, function pointer) behind a common interface.**
+      **B. 2 and 3**
 
-      ``std::function`` "erases" the concrete type of the stored callable and presents a uniform interface based solely on the function signature. This allows different callable types to be stored in the same variable or passed to the same function parameter.
+      1. ``[limit_pct]`` copies 40 **when the lambda is created**. Changing ``limit_pct`` later does not reach the copy, so ``is_low`` counts the levels under 40: 35.0 and 18.0, so 2.
+      2. ``[&limit_pct]`` stores a reference, so ``is_low_ref`` reads ``limit_pct`` **at each call**, when it is 70. The levels under 70 are 35.0, 64.0 and 18.0, so 3.
 
-
-True/False (Questions 11-15)
-===============================
+True/False (Questions 11 to 15)
+=================================
 
 .. admonition:: Question 11
    :class: hint
@@ -214,26 +243,31 @@ True/False (Questions 11-15)
 .. admonition:: Question 12
    :class: hint
 
-   **True or False**: A lambda with capture clause ``[=]`` captures all variables from the surrounding scope by value, and the copies are ``const`` by default.
+   **True or False**: A lambda with the capture default ``[=]`` copies every local variable its body uses, and the body cannot change those copies unless the lambda is ``mutable``.
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
       **True.**
 
-      The ``[=]`` capture clause makes copies of all used variables. These copies are ``const`` inside the lambda's ``operator()`` by default. To modify them, you must add the ``mutable`` keyword.
+      ``[=]`` copies each local the body uses, not every variable in scope. A copy captured by value is read-only inside the body: ``++assigned`` fails with ``increment of read-only variable 'assigned'``. ``mutable`` lets the body change its copies; the originals stay unchanged.
 
 .. admonition:: Question 13
    :class: hint
 
-   **True or False**: If a ``noexcept`` function throws an exception, the program invokes undefined behavior.
+   **True or False**: The call ``same_id(3, 3L)`` compiles with this template.
+
+   .. code-block:: cpp
+
+      template <std::integral T>
+      bool same_id(T first, T second) { return first == second; }
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
       **False.**
 
-      If an exception escapes a ``noexcept`` function, ``std::terminate()`` is called. This is well-defined behavior (the program is terminated), not undefined behavior.
+      Both parameters are ``T``, so both arguments must give the same ``T``. ``3`` is an ``int`` and ``3L`` is a ``long``, so deduction fails: ``deduced conflicting types for parameter 'T' ('int' and 'long int')``. With form 3, ``bool same_id(std::integral auto first, std::integral auto second)``, each ``auto`` is its own type, and the call compiles.
 
 .. admonition:: Question 14
    :class: hint
@@ -250,11 +284,20 @@ True/False (Questions 11-15)
 .. admonition:: Question 15
    :class: hint
 
-   **True or False**: A functor can hold state between calls, whereas a regular function (without ``static`` variables) cannot.
+   **True or False**: ``make_filter`` is safe, because the lambda keeps a reference to ``limit_pct``.
+
+   .. code-block:: cpp
+
+      auto make_filter(double limit_pct) {
+        return [&limit_pct](double pct) { return pct < limit_pct; };
+      }
+
+      auto is_low = make_filter(40.0);
+      is_low(30.0);
 
    .. dropdown:: Answer
       :class-container: sd-border-success
 
-      **True.**
+      **False.**
 
-      A functor is an object with member variables that persist across calls to ``operator()``. A regular function is stateless (unless it uses ``static`` local variables, which is a different mechanism with its own implications).
+      ``limit_pct`` is a parameter, so it dies when ``make_filter`` returns. The lambda keeps a reference to it, so every call to ``is_low`` reads a dead variable: a dangling reference. AddressSanitizer reports ``stack-use-after-return``. A lambda that leaves the function must capture by value: ``[limit_pct]``. Rule: Core Guidelines F.53.
