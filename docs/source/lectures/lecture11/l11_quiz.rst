@@ -3,10 +3,10 @@ Quiz
 ====================================================
 
 This quiz covers the key concepts from Lecture 11: ROS 2 Configuration and
-Orchestration. Topics include parameters (declaring, getting, setting,
-callbacks), launch files (Python launch files, launch arguments, remappings,
-namespaces), executors (single-threaded, multi-threaded, callback groups),
-YAML configuration files, and ROS 2 CLI tools for parameters.
+Orchestration. Topics include launch files (Python launch files, launch
+arguments, conditions, groups and namespaces, events), executors
+(single-threaded, multi-threaded, callback groups) and custom interfaces
+(``.msg`` files, interface packages, generated C++ types).
 
 .. note::
 
@@ -23,53 +23,6 @@ Multiple Choice (Questions 1-10)
 ====================================================
 
 .. admonition:: Question 1
-   :class: hint
-
-   What must a ROS 2 node do before accessing a parameter's value?
-
-   A. Subscribe to the ``/parameter_events`` topic.
-
-   B. Declare the parameter using ``declare_parameter()``.
-
-   C. Call ``rclcpp::init()`` with the parameter name.
-
-   D. Load a YAML configuration file.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B**, Declare the parameter using ``declare_parameter()``.
-
-   In ROS 2, every parameter must be declared before it can be used. If a
-   node tries to get an undeclared parameter, an
-   ``rclcpp::exceptions::ParameterNotDeclaredException`` is thrown.
-
-
-.. admonition:: Question 2
-   :class: hint
-
-   Which command correctly sets a parameter when launching a node from the
-   command line?
-
-   A. ``ros2 run my_pkg my_node -p max_speed 2.5``
-
-   B. ``ros2 run my_pkg my_node --ros-args -p max_speed:=2.5``
-
-   C. ``ros2 run my_pkg my_node --param max_speed=2.5``
-
-   D. ``ros2 run my_pkg my_node max_speed:=2.5``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B**, ``ros2 run my_pkg my_node --ros-args -p max_speed:=2.5``
-
-   The ``--ros-args`` flag tells the ROS 2 argument parser that the
-   following arguments are ROS-specific. The ``-p`` flag sets a parameter
-   using the ``name:=value`` syntax.
-
-
-.. admonition:: Question 3
    :class: hint
 
    In a Python launch file, which class is used to define a launch argument
@@ -93,80 +46,106 @@ Multiple Choice (Questions 1-10)
    to *read* the value of a declared argument inside the launch file.
 
 
-.. admonition:: Question 4
+.. admonition:: Question 2
    :class: hint
 
-   What is the correct YAML structure for setting a parameter ``max_speed``
-   to ``2.5`` on a node named ``robot_node``?
+   Which launch action starts everything another launch file starts?
 
-   A.
+   A. ``GroupAction``
 
-   .. code-block:: yaml
+   B. ``IncludeLaunchDescription``
 
-      max_speed: 2.5
+   C. ``ExecuteProcess``
 
-   B.
-
-   .. code-block:: yaml
-
-      robot_node:
-        max_speed: 2.5
-
-   C.
-
-   .. code-block:: yaml
-
-      robot_node:
-        ros__parameters:
-          max_speed: 2.5
-
-   D.
-
-   .. code-block:: yaml
-
-      parameters:
-        robot_node:
-          max_speed: 2.5
+   D. ``RegisterEventHandler``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**
+   **B**, ``IncludeLaunchDescription``
 
-   .. code-block:: yaml
+   It runs every action of the launch file it is given, so a large system
+   can be built from small launch files. ``GroupAction`` gives a set of
+   actions shared settings, ``ExecuteProcess`` runs any command, and
+   ``RegisterEventHandler`` runs actions when an event happens.
 
-      robot_node:
-        ros__parameters:
-          max_speed: 2.5
 
-   ROS 2 YAML parameter files require the node name as a top-level key,
-   followed by the special ``ros__parameters`` key (with double underscores),
-   under which the actual parameters are listed.
+.. admonition:: Question 3
+   :class: hint
+
+   You put a launch file in the ``launch`` folder of a package and build the
+   package. ``ros2 launch`` cannot find the file. What is the most likely
+   cause?
+
+   A. The file name ends with ``_launch.py``.
+
+   B. ``CMakeLists.txt`` does not install the ``launch`` folder.
+
+   C. The node names in the file do not end with ``_node``.
+
+   D. The package has no ``include`` folder.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, ``CMakeLists.txt`` does not install the ``launch`` folder.
+
+   ``ros2 launch`` finds a launch file only in
+   ``install/<package>/share/<package>/launch/``. ``colcon build`` copies
+   the ``launch`` folder there only when ``CMakeLists.txt`` has
+   ``install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})``.
+
+
+.. admonition:: Question 4
+   :class: hint
+
+   A launch file calls ``make_taxi("taxi1")`` and ``make_taxi("taxi2")``.
+   Each call returns a ``GroupAction`` that starts a ``robotaxi_node`` with
+   ``PushROSNamespace``. The node publishes on the relative topic name
+   ``robotaxi/position``. What is the full name of the topic that the
+   ``taxi2`` robotaxi publishes?
+
+   A. ``/robotaxi/position``
+
+   B. ``/taxi2/robotaxi/position``
+
+   C. ``/taxi2/position``
+
+   D. ``taxi2/robotaxi``
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **B**, ``/taxi2/robotaxi/position``
+
+   The namespace goes in front of a relative topic name. With no namespace,
+   the topic would be ``/robotaxi/position``. A name that starts with ``/``
+   would ignore the namespace.
 
 
 .. admonition:: Question 5
    :class: hint
 
-   What does the ``add_on_set_parameters_callback`` method return?
+   A launch file registers
+   ``OnProcessStart(target_action=robotaxi, on_start=[LogInfo(...), dispatcher])``.
+   When does it start the dispatcher?
 
-   A. A ``bool`` indicating whether the callback was registered.
+   A. At the same time as the robotaxi, in any order.
 
-   B. A ``SharedPtr`` to a callback handle that must be stored as a member
-      variable.
+   B. When the launch shuts down after :kbd:`Ctrl+C`.
 
-   C. A ``SetParametersResult`` message.
+   C. When the process of the ``robotaxi`` action has started.
 
-   D. Nothing (``void``).
+   D. After a fixed delay.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **B**, A ``SharedPtr`` to a callback handle that must be stored as a
-   member variable.
+   **C**, when the process of the ``robotaxi`` action has started.
 
-   The returned handle must remain in scope for the callback to stay active.
-   If the handle goes out of scope (e.g., stored in a local variable), the
-   callback is automatically unregistered.
+   The event handler waits for the event, then logs its line and starts the
+   dispatcher. The dispatcher is not added to the launch description: the
+   handler starts it, so the event decides the order.
 
 
 .. admonition:: Question 6
@@ -188,11 +167,37 @@ Multiple Choice (Questions 1-10)
    **B**, ``SingleThreadedExecutor``
 
    When you call ``rclcpp::spin(node)``, ROS 2 creates a
-   ``SingleThreadedExecutor`` behind the scenes and spins the node on a
-   single thread. All callbacks are processed sequentially.
+   ``SingleThreadedExecutor``, adds your node to it and calls its
+   ``spin()``. All callbacks run one at a time on one thread.
 
 
 .. admonition:: Question 7
+   :class: hint
+
+   A ``main`` function contains ``rclcpp::spin(camera);`` followed by
+   ``rclcpp::spin(controller);``. What happens when it runs?
+
+   A. Both nodes run, each on its own thread.
+
+   B. Both nodes run, one callback at a time.
+
+   C. Only the camera's callbacks run; the second call starts only after
+      ROS 2 has shut down.
+
+   D. The program does not compile.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**
+
+   The first ``spin`` returns only when ROS 2 shuts down, after
+   :kbd:`Ctrl+C`. Until then, the second line never runs, so the
+   controller's callbacks never run. Two nodes in one process need one
+   executor that holds both.
+
+
+.. admonition:: Question 8
    :class: hint
 
    In a ``MultiThreadedExecutor``, what is the behavior of a **mutually
@@ -213,82 +218,58 @@ Multiple Choice (Questions 1-10)
    wait.
 
    A mutually exclusive callback group ensures that at most one callback
-   from the group runs at any given time. This provides serialized access
-   without requiring explicit mutexes, making it safe for callbacks that
-   share state.
-
-
-.. admonition:: Question 8
-   :class: hint
-
-   Which of the following correctly passes a YAML file as parameters in a
-   Python launch file?
-
-   A. ``parameters={'file': 'params.yaml'}``
-
-   B. ``parameters=['/path/to/params.yaml']``
-
-   C. ``parameters=LaunchConfiguration('params.yaml')``
-
-   D. ``parameters=yaml.load('params.yaml')``
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **B**, ``parameters=['/path/to/params.yaml']``
-
-   The ``parameters`` argument to the ``Node`` action accepts a list. Each
-   element can be either a dictionary of parameter key-value pairs or a
-   string path to a YAML file. ROS 2 automatically parses the YAML file
-   and applies the parameters to the node.
+   from the group runs at any given time, even with several threads.
+   Callbacks in other groups can still run alongside.
 
 
 .. admonition:: Question 9
    :class: hint
 
-   You want to remap a node's subscription topic from ``/input`` to
-   ``/sensor/data`` in a launch file. Which argument do you use?
+   A timer has a period of 1 s, its callback works for 1.5 s, and the timer
+   is in a **reentrant** group of a ``MultiThreadedExecutor`` with enough
+   threads. What happens to its next run?
 
-   A. ``arguments=['--remap', '/input:=/sensor/data']``
+   A. It waits until the previous run ends.
 
-   B. ``parameters=[{'input_topic': '/sensor/data'}]``
+   B. It is skipped.
 
-   C. ``remappings=[('/input', '/sensor/data')]``
+   C. It starts on time, so two runs of the callback overlap.
 
-   D. ``namespace='sensor'``
+   D. It runs on the main thread only.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, ``remappings=[('/input', '/sensor/data')]``
+   **C**, it starts on time, so two runs of the callback overlap.
 
-   The ``remappings`` argument accepts a list of ``(from, to)`` tuples that
-   redirect topic and service names. This is applied at the ROS 2 middleware
-   level, so the node code does not need to change.
+   A reentrant group puts no limit on its callbacks: two runs of the same
+   callback can run at the same time. In the demo with two reentrant
+   groups, nothing waited and ``timer1`` overlapped itself.
 
 
 .. admonition:: Question 10
    :class: hint
 
-   Which ROS 2 CLI command dumps all of a running node's parameters in YAML
-   format?
+   The file ``Status.msg`` is in the package ``fleet_interfaces``. What are
+   the C++ type and the header that the build generates?
 
-   A. ``ros2 param list /my_node``
+   A. ``fleet_interfaces::Status`` from ``fleet_interfaces/Status.hpp``
 
-   B. ``ros2 param get /my_node --all``
+   B. ``fleet_interfaces::msg::Status`` from ``fleet_interfaces/msg/status.hpp``
 
-   C. ``ros2 param dump /my_node``
+   C. ``msg::Status`` from ``status.hpp``
 
-   D. ``ros2 param describe /my_node``
+   D. ``fleet_interfaces::msg::status`` from ``fleet_interfaces/msg/Status.msg``
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, ``ros2 param dump /my_node``
+   **B**, ``fleet_interfaces::msg::Status`` from
+   ``fleet_interfaces/msg/status.hpp``
 
-   The ``ros2 param dump`` command outputs all of a node's current parameter
-   names and values in YAML format. This can be redirected to a file to
-   capture the running configuration.
+   A file ``Type.msg`` in the package ``pkg`` becomes the C++ type
+   ``pkg::msg::Type``, from the header ``pkg/msg/type.hpp``: the name in
+   lowercase, with underscores between words.
 
 
 ----
@@ -298,23 +279,6 @@ True / False (Questions 11-15)
 ====================================================
 
 .. admonition:: Question 11
-   :class: hint
-
-   **True or False:** ROS 2 parameters are globally shared between all nodes
-   in the system.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False.**
-
-   ROS 2 parameters are **node-specific**. Each node declares, owns, and
-   manages its own parameters. Unlike ROS 1's parameter server, there is no
-   global parameter store. To read another node's parameters, you must use
-   a parameter client or the CLI tools.
-
-
-.. admonition:: Question 12
    :class: hint
 
    **True or False:** A ``MultiThreadedExecutor`` can execute callbacks from
@@ -328,10 +292,10 @@ True / False (Questions 11-15)
    A mutually exclusive callback group guarantees that only one callback in
    the group executes at a time, even when using a ``MultiThreadedExecutor``.
    Concurrent execution is only possible for callbacks in a **reentrant**
-   callback group or in separate mutually exclusive groups.
+   callback group or in separate groups.
 
 
-.. admonition:: Question 13
+.. admonition:: Question 12
    :class: hint
 
    **True or False:** Python launch files must define a function called
@@ -348,34 +312,50 @@ True / False (Questions 11-15)
    return a ``LaunchDescription`` containing the actions to execute.
 
 
-.. admonition:: Question 14
+.. admonition:: Question 13
    :class: hint
 
-   **True or False:** The ``ros2 param set`` command can change a parameter
-   on a running node even if the node does not have a parameter callback.
+   **True or False:** A single-threaded executor that holds two nodes runs
+   each node on its own thread.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **True.**
+   **False.**
 
-   Parameter callbacks are optional. If no callback is registered, the
-   parameter value is simply updated. The callback is only needed if you want
-   to validate, reject, or react to parameter changes.
+   A node is not a thread. A single-threaded executor runs the callbacks of
+   both nodes on one thread, one at a time, so a slow callback in one node
+   delays the callbacks of the other.
+
+
+.. admonition:: Question 14
+   :class: hint
+
+   **True or False:** In a ``.msg`` file, the constant ``uint8 mode_idle=0``
+   is valid, because constant names may use lowercase letters.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False.**
+
+   A constant's name is in uppercase, as in ``MODE_IDLE``. ``mode_idle``
+   stops the build with the message ``'mode_idle' is an invalid constant
+   name``. Field names, in contrast, use lowercase letters, digits and
+   underscores.
 
 
 .. admonition:: Question 15
    :class: hint
 
-   **True or False:** In a ROS 2 YAML parameter file, the ``/**`` wildcard
-   key applies parameters to all nodes that load that file.
+   **True or False:** A condition given to a ``GroupAction`` applies to
+   every action in the group.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **True.**
 
-   The ``/**`` wildcard namespace matches all nodes. Parameters defined
-   under ``/**`` are applied to every node that loads the YAML file.
-   Node-specific entries (e.g., ``my_node:``) override the wildcard values
-   for that particular node.
+   A condition on a group starts or skips every action in the group at once.
+   In the lecture, ``make_taxi("taxi2", second)`` starts the second robotaxi
+   and its dispatcher together, only when ``two_taxis:=true``.

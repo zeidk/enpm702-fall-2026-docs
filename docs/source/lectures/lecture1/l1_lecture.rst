@@ -661,11 +661,11 @@ autonomous robot in simulation.
      -
      -
    * - 12 (Nov 17)
-     - L11: ROS 2 configuration (parameters, launch, executors)
+     - L11: ROS 2 configuration (launch, executors, custom interfaces)
      -
      - RWA3 due, GP1 posted
    * - 13 (Nov 24)
-     - L12: ROS 2 communication (services, actions)
+     - L12: ROS 2 communication (parameters, services, actions)
      - Quiz 5
      - GP1 due, GP2 posted
    * - 14 (Dec 1)

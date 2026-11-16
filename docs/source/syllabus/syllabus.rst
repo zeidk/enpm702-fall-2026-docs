@@ -133,13 +133,13 @@ scheduled.
    * - Week 12
      - Nov 17
      -
-     - ROS 2, Configuration and Orchestration (Custom Interfaces, Parameters, Launch Files, Executors)
+     - ROS 2, Configuration and Orchestration (Launch Files, Executors, Custom Interfaces)
      - | Submit Lecture 11 exercises
        | :assignment:`RWA3 due, GP1 posted`
    * - Week 13
      - Nov 24
      -
-     - | ROS 2, Communication Patterns (Services, Actions)
+     - | ROS 2, Communication Patterns (Parameters, Services, Actions)
        | :quiz:`Quiz 5`
      - | Submit Lecture 12 exercises
        | :assignment:`GP1 due, GP2 posted`
@@ -199,9 +199,10 @@ improves the codebase:
 Group Projects (GPs)
 --------------------
 
-The two GPs are **cumulative** team-based projects that progressively
-build a ROS 2 application with a mobile robot in Gazebo. GP2 extends the
-GP1 deliverable:
+The two GPs are **cumulative** team-based projects that build one ROS 2
+application for a mobile robot that patrols a building. GP1 runs in the
+terminal, with a stand-in robot node. GP2 runs the same nodes on a
+simulated robot in Gazebo:
 
 .. list-table::
    :header-rows: 1
@@ -213,12 +214,12 @@ GP1 deliverable:
      - Due
      - Duration
      - Points
-   * - GP1: ROS 2 Pub/Sub with Gazebo
+   * - GP1: Patrol and Inspect (terminal only)
      - Nov 17
      - Nov 24
      - 1 week
      - 44
-   * - GP2: Services, Actions, Frames, and a Decision Layer
+   * - GP2: Patrol and Inspect in Gazebo
      - Nov 24
      - Dec 11
      - About 2.5 weeks (incl. Thanksgiving recess)

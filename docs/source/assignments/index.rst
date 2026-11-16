@@ -59,8 +59,9 @@ demonstrating why each new C++ feature improves the codebase.
 Group Projects (GPs)
 ---------------------
 
-The GPs progressively build a ROS 2 application with a mobile robot
-in Gazebo. GP2 extends the GP1 deliverable.
+The two GPs build one ROS 2 application for a mobile robot that patrols
+a building. GP1 runs in the terminal, with a stand-in robot node. GP2
+runs the same nodes on a simulated robot in Gazebo.
 
 .. list-table::
    :header-rows: 1
@@ -72,13 +73,13 @@ in Gazebo. GP2 extends the GP1 deliverable.
      - Posted
      - Due
      - Duration
-   * - GP1
-     - ROS 2 Pub/Sub with Gazebo
+   * - :doc:`GP1 <gp1>`
+     - Patrol and Inspect (terminal only)
      - Nov 17
      - Nov 24
      - 1 week
    * - GP2
-     - Services, Actions, Frames, and a Decision Layer
+     - Patrol and Inspect in Gazebo (parameters, services, actions, frames)
      - Nov 24
      - Dec 11
      - About 2.5 weeks
@@ -92,10 +93,10 @@ in Gazebo. GP2 extends the GP1 deliverable.
    rwa1
    rwa2
    rwa3
+   gp1
 
 ..
    Hidden for now. Uncomment an entry when that assignment is rewritten,
    and restore its row in the table above.
 
-   gp1
    gp2
