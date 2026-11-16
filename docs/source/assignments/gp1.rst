@@ -670,16 +670,49 @@ Tips
 * **Build the interfaces first.** ``colcon build --packages-up-to
   gp1_patrol`` builds ``gp1_interfaces`` before the package that uses
   it.
-* **Start with one robot and no launch file.** Run the stand-in robot in
-  ``robot_1`` from the command line
-  (``ros2 run gp1_patrol stand_in_robot_exe --ros-args -r __ns:=/robot_1``),
-  then the patrol executable, the mission node and the operator the same
-  way. Write the launch files once the nodes work.
-* **A node started by an event handler is outside the group.** The
-  handler runs later, when the patrol process has started, outside the
-  group that pushed the robot's namespace. Give the mission node its own
-  ``GroupAction`` with ``PushROSNamespace`` inside ``on_start``, or it
-  starts as ``/mission_node``. Check with ``ros2 node list``.
+* **Start with one robot and no launch file.** Get the nodes working
+  first, so that when something fails, you know the problem is in a node
+  and not in a launch file. Run each executable in its own terminal with
+  ``ros2 run``. To put a node in the ``robot_1`` namespace without a
+  launch file, add ``--ros-args -r __ns:=/robot_1`` to the command:
+
+  * ``--ros-args`` tells ``ros2 run`` that the arguments after it are for
+    ROS 2, not for your ``main``.
+  * ``-r`` (remap) changes a name the node got in its code.
+  * ``__ns:=/robot_1`` sets the node's namespace to ``/robot_1``. It does
+    what ``PushROSNamespace("robot_1")`` does in a launch file: the node
+    becomes ``/robot_1/navigation_node``, and its relative topics become
+    ``/robot_1/scan`` and ``/robot_1/cmd_vel``. An absolute topic, such
+    as ``/emergency_stop``, does not change.
+
+  .. code-block:: bash
+
+     ros2 run gp1_patrol stand_in_robot_exe --ros-args -r __ns:=/robot_1
+     ros2 run gp1_patrol patrol_exe --ros-args -r __ns:=/robot_1
+     ros2 run gp1_patrol mission_exe --ros-args -r __ns:=/robot_1
+     ros2 run gp1_patrol operator_exe
+
+  The operator runs at the root namespace, so its command has no
+  ``__ns``. ``ros2 node list`` should then show:
+
+  .. code-block:: text
+
+     /operator_node
+     /robot_1/mission_node
+     /robot_1/navigation_node
+     /robot_1/patrol_log_node
+     /robot_1/stand_in_robot_node
+
+  Write the launch files once the nodes work.
+* **Put the mission node in the namespace yourself.** The launch file
+  starts ``mission_exe`` from an event handler, once the patrol process is
+  running. The handler runs after the robot's group has ended, so the
+  group's ``PushROSNamespace`` no longer applies. The mission node then
+  starts as ``/mission_node``, not ``/robot_1/mission_node``, and it
+  listens to ``/scan`` and ``/arrival``, where nothing is published. To fix
+  it, wrap the mission node in its own ``GroupAction`` with
+  ``PushROSNamespace``, inside ``on_start``. Then check with
+  ``ros2 node list`` that you see ``/robot_1/mission_node``.
 * **Agree on R1 on day one.** Every other part uses the three messages.
   Once they build, A, B and C can work at the same time.
 
