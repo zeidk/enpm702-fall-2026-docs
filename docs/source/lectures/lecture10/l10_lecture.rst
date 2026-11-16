@@ -2113,7 +2113,7 @@ Subscribers
 The last section built the publisher; this one builds the node that receives its messages. A **subscriber** is the object a node uses to receive the messages of one topic. It runs a callback for each message, so the node reacts to data that other nodes publish.
 
 .. figure:: /_static/images/l10/subscriber_steps.png
-   :alt: A flowchart of the subscriber's steps. Four boxes in a row, joined by arrows: tag 1, Create the subscription, with message type, topic name, queue size, callback; tag 2, Define the callback, it handles one message; tag 3, Spin, wait for a message; tag 4, Run the callback, on that message. From the fourth box, an arrow loops back to Spin, labeled Repeat for each message.
+   :alt: A flowchart of the subscriber's steps. Four boxes in a row, joined by arrows: Create the subscription, with message type, topic name, queue size, callback; Define the callback, it handles one message; Spin, wait for a message; Run the callback, on that message. From the fourth box, an arrow loops back to Spin, labeled Repeat for each message.
    :align: center
    :width: 90%
 
@@ -2271,6 +2271,26 @@ Run the Complete System
 
 When nothing arrives, check the topic names first: ``ros2 topic list`` shows what each side uses (rule 1).
 
+.. dropdown:: More detail: what ``ros2 topic hz`` prints
+   :class-container: more-detail
+   :icon: info
+
+   Early in a run, ``ros2 topic hz /robotaxi/position`` printed:
+
+   .. code-block:: text
+
+      average rate: 2.000
+        min: 0.500s max: 0.500s std dev: 0.00021s window: 3
+
+   Each time a message arrives, ``ros2 topic hz`` notes the time on its node's clock and stores the time since the previous message arrived: the gap between two messages in a row. These are arrival times at the ``ros2 topic hz`` node, not the times the publisher sent the messages.
+
+   * ``min`` and ``max``: the shortest and the longest gap, in seconds. Here both are 0.5 s, so every message came 0.5 s after the one before, as the robotaxi's timer publishes every 0.5 s.
+   * ``average rate``: 1 divided by the average gap. 1 / 0.5 s = 2 messages per second.
+   * ``std dev``: how much the gaps vary around their average. 0.00021 s is 0.21 ms, so the timing is very regular.
+   * ``window``: the number of gaps stored so far, not the number of messages. Three gaps means four messages arrived. The window grows up to 10000 gaps by default (``--window`` or ``-w`` changes it); after that, each new gap pushes out the oldest one.
+
+   These meanings come from the Jazzy source of the command, ``ros2topic/verb/hz.py``.
+
 Who Connects the Nodes: DDS, Not Your Code
 """"""""""""""""""""""""""""""""""""""""""
 
@@ -2356,13 +2376,25 @@ The last section ran the robotaxi and the dispatcher together. This section look
 
 A DataWriter and a DataReader connect only when they match: the same topic name, the same type, and compatible QoS settings (`Discovery <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Discovery.html>`_). The four scenarios that follow show what happens to the messages once they match, or when nobody reads.
 
+.. figure:: /_static/images/l10/robotaxi_graph.png
+   :alt: Two white boxes, robotaxi_node on the left and dispatcher_node on the right. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :align: center
+   :width: 70%
+
+   The robotaxi publishes its position; the dispatcher subscribes to it.
+
 Scenario Analysis
 ^^^^^^^^^^^^^^^^^
 
 Scenario 1: One Publisher, No Subscriber
 """"""""""""""""""""""""""""""""""""""""
 
-The robotaxi publishes at 2 Hz, every 0.5 s, with a queue of 10 (the code's values). No subscriber is running.
+.. figure:: /_static/images/l10/scenario_1.png
+   :alt: robotaxi_node on the left, with queue: 10 and rate: 2 Hz in gray beside it. An arrow goes right from it, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it, and ends with no node at its head.
+   :align: center
+   :width: 70%
+
+   The robotaxi publishes at 2 Hz with a queue of 10 (the code's values); no subscriber runs.
 
 .. list-table::
    :header-rows: 1
@@ -2396,7 +2428,12 @@ The robotaxi publishes at 2 Hz, every 0.5 s, with a queue of 10 (the code's valu
 Scenario 2: a Fast Subscriber
 """""""""""""""""""""""""""""
 
-The robotaxi publishes at 2 Hz, every 0.5 s, queues of 10 (the code's values). The callback takes 100 ms, chosen for this example.
+.. figure:: /_static/images/l10/scenario_2.png
+   :alt: robotaxi_node on the left, with queue: 10 and rate: 2 Hz in gray beside it, and dispatcher_node on the right, with queue: 10 in gray beside it. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :align: center
+   :width: 95%
+
+   The code's values: the robotaxi publishes at 2 Hz, and both queues hold 10.
 
 .. list-table::
    :header-rows: 1
@@ -2429,14 +2466,21 @@ A message waits in the queue only for an instant: the executor is idle, so it ta
 .. admonition:: What scenario 2 shows
    :class: key-box
 
-   - **The ideal case:** the callback, 100 ms, is much shorter than the period, 500 ms.
+   - **The ideal case:** the callback, 100 ms (chosen for this example), is much shorter than the period, 500 ms.
    - **At most one message** is ever in the queue, then 400 ms of idle time.
    - **Load:** busy 100 ms of every 500 ms, that is 100 / 500 = 20% of the time.
 
 Scenario 3: a Slow Subscriber Loses Messages
 """"""""""""""""""""""""""""""""""""""""""""
 
-A test version of the dispatcher keeps a **queue of 3** and spends **1.7 s** in each callback (both chosen for this example). The robotaxi publishes every 0.5 s. A full queue pushes out its oldest message.
+.. figure:: /_static/images/l10/scenario_3.png
+   :alt: robotaxi_node on the left, with queue: 10 and rate: 2 Hz in gray beside it, and dispatcher_node on the right, with queue: 3 in gray beside it. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
+   :align: center
+   :width: 95%
+
+   The test dispatcher's queue holds 3.
+
+A test version of the dispatcher spends **1.7 s** in each callback; this time and its queue of 3 are chosen for this example. A full queue pushes out its oldest message.
 
 .. list-table::
    :header-rows: 1
@@ -2500,7 +2544,14 @@ Each box is one callback: the message it handled and the time it started.
 Scenario 4: the Publisher's Queue Fills Up
 """"""""""""""""""""""""""""""""""""""""""
 
-With reliable delivery, the default, the publisher keeps each message in its queue until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher stops acknowledging: its process is frozen from 2.8 s to 12.9 s. Chosen: 2 Hz, 100 KB messages (an image), a publisher queue of 4.
+.. figure:: /_static/images/l10/scenario_4.png
+   :alt: robotaxi_node on the left, with queue: 4 and rate: 2 Hz in gray beside it, and dispatcher_node on the right, with queue: 100 in gray beside it. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/image above it and the message type std_msgs/msg/UInt8MultiArray below it.
+   :align: center
+   :width: 95%
+
+   The queues of the test: 4 at the publisher, 100 at the subscriber.
+
+With reliable delivery, the default, the publisher keeps each message until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher's process is frozen from 2.8 s to 12.9 s. Chosen: 100 KB messages (an image) and the queues in the graph.
 
 .. list-table::
    :header-rows: 1
