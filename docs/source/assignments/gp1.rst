@@ -667,10 +667,6 @@ review score for GP1.
 Tips
 ----
 
-* **Use your own ROS domain.** On a shared network, every team's nodes
-  see each other. Before you run anything, each member sets
-  ``export ROS_DOMAIN_ID=<N>``, with your team number, in every terminal.
-  Check with ``ros2 node list`` that you see only your own nodes.
 * **Build the interfaces first.** ``colcon build --packages-up-to
   gp1_patrol`` builds ``gp1_interfaces`` before the package that uses
   it.
