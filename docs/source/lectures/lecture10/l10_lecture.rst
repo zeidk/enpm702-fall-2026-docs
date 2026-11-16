@@ -2551,7 +2551,7 @@ Scenario 4: the Publisher's Queue Fills Up
 
    The queues of the test: 4 at the publisher, 100 at the subscriber.
 
-With reliable delivery, the default, the publisher keeps each message until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher's process is frozen from 2.8 s to 12.9 s. Chosen: 100 KB messages (an image) and the queues in the graph.
+With reliable delivery, the default, the publisher keeps each message until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here a debugger breakpoint freezes the dispatcher's process from 2.8 s to 12.9 s. Chosen: 100 KB messages (an image) and the queues in the graph.
 
 .. list-table::
    :header-rows: 1
