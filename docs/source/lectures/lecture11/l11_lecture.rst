@@ -984,13 +984,13 @@ Multi-Threaded Executors
    An executor with several threads. Each thread runs one callback at a time, so several callbacks can run at the same time.
 
 .. figure:: /_static/images/l11/mte_loops.png
-   :alt: Two circles, one above the other: thread 1, the main thread, on top, and thread 2, started by spin(), below. Each circle holds 1. wait for an event, 2. run its callback, 3. repeat, and an arrow runs clockwise around it. On the left, a wavy line labeled main thread, with init, makes the nodes, sits midway between the circles; its line, labeled executor.spin(), branches into a solid arrow into thread 1 and a dashed arrow labeled starts into thread 2. On the right, a solid arrow from thread 1 and a dashed arrow labeled joins from thread 2 meet, and lead, past the keys Ctrl and C, to a wavy line labeled main thread, with rclcpp::shutdown(). Thread 1 has a green dot, sensor_callback, then a purple dot, health_callback. Thread 2 has an orange dot, command_callback, then a green dot, sensor_callback.
+   :alt: On the left, a wavy line labeled main thread, with init, makes the nodes, leads to executor.spin(). The line branches: a solid arrow into a circle labeled thread 1, the main thread, and a dashed arrow labeled starts into a circle labeled thread 2, started by spin(). Each circle holds 1. wait for an event, 2. run its callback, 3. repeat. Thread 1 has dots callback1 and callback2; thread 2 has dots callback3 and callback1. The dashed line continues down past thread 2 to three dots and the text thread 3, thread 4, ... as many as you ask for. On the right, a solid arrow from thread 1 and a dashed arrow labeled joins from thread 2 meet, past the keys Ctrl and C, at a wavy line labeled main thread, rclcpp::shutdown().
    :align: center
-   :width: 100%
+   :width: 85%
 
-   A multi-threaded executor with two threads: ``executor.spin()`` starts thread 2, and both threads loop.
+   A multi-threaded executor: ``executor.spin()`` starts the extra threads, and each thread loops. You choose how many threads there are.
 
-**Key:** solid line, the main thread, which becomes thread 1 inside ``spin()``; dashed line, thread 2, which ``spin()`` starts and waits for after :kbd:`Ctrl+C`.
+**Key:** solid line, the main thread, which becomes thread 1 inside ``spin()``; dashed line, a thread that ``spin()`` starts and waits for after :kbd:`Ctrl+C`.
 
 One Thread or Several Threads
 """""""""""""""""""""""""""""
@@ -1014,9 +1014,29 @@ A thread runs one callback at a time. Think of a thread as a cook, and a callbac
 .. admonition:: Definition: Parallelism
    :class: tip
 
-   Running two or more callbacks at the same moment, each on its own thread. Such callbacks run **in parallel**.
+   Running two or more callbacks at the same moment, each on its own thread. Such callbacks run **in parallel**. C++ allows true parallelism: since C++11, the threads of one program (``std::thread``) can run at the same moment, each on its own CPU core.
 
 With 3 threads, up to 3 callbacks run in parallel. A fourth waits until a thread is free.
+
+Concurrency and Parallelism
+"""""""""""""""""""""""""""
+
+.. admonition:: Definition: Concurrency
+   :class: tip
+
+   Running two or more callbacks during the same period of time, taking turns. On one thread, they never run at the same moment: a single-threaded executor is concurrent, not parallel.
+
+.. figure:: /_static/images/l11/concurrency_vs_parallelism.png
+   :alt: Timeline with four lanes and a dashed line between the top two and the bottom two; time runs to the right, with no numbers. Above the line, labeled concurrency, 1 thread: callback1 and callback2 each have three bars, and the bars take turns, never at the same time; the last bar ends at the right of the axis. Below the line, labeled parallelism, 2 threads: callback1 and callback2 each have three bars side by side, at the same moments, and the last bars end halfway along the axis.
+   :align: center
+   :width: 90%
+
+   Each bar is one callback run. The figure is drawn for illustration, not measured.
+
+.. admonition:: Conclusion
+   :class: important
+
+   On one thread the runs take turns; on two threads they happen at the same moment, and the same work ends in half the time.
 
 Why Not Run Every Callback in Parallel
 """"""""""""""""""""""""""""""""""""""
@@ -1307,6 +1327,32 @@ This is the waiting of the single-threaded executor (see "A Slow Callback Delays
    :class: important
 
    In a mutually exclusive group, the fast callback waits for the slow one: ``timer2`` ran 5 times, not 11.
+
+Demo 1 Explained: What Mutually Exclusive Does
+""""""""""""""""""""""""""""""""""""""""""""""
+
+.. admonition:: Definition: Mutually Exclusive Group
+   :class: tip
+
+   A group whose callbacks run one at a time. While one of them runs, every other callback of the group waits, even when threads are free. A node's default group is of this type.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 82
+
+   * - Time
+     - What happens in group 1
+   * - 0.0 s, 0.5 s
+     - ``timer2`` runs. At 0.5 s, ``timer1`` starts 1.5 s of work.
+   * - 1.0 s, 1.5 s
+     - ``timer2`` is ready, but waits: ``timer1`` is running.
+   * - 2.0 s
+     - ``timer1`` ends. ``timer2`` runs once, then ``timer1`` starts again.
+
+.. admonition:: Conclusion
+   :class: important
+
+   ``timer2`` runs only in the short gap between two runs of ``timer1``: at 2.0, 3.5 and 5.0 s, so 5 times instead of 11.
 
 Demo 2: Both Groups Reentrant
 """""""""""""""""""""""""""""
@@ -1804,13 +1850,14 @@ Lines 12 to 18 of ``CMakeLists.txt``:
 Add these three lines to ``package.xml``:
 
 .. code-block:: xml
+   :linenos:
 
    <buildtool_depend>rosidl_default_generators</buildtool_depend>
    <exec_depend>rosidl_default_runtime</exec_depend>
    <member_of_group>rosidl_interface_packages</member_of_group>
 
 - Lines 15 to 18 turn each listed file into code. ``DEPENDENCIES`` names the packages of the types used inside: ``Header`` and ``Point``.
-- The generators run at build time, the runtime library when a node runs.
+- In ``package.xml``, line 1: the build needs the code generators. Line 2: a node that uses the message needs the runtime library. Line 3: this is an interface package, with code for every client library.
 
 Step 4: Build the Package and Show the Message
 """"""""""""""""""""""""""""""""""""""""""""""
