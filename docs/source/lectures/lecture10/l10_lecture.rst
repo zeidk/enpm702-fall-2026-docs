@@ -2545,13 +2545,13 @@ Scenario 4: the Publisher's Queue Fills Up
 """"""""""""""""""""""""""""""""""""""""""
 
 .. figure:: /_static/images/l10/scenario_4.png
-   :alt: robotaxi_node on the left, with queue: 4 and rate: 2 Hz in gray beside it, and dispatcher_node on the right, with queue: 100 in gray beside it. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/image above it and the message type std_msgs/msg/UInt8MultiArray below it.
+   :alt: robotaxi_node on the left, with queue: 4 and rate: 2 Hz in gray beside it, and dispatcher_node on the right, with queue: 100 in gray beside it. An arrow goes from robotaxi_node to dispatcher_node, with the topic name /robotaxi/position above it and the message type geometry_msgs/msg/Point below it.
    :align: center
    :width: 95%
 
    The queues of the test: 4 at the publisher, 100 at the subscriber.
 
-With reliable delivery, the default, the publisher keeps each message until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here a debugger breakpoint freezes the dispatcher's process from 2.8 s to 12.9 s. Chosen: 100 KB messages (an image) and the queues in the graph.
+With reliable delivery, the default, the publisher keeps each message until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here a debugger breakpoint freezes the dispatcher's process from 2.8 s to 12.9 s. The queues in the graph are chosen for this test.
 
 .. list-table::
    :header-rows: 1
@@ -2613,14 +2613,12 @@ The publisher's queue fills when acknowledgements stop coming: a subscriber that
 
 Scenario 3 filled the subscriber's queue; this one fills the publisher's.
 
-Scenario 4: Message Size and Keep All
-"""""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: message size and keep all
+   :class-container: more-detail
+   :icon: info
 
-.. admonition:: What scenario 4 shows
-   :class: key-box
-
-   - **Small messages hide it:** with messages of 10 characters, the same 10 s freeze lost nothing. The receive buffer, 212,992 bytes here, held all of them.
-   - **Keep all:** ``publish`` blocks "until the oldest sample has been acknowledged by all readers and can be removed", up to a maximum blocking time, 100 ms by default, then returns an error (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_).
+   - **Small messages show no loss:** with 10-character messages, the same 10 s freeze lost nothing. The operating system keeps a receive buffer for the dispatcher, 212,992 bytes on this computer, and it held every message until the dispatcher ran again.
+   - **Keep all instead of keep last:** the publisher keeps every message that is not acknowledged. When its queue is full, ``publish`` waits "until the oldest sample has been acknowledged by all readers and can be removed" (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). It waits at most 100 ms by default, then returns an error.
 
 Wrap-Up
 -------
