@@ -963,7 +963,7 @@ Resources
 Workspace and Development Environment
 -------------------------------------
 
-A **workspace** is a folder that keeps your source code, the build files and the installed packages in one place. One workspace per project, or per ROS version, keeps them apart.
+The last section ran and inspected nodes from the packages that come with ROS 2. This section turns to a package of our own. A **workspace** is a folder that keeps your source code, the build files and the installed packages in one place. One workspace per project, or per ROS version, keeps them apart.
 
 Packages that come with ROS 2 are installed already. Nodes of your own are built in a workspace, then run with the same ``ros2`` tools.
 
@@ -1066,6 +1066,7 @@ We have provided this lecture's package, ``robotaxi_demo``. Here is the command 
 
 .. code-block:: bash
    :linenos:
+   :emphasize-lines: 2, 3, 5
 
    cd ~/ros2_ws/src/enpm702-fall-2026-ros/L10
    ros2 pkg create robotaxi_demo --build-type ament_cmake \
@@ -1137,11 +1138,12 @@ Package Discovery: the ros2 pkg Commands
 Package Manifest: package.xml
 """""""""""""""""""""""""""""
 
-The first lines of your ``package.xml``, once you replace its two ``TODO`` lines:
+Lines 3 to 13 of your ``package.xml``, once you replace its two ``TODO`` lines:
 
 .. code-block:: xml
    :linenos:
-   :emphasize-lines: 2, 4, 5, 10, 11
+   :emphasize-lines: 4, 5, 6, 10, 11
+   :lineno-start: 3
 
    <package format="3">
      <name>robotaxi_demo</name>
@@ -1155,8 +1157,8 @@ The first lines of your ``package.xml``, once you replace its two ``TODO`` lines
      <depend>rclcpp</depend>
      <depend>geometry_msgs</depend>
 
-- Lines 4 to 6: ``ros2 pkg create`` writes ``TODO`` in the description and the license. Replace both right after you create the package.
-- Lines 10 and 11: ``<depend>``: the package needs another package to build and to run.
+- Lines 6 to 8: ``ros2 pkg create`` writes ``TODO`` in the description and the license. Replace both right after you create the package.
+- Lines 12 and 13: ``<depend>``: the package needs another package to build and to run.
 
 What package.xml Is Used For
 """"""""""""""""""""""""""""
@@ -1249,7 +1251,7 @@ The first command that asks about running nodes, such as ``ros2 node list``, sta
 Writing Your First Node
 -----------------------
 
-The package of the last section has a build file but no code. This section writes a first node, as a class.
+The package that the last section described, ``robotaxi_demo``, has no node yet. This section writes the first one, as a class.
 
 - **Goal:** a node that prints ``robotaxi_node is ready`` in the terminal.
 - **Concepts:** starting ROS 2, logging, and a clean stop.
@@ -1325,7 +1327,7 @@ Step 2: main, in robotaxi_main.cpp
 
 .. code-block:: cpp
    :linenos:
-   :emphasize-lines: 8, 9, 10
+   :emphasize-lines: 8, 9, 10, 11, 12
 
    #include <memory>
 
@@ -1432,9 +1434,19 @@ Threads: Who Runs main and the Callbacks
 
 - A process starts with one thread, the **main thread**, which runs ``main``.
 - Every thread of a process can reach the same objects: "any thread can potentially access any object and function in the program" (cppreference). Two processes cannot.
-- With spinning added, the main thread of ``robotaxi_main.cpp`` runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. Only then does it reach ``rclcpp::shutdown``.
+- With spinning added, the main thread of ``robotaxi_main.cpp`` runs ``rclcpp::init``, makes the node, then enters ``rclcpp::spin`` and stays there until :kbd:`Ctrl+C`. :kbd:`Ctrl+C` also shuts ROS 2 down, so ``main`` calls ``rclcpp::shutdown`` only while ``rclcpp::ok()`` is still true.
 - While it is inside ``spin``, the main thread runs the node's callbacks. One thread means one callback at a time.
 - A program can start more threads, with ``std::thread`` or a multi-threaded executor, to run callbacks at the same time. That comes in a later lecture.
+
+.. code-block:: cpp
+   :emphasize-lines: 4
+
+   int main(int argc, char** argv) {
+     rclcpp::init(argc, argv);
+     auto node{std::make_shared<robotaxi_demo::RoboTaxiNode>()};
+     rclcpp::spin(node);
+     if (rclcpp::ok()) { rclcpp::shutdown(); }
+   }
 
 Spinning: the Main Thread Runs the Callbacks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1446,7 +1458,9 @@ Spinning: the Main Thread Runs the Callbacks
    :align: center
    :width: 90%
 
-   The main thread stays inside ``rclcpp::spin`` until :kbd:`Ctrl+C`, then runs ``rclcpp::shutdown()``.
+   The main thread stays inside ``rclcpp::spin`` until :kbd:`Ctrl+C`.
+
+The main thread stays in this loop until :kbd:`Ctrl+C`. :kbd:`Ctrl+C` also shuts ROS 2 down, and ``spin`` returns.
 
 - ``rclcpp::spin(node)`` makes "a default single-threaded executor" (`rclcpp, executors.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors.hpp>`_). Its loop runs in the thread that called it, the main thread: "block until work comes in, execute it, and then repeat" (`rclcpp, single_threaded_executor.hpp <https://github.com/ros2/rclcpp/blob/jazzy/rclcpp/include/rclcpp/executors/single_threaded_executor.hpp>`_). Work is a message that arrives, a timer that is due, or a request.
 - One thread runs every callback, one at a time: a slow callback delays the others.
@@ -1474,7 +1488,9 @@ The Basic Spinning Pattern
      auto node{std::make_shared<
        robotaxi_demo::RoboTaxiNode>()};
      rclcpp::spin(node);
-     rclcpp::shutdown();
+     if (rclcpp::ok()) {
+       rclcpp::shutdown();
+     }
    }
 
 This is the ``main`` of every node in this lecture, with the class name changed. In ``robotaxi_main.cpp``, remove the ``//`` before ``rclcpp::spin(node)``.
@@ -1484,7 +1500,7 @@ This is the ``main`` of every node in this lecture, with the class name changed.
 1. **Event loop:** it waits for a message, a timer or a request.
 2. **Callback execution:** it runs the callback of the event that happened, then waits again.
 3. **One at a time:** the default executor runs one callback at a time, on the main thread. A slow callback delays the others.
-4. **Signal handling:** :kbd:`Ctrl+C` ends the loop. ``spin`` returns, and ``main`` goes on to ``shutdown``.
+4. **Signal handling:** :kbd:`Ctrl+C` ends the loop and shuts ROS 2 down, so ``main`` skips ``shutdown``.
 
 The ROS 2 documentation: ``rclcpp::spin(node)`` "expands to an instantiation and invocation of the Single-Threaded Executor" (`Executors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html>`_).
 
@@ -1562,7 +1578,7 @@ Build and run, from ``~/ros2_ws``, then press :kbd:`Ctrl+C`:
    [INFO] [1794342588.481109258] [robotaxi_node]: exited the loop...
 
 - Without ``spin``, the program ended after its first line. Now it keeps running: the main thread waits inside ``spin``.
-- :kbd:`Ctrl+C` makes ``spin`` return: rclcpp logs the second line. Then ``main`` logs "exited the loop..." and runs ``rclcpp::shutdown``.
+- :kbd:`Ctrl+C` makes ``spin`` return: rclcpp logs the second line. Then ``main`` logs "exited the loop..."; ``rclcpp::ok()`` is false, so it skips ``shutdown``.
 
 Common Mistakes, and What You See
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1592,7 +1608,7 @@ Two nodes with one name both run. The warning goes on: this "can have unintended
 Messages
 --------
 
-**Messages** are the data structures that nodes send each other. A message type is written in a ``.msg`` file, and every message on a topic has the topic's type.
+The last section kept the robotaxi node running; now the data it sends. **Messages** are the data structures that nodes send each other. A message type is written in a ``.msg`` file, and every message on a topic has the topic's type.
 
 A message type is an **interface**: a text description of data that ROS 2 turns into C++ and Python code. There are three kinds: messages (``.msg``) for topics, services (``.srv``) and actions (``.action``). So the command that reads a message type is ``ros2 interface``. The ROS 2 documentation says ROS applications "typically communicate through interfaces of one of three types", and that the description lets ROS tools "automatically generate source code for the interface type in several target languages" (`ROS 2 Jazzy: Interfaces <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Interfaces.html>`_).
 
@@ -1857,7 +1873,7 @@ To use a message package, name it in ``package.xml`` and in ``CMakeLists.txt``. 
 Publishers
 ----------
 
-A **publisher** is the object a node uses to send messages on one topic. One publisher, many subscribers.
+The last section described messages. This section sends them. A **publisher** is the object a node uses to send messages on one topic. One publisher, many subscribers.
 
 .. figure:: /_static/images/l10/publisher_steps.png
    :alt: A flowchart of the publisher's steps. Three boxes in a row, joined by arrows: tag 1, Create the publisher, with message type, topic name, queue size; tag 2, Create a message and fill its fields; tag 3, Publish, to every subscriber. From the Publish box, an arrow loops back to the second box, with tag 4 and the label Repeat, often from a timer.
@@ -2014,6 +2030,7 @@ The Timer Callback, in robotaxi_node.cpp: Fill, Publish, Move
 
 .. code-block:: cpp
    :linenos:
+   :emphasize-lines: 4, 6
 
    void RoboTaxiNode::publish_position() {
      geometry_msgs::msg::Point msg{};  // x, y and z start at 0.0
@@ -2034,7 +2051,7 @@ The Timer Callback, in robotaxi_node.cpp: Fill, Publish, Move
      rclcpp::init(argc, argv);
      auto node{std::make_shared<robotaxi_demo::RoboTaxiNode>()};
      rclcpp::spin(node);
-     rclcpp::shutdown();
+     if (rclcpp::ok()) { rclcpp::shutdown(); }
    }
 
 Build and Test the Publisher
@@ -2090,7 +2107,7 @@ In ``CMakeLists.txt``, the executable lists two source files: ``add_executable(r
 Subscribers
 -----------
 
-A **subscriber** is the object a node uses to receive the messages of one topic. It runs a callback for each message, so the node reacts to data that other nodes publish.
+The last section built the publisher; this one builds the node that receives its messages. A **subscriber** is the object a node uses to receive the messages of one topic. It runs a callback for each message, so the node reacts to data that other nodes publish.
 
 .. figure:: /_static/images/l10/subscriber_steps.png
    :alt: A flowchart of the subscriber's steps. Four boxes in a row, joined by arrows: tag 1, Create the subscription, with message type, topic name, queue size, callback; tag 2, Define the callback, it handles one message; tag 3, Spin, wait for a message; tag 4, Run the callback, on that message. From the fourth box, an arrow loops back to Spin, labeled Repeat for each message.
@@ -2142,7 +2159,7 @@ The Header: a Subscription and a Callback
 
 .. code-block:: cpp
    :linenos:
-   :emphasize-lines: 5, 6, 7, 8, 11
+   :emphasize-lines: 5, 6, 7, 8, 11, 12
 
    class DispatcherNode : public rclcpp::Node {
     public:
@@ -2154,12 +2171,13 @@ The Header: a Subscription and a Callback
                          std::placeholders::_1))} {}
     private:
      void on_position(const geometry_msgs::msg::Point& msg);
-     rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr subscription_;
+     rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr
+         subscription_;
      double pickup_x_{10.0};  // pickup point, in m
      double pickup_y_{0.0};   // pickup point, in m
    };
 
-The constructor makes a subscription (lines 5 to 8), kept in a data member (line 11). The file includes ``<functional>``, ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
+The constructor makes a subscription (lines 5 to 8), kept in a data member (lines 11 and 12). The file includes ``<functional>``, ``<geometry_msgs/msg/point.hpp>`` and ``<rclcpp/rclcpp.hpp>``, inside ``namespace robotaxi_demo``.
 
 Initialize the Subscriber
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2328,7 +2346,7 @@ What DDS knows, with the robotaxi and the dispatcher running (output trimmed):
 Publisher-Subscriber Communication
 ----------------------------------
 
-In DDS, the middleware under ROS 2, two objects carry a topic:
+The last section ran the robotaxi and the dispatcher together. This section looks at what happens to the messages between them. In DDS, the middleware under ROS 2, two objects carry a topic:
 
 - A **DataWriter**: made by a ROS 2 publisher. It writes the messages to the network.
 - A **DataReader**: made by a ROS 2 subscriber. It reads the messages from the network.
@@ -2388,7 +2406,7 @@ The robotaxi publishes at 2 Hz, every 0.5 s, queues of 10 (the code's values). T
      - Subscriber's callback
    * - 0.0 s
      - Publishes x = 0
-     - [ ] then [0] then [ ]
+     - [0], taken out at once
      - Starts on x = 0 at once
    * - 0.1 s
      -
@@ -2396,24 +2414,26 @@ The robotaxi publishes at 2 Hz, every 0.5 s, queues of 10 (the code's values). T
      - Finishes x = 0; waits
    * - 0.5 s
      - Publishes x = 1
-     - [ ] then [1] then [ ]
+     - [1], taken out at once
      - Starts on x = 1 at once
    * - 0.6 s
      -
      - [ ]
      - Finishes x = 1; waits
 
+A message waits in the queue only for an instant: the executor is idle, so it takes the message out and runs the callback at once.
+
 .. admonition:: What scenario 2 shows
    :class: key-box
 
    - **The ideal case:** the callback, 100 ms, is much shorter than the period, 500 ms.
-   - **Each message is handled at once**, and the queue never holds more than one: 400 ms of idle time before the next.
+   - **At most one message** is ever in the queue, then 400 ms of idle time.
    - **Load:** busy 100 ms of every 500 ms, that is 100 / 500 = 20% of the time.
 
 Scenario 3: a Slow Subscriber Loses Messages
 """"""""""""""""""""""""""""""""""""""""""""
 
-A test version of the dispatcher keeps a queue of 3 and spends 1.7 s in each callback (both chosen for this example). The robotaxi publishes every 0.5 s. The callback end times and the message each callback takes were measured; a full queue pushes out its oldest message.
+A test version of the dispatcher keeps a **queue of 3** and spends **1.7 s** in each callback (both chosen for this example). The robotaxi publishes every 0.5 s. A full queue pushes out its oldest message.
 
 .. list-table::
    :header-rows: 1
@@ -2426,7 +2446,7 @@ A test version of the dispatcher keeps a queue of 3 and spends 1.7 s in each cal
      - Subscriber's callback
    * - 0.0 s
      - Publishes x = 0
-     - [ ] then [0] then [ ]
+     - [0], taken out at once
      - Starts on x = 0 at once
    * - 0.5 to 1.5 s
      - Publishes x = 1, 2, 3
@@ -2459,7 +2479,7 @@ Scenario 3: What the Slow Subscriber Lost
 .. admonition:: Conclusion
    :class: tip
 
-   In 11 s the robotaxi published 23 positions, x = 0 to 22. The dispatcher handled 7 of them. At 10.2 s it started on x = 18, published at 9.0 s: 1.2 s old.
+   In 11 s the robotaxi published 23 positions, x = 0 to 22, and the dispatcher handled 7 of them.
 
 Each box is one callback: the message it handled and the time it started.
 
@@ -2471,48 +2491,60 @@ Each box is one callback: the message it handled and the time it started.
    The seven callbacks of the slow dispatcher, and the messages pushed out between them.
 
 - **Data loss:** each 1.7 s callback sees 3 or 4 new messages, and the queue keeps 3.
-- **Stale data:** the dispatcher works on a position that is 1.2 s old.
+- **Stale data:** at 10.2 s the dispatcher started on x = 18, published at 9.0 s, so it works on a position that is 1.2 s old.
 - **Fixes:** a shorter callback, a lower publish rate, or a larger queue. The larger queue only delays the loss: each message still takes 1.7 s.
 
 Scenario 4: the Publisher's Queue Fills Up
 """"""""""""""""""""""""""""""""""""""""""
 
-With reliable delivery, the default, the publisher keeps each message in its queue until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher stops acknowledging: its process is frozen for 10 s, then resumed. Chosen for this example: 2 Hz, messages of 100 KB (an image), a publisher queue of 10, a subscriber queue of 100. Measured on Jazzy, two test nodes.
+With reliable delivery, the default, the publisher keeps each message in its queue until every subscriber acknowledges it (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Here the dispatcher stops acknowledging: its process is frozen from 2.8 s to 12.9 s. Chosen: 2 Hz, 100 KB messages (an image), a publisher queue of 4.
 
 .. list-table::
    :header-rows: 1
-   :widths: 15 25 32 28
+   :widths: 15 15 38 32
    :class: compact-table
 
    * - Time
-     - Publisher
-     - Publisher's queue
+     - Publishes
+     - Publisher's queue (4)
      - Dispatcher
    * - 0.5 to 2.5 s
-     - Publishes x = 0 to 4
-     - Acknowledged, then removed
+     - x = 0 to 4
+     - [0], then [ ] once acknowledged; same for 1 to 4
      - Receives x = 0 to 4
-   * - 3.0 to 12.5 s
-     - Publishes x = 5 to 24
-     - Keeps the last 10 not acknowledged; x = 5 to 14 pushed out
-     - Frozen: no acknowledgement
-   * - 12.8 s
-     -
-     - Sends x = 15 to 24 again
-     - Resumes: x = 5, 6, then x = 15 to 24
+   * - 3.0 s
+     - x = 5
+     - [5]
+     - Frozen, no acknowledgement
+   * - 4.5 s
+     - x = 8
+     - [5, 6, 7, 8]: full
+     - Frozen
+   * - 5.0 s
+     - x = 9
+     - [6, 7, 8, 9]: x = 5 pushed out
+     - Frozen
+   * - 12.5 s
+     - x = 24
+     - [21, 22, 23, 24]
+     - Resumes at 12.9 s
+   * - 13.0 s
+     - x = 25
+     - [22, 23, 24, 25]
+     - Receives x = 22 to 25 (13.3 s)
 
 .. admonition:: Conclusion
    :class: tip
 
-   The dispatcher lost x = 7 to 14. It got x = 5 and 6 from its computer's receive buffer, and x = 15 to 24 from the publisher's queue of 10.
+   The dispatcher lost x = 5 to 21: the publisher keeps only the last 4 messages that are not acknowledged.
 
 .. dropdown:: More detail: how the test was run
    :class-container: more-detail
    :icon: info
 
-   - Both test nodes use reliable delivery and keep last. Each message is a ``std_msgs/msg/String`` of 100,000 characters that starts with its number x.
-   - The dispatcher's process is frozen with ``kill -STOP <pid>`` 3 s after the publisher starts, and resumed with ``kill -CONT <pid>`` 10 s later. A frozen process cannot read or acknowledge anything.
-   - Both run with ``FASTDDS_BUILTIN_TRANSPORTS=UDPv4``, so the messages go through the network stack, as between two computers. On one computer, Fast DDS can also use shared memory.
+   - Both test nodes are written in ``rclpy``. They use reliable delivery and keep last: the publisher's queue holds 4 messages, the dispatcher's holds 100. Each message is a ``std_msgs/msg/UInt8MultiArray`` of 100 KB.
+   - The dispatcher's process is frozen with ``kill -STOP <pid>`` 2.84 s after the publisher starts, and resumed with ``kill -CONT <pid>`` at 12.88 s. A frozen process cannot read or acknowledge anything.
+   - Three runs gave the same messages: x = 0 to 4, then x = 22 to 32.
 
 Scenario 4: When the Publisher's Queue Fills
 """"""""""""""""""""""""""""""""""""""""""""
@@ -2523,11 +2555,21 @@ The publisher's queue fills when acknowledgements stop coming: a subscriber that
    :class: key-box
 
    - **No blocking:** with keep last, the default, "the system will discard the oldest sample to make room for a new one" (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_). Each ``publish`` returned in under 1 ms.
-   - **The depth decides what survives:** with a publisher queue of 3, the dispatcher got x = 5, 6, then only x = 22 to 24.
+   - **The depth decides what survives:** with a publisher queue of 3, the dispatcher got only x = 23 to 25 after the freeze; with 4, x = 22 to 25.
+
+Scenario 3 filled the subscriber's queue; this one fills the publisher's.
+
+Scenario 4: Message Size and Keep All
+"""""""""""""""""""""""""""""""""""""
+
+.. admonition:: What scenario 4 shows
+   :class: key-box
+
    - **Small messages hide it:** with messages of 10 characters, the same 10 s freeze lost nothing. The receive buffer, 212,992 bytes here, held all of them.
    - **Keep all:** ``publish`` blocks "until the oldest sample has been acknowledged by all readers and can be removed", up to a maximum blocking time, 100 ms by default, then returns an error (`Fast DDS: Standard QoS Policies <https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html>`_).
 
-Scenario 3 filled the subscriber's queue; this one fills the publisher's.
+Wrap-Up
+-------
 
 Investigate a Program You Did Not Write
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2559,7 +2601,7 @@ You must write a node that warns the dispatcher when a robotaxi's battery is low
 Recap: the Lecture in One UML Component Diagram
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Each box is a node. The ball is the interface ``robotaxi_node`` provides (it publishes); the socket is the one ``dispatcher_node`` requires (it subscribes). The notes hold the rest of the lecture.
+Each box is a node. The ball is the interface ``robotaxi_node`` provides (it publishes); the socket is the one ``dispatcher_node`` requires (it subscribes).
 
 .. figure:: /_static/images/l10/l10_recap.png
    :alt: UML component diagram. Two components in a row, robotaxi_node : RoboTaxiNode on the left and dispatcher_node : DispatcherNode on the right. Between them, a ball provided by robotaxi_node meets a socket required by dispatcher_node, labeled geometry_msgs/msg/Point on /robotaxi/position. Notes: above robotaxi_node, derives from rclcpp::Node, a publisher with a queue of 10, a 500 ms timer that fills a Point, then publisher_->publish(msg). Above the interface, a message type is an interface (.msg), both sides use the same topic and type. Above dispatcher_node, derives from rclcpp::Node, a subscription with a queue of 10, spin runs on_position for each message, a slow callback loses messages. Below robotaxi_node, package robotaxi_demo holds both nodes, package.xml and CMakeLists.txt declare rclcpp and geometry_msgs, then colcon build, source install/setup.bash, ros2 run. Bottom right, under each node: rclcpp, rcl, rmw, DDS, OS and network; inspect it with ros2 node list, ros2 topic list, echo, hz, info, ros2 interface show.
