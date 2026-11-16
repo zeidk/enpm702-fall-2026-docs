@@ -1327,7 +1327,7 @@ Step 2: main, in robotaxi_main.cpp
 
 .. code-block:: cpp
    :linenos:
-   :emphasize-lines: 8, 9, 10, 11, 12
+   :emphasize-lines: 8, 10, 11, 13, 15
 
    #include <memory>
 
@@ -1337,16 +1337,19 @@ Step 2: main, in robotaxi_main.cpp
 
    int main(int argc, char** argv) {
      rclcpp::init(argc, argv);
+
      auto node{std::make_shared<
        robotaxi_demo::RoboTaxiNode>()};
+
      //rclcpp::spin(node);
+
      rclcpp::shutdown();
    }
 
 - Line 8: starts ROS 2 and the middleware. Call it before you make any node.
-- Lines 9 and 10: make a ``RoboTaxiNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
-- Line 11: ``rclcpp::spin`` is commented out for now; `Node Spinning`_ explains it. Without it, the program ends right after the log line.
-- Line 12: stops ROS 2 and frees what ``init`` set up.
+- Lines 10 and 11: make a ``RoboTaxiNode`` in a ``std::shared_ptr``, the form ``rclcpp::spin`` takes, instead of a plain ``rclcpp::Node``. Its constructor logs the line.
+- Line 13: ``rclcpp::spin`` is commented out for now; `Node Spinning`_ explains it. Without it, the program ends right after the log line.
+- Line 15: stops ROS 2 and frees what ``init`` set up.
 
 Step 3: CMakeLists.txt
 """"""""""""""""""""""
