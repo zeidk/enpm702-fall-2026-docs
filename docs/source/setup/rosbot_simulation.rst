@@ -139,7 +139,7 @@ robot forward:
    ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped "{twist: {linear: {x: 0.2}}}"
 
 The robot moves forward, and ``x`` grows. On the course computer, ``x`` was
-0.68 to 0.87 m after 5 s of this command (three runs). Press :kbd:`Ctrl+C`
+0.68 to 0.86 m after 5 s of this command (three runs). Press :kbd:`Ctrl+C`
 to stop the command. The robot stops by itself when no ``cmd_vel`` message
 arrives for 0.5 s.
 
@@ -293,7 +293,7 @@ Two facts to plan for:
 What Surprises People
 ^^^^^^^^^^^^^^^^^^^^^
 
-.. admonition:: Three things that differ from what you expect
+.. admonition:: Two things that differ from what you expect
    :class: important
 
    1. **The command topic takes a stamped message.** ``/cmd_vel`` has the type
@@ -304,18 +304,13 @@ What Surprises People
       tf2_echo base_link laser`` prints a rotation of 180.000 degrees about
       z. The direction straight ahead of the robot is at the angle
       plus or minus pi in ``/scan``, not at 0.
-   3. **Odometry reports 5 percent too little travel.** In the GP2 runs, after
-      the robot drove 6 m, ``odom`` said x = 5.96 m and Gazebo's true
-      position was 6.28 m. The cause is a wheel radius multiplier of 0.95 in
-      the ``rosbot_controller`` configuration. The error grows with the
-      distance, so do not trust ``odom`` over long drives.
 
 
 The Environment
 ---------------
 
 .. figure:: /_static/images/rosbot/patrol_world.png
-   :alt: Top view of the patrol world from Gazebo, 20 m by 10 m, with north at the top. A long hall runs along the bottom with the yellow disc of the robot at the left end and four blue discs. Two rooms lie above it, joined to the hall by two doorways. The left doorway is open. The right doorway has a red panel. A purple disc, a small orange cylinder, a green cylinder with a round head and a brown box lie on the hall floor. Numbered tags mark each item, and axes in meters run along the left and the bottom.
+   :alt: Top view of the patrol world from Gazebo, 20 m by 10 m, with north at the top. A long hall runs along the bottom with the small dark robot near the left end and four blue discs. Two rooms lie above it, joined to the hall by two doorways. The left doorway is open. The right doorway has a red panel. A purple disc, a small orange cylinder, a green cylinder with a round head and a brown box lie on the hall floor. Numbered tags mark each item, and axes in meters run along the left and the bottom.
    :width: 100%
 
    The patrol world, rendered from above in Gazebo with a camera that is not
@@ -345,7 +340,7 @@ The tags in the figure:
      - Checkpoint 4 (blue disc)
      - (3.0, 0.4)
    * - 5
-     - Start of the robot (yellow disc under it)
+     - Start of the robot
      - (0.0, 0.0), facing east
    * - 6
      - ``fire_extinguisher`` (orange cylinder)
@@ -383,6 +378,9 @@ east.
   camera lists it by that name. Each is seen from one checkpoint: the
   ``fire_extinguisher`` from checkpoint 1, the ``crate`` from checkpoint 2,
   the ``person`` from checkpoint 3 and the ``spill`` from checkpoint 4.
+  The objects have no collision shape, so the robot drives through them
+  instead of getting stuck. The lidar and the camera still see them. The
+  walls and the doors keep their collision shapes.
 
 Other worlds
 ^^^^^^^^^^^^

@@ -31,10 +31,19 @@ transform for the camera.
    <figure class="align-center">
      <video controls muted playsinline preload="metadata" width="100%"
             poster="../_static/videos/gp2/patrol_gazebo_poster.jpg"
-            aria-label="A 45-second video of a Gazebo simulation, seen from above at an angle, sped up 1.5 times: a small building with grey walls, a hall and two rooms. A yellow disc marks the ROSbot. It drives along curved paths to four checkpoints. It passes a brown crate, a closed red door and an open doorway, and stops near an extinguisher, a person and a spill, which are the objects to find.">
+            aria-label="A 50-second video of a Gazebo simulation, seen from above at an angle, sped up 1.5 times: a building with grey walls, a hall and two rooms. The small dark ROSbot drives along curved paths and stops on each of four blue discs, the checkpoints. It passes a brown crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.">
        <source src="../_static/videos/gp2/patrol_gazebo.mp4" type="video/mp4">
      </video>
-     <figcaption>The reference solution in Gazebo, sped up 1.5 times (45.5 s). A yellow disc marks the ROSbot. It drives on curved paths to the four checkpoints, passes a crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.</figcaption>
+     <figcaption>The reference solution in Gazebo, sped up 1.5 times (50.5 s). The ROSbot drives on curved paths and stops on each of the four blue discs. It passes a crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.</figcaption>
+   </figure>
+
+   <figure class="align-center">
+     <video controls muted playsinline preload="metadata" width="100%"
+            poster="../_static/videos/gp2/patrol_terminal_poster.jpg"
+            aria-label="A 50-second video of three terminal panes, light text on a dark background, sped up 1.5 times. The top pane, mission_node, logs each goal it sends, each checkpoint result (clear, blocked, door closed, door open) and each object with its position. The middle pane prints the front range from the lidar once per second. The bottom pane prints the names of the objects the logical camera sees once per second.">
+       <source src="../_static/videos/gp2/patrol_terminal.mp4" type="video/mp4">
+     </video>
+     <figcaption>The same run in the terminal, at the same speed. Top: the mission node's log. Middle: the lidar's front range, once per second. Bottom: the objects the logical camera sees, once per second. Play it next to the Gazebo video.</figcaption>
    </figure>
 
 .. important::
@@ -199,8 +208,8 @@ checkpoint is at least 1.5 m from every wall. A second world, the
 is closed. It has no ``fire_extinguisher`` and no ``person``. Your
 program must report both worlds correctly.
 
-The reference solution drives the patrol in about 61 s over 21.9 m, and
-its closest approach to any wall is 1.38 m. Gazebo needs about 40 s to
+The reference solution drives the patrol in 56 to 62 s over 20.5 to
+21.8 m (four runs), and its closest approach to any wall is 1.35 m. Gazebo needs about 40 s to
 start, so wait for the first pose before you send a goal.
 
 The System
@@ -415,7 +424,9 @@ Week 1 (Lecture 12, stand-in robot)
    against the stand-in robot. Put your gains in the README. A start that
    worked in Gazebo: ``kp_linear`` 0.8, ``kp_angular`` 1.5,
    ``max_linear_mps`` 0.5, ``max_angular_rps`` 1.0,
-   ``distance_tolerance_m`` 0.10 and ``yaw_tolerance_rad`` 0.05.
+   ``distance_tolerance_m`` 0.04 and ``yaw_tolerance_rad`` 0.025. With
+   these, the robot's true position ended 0.028 to 0.044 m from each
+   checkpoint, with its heading within 1.23 degrees (three runs).
 
 .. dropdown:: R5: Stop on an obstacle, cancel and timeout (Member B, Week 1)
 
@@ -521,13 +532,9 @@ Week 2 (Lecture 13, Gazebo)
    Checked in the patrol world, where the objects are the ``fire_extinguisher``,
    the ``crate``, the ``person`` and the ``spill``, and in the swapped
    world, which has no ``fire_extinguisher`` and no ``person``. Compare each
-   reported position with the world coordinates in The World. **Allow 0.7 m.**
-   The ROSbot's odometry under-reports the distance it travels by about 5
-   percent (the controller's wheel radius multiplier is 0.95), so the
-   position in ``odom`` is off from the world file. The reference solution
-   is 0.15 to 0.62 m off (the ``spill`` 0.15, the ``fire_extinguisher``
-   0.24, the ``crate`` 0.49, the ``person`` 0.62). Call ``get_report`` and
-   check that the response carries the objects.
+   reported position with the world coordinates in The World. The
+   reference solution is within 0.015 m of them (four runs). **Allow 0.1 m.** Call
+   ``get_report`` and check that the response carries the objects.
 
 .. dropdown:: R11: Build, demo and documentation (All)
 
@@ -551,9 +558,6 @@ Tips
   degrees, so the beam straight ahead is at plus or minus pi. Print the
   ``angle_min`` and ``angle_increment`` of one ``LaserScan`` and work out
   the index.
-* **Odometry drifts.** The odometry under-reports travel by about 5
-  percent, so positions in ``odom`` differ from the world file by a few
-  tenths of a meter. Check object positions with a 0.7 m tolerance.
 * **The camera sees too much.** It lists walls and floor pads, and it sees
   through walls. Filter by name.
 
@@ -626,12 +630,5 @@ Open Questions for the Instructor
   Week 1 checkpoint, or only the advice to merge R1 to R6 by Dec 1?
 * **The obstacle test.** Should one world have a box between two
   checkpoints, so R5 can be tested in Gazebo?
-* **The floor pads.** The world draws a pad at each checkpoint position
-  of the table, but the robot stops where its odometry says the checkpoint
-  is, which is off by 0.15 to 0.62 m in the measured object positions.
-  Should the pads be drawn where the robot really stops?
-* **The position tolerance.** Do you state 0.7 m to the students as the
-  tolerance for an object's position in ``odom``, or leave it for them to
-  find?
 * **You provide:** ``gp2_bringup``, the two world files, and starter
   ``CMakeLists.txt`` and ``package.xml`` files [TBD].
