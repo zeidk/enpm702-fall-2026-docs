@@ -1,9 +1,7 @@
-:orphan:
-
 .. _gp2:
 
 ====================================================
-GP2: Patrol and Inspect in Gazebo (DRAFT)
+GP2: Patrol and Inspect in Gazebo
 ====================================================
 
 Overview
@@ -23,7 +21,7 @@ The heart of the project is one action, ``GoToCheckpoint``. Its server
 holds a proportional controller that drives the robot to a checkpoint.
 Its client, in the mission node, sends the goals one after another and
 decides what to do with each result. Around it you add parameters in a
-YAML file, three services, one TF frame per checkpoint, and a tf2
+YAML file, two services, one TF frame per checkpoint, and a tf2
 transform for the camera.
 
 .. raw:: html
@@ -61,7 +59,7 @@ transform for the camera.
 
    * **Week 1 (R1 to R6) needs only Lecture 12** (parameters, services,
      actions; Tue, Nov 24). It still runs against your GP1 stand-in
-     robot, in a terminal.
+     robot, in a terminal. Merge R1 to R6 into ``main`` by Tue, Dec 1.
    * **Week 2 (R7 to R10) needs Lecture 13** (frames and TF; Tue, Dec 1).
      It moves the system to Gazebo Harmonic with the Husarion ROSbot and
      adds the logical camera.
@@ -129,7 +127,7 @@ the stand-in robot, so most of the system stays.
 * **Changed:** ``mission_node`` becomes the action client, reads a
   cone of beams and, in Gazebo, the logical camera. ``operator_node``
   calls services.
-* **Added:** parameters, three services, one action, static frames,
+* **Added:** parameters, two services, one action, static frames,
   ``DetectedObject`` and ``gp2_bringup``.
 
 
@@ -143,8 +141,8 @@ After completing this assignment you will be able to:
 3. Write an action server with feedback, cancel and a timeout, and a
    client that acts on each result.
 4. Write a proportional controller that drives a robot to a pose.
-5. Publish static frames, and use TF2 to look up the robot's pose and to
-   move an object's position from the camera frame to ``odom``.
+5. Publish static frames, and use TF2 to move an object's position from
+   the camera frame to ``odom``.
 6. Decide from a lidar cone, find objects with a logical camera, and run
    the system in Gazebo.
 7. Split a project among three people and show it in the peer review.
@@ -208,9 +206,10 @@ checkpoint is at least 1.5 m from every wall. A second world, the
 is closed. It has no ``fire_extinguisher`` and no ``person``. Your
 program must report both worlds correctly.
 
-The reference solution drives the patrol in 56 to 62 s over 20.5 to
-21.8 m (four runs), and its closest approach to any wall is 1.35 m. Gazebo needs about 40 s to
-start, so wait for the first pose before you send a goal.
+The reference solution drives the patrol in 62.1 to 62.4 s of simulation
+time over 21.7 to 21.8 m (five runs, both worlds), and its closest
+approach to any wall is 1.34 m. Gazebo needs about 40 s to start, so wait for the
+first pose before you send a goal.
 
 The System
 ----------
@@ -223,10 +222,10 @@ The System
    * - Node
      - What it does
    * - ``patrol_services_node`` (A)
-     - Serves ``set_paused``, ``get_report`` and ``skip_checkpoint``.
+     - Serves ``set_paused`` and ``get_report``.
        Stores the reports. Publishes ``patrol_status`` at 2 Hz.
    * - ``operator_node`` (A)
-     - Calls the three services at set times.
+     - Calls the two services at set times.
    * - ``controller_node`` (B)
      - Action server ``go_to_checkpoint``. Drives to the checkpoint with
        a proportional controller. Stops on an obstacle or a cancel.
@@ -234,7 +233,7 @@ The System
      - Action client. Sends the goals in order, decides from each result,
        checks the door, finds the objects, publishes
        ``inspection_report``.
-   * - ``checkpoint_frames_node`` (C)
+   * - ``checkpoint_frames_node`` (A)
      - Broadcasts one static frame per checkpoint.
    * - ``patrol_log_node``
      - As in GP1. Runs with ``mission_node`` in one process.
@@ -287,9 +286,8 @@ The interfaces:
   ``patrol_services_node`` to ``mission_node``.
 * **Action.** ``go_to_checkpoint`` (``GoToCheckpoint``): server
   ``controller_node``, client ``mission_node``.
-* **Services.** ``set_paused`` (``std_srvs/srv/SetBool``),
-  ``get_report`` (``GetReport``), ``skip_checkpoint``
-  (``SkipCheckpoint``): server ``patrol_services_node``, client
+* **Services.** ``set_paused`` (``std_srvs/srv/SetBool``) and
+  ``get_report`` (``GetReport``): server ``patrol_services_node``, client
   ``operator_node``.
 * **Frames.** ``odom`` and ``base_link`` come from the ROSbot.
   ``logical_camera_link`` comes from the launch file of ``gp2_bringup``.
@@ -308,17 +306,26 @@ The instructor provides ``gp2_bringup``: a package that starts Gazebo
 with the ROSbot, the lidar and the logical camera in a world chosen by an
 argument (the patrol world or the swapped world). It is in the course
 repository, in ``rosbot_sim/``; :doc:`ROSbot Simulation </setup/rosbot_simulation>`
-says how to install, build and launch it. You build everything else.
+says how to install, build and launch it.
+
+The instructor also provides a starter in the folder ``GP2/`` of the same
+repository. Get both as you got GP1: run ``git fetch upstream`` and
+``git merge upstream/main``. The starter holds ``gp2_interfaces`` and
+``gp2_patrol``, each with a complete ``CMakeLists.txt`` and
+``package.xml`` with ``TODO`` marks, and ``geometry.hpp``, the helpers of
+GP1. Its ``README.md`` lists the steps in order. You build everything
+else.
 
 Team Roles
 ----------
 
-* **A:** parameters and the three services (R1, R2, R3).
-* **B:** the action server with the proportional controller and the
-  scan-based stop (R4, R5, R8).
-* **C:** frames and TF, the action client and decisions in
-  ``mission_node``, the launch files, and the camera-to-``odom``
-  transform for the objects (R6, R7, R9, R10).
+* **A:** the interfaces, parameters, the two services and the
+  checkpoint frames (R1, R2, R3, R7).
+* **B:** the action server with the proportional controller, the
+  scan-based stop, and the controller on the ROSbot (R4, R5, R8).
+* **C:** the action client and decisions in ``mission_node``, the launch
+  files, and the camera-to-``odom`` transform for the objects (R6, R9,
+  R10).
 * **All:** ``README.md``, ``CONTRIBUTIONS.md``, the demo (R11).
 
 Every member must be able to explain every part, because the peer review
@@ -344,11 +351,11 @@ Week 1 (Lecture 12, stand-in robot)
    * ``DetectedObject.msg``: ``string name`` and
      ``geometry_msgs/Point position``. The position is in the ``odom``
      frame.
-   * ``InspectionReport.msg`` from GP1, with two more result constants,
-     ``RESULT_NOT_REACHED`` (4) and ``RESULT_SKIPPED`` (5), and a new
-     field ``DetectedObject[] objects``. It is empty when the camera saw
-     no object.
-   * ``PatrolStatus.msg``: ``bool paused`` and ``uint32[] skipped_ids``.
+   * ``InspectionReport.msg`` from GP1, with one more result constant,
+     ``RESULT_NOT_REACHED`` (4), and a new field
+     ``DetectedObject[] objects``. It is empty when the camera saw no
+     object.
+   * ``PatrolStatus.msg``: ``bool paused``.
    * ``action/GoToCheckpoint.action``. Goal: ``checkpoint_id``
      (``uint32``). Feedback: ``distance_left_m`` and
      ``heading_error_rad`` (``float32``). Result: ``outcome`` (``uint8``,
@@ -357,8 +364,7 @@ Week 1 (Lecture 12, stand-in robot)
      ``final_distance_m``.
    * ``srv/GetReport.srv``: request ``checkpoint_id``; response ``found``
      and ``report``, the whole ``InspectionReport``, so the response
-     carries ``objects`` too. ``srv/SkipCheckpoint.srv``: request
-     ``checkpoint_id``; response ``accepted`` and ``message``.
+     carries ``objects`` too.
 
    Checked with ``ros2 interface show`` for each file.
 
@@ -391,13 +397,13 @@ Week 1 (Lecture 12, stand-in robot)
      says what happened, for example ``patrol resumed``.
    * ``get_report``: the latest ``InspectionReport`` of the checkpoint,
      or ``found: false``.
-   * ``skip_checkpoint``: accepts a known id that was not reported yet,
-     and refuses the rest with a reason in ``message``.
 
-   The node publishes ``patrol_status`` from the first two. Each
-   service is called with ``ros2 service call``. ``operator_node`` calls
-   all three with a client and logs each response. It uses timers, never
-   ``sleep``.
+   The node publishes ``patrol_status`` at 2 Hz with the current
+   ``paused`` value. Each service is called with ``ros2 service call``.
+   ``operator_node`` calls both with a client and logs each response. It
+   uses timers, never ``sleep``. It counts its times with the node clock,
+   ``now()``: in Gazebo that is the simulation time, so each call happens
+   at the same point of the patrol on every computer.
 
 .. dropdown:: R4: The action server and the controller (Member B, Week 1)
 
@@ -425,15 +431,17 @@ Week 1 (Lecture 12, stand-in robot)
    worked in Gazebo: ``kp_linear`` 0.8, ``kp_angular`` 1.5,
    ``max_linear_mps`` 0.5, ``max_angular_rps`` 1.0,
    ``distance_tolerance_m`` 0.04 and ``yaw_tolerance_rad`` 0.025. With
-   these, the robot's true position ended 0.028 to 0.044 m from each
-   checkpoint, with its heading within 1.23 degrees (three runs).
+   these, the robot's true position ended 0.014 to 0.056 m from each
+   checkpoint, with its heading within 1.24 degrees (five runs). The
+   tolerance applies to the odometry, which stopped 0.036 to 0.038 m
+   away; the odometry and the true position differed by up to 0.023 m.
 
 .. dropdown:: R5: Stop on an obstacle, cancel and timeout (Member B, Week 1)
 
    While driving, average the finite ranges of ``scan`` within
    ``cone_half_angle_deg`` of straight ahead. The index of straight ahead
    comes from a parameter, because it is not the same on every robot (see
-   R9). A start that worked in Gazebo: a half angle of 10 degrees.
+   R8). A start that worked in Gazebo: a half angle of 10 degrees.
 
    * Below ``stop_range_m`` (0.35 m in the reference solution): stop,
      result ``OUTCOME_OBSTACLE``. ``stop_range_m`` is below every doorway
@@ -443,17 +451,21 @@ Week 1 (Lecture 12, stand-in robot)
      ``OUTCOME_CANCELLED``.
    * Longer than ``goal_timeout_s`` (90 s in the reference solution):
      stop, ``OUTCOME_TIMED_OUT``. The clock starts when the first pose
-     arrives, not when Gazebo starts.
+     arrives, not when Gazebo starts. Measure it with ``now()``, the
+     node clock: in Gazebo it follows the simulation, so a computer that
+     runs Gazebo slower than real time does not time out early.
 
    Checked with a ``ros2 topic pub`` of a short scan, a cancel in the
    middle of a drive (odometry stops changing), and a tiny timeout.
 
 .. dropdown:: R6: The mission node: client and decisions (Member C, Week 1)
 
-   ``mission_node`` (with ``patrol_log_node`` in one
-   ``MultiThreadedExecutor``) sends goals 1, 2, ... one at a time, with
-   asynchronous calls and callbacks. It never blocks. It acts on
-   ``patrol_status`` and on each result:
+   ``mission_node`` sends goals 1, 2, ... one at a time, with
+   asynchronous calls and callbacks. It never blocks. It runs with
+   ``patrol_log_node`` in one ``MultiThreadedExecutor`` with 2 threads.
+   With one thread, its callbacks would wait while the log node does its
+   1.5 s of work, and a pause would cancel the goal up to 1.5 s late.
+   It acts on ``patrol_status`` and on each result:
 
    * ``OUTCOME_REACHED``: average the cone ahead. At a door, a value no
      more than ``door_tolerance_m`` above the checkpoint's
@@ -465,7 +477,6 @@ Week 1 (Lecture 12, stand-in robot)
    * ``OUTCOME_OBSTACLE``: ``RESULT_BLOCKED``. ``OUTCOME_TIMED_OUT``:
      ``RESULT_NOT_REACHED``. Report, then go to the next checkpoint.
    * Paused: cancel the active goal. Resumed: send that checkpoint again.
-     A skipped id gets ``RESULT_SKIPPED`` and no goal.
 
    Log ``checkpoint 3 (door): door closed, average 0.6 m`` (the format).
    Checked by the log from an ``operator_node`` run with the stand-in.
@@ -473,7 +484,7 @@ Week 1 (Lecture 12, stand-in robot)
 Week 2 (Lecture 13, Gazebo)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. dropdown:: R7: Checkpoint frames (Member C, Week 2)
+.. dropdown:: R7: Checkpoint frames (Member A, Week 2)
 
    ``checkpoint_frames_node`` reads the checkpoint parameters and
    broadcasts one static transform per checkpoint with
@@ -484,14 +495,17 @@ Week 2 (Lecture 13, Gazebo)
    checkpoint in the robot's frame, and with ``ros2 run tf2_tools
    view_frames``.
 
-.. dropdown:: R8: The controller reads TF (Member B, Week 2)
+.. dropdown:: R8: The controller on the ROSbot (Member B, Week 2)
 
-   Replace the odometry pose of R4 with a TF lookup of ``checkpoint_<id>``
-   in ``base_link``. Its position gives the distance left (its length) and
-   the bearing error (``atan2`` of y and x). Its rotation gives the heading
-   error. The curved drive of both commands, the turn on the spot and the
-   feedback stay. Checked in Gazebo: the robot ends within both
-   tolerances, and ``tf2_echo`` agrees with the last feedback.
+   Make the controller of R4 and R5 drive the ROSbot in Gazebo. Two
+   things differ from the stand-in robot. ``cmd_vel`` takes
+   ``geometry_msgs/msg/TwistStamped``, so the controller publishes that
+   type with a header stamp. The lidar frame is turned by 180 degrees, so
+   straight ahead is at plus or minus pi in ``scan``, not in the middle of
+   ``ranges``: set the angle parameter of R5 in ``params_gazebo.yaml``.
+   Tune the gains and tolerances for Gazebo and write the values in the
+   README. Checked in Gazebo with ``ros2 action send_goal`` on each
+   checkpoint: the robot ends within both tolerances.
 
 .. dropdown:: R9: Launch files and the Gazebo run (Member C, Week 2)
 
@@ -499,15 +513,11 @@ Week 2 (Lecture 13, Gazebo)
    ROSbot and one world, chosen by an argument), then starts the nodes
    with the YAML file of R2. It starts no stand-in node. ``mission_node``
    starts when ``controller_node`` has started, with an event handler.
-   Two things differ on the ROSbot. ``cmd_vel`` takes
-   ``geometry_msgs/msg/TwistStamped``, so the controller publishes that
-   type with a header stamp. The lidar frame is turned by 180 degrees, so
-   straight ahead is at plus or minus pi in ``scan``, not in the middle of
-   ``ranges``: set the angle parameter of R5 in ``params_gazebo.yaml``.
    Checked in the patrol world and in the swapped world: the robot
    visits each checkpoint, and each door is reported correctly
-   (``door open`` at a checkpoint whose door is open). Tune the gains,
-   tolerances and ranges for Gazebo and write the values in the README.
+   (``door open`` at a checkpoint whose door is open). Tune the door and
+   room ranges (``door_tolerance_m``, ``blocked_range_m``) for Gazebo and
+   write the values in the README.
 
 .. dropdown:: R10: Detect objects with the logical camera (Member C, Week 2)
 
@@ -533,7 +543,7 @@ Week 2 (Lecture 13, Gazebo)
    the ``crate``, the ``person`` and the ``spill``, and in the swapped
    world, which has no ``fire_extinguisher`` and no ``person``. Compare each
    reported position with the world coordinates in The World. The
-   reference solution is within 0.015 m of them (four runs). **Allow 0.1 m.** Call
+   reference solution is within 0.023 m of them (five runs). **Allow 0.1 m.** Call
    ``get_report`` and check that the response carries the objects.
 
 .. dropdown:: R11: Build, demo and documentation (All)
@@ -576,59 +586,36 @@ How It Is Graded
      - 6 %
      - A
    * - R2: Parameters
-     - 10 %
+     - 8 %
      - A
    * - R3: Services and the operator client
-     - 16 %
+     - 12 %
      - A
    * - R4: Action server and controller
      - 16 %
      - B
    * - R5: Stop, cancel, timeout
-     - 10 %
+     - 8 %
      - B
    * - R6: Mission node
-     - 10 %
+     - 12 %
      - C
    * - R7: Checkpoint frames
      - 6 %
-     - C
-   * - R8: Controller on TF
-     - 6 %
+     - A
+   * - R8: Controller on the ROSbot
+     - 8 %
      - B
    * - R9: Launch files and Gazebo
-     - 8 %
+     - 10 %
      - C
    * - R10: Object detection with the logical camera
-     - 8 %
+     - 10 %
      - C
    * - R11: Build, demo, documentation
      - 4 %
      - All
 
-Each member owns 32 % and the team shares 4 %. R6, R7, R9 and R10 together
-weigh 32 % for Member C: R6 went from 12 to 10, R7 from 8 to 6 and R9 from 12
-to 8, and R10 is new at 8. The rubric gives the team grade. The :ref:`syllabus <peer-evaluation>`
-explains how the peer review adjusts each member's grade.
-
-
-Open Questions for the Instructor
----------------------------------
-
-* **The stop topic is dropped.** ``/emergency_stop`` and ``StopCommand``
-  go away, since pause and cancel do the job. The GP1 executor lesson
-  survives only in ``patrol_log_node`` sharing a process. Is that right?
-* **A separate services node and a status topic are my guess.** They give
-  Member A a real part. The alternative is the services inside
-  ``mission_node``, which merges A's and C's work.
-* **The load is uneven in Week 2.** Member A has no requirement in Week
-  2, and Member C has four. I suggest A also owns ``run_demo.sh`` and the
-  per-world tuning. The weights are 32 % per member and 4 % shared.
-* **Hardest to grade:** R5 and R9. Timing differs between computers.
-  Grade the end pose, the outcomes and the logs in ``evidence/``.
-* **Thanksgiving.** Week 1 has almost no class time. Do you want a graded
-  Week 1 checkpoint, or only the advice to merge R1 to R6 by Dec 1?
-* **The obstacle test.** Should one world have a box between two
-  checkpoints, so R5 can be tested in Gazebo?
-* **You provide:** ``gp2_bringup``, the two world files, and starter
-  ``CMakeLists.txt`` and ``package.xml`` files [TBD].
+Each member owns 32 % and the team shares 4 %. The rubric gives the team
+grade. The :ref:`syllabus <peer-evaluation>` explains how the peer review
+adjusts each member's grade.

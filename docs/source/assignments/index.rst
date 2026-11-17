@@ -78,7 +78,7 @@ runs the same nodes on a simulated robot in Gazebo.
      - Nov 17
      - Nov 24
      - 1 week
-   * - GP2
+   * - :doc:`GP2 <gp2>`
      - Patrol and Inspect in Gazebo (parameters, services, actions, frames)
      - Nov 24
      - Dec 11
@@ -94,9 +94,4 @@ runs the same nodes on a simulated robot in Gazebo.
    rwa2
    rwa3
    gp1
-
-..
-   Hidden for now. Uncomment an entry when that assignment is rewritten,
-   and restore its row in the table above.
-
    gp2
