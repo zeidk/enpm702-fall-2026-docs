@@ -125,8 +125,7 @@ After completing this assignment you will be able to:
 4. Choose between a single-threaded and a multi-threaded executor, and
    show the difference with timestamps from your own runs.
 5. Start two copies of a system with Python launch files that use an
-   include, launch arguments, conditions, groups with namespaces, and
-   event handlers.
+   include, launch arguments, conditions and groups with namespaces.
 6. Split a ROS 2 project among three people, and build, test and
    document it as one system.
 
@@ -479,21 +478,13 @@ method in the ``.cpp`` file.
    Two launch files, in ``gp1_patrol/launch/``, installed by
    ``CMakeLists.txt``.
 
-   Two tools these files need were not shown in class and are in the
-   Lecture 11 notes: :ref:`groups with a condition <l11-groups-with-a-condition>`
-   (for ``robot_2``) and :ref:`event handlers <l11-launch-events>`
-   (``OnProcessStart``, ``OnShutdown``). Read both sections before you
-   start.
-
    ``robots_launch.py`` starts the robots.
 
    * A launch argument ``two_robots``, ``false`` by default.
    * A helper function that returns one robot: a group with the robot's
-     namespace, its ``patrol_exe`` and ``stand_in_robot_exe``, and an
-     event handler that starts its ``mission_exe`` once the patrol
-     process has started, with a ``LogInfo``
-     (``robot_1 patrol started, starting mission``). The mission node
-     must run in the robot's namespace too (see the `Tips`_).
+     namespace and its ``patrol_exe``, ``stand_in_robot_exe`` and
+     ``mission_exe``. The helper takes an optional condition and puts it
+     on each of the three nodes, as Lecture 11 puts a condition on a node.
    * ``robot_1`` always starts; ``robot_2`` starts only when
      ``two_robots`` is ``true``.
 
@@ -504,14 +495,12 @@ method in the ``.cpp`` file.
      whether ``operator_exe`` starts.
    * A ``LogInfo`` prints both arguments:
      ``two_robots = false, with_operator = true``.
-   * An event handler logs ``Patrol stopped`` when the launch shuts
-     down.
 
    ``ros2 launch gp1_patrol patrol_launch.py two_robots:=true`` must
    start both robots, although ``two_robots`` is declared in the
    included file. Check every node's full name with ``ros2 node list``:
-   every robot node has the namespace of its robot, including the node
-   that the event handler starts.
+   every robot node has the namespace of its robot, including the
+   mission node.
 
 .. dropdown:: R8: Build, demo script and documentation (All)
 
@@ -545,20 +534,19 @@ lines, ``patrol_log_node`` writes its log every 2 s.
 .. code-block:: text
 
    [INFO] [launch.user]: two_robots = false, with_operator = true
-   [INFO] [launch.user]: robot_1 patrol started, starting mission
    [stand_in_robot_exe-2] [INFO] [...] [robot_1.stand_in_robot_node]: stand-in robot near checkpoint 1
    [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: arrived at checkpoint 1
-   [mission_exe-4] [INFO] [...] [robot_1.mission_node]: checkpoint 1 (room): clear, range 4.0 m
-   [operator_exe-3] [INFO] [...] [operator_node]: sent STOP (operator stop)
-   [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: STOP (operator stop) received 0.6 ms after it was sent
-   [operator_exe-3] [INFO] [...] [operator_node]: sent RESUME (operator resume)
-   [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: RESUME (operator resume) received 0.5 ms after it was sent
+   [mission_exe-3] [INFO] [...] [robot_1.mission_node]: checkpoint 1 (room): clear, range 4.0 m
+   [operator_exe-4] [INFO] [...] [operator_node]: sent STOP (operator stop)
+   [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: STOP (operator stop) received 0.5 ms after it was sent
+   [operator_exe-4] [INFO] [...] [operator_node]: sent RESUME (operator resume)
+   [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: RESUME (operator resume) received 0.6 ms after it was sent
    [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: arrived at checkpoint 2
-   [mission_exe-4] [INFO] [...] [robot_1.mission_node]: checkpoint 2 (room): blocked, range 0.6 m
+   [mission_exe-3] [INFO] [...] [robot_1.mission_node]: checkpoint 2 (room): blocked, range 0.6 m
    [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: arrived at checkpoint 3
-   [mission_exe-4] [INFO] [...] [robot_1.mission_node]: checkpoint 3 (door): door closed, range 0.6 m
+   [mission_exe-3] [INFO] [...] [robot_1.mission_node]: checkpoint 3 (door): door closed, range 0.6 m
    [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: arrived at checkpoint 4
-   [mission_exe-4] [INFO] [...] [robot_1.mission_node]: checkpoint 4 (door): door open, range 4.0 m
+   [mission_exe-3] [INFO] [...] [robot_1.mission_node]: checkpoint 4 (door): door open, range 4.0 m
    [patrol_exe-1] [INFO] [...] [robot_1.navigation_node]: patrol complete
 
 The last patrol log line of that run:
@@ -646,7 +634,7 @@ Grading Rubric
      - The four results at the four checkpoints, the timed commands.
    * - R7: Launch files (C)
      - 18 %
-     - Include, arguments, condition, namespaces, event handlers.
+     - Include, arguments, conditions, namespaces.
    * - R8: Build, demo script, documentation (all)
      - 10 %
      - No warnings, the demo log, ``README.md``, ``CONTRIBUTIONS.md``.
@@ -714,15 +702,6 @@ Tips
      /robot_1/stand_in_robot_node
 
   Write the launch files once the nodes work.
-* **Put the mission node in the namespace yourself.** The launch file
-  starts ``mission_exe`` from an event handler, once the patrol process is
-  running. The handler runs after the robot's group has ended, so the
-  group's ``PushROSNamespace`` no longer applies. The mission node then
-  starts as ``/mission_node``, not ``/robot_1/mission_node``, and it
-  listens to ``/scan`` and ``/arrival``, where nothing is published. To fix
-  it, wrap the mission node in its own ``GroupAction`` with
-  ``PushROSNamespace``, inside ``on_start``. Then check with
-  ``ros2 node list`` that you see ``/robot_1/mission_node``.
 * **Agree on R1 on day one.** Every other part uses the three messages.
   Once they build, A, B and C can work at the same time.
 
