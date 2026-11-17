@@ -34,7 +34,7 @@ taught in Lectures 10 to 13.
             aria-label="A 50-second video of a Gazebo simulation, seen from above at an angle, sped up 1.5 times: a building with grey walls, a hall and two rooms. The small dark ROSbot drives along curved paths and stops on each of four blue discs, the checkpoints. It passes a brown crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.">
        <source src="../_static/videos/gp2/patrol_gazebo.mp4" type="video/mp4">
      </video>
-     <figcaption>The reference solution in Gazebo, sped up 1.5 times (50.5 s). The ROSbot drives on curved paths and stops on each of the four blue discs. It passes a crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.</figcaption>
+     <figcaption>The reference solution in Gazebo, sped up 1.5 times (49.6 s). The ROSbot drives on curved paths and stops on each of the four blue discs. It passes a crate, a closed red door and an open doorway, and finds an extinguisher, a person and a spill.</figcaption>
    </figure>
 
    <figure class="align-center">
