@@ -4,6 +4,50 @@
 GP1: Patrol and Inspect
 ====================================================
 
+.. admonition:: Robot terms the lectures have not covered
+   :class: note
+
+   GP1 uses the topic names and message types of the real ROSbot, so
+   that GP2 can run the same nodes in Gazebo. The lectures have not
+   explained these yet. This is all you need from them in GP1.
+
+   * ``cmd_vel``, of type ``geometry_msgs/msg/Twist``, is the velocity
+     command sent to the robot. A ``Twist`` holds two vectors,
+     ``linear`` and ``angular``, each with an ``x``, a ``y`` and a ``z``.
+     A robot that drives on the floor uses two of these six numbers:
+
+     - ``linear.x``: the forward speed, in m/s. A negative value drives
+       backward.
+     - ``angular.z``: the turn rate, in rad/s. A positive value turns
+       the robot to the left (counterclockwise, seen from above).
+
+     Leave the other four numbers at 0.
+   * ``odometry/filtered``, of type ``nav_msgs/msg/Odometry``, is where
+     the robot thinks it is. The position is
+     ``pose.pose.position.x`` and ``pose.pose.position.y``, in m. The
+     heading is ``pose.pose.orientation``, a quaternion (next bullet).
+     On the real ROSbot, a filter (the ``ekf_node`` of the
+     ``robot_localization`` package) combines the wheel odometry and the
+     IMU into this one estimate: that is what *filtered* means. In GP1,
+     your stand-in node publishes it, and you can leave its ``twist``
+     part (the velocity) empty.
+   * **Quaternion and yaw.** ROS gives an orientation as a quaternion,
+     four numbers ``x``, ``y``, ``z`` and ``w``. For a robot on the
+     floor, only its heading changes. That heading is the **yaw**: an
+     angle in rad, 0 when the robot faces +x and positive
+     counterclockwise. You do not need the math of quaternions:
+     ``geometry.hpp`` gives you ``yaw_from_quaternion`` to read the yaw
+     and ``quaternion_from_yaw`` to write it.
+   * ``scan``, of type ``sensor_msgs/msg/LaserScan``, is the range
+     sensor. ``ranges`` holds one distance in m for each beam, from
+     ``angle_min`` to ``angle_max`` in steps of ``angle_increment``. In
+     GP1 there are three beams: straight ahead, and 0.1 rad to each
+     side.
+
+   The directions and units (x forward, y left, z up; meters, radians,
+   seconds) are the ROS conventions of
+   `REP 103 <https://www.ros.org/reps/rep-0103.html>`__.
+
 Overview
 --------
 
