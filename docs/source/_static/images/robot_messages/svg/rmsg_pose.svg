@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+<rect x="0" y="0" width="640" height="440" fill="white"/>
+<defs>
+<marker id="head_navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14325c"/></marker>
+<marker id="head_red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+<marker id="head_green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker>
+<marker id="head_blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f4e99"/></marker>
+<marker id="head_dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/></marker>
+</defs>
+<line x1="90.0" y1="360.0" x2="540.0" y2="360.0" stroke="#c0392b" stroke-width="3" marker-end="url(#head_red)"/>
+<text x="550.0" y="366.0" font-family="Fira Sans" font-size="19" fill="#c0392b" text-anchor="start" font-weight="normal">x</text>
+<line x1="90.0" y1="360.0" x2="90.0" y2="60.0" stroke="#1e8449" stroke-width="3" marker-end="url(#head_green)"/>
+<text x="84.0" y="48.0" font-family="Fira Sans" font-size="19" fill="#1e8449" text-anchor="middle" font-weight="normal">y</text>
+<text x="80.0" y="386.0" font-family="Fira Mono" font-size="17" fill="#14325c" text-anchor="middle" font-weight="bold">odom</text>
+<line x1="240.0" y1="354.0" x2="240.0" y2="366.0" stroke="#c0392b" stroke-width="2"/>
+<text x="240.0" y="386.0" font-family="Fira Sans" font-size="15" fill="#5a5a5a" text-anchor="middle" font-weight="normal">1 m</text>
+<line x1="390.0" y1="354.0" x2="390.0" y2="366.0" stroke="#c0392b" stroke-width="2"/>
+<text x="390.0" y="386.0" font-family="Fira Sans" font-size="15" fill="#5a5a5a" text-anchor="middle" font-weight="normal">2 m</text>
+<line x1="84.0" y1="210.0" x2="96.0" y2="210.0" stroke="#1e8449" stroke-width="2"/>
+<text x="78.0" y="215.0" font-family="Fira Sans" font-size="15" fill="#5a5a5a" text-anchor="end" font-weight="normal">1 m</text>
+<line x1="390.0" y1="260.0" x2="390.0" y2="360.0" stroke="#5a5a5a" stroke-width="1.6" stroke-dasharray="5 5"/>
+<line x1="348.0" y1="210.0" x2="90.0" y2="210.0" stroke="#5a5a5a" stroke-width="1.6" stroke-dasharray="5 5"/>
+<g transform="translate(390.0,210.0) rotate(-90.0)"><rect x="-46.0" y="-34.0" width="92" height="68" rx="14" fill="#e8edf4" stroke="#14325c" stroke-width="2.5"/><rect x="-40.5" y="-42.8" width="22.1" height="8.8" rx="3" fill="#14325c"/><rect x="-40.5" y="34.0" width="22.1" height="8.8" rx="3" fill="#14325c"/><rect x="18.4" y="-42.8" width="22.1" height="8.8" rx="3" fill="#14325c"/><rect x="18.4" y="34.0" width="22.1" height="8.8" rx="3" fill="#14325c"/><path d="M36.0,0 L24.96,-8.831999999999999 L24.96,8.831999999999999 z" fill="#14325c"/></g>
+<line x1="390.0" y1="210.0" x2="510.0" y2="210.0" stroke="#5a5a5a" stroke-width="1.8" stroke-dasharray="6 5"/>
+<path d="M463.8,204.8 A74,74 0 0 0 395.2,136.2" fill="none" stroke="#14325c" stroke-width="2.5" marker-end="url(#head_navy)"/>
+<text x="460.0" y="148.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">yaw = 90° (1.57 rad)</text>
+<text x="424.0" y="294.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">position:</text>
+<text x="424.0" y="316.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">x = 2.0 m, y = 1.0 m</text>
+</svg>

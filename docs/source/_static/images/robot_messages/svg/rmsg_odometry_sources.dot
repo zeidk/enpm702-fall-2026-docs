@@ -1,0 +1,26 @@
+digraph G {
+  graph [fontname="Fira Sans", bgcolor="white", pad="0.25", nodesep="0.35", ranksep="0.7",
+         rankdir=LR, newrank=true];
+  node [fontname="Fira Sans", fontsize=16, shape=box, style="rounded", color="#14325c",
+        fontcolor="#14325c", penwidth=2, margin="0.20,0.10"];
+  edge [fontname="Fira Sans", fontsize=14, color="#14325c", fontcolor="#5a5a5a", penwidth=1.6,
+        arrowsize=0.8];
+  subgraph cluster_rosbot {
+    graph [label="On the ROSbot (GP2)", style="rounded", color="#5a5a5a", fontcolor="#5a5a5a", fontsize=17, labeljust="l", margin=14];
+  ddc [label=<<b><font face="Fira Mono">differential_drive_controller</font></b>>];
+  imb [label=<<b><font face="Fira Mono">imu_broadcaster</font></b>>];
+  tw [label=<<font face="Fira Mono">odometry/wheels</font><br/><font point-size="12" face="Fira Mono">nav_msgs/msg/Odometry</font>>, style="rounded,filled", fillcolor="#14325c", fontcolor="white"];
+  ti [label=<<font face="Fira Mono">imu/data</font><br/><font point-size="12" face="Fira Mono">sensor_msgs/msg/Imu</font>>, style="rounded,filled", fillcolor="#14325c", fontcolor="white"];
+  ekf [label=<<b><font face="Fira Mono">ekf</font></b><br/><font point-size="12" color="#5a5a5a">robot_localization</font>>];
+  tf [label=<<font face="Fira Mono">odometry/filtered</font><br/><font point-size="12" face="Fira Mono">nav_msgs/msg/Odometry</font>>, style="rounded,filled", fillcolor="#14325c", fontcolor="white"];
+  you [label="your nodes"];
+  }
+  subgraph cluster_gp1 {
+    graph [label="In GP1", style="rounded", color="#5a5a5a", fontcolor="#5a5a5a", fontsize=17, labeljust="l", margin=14];
+  sir [label=<<b><font face="Fira Mono">stand_in_robot_node</font></b>>];
+  tf1 [label=<<font face="Fira Mono">odometry/filtered</font><br/><font point-size="12" face="Fira Mono">nav_msgs/msg/Odometry</font>>, style="rounded,filled", fillcolor="#14325c", fontcolor="white"];
+  nav [label=<<b><font face="Fira Mono">navigation_node</font></b>>];
+  }
+  ddc -> tw; imb -> ti; tw -> ekf; ti -> ekf; ekf -> tf; tf -> you;
+  sir -> tf1; tf1 -> nav;
+}

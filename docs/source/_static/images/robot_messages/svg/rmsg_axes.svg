@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+<rect x="0" y="0" width="600" height="400" fill="white"/>
+<defs>
+<marker id="head_navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14325c"/></marker>
+<marker id="head_red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+<marker id="head_green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker>
+<marker id="head_blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f4e99"/></marker>
+<marker id="head_dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/></marker>
+</defs>
+<g transform="translate(230.0,270.0) rotate(-0.0)"><rect x="-75.0" y="-55.0" width="150" height="110" rx="14" fill="#e8edf4" stroke="#14325c" stroke-width="2.5"/><rect x="-66.0" y="-69.3" width="36.0" height="14.3" rx="3" fill="#14325c"/><rect x="-66.0" y="55.0" width="36.0" height="14.3" rx="3" fill="#14325c"/><rect x="30.0" y="-69.3" width="36.0" height="14.3" rx="3" fill="#14325c"/><rect x="30.0" y="55.0" width="36.0" height="14.3" rx="3" fill="#14325c"/><path d="M65.0,0 L47.0,-14.4 L47.0,14.4 z" fill="#14325c"/></g>
+<line x1="230.0" y1="270.0" x2="480.0" y2="270.0" stroke="#c0392b" stroke-width="3" marker-end="url(#head_red)"/>
+<text x="492.0" y="276.0" font-family="Fira Sans" font-size="19" fill="#c0392b" text-anchor="start" font-weight="normal">x: forward</text>
+<line x1="230.0" y1="270.0" x2="230.0" y2="50.0" stroke="#1e8449" stroke-width="3" marker-end="url(#head_green)"/>
+<text x="242.0" y="60.0" font-family="Fira Sans" font-size="19" fill="#1e8449" text-anchor="start" font-weight="normal">y: left</text>
+<circle cx="230" cy="270" r="11" fill="white" stroke="#1f4e99" stroke-width="3"/>
+<circle cx="230" cy="270" r="3.5" fill="#1f4e99"/>
+<text x="200.0" y="302.0" font-family="Fira Sans" font-size="14" fill="#1f4e99" text-anchor="middle" font-weight="normal">z: up, out</text>
+<text x="200.0" y="318.0" font-family="Fira Sans" font-size="14" fill="#1f4e99" text-anchor="middle" font-weight="normal">of the page</text>
+<path d="M356.8,252.2 A128,128 0 0 0 290.1,157.0" fill="none" stroke="#14325c" stroke-width="2.5" marker-end="url(#head_navy)"/>
+<text x="342.0" y="152.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">positive yaw:</text>
+<text x="342.0" y="172.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">counterclockwise</text>
+<text x="342.0" y="192.0" font-family="Fira Sans" font-size="17" fill="#14325c" text-anchor="start" font-weight="normal">(a turn to the left)</text>
+</svg>

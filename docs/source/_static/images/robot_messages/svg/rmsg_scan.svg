@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="560" viewBox="0 0 1220 560">
+<rect x="0" y="0" width="1220" height="560" fill="white"/>
+<defs>
+<marker id="head_navy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14325c"/></marker>
+<marker id="head_red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+<marker id="head_green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker>
+<marker id="head_blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f4e99"/></marker>
+<marker id="head_dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/></marker>
+</defs>
+<line x1="150.0" y1="300.0" x2="265.0" y2="499.2" stroke="#14325c" stroke-width="2.4"/>
+<line x1="150.0" y1="300.0" x2="326.2" y2="447.8" stroke="#8aa0bd" stroke-width="1.6"/>
+<line x1="150.0" y1="300.0" x2="366.1" y2="378.7" stroke="#8aa0bd" stroke-width="1.6"/>
+<line x1="150.0" y1="300.0" x2="380.0" y2="300.0" stroke="#8aa0bd" stroke-width="1.6"/>
+<line x1="150.0" y1="300.0" x2="366.1" y2="221.3" stroke="#8aa0bd" stroke-width="1.6"/>
+<line x1="150.0" y1="300.0" x2="326.2" y2="152.2" stroke="#8aa0bd" stroke-width="1.6"/>
+<line x1="150.0" y1="300.0" x2="265.0" y2="100.8" stroke="#14325c" stroke-width="2.4"/>
+<g transform="translate(150.0,300.0) rotate(0.0)"><rect x="-35.0" y="-26.0" width="70" height="52" rx="14" fill="#e8edf4" stroke="#14325c" stroke-width="2.5"/><rect x="-30.8" y="-32.8" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="-30.8" y="26.0" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="14.0" y="-32.8" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="14.0" y="26.0" width="16.8" height="6.8" rx="3" fill="#14325c"/><path d="M25.0,0 L16.6,-6.720000000000001 L16.6,6.720000000000001 z" fill="#14325c"/></g>
+<text x="277.0" y="507.2" font-family="Fira Mono" font-size="16" fill="#14325c" text-anchor="start" font-weight="normal">ranges[0]</text>
+<text x="277.0" y="104.8" font-family="Fira Mono" font-size="16" fill="#14325c" text-anchor="start" font-weight="normal">ranges[6]</text>
+<path d="M244.9,303.3 A95,95 0 0 1 200.3,380.6" fill="none" stroke="#c0392b" stroke-width="2.2" marker-end="url(#head_red)"/>
+<text x="180.0" y="420.0" font-family="Fira Mono" font-size="16" fill="#c0392b" text-anchor="end" font-weight="normal">angle_min</text>
+<text x="180.0" y="440.0" font-family="Fira Sans" font-size="14" fill="#c0392b" text-anchor="end" font-weight="normal">(negative: right)</text>
+<path d="M244.9,296.7 A95,95 0 0 0 200.3,219.4" fill="none" stroke="#1e8449" stroke-width="2.2" marker-end="url(#head_green)"/>
+<text x="180.0" y="188.0" font-family="Fira Mono" font-size="16" fill="#1e8449" text-anchor="end" font-weight="normal">angle_max</text>
+<text x="180.0" y="168.0" font-family="Fira Sans" font-size="14" fill="#1e8449" text-anchor="end" font-weight="normal">(positive: left)</text>
+<path d="M350.0,300.0 A200,200 0 0 0 337.9,231.6" fill="none" stroke="#1f4e99" stroke-width="2.2"/>
+<text x="395.0" y="272.0" font-family="Fira Mono" font-size="16" fill="#1f4e99" text-anchor="start" font-weight="normal">angle_increment</text>
+<text x="270.0" y="32.0" font-family="Fira Sans" font-size="17" fill="#5a5a5a" text-anchor="middle" font-weight="normal">a scan, angles drawn large</text>
+<line x1="660.0" y1="300.0" x2="958.5" y2="330.0" stroke="#14325c" stroke-width="2.4"/>
+<text x="968.5" y="344.0" font-family="Fira Mono" font-size="15" fill="#14325c" text-anchor="start" font-weight="normal">ranges[0]  (-0.1 rad)</text>
+<line x1="660.0" y1="300.0" x2="960.0" y2="300.0" stroke="#14325c" stroke-width="2.4"/>
+<text x="970.0" y="306.0" font-family="Fira Mono" font-size="15" fill="#14325c" text-anchor="start" font-weight="normal">ranges[1]  (0.0 rad)</text>
+<line x1="660.0" y1="300.0" x2="958.5" y2="270.0" stroke="#14325c" stroke-width="2.4"/>
+<text x="968.5" y="268.0" font-family="Fira Mono" font-size="15" fill="#14325c" text-anchor="start" font-weight="normal">ranges[2]  (+0.1 rad)</text>
+<g transform="translate(660.0,300.0) rotate(0.0)"><rect x="-35.0" y="-26.0" width="70" height="52" rx="14" fill="#e8edf4" stroke="#14325c" stroke-width="2.5"/><rect x="-30.8" y="-32.8" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="-30.8" y="26.0" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="14.0" y="-32.8" width="16.8" height="6.8" rx="3" fill="#14325c"/><rect x="14.0" y="26.0" width="16.8" height="6.8" rx="3" fill="#14325c"/><path d="M25.0,0 L16.6,-6.720000000000001 L16.6,6.720000000000001 z" fill="#14325c"/></g>
+<text x="850.0" y="32.0" font-family="Fira Sans" font-size="17" fill="#5a5a5a" text-anchor="middle" font-weight="normal">GP1's three beams, to scale</text>
+</svg>
