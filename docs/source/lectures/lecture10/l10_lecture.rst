@@ -516,7 +516,7 @@ Three Ways Nodes Talk: Topics, Services, Actions
       - While it runs, it reports its progress (**feedback**), and the caller can cancel it.
       - "Drive to the pickup point." Navigation, manipulation, perception routines.
 
-This lecture is about topics. Services and actions come in a later lecture.
+This lecture is about topics. The :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading covers services and actions.
 
 The Three Ways on One Robot: a Camera, a Laptop and an Arm
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""

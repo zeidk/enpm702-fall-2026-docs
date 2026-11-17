@@ -9,140 +9,66 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 L12: ROS 2 Communication Patterns**
+        **ENPM702 L12: Robots in Gazebo and Parameters**
 
-        Covers the three core ROS 2 communication patterns: topics
-        (publish-subscribe), services (request-response), and actions
-        (goal-feedback-result). The lecture explains when to use each
-        pattern, how to define custom ``.srv`` and ``.action``
-        interfaces, and how to implement service servers/clients and
-        action servers/clients in C++ using ``rclcpp`` and
-        ``rclcpp_action``. CLI tools for inspecting and calling
-        services and actions are also covered.
+        The ROSbot in Gazebo, a proportional controller, and parameters:
+        declaring and reading them, setting them with ``-p``, a YAML file
+        and a launch file, and changing them with ``ros2 param`` and a
+        parameter callback.
 
-        **Before next class**: complete the ROS exercises on services
-        and actions, and the quiz. Prepare your workspace with the
-        ``robot_interfaces`` package built and ready.
+        **Before the lecture**: read :doc:`Mobile Robot Messages
+        </reading_material/robot_messages/rmsg_index>` and set up
+        :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
 
 
-.. dropdown:: ROS 2 Documentation: Services
+.. dropdown:: ROS 2 Documentation: Parameters
     :class-container: sd-border-secondary
 
     .. grid:: 1 1 2 2
         :gutter: 2
 
-        .. grid-item-card:: Understanding Services
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html
+        .. grid-item-card:: Understanding Parameters
+            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy: Understanding Services**
+            **ROS 2 Jazzy: Understanding Parameters**
 
-            Beginner tutorial introducing the service concept, CLI
-            tools for listing, calling, and inspecting services.
+            What a parameter is, and the commands that list, get, set,
+            dump and load parameters.
 
             +++
 
-            - ``ros2 service list``
-            - ``ros2 service type``
-            - ``ros2 service call``
+            - ``ros2 param list``
+            - ``ros2 param get``
+            - ``ros2 param set``
 
-        .. grid-item-card:: Writing a Service and Client (C++)
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Service-And-Client.html
+        .. grid-item-card:: Using Parameters in a Class (C++)
+            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Using-Parameters-In-A-Class-CPP.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy: Writing a Simple Service and Client (C++)**
+            **ROS 2 Jazzy: Using Parameters in a Class (C++)**
 
-            Step-by-step tutorial for implementing a service server and
-            client using ``rclcpp``.
+            Declare and read a parameter in a node, and change it from the
+            command line.
 
             +++
 
-            - ``create_service`` API
-            - ``create_client`` and ``async_send_request``
-            - Request/response callback patterns
+            - ``declare_parameter``
+            - ``get_parameter``
 
-        .. grid-item-card:: Custom Interfaces
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html
+        .. grid-item-card:: Parameters in Launch Files
+            :link: https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Using-ROS2-Launch-For-Large-Projects.html
             :class-card: sd-border-secondary
 
-            **ROS 2 Jazzy: Custom Interfaces**
+            **ROS 2 Jazzy: Using ROS 2 Launch For Large Projects**
 
-            Tutorial on creating custom ``.msg``, ``.srv``, and
-            ``.action`` files in a dedicated interface package.
-
-            +++
-
-            - ``rosidl_generate_interfaces``
-            - Package.xml dependencies
-            - Building and verifying interfaces
+            Load a parameter file from a launch file, and pass launch
+            arguments to nodes.
 
 
-.. dropdown:: ROS 2 Documentation: Actions
+.. dropdown:: The ROSbot
     :class-container: sd-border-secondary
 
-    .. grid:: 1 1 2 2
-        :gutter: 2
-
-        .. grid-item-card:: Understanding Actions
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy: Understanding Actions**
-
-            Beginner tutorial covering the action concept, the
-            goal-feedback-result lifecycle, and CLI tools for
-            interacting with actions.
-
-            +++
-
-            - ``ros2 action list``
-            - ``ros2 action info``
-            - ``ros2 action send_goal --feedback``
-
-        .. grid-item-card:: Writing an Action Server and Client (C++)
-            :link: https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Writing-an-Action-Server-Client/Cpp.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy: Writing an Action Server and Client (C++)**
-
-            Intermediate tutorial for implementing an action server
-            (with goal handling, feedback, and cancellation) and an
-            action client using ``rclcpp_action``.
-
-            +++
-
-            - ``rclcpp_action::create_server``
-            - ``rclcpp_action::create_client``
-            - Goal, cancel, and accepted callbacks
-            - ``SendGoalOptions`` and result handling
-
-        .. grid-item-card:: ROS 2 Design: Actions
-            :link: https://design.ros2.org/articles/actions.html
-            :class-card: sd-border-secondary
-
-            **ROS 2 Design: Actions**
-
-            Design article explaining the architecture of actions,
-            their internal implementation using topics and services,
-            and the rationale behind the goal-feedback-result pattern.
-
-            +++
-
-            - Internal topic/service structure
-            - Goal state machine
-            - Preemption and cancellation semantics
-
-        .. grid-item-card:: ``rclcpp_action`` API Reference
-            :link: https://docs.ros.org/en/jazzy/p/rclcpp_action/
-            :class-card: sd-border-secondary
-
-            **ROS 2 Jazzy: rclcpp_action API**
-
-            API documentation for the ``rclcpp_action`` library
-            including server, client, and goal handle classes.
-
-            +++
-
-            - ``Server`` and ``Client`` class templates
-            - ``ServerGoalHandle`` and ``ClientGoalHandle``
-            - ``GoalResponse`` and ``CancelResponse`` enums
+    The ROSbot's topics, drive controller and filter come from Husarion's
+    ``rosbot_ros`` packages, in the ``rosbot_sim/`` folder of the course
+    repository. See :doc:`ROSbot Simulation </setup/rosbot_simulation>`.

@@ -350,7 +350,7 @@ REP 105 also gives the frame's limit: "The pose of a mobile platform in
 the odom frame can drift over time, without any bounds". Odometry adds up
 small measurements, and their errors add up too. In the GP2 reference
 runs in Gazebo, the odometry and the robot's true position differed by up
-to 0.023 m at the checkpoints (R4 of :doc:`/assignments/gp2`).
+to 0.016 m at the checkpoints (R4 of :doc:`/assignments/gp2`).
 
 Where It Comes From
 ----------------------------------------------------

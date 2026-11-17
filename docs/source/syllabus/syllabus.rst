@@ -139,14 +139,14 @@ scheduled.
    * - Week 13
      - Nov 24
      -
-     - | ROS 2, Communication Patterns (Parameters, Services, Actions)
+     - | ROS 2, Robots in Gazebo and Parameters (the ROSbot in Gazebo, Proportional Control, Parameters)
        | :quiz:`Quiz 5`
      - | Submit Lecture 12 exercises
        | :assignment:`GP1 due, GP2 posted`
    * - Week 14
      - Dec 1
      -
-     - ROS 2, Coordinate Frames and Transforms
+     - ROS 2, Frames and Transforms (Frames, the Frame Tree, Broadcasters, Listeners)
      - Submit Lecture 13 exercises
    * - Week 15
      - Dec 8

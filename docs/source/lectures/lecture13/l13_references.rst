@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 L13: Coordinate Frames and Transforms**
+        **ENPM702 L13: Frames and Transforms**
 
         Covers coordinate frame management with TF2: the frame tree
         concept, static and dynamic transform broadcasting, transform

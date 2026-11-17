@@ -7,10 +7,11 @@ Robot Autonomy Architecture
 ====================================================
 
 Throughout the ROS 2 lectures you have learned the individual building
-blocks of a robotic system: **nodes**, **topics**, **services**,
-**actions**, **parameters**, **launch files**, **executors**, and, in
-Lecture 13, **coordinate frames (TF2)**.
-Each of these was introduced in isolation.
+blocks of a robotic system: **nodes**, **topics**, **parameters**,
+**launch files**, **executors**, and, in Lecture 13, **coordinate frames
+(TF2)**. The :doc:`Services and Actions
+</reading_material/services_actions/sa_index>` reading adds **services**
+and **actions**. Each of these was introduced in isolation.
 
 This final lecture answers a different question: *how do these pieces
 fit together to make a robot behave intelligently?* The answer is an
@@ -96,13 +97,13 @@ It is the same toolbox, organized into a system.
      - Lecture 10
    * - One-shot queries ("is the path clear?")
      - **Services** (request/response)
-     - Lecture 12
+     - Services and Actions reading
    * - Long-running goals ("navigate to waypoint")
      - **Actions** (goal/feedback/result)
-     - Lecture 12
+     - Services and Actions reading
    * - Tuning behavior (speeds, thresholds)
      - **Parameters**
-     - Lecture 11
+     - Lecture 12
    * - Bringing the whole system up
      - **Launch files** + **executors**
      - Lecture 11
@@ -118,13 +119,12 @@ The Three Layers as ROS 2 Nodes
 ====================================================
 
 A minimal autonomy stack is three nodes connected by topics. Consider
-the search-and-rescue **TurtleBot3** from the Group Projects, which
-exposes ``/scan`` (lidar), ``/odom`` (odometry), and ``/cmd_vel``
-(velocity command):
+the patrol **ROSbot** of GP2, which exposes ``/scan`` (lidar),
+``/odometry/filtered`` (odometry), and ``/cmd_vel`` (velocity command):
 
 .. code-block:: text
 
-           /scan, /odom                /world_state               /cmd_vel
+           scan, odometry/filtered     /world_state               /cmd_vel
    robot ──────────────► ┌────────────┐ ──────────► ┌──────────┐ ──────────► ┌─────────┐ ──────► robot
    sensors  (topics)     │ PERCEPTION │  (topic,     │ DECISION │  (topic)    │ CONTROL │ (topic)
                          │   node     │   custom msg)│   node   │             │  node   │
@@ -132,14 +132,15 @@ exposes ``/scan`` (lidar), ``/odom`` (odometry), and ``/cmd_vel``
                                                           ▲
                                                   parameters (tuning)
 
-- **Perception node**, subscribes to ``/scan`` and ``/odom``, fuses
+- **Perception node**, subscribes to ``/scan`` and ``/odometry/filtered``, fuses
   them into a compact description of the world, and publishes it on a
   custom topic (e.g., ``/world_state``).
 - **Decision node**, subscribes to ``/world_state`` and decides on an
   action, which it publishes (e.g., a desired velocity or a higher-level
   command). **This is the node that contains the robot's intelligence.**
 - **Control node**, subscribes to the decision and publishes the final
-  ``/cmd_vel`` (``geometry_msgs::msg::Twist``) that drives the robot.
+  ``/cmd_vel`` (``geometry_msgs::msg::TwistStamped`` on the ROSbot) that
+  drives the robot.
 
 .. note::
 
@@ -217,27 +218,27 @@ A Concrete Example: A Reactive Decision Node
 The smallest useful autonomy example is a **reactive** decision node:
 it maps the latest sensor reading directly to an action, with no
 internal world model. The node below performs simple obstacle avoidance
-on the TurtleBot3, it drives forward, and turns when the lidar reports
-an obstacle ahead.
+on the ROSbot: it drives forward, and turns when the lidar reports an
+obstacle.
 
 .. code-block:: cpp
 
    #include <rclcpp/rclcpp.hpp>
    #include <sensor_msgs/msg/laser_scan.hpp>
-   #include <geometry_msgs/msg/twist.hpp>
+   #include <geometry_msgs/msg/twist_stamped.hpp>
    #include <algorithm>
 
    class ReactiveController : public rclcpp::Node {
     public:
      ReactiveController()
          : Node{"reactive_controller"} {
-       // Tunable behavior via parameters (see Lecture 11)
+       // Tunable behavior via parameters (see Lecture 12)
        safe_distance_ = this->declare_parameter<double>("safe_distance", 0.5);
        forward_speed_ = this->declare_parameter<double>("forward_speed", 0.2);
        turn_speed_ = this->declare_parameter<double>("turn_speed", 0.5);
 
-       // ACT: publish velocity commands to the robot
-       cmd_pub_ = this->create_publisher<geometry_msgs::msg::Twist>(
+       // ACT: publish velocity commands to the robot (the ROSbot takes TwistStamped)
+       cmd_pub_ = this->create_publisher<geometry_msgs::msg::TwistStamped>(
            "/cmd_vel", 10);
 
        // SENSE: subscribe to the lidar
@@ -247,22 +248,23 @@ an obstacle ahead.
      }
 
     private:
-     // PLAN: the decision layer -- this is where the "intelligence" lives
+     // PLAN: the decision layer, where the "intelligence" lives
      void decide(const sensor_msgs::msg::LaserScan::SharedPtr scan) {
        // Closest obstacle anywhere in the scan
        double nearest = *std::min_element(scan->ranges.begin(),
                                           scan->ranges.end());
 
-       auto cmd = geometry_msgs::msg::Twist{};
+       auto cmd = geometry_msgs::msg::TwistStamped{};
+       cmd.header.stamp = this->now();
        if (nearest < safe_distance_) {
-         cmd.angular.z = turn_speed_;  // obstacle ahead -> turn in place
+         cmd.twist.angular.z = turn_speed_;  // obstacle ahead: turn in place
        } else {
-         cmd.linear.x = forward_speed_;  // clear -> drive forward
+         cmd.twist.linear.x = forward_speed_;  // clear: drive forward
        }
        cmd_pub_->publish(cmd);
      }
 
-     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_pub_;
+     rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr cmd_pub_;
      rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;
      double safe_distance_;
      double forward_speed_;
@@ -332,7 +334,7 @@ earlier lectures become the glue that holds it together:
 
 - **Launch files** (Lecture 11) start the perception, decision, and
   control nodes together as one system.
-- **Parameters** (Lecture 11) tune the behavior of each layer (speeds,
+- **Parameters** (Lecture 12) tune the behavior of each layer (speeds,
   thresholds, model paths) without recompiling.
 - **TF2** (Lecture 13) lets the perception and decision layers
   reason about *where* things are, by transforming sensor detections

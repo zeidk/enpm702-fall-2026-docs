@@ -2,7 +2,7 @@
 ROS Exercise
 ====================================================
 
-This exercise uses the concepts of Lecture 13: Coordinate Frames and
+This exercise uses the concepts of Lecture 13: Frames and
 Transforms (TF2). Build and run the program in a ROS 2 workspace.
 
 .. note::

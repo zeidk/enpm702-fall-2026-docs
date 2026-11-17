@@ -2314,12 +2314,6 @@ L10: ROS 2 Foundations
 
 .. glossary::
 
-   Action
-      A long-running request between ROS 2 nodes. While it runs, it reports
-      its progress (feedback), and the caller can cancel it, as in "Drive to
-      the pickup point."
-      :doc:`L10 </lectures/lecture10/l10_lecture>`
-
    colcon
       The command-line tool that builds the packages of a ROS 2 workspace
       (collective construction). It works out the build order from their
@@ -2441,12 +2435,6 @@ L10: ROS 2 Foundations
       the receiving side turns the bytes back (deserialization).
       :doc:`L10 </lectures/lecture10/l10_lecture>`
 
-   Service
-      A request-response exchange between ROS 2 nodes: one request, one
-      response. The caller waits for the response, so a service must return
-      quickly.
-      :doc:`L10 </lectures/lecture10/l10_lecture>`
-
    Spinning
       Keeping a ROS 2 node alive: the node waits for events (a message, a
       timer, a request) and runs the callback of each one.
@@ -2480,7 +2468,41 @@ L10: ROS 2 Foundations
 
 .. raw:: html
 
-   <p class="glossary-also">Also used here: <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-Inheritance" target="_blank" rel="noopener">Inheritance</a> (L9), <a href="#term-Lambda" target="_blank" rel="noopener">Lambda</a> (L6), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6).</p>
+   <p class="glossary-also">Also used here: <a href="#term-Action" target="_blank" rel="noopener">Action</a> (SA), <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-Inheritance" target="_blank" rel="noopener">Inheritance</a> (L9), <a href="#term-Lambda" target="_blank" rel="noopener">Lambda</a> (L6), <a href="#term-Service" target="_blank" rel="noopener">Service</a> (SA), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6).</p>
+
+
+.. _g-l12:
+
+L12: Robots in Gazebo and Parameters
+====================================
+
+.. glossary::
+
+   Parameter
+      A named, typed value of one ROS 2 node, such as ``speed_mps``. The node
+      declares it with ``declare_parameter<Type>(name, default)``. You set it
+      when the node starts or change it while the node runs, without a
+      rebuild.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Parameter Callback
+      A function that ROS 2 calls before it stores a new value of a
+      parameter. It returns ``successful = false`` to reject the value, and
+      it can copy a valid value into the node's own variable.
+      ``add_on_set_parameters_callback`` registers it.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Parameter File
+      A YAML file that holds the parameters of one or more nodes: a node name,
+      then ``ros__parameters``, then one line per parameter. ``/**`` instead
+      of a node name gives a parameter to every node that declares it.
+      ``--params-file`` or a launch file loads it.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Proportional Controller
+      A controller that sets a command in proportion to an error: the command
+      is a gain times the error. The gain is a number that you tune.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
 
 
 .. _g-vc:
@@ -2674,3 +2696,57 @@ Reading: Exception Handling
 .. raw:: html
 
    <p class="glossary-also">Also used here: <a href="#term-noexcept" target="_blank" rel="noopener">noexcept</a> (L7).</p>
+
+
+.. _g-sa:
+
+Reading: Services and Actions
+=============================
+
+.. glossary::
+
+   Action
+      A long-running request between ROS 2 nodes. While it runs, it reports
+      its progress (feedback), and the caller can cancel it, as in "Drive to
+      the pickup point".
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Action Client
+      The node, or the object in a node, that sends a goal to an action
+      server. ``rclcpp_action::create_client`` makes it, and three callbacks
+      receive the goal response, the feedback and the result.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Action Server
+      The node, or the object in a node, that runs the goals of an action.
+      ``rclcpp_action::create_server`` makes it, with a goal callback, a
+      cancel callback and an accepted callback.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Feedback
+      The messages that an action server sends while a goal runs, such as the
+      position of the robotaxi every 0.5 s.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Goal
+      What an action client asks for, such as ``target_x``. The server accepts
+      or rejects it, and the client can cancel it.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Service
+      A request-response exchange between ROS 2 nodes: one request, one
+      response. The caller waits for the response, so a service must return
+      quickly.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Service Client
+      The node, or the object in a node, that sends requests to a service.
+      ``create_client`` makes it, and ``async_send_request`` sends a request
+      without waiting.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+   Service Server
+      The node, or the object in a node, that answers the requests of a
+      service. ``create_service`` makes it, with a callback that fills in the
+      response.
+      :doc:`SA </reading_material/services_actions/sa_lecture>`

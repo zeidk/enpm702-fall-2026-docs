@@ -1654,11 +1654,11 @@ An **interface** is the data structure two nodes agree on. ROS 2 has three kinds
    * - Service
      - ``.srv``
      - A request, then one response.
-     - Lecture 12
+     - Reading material
    * - Action
      - ``.action``
      - A goal, feedback while it runs, then a result.
-     - Lecture 12
+     - Reading material
 
 The message type the robotaxi published in the previous lecture, as ROS 2 shows it:
 
@@ -2041,13 +2041,13 @@ Custom Interfaces: What You Can Do Now
    - Check it with ``ros2 interface show``.
    - Use it from another package's nodes: depend on the interface package, include the generated header, fill and read the fields.
 
-Services and actions are written the same way, in ``.srv`` and ``.action`` files, in Lecture 12.
+Services and actions are written the same way, in ``.srv`` and ``.action`` files: see the reading material :doc:`Services and Actions </reading_material/services_actions/sa_index>`.
 
 Next Class
 ----------
 
-- **Next lecture**: *L12: ROS 2 Communication Patterns*. Parameters, services and actions. Quiz 5.
-- **Pre-work**: complete the L11 exercises and quiz on ReadTheDocs.
+- **Next lecture**: *L12: Robots in Gazebo and Parameters*. The ROSbot in Gazebo, driven by a proportional controller, then parameters. Quiz 5.
+- **Pre-work**: install the :doc:`ROSbot simulation </setup/rosbot_simulation>`, and complete the L11 exercises and quiz on ReadTheDocs.
 - **Required reading**:
 
   - `ROS 2 Jazzy: Creating a launch file <https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`__

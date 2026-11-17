@@ -7,9 +7,10 @@ two-layer architecture: a perception node and a decision node.
 
 .. note::
 
-   The exercise requires a ROS 2 Jazzy workspace and assumes a
-   TurtleBot3-style robot (or Gazebo simulation) exposing ``/scan`` and
-   ``/cmd_vel``. Build with:
+   The exercise requires a ROS 2 Jazzy workspace and the simulated
+   ROSbot of GP2 (:doc:`ROSbot Simulation </setup/rosbot_simulation>`),
+   which exposes ``/scan`` and ``/cmd_vel``. On the ROSbot, ``/cmd_vel``
+   takes ``geometry_msgs/msg/TwistStamped``. Build with:
 
    .. code-block:: bash
 

@@ -38,6 +38,6 @@ Before class, do the two steps of the Before Class part of the :doc:`l11_lecture
 Next Steps
 ----------
 
-- In the next lecture (**L12: ROS 2 Communication Patterns**), we will cover parameters, services and actions.
+- In the next lecture (**L12: Robots in Gazebo and Parameters**), we will drive the ROSbot in Gazebo with a proportional controller, then set its gains with parameters. Install the :doc:`ROSbot simulation </setup/rosbot_simulation>` before next class.
 - Before next class: complete the L11 exercises and quiz, and build and run ``l11_robotaxi`` in your own workspace.
 - Required reading: `ROS 2 Jazzy: Creating a launch file <https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html>`_, `ROS 2 Jazzy: Executors <https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-Executors.html>`_ and `ROS 2 Jazzy: Creating custom msg and srv files <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Custom-ROS2-Interfaces.html>`_.

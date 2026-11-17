@@ -35,6 +35,11 @@ are expected to work through these outside of class.
        (REP 103), ``Twist`` and ``TwistStamped`` on ``cmd_vel``,
        ``Odometry`` and the ``odom`` frame, quaternion and yaw,
        ``LaserScan`` and the angle of each beam
+   * - :doc:`services_actions/sa_index`
+     - Services and actions in C++: the ``.srv`` and ``.action`` files, a
+       server and a client for each, feedback, a cancel request and a
+       timeout, and the ``ros2 service`` and ``ros2 action`` commands.
+       Extra reading, beyond the course projects
    * - :doc:`input_validation/iv_index`
      - Validating terminal input: what ``std::cin >> value`` does when the
        input is not a number, stream state and recovery, and whole-line
@@ -63,6 +68,7 @@ are expected to work through these outside of class.
    flow_control/fc_index
    linux_shell/ls_index
    robot_messages/rmsg_index
+   services_actions/sa_index
    input_validation/iv_index
    value_categories/vcat_index
    version_control/vc_index

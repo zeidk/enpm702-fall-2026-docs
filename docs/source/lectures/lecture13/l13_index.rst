@@ -1,15 +1,24 @@
 ====================================================
-L13: ROS 2 Coordinate Frames and Transforms
+L13: Frames and Transforms
 ====================================================
 
 Overview
 --------
 
-This lecture covers **coordinate frame management with TF2**, the ROS 2
-framework for tracking and transforming between the many reference frames
-on a robot (its base, each sensor, and the world). TF2 is essential
-whenever your robot has multiple sensors and links, and it underpins the
-spatial reasoning used throughout the autonomy stack.
+This lecture covers **coordinate frames and transforms**, from the pose
+of a robot to the frame tree of TF2. A **pose** is a position and an
+orientation. On a robot that drives on a floor, the orientation is a
+**yaw**, which ROS stores as a **quaternion**. Every part of a robot
+has a frame: the base, each sensor, and the world. **TF2**, the ROS 2
+library for frames, keeps the tree of these frames, lets nodes broadcast
+the transform between two of them, and lets other nodes listen for it
+and use it. TF2 is essential whenever your robot has several sensors
+and links, and it underpins the spatial reasoning of the autonomy stack.
+
+The frames of the ROSbot (``odom``, ``base_link`` and the sensor frames)
+are the ones of :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
+:doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>`
+explains the quaternion and the yaw of a robot on a floor.
 
 
 .. admonition:: Learning Objectives
@@ -17,12 +26,15 @@ spatial reasoning used throughout the autonomy stack.
 
    By the end of this lecture, you will be able to:
 
-   - Understand what coordinate frames are and why they are essential in robotics.
-   - Describe the TF2 frame tree and standard frame conventions.
+   - Describe a **pose**, and convert between a **yaw** and a **quaternion**.
+   - Explain what **coordinate frames** are and why a robot needs several.
+   - Describe the **TF2 frame tree** and the standard frame names.
    - Use the ``TransformStamped`` message to represent a transform.
-   - Broadcast static and dynamic transforms with TF2.
-   - Listen for transforms and look them up with ``lookupTransform()``.
-   - Handle transform exceptions and debug frames with ``view_frames``, ``tf2_echo``, and RViz2.
+   - Broadcast **static** and **dynamic** transforms with TF2.
+   - **Listen** for a transform, look it up with ``lookupTransform()``, and
+     use it to express a point in another frame.
+   - **Debug** frames: handle transform exceptions, and use
+     ``view_frames``, ``tf2_echo`` and RViz2.
 
 
 .. toctree::

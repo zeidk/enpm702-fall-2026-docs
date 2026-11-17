@@ -2,7 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 13: Coordinate Frames and
+This quiz covers the key concepts from Lecture 13: Frames and
 Transforms. Topics include coordinate frames, the frame tree, TF2 (static
 and dynamic transforms, broadcasting, listening), the ``TransformStamped``
 message, and ``lookupTransform()``.

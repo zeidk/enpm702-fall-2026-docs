@@ -3,693 +3,532 @@ Lecture
 ====================================================
 
 
-Communication Patterns Overview
+.. note::
+
+   **Draft.** This page states what Lecture 12 covers and holds its
+   Parameters part in full. The other parts will be written from the
+   slides. Every C++ example in the Parameters part was built with the
+   course flags (``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``)
+   without a warning, on ROS 2 Jazzy, and every output is pasted from a
+   run.
+
+
+What This Lecture Covers
 ====================================================
 
-ROS 2 provides three built-in communication patterns. Each pattern
-addresses a different category of inter-node interaction.
+Lecture 12 puts a real robot under your code, then makes the code easy
+to tune. It has three parts:
 
-.. list-table:: Communication Pattern Comparison
-   :header-rows: 1
-   :widths: 18 28 28 26
+1. **The ROSbot in Gazebo.** The Husarion ROSbot is the robot of
+   Lecture 12 to Lecture 14 and of Group Project 2. :doc:`ROSbot
+   Simulation </setup/rosbot_simulation>` shows how to install, build and
+   start it. The topics of the ROSbot and the messages on them are in
+   :doc:`Mobile Robot Messages
+   </reading_material/robot_messages/rmsg_index>`: read it before this
+   lecture.
+2. **Proportional control.** A **proportional controller** sets a
+   command in proportion to an error. For example, the angular velocity
+   of a robot is a gain times the angle between the direction the robot
+   faces and the direction it should face. The gain is a number that you
+   tune.
+3. **Parameters.** A **parameter** is a value of a node that you set
+   when the node starts, or change while it runs, without a rebuild. The
+   gain of a controller and the speed limit of a robot are parameters.
+   This part is below.
 
-   * - Feature
-     - Topics (Pub/Sub)
-     - Services
-     - Actions
-   * - Direction
-     - Many-to-many
-     - One-to-one (client to server)
-     - One-to-one (client to server)
-   * - Style
-     - Asynchronous, continuous
-     - Synchronous request-response
-     - Asynchronous goal-feedback-result
-   * - Use case
-     - Streaming sensor data, commands
-     - Quick queries, configuration
-     - Long-running tasks with progress
-   * - Feedback
-     - No built-in feedback
-     - Single response
-     - Periodic feedback during execution
-   * - Preemptable
-     - N/A
-     - No
-     - Yes (goals can be canceled)
-   * - Example
-     - ``/scan``, ``/cmd_vel``
-     - ``/spawn``, ``/set_parameters``
-     - ``/navigate_to_pose``
-
-Topics (Publish-Subscribe)
---------------------------
-
-Topics use the **publish-subscribe** pattern covered in L10. Publishers
-send messages to a named topic; any number of subscribers can receive
-them. Communication is decoupled, publishers and subscribers do not
-know about each other.
-
-- **Many-to-many**: multiple publishers and subscribers per topic.
-- **Continuous**: data streams at a configured rate.
-- **Asynchronous**: publishers do not wait for subscribers.
-
-Services (Request-Response)
----------------------------
-
-A **service** is a synchronous exchange between exactly one client and
-one server. The client sends a **request**, the server processes it and
-returns a **response**. The interaction is complete in a single
-round-trip.
-
-- **One-to-one**: one server per service name, clients take turns.
-- **Synchronous from the client's perspective**: the client waits for
-  the response (though the underlying call is async in ``rclcpp``).
-- **Short-lived**: the callback should return quickly.
-
-Actions (Goal-Feedback-Result)
-------------------------------
-
-An **action** models a long-running task. The client sends a **goal**;
-the server may accept or reject it. While executing, the server
-publishes **feedback** messages to report progress. When done, the
-server returns a **result**. The client can also **cancel** a goal.
-
-- **One-to-one**: one server, one or more clients.
-- **Asynchronous**: the client does not block while the goal executes.
-- **Preemptable**: goals can be canceled mid-execution.
+Services and actions are not in this lecture. :doc:`Services and
+Actions </reading_material/services_actions/sa_index>` is a reading
+module with extra material.
 
 
-Services
+Parameters
 ====================================================
 
-What Is a Service?
-------------------
+A node has values that you want to change without editing the code and
+building again: a speed, a name, the gain of a controller. A ROS 2
+**parameter** is such a value. It belongs to one node, it has a name and
+a type, and the node declares it. You can set it from the command line,
+from a file, from a launch file, or while the node runs.
 
-A ROS 2 service implements the **request-response** pattern. A single
-node advertises a service under a name (e.g., ``/add_two_ints``). Any
-node can create a client, send a request, and receive a response.
+The example is the robotaxi of Lecture 10. Its node publishes its
+position every 0.5 s, and now its name, its speed and its start position
+are parameters.
 
-.. code-block:: text
+Declare and Read a Parameter
+----------------------------------------------------
 
-   Client ── Request ──> Server
-   Client <── Response ── Server
+A node must **declare** a parameter before anyone can use it. The call
+``declare_parameter<Type>(name, default)`` declares it with a default
+value, and returns the value that the parameter holds. If nobody sets
+the parameter, that value is the default.
 
-Unlike topics, the communication is **bidirectional** and
-**transactional**: the client expects exactly one response per request.
+The type of a parameter is one of ``bool``, ``int64``, ``double``,
+``string``, ``byte`` array, or an array of one of the others. The first
+declaration fixes the type. The robotaxi has a ``string``, ``robotaxi_name``,
+and two ``double`` parameters, ``speed_mps`` (in m/s) and ``start_x_m``
+(in m).
 
-Service Definition (``.srv`` Files)
------------------------------------
-
-A ``.srv`` file defines the request and response types, separated by
-``---``:
-
-.. code-block:: text
-
-   # AddTwoInts.srv
-   int64 a
-   int64 b
-   ---
-   int64 sum
-
-- Fields above ``---`` form the **request**.
-- Fields below ``---`` form the **response**.
-
-Standard Service Types
-~~~~~~~~~~~~~~~~~~~~~~
-
-ROS 2 ships several service types in ``std_srvs`` and ``example_interfaces``:
-
-- ``std_srvs/srv/Trigger``, empty request, bool success + string message.
-- ``std_srvs/srv/SetBool``, bool request, bool success + string message.
-- ``example_interfaces/srv/AddTwoInts``, two int64 fields, one int64 sum.
-
-Creating a Custom ``.srv``
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-1. Create an interface package (or reuse an existing one):
-
-   .. code-block:: bash
-
-      ros2 pkg create --build-type ament_cmake my_interfaces
-
-2. Create the ``srv/`` directory and the ``.srv`` file:
-
-   .. code-block:: bash
-
-      mkdir -p my_interfaces/srv
-
-3. Add the ``.srv`` file, e.g., ``srv/ComputeSum.srv``:
-
-   .. code-block:: text
-
-      int64 a
-      int64 b
-      ---
-      int64 sum
-
-4. Update ``CMakeLists.txt``:
-
-   .. code-block:: cmake
-
-      find_package(rosidl_default_generators REQUIRED)
-
-      rosidl_generate_interfaces(${PROJECT_NAME}
-        "srv/ComputeSum.srv"
-      )
-
-5. Update ``package.xml``:
-
-   .. code-block:: xml
-
-      <buildtool_depend>rosidl_default_generators</buildtool_depend>
-      <exec_depend>rosidl_default_runtime</exec_depend>
-      <member_of_group>rosidl_interface_packages</member_of_group>
-
-6. Build with ``colcon build``.
-
-Service Server
---------------
-
-A service server is created with ``create_service``. The template
-parameter is the service type. The callback receives the request and
-must populate the response.
+``l12_robotaxi/include/l12_robotaxi/robotaxi_node.hpp``:
 
 .. code-block:: cpp
 
+   #pragma once
+   #include <chrono>
+   #include <functional>
+   #include <geometry_msgs/msg/point.hpp>
+   #include <memory>
+   #include <rcl_interfaces/msg/set_parameters_result.hpp>
    #include <rclcpp/rclcpp.hpp>
-   #include "my_interfaces/srv/compute_sum.hpp"
+   #include <string>
+   #include <vector>
 
-   class SumServer : public rclcpp::Node {
-    public:
-     SumServer() : Node{"sum_server"} {
-       service_ = create_service<my_interfaces::srv::ComputeSum>(
-         "compute_sum",
-         std::bind(&SumServer::handle_request, this,
-                   std::placeholders::_1, std::placeholders::_2));
-       RCLCPP_INFO(get_logger(), "Service server ready.");
-     }
+   namespace l12_robotaxi {
 
-    private:
-     void handle_request(
-         const std::shared_ptr<my_interfaces::srv::ComputeSum::Request> request,
-         std::shared_ptr<my_interfaces::srv::ComputeSum::Response> response) {
-       response->sum = request->a + request->b;
-       RCLCPP_INFO(get_logger(), "Request: %ld + %ld = %ld",
-                   request->a, request->b, response->sum);
-     }
-
-     rclcpp::Service<my_interfaces::srv::ComputeSum>::SharedPtr service_;
-   };
-
-   int main(int argc, char* argv[]) {
-     rclcpp::init(argc, argv);
-     rclcpp::spin(std::make_shared<SumServer>());
-     rclcpp::shutdown();
-     return 0;
-   }
-
-Key points:
-
-- ``create_service<SrvType>(name, callback)`` advertises the service.
-- The callback signature takes a ``shared_ptr`` to the request and a
-  ``shared_ptr`` to the response.
-- The response is populated in-place; no return value is needed.
-
-Service Client
---------------
-
-A service client calls the service asynchronously with
-``async_send_request``.
-
-.. code-block:: cpp
-
-   #include <rclcpp/rclcpp.hpp>
-   #include "my_interfaces/srv/compute_sum.hpp"
-
-   class SumClient : public rclcpp::Node {
-    public:
-     SumClient() : Node{"sum_client"} {
-       client_ = create_client<my_interfaces::srv::ComputeSum>("compute_sum");
-     }
-
-     void send_request(int64_t a, int64_t b) {
-       // Wait for the service to become available
-       while (!client_->wait_for_service(std::chrono::seconds{1})) {
-         if (!rclcpp::ok()) {
-           RCLCPP_ERROR(get_logger(), "Interrupted while waiting.");
-           return;
-         }
-         RCLCPP_INFO(get_logger(), "Waiting for service...");
+   // Publishes the robotaxi's position every 0.5 s. Its name, speed and start position
+   // are parameters.
+   class RobotaxiNode : public rclcpp::Node {
+     public:
+       RobotaxiNode()
+           : rclcpp::Node{"robotaxi_node"},
+             // declare_parameter declares the parameter and returns its value.
+             robotaxi_name_{declare_parameter<std::string>("robotaxi_name", "robotaxi_1")},
+             speed_mps_{declare_parameter<double>("speed_mps", 2.0)},
+             x_{declare_parameter<double>("start_x_m", 0.0)},
+             publisher_{create_publisher<geometry_msgs::msg::Point>("robotaxi/position", 10)},
+             timer_{create_wall_timer(std::chrono::milliseconds{500},
+                                      std::bind(&RobotaxiNode::publish_position, this))},
+             parameter_callback_{add_on_set_parameters_callback(
+                 std::bind(&RobotaxiNode::on_parameters, this, std::placeholders::_1))} {
+           RCLCPP_INFO_STREAM(get_logger(), robotaxi_name_ << " starts at x = " << x_
+                                                           << " m, speed " << speed_mps_ << " m/s");
        }
 
-       auto request =
-           std::make_shared<my_interfaces::srv::ComputeSum::Request>();
-       request->a = a;
-       request->b = b;
+     private:
+       void publish_position();
+       rcl_interfaces::msg::SetParametersResult
+       on_parameters(const std::vector<rclcpp::Parameter> &parameters);
 
-       auto future = client_->async_send_request(
-           request,
-           std::bind(&SumClient::response_callback, this,
-                     std::placeholders::_1));
-     }
-
-    private:
-     void response_callback(
-         rclcpp::Client<my_interfaces::srv::ComputeSum>::SharedFuture future) {
-       auto response = future.get();
-       RCLCPP_INFO(get_logger(), "Result: %ld", response->sum);
-     }
-
-     rclcpp::Client<my_interfaces::srv::ComputeSum>::SharedPtr client_;
+       std::string robotaxi_name_;
+       double speed_mps_; // in m/s
+       double x_;         // position along the street, in m
+       rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr publisher_;
+       rclcpp::TimerBase::SharedPtr timer_;
+       rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_callback_;
    };
 
-   int main(int argc, char* argv[]) {
-     rclcpp::init(argc, argv);
-     auto node = std::make_shared<SumClient>();
-     node->send_request(3, 5);
-     rclcpp::spin(node);
-     rclcpp::shutdown();
-     return 0;
+   } // namespace l12_robotaxi
+
+The first three members take their values from the three parameters.
+``x_`` holds the start position first, and then the current position.
+The members are initialized in the order in which they are declared.
+
+``l12_robotaxi/src/robotaxi_node.cpp``:
+
+.. code-block:: cpp
+
+   #include "l12_robotaxi/robotaxi_node.hpp"
+
+   namespace l12_robotaxi {
+
+   void RobotaxiNode::publish_position() {
+       x_ += speed_mps_ * 0.5; // the timer period is 0.5 s
+       geometry_msgs::msg::Point msg{};
+       msg.x = x_;
+       publisher_->publish(msg);
+       RCLCPP_INFO_STREAM(get_logger(), "x = " << x_ << " m");
    }
 
-Key points:
+   rcl_interfaces::msg::SetParametersResult
+   RobotaxiNode::on_parameters(const std::vector<rclcpp::Parameter> &parameters) {
+       rcl_interfaces::msg::SetParametersResult result{};
+       result.successful = true;
+       for (const rclcpp::Parameter &parameter : parameters) {
+           if (parameter.get_name() != "speed_mps") {
+               continue;
+           }
+           if (parameter.as_double() < 0.0) {
+               result.successful = false;
+               result.reason = "speed_mps must not be negative";
+               return result;
+           }
+           speed_mps_ = parameter.as_double();
+           RCLCPP_INFO_STREAM(get_logger(), "speed_mps is now " << speed_mps_ << " m/s");
+       }
+       return result;
+   }
 
-- ``create_client<SrvType>(name)`` creates the client.
-- ``wait_for_service`` blocks until the server is available.
-- ``async_send_request`` returns a ``SharedFuture``. A callback can be
-  attached or you can call ``future.get()`` (blocking).
+   } // namespace l12_robotaxi
 
-CMakeLists.txt for a Service Node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``l12_robotaxi/src/robotaxi_main.cpp`` is the ``main`` of
+Lecture 10, with ``l12_robotaxi::RobotaxiNode`` as the node:
 
-In the package that contains the server/client nodes:
+.. code-block:: cpp
 
-.. code-block:: cmake
+   #include <memory>
 
-   find_package(rclcpp REQUIRED)
-   find_package(my_interfaces REQUIRED)
+   #include <rclcpp/rclcpp.hpp>
 
-   add_executable(sum_server src/sum_server.cpp)
-   ament_target_dependencies(sum_server rclcpp my_interfaces)
+   #include "l12_robotaxi/robotaxi_node.hpp"
 
-   add_executable(sum_client src/sum_client.cpp)
-   ament_target_dependencies(sum_client rclcpp my_interfaces)
+   int main(int argc, char **argv) {
+       rclcpp::init(argc, argv);
+       auto node{std::make_shared<l12_robotaxi::RobotaxiNode>()};
+       rclcpp::spin(node);
+       if (rclcpp::ok()) {
+           rclcpp::shutdown();
+       }
+   }
 
-   install(TARGETS sum_server sum_client
-     DESTINATION lib/${PROJECT_NAME})
-
-Service CLI Tools
------------------
+Run it with no setting. The node uses the defaults:
 
 .. code-block:: bash
 
-   # List all active services
-   ros2 service list
-
-   # Show the type of a service
-   ros2 service type /compute_sum
-
-   # Call a service from the command line
-   ros2 service call /compute_sum my_interfaces/srv/ComputeSum "{a: 3, b: 5}"
-
-
-Actions
-====================================================
-
-What Is an Action?
-------------------
-
-An action models a **long-running task** with three phases:
-
-1. **Goal**: the client sends a goal to the server.
-2. **Feedback**: while executing, the server publishes progress updates.
-3. **Result**: when complete, the server returns the final result.
+   ros2 run l12_robotaxi robotaxi_exe
 
 .. code-block:: text
 
-   Client ── Goal ──────> Server
-   Client <── Feedback ── Server   (periodic)
-   Client <── Result ──── Server   (once, at completion)
+   [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 2 m/s
+   [INFO] [...] [robotaxi_node]: x = 1 m
+   [INFO] [...] [robotaxi_node]: x = 2 m
+   [INFO] [...] [robotaxi_node]: x = 3 m
+   [INFO] [...] [robotaxi_node]: x = 4 m
 
-Actions are built on top of topics and services internally, but
-``rclcpp_action`` provides a clean high-level API.
+The speed is 2 m/s, so the position grows by 1 m every 0.5 s.
 
-Action Definition (``.action`` Files)
---------------------------------------
 
-An ``.action`` file has three sections separated by ``---``:
+Set a Parameter When the Node Starts
+----------------------------------------------------
 
-.. code-block:: text
+There are three ways. They all set the same parameter, so they differ
+only in where the value is written.
 
-   # Countdown.action
-   int32 target_number
-   ---
-   bool success
-   string message
-   ---
-   int32 current_number
-
-- **Goal** (above first ``---``): what the client requests.
-- **Result** (between the two ``---``): what the server returns on completion.
-- **Feedback** (below second ``---``): progress updates during execution.
-
-Creating a Custom ``.action``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-1. In the interface package, create an ``action/`` directory:
-
-   .. code-block:: bash
-
-      mkdir -p my_interfaces/action
-
-2. Add the ``.action`` file, e.g., ``action/Countdown.action``:
-
-   .. code-block:: text
-
-      int32 target_number
-      ---
-      bool success
-      string message
-      ---
-      int32 current_number
-
-3. Update ``CMakeLists.txt``:
-
-   .. code-block:: cmake
-
-      rosidl_generate_interfaces(${PROJECT_NAME}
-        "srv/ComputeSum.srv"
-        "action/Countdown.action"
-      )
-
-4. Build with ``colcon build``.
-
-Action Server
--------------
-
-An action server uses the ``rclcpp_action`` library. You must provide
-callbacks for handling goals, cancellation, and execution.
-
-.. code-block:: cpp
-
-   #include <rclcpp/rclcpp.hpp>
-   #include <rclcpp_action/rclcpp_action.hpp>
-   #include "my_interfaces/action/countdown.hpp"
-
-   using Countdown = my_interfaces::action::Countdown;
-   using GoalHandleCountdown = rclcpp_action::ServerGoalHandle<Countdown>;
-
-   class CountdownServer : public rclcpp::Node {
-    public:
-     CountdownServer() : Node{"countdown_server"} {
-       action_server_ = rclcpp_action::create_server<Countdown>(
-           this,
-           "countdown",
-           std::bind(&CountdownServer::handle_goal, this,
-                     std::placeholders::_1, std::placeholders::_2),
-           std::bind(&CountdownServer::handle_cancel, this,
-                     std::placeholders::_1),
-           std::bind(&CountdownServer::handle_accepted, this,
-                     std::placeholders::_1));
-       RCLCPP_INFO(get_logger(), "Action server ready.");
-     }
-
-    private:
-     // Decide whether to accept or reject a goal
-     rclcpp_action::GoalResponse handle_goal(
-         const rclcpp_action::GoalUUID& /*uuid*/,
-         std::shared_ptr<const Countdown::Goal> goal) {
-       RCLCPP_INFO(get_logger(), "Received goal: count down to %d",
-                   goal->target_number);
-       if (goal->target_number < 0) {
-         return rclcpp_action::GoalResponse::REJECT;
-       }
-       return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
-     }
-
-     // Decide whether to accept a cancel request
-     rclcpp_action::CancelResponse handle_cancel(
-         const std::shared_ptr<GoalHandleCountdown> /*goal_handle*/) {
-       RCLCPP_INFO(get_logger(), "Cancel request received.");
-       return rclcpp_action::CancelResponse::ACCEPT;
-     }
-
-     // Called when a goal is accepted -- start execution in a thread
-     void handle_accepted(
-         const std::shared_ptr<GoalHandleCountdown> goal_handle) {
-       std::thread{
-           std::bind(&CountdownServer::execute, this, std::placeholders::_1),
-           goal_handle}
-           .detach();
-     }
-
-     // Execute the goal
-     void execute(const std::shared_ptr<GoalHandleCountdown> goal_handle) {
-       RCLCPP_INFO(get_logger(), "Executing goal...");
-       auto feedback = std::make_shared<Countdown::Feedback>();
-       auto result = std::make_shared<Countdown::Result>();
-       const auto goal = goal_handle->get_goal();
-       rclcpp::Rate rate{1.0};  // 1 Hz
-
-       int current{10};
-       while (current > goal->target_number && rclcpp::ok()) {
-         // Check for cancellation
-         if (goal_handle->is_canceling()) {
-           result->success = false;
-           result->message = "Countdown canceled.";
-           goal_handle->canceled(result);
-           RCLCPP_INFO(get_logger(), "Goal canceled.");
-           return;
-         }
-
-         // Publish feedback
-         feedback->current_number = current;
-         goal_handle->publish_feedback(feedback);
-         RCLCPP_INFO(get_logger(), "Feedback: %d", current);
-         --current;
-         rate.sleep();
-       }
-
-       // Send result
-       result->success = true;
-       result->message = "Countdown complete!";
-       goal_handle->succeed(result);
-       RCLCPP_INFO(get_logger(), "Goal succeeded.");
-     }
-
-     rclcpp_action::Server<Countdown>::SharedPtr action_server_;
-   };
-
-   int main(int argc, char* argv[]) {
-     rclcpp::init(argc, argv);
-     rclcpp::spin(std::make_shared<CountdownServer>());
-     rclcpp::shutdown();
-     return 0;
-   }
-
-Key points:
-
-- ``rclcpp_action::create_server<ActionType>`` takes three callbacks:
-
-  - **handle_goal**: accept or reject the incoming goal.
-  - **handle_cancel**: accept or reject a cancel request.
-  - **handle_accepted**: called when the goal is accepted; start
-    execution (typically in a new thread).
-
-- Inside ``execute``:
-
-  - Use ``goal_handle->publish_feedback(feedback)`` to send progress.
-  - Use ``goal_handle->is_canceling()`` to check for cancellation.
-  - Call ``goal_handle->succeed(result)`` or ``goal_handle->canceled(result)``
-    to finish.
-
-Action Client
--------------
-
-An action client sends goals and registers callbacks for the response,
-feedback, and result.
-
-.. code-block:: cpp
-
-   #include <rclcpp/rclcpp.hpp>
-   #include <rclcpp_action/rclcpp_action.hpp>
-   #include "my_interfaces/action/countdown.hpp"
-
-   using Countdown = my_interfaces::action::Countdown;
-   using GoalHandleCountdown = rclcpp_action::ClientGoalHandle<Countdown>;
-
-   class CountdownClient : public rclcpp::Node {
-    public:
-     CountdownClient() : Node{"countdown_client"} {
-       client_ = rclcpp_action::create_client<Countdown>(this, "countdown");
-     }
-
-     void send_goal(int32_t target) {
-       if (!client_->wait_for_action_server(std::chrono::seconds{5})) {
-         RCLCPP_ERROR(get_logger(), "Action server not available.");
-         return;
-       }
-
-       auto goal = Countdown::Goal{};
-       goal.target_number = target;
-
-       auto send_goal_options =
-           rclcpp_action::Client<Countdown>::SendGoalOptions{};
-       send_goal_options.goal_response_callback =
-           std::bind(&CountdownClient::goal_response_callback, this,
-                     std::placeholders::_1);
-       send_goal_options.feedback_callback =
-           std::bind(&CountdownClient::feedback_callback, this,
-                     std::placeholders::_1, std::placeholders::_2);
-       send_goal_options.result_callback =
-           std::bind(&CountdownClient::result_callback, this,
-                     std::placeholders::_1);
-
-       client_->async_send_goal(goal, send_goal_options);
-       RCLCPP_INFO(get_logger(), "Goal sent.");
-     }
-
-    private:
-     void goal_response_callback(
-         const GoalHandleCountdown::SharedPtr& goal_handle) {
-       if (!goal_handle) {
-         RCLCPP_ERROR(get_logger(), "Goal was rejected by server.");
-       } else {
-         RCLCPP_INFO(get_logger(), "Goal accepted by server.");
-       }
-     }
-
-     void feedback_callback(
-         GoalHandleCountdown::SharedPtr /*goal_handle*/,
-         const std::shared_ptr<const Countdown::Feedback> feedback) {
-       RCLCPP_INFO(get_logger(), "Feedback: %d", feedback->current_number);
-     }
-
-     void result_callback(
-         const GoalHandleCountdown::WrappedResult& result) {
-       switch (result.code) {
-         case rclcpp_action::ResultCode::SUCCEEDED:
-           RCLCPP_INFO(get_logger(), "Result: %s",
-                       result.result->message.c_str());
-           break;
-         case rclcpp_action::ResultCode::ABORTED:
-           RCLCPP_ERROR(get_logger(), "Goal was aborted.");
-           break;
-         case rclcpp_action::ResultCode::CANCELED:
-           RCLCPP_WARN(get_logger(), "Goal was canceled.");
-           break;
-         default:
-           RCLCPP_ERROR(get_logger(), "Unknown result code.");
-           break;
-       }
-       rclcpp::shutdown();
-     }
-
-     rclcpp_action::Client<Countdown>::SharedPtr client_;
-   };
-
-   int main(int argc, char* argv[]) {
-     rclcpp::init(argc, argv);
-     auto node = std::make_shared<CountdownClient>();
-     node->send_goal(0);
-     rclcpp::spin(node);
-     return 0;
-   }
-
-Key points:
-
-- ``rclcpp_action::create_client<ActionType>`` creates the client.
-- ``SendGoalOptions`` lets you attach three callbacks:
-
-  - **goal_response_callback**: called when the server accepts or
-    rejects the goal.
-  - **feedback_callback**: called each time the server publishes
-    feedback.
-  - **result_callback**: called once when the action completes (or is
-    canceled/aborted).
-
-- ``async_send_goal(goal, options)`` sends the goal without blocking.
-
-CMakeLists.txt for an Action Node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: cmake
-
-   find_package(rclcpp REQUIRED)
-   find_package(rclcpp_action REQUIRED)
-   find_package(my_interfaces REQUIRED)
-
-   add_executable(countdown_server src/countdown_server.cpp)
-   ament_target_dependencies(countdown_server
-     rclcpp rclcpp_action my_interfaces)
-
-   add_executable(countdown_client src/countdown_client.cpp)
-   ament_target_dependencies(countdown_client
-     rclcpp rclcpp_action my_interfaces)
-
-   install(TARGETS countdown_server countdown_client
-     DESTINATION lib/${PROJECT_NAME})
-
-Remember to add ``<depend>rclcpp_action</depend>`` to ``package.xml``.
-
-Action CLI Tools
-----------------
+**On the command line.** ``--ros-args`` starts the ROS arguments, and
+``-p name:=value`` sets one parameter:
 
 .. code-block:: bash
 
-   # List all active actions
-   ros2 action list
+   ros2 run l12_robotaxi robotaxi_exe --ros-args -p speed_mps:=3.0 -p robotaxi_name:=taxi_7
 
-   # Show information about an action
-   ros2 action info /countdown
+.. code-block:: text
 
-   # Send a goal from the command line (with feedback)
-   ros2 action send_goal /countdown my_interfaces/action/Countdown \
-     "{target_number: 0}" --feedback
+   [INFO] [...] [robotaxi_node]: taxi_7 starts at x = 0 m, speed 3 m/s
+   [INFO] [...] [robotaxi_node]: x = 1.5 m
+   [INFO] [...] [robotaxi_node]: x = 3 m
+   [INFO] [...] [robotaxi_node]: x = 4.5 m
+
+**In a YAML file.** A parameter file is a YAML file. It starts with the
+name of a node, then ``ros__parameters``, then one line per parameter.
+``--params-file`` loads it.
+
+``l12_robotaxi/config/robotaxi_params.yaml``:
+
+.. code-block:: yaml
+
+   robotaxi_node:
+     ros__parameters:
+       robotaxi_name: "robotaxi_1"
+       speed_mps: 2.0
+       start_x_m: 0.0
+
+.. code-block:: bash
+
+   ros2 run l12_robotaxi robotaxi_exe --ros-args --params-file <path to the file>
+
+The name at the top of the file must be the name of the node. If you
+start the same executable with another node name, the node ignores the
+section and uses its defaults. With ``-r __node:=taxi_b`` and the file
+above, the node ``taxi_b`` logs a speed of 2 m/s, which is the default,
+and not a different value:
+
+.. code-block:: text
+
+   [INFO] [...] [taxi_b]: robotaxi_1 starts at x = 0 m, speed 2 m/s
+   [INFO] [...] [taxi_b]: x = 1 m
+
+To give the same value to every node, write ``/**`` instead of a node
+name. A node reads the parameters it declares and ignores the others.
+This file sets ``speed_mps`` for any node:
+
+``l12_robotaxi/config/fleet_params.yaml``:
+
+.. code-block:: yaml
+
+   /**:
+     ros__parameters:
+       speed_mps: 1.5
+
+Started with this file, and with the new name ``taxi_b``, the node uses
+a speed of 1.5 m/s:
+
+.. code-block:: text
+
+   [INFO] [...] [taxi_b]: robotaxi_1 starts at x = 0 m, speed 1.5 m/s
+   [INFO] [...] [taxi_b]: x = 0.75 m
+
+**In a launch file.** A launch file loads the YAML file for you, so you
+do not type the path. The launch argument ``params_file`` names the file,
+and its default is the file in the package. ``ros2 launch ...
+params_file:=<path>`` loads another file.
+
+``l12_robotaxi/launch/robotaxi_launch.py``:
+
+.. code-block:: python
+
+   import os
+
+   from ament_index_python.packages import get_package_share_directory
+   from launch import LaunchDescription
+   from launch.actions import DeclareLaunchArgument
+   from launch.substitutions import LaunchConfiguration
+   from launch_ros.actions import Node
 
 
-When to Use What
-====================================================
+   def generate_launch_description():
+       default_file = os.path.join(
+           get_package_share_directory("l12_robotaxi"), "config", "robotaxi_params.yaml"
+       )
+       return LaunchDescription(
+           [
+               # ros2 launch l12_robotaxi robotaxi_launch.py params_file:=<path>
+               DeclareLaunchArgument("params_file", default_value=default_file),
+               Node(
+                   package="l12_robotaxi",
+                   executable="robotaxi_exe",
+                   parameters=[LaunchConfiguration("params_file")],
+                   output="screen",
+               ),
+           ]
+       )
 
-Choosing the right communication pattern depends on the nature of the
-interaction.
+The package must install the folders ``config`` and ``launch``, or the
+launch file does not find the YAML file. The line
+``install(DIRECTORY config launch ...)`` of ``CMakeLists.txt`` does it:
 
-.. list-table:: Decision Guide
+``l12_robotaxi/CMakeLists.txt``:
+
+.. code-block:: cmake
+
+   cmake_minimum_required(VERSION 3.8)
+   project(l12_robotaxi)
+
+   set(CMAKE_CXX_STANDARD 20)
+   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+   set(CMAKE_CXX_EXTENSIONS OFF)
+
+   if(NOT CMAKE_BUILD_TYPE)
+     set(CMAKE_BUILD_TYPE Debug)
+   endif()
+
+   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+     add_compile_options(-Wall -Wextra -pedantic-errors -Wshadow)
+   endif()
+
+   find_package(ament_cmake REQUIRED)
+   find_package(rclcpp REQUIRED)
+   find_package(geometry_msgs REQUIRED)
+
+   include_directories(include)
+
+   add_executable(robotaxi_exe src/robotaxi_main.cpp src/robotaxi_node.cpp)
+   ament_target_dependencies(robotaxi_exe rclcpp geometry_msgs)
+
+   install(TARGETS robotaxi_exe DESTINATION lib/${PROJECT_NAME})
+
+   # Copies config/ and launch/ to install/l12_robotaxi/share/l12_robotaxi, where the launch
+   # file looks for the YAML file.
+   install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
+
+   ament_package()
+
+``l12_robotaxi/package.xml``:
+
+.. code-block:: xml
+
+   <?xml version="1.0"?>
+   <package format="3">
+     <name>l12_robotaxi</name>
+     <version>0.0.0</version>
+     <description>A robotaxi node with parameters, loaded from a YAML file by a launch file.</description>
+     <maintainer email="zeidk@umd.edu">zeidk</maintainer>
+     <license>Apache-2.0</license>
+
+     <buildtool_depend>ament_cmake</buildtool_depend>
+
+     <depend>rclcpp</depend>
+     <depend>geometry_msgs</depend>
+
+     <exec_depend>ros2launch</exec_depend>
+     <exec_depend>ament_index_python</exec_depend>
+
+     <export>
+       <build_type>ament_cmake</build_type>
+     </export>
+   </package>
+
+Run the launch file with the default file, then with ``fast.yaml``, a
+file that sets ``speed_mps`` to 5.0:
+
+``fast.yaml``:
+
+.. code-block:: yaml
+
+   robotaxi_node:
+     ros__parameters:
+       speed_mps: 5.0
+
+.. code-block:: bash
+
+   ros2 launch l12_robotaxi robotaxi_launch.py
+   ros2 launch l12_robotaxi robotaxi_launch.py params_file:=$PWD/fast.yaml
+
+.. code-block:: text
+
+   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 2 m/s
+   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: x = 1 m
+
+.. code-block:: text
+
+   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 5 m/s
+   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: x = 2.5 m
+
+With the speed of 5 m/s, the position grows by 2.5 m every 0.5 s.
+
+
+Change a Parameter While the Node Runs
+----------------------------------------------------
+
+The ``ros2 param`` command works on a running node:
+
+.. list-table::
    :header-rows: 1
-   :widths: 30 70
+   :widths: 20 80
+   :class: compact-table
 
-   * - Scenario
-     - Recommended Pattern
-   * - Continuous sensor data (LiDAR, IMU, camera)
-     - **Topic**, publisher streams data; subscribers process it.
-   * - Periodic velocity commands
-     - **Topic**, ``/cmd_vel`` published at a fixed rate.
-   * - Quick computation (e.g., add two numbers)
-     - **Service**, send request, get immediate response.
-   * - Configuration query (e.g., get/set a parameter)
-     - **Service**, one-off request-response.
-   * - Spawning/deleting an entity
-     - **Service**, short-lived, immediate result.
-   * - Navigation to a waypoint
-     - **Action**, long-running, needs progress feedback.
-   * - Robot arm trajectory execution
-     - **Action**, takes time, client needs to monitor progress.
-   * - Any task the operator may want to cancel
-     - **Action**, supports goal cancellation.
+   * - Command
+     - What it does
+   * - ``ros2 param list``
+     - Lists the parameters of a node, or of every node.
+   * - ``ros2 param get``
+     - Prints the value of one parameter.
+   * - ``ros2 param describe``
+     - Prints the type of a parameter, and its description and limits
+       if the node gave them.
+   * - ``ros2 param set``
+     - Sets a parameter of a running node.
+   * - ``ros2 param dump``
+     - Prints the parameters of a node in the YAML format.
+   * - ``ros2 param load``
+     - Loads a YAML file into a running node.
+   * - ``ros2 param delete``
+     - Deletes a parameter.
 
-**Rules of thumb:**
+With ``robotaxi_exe`` running:
 
-1. Use a **topic** when data flows continuously and you do not need a
-   response.
-2. Use a **service** when you need a response and the server can reply
-   quickly (a few milliseconds).
-3. Use an **action** when the task takes a noticeable amount of time,
-   you want feedback, or you need the ability to cancel.
+.. code-block:: text
 
-.. warning::
+   $ ros2 param list /robotaxi_node
+     qos_overrides./parameter_events.publisher.depth
+     qos_overrides./parameter_events.publisher.durability
+     qos_overrides./parameter_events.publisher.history
+     qos_overrides./parameter_events.publisher.reliability
+     robotaxi_name
+     speed_mps
+     start_type_description_service
+     start_x_m
+     use_sim_time
+   $ ros2 param get /robotaxi_node speed_mps
+   Double value is: 2.0
+   $ ros2 param describe /robotaxi_node speed_mps
+   Parameter name: speed_mps
+     Type: double
+     Constraints:
+   $ ros2 param set /robotaxi_node speed_mps 4.0
+   Set parameter successful
+   $ ros2 param set /robotaxi_node speed_mps -1.0
+   Setting parameter failed: speed_mps must not be negative
+   $ ros2 param set /robotaxi_node speed_mps 3
+   Setting parameter failed: Wrong parameter type, parameter {speed_mps} is of type {double}, setting it to {integer} is not allowed.
+   $ ros2 param set /robotaxi_node colour red
+   Setting parameter failed: parameter 'colour' cannot be set because it was not declared
+   $ ros2 param get /robotaxi_node speed_mps
+   Double value is: 4.0
+   $ ros2 param dump /robotaxi_node
+   /robotaxi_node:
+     ros__parameters:
+       qos_overrides:
+         /parameter_events:
+           publisher:
+             depth: 1000
+             durability: volatile
+             history: keep_last
+             reliability: reliable
+       robotaxi_name: robotaxi_1
+       speed_mps: 4.0
+       start_type_description_service: true
+       start_x_m: 0.0
+       use_sim_time: false
 
-   Never perform long-running work inside a service callback. The
-   client will block waiting for the response, and the server's
-   executor thread is occupied. Use an action for anything that takes
-   more than a trivial amount of time.
+The list holds the three parameters of the robotaxi, and the parameters
+that every node has, such as ``use_sim_time``. Three sets failed, and each
+failure has a reason:
+
+- ``-1.0`` failed because of the node's own check, below.
+- ``3`` failed because ``3`` is an integer, and ``speed_mps`` is a
+  ``double``. Write ``3.0``.
+- ``colour`` failed because the node never declared it. A node accepts
+  only the parameters that it declares.
+
+The Parameter Callback
+----------------------------------------------------
+
+``ros2 param set`` changes the stored value of the parameter. The
+variable ``speed_mps_`` of the node is a copy, and it does not change by
+itself. To react to a change, the node registers a **parameter
+callback** with ``add_on_set_parameters_callback``. In
+``robotaxi_node.hpp``, this is the member ``parameter_callback_``, and
+its callback is ``on_parameters`` in ``robotaxi_node.cpp``.
+
+ROS calls the callback **before** it stores a new value, with the
+parameters that someone wants to set. The callback returns a result:
+
+- ``successful = true``: ROS stores the value.
+- ``successful = false``: ROS does not store it, and ``ros2 param set``
+  prints the ``reason`` of the callback.
+
+``on_parameters`` copies a valid ``speed_mps`` into ``speed_mps_`` and
+rejects a negative one. In a run, ``ros2 param set /robotaxi_node
+speed_mps 4.0`` took effect on the next timer call:
+
+.. code-block:: text
+
+   [INFO] [...] [robotaxi_node]: x = 12 m
+   [INFO] [...] [robotaxi_node]: x = 13 m
+   [INFO] [...] [robotaxi_node]: speed_mps is now 4 m/s
+   [INFO] [...] [robotaxi_node]: x = 15 m
+   [INFO] [...] [robotaxi_node]: x = 17 m
+   [INFO] [...] [robotaxi_node]: x = 19 m
+   [INFO] [...] [robotaxi_node]: x = 21 m
+
+The position grew by 1 m per 0.5 s (2 m/s) until 13 m, and by 2 m per
+0.5 s (4 m/s) after the callback printed the new speed.
+
+.. note::
+
+   The node registers the callback after it declares the parameters, so
+   the callback sees only later changes. A value set before the node
+   starts, with ``-p``, a file or a launch file, is the value that
+   ``declare_parameter`` returns. In the runs above, no start-up value
+   made the node print ``speed_mps is now``.
+
+Summary
+----------------------------------------------------
+
+- A **parameter** is a named, typed value of a node. The node declares
+  it with ``declare_parameter<Type>(name, default)``, which returns its
+  value.
+- Set it at start with ``-p name:=value``, with a YAML file
+  (``--params-file``), or with a launch file that loads the file.
+- A YAML file names the node, then ``ros__parameters``. ``/**`` gives a
+  parameter to every node that declares it.
+- ``ros2 param set`` changes a running node. A **parameter callback**
+  checks the new value and copies it into the node's variable.

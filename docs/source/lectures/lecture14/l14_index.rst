@@ -7,8 +7,10 @@ Overview
 
 This is the final lecture in the course. It is a **capstone** that ties
 together everything you learned in the ROS 2 lectures. Rather than
-introducing a new ROS 2 feature, it shows how nodes, topics, services,
-actions, parameters, launch files, and TF2 **compose
+introducing a new ROS 2 feature, it shows how nodes, topics, parameters,
+launch files, and TF2 (and, from the :doc:`Services and Actions
+</reading_material/services_actions/sa_index>` reading, services and
+actions) **compose
 into an autonomy architecture**, a standard way of organizing
 perception, decision-making, and control. This lecture also shows
 **where Artificial Intelligence and Machine Learning fit** into a robotic
@@ -44,8 +46,8 @@ Next Steps
   and knowledge needed for the remaining assignments.
 
 - The autonomy architecture in this lecture is the conceptual frame for
-  the **Group Projects**: the TurtleBot3 system you build *is* a
-  Sense-Plan-Act stack.
+  the **Group Projects**: the ROSbot patrol system you build in GP2 *is*
+  a Sense-Plan-Act stack.
 
 - The ROS 2 capability that supports this architecture most directly,
   **TF2 (coordinate frames)**, is covered in

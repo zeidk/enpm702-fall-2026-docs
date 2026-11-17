@@ -3,6 +3,15 @@ Lecture
 ====================================================
 
 
+.. note::
+
+   **Draft.** This page comes from an earlier version of the lecture. It
+   has no part yet on poses, the quaternion and the yaw (see :doc:`Mobile
+   Robot Messages </reading_material/robot_messages/rmsg_index>`), and no
+   part on using a transform to express a point in another frame. Both
+   will be added from the slides.
+
+
 Coordinate Frames and Transforms
 ====================================================
 
@@ -11,7 +20,8 @@ ROS 2 framework for tracking and transforming between the many reference
 frames on a robot (its base, its sensors, and the world it operates in).
 It covers:
 
-- Coordinate frames and the frame tree
+- Coordinate frames and the frame tree (the frames of the ROSbot are in
+  :doc:`ROSbot Simulation </setup/rosbot_simulation>`)
 - The ``TransformStamped`` message
 - Static and dynamic transform broadcasting
 - Listening for and looking up transforms

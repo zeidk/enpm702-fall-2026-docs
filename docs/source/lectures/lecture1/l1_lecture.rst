@@ -665,11 +665,11 @@ autonomous robot in simulation.
      -
      - RWA3 due, GP1 posted
    * - 13 (Nov 24)
-     - L12: ROS 2 communication (parameters, services, actions)
+     - L12: Robots in Gazebo and parameters (the ROSbot, a proportional controller, parameters)
      - Quiz 5
      - GP1 due, GP2 posted
    * - 14 (Dec 1)
-     - L13: ROS 2 coordinate frames and transforms
+     - L13: Frames and transforms
      -
      -
    * - 15 (Dec 8)

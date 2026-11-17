@@ -36,8 +36,9 @@ the stand-in node is the only part you replace.
 
 Everything in this assignment comes from Lectures 10 and 11: nodes,
 publishers, subscribers and timers, then launch files, executors,
-callback groups and custom interfaces. Parameters, services and actions
-come later: do not use them in GP1.
+callback groups and custom interfaces. Parameters come in Lecture 12,
+and services and actions are reading material only: do not use them in
+GP1.
 
 .. important::
 
