@@ -2478,6 +2478,11 @@ L12: Robots in Gazebo and Parameters
 
 .. glossary::
 
+   Absolute Name
+      A name that begins with ``/``, such as ``/rosout``. A namespace does not
+      change it.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    Bridge
       A node that copies topics between Gazebo and ROS 2. Gazebo's topics are not
       ROS topics. The package ``ros_gz_bridge`` provides the ``parameter_bridge``
@@ -2487,8 +2492,7 @@ L12: Robots in Gazebo and Parameters
    Controller
       A node that brings one measured value to a target. It repeats four steps:
       measure the value, compute the error, publish a command computed from the
-      error, and repeat. In L12, the value is the ROSbot's heading or its
-      distance from the start.
+      error, and repeat. In L12, the value is the ROSbot's heading.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Differential Drive
@@ -2500,7 +2504,7 @@ L12: Robots in Gazebo and Parameters
    Error
       In a controller, the target minus the measured value. For a turn, it is
       the angle left to turn, the short way, in -pi to pi; a positive error
-      means turn left. For a drive, it is the distance left to drive.
+      means turn left.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Fixed Frame
@@ -2548,6 +2552,13 @@ L12: Robots in Gazebo and Parameters
       ``--params-file`` or a launch file loads it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
+   Private Name
+      A name that begins with ``~``, such as ``~/status``. The ``~`` is replaced
+      by the node's namespace and the node's name: in ``/robot1``, node
+      ``heading_controller_node``, the name is
+      ``/robot1/heading_controller_node/status``.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    Proportional Controller
       A controller that sets a command in proportion to the error: the command
       is a gain times the error, limited to a maximum speed. The gain is a
@@ -2560,10 +2571,17 @@ L12: Robots in Gazebo and Parameters
       computed from it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
+   Relative Name
+      A name that does not begin with ``/``, such as ``cmd_vel``. A namespace puts
+      its prefix in front of it: in ``/robot1``, ``/robot1/cmd_vel``.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    Remapping
       Changing a name that a node uses, when the node starts, without editing its
-      code: ``--ros-args -r from:=to``. It changes where the node reads or writes,
-      not what the data means.
+      code: ``--ros-args -r match:=replacement``. It changes where the node reads
+      or writes, not what the data means. A remapping rule renames topics, the
+      node (``__node``) and its namespace (``__ns``), and does not rename
+      parameters.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    ROS Namespace
@@ -2572,10 +2590,21 @@ L12: Robots in Gazebo and Parameters
       absolute, and the namespace does not change it. This is not a C++ namespace.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
+   ROS Time
+      The clock a ROS 2 node reads with ``now()``. With ``use_sim_time`` false, it
+      is the computer's clock. With ``use_sim_time`` true, it is the latest time
+      published on ``/clock``, and it is 0 until the first message arrives.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    RViz
       A ROS node that draws what the topics carry, in one fixed frame: the robot
       model, its frames and the lidar's ranges. Gazebo draws the simulated world;
       RViz draws what ROS sees.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Simulation Time
+      Gazebo's own clock. It counts from the moment the simulation starts, and
+      Gazebo publishes it on ``/clock``. It stops while the simulation is paused.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Tolerance
@@ -2588,6 +2617,13 @@ L12: Robots in Gazebo and Parameters
       A parameter that every node has, false by default. When it is true, the
       node's clock follows the ``/clock`` topic, so ``now()`` gives the
       simulation's time. Set it to true for every node you run with Gazebo.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Wall Timer
+      A timer made with ``create_wall_timer``. It runs on the computer's clock, so
+      it keeps firing while Gazebo is paused. A timer made with ``create_timer``
+      runs on the node's clock and stops with the simulation when
+      ``use_sim_time`` is true.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Yaw

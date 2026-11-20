@@ -2,7 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Parameters. Topics include the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), proportional control (the error of a turn and of a drive, the gain, the limit and the tolerance) parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and remapping (topic names and namespaces).
+This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Parameters. Topics include the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), simulation time (``/clock``, ``use_sim_time`` and the two kinds of timer), proportional control (the error of a turn, the gain, the limit and the tolerance), parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and namespaces and remapping (relative and absolute names, and rules).
 
 .. note::
 
@@ -15,7 +15,7 @@ This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Paramete
 ----
 
 
-Multiple Choice (Questions 1-12)
+Multiple Choice (Questions 1-13)
 ====================================================
 
 .. admonition:: Question 1
@@ -126,22 +126,22 @@ Multiple Choice (Questions 1-12)
 .. admonition:: Question 6
    :class: hint
 
-   The distance controller has a target of 1.0 m, a gain of 0.8 (m/s per m) and a limit of 0.5 m/s. The robot is 0.75 m from its start. What command does it publish?
+   A heading controller has a gain of 1.5 (rad/s per rad) and a limit of 1.0 rad/s. The error is 0.5848 rad. What command does it publish?
 
-   A. 0.5 m/s
+   A. 1.0 rad/s
 
-   B. 0.25 m/s
+   B. 0.877 rad/s
 
-   C. 0.2 m/s
+   C. 0.39 rad/s
 
-   D. 0.6 m/s
+   D. 2.35 rad/s
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **C**, 0.2 m/s
+   **B**, 0.877 rad/s
 
-   The error is the distance left to drive: 1.0 - 0.75 = 0.25 m. The gain times the error is 0.8 × 0.25 = 0.2 m/s, which is under the 0.5 m/s limit, so it is sent as it is.
+   The gain times the error is 1.5 × 0.5848 = 0.877 rad/s. That is under the 1.0 rad/s limit, so it is sent as it is. The limit applies only when the gain times the error is above it, which happens while the error is over 1.0 / 1.5 = 0.67 rad.
 
 
 .. admonition:: Question 7
@@ -258,7 +258,7 @@ Multiple Choice (Questions 1-12)
 
    **A**
 
-   Gazebo is a program of its own, not a ROS node, and it has its own topics. The ROS list shows only ``/parameter_events`` and ``/rosout``. The simulation launch file starts 5 ``parameter_bridge`` programs from ``ros_gz_bridge``, and they copy topics such as the lidar's and the cameras' between Gazebo and ROS.
+   Gazebo is a program of its own, not a ROS node, and it has its own topics. The ROS list shows only ``/parameter_events`` and ``/rosout``. A bridge node from ``ros_gz_bridge`` copies the topics you need between Gazebo and ROS.
 
 
 .. admonition:: Question 12
@@ -282,26 +282,47 @@ Multiple Choice (Questions 1-12)
    The namespace puts the prefix ``/robot1`` in front of the node's name and of its relative topic names. In the lecture, ``ros2 topic info /robot1/odometry/filtered`` shows "Publisher count: 0". ``control_callback`` returns at once while it has no odometry, so the node logged nothing and published no command. Adding ``-r odometry/filtered:=/odometry/filtered -r cmd_vel:=/cmd_vel`` points the two topics back at the robot.
 
 
-----
-
-
-True / False (Questions 13-18)
-====================================================
-
 .. admonition:: Question 13
    :class: hint
 
-   **True or False:** A node started with ``-p kp_linear:=0.8`` has the parameter ``kp_linear`` even when it did not declare it.
+   A node runs with ``use_sim_time`` true. It has one timer made with ``create_timer`` and one made with ``create_wall_timer``. Gazebo is paused. What happens?
+
+   A. Both timers stop, because the node's clock is the simulation's.
+
+   B. Both timers keep firing, and ``now()`` keeps counting.
+
+   C. The ``create_timer`` timer stops. The ``create_wall_timer`` timer keeps firing, and ``now()`` does not move.
+
+   D. The ``create_wall_timer`` timer stops. The ``create_timer`` timer keeps firing.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**
+
+   A ``create_timer`` timer runs on the node's clock, which follows ``/clock``, so it stops while Gazebo is paused. A ``create_wall_timer`` timer runs on the computer's clock, so it keeps firing, and ``now()`` stays at the last simulation time. In the lecture's run, the wall timer fired 5 times during the pause, and ``now()`` read 32.892 s, then 32.896 s. After Gazebo resumed, the ``create_timer`` timer fired again, at 33.000 s.
+
+
+----
+
+
+True / False (Questions 14-20)
+====================================================
+
+.. admonition:: Question 14
+   :class: hint
+
+   **True or False:** A node declared ``kp_angular`` with the default 1.5. Started with ``-p kp_angular:=1``, it uses a gain of 1.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
    **False.**
 
-   A node accepts only the parameters it declared. The node starts with no message, and ``ros2 param get`` answers "Parameter not set". A wrong name on the command line at start is dropped without a message, so check what the node has with ``ros2 param list``.
+   ``1`` is an integer, and ``kp_angular`` is a double, so the node does not start: it stops with an ``InvalidParameterTypeException``, "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed". Write a double with a decimal point: ``-p kp_angular:=1.0``.
 
 
-.. admonition:: Question 14
+.. admonition:: Question 15
    :class: hint
 
    **True or False:** In the lecture's runs, raising the gain from 1.5 to 4.0 made a 90° turn of the ROSbot faster.
@@ -314,7 +335,7 @@ True / False (Questions 13-18)
    The turns took 2.65 s to 2.75 s at a gain of 1.5 and 2.70 s at 4.0. A gain of 4.0 keeps the command at the 1.0 rad/s limit longer (until the error is under 1.0 / 4.0 = 0.25 rad, against 1.0 / 1.5 = 0.67 rad), but the turn was no faster. A gain of 0.5 never reaches the limit (0.5 × 1.57 = 0.785 rad/s at most), and its turns took 6.25 s to 6.45 s.
 
 
-.. admonition:: Question 15
+.. admonition:: Question 16
    :class: hint
 
    **True or False:** If a parameter callback returns ``successful = false``, ``ros2 param set`` prints the callback's ``reason``, and the parameter keeps its old value.
@@ -324,10 +345,10 @@ True / False (Questions 13-18)
 
    **True.**
 
-   In the lecture, ``ros2 param set /heading_controller_node kp_angular -1.0`` answers "Setting parameter failed: kp_angular must not be negative". The callback checks every value of a set command first, and one bad value rejects the whole command.
+   In the lecture, ``ros2 param set /heading_controller_node kp_angular -1.0`` answers "Setting parameter failed: kp_angular must not be negative". The callback checks the values of a set command first, and stores the new ones only when every value is good, so one bad value rejects the whole command.
 
 
-.. admonition:: Question 16
+.. admonition:: Question 17
    :class: hint
 
    **True or False:** A parameter callback stays registered even if the node does not keep the handle that ``add_on_set_parameters_callback`` returned.
@@ -340,7 +361,7 @@ True / False (Questions 13-18)
    The callback stays registered only while the handle exists. That is why the lecture keeps it in a data member of the node.
 
 
-.. admonition:: Question 17
+.. admonition:: Question 18
    :class: hint
 
    **True or False:** The turning limit that the lecture's callback uses for ``max_angular_rps`` is 3.14 rad/s, the ROSbot's own turning limit, so ``max_angular_rps 5.0`` is rejected.
@@ -353,7 +374,7 @@ True / False (Questions 13-18)
    The callback accepts a ``max_angular_rps`` that is more than 0 and at most 3.14 rad/s. The answer to the set of 5.0 is "Setting parameter failed: max_angular_rps must be more than 0 and at most 3.14 rad/s".
 
 
-.. admonition:: Question 18
+.. admonition:: Question 19
    :class: hint
 
    **True or False:** A node runs with ``-r __ns:=/robot1 -r cmd_vel:=/cmd_vel``. It publishes on ``/robot1/cmd_vel``.
@@ -364,3 +385,16 @@ True / False (Questions 13-18)
    **False.**
 
    A name that starts with ``/`` is absolute, and the namespace does not change it. The remapped name ``/cmd_vel`` is absolute, so the node publishes on ``/cmd_vel``. Only a relative name, such as ``cmd_vel`` without the slash, gets the prefix.
+
+
+.. admonition:: Question 20
+   :class: hint
+
+   **True or False:** A node starts with ``-p use_sim_time:=true``, and Gazebo is not running. ``now()`` returns the computer's time.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False.**
+
+   With ``use_sim_time`` true, the node's clock follows ``/clock``, and ROS time "will return zero if nothing has been received." No message arrives, so ``now()`` is 0. In the lecture's run with Gazebo, the first two lines read ``now() = 0.000 s`` before the first ``/clock`` message arrived. With ``use_sim_time`` false, ``now()`` was 1795198889.261 s, the computer's clock in seconds since 1 January 1970.

@@ -31,7 +31,7 @@ In class, I do not explain the shell commands: you learned them in the shell exe
 Code for This Lecture
 ---------------------
 
-The ``L12`` folder of the course repository holds one package, ``l12_rosbot``. It has the two controller nodes of this lecture, a configuration folder and a launch folder:
+The ``L12`` folder of the course repository holds one package, ``l12_rosbot``. It has the two controller nodes of this lecture, a node for the simulation time demo, a configuration folder and a launch folder:
 
 .. code-block:: text
 
@@ -44,17 +44,21 @@ The ``L12`` folder of the course repository holds one package, ``l12_rosbot``. I
    ├── include/l12_rosbot/
    │   ├── geometry.hpp
    │   ├── heading_controller_node.hpp
-   │   └── distance_controller_node.hpp
+   │   ├── distance_controller_node.hpp
+   │   └── sim_time_node.hpp
    ├── launch/
    │   ├── heading_launch.py
-   │   └── distance_launch.py
+   │   ├── distance_launch.py
+   │   └── remap_launch.py
    └── src/
        ├── heading_controller_main.cpp
        ├── heading_controller_node.cpp
        ├── distance_controller_main.cpp
-       └── distance_controller_node.cpp
+       ├── distance_controller_node.cpp
+       ├── sim_time_main.cpp
+       └── sim_time_node.cpp
 
-The code grows in four stages, one commit each. The lecture quotes the stage a listing belongs to, because the line numbers change from stage to stage:
+The code grows in five stages, one commit each. The lecture quotes the stage a listing belongs to, because the line numbers change from stage to stage:
 
 .. list-table::
    :header-rows: 1
@@ -74,7 +78,10 @@ The code grows in four stages, one commit each. The lecture quotes the stage a l
      - The ``config`` and ``launch`` folders: a parameter file and two launch files.
    * - 4
      - ``94d4d64``
-     - A parameter callback in ``heading_controller_node``. This is the final code of the package.
+     - A parameter callback in ``heading_controller_node``.
+   * - 5
+     - ``6d2b94b``
+     - ``sim_time_node``, which shows what ``use_sim_time`` changes, and ``remap_launch.py``, a launch file with a name, a namespace and two remappings. This is the final code of the package.
 
 To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository.
 
@@ -164,6 +171,13 @@ The ROSbot is a small research robot with four wheels. The two wheels on each si
    * - Odometry
      - The robot's pose, computed from the wheels and the IMU
 
+.. figure:: /_static/images/l12/rosbot.png
+   :alt: Photo of the Husarion ROSbot: a black robot with four rubber wheels and red corners, a round RPLIDAR lidar on top, a depth camera on a bracket above the lidar, and an antenna at the back.
+   :align: center
+   :width: 50%
+
+   The Husarion ROSbot.
+
 Command the ROSbot and Read Its Pose
 """""""""""""""""""""""""""""""""""""
 
@@ -227,29 +241,30 @@ One command starts Gazebo, the patrol world and the ROSbot:
 
    Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.
 
-What the Launch File Starts
-"""""""""""""""""""""""""""
+.. dropdown:: More detail: What the launch file starts
+   :class-container: more-detail
+   :icon: info
 
-``ros2 launch gp2_bringup gp2_sim.launch.py`` starts 10 programs. It also spawns the ROSbot into the world, a step that then ends.
+   ``ros2 launch gp2_bringup gp2_sim.launch.py`` starts 10 programs. It also spawns the ROSbot into the world, a step that then ends.
 
-.. list-table::
-   :header-rows: 1
-   :widths: 41 59
+   .. list-table::
+      :header-rows: 1
+      :widths: 41 59
 
-   * - Program
-     - What it does
-   * - ``gz sim`` with ``patrol.sdf``
-     - Gazebo and the patrol world. ``differential_drive_controller`` runs inside it and reads ``/cmd_vel``.
-   * - 5 × ``parameter_bridge``
-     - Bridges from ``ros_gz_bridge``: they copy topics between Gazebo and ROS, such as the lidar's and the cameras'.
-   * - ``robot_state_publisher``
-     - Publishes the robot's description and the frames of its parts.
-   * - ``ekf``
-     - Combines the wheels and the IMU into ``/odometry/filtered``.
-   * - ``laser_filters``
-     - Publishes ``/scan_filtered``: the scan without the beams that hit the robot.
-   * - ``static_transform_publisher``
-     - Places the logical camera's frame on the robot.
+      * - Program
+        - What it does
+      * - ``gz sim`` with ``patrol.sdf``
+        - Gazebo and the patrol world. ``differential_drive_controller`` runs inside it and reads ``/cmd_vel``.
+      * - 5 × ``parameter_bridge``
+        - Bridges from ``ros_gz_bridge``: they copy topics between Gazebo and ROS, such as the lidar's and the cameras'.
+      * - ``robot_state_publisher``
+        - Publishes the robot's description and the frames of its parts.
+      * - ``ekf``
+        - Combines the wheels and the IMU into ``/odometry/filtered``.
+      * - ``laser_filters``
+        - Publishes ``/scan_filtered``: the scan without the beams that hit the robot.
+      * - ``static_transform_publisher``
+        - Places the logical camera's frame on the robot.
 
 Launch Arguments
 """"""""""""""""
@@ -345,25 +360,26 @@ Of the 31 topics, your nodes use these:
 
    ``/cmd_vel`` takes a ``TwistStamped``: a ``Twist`` with a header that holds a time stamp. The two types do not connect, so a node that publishes ``Twist`` on ``/cmd_vel`` cannot move the robot.
 
-Read the Position
-"""""""""""""""""
+.. dropdown:: More detail: Read the position
+   :class-container: more-detail
+   :icon: info
 
-The robot's position is one field of the odometry message. Print it once:
+   The robot's position is one field of the odometry message. Print it once:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   ros2 topic echo --once /odometry/filtered --field pose.pose.position
+      ros2 topic echo --once /odometry/filtered --field pose.pose.position
 
-.. code-block:: text
+   .. code-block:: text
 
-   x: -7.400765781802631e-18
-   y: 3.202344653318229e-21
-   z: 0.0
-   ---
+      x: -7.400765781802631e-18
+      y: 3.202344653318229e-21
+      z: 0.0
+      ---
 
-- ``--once`` prints one message and exits. ``--field`` prints only that part of the message.
-- At the start, the robot is at the origin: -7.4 × 10\ :sup:`-18` m and 3.2 × 10\ :sup:`-21` m are rounding errors, not distances.
-- The fields of ``Odometry`` are in the :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading.
+   - ``--once`` prints one message and exits. ``--field`` prints only that part of the message.
+   - At the start, the robot is at the origin: -7.4 × 10\ :sup:`-18` m and 3.2 × 10\ :sup:`-21` m are rounding errors, not distances.
+   - The fields of ``Odometry`` are in the :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading.
 
 Drive Forward and Turn
 """"""""""""""""""""""
@@ -385,31 +401,169 @@ Turn on the spot at 0.5 rad/s:
 - ``linear.x`` is the forward speed in m/s. ``angular.z`` is the turn rate in rad/s; a positive value turns left.
 - :kbd:`Ctrl+C` stops the command. The robot then stops by itself: its controller brakes when no command arrives for 0.5 s.
 
-Drive with the Keyboard
-"""""""""""""""""""""""
+.. dropdown:: More detail: Drive with the keyboard
+   :class-container: more-detail
+   :icon: info
 
-The node ``teleop_twist_keyboard`` turns key presses into velocity commands:
+   The node ``teleop_twist_keyboard`` turns key presses into velocity commands:
+
+   .. code-block:: bash
+
+      ros2 run teleop_twist_keyboard teleop_twist_keyboard \
+        --ros-args -p stamped:=true
+
+   .. code-block:: text
+
+      Moving around:
+         u    i    o
+         j    k    l
+         m    ,    .
+
+   - ``i`` drives forward, ``,`` drives backward, ``j`` and ``l`` turn on the spot, and ``k`` stops.
+   - ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. The Parameters section explains them.
+   - The keys work only while the teleop terminal has the focus.
+
+.. _l12-simulation-time:
+
+Simulation Time
+^^^^^^^^^^^^^^^
+
+Gazebo keeps its own clock. A node reads either that clock or the computer's, and the choice changes what ``now()`` returns and when a timer fires.
+
+Two Clocks: the Computer's and Gazebo's
+"""""""""""""""""""""""""""""""""""""""
+
+Gazebo counts its own time from the moment the simulation starts, and publishes it on ``/clock``:
 
 .. code-block:: bash
 
-   ros2 run teleop_twist_keyboard teleop_twist_keyboard \
-     --ros-args -p stamped:=true
+   ros2 topic echo --once /clock
 
 .. code-block:: text
 
-   Moving around:
-      u    i    o
-      j    k    l
-      m    ,    .
+   clock:
+     sec: 24
+     nanosec: 988000000
 
-- ``i`` drives forward, ``,`` drives backward, ``j`` and ``l`` turn on the spot, and ``k`` stops.
-- ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. The Parameters section explains them.
-- The keys work only while the teleop terminal has the focus.
+.. code-block:: bash
+
+   gz topic -e -t /world/patrol/stats -n 1 | grep real_time_factor
+
+The command gave ``0.99971308234536693`` in one sample: the simulation ran at 99.97 % of the speed of the computer's clock.
+
+The `ROS 2 design article on time <https://design.ros2.org/articles/clock_and_time.html>`__ names the two clocks a node can read:
+
+- System time: "``SystemTime`` will be directly tied to the system clock."
+- ROS time: "``ROSTime`` is considered active when the parameter ``use_sim_time`` is set on the node." It then reports the latest ``/clock``.
+
+In Code: now() and Two Kinds of Timer
+"""""""""""""""""""""""""""""""""""""
+
+A node reads its clock with ``now()``. A timer runs on one of two clocks. Lines 13 to 22 of ``include/l12_rosbot/sim_time_node.hpp`` (stage 5, commit ``6d2b94b``):
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 13
+   :emphasize-lines: 5, 8
+
+   class SimTimeNode : public rclcpp::Node {
+     public:
+       SimTimeNode()
+           : rclcpp::Node{"sim_time_node"},
+             node_clock_timer_{create_timer(
+                 std::chrono::seconds{1},
+                 std::bind(&SimTimeNode::node_clock_callback, this))},
+             wall_clock_timer_{create_wall_timer(
+                 std::chrono::seconds{1},
+                 std::bind(&SimTimeNode::wall_clock_callback, this))} {}
+
+- Line 17: a timer "that uses the node clock to drive the callback" (``rclcpp/node.hpp``).
+- Line 20: a timer "that uses the wall clock to drive the callback".
+- Each callback logs ``now().seconds()``, the node clock's time.
+
+Run It: use_sim_time Off, Then On
+"""""""""""""""""""""""""""""""""
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot sim_time_exe
+
+.. code-block:: text
+
+   [...]: create_wall_timer: now() = 1795198889.261 s
+   [...]: create_timer:      now() = 1795198889.261 s
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot sim_time_exe --ros-args -p use_sim_time:=true
+
+The first four lines:
+
+.. code-block:: text
+
+   [...]: create_wall_timer: now() = 0.000 s
+   [...]: create_wall_timer: now() = 0.000 s
+   [...]: create_timer:      now() = 31.184 s
+   [...]: create_wall_timer: now() = 31.896 s
+
+- Off: both read the computer's clock, in seconds since 1 January 1970.
+- On: the node subscribes to ``/clock``. Until the first message arrives, ``now()`` is 0: the article says ROS time "will return zero if nothing has been received."
+
+Pause Gazebo: Which Timer Stops
+"""""""""""""""""""""""""""""""
+
+With ``use_sim_time`` on, the world was paused, then resumed 4.3 s later with the same command and ``pause: false``:
+
+.. code-block:: bash
+
+   gz service -s /world/patrol/control --reqtype gz.msgs.WorldControl \
+     --reptype gz.msgs.Boolean --timeout 3000 --req 'pause: true'
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 36 30
+
+   * - Computer's clock (s)
+     - What happened
+     - ``now()`` (s)
+   * - 1795198894.988
+     - ``create_timer``
+     - 32.000
+   * - 1795198895.695
+     - Gazebo paused
+     -
+   * - 1795198895.884 to 1795198899.884
+     - ``create_wall_timer``, 5 times
+     - 32.892, then 32.896
+   * - 1795198899.992
+     - Gazebo resumed
+     -
+   * - 1795198900.401
+     - ``create_timer``
+     - 33.000
+   * - 1795198901.458
+     - ``create_timer``
+     - 34.000
+
+.. admonition:: Conclusion
+   :class: important
+
+   A ``create_timer`` timer follows the simulation: it stopped while Gazebo was paused. A wall timer kept firing, and ``now()`` did not move.
+
+.. dropdown:: More detail: Simulation time in this lecture's nodes
+   :class-container: more-detail
+   :icon: info
+
+   - Every node that runs with Gazebo sets ``use_sim_time`` to true: its ``now()``, and so the stamp of every ``TwistStamped``, is then the simulation's time. :ref:`l12-use-sim-time` sets it for both controllers at once.
+   - The controllers of the next section run ``control_callback`` on a ``create_wall_timer`` timer. With a real-time factor of 0.9997, 50 ms on the computer's clock is about 50 ms of simulation (50 × 0.9997 = 49.985 ms).
+   - A node that must stay in step with the simulation, when it runs slower than real time or is paused, uses ``create_timer``.
+   - Elapsed time comes from two readings of the same clock: ``(now() - start).seconds()``.
+
 
 Proportional Control
 --------------------
 
-The last section drove the ROSbot by hand with ``ros2 topic pub``. This section replaces your hand with a node: it reads where the ROSbot is and publishes velocity commands that turn it to a heading or drive it a distance.
+The last section drove the ROSbot by hand with ``ros2 topic pub``. This section replaces your hand with a node: it reads where the ROSbot is and publishes velocity commands that turn it to a heading.
 
 From a Terminal Command to a Node
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -691,7 +845,7 @@ Step 3: Install the Executable
    ament_target_dependencies(heading_controller_exe
      rclcpp geometry_msgs nav_msgs)
 
-Lines 53 and 54 install it, with the executable of the next subsection:
+Lines 53 and 54 install it, with ``distance_controller_exe``, the package's second controller, which the More detail box after Step 4 explains:
 
 .. code-block:: cmake
    :linenos:
@@ -730,95 +884,93 @@ With the simulation running:
 
    The robot turned from 0 to 1.552 rad (88.9°) by itself, and stopped within the 0.02 rad tolerance.
 
-Drive a Distance
-^^^^^^^^^^^^^^^^
+.. dropdown:: More detail: Drive a distance
+   :class-container: more-detail
+   :icon: info
 
-``distance_controller_node`` drives the ROSbot straight ahead for one distance. Only the error changes: the distance left to drive.
+   ``distance_controller_node`` drives the ROSbot straight ahead for one distance. Only the error changes: the distance left to drive.
 
-The Error of a Drive
-""""""""""""""""""""
+   .. rubric:: The Error of a Drive
 
-The same four steps; only the measured value changes, to the distance driven since the start. Lines 16 to 25 of ``src/distance_controller_node.cpp`` (stage 1):
+   The same four steps; only the measured value changes, to the distance driven since the start. Lines 16 to 25 of ``src/distance_controller_node.cpp`` (stage 1):
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 16
-   :emphasize-lines: 5-7
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 16
+      :emphasize-lines: 5-7
 
-   void DistanceControllerNode::odometry_callback(
-       const nav_msgs::msg::Odometry &msg) {
-       x_ = msg.pose.pose.position.x;
-       y_ = msg.pose.pose.position.y;
-       if (!has_odometry_) {
-           start_x_ = x_; // the first message gives the start
-           start_y_ = y_;
-           has_odometry_ = true;
-       }
-   }
+      void DistanceControllerNode::odometry_callback(
+          const nav_msgs::msg::Odometry &msg) {
+          x_ = msg.pose.pose.position.x;
+          y_ = msg.pose.pose.position.y;
+          if (!has_odometry_) {
+              start_x_ = x_; // the first message gives the start
+              start_y_ = y_;
+              has_odometry_ = true;
+          }
+      }
 
-Lines 31 to 33, in ``control_callback``:
+   Lines 31 to 33, in ``control_callback``:
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 31
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 31
 
-   const double driven{std::hypot(x_ - start_x_, y_ - start_y_)};
-   // The error: the distance left to drive.
-   const double error{target_distance_m - driven};
+      const double driven{std::hypot(x_ - start_x_, y_ - start_y_)};
+      // The error: the distance left to drive.
+      const double error{target_distance_m - driven};
 
-- Line 31: ``std::hypot`` gives :math:`\sqrt{\Delta x^2 + \Delta y^2}`, the distance from the start.
+   - Line 31: ``std::hypot`` gives :math:`\sqrt{\Delta x^2 + \Delta y^2}`, the distance from the start.
 
-The Same Law on the Forward Speed
-"""""""""""""""""""""""""""""""""
+   .. rubric:: The Same Law on the Forward Speed
 
-The constants are a 1.0 m target, a gain of 0.8 (m/s per m of error), a limit of 0.5 m/s and a tolerance of 0.02 m. Lines 43 to 45 and 52 to 57 of the same file:
+   The constants are a 1.0 m target, a gain of 0.8 (m/s per m of error), a limit of 0.5 m/s and a tolerance of 0.02 m. Lines 43 to 45 and 52 to 57 of the same file:
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 43
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 43
 
-   const double command{
-       std::clamp(kp_linear * error, -max_linear_mps,
-                  max_linear_mps)};
+      const double command{
+          std::clamp(kp_linear * error, -max_linear_mps,
+                     max_linear_mps)};
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 52
-   :emphasize-lines: 4
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 52
+      :emphasize-lines: 4
 
-   void DistanceControllerNode::publish_command(double linear_speed) {
-       geometry_msgs::msg::TwistStamped command{};
-       command.header.stamp = now();
-       command.twist.linear.x = linear_speed;
-       command_publisher_->publish(command);
-   }
+      void DistanceControllerNode::publish_command(double linear_speed) {
+          geometry_msgs::msg::TwistStamped command{};
+          command.header.stamp = now();
+          command.twist.linear.x = linear_speed;
+          command_publisher_->publish(command);
+      }
 
-- Line 55: only ``linear.x`` is set, so the robot drives straight ahead and does not turn.
-- The stop within the tolerance, the timer and the log are the same as in ``heading_controller_node``.
+   - Line 55: only ``linear.x`` is set, so the robot drives straight ahead and does not turn.
+   - The stop within the tolerance, the timer and the log are the same as in ``heading_controller_node``.
 
-Run the Distance Controller
-"""""""""""""""""""""""""""
+   .. rubric:: Run the Distance Controller
 
-``ros2 run l12_rosbot distance_controller_exe``, with the robot facing +y (``[...]`` is the cut prefix):
+   ``ros2 run l12_rosbot distance_controller_exe``, with the robot facing +y (``[...]`` is the cut prefix):
 
-.. code-block:: text
+   .. code-block:: text
 
-   [...]: error 1 m, command 0.5 m/s
-   [...]: error 0.627905 m, command 0.5 m/s
-   [...]: error 0.406843 m, command 0.325475 m/s
-   [...]: error 0.252548 m, command 0.202038 m/s
-   [...]: error 0.159472 m, command 0.127577 m/s
-   [...]: error 0.103942 m, command 0.0831533 m/s
-   [...]: distance reached: driven 0.980244 m, error 0.0197556 m
+      [...]: error 1 m, command 0.5 m/s
+      [...]: error 0.627905 m, command 0.5 m/s
+      [...]: error 0.406843 m, command 0.325475 m/s
+      [...]: error 0.252548 m, command 0.202038 m/s
+      [...]: error 0.159472 m, command 0.127577 m/s
+      [...]: error 0.103942 m, command 0.0831533 m/s
+      [...]: distance reached: driven 0.980244 m, error 0.0197556 m
 
-- The command stays at the 0.5 m/s limit while the error is over 0.5 / 0.8 = 0.625 m.
-- After that, from one line to the next (about 0.55 s), the error falls to about 63 % of its value: 0.407, 0.253, 0.159, 0.104 m.
-- The whole drive took 5.25 s (time stamps 1795157115.823 to 1795157121.073). The last 0.10 m alone took 2.0 s.
+   - The command stays at the 0.5 m/s limit while the error is over 0.5 / 0.8 = 0.625 m.
+   - After that, from one line to the next (about 0.55 s), the error falls to about 63 % of its value: 0.407, 0.253, 0.159, 0.104 m.
+   - The whole drive took 5.25 s (time stamps 1795157115.823 to 1795157121.073). The last 0.10 m alone took 2.0 s.
 
-.. admonition:: Conclusion
-   :class: important
+   .. admonition:: Conclusion
+      :class: important
 
-   Near the target the command is small, so a smaller tolerance costs more time.
+      Near the target the command is small, so a smaller tolerance costs more time.
 
 Proportional Control: What You Can Do Now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -826,7 +978,7 @@ Proportional Control: What You Can Do Now
 .. admonition:: Summary
    :class: tip
 
-   - Compute an error: the angle left to turn, the short way, or the distance left to drive.
+   - Compute an error: the angle left to turn, the short way.
    - Turn the error into a command with a gain and a limit: ``std::clamp(kp * error, -max, max)``.
    - Stop within a tolerance, and cancel the timer.
    - Run a controller node in Gazebo: odometry in, ``TwistStamped`` out.
@@ -919,49 +1071,51 @@ Lines 35 to 49 of ``heading_controller_node.hpp``, the end of the constructor (i
 - Line 39: the default value sets the type: 1.5 makes a double.
 - Line 45: the constructor reads each value once, into a data member.
 
-Why a Node Declares Its Parameters
-""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: Why a node declares its parameters
+   :class-container: more-detail
+   :icon: info
 
-A node accepts only the parameters it declared. Two tries on ``heading_controller_node``:
+   A node accepts only the parameters it declared. Two tries on ``heading_controller_node``:
 
-1. A misspelled name, while the node runs:
+   1. A misspelled name, while the node runs:
 
-   .. code-block:: bash
+      .. code-block:: bash
 
-      ros2 param set /heading_controller_node kp_lineer 2.0
+         ros2 param set /heading_controller_node kp_lineer 2.0
 
-   The command fails: "parameter 'kp_lineer' cannot be set because it was not declared".
+      The command fails: "parameter 'kp_lineer' cannot be set because it was not declared".
 
-2. A parameter of the other node, given at start with ``-p kp_linear:=0.8``. The node starts with no message, and ``ros2 param get /heading_controller_node kp_linear`` answers "Parameter not set".
+   2. A parameter of the other node, given at start with ``-p kp_linear:=0.8``. The node starts with no message, and ``ros2 param get /heading_controller_node kp_linear`` answers "Parameter not set".
 
-.. admonition:: Conclusion
-   :class: important
+   .. admonition:: Conclusion
+      :class: important
 
-   A wrong name on the command line at start is dropped without a message. Check what the node has with ``ros2 param list``.
+      A wrong name on the command line at start is dropped without a message. Check what the node has with ``ros2 param list``.
 
-An Array Parameter: a List of Headings
-""""""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: An array parameter: a list of headings
+   :class-container: more-detail
+   :icon: info
 
-``target_headings_deg`` holds four headings, read into a ``std::vector<double>``. The robot turns to each one in order. Lines 21 to 30 of ``heading_controller_node.cpp``:
+   ``target_headings_deg`` holds four headings, read into a ``std::vector<double>``. The robot turns to each one in order. Lines 21 to 30 of ``heading_controller_node.cpp``:
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 21
-   :emphasize-lines: 1, 9
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 21
+      :emphasize-lines: 1, 9
 
-   if (target_index_ >= target_headings_deg_.size()) {
-       publish_command(0.0);
-       control_timer_->cancel(); // done: no more control_callback
-       RCLCPP_INFO_STREAM(get_logger(),
-                          "all " << target_headings_deg_.size()
-                                 << " headings reached");
-       return;
-   }
-   const double target_deg{target_headings_deg_[target_index_]};
-   const double target_yaw{target_deg * std::numbers::pi / 180.0};
+      if (target_index_ >= target_headings_deg_.size()) {
+          publish_command(0.0);
+          control_timer_->cancel(); // done: no more control_callback
+          RCLCPP_INFO_STREAM(get_logger(),
+                             "all " << target_headings_deg_.size()
+                                    << " headings reached");
+          return;
+      }
+      const double target_deg{target_headings_deg_[target_index_]};
+      const double target_yaw{target_deg * std::numbers::pi / 180.0};
 
-- Line 29: ``target_index_`` picks the heading to reach now. Within the tolerance, line 41 adds 1 to it.
-- Line 21: after the last heading, the node stops for good.
+   - Line 29: ``target_index_`` picks the heading to reach now. Within the tolerance, line 41 adds 1 to it.
+   - Line 21: after the last heading, the node stops for good.
 
 Command-Line Tools: list and get
 """"""""""""""""""""""""""""""""
@@ -1020,31 +1174,32 @@ The node was started with ``kp_angular`` 0.5. During its first turn, the gain is
 
    ``ros2 param set`` changes the stored value. The node read ``kp_angular`` once, in its constructor, so its commands do not change.
 
-Command-Line Tools: dump
-""""""""""""""""""""""""
+.. dropdown:: More detail: Command-line tools: dump
+   :class-container: more-detail
+   :icon: info
 
-``ros2 param dump`` prints every stored value of a node. In this run, the node started with ``kp_angular`` 1.5, and ``ros2 param set`` then stored 0.5:
+   ``ros2 param dump`` prints every stored value of a node. In this run, the node started with ``kp_angular`` 1.5, and ``ros2 param set`` then stored 0.5:
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   ros2 param dump /heading_controller_node
+      ros2 param dump /heading_controller_node
 
-.. code-block:: text
+   .. code-block:: text
 
-   /heading_controller_node:
-     ros__parameters:
-       kp_angular: 0.5
-       max_angular_rps: 1.0
-       [...]
-       target_headings_deg:
-       - 90.0
-       - 180.0
-       - -90.0
-       - 0.0
-       use_sim_time: false
-       yaw_tolerance_rad: 0.02
+      /heading_controller_node:
+        ros__parameters:
+          kp_angular: 0.5
+          max_angular_rps: 1.0
+          [...]
+          target_headings_deg:
+          - 90.0
+          - 180.0
+          - -90.0
+          - 0.0
+          use_sim_time: false
+          yaw_tolerance_rad: 0.02
 
-The output is a parameter file: the next subsection loads files like it. ``[...]`` cuts the lines ROS 2 adds to every node.
+   The output is a parameter file: the next subsection loads files like it. ``[...]`` cuts the lines ROS 2 adds to every node.
 
 Set a Parameter
 ^^^^^^^^^^^^^^^
@@ -1065,11 +1220,11 @@ On the Command Line, at Start
 
    [...]: error 1.58335 rad, command 0.791676 rad/s
 
-0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command. The teleop node of the keyboard section got ``-p stamped:=true`` the same way.
+0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command.
 
 .. note::
 
-   Write a double with a decimal point. ``1`` is an integer, and ``kp_angular`` refuses it: "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed".
+   Write a double with a decimal point. With ``-p kp_angular:=1``, an integer, the node stops at start with an ``InvalidParameterTypeException``: "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed".
 
 From a YAML File
 """"""""""""""""
@@ -1092,7 +1247,7 @@ A parameter file sets many parameters at once: ``config/controllers.yaml``.
        max_angular_rps: 1.0
        yaw_tolerance_rad: 0.02
 
-- Line 7: a key names a node; its values are under ``ros__parameters``. Lines 14 to 19 hold ``distance_controller_node``'s.
+- Line 7: a key names a node; its values are under ``ros__parameters``. Lines 14 to 19 hold the package's other node.
 - Line 3: the **wildcard** key ``/**`` matches every node.
 
 From the package folder, ``l12_rosbot``:
@@ -1107,7 +1262,7 @@ From the package folder, ``l12_rosbot``:
 use_sim_time for a Node That Runs with Gazebo
 """""""""""""""""""""""""""""""""""""""""""""
 
-Gazebo publishes its own time on ``/clock``. With ``use_sim_time`` true, a node's clock follows ``/clock`` instead of the computer's clock: ``now()``, and so the stamp of every ``TwistStamped``, gives the simulation's time.
+Gazebo publishes its own time on ``/clock`` (:ref:`l12-simulation-time`). With ``use_sim_time`` true, a node's clock follows ``/clock`` instead of the computer's clock: ``now()``, and so the stamp of every ``TwistStamped``, gives the simulation's time.
 
 Every node has ``use_sim_time``, and it is false unless you set it:
 
@@ -1198,37 +1353,38 @@ The command stays at the 1.0 rad/s limit while the gain times the error is over 
 
    A gain of 4.0 kept the command at the limit longer, yet the turn was no faster: 2.70 s with 1.5 and with 4.0.
 
-From a Launch File: Values Written in It
-""""""""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: From a launch file: values written in it
+   :class-container: more-detail
+   :icon: info
 
-A launch file can also hold the values itself, as a Python dictionary. Lines 8 to 21 of ``launch/distance_launch.py``:
+   A launch file can also hold the values itself, as a Python dictionary. Lines 8 to 21 of ``launch/distance_launch.py``:
 
-.. code-block:: python
-   :linenos:
-   :lineno-start: 8
-   :emphasize-lines: 5-11
+   .. code-block:: python
+      :linenos:
+      :lineno-start: 8
+      :emphasize-lines: 5-11
 
-   distance_controller = Node(
-       package="l12_rosbot",
-       executable="distance_controller_exe",
-       parameters=[
-           {
-               "use_sim_time": True,
-               "target_distance_m": 1.0,
-               "kp_linear": 0.8,
-               "max_linear_mps": 0.5,
-               "distance_tolerance_m": 0.02,
-           }
-       ],
-       output="screen",
-   )
+      distance_controller = Node(
+          package="l12_rosbot",
+          executable="distance_controller_exe",
+          parameters=[
+              {
+                  "use_sim_time": True,
+                  "target_distance_m": 1.0,
+                  "kp_linear": 0.8,
+                  "max_linear_mps": 0.5,
+                  "distance_tolerance_m": 0.02,
+              }
+          ],
+          output="screen",
+      )
 
-With this launch file, the robot drove 0.981 m. A new value means editing the launch file, so values you tune belong in a YAML file.
+   With this launch file, the robot drove 0.981 m. A new value means editing the launch file, so values you tune belong in a YAML file.
 
 React to a Change
 ^^^^^^^^^^^^^^^^^
 
-A node can run a callback when someone sets a parameter. The callback accepts or rejects the new value. The listings of this subsection are from stage 4 (commit ``94d4d64``), the final code.
+A node can run a callback when someone sets a parameter. The callback accepts or rejects the new value. The listings of this subsection are from stage 4 (commit ``94d4d64``). Stage 5 does not change these files.
 
 Register the Callback
 """""""""""""""""""""
@@ -1263,37 +1419,38 @@ Lines 64 and 65 declare the callback, and lines 73 and 74 keep the handle:
 - The callback stays registered only while the handle, a data member, exists.
 - ``SetParametersResult`` is in ``rcl_interfaces``: add it to ``package.xml`` and ``CMakeLists.txt``.
 
-The Callback, Part 1: Refuse a Parameter Read Only at Start
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: The callback part that refuses ``target_headings_deg``
+   :class-container: more-detail
+   :icon: info
 
-Lines 68 to 81 of ``heading_controller_node.cpp``:
+   The loop of the next part starts with this check. Lines 68 to 81 of ``heading_controller_node.cpp``:
 
-.. code-block:: cpp
-   :linenos:
-   :lineno-start: 68
-   :emphasize-lines: 9-13
+   .. code-block:: cpp
+      :linenos:
+      :lineno-start: 68
+      :emphasize-lines: 9-13
 
-   rcl_interfaces::msg::SetParametersResult
-   HeadingControllerNode::on_parameters_set(
-       const std::vector<rclcpp::Parameter> &parameters) {
-       rcl_interfaces::msg::SetParametersResult result{};
-       // First check every new value. One bad value rejects the whole
-       // change.
-       for (const auto &parameter : parameters) {
-           const std::string &name{parameter.get_name()};
-           if (name == "target_headings_deg") {
-               result.successful = false;
-               result.reason =
-                   "target_headings_deg is read once, at start";
-               return result;
-           }
+      rcl_interfaces::msg::SetParametersResult
+      HeadingControllerNode::on_parameters_set(
+          const std::vector<rclcpp::Parameter> &parameters) {
+          rcl_interfaces::msg::SetParametersResult result{};
+          // First check every new value. One bad value rejects the whole
+          // change.
+          for (const auto &parameter : parameters) {
+              const std::string &name{parameter.get_name()};
+              if (name == "target_headings_deg") {
+                  result.successful = false;
+                  result.reason =
+                      "target_headings_deg is read once, at start";
+                  return result;
+              }
 
-- Lines 76 to 80: the node never reads the list again, so a new list would change nothing. The callback says so instead of accepting it.
+   - Lines 76 to 80: the node never reads the list again, so a new list would change nothing. The callback says so instead of accepting it.
 
-The Callback, Part 2: Refuse a Bad Value
+The Callback, Part 1: Refuse a Bad Value
 """"""""""""""""""""""""""""""""""""""""
 
-Lines 82 to 96 of the same file, still inside the first loop:
+Lines 82 to 96 of ``heading_controller_node.cpp``, the loop that checks each value:
 
 .. code-block:: cpp
    :linenos:
@@ -1319,7 +1476,7 @@ Lines 82 to 96 of the same file, still inside the first loop:
 - Line 82: a negative gain would turn the robot away from its target.
 - Lines 87 to 89: 3.14 rad/s is the ROSbot's turning limit.
 
-The Callback, Part 3: Store the New Values
+The Callback, Part 2: Store the New Values
 """"""""""""""""""""""""""""""""""""""""""
 
 Lines 97 to 114 of the same file:
@@ -1371,6 +1528,7 @@ The node runs with ``low_gain.yaml`` (gain 0.5). Five ``ros2 param set`` command
      - Set parameter successful
 
 - ROS 2's own type check refused ``kp_angular 2``: the answer is its message, not one of the callback's.
+- The callback refused ``target_headings_deg`` with the check of the More detail box above: the node never reads the list again.
 - The turn to 180° took 6.40 s at gain 0.5. The gain changed during the next turn, which took 3.20 s. The last turn, at 1.5, took 2.70 s.
 
 Parameters: What You Can Do Now
@@ -1388,7 +1546,7 @@ Parameters: What You Can Do Now
 Remapping
 ---------
 
-Parameters changed a node's settings without recompiling. **Remapping** does the same for the topic names in its code, and a **namespace** puts a prefix in front of them. Both use the same controller, unchanged.
+Parameters changed a node's settings without recompiling. **Remapping** does the same for the names it uses: its topics, its own name and its **namespace**. The controller's code stays the same.
 
 Why Remap: Topic Names Written in the Code
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1398,13 +1556,144 @@ Why Remap: Topic Names Written in the Code
 - **Another source.** ``differential_drive_controller`` also publishes ``/odometry/wheels``, the pose from the wheels alone. To compare the two, the controller must read ``/odometry/wheels``.
 - **A fleet.** Each robot of a fleet has its own topics, such as ``/robot1/cmd_vel`` and ``/robot2/cmd_vel``, and each controller must use its own robot's.
 
-Editing the strings means one copy of the code per job. Instead, ``--ros-args`` changes the names when the node starts:
+Editing the strings means one copy of the code per job. Instead, ``--ros-args -r`` changes the names when the node starts:
 
-- ``-r from:=to`` **remaps** one name to another.
-- ``-r __ns:=/robot1`` puts the node in a **namespace**: "a prefix added to the names of its nodes and of its relative topics", the definition of the previous lecture.
+- A **namespace**, "a prefix added to the names of its nodes and of its relative topics" (the definition of the previous lecture), gives each robot's controller its own names.
+- A **remapping rule** replaces one name with another.
+
+Namespaces
+^^^^^^^^^^
+
+A namespace is a prefix in front of a node's name and of its relative names, so the same code can run once per robot.
+
+Two Controllers with One Name
+"""""""""""""""""""""""""""""
+
+A fleet runs one controller per robot: the same executable, started once per robot. Started twice as it is, in two terminals:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe     # in each terminal
+
+- ``ros2 node list`` lists ``/heading_controller_node`` twice, after a warning: "Be aware that there are nodes in the graph that share an exact name, which can have unintended side effects."
+- ``ros2 topic info /cmd_vel`` answers "Publisher count: 3": the two controllers and ``rosbot_gz_bridge``.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The two nodes share one name, and both send commands on one ``/cmd_vel``. A namespace gives each controller its own names.
+
+One Namespace per Controller
+""""""""""""""""""""""""""""
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
+   ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2
+
+.. code-block:: bash
+
+   ros2 node list | grep heading
+
+.. code-block:: text
+
+   /robot1/heading_controller_node
+   /robot2/heading_controller_node
+
+.. code-block:: bash
+
+   ros2 topic list | grep robot
+
+.. code-block:: text
+
+   /robot1/cmd_vel
+   /robot1/odometry/filtered
+   /robot2/cmd_vel
+   /robot2/odometry/filtered
+   /robot_description
+
+- ``__ns`` put the prefix in front of each node's name and of its two topics. ``/robot_description`` is the ROSbot's description: ``grep`` matched it too.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The same code now runs with two sets of names, one per robot.
+
+Relative, Absolute and Private Names
+""""""""""""""""""""""""""""""""""""
+
+Whether a namespace changes a name depends on how the code writes it. The `ROS 2 design article on names <https://design.ros2.org/articles/topic_and_service_names.html>`__:
+
+- **Relative**, such as ``"cmd_vel"``: "A relative name does not begin with a forward slash (/) and does respect the namespace of the node which created them." In ``/robot1``: ``/robot1/cmd_vel``.
+- **Absolute**, such as ``"/rosout"``: "An absolute name begins with a forward slash (/) and does not respect namespaces". In ``/robot1``: still ``/rosout``.
+- **Private**, such as ``"~/status"``: "The special single character token ~ will be replaced with a namespace snippet that is a concatenation of the namespace for the node and the node name." In ``/robot1``: ``/robot1/heading_controller_node/status``. This lecture's code has no private name.
+
+The controllers write ``"odometry/filtered"`` and ``"cmd_vel"`` without a leading ``/``, so a namespace moves them. A name written with ``/`` would stay the same in every namespace.
+
+What the Namespace Changed
+""""""""""""""""""""""""""
+
+In the previous lecture, ``PushROSNamespace`` put the nodes of a launch file in a namespace; ``__ns`` does it from the command line. One controller in ``/robot1``:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
+
+``ros2 node info /robot1/heading_controller_node``, first lines:
+
+.. code-block:: text
+
+   Subscribers:
+     /parameter_events: rcl_interfaces/msg/ParameterEvent
+     /robot1/odometry/filtered: nav_msgs/msg/Odometry
+   Publishers:
+     /parameter_events: rcl_interfaces/msg/ParameterEvent
+     /robot1/cmd_vel: geometry_msgs/msg/TwistStamped
+
+- The node and both relative topic names got the prefix ``/robot1``.
+- ``ros2 topic info /robot1/odometry/filtered``: "Publisher count: 0". No odometry arrives, so ``control_callback`` returns at once: the node logged nothing, and by its code it publishes no command.
+
+Remapping Rules
+^^^^^^^^^^^^^^^
+
+A remapping rule replaces a name the node uses, when the node starts. It renames topics, the node itself and its namespace.
+
+A Rule: match:=replacement
+""""""""""""""""""""""""""
+
+The `ROS 2 design article on remapping <https://design.ros2.org/articles/static_remapping.html>`__: "**Remapping rules** are the instructions describing how a node should change the names it uses." A rule has two parts, written ``match:=replacement`` after ``-r``:
+
+- "The first part is used to determine if the rule applies to a name."
+- "The second part is the replacement for a matched name."
+
+Two match parts are special:
+
+- "The strings ``__name`` or ``__node`` can be given on the match part of a rule to signal a change of the node's name."
+- "The string ``__ns`` can be given on the match part of a rule to signal a change of the default namespace."
+
+.. dropdown:: More detail: Rename a node: __node
+   :class-container: more-detail
+   :icon: info
+
+   The two controllers of "Two Controllers with One Name", each with its own name:
+
+   .. code-block:: bash
+
+      ros2 run l12_rosbot heading_controller_exe \
+        --ros-args -r __node:=heading_a
+      ros2 run l12_rosbot heading_controller_exe \
+        --ros-args -r __node:=heading_b
+
+   - ``ros2 node list`` lists ``/heading_a`` and ``/heading_b``, with no warning.
+   - ``ros2 topic info /cmd_vel`` still answers "Publisher count: 3".
+
+   .. admonition:: Conclusion
+      :class: important
+
+      ``__node`` changed the node names, not the topic names. Both controllers still command the one ``/cmd_vel``.
 
 Remap a Topic: Read the Wheel Odometry
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""""""
 
 .. code-block:: bash
 
@@ -1427,31 +1716,8 @@ Remap a Topic: Read the Wheel Odometry
 
    Remapping changes where a node reads, not what the data means. Check what the new topic carries.
 
-Put the Node in a Namespace
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In the previous lecture, ``PushROSNamespace`` put the nodes of a launch file in a namespace. ``__ns`` does the same from the command line:
-
-.. code-block:: bash
-
-   ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
-
-``ros2 node info /robot1/heading_controller_node``, first lines:
-
-.. code-block:: text
-
-   Subscribers:
-     /parameter_events: rcl_interfaces/msg/ParameterEvent
-     /robot1/odometry/filtered: nav_msgs/msg/Odometry
-   Publishers:
-     /parameter_events: rcl_interfaces/msg/ParameterEvent
-     /robot1/cmd_vel: geometry_msgs/msg/TwistStamped
-
-- The node and both relative topic names got the prefix ``/robot1``.
-- ``ros2 topic info /robot1/odometry/filtered``: "Publisher count: 0". No odometry arrives, so ``control_callback`` returns at once: the node logged nothing and published no command.
-
 A Namespace and Remapping Together
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""""""""""""""""""""""""""""""""""
 
 The simulation has one ROSbot, with no namespace. Keep the node's namespace, and remap its two topics to the robot's absolute names:
 
@@ -1461,28 +1727,72 @@ The simulation has one ROSbot, with no namespace. Keep the node's namespace, and
      -r __ns:=/robot1 \
      -r odometry/filtered:=/odometry/filtered -r cmd_vel:=/cmd_vel
 
-.. code-block:: text
+.. figure:: /_static/images/l12/remap_graph.png
+   :alt: ROS graph drawn top to bottom. A rounded box ekf has an arrow down, labeled /odometry/filtered and nav_msgs/msg/Odometry, with tag 1 beside it, into a dashed box named /robot1 that holds the rounded box heading_controller_node. From that node, an arrow labeled /cmd_vel and geometry_msgs/msg/TwistStamped, with tag 2 beside it, goes down to a rounded box differential_drive_controller.
+   :align: center
+   :width: 55%
 
-   [INFO] [...] [robot1.heading_controller_node]: all 4 headings reached
+   Tag 1 is the rule for ``odometry/filtered``, tag 2 the rule for ``cmd_vel``; the dashed box is the namespace.
 
-- ``ros2 node info`` lists ``/odometry/filtered`` and ``/cmd_vel``: a name that starts with ``/`` is absolute, and the namespace does not change it.
-- In a launch file, ``Node(...)`` takes the same settings as ``namespace=`` and ``remappings=``.
+The log ends with ``[robot1.heading_controller_node]: all 4 headings reached``. A name that starts with ``/`` is absolute, so the namespace does not change the two replacements.
+
+Remapping and Parameters
+""""""""""""""""""""""""
+
+1. A parameter set in a namespace:
+
+   .. code-block:: bash
+
+      ros2 run l12_rosbot heading_controller_exe \
+        --ros-args -r __ns:=/robot1 -p kp_angular:=0.5
+      ros2 param get /robot1/heading_controller_node kp_angular
+
+   The answer is "Double value is: 0.5": a parameter is reached through the node's full name, namespace included.
+
+2. A rule on a parameter's name, ``-r kp_angular:=gain``: ``ros2 param list`` still lists ``kp_angular``, and no ``gain``.
 
 .. admonition:: Conclusion
    :class: important
 
-   The namespace names the node; the remapping points two of its topics at the robot. The code did not change.
+   Rules rename the node and its topics; parameter names stay. The design article's example says the same: "the parameter name remains unchanged".
 
-Remapping: What You Can Do Now
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In a Launch File: name, namespace and remappings
+""""""""""""""""""""""""""""""""""""""""""""""""
+
+Lines 9 to 20 of ``launch/remap_launch.py`` (stage 5, commit ``6d2b94b``):
+
+.. code-block:: python
+   :linenos:
+   :lineno-start: 9
+   :emphasize-lines: 4-9
+
+   heading_controller = Node(
+       package="l12_rosbot",
+       executable="heading_controller_exe",
+       name="heading_a",
+       namespace="robot1",
+       remappings=[
+           ("odometry/filtered", "/odometry/filtered"),
+           ("cmd_vel", "/cmd_vel"),
+       ],
+       parameters=[{"use_sim_time": True}],
+       output="screen",
+   )
+
+- Line 12 does what ``__node`` does, line 13 what ``__ns`` does, and lines 14 to 17 are two rules, each a (match, replacement) pair.
+- ``ros2 launch l12_rosbot remap_launch.py``: the node is ``/robot1/heading_a``, and it turned the ROSbot through its four headings.
+
+Namespaces and Remapping: What You Can Do Now
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. admonition:: Summary
    :class: tip
 
-   - Remap a topic name when a node starts: ``--ros-args -r from:=to``.
-   - Put a node in a namespace: ``-r __ns:=/name``. Its relative names get the prefix; its absolute names do not.
-   - Combine the two, to give a node its own name and still reach a robot's topics.
-   - Check the result with ``ros2 node info`` and ``ros2 topic info``.
+   - Put a node in a namespace: ``-r __ns:=/robot1``, or ``namespace=`` in a launch file. Relative names get the prefix; absolute names do not.
+   - Rename a node: ``-r __node:=heading_a``, or ``name=``.
+   - Remap a name: ``-r match:=replacement``, or ``remappings=[(match, replacement)]``.
+   - Reach a parameter through the node's full name; rules do not rename parameters.
+   - Check the result with ``ros2 node list``, ``ros2 node info``, ``ros2 topic list`` and ``ros2 topic info``.
 
 Next Class
 ----------

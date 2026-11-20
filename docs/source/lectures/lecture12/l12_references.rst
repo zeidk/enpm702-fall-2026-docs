@@ -11,7 +11,7 @@ References
 
         **ENPM702 L12: Robots in Gazebo and Parameters**
 
-        The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, the launch file and the programs it starts, RViz, the topics, and driving it with ``ros2 topic pub`` and the keyboard. Proportional control: the error of a turn and of a drive, the control law with a gain, a limit and a tolerance, a heading controller and a distance controller. Parameters: declaring and reading them, an array parameter, ``ros2 param list``, ``get``, ``set`` and ``dump``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback. Remapping: ``--ros-args -r`` for topic names and for the namespace, and the two together.
+        The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, starting the simulation, RViz, the topics, and driving it with ``ros2 topic pub``. Simulation time: ``/clock``, the computer's clock and ROS time, and which timer stops when Gazebo is paused. Proportional control: the error of a turn, the control law with a gain, a limit and a tolerance, and a heading controller. Parameters: declaring and reading them, ``ros2 param list``, ``get`` and ``set``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback. Namespaces and remapping: two controllers in two namespaces, relative, absolute and private names, a rule ``match:=replacement`` for a topic, a node name and a namespace, and the two together, on the command line and in a launch file.
 
         **Before the lecture**: read :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` and set up :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
 
@@ -33,3 +33,9 @@ References
     **ROS 2 Documentation: Jazzy** (Open Robotics, 2024)
 
     - `Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`_
+
+    **ROS 2 Design** (Open Robotics)
+
+    - `Clock and Time <https://design.ros2.org/articles/clock_and_time.html>`_
+    - `Topic and Service name mapping to DDS <https://design.ros2.org/articles/topic_and_service_names.html>`_
+    - `Remapping Names <https://design.ros2.org/articles/static_remapping.html>`_

@@ -2,7 +2,7 @@
 ROS Exercises
 ====================================================
 
-These exercises use the package ``l12_rosbot`` of the lecture, in your own workspace, with the Gazebo simulation running (``ros2 launch gp2_bringup gp2_sim.launch.py``). Start from the final code of the package (stage 4). Restart the simulation before each run, so the robot starts at the origin and faces east.
+These exercises use the package ``l12_rosbot`` of the lecture, in your own workspace, with the Gazebo simulation running (``ros2 launch gp2_bringup gp2_sim.launch.py``). Start from the final code of the package (stage 5). Restart the simulation before each run, so the robot starts at the origin and faces east.
 
 .. note::
 
@@ -53,38 +53,44 @@ These exercises use the package ``l12_rosbot`` of the lecture, in your own works
           ros2 launch l12_rosbot heading_launch.py \
             params_file:=install/l12_rosbot/share/l12_rosbot/config/my_headings.yaml
 
-    7. While the node runs, check the values with ``ros2 param get`` for ``kp_angular`` and ``use_sim_time``, and with ``ros2 param dump``. Then run the node with a plain ``ros2 run`` and no file, and check ``use_sim_time`` again. What changed, and why?
+    7. While the node runs, check the values with ``ros2 param get`` for ``kp_angular`` and ``use_sim_time``. Then run the node with a plain ``ros2 run`` and no file, and check ``use_sim_time`` again. What changed, and why?
 
 
-.. dropdown:: Exercise 2: A Parameter Callback for the Distance Controller
+.. dropdown:: Exercise 2: A Stricter Parameter Callback
     :icon: rocket
     :class-container: sd-border-warning
     :class-title: sd-font-weight-bold
 
     **Goal**
 
-    Give ``distance_controller_node`` the parameter callback that ``heading_controller_node`` has, so the node checks a new value while the robot drives.
+    ``on_parameters_set`` in ``heading_controller_node`` checks ``kp_angular`` and ``max_angular_rps``, but it accepts any ``yaw_tolerance_rad`` and a gain of exactly 0. Close both gaps.
 
     **Specification**
 
-    1. Add ``rcl_interfaces`` to ``distance_controller_exe`` in ``CMakeLists.txt``, in the ``ament_target_dependencies`` of that executable. ``package.xml`` already lists it.
-    2. In ``DistanceControllerNode``, add a method ``on_parameters_set`` that takes ``const std::vector<rclcpp::Parameter> &`` and returns ``rcl_interfaces::msg::SetParametersResult``, and a data member that keeps the handle returned by ``add_on_set_parameters_callback``. Register the callback at the end of the constructor.
-    3. The callback first checks every value of one set command, and rejects the whole command if one value is bad, with a ``reason`` that names the parameter:
+    1. Before you change anything, explain what each value would do to a turn:
 
-       - ``target_distance_m`` is read once, at start, as ``target_headings_deg`` is in the heading controller. Reject any new value, with a ``reason`` that says so.
-       - ``distance_tolerance_m`` must be more than 0.
-       - ``kp_linear`` must not be negative.
-       - ``max_linear_mps`` must be more than 0 and at most 1.0, the ROSbot's forward speed limit.
+       - ``yaw_tolerance_rad`` 0.0 or less: when does ``control_callback`` decide that the heading is reached?
+       - ``kp_angular`` 0.0: what command does the proportional control law give, whatever the error?
 
-    4. If every value is good, the callback stores the new values of ``kp_linear``, ``max_linear_mps`` and ``distance_tolerance_m`` in their data members, logs ``new value: <name> = <value>``, and returns ``successful = true``.
-    5. Build and run ``distance_controller_exe``. While the node runs, send these ``ros2 param set`` commands and write down each answer:
+    2. In the first loop of ``on_parameters_set``, which checks every new value before anything is stored, add two checks, each with a ``reason`` that names the parameter:
 
-       - ``kp_linear -0.5``
-       - ``max_linear_mps 1.5``
-       - ``distance_tolerance_m 0.0``
-       - ``target_distance_m 2.0``
-       - ``kp_linear 1`` (what does ROS 2 answer, and who refuses it: your callback or ROS 2?)
-       - ``kp_linear 0.4``
+       - ``yaw_tolerance_rad`` must be more than 0.
+       - ``kp_angular`` must be more than 0 (today the check refuses only a negative gain).
 
-    6. Restart the simulation. Run the node, and send ``ros2 param set /distance_controller_node kp_linear 0.4`` during the drive, as early as you can. Compare the ``command`` lines before and after the set with 0.8 × error and 0.4 × error. Does the new gain change the command from the next ``control_callback`` on?
-    7. Restart the simulation again and run the node with ``--ros-args -p max_linear_mps:=0.3 -p kp_linear:=0.4``. Before you run it, predict the first command and the error at which the command leaves the limit. Then compare with the log.
+    3. In the second loop, nothing changes: it already stores ``yaw_tolerance_rad`` and ``kp_angular``.
+    4. Build, start the simulation, and run the node with ``config/low_gain.yaml``, so each turn takes several seconds:
+
+       .. code-block:: bash
+
+          ros2 run l12_rosbot heading_controller_exe \
+            --ros-args --params-file config/low_gain.yaml
+
+    5. While the robot turns, send these ``ros2 param set`` commands and write down each answer:
+
+       - ``yaw_tolerance_rad 0.0``
+       - ``yaw_tolerance_rad -0.01``
+       - ``kp_angular 0.0``
+       - ``kp_angular 0`` (what does ROS 2 answer, and who refuses it: your callback or ROS 2?)
+       - ``yaw_tolerance_rad 0.05``
+
+    6. After the last set, read the ``error`` of the next ``heading ... deg reached`` lines. Is it now under 0.05 rad instead of under 0.02 rad? Does the turn end sooner?

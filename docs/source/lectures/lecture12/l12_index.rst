@@ -5,13 +5,13 @@ L12: Robots in Gazebo and Parameters
 Overview
 --------
 
-This lecture puts the Husarion ROSbot in a Gazebo world and writes the first controllers for it. The ROSbot is the robot of Lecture 12 to Lecture 14 and of Group Project 2. You start it with one launch file, see what the launch file starts, view the robot in **RViz**, read its pose from ``/odometry/filtered``, and drive it with ``TwistStamped`` messages on ``/cmd_vel``. Gazebo has its own topics, and a bridge copies the ones you need to ROS.
+This lecture puts the Husarion ROSbot in a Gazebo world and writes the first controllers for it. The ROSbot is the robot of Lecture 12 to Lecture 14 and of Group Project 2. You start it with one launch file, see what the launch file starts, view the robot in **RViz**, read its pose from ``/odometry/filtered``, and drive it with ``TwistStamped`` messages on ``/cmd_vel``. Gazebo has its own topics, and a bridge copies the ones you need to ROS. Gazebo also has its own clock, **simulation time**: the lecture shows what ``use_sim_time`` changes for ``now()``, and which kind of timer stops when Gazebo is paused.
 
-A **proportional controller** sets a speed in proportion to an error. The lecture writes two of them as nodes: one turns the ROSbot on the spot to a heading, and one drives it straight for a distance. Each has a gain, a speed limit and a tolerance.
+A **proportional controller** sets a speed in proportion to an error. The lecture writes one as a node that turns the ROSbot on the spot to a heading. It has a gain, a speed limit and a tolerance. A second node, which drives the ROSbot straight for a distance, is in a More detail box of the lecture page.
 
 Those numbers are then moved out of the code into **parameters**: named values of a node that you set at start or change while the node runs, without a rebuild. The lecture declares and reads them, sets them with ``-p``, a YAML file and a launch file, and uses a parameter callback to accept or reject a new value while the ROSbot turns.
 
-The last section is **remapping**. With ``--ros-args -r`` you change the topic names a node uses, and put the node in a **namespace**, without editing its code. The lecture runs the same heading controller on the wheel odometry, inside the namespace ``/robot1``, and with both settings together.
+The last section is **namespaces** and **remapping**. A namespace is a prefix in front of a node's name and of its relative names, so the same code runs once per robot. A remapping rule, ``match:=replacement``, changes a name the node uses without editing its code. The lecture runs two copies of the heading controller in two namespaces, reads the wheel odometry with a rule, combines a namespace with two rules, and writes the same settings in a launch file.
 
 Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` and set up the :doc:`ROSbot Simulation </setup/rosbot_simulation>`. Then do the two steps of the Before Class part of the :doc:`l12_lecture`: update your copy of the course repository, and build the package ``l12_rosbot``.
 
@@ -22,14 +22,16 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
 
    - Start the **ROSbot** in **Gazebo**, and explain why Gazebo's own topics reach ROS only through a **bridge**.
    - View the robot in **RViz**, list its ROS topics, and drive it with a ``TwistStamped`` command on ``/cmd_vel``.
-   - Read the robot's position and its **yaw** from ``/odometry/filtered``.
-   - Compute the **error** of a turn, the angle left to turn the short way, and the error of a drive, the distance left.
+   - Read the robot's pose from ``/odometry/filtered``, and compute its **yaw** from the orientation.
+   - Explain the difference between the computer's clock and **simulation time**, what ``use_sim_time`` changes for ``now()``, and which kind of **timer** stops when Gazebo is paused.
+   - Compute the **error** of a turn, the angle left to turn the short way.
    - Write a **proportional controller** node: a command that is a **gain** times the error, limited to a maximum speed, that stops within a **tolerance**.
    - **Declare** a **parameter** with a type and a default value, and read it in a node.
    - Set parameters at start with ``-p``, with a **parameter file**, and with a **launch file**, and set ``use_sim_time`` for a node that runs with Gazebo.
-   - List, get, set and dump the parameters of a running node, and explain why a value the node already read does not change its behavior.
+   - List, get and set the parameters of a running node, and explain why a value the node already read does not change its behavior.
    - Check and store a new value while the node runs, with a **parameter callback**.
-   - **Remap** a topic name and put a node in a **namespace** from the command line with ``--ros-args -r``, and combine the two.
+   - Put a node in a **namespace**, and tell how it changes a **relative**, an **absolute** and a **private** name.
+   - Write a **remapping rule**, ``match:=replacement``, with ``--ros-args -r`` or in a launch file, to rename a topic, a node or a namespace, and combine rules with a namespace.
 
 .. toctree::
    :hidden:
