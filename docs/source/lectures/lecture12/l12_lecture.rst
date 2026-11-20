@@ -2,533 +2,1265 @@
 Lecture
 ====================================================
 
+Before Class
+------------
 
-.. note::
-
-   **Draft.** This page states what Lecture 12 covers and holds its
-   Parameters part in full. The other parts will be written from the
-   slides. Every C++ example in the Parameters part was built with the
-   course flags (``-std=c++20 -Wall -Wextra -pedantic-errors -Wshadow``)
-   without a warning, on ROS 2 Jazzy, and every output is pasted from a
-   run.
-
-
-What This Lecture Covers
-====================================================
-
-Lecture 12 puts a real robot under your code, then makes the code easy
-to tune. It has three parts:
-
-1. **The ROSbot in Gazebo.** The Husarion ROSbot is the robot of
-   Lecture 12 to Lecture 14 and of Group Project 2. :doc:`ROSbot
-   Simulation </setup/rosbot_simulation>` shows how to install, build and
-   start it. The topics of the ROSbot and the messages on them are in
-   :doc:`Mobile Robot Messages
-   </reading_material/robot_messages/rmsg_index>`: read it before this
-   lecture.
-2. **Proportional control.** A **proportional controller** sets a
-   command in proportion to an error. For example, the angular velocity
-   of a robot is a gain times the angle between the direction the robot
-   faces and the direction it should face. The gain is a number that you
-   tune.
-3. **Parameters.** A **parameter** is a value of a node that you set
-   when the node starts, or change while it runs, without a rebuild. The
-   gain of a controller and the speed limit of a robot are parameters.
-   This part is below.
-
-Services and actions are not in this lecture. :doc:`Services and
-Actions </reading_material/services_actions/sa_index>` is a reading
-module with extra material.
-
-
-Parameters
-====================================================
-
-A node has values that you want to change without editing the code and
-building again: a speed, a name, the gain of a controller. A ROS 2
-**parameter** is such a value. It belongs to one node, it has a name and
-a type, and the node declares it. You can set it from the command line,
-from a file, from a launch file, or while the node runs.
-
-The example is the robotaxi of Lecture 10. Its node publishes its
-position every 0.5 s, and now its name, its speed and its start position
-are parameters.
-
-Declare and Read a Parameter
-----------------------------------------------------
-
-A node must **declare** a parameter before anyone can use it. The call
-``declare_parameter<Type>(name, default)`` declares it with a default
-value, and returns the value that the parameter holds. If nobody sets
-the parameter, that value is the default.
-
-The type of a parameter is one of ``bool``, ``int64``, ``double``,
-``string``, ``byte`` array, or an array of one of the others. The first
-declaration fixes the type. The robotaxi has a ``string``, ``robotaxi_name``,
-and two ``double`` parameters, ``speed_mps`` (in m/s) and ``start_x_m``
-(in m).
-
-``l12_robotaxi/include/l12_robotaxi/robotaxi_node.hpp``:
-
-.. code-block:: cpp
-
-   #pragma once
-   #include <chrono>
-   #include <functional>
-   #include <geometry_msgs/msg/point.hpp>
-   #include <memory>
-   #include <rcl_interfaces/msg/set_parameters_result.hpp>
-   #include <rclcpp/rclcpp.hpp>
-   #include <string>
-   #include <vector>
-
-   namespace l12_robotaxi {
-
-   // Publishes the robotaxi's position every 0.5 s. Its name, speed and start position
-   // are parameters.
-   class RobotaxiNode : public rclcpp::Node {
-     public:
-       RobotaxiNode()
-           : rclcpp::Node{"robotaxi_node"},
-             // declare_parameter declares the parameter and returns its value.
-             robotaxi_name_{declare_parameter<std::string>("robotaxi_name", "robotaxi_1")},
-             speed_mps_{declare_parameter<double>("speed_mps", 2.0)},
-             x_{declare_parameter<double>("start_x_m", 0.0)},
-             publisher_{create_publisher<geometry_msgs::msg::Point>("robotaxi/position", 10)},
-             timer_{create_wall_timer(std::chrono::milliseconds{500},
-                                      std::bind(&RobotaxiNode::publish_position, this))},
-             parameter_callback_{add_on_set_parameters_callback(
-                 std::bind(&RobotaxiNode::on_parameters, this, std::placeholders::_1))} {
-           RCLCPP_INFO_STREAM(get_logger(), robotaxi_name_ << " starts at x = " << x_
-                                                           << " m, speed " << speed_mps_ << " m/s");
-       }
-
-     private:
-       void publish_position();
-       rcl_interfaces::msg::SetParametersResult
-       on_parameters(const std::vector<rclcpp::Parameter> &parameters);
-
-       std::string robotaxi_name_;
-       double speed_mps_; // in m/s
-       double x_;         // position along the street, in m
-       rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr publisher_;
-       rclcpp::TimerBase::SharedPtr timer_;
-       rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr parameter_callback_;
-   };
-
-   } // namespace l12_robotaxi
-
-The first three members take their values from the three parameters.
-``x_`` holds the start position first, and then the current position.
-The members are initialized in the order in which they are declared.
-
-``l12_robotaxi/src/robotaxi_node.cpp``:
-
-.. code-block:: cpp
-
-   #include "l12_robotaxi/robotaxi_node.hpp"
-
-   namespace l12_robotaxi {
-
-   void RobotaxiNode::publish_position() {
-       x_ += speed_mps_ * 0.5; // the timer period is 0.5 s
-       geometry_msgs::msg::Point msg{};
-       msg.x = x_;
-       publisher_->publish(msg);
-       RCLCPP_INFO_STREAM(get_logger(), "x = " << x_ << " m");
-   }
-
-   rcl_interfaces::msg::SetParametersResult
-   RobotaxiNode::on_parameters(const std::vector<rclcpp::Parameter> &parameters) {
-       rcl_interfaces::msg::SetParametersResult result{};
-       result.successful = true;
-       for (const rclcpp::Parameter &parameter : parameters) {
-           if (parameter.get_name() != "speed_mps") {
-               continue;
-           }
-           if (parameter.as_double() < 0.0) {
-               result.successful = false;
-               result.reason = "speed_mps must not be negative";
-               return result;
-           }
-           speed_mps_ = parameter.as_double();
-           RCLCPP_INFO_STREAM(get_logger(), "speed_mps is now " << speed_mps_ << " m/s");
-       }
-       return result;
-   }
-
-   } // namespace l12_robotaxi
-
-``l12_robotaxi/src/robotaxi_main.cpp`` is the ``main`` of
-Lecture 10, with ``l12_robotaxi::RobotaxiNode`` as the node:
-
-.. code-block:: cpp
-
-   #include <memory>
-
-   #include <rclcpp/rclcpp.hpp>
-
-   #include "l12_robotaxi/robotaxi_node.hpp"
-
-   int main(int argc, char **argv) {
-       rclcpp::init(argc, argv);
-       auto node{std::make_shared<l12_robotaxi::RobotaxiNode>()};
-       rclcpp::spin(node);
-       if (rclcpp::ok()) {
-           rclcpp::shutdown();
-       }
-   }
-
-Run it with no setting. The node uses the defaults:
+Before this class, get the latest edits of the course repository into your copy (assuming you have already followed the `instructions <../../setup/ros_setup.html#ros-2-workspace>`__), from ``~/ros2_ws/src/enpm702-fall-2026-ros``:
 
 .. code-block:: bash
 
-   ros2 run l12_robotaxi robotaxi_exe
+   git fetch upstream
+   git merge --no-edit upstream/main
+   git push
 
-.. code-block:: text
-
-   [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 2 m/s
-   [INFO] [...] [robotaxi_node]: x = 1 m
-   [INFO] [...] [robotaxi_node]: x = 2 m
-   [INFO] [...] [robotaxi_node]: x = 3 m
-   [INFO] [...] [robotaxi_node]: x = 4 m
-
-The speed is 2 m/s, so the position grows by 1 m every 0.5 s.
-
-
-Set a Parameter When the Node Starts
-----------------------------------------------------
-
-There are three ways. They all set the same parameter, so they differ
-only in where the value is written.
-
-**On the command line.** ``--ros-args`` starts the ROS arguments, and
-``-p name:=value`` sets one parameter:
+Its ``rosbot_sim`` folder holds the simulation. Install and build it with the steps of the :doc:`ROSbot Simulation </setup/rosbot_simulation>` page. Its last step starts Gazebo with the ROSbot, which needs about 40 s the first time:
 
 .. code-block:: bash
 
-   ros2 run l12_robotaxi robotaxi_exe --ros-args -p speed_mps:=3.0 -p robotaxi_name:=taxi_7
+   ros2 launch gp2_bringup gp2_sim.launch.py
 
-.. code-block:: text
-
-   [INFO] [...] [robotaxi_node]: taxi_7 starts at x = 0 m, speed 3 m/s
-   [INFO] [...] [robotaxi_node]: x = 1.5 m
-   [INFO] [...] [robotaxi_node]: x = 3 m
-   [INFO] [...] [robotaxi_node]: x = 4.5 m
-
-**In a YAML file.** A parameter file is a YAML file. It starts with the
-name of a node, then ``ros__parameters``, then one line per parameter.
-``--params-file`` loads it.
-
-``l12_robotaxi/config/robotaxi_params.yaml``:
-
-.. code-block:: yaml
-
-   robotaxi_node:
-     ros__parameters:
-       robotaxi_name: "robotaxi_1"
-       speed_mps: 2.0
-       start_x_m: 0.0
+Then build this lecture's package, ``L12/l12_rosbot``, from ``~/ros2_ws``:
 
 .. code-block:: bash
 
-   ros2 run l12_robotaxi robotaxi_exe --ros-args --params-file <path to the file>
+   colcon build --packages-select l12_rosbot
+   source install/setup.bash
 
-The name at the top of the file must be the name of the node. If you
-start the same executable with another node name, the node ignores the
-section and uses its defaults. With ``-r __node:=taxi_b`` and the file
-above, the node ``taxi_b`` logs a speed of 2 m/s, which is the default,
-and not a different value:
+In class, I do not explain the shell commands: you learned them in the shell exercises on ReadTheDocs, which every student was asked to do.
 
-.. code-block:: text
+Code for This Lecture
+---------------------
 
-   [INFO] [...] [taxi_b]: robotaxi_1 starts at x = 0 m, speed 2 m/s
-   [INFO] [...] [taxi_b]: x = 1 m
-
-To give the same value to every node, write ``/**`` instead of a node
-name. A node reads the parameters it declares and ignores the others.
-This file sets ``speed_mps`` for any node:
-
-``l12_robotaxi/config/fleet_params.yaml``:
-
-.. code-block:: yaml
-
-   /**:
-     ros__parameters:
-       speed_mps: 1.5
-
-Started with this file, and with the new name ``taxi_b``, the node uses
-a speed of 1.5 m/s:
+The ``L12`` folder of the course repository holds one package, ``l12_rosbot``. It has the two controller nodes of this lecture, a configuration folder and a launch folder:
 
 .. code-block:: text
 
-   [INFO] [...] [taxi_b]: robotaxi_1 starts at x = 0 m, speed 1.5 m/s
-   [INFO] [...] [taxi_b]: x = 0.75 m
+   enpm702-fall-2026-ros/L12/l12_rosbot/
+   ├── CMakeLists.txt
+   ├── package.xml
+   ├── config/
+   │   ├── controllers.yaml
+   │   └── low_gain.yaml
+   ├── include/l12_rosbot/
+   │   ├── geometry.hpp
+   │   ├── heading_controller_node.hpp
+   │   └── distance_controller_node.hpp
+   ├── launch/
+   │   ├── heading_launch.py
+   │   └── distance_launch.py
+   └── src/
+       ├── heading_controller_main.cpp
+       ├── heading_controller_node.cpp
+       ├── distance_controller_main.cpp
+       └── distance_controller_node.cpp
 
-**In a launch file.** A launch file loads the YAML file for you, so you
-do not type the path. The launch argument ``params_file`` names the file,
-and its default is the file in the package. ``ros2 launch ...
-params_file:=<path>`` loads another file.
-
-``l12_robotaxi/launch/robotaxi_launch.py``:
-
-.. code-block:: python
-
-   import os
-
-   from ament_index_python.packages import get_package_share_directory
-   from launch import LaunchDescription
-   from launch.actions import DeclareLaunchArgument
-   from launch.substitutions import LaunchConfiguration
-   from launch_ros.actions import Node
-
-
-   def generate_launch_description():
-       default_file = os.path.join(
-           get_package_share_directory("l12_robotaxi"), "config", "robotaxi_params.yaml"
-       )
-       return LaunchDescription(
-           [
-               # ros2 launch l12_robotaxi robotaxi_launch.py params_file:=<path>
-               DeclareLaunchArgument("params_file", default_value=default_file),
-               Node(
-                   package="l12_robotaxi",
-                   executable="robotaxi_exe",
-                   parameters=[LaunchConfiguration("params_file")],
-                   output="screen",
-               ),
-           ]
-       )
-
-The package must install the folders ``config`` and ``launch``, or the
-launch file does not find the YAML file. The line
-``install(DIRECTORY config launch ...)`` of ``CMakeLists.txt`` does it:
-
-``l12_robotaxi/CMakeLists.txt``:
-
-.. code-block:: cmake
-
-   cmake_minimum_required(VERSION 3.8)
-   project(l12_robotaxi)
-
-   set(CMAKE_CXX_STANDARD 20)
-   set(CMAKE_CXX_STANDARD_REQUIRED ON)
-   set(CMAKE_CXX_EXTENSIONS OFF)
-
-   if(NOT CMAKE_BUILD_TYPE)
-     set(CMAKE_BUILD_TYPE Debug)
-   endif()
-
-   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-     add_compile_options(-Wall -Wextra -pedantic-errors -Wshadow)
-   endif()
-
-   find_package(ament_cmake REQUIRED)
-   find_package(rclcpp REQUIRED)
-   find_package(geometry_msgs REQUIRED)
-
-   include_directories(include)
-
-   add_executable(robotaxi_exe src/robotaxi_main.cpp src/robotaxi_node.cpp)
-   ament_target_dependencies(robotaxi_exe rclcpp geometry_msgs)
-
-   install(TARGETS robotaxi_exe DESTINATION lib/${PROJECT_NAME})
-
-   # Copies config/ and launch/ to install/l12_robotaxi/share/l12_robotaxi, where the launch
-   # file looks for the YAML file.
-   install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
-
-   ament_package()
-
-``l12_robotaxi/package.xml``:
-
-.. code-block:: xml
-
-   <?xml version="1.0"?>
-   <package format="3">
-     <name>l12_robotaxi</name>
-     <version>0.0.0</version>
-     <description>A robotaxi node with parameters, loaded from a YAML file by a launch file.</description>
-     <maintainer email="zeidk@umd.edu">zeidk</maintainer>
-     <license>Apache-2.0</license>
-
-     <buildtool_depend>ament_cmake</buildtool_depend>
-
-     <depend>rclcpp</depend>
-     <depend>geometry_msgs</depend>
-
-     <exec_depend>ros2launch</exec_depend>
-     <exec_depend>ament_index_python</exec_depend>
-
-     <export>
-       <build_type>ament_cmake</build_type>
-     </export>
-   </package>
-
-Run the launch file with the default file, then with ``fast.yaml``, a
-file that sets ``speed_mps`` to 5.0:
-
-``fast.yaml``:
-
-.. code-block:: yaml
-
-   robotaxi_node:
-     ros__parameters:
-       speed_mps: 5.0
-
-.. code-block:: bash
-
-   ros2 launch l12_robotaxi robotaxi_launch.py
-   ros2 launch l12_robotaxi robotaxi_launch.py params_file:=$PWD/fast.yaml
-
-.. code-block:: text
-
-   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 2 m/s
-   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: x = 1 m
-
-.. code-block:: text
-
-   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: robotaxi_1 starts at x = 0 m, speed 5 m/s
-   [robotaxi_exe-1] [INFO] [...] [robotaxi_node]: x = 2.5 m
-
-With the speed of 5 m/s, the position grows by 2.5 m every 0.5 s.
-
-
-Change a Parameter While the Node Runs
-----------------------------------------------------
-
-The ``ros2 param`` command works on a running node:
+The code grows in four stages, one commit each. The lecture quotes the stage a listing belongs to, because the line numbers change from stage to stage:
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 80
-   :class: compact-table
+   :widths: 10 14 76
 
-   * - Command
-     - What it does
-   * - ``ros2 param list``
-     - Lists the parameters of a node, or of every node.
-   * - ``ros2 param get``
-     - Prints the value of one parameter.
-   * - ``ros2 param describe``
-     - Prints the type of a parameter, and its description and limits
-       if the node gave them.
-   * - ``ros2 param set``
-     - Sets a parameter of a running node.
-   * - ``ros2 param dump``
-     - Prints the parameters of a node in the YAML format.
-   * - ``ros2 param load``
-     - Loads a YAML file into a running node.
-   * - ``ros2 param delete``
-     - Deletes a parameter.
+   * - Stage
+     - Commit
+     - What it adds
+   * - 1
+     - ``8bd21e7``
+     - The two controllers, with the gains and limits as constants in the code.
+   * - 2
+     - ``9434e00``
+     - The controllers read their gains and limits from parameters, once, in the constructor.
+   * - 3
+     - ``e7048f4``
+     - The ``config`` and ``launch`` folders: a parameter file and two launch files.
+   * - 4
+     - ``94d4d64``
+     - A parameter callback in ``heading_controller_node``. This is the final code of the package.
 
-With ``robotaxi_exe`` running:
+To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository.
 
-.. code-block:: text
+The ROSbot in Gazebo
+--------------------
 
-   $ ros2 param list /robotaxi_node
-     qos_overrides./parameter_events.publisher.depth
-     qos_overrides./parameter_events.publisher.durability
-     qos_overrides./parameter_events.publisher.history
-     qos_overrides./parameter_events.publisher.reliability
-     robotaxi_name
-     speed_mps
-     start_type_description_service
-     start_x_m
-     use_sim_time
-   $ ros2 param get /robotaxi_node speed_mps
-   Double value is: 2.0
-   $ ros2 param describe /robotaxi_node speed_mps
-   Parameter name: speed_mps
-     Type: double
-     Constraints:
-   $ ros2 param set /robotaxi_node speed_mps 4.0
-   Set parameter successful
-   $ ros2 param set /robotaxi_node speed_mps -1.0
-   Setting parameter failed: speed_mps must not be negative
-   $ ros2 param set /robotaxi_node speed_mps 3
-   Setting parameter failed: Wrong parameter type, parameter {speed_mps} is of type {double}, setting it to {integer} is not allowed.
-   $ ros2 param set /robotaxi_node colour red
-   Setting parameter failed: parameter 'colour' cannot be set because it was not declared
-   $ ros2 param get /robotaxi_node speed_mps
-   Double value is: 4.0
-   $ ros2 param dump /robotaxi_node
-   /robotaxi_node:
-     ros__parameters:
-       qos_overrides:
-         /parameter_events:
-           publisher:
-             depth: 1000
-             durability: volatile
-             history: keep_last
-             reliability: reliable
-       robotaxi_name: robotaxi_1
-       speed_mps: 4.0
-       start_type_description_service: true
-       start_x_m: 0.0
-       use_sim_time: false
+The previous lecture set up launch files, executors and custom interfaces for the robotaxi. This lecture moves to a simulated robot, the one GP2 uses. **Gazebo** is a simulator: it runs a robot and its sensors in a virtual world.
 
-The list holds the three parameters of the robotaxi, and the parameters
-that every node has, such as ``use_sim_time``. Three sets failed, and each
-failure has a reason:
+Gazebo and the ROSbot
+^^^^^^^^^^^^^^^^^^^^^
 
-- ``-1.0`` failed because of the node's own check, below.
-- ``3`` failed because ``3`` is an integer, and ``speed_mps`` is a
-  ``double``. Write ``3.0``.
-- ``colour`` failed because the node never declared it. A node accepts
-  only the parameters that it declares.
+Gazebo computes the physics of the robot and the readings of its sensors. The ROSbot is the robot you program in Gazebo for the rest of the course.
 
-The Parameter Callback
-----------------------------------------------------
+What Gazebo Simulates
+"""""""""""""""""""""
 
-``ros2 param set`` changes the stored value of the parameter. The
-variable ``speed_mps_`` of the node is a copy, and it does not change by
-itself. To react to a change, the node registers a **parameter
-callback** with ``add_on_set_parameters_callback``. In
-``robotaxi_node.hpp``, this is the member ``parameter_callback_``, and
-its callback is ``on_parameters`` in ``robotaxi_node.cpp``.
+Gazebo runs a robot in a virtual world, so you can test your nodes without a real robot. It computes three things:
 
-ROS calls the callback **before** it stores a new value, with the
-parameters that someone wants to set. The callback returns a result:
+- **Physics**: the wheels push the robot over the floor, and the walls stop it.
+- **Sensors**: what each sensor would read in that world. The simulation publishes the readings on ROS topics.
+- **The world**: walls, doors and objects, read from a world file.
 
-- ``successful = true``: ROS stores the value.
-- ``successful = false``: ROS does not store it, and ``ros2 param set``
-  prints the ``reason`` of the callback.
+Why you use a simulator in this course:
 
-``on_parameters`` copies a valid ``speed_mps`` into ``speed_mps_`` and
-rejects a negative one. In a run, ``ros2 param set /robotaxi_node
-speed_mps 4.0`` took effect on the next timer call:
+- The simulation uses Husarion's own ROSbot packages, with the real robot's shape, wheels and sensor positions.
+- A crash costs nothing, and every student runs the same robot in the same world.
 
-.. code-block:: text
+The Husarion ROSbot
+"""""""""""""""""""
 
-   [INFO] [...] [robotaxi_node]: x = 12 m
-   [INFO] [...] [robotaxi_node]: x = 13 m
-   [INFO] [...] [robotaxi_node]: speed_mps is now 4 m/s
-   [INFO] [...] [robotaxi_node]: x = 15 m
-   [INFO] [...] [robotaxi_node]: x = 17 m
-   [INFO] [...] [robotaxi_node]: x = 19 m
-   [INFO] [...] [robotaxi_node]: x = 21 m
+The ROSbot is a small research robot with four wheels. The two wheels on each side turn together, so the robot turns by driving its left and right sides at different speeds: a **differential drive**.
 
-The position grew by 1 m per 0.5 s (2 m/s) until 13 m, and by 2 m per
-0.5 s (4 m/s) after the callback printed the new speed.
+.. list-table::
+   :header-rows: 1
+   :widths: 24 76
+
+   * - Part
+     - What it is
+   * - Body
+     - 0.197 m long, 0.150 m wide, 0.080 m high
+   * - Speed limits
+     - 1.0 m/s forward, 3.14 rad/s turning
+   * - Lidar
+     - 3000 beams over a full circle, 0.05 m to 30 m
+   * - Logical camera
+     - Lists the objects in front of the robot, with the pose of each one
+   * - IMU
+     - Measures the robot's orientation, turn rate and acceleration
+   * - Odometry
+     - The robot's pose, computed from the wheels and the IMU
+
+The Patrol World
+""""""""""""""""
+
+The patrol world is one floor, 20 m by 10 m, with walls 1 m high. The robot starts at the origin and faces east, along +x.
+
+.. figure:: /_static/images/rosbot/patrol_world.png
+   :alt: Top view of the patrol world from Gazebo, with x in meters along the bottom and y in meters along the left. A long hall runs along the bottom with the small dark robot at the origin, tag 5, and four blue discs, tags 1 to 4. Two rooms lie above the hall, joined to it by two doorways in the wall at y equals 2: the left doorway, tag 11, is open, and the right one, tag 10, has a red panel. A purple disc, tag 9, a small orange cylinder, tag 6, a green cylinder with a round head, tag 8, and a brown box, tag 7, lie in the hall.
+   :align: center
+   :width: 90%
+
+   The patrol world. Tags 1 to 4 are checkpoints, 5 is the robot's start, 6 to 9 are objects, 10 is a closed door and 11 is an open door.
+
+Launch the Simulation
+^^^^^^^^^^^^^^^^^^^^^
+
+One launch file starts Gazebo, the world and the ROSbot. You start it once, then use it from other terminals.
+
+Start the Simulation
+""""""""""""""""""""
+
+One command starts Gazebo, the patrol world and the ROSbot:
+
+.. code-block:: bash
+
+   ros2 launch gp2_bringup gp2_sim.launch.py
+
+- The first start takes about 40 s, while Gazebo loads its models. Wait before you check anything. A later start took under 10 s on the course computer.
+- Check it from a second terminal: ``ros2 topic list`` prints 31 topics.
 
 .. note::
 
-   The node registers the callback after it declares the parameters, so
-   the callback sees only later changes. A value set before the node
-   starts, with ``-p``, a file or a launch file, is the value that
-   ``declare_parameter`` returns. In the runs above, no start-up value
-   made the node print ``speed_mps is now``.
+   Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.
 
-Summary
-----------------------------------------------------
+Launch Arguments
+""""""""""""""""
 
-- A **parameter** is a named, typed value of a node. The node declares
-  it with ``declare_parameter<Type>(name, default)``, which returns its
-  value.
-- Set it at start with ``-p name:=value``, with a YAML file
-  (``--params-file``), or with a launch file that loads the file.
-- A YAML file names the node, then ``ros__parameters``. ``/**`` gives a
-  parameter to every node that declares it.
-- ``ros2 param set`` changes a running node. A **parameter callback**
-  checks the new value and copies it into the node's variable.
+The launch file takes launch arguments, set on the command line as ``name:=value``, the same form as ``with_dispatcher:=false`` in the previous lecture. The main ones, all optional:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 16 62
+
+   * - Argument
+     - Default
+     - What it does
+   * - ``gui``
+     - ``true``
+     - ``false`` runs Gazebo without a window, for a slow computer.
+   * - ``world``
+     - ``patrol``
+     - ``patrol``, ``patrol_doors_swapped`` or ``empty``.
+   * - ``rviz``
+     - ``false``
+     - ``true`` also opens RViz.
+   * - ``x``, ``y``, ``yaw``
+     - ``0.0``
+     - The robot's start pose, in meters and radians.
+
+.. code-block:: bash
+
+   ros2 launch gp2_bringup gp2_sim.launch.py gui:=false rviz:=true
+
+To stop the simulation, press :kbd:`Ctrl+C` in the launch terminal.
+
+Topics and Driving
+^^^^^^^^^^^^^^^^^^
+
+You control the ROSbot with topics. This subsection lists them and drives the robot from a terminal.
+
+The Topics You Use
+""""""""""""""""""
+
+Of the 31 topics, your nodes use these:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 29 38 33
+
+   * - Topic
+     - Type
+     - What it carries
+   * - ``/cmd_vel``
+     - ``geometry_msgs/msg/TwistStamped``
+     - The velocity command. You publish it.
+   * - ``/odometry/filtered``
+     - ``nav_msgs/msg/Odometry``
+     - The robot's pose, about 20 times per second.
+   * - ``/scan``
+     - ``sensor_msgs/msg/LaserScan``
+     - The lidar's ranges.
+   * - ``/logical_camera``
+     - ``ros_gz_interfaces/msg/LogicalCameraImage``
+     - The objects in front of the robot.
+   * - ``/tf``, ``/tf_static``
+     - ``tf2_msgs/msg/TFMessage``
+     - The robot's frames, next class.
+   * - ``/clock``
+     - ``rosgraph_msgs/msg/Clock``
+     - The simulation time.
+
+.. note::
+
+   ``/cmd_vel`` takes a ``TwistStamped``: a ``Twist`` with a header that holds a time stamp. The two types do not connect, so a node that publishes ``Twist`` on ``/cmd_vel`` cannot move the robot.
+
+Read the Position
+"""""""""""""""""
+
+The robot's position is one field of the odometry message. Print it once:
+
+.. code-block:: bash
+
+   ros2 topic echo --once /odometry/filtered --field pose.pose.position
+
+.. code-block:: text
+
+   x: -7.400765781802631e-18
+   y: 3.202344653318229e-21
+   z: 0.0
+   ---
+
+- ``--once`` prints one message and exits. ``--field`` prints only that part of the message.
+- At the start, the robot is at the origin: -7.4 × 10\ :sup:`-18` m and 3.2 × 10\ :sup:`-21` m are rounding errors, not distances.
+- The fields of ``Odometry`` are in the :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading.
+
+Drive Forward and Turn
+""""""""""""""""""""""
+
+``ros2 topic pub`` publishes one message again and again; ``-r 10`` sends it 10 times per second. Drive forward at 0.2 m/s:
+
+.. code-block:: bash
+
+   ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
+     "{twist: {linear: {x: 0.2}}}"
+
+Turn on the spot at 0.5 rad/s:
+
+.. code-block:: bash
+
+   ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
+     "{twist: {angular: {z: 0.5}}}"
+
+- ``linear.x`` is the forward speed in m/s. ``angular.z`` is the turn rate in rad/s; a positive value turns left.
+- :kbd:`Ctrl+C` stops the command. The robot then stops by itself: its controller brakes when no command arrives for 0.5 s.
+
+Drive with the Keyboard
+"""""""""""""""""""""""
+
+The node ``teleop_twist_keyboard`` turns key presses into velocity commands:
+
+.. code-block:: bash
+
+   ros2 run teleop_twist_keyboard teleop_twist_keyboard \
+     --ros-args -p stamped:=true
+
+.. code-block:: text
+
+   Moving around:
+      u    i    o
+      j    k    l
+      m    ,    .
+
+- ``i`` drives forward, ``,`` drives backward, ``j`` and ``l`` turn on the spot, and ``k`` stops.
+- ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. Parameters are the last section of this class.
+- The keys work only while the teleop terminal has the focus.
+
+Proportional Control
+--------------------
+
+The last section drove the ROSbot by hand with ``ros2 topic pub``. This section replaces your hand with a node: it reads where the ROSbot is and publishes velocity commands that turn it to a heading or drive it a distance.
+
+From a Terminal Command to a Node
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+With ``ros2 topic pub``, you chose the command and you watched the robot. A controller node does both: every 50 ms, it reads where the robot is and publishes a command.
+
+- ``ekf`` publishes the robot's pose, computed from the wheels and the IMU.
+- ``differential_drive_controller`` turns each ``/cmd_vel`` command into wheel speeds.
+- You write the node in the middle. The graph shows only the nodes it exchanges data with.
+
+.. figure:: /_static/images/l12/control_graph.png
+   :alt: ROS graph drawn top to bottom. A rounded box ekf has an arrow down to a rounded box heading_controller_node, labeled /odometry/filtered and nav_msgs/msg/Odometry. From heading_controller_node, an arrow down to a rounded box differential_drive_controller is labeled /cmd_vel and geometry_msgs/msg/TwistStamped.
+   :align: center
+   :width: 60%
+
+   ``heading_controller_node`` receives the pose on ``/odometry/filtered`` and publishes the command on ``/cmd_vel``.
+
+One Error, One Gain
+^^^^^^^^^^^^^^^^^^^
+
+A proportional controller sets a speed in proportion to the error that is left. One gain sets how strongly it reacts.
+
+What a Controller Does
+""""""""""""""""""""""
+
+A controller brings one measured value to a target. For a turn, the value is the robot's heading, and the target is the heading you want. It repeats four steps:
+
+1. **Measure**: read the heading from the odometry.
+2. **Compare**: compute the **error**, the target minus the heading.
+3. **Command**: publish a turn rate computed from the error.
+4. **Repeat** every 50 ms. The robot has turned a little, so the next error is smaller.
+
+The loop stops when the error is smaller than a **tolerance**, a margin you choose. Without a tolerance, the loop would wait for an error of exactly 0, which the odometry never reads.
+
+The Error of a Turn
+"""""""""""""""""""
+
+The error of a turn is the angle left to turn, the short way. A positive error means turn left (counterclockwise), a negative one, turn right. Headings are in radians, from -π to π.
+
+Example: the robot faces 3.122 rad (179°), and the target is -90°, which is -1.571 rad.
+
+1. Target minus heading: -1.571 - 3.122 = -4.693 rad. That is a turn right of 269°.
+2. Turning left is shorter. Add one full turn, 2π = 6.283 rad: -4.693 + 6.283 = 1.590 rad, a turn left of 91°.
+3. The error is 1.590 rad: the robot turns left 91°, past the 180° heading.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The error is the target minus the heading, moved into -π to π by adding or removing full turns.
+
+Yaw from the Odometry's Quaternion
+""""""""""""""""""""""""""""""""""
+
+The odometry gives the robot's orientation as a **quaternion**, four numbers ``x``, ``y``, ``z`` and ``w``. The controller needs one angle, the **yaw**: the heading, counterclockwise from +x. Lines 15 to 24 of ``include/l12_rosbot/geometry.hpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 15
+
+   inline double yaw_from_quaternion(
+       const geometry_msgs::msg::Quaternion &orientation) {
+       const double siny_cosp{
+           2.0 * (orientation.w * orientation.z +
+                  orientation.x * orientation.y)};
+       const double cosy_cosp{
+           1.0 - 2.0 * (orientation.y * orientation.y +
+                        orientation.z * orientation.z)};
+       return std::atan2(siny_cosp, cosy_cosp);
+   }
+
+- The same file holds ``angle_difference``, which computes the error of the last section.
+- The :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading explains the quaternion and this formula.
+
+The Proportional Control Law
+""""""""""""""""""""""""""""
+
+A **proportional controller** commands a turn rate proportional to the error: the command is the error times a number you choose, the **gain** :math:`k_p`. Then it limits the command to a maximum speed. With :math:`k_p` = 1.5 (rad/s per rad of error) and a limit of 1.0 rad/s:
+
+1. At the start, the error is 1.569 rad: 1.5 × 1.569 = 2.35 rad/s.
+2. That is above the limit, so the controller sends 1.0 rad/s.
+3. Later, the error is 0.5848 rad: 1.5 × 0.5848 = 0.877 rad/s, under the limit, so it is sent as it is.
+4. Near the end, the error is 0.092 rad: 1.5 × 0.092 = 0.138 rad/s.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The command shrinks with the error, so the robot slows down as it nears the target heading.
+
+Turn to a Heading
+^^^^^^^^^^^^^^^^^
+
+You write ``heading_controller_node``, which turns the ROSbot on the spot to one heading. Its gain and limits are constants in the code, for now. The listings of this subsection are from stage 1 (commit ``8bd21e7``).
+
+Step 1: Create the Files
+""""""""""""""""""""""""
+
+The package ``l12_rosbot`` is provided, in the ``L12`` folder of the course repository. It was created with ``ros2 pkg create``, with the dependencies ``rclcpp``, ``geometry_msgs`` and ``nav_msgs``. From ``l12_rosbot``, the node needs four files:
+
+.. code-block:: bash
+
+   cd include/l12_rosbot
+   touch geometry.hpp
+   touch heading_controller_node.hpp
+   cd ../../src
+   touch heading_controller_node.cpp
+   touch heading_controller_main.cpp
+
+The package after Step 1:
+
+.. code-block:: text
+
+   l12_rosbot/
+   ├── include/
+   │   └── l12_rosbot/
+   │       ├── geometry.hpp
+   │       └── heading_controller_node.hpp
+   ├── src/
+   │   ├── heading_controller_main.cpp
+   │   └── heading_controller_node.cpp
+   ├── CMakeLists.txt
+   └── package.xml
+
+Step 2: Write the Class
+"""""""""""""""""""""""
+
+Lines 15 to 30 of ``include/l12_rosbot/heading_controller_node.hpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 15
+   :emphasize-lines: 5, 10, 13
+
+   class HeadingControllerNode : public rclcpp::Node {
+     public:
+       HeadingControllerNode()
+           : rclcpp::Node{"heading_controller_node"},
+             odometry_subscription_{
+                 create_subscription<nav_msgs::msg::Odometry>(
+                     "odometry/filtered", 10,
+                     std::bind(&HeadingControllerNode::odometry_callback,
+                               this, std::placeholders::_1))},
+             command_publisher_{
+                 create_publisher<geometry_msgs::msg::TwistStamped>(
+                     "cmd_vel", 10)},
+             control_timer_{create_wall_timer(
+                 std::chrono::milliseconds{50},
+                 std::bind(&HeadingControllerNode::control_callback,
+                           this))} {}
+
+- Line 19: odometry in.
+- Line 24: commands out.
+- Line 27: the 50 ms timer.
+
+Step 2: Write the Class, Its Members
+""""""""""""""""""""""""""""""""""""
+
+Lines 32 to 43 of the same file:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 32
+   :emphasize-lines: 10, 11
+
+     private:
+       void odometry_callback(const nav_msgs::msg::Odometry &msg);
+       void control_callback();
+       void publish_command(double angular_speed);
+       rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr
+           odometry_subscription_;
+       rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr
+           command_publisher_;
+       rclcpp::TimerBase::SharedPtr control_timer_;
+       double yaw_{0.0};          // the robot's heading, in rad
+       bool has_odometry_{false}; // true once odometry arrived
+   };
+
+- Lines 41 and 42: ``odometry_callback`` writes them, and ``control_callback`` reads them. The two callbacks never call each other.
+- ``has_odometry_`` keeps the controller from acting on a heading of 0 before the first message arrives.
+
+Step 2: Write the Constants and odometry_callback
+"""""""""""""""""""""""""""""""""""""""""""""""""
+
+Lines 11 to 23 of ``src/heading_controller_node.cpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 11
+   :emphasize-lines: 3-6, 11
+
+   namespace {
+   // Gains and limits, as constants in the code for now.
+   constexpr double target_yaw_deg{90.0};    // heading to reach, degrees
+   constexpr double kp_angular{1.5};         // gain: rad/s per rad
+   constexpr double max_angular_rps{1.0};    // speed limit, rad/s
+   constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
+   } // namespace
+
+   void HeadingControllerNode::odometry_callback(
+       const nav_msgs::msg::Odometry &msg) {
+       yaw_ = yaw_from_quaternion(msg.pose.pose.orientation);
+       has_odometry_ = true;
+   }
+
+- Lines 13 to 16: the target, the gain, the limit and the tolerance. The unnamed namespace keeps them inside this file.
+- Line 21: the helper of the yaw section turns the quaternion into the yaw.
+
+Step 2: Write control_callback, the Error and the Stop
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Lines 25 to 41 of the same file:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 25
+   :emphasize-lines: 9-12
+
+   void HeadingControllerNode::control_callback() {
+       if (!has_odometry_) {
+           return; // no heading yet
+       }
+       const double target_yaw{
+           target_yaw_deg * std::numbers::pi / 180.0};
+       // The error: the angle left to turn, the short way.
+       // Positive: turn left.
+       const double error{angle_difference(target_yaw, yaw_)};
+       if (std::abs(error) < yaw_tolerance_rad) {
+           publish_command(0.0);
+           control_timer_->cancel(); // done: no more control_callback
+           RCLCPP_INFO_STREAM(get_logger(),
+                              "heading reached: yaw " << yaw_
+                                  << " rad, error " << error << " rad");
+           return;
+       }
+
+- Line 33: the error.
+- Lines 34 to 36: within the tolerance, stop for good.
+
+Step 2: Write control_callback, the Command
+"""""""""""""""""""""""""""""""""""""""""""
+
+Lines 43 to 57 of the same file:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 43
+   :emphasize-lines: 1-3, 13
+
+       const double command{
+           std::clamp(kp_angular * error, -max_angular_rps,
+                      max_angular_rps)};
+       publish_command(command);
+       RCLCPP_INFO_STREAM_THROTTLE(
+           get_logger(), *get_clock(), 500,
+           "error " << error << " rad, command " << command << " rad/s");
+   }
+
+   void HeadingControllerNode::publish_command(double angular_speed) {
+       geometry_msgs::msg::TwistStamped command{};
+       command.header.stamp = now();
+       command.twist.angular.z = angular_speed;
+       command_publisher_->publish(command);
+   }
+
+- Lines 43 to 45: the law of the control-law section, limited by ``std::clamp``.
+- Line 55: only ``angular.z`` is set, so the robot turns on the spot.
+
+Step 3: Install the Executable
+""""""""""""""""""""""""""""""
+
+``heading_controller_main.cpp`` is the usual ``main``: it creates the node and spins it. In ``CMakeLists.txt``, lines 39 to 43 build the executable:
+
+.. code-block:: cmake
+   :linenos:
+   :lineno-start: 39
+
+   # Turns the ROSbot on the spot to a heading.
+   add_executable(heading_controller_exe
+     src/heading_controller_main.cpp src/heading_controller_node.cpp)
+   ament_target_dependencies(heading_controller_exe
+     rclcpp geometry_msgs nav_msgs)
+
+Lines 53 and 54 install it, with the executable of the next subsection:
+
+.. code-block:: cmake
+   :linenos:
+   :lineno-start: 53
+
+   install(TARGETS heading_controller_exe distance_controller_exe
+     DESTINATION lib/${PROJECT_NAME})
+
+``nav_msgs`` holds the ``Odometry`` message. ``ros2 pkg create`` already added it to ``package.xml`` and to ``find_package``.
+
+Step 4: Build and Run in Gazebo
+"""""""""""""""""""""""""""""""
+
+With the simulation running:
+
+.. code-block:: bash
+
+   colcon build --packages-select l12_rosbot
+   source install/setup.bash
+   ros2 run l12_rosbot heading_controller_exe
+
+.. code-block:: text
+
+   [...]: error 1.56886 rad, command 1 rad/s
+   [...]: error 1.20115 rad, command 1 rad/s
+   [...]: error 0.58477 rad, command 0.877155 rad/s
+   [...]: error 0.24099 rad, command 0.361486 rad/s
+   [...]: error 0.0918069 rad, command 0.13771 rad/s
+   [...]: heading reached: yaw 1.55212 rad, error 0.0186762 rad
+
+- ``[...]`` is ``[INFO]``, the time and the node's name. The throttled log prints about every 0.5 s.
+- The turn took 2.65 s (time stamps 1795157077.809 to 1795157080.459). The command stays at 1.0 rad/s until the error is under 1.0 / 1.5 = 0.67 rad.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The robot turned from 0 to 1.552 rad (88.9°) by itself, and stopped within the 0.02 rad tolerance.
+
+Drive a Distance
+^^^^^^^^^^^^^^^^
+
+``distance_controller_node`` drives the ROSbot straight ahead for one distance. Only the error changes: the distance left to drive.
+
+The Error of a Drive
+""""""""""""""""""""
+
+The same four steps; only the measured value changes, to the distance driven since the start. Lines 16 to 25 of ``src/distance_controller_node.cpp`` (stage 1):
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 16
+   :emphasize-lines: 5-7
+
+   void DistanceControllerNode::odometry_callback(
+       const nav_msgs::msg::Odometry &msg) {
+       x_ = msg.pose.pose.position.x;
+       y_ = msg.pose.pose.position.y;
+       if (!has_odometry_) {
+           start_x_ = x_; // the first message gives the start
+           start_y_ = y_;
+           has_odometry_ = true;
+       }
+   }
+
+Lines 31 to 33, in ``control_callback``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 31
+
+   const double driven{std::hypot(x_ - start_x_, y_ - start_y_)};
+   // The error: the distance left to drive.
+   const double error{target_distance_m - driven};
+
+- Line 31: ``std::hypot`` gives :math:`\sqrt{\Delta x^2 + \Delta y^2}`, the distance from the start.
+
+The Same Law on the Forward Speed
+"""""""""""""""""""""""""""""""""
+
+The constants are a 1.0 m target, a gain of 0.8 (m/s per m of error), a limit of 0.5 m/s and a tolerance of 0.02 m. Lines 43 to 45 and 52 to 57 of the same file:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 43
+
+   const double command{
+       std::clamp(kp_linear * error, -max_linear_mps,
+                  max_linear_mps)};
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 52
+   :emphasize-lines: 4
+
+   void DistanceControllerNode::publish_command(double linear_speed) {
+       geometry_msgs::msg::TwistStamped command{};
+       command.header.stamp = now();
+       command.twist.linear.x = linear_speed;
+       command_publisher_->publish(command);
+   }
+
+- Line 55: only ``linear.x`` is set, so the robot drives straight ahead and does not turn.
+- The stop within the tolerance, the timer and the log are the same as in ``heading_controller_node``.
+
+Run the Distance Controller
+"""""""""""""""""""""""""""
+
+``ros2 run l12_rosbot distance_controller_exe``, with the robot facing +y (``[...]`` is the cut prefix):
+
+.. code-block:: text
+
+   [...]: error 1 m, command 0.5 m/s
+   [...]: error 0.627905 m, command 0.5 m/s
+   [...]: error 0.406843 m, command 0.325475 m/s
+   [...]: error 0.252548 m, command 0.202038 m/s
+   [...]: error 0.159472 m, command 0.127577 m/s
+   [...]: error 0.103942 m, command 0.0831533 m/s
+   [...]: distance reached: driven 0.980244 m, error 0.0197556 m
+
+- The command stays at the 0.5 m/s limit while the error is over 0.5 / 0.8 = 0.625 m.
+- After that, from one line to the next (about 0.55 s), the error falls to about 63 % of its value: 0.407, 0.253, 0.159, 0.104 m.
+- The whole drive took 5.25 s (time stamps 1795157115.823 to 1795157121.073). The last 0.10 m alone took 2.0 s.
+
+.. admonition:: Conclusion
+   :class: important
+
+   Near the target the command is small, so a smaller tolerance costs more time.
+
+Proportional Control: What You Can Do Now
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Summary
+   :class: tip
+
+   - Compute an error: the angle left to turn, the short way, or the distance left to drive.
+   - Turn the error into a command with a gain and a limit: ``std::clamp(kp * error, -max, max)``.
+   - Stop within a tolerance, and cancel the timer.
+   - Run a controller node in Gazebo: odometry in, ``TwistStamped`` out.
+
+The gains and limits of these controllers are constants in the code. They become parameters in the next section.
+
+Parameters
+----------
+
+The controller keeps its gains and limits as numbers in its code, so each change needs a rebuild. A **parameter** is a named setting of a node that you change without recompiling.
+
+What a Parameter Holds
+^^^^^^^^^^^^^^^^^^^^^^
+
+A parameter belongs to one node and has a name, a type and a value. Its type is one of nine, from ``rcl_interfaces/msg/ParameterType``. In C++, a ``rclcpp::Parameter`` gives its value with an ``as_...()`` function:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 24 44 32
+
+   * - Type
+     - C++ value
+     - In this lecture
+   * - bool
+     - ``bool``, ``as_bool()``
+     - ``use_sim_time``
+   * - integer
+     - ``int64_t``, ``as_int()``
+     -
+   * - double
+     - ``double``, ``as_double()``
+     - ``kp_angular``
+   * - string
+     - ``std::string``, ``as_string()``
+     -
+   * - double array
+     - ``std::vector<double>``, ``as_double_array()``
+     - ``target_headings_deg``
+   * - other arrays
+     - of bytes, bools, integers or strings
+     -
+
+Each ``as_...()`` function throws an exception when the parameter has another type.
+
+Declare and Read
+^^^^^^^^^^^^^^^^
+
+A node must declare a parameter before it uses it. You declare each one with a type and a default value, and then read its value. The listings of this subsection are from stage 2 (commit ``9434e00``), unless they say stage 4.
+
+Declare, Then Read
+""""""""""""""""""
+
+Lines 35 to 49 of ``heading_controller_node.hpp``, the end of the constructor (in the stage 4 file, the same code is on lines 39 to 53):
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 35
+   :emphasize-lines: 2, 5, 11
+
+   // Declare each parameter with its default value.
+   declare_parameter(
+       "target_headings_deg",
+       std::vector<double>{90.0, 180.0, -90.0, 0.0});
+   declare_parameter("kp_angular", 1.5);
+   declare_parameter("max_angular_rps", 1.0);
+   declare_parameter("yaw_tolerance_rad", 0.02);
+   // Read each value once, into a data member.
+   target_headings_deg_ =
+       get_parameter("target_headings_deg").as_double_array();
+   kp_angular_ = get_parameter("kp_angular").as_double();
+   max_angular_rps_ =
+       get_parameter("max_angular_rps").as_double();
+   yaw_tolerance_rad_ =
+       get_parameter("yaw_tolerance_rad").as_double();
+
+- Line 39: the default value sets the type: 1.5 makes a double.
+- Line 45: the constructor reads each value once, into a data member.
+
+Why a Node Declares Its Parameters
+""""""""""""""""""""""""""""""""""
+
+A node accepts only the parameters it declared. Two tries on ``heading_controller_node``:
+
+1. A misspelled name, while the node runs:
+
+   .. code-block:: bash
+
+      ros2 param set /heading_controller_node kp_lineer 2.0
+
+   The command fails: "parameter 'kp_lineer' cannot be set because it was not declared".
+
+2. A parameter of the other node, given at start with ``-p kp_linear:=0.8``. The node starts with no message, and ``ros2 param get /heading_controller_node kp_linear`` answers "Parameter not set".
+
+.. admonition:: Conclusion
+   :class: important
+
+   A wrong name on the command line at start is dropped without a message. Check what the node has with ``ros2 param list``.
+
+An Array Parameter: a List of Headings
+""""""""""""""""""""""""""""""""""""""
+
+``target_headings_deg`` holds four headings, read into a ``std::vector<double>``. The robot turns to each one in order. Lines 21 to 30 of ``heading_controller_node.cpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 21
+   :emphasize-lines: 1, 9
+
+   if (target_index_ >= target_headings_deg_.size()) {
+       publish_command(0.0);
+       control_timer_->cancel(); // done: no more control_callback
+       RCLCPP_INFO_STREAM(get_logger(),
+                          "all " << target_headings_deg_.size()
+                                 << " headings reached");
+       return;
+   }
+   const double target_deg{target_headings_deg_[target_index_]};
+   const double target_yaw{target_deg * std::numbers::pi / 180.0};
+
+- Line 29: ``target_index_`` picks the heading to reach now. Within the tolerance, line 41 adds 1 to it.
+- Line 21: after the last heading, the node stops for good.
+
+Command-Line Tools: list and get
+""""""""""""""""""""""""""""""""
+
+.. code-block:: bash
+
+   ros2 param list /heading_controller_node
+
+.. code-block:: text
+
+   kp_angular
+   max_angular_rps
+   qos_overrides./parameter_events.publisher.depth
+   qos_overrides./parameter_events.publisher.durability
+   qos_overrides./parameter_events.publisher.history
+   qos_overrides./parameter_events.publisher.reliability
+   start_type_description_service
+   target_headings_deg
+   use_sim_time
+   yaw_tolerance_rad
+
+.. code-block:: bash
+
+   ros2 param get /heading_controller_node kp_angular
+
+.. code-block:: text
+
+   Double value is: 1.5
+
+The node declared four parameters. ROS 2 adds the others to every node, among them ``use_sim_time``.
+
+Setting a Value the Node Already Read
+"""""""""""""""""""""""""""""""""""""
+
+The node was started with ``kp_angular`` 0.5. During its first turn, the gain is set to 1.5:
+
+.. code-block:: bash
+
+   ros2 param set /heading_controller_node kp_angular 1.5
+
+.. code-block:: text
+
+   Set parameter successful
+
+``ros2 param get`` then answers 1.5. The node's log, after the set:
+
+.. code-block:: text
+
+   [...]: error 0.068624 rad, command 0.034312 rad/s
+   [...]: error 0.0432666 rad, command 0.0216333 rad/s
+
+0.5 × 0.0686 = 0.0343 rad/s: the node still uses 0.5.
+
+.. admonition:: Conclusion
+   :class: important
+
+   ``ros2 param set`` changes the stored value. The node read ``kp_angular`` once, in its constructor, so its commands do not change.
+
+Command-Line Tools: dump
+""""""""""""""""""""""""
+
+``ros2 param dump`` prints every stored value of a node. In this run, the node started with ``kp_angular`` 1.5, and ``ros2 param set`` then stored 0.5:
+
+.. code-block:: bash
+
+   ros2 param dump /heading_controller_node
+
+.. code-block:: text
+
+   /heading_controller_node:
+     ros__parameters:
+       kp_angular: 0.5
+       max_angular_rps: 1.0
+       [...]
+       target_headings_deg:
+       - 90.0
+       - 180.0
+       - -90.0
+       - 0.0
+       use_sim_time: false
+       yaw_tolerance_rad: 0.02
+
+The output is a parameter file: the next subsection loads files like it. ``[...]`` cuts the lines ROS 2 adds to every node.
+
+Set a Parameter
+^^^^^^^^^^^^^^^
+
+You can set a parameter from the command line, from a YAML file, or from a launch file. The listings of this subsection are from stage 3 (commit ``e7048f4``).
+
+On the Command Line, at Start
+"""""""""""""""""""""""""""""
+
+``--ros-args`` starts the arguments for ROS 2, and each ``-p name:=value`` sets one parameter before the constructor reads it:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe \
+     --ros-args -p kp_angular:=0.5
+
+.. code-block:: text
+
+   [...]: error 1.58335 rad, command 0.791676 rad/s
+
+0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command. The teleop node of the keyboard section got ``-p stamped:=true`` the same way.
+
+.. note::
+
+   Write a double with a decimal point. ``1`` is an integer, and ``kp_angular`` refuses it: "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed".
+
+From a YAML File
+""""""""""""""""
+
+A parameter file sets many parameters at once: ``config/controllers.yaml``.
+
+.. code-block:: yaml
+   :linenos:
+   :lineno-start: 3
+   :emphasize-lines: 1, 5
+
+   /**:
+     ros__parameters:
+       use_sim_time: true
+
+   heading_controller_node:
+     ros__parameters:
+       target_headings_deg: [90.0, 180.0, -90.0, 0.0]
+       kp_angular: 1.5
+       max_angular_rps: 1.0
+       yaw_tolerance_rad: 0.02
+
+- Line 7: a key names a node; its values are under ``ros__parameters``. Lines 14 to 19 hold ``distance_controller_node``'s.
+- Line 3: the **wildcard** key ``/**`` matches every node.
+
+From the package folder, ``l12_rosbot``:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe \
+     --ros-args --params-file config/controllers.yaml
+
+use_sim_time for a Node That Runs with Gazebo
+"""""""""""""""""""""""""""""""""""""""""""""
+
+Gazebo publishes its own time on ``/clock``. With ``use_sim_time`` true, a node's clock follows ``/clock`` instead of the computer's clock: ``now()``, and so the stamp of every ``TwistStamped``, gives the simulation's time.
+
+Every node has ``use_sim_time``, and it is false unless you set it:
+
+- With ``controllers.yaml`` (the ``/**`` key): ``ros2 param get`` answers ``True``.
+- With a plain ``ros2 run``: it answers ``False``.
+
+.. admonition:: Conclusion
+   :class: important
+
+   Set ``use_sim_time`` to true for every node you run with Gazebo. The ``/**`` key of a parameter file does it for all of them.
+
+From a Launch File: a YAML File Named by an Argument
+""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Lines 12 to 25 of ``launch/heading_launch.py``:
+
+.. code-block:: python
+   :linenos:
+   :lineno-start: 12
+   :emphasize-lines: 2-5, 12
+
+   params_file = DeclareLaunchArgument(
+       "params_file",
+       default_value=PathJoinSubstitution(
+           [FindPackageShare("l12_rosbot"), "config",
+            "controllers.yaml"]
+       ),
+       description="YAML file with the controller's parameters",
+   )
+   heading_controller = Node(
+       package="l12_rosbot",
+       executable="heading_controller_exe",
+       parameters=[LaunchConfiguration("params_file")],
+       output="screen",
+   )
+
+- Lines 13 to 16: the launch argument ``params_file``, by default the installed ``controllers.yaml``.
+- Line 23: a list, here with one file: the one the argument names.
+
+Install and Run the Launch File
+"""""""""""""""""""""""""""""""
+
+Lines 59 and 60 of ``CMakeLists.txt`` install the ``launch`` and ``config`` folders, where ``ros2 launch`` and ``FindPackageShare`` look:
+
+.. code-block:: cmake
+   :linenos:
+   :lineno-start: 59
+
+   install(DIRECTORY launch config
+     DESTINATION share/${PROJECT_NAME})
+
+After a build, the default file, then another one:
+
+.. code-block:: bash
+
+   ros2 launch l12_rosbot heading_launch.py
+   ros2 launch l12_rosbot heading_launch.py \
+     params_file:=install/l12_rosbot/share/l12_rosbot/config/low_gain.yaml
+
+``low_gain.yaml`` is ``controllers.yaml`` without the distance controller, and with ``kp_angular`` 0.5 instead of 1.5. The next part compares three gains.
+
+Three Gains, Three Separate Runs
+""""""""""""""""""""""""""""""""
+
+Each run turns through the four headings, so each turn is 90°. A turn's time is the gap between two "reached" lines of the log:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 40 42
+
+   * - Gain
+     - Set by
+     - 90° turns, in s
+   * - 0.5
+     - ``low_gain.yaml``
+     - 6.40, 6.45, 6.25
+   * - 1.5
+     - ``controllers.yaml``
+     - 2.70, 2.75, 2.65
+   * - 4.0
+     - ``controllers.yaml``, then ``-p kp_angular:=4.0``
+     - 2.70, 2.70, 2.70
+
+The command stays at the 1.0 rad/s limit while the gain times the error is over 1.0: with a gain of 1.5, until the error is under 1.0 / 1.5 = 0.67 rad; with 4.0, until 1.0 / 4.0 = 0.25 rad. Most of a 90° turn (1.57 rad) is at the limit either way.
+
+.. admonition:: Conclusion
+   :class: important
+
+   With gains of 1.5 and 4.0, the speed limit, not the gain, set the time of a turn.
+
+From a Launch File: Values Written in It
+""""""""""""""""""""""""""""""""""""""""
+
+A launch file can also hold the values itself, as a Python dictionary. Lines 8 to 21 of ``launch/distance_launch.py``:
+
+.. code-block:: python
+   :linenos:
+   :lineno-start: 8
+   :emphasize-lines: 5-11
+
+   distance_controller = Node(
+       package="l12_rosbot",
+       executable="distance_controller_exe",
+       parameters=[
+           {
+               "use_sim_time": True,
+               "target_distance_m": 1.0,
+               "kp_linear": 0.8,
+               "max_linear_mps": 0.5,
+               "distance_tolerance_m": 0.02,
+           }
+       ],
+       output="screen",
+   )
+
+With this launch file, the robot drove 0.981 m. A new value means editing the launch file, so values you tune belong in a YAML file.
+
+React to a Change
+^^^^^^^^^^^^^^^^^
+
+A node can run a callback when someone sets a parameter. The callback accepts or rejects the new value. The listings of this subsection are from stage 4 (commit ``94d4d64``), the final code.
+
+Register the Callback
+"""""""""""""""""""""
+
+The node registers ``on_parameters_set`` at the end of its constructor. Lines 55 to 57 of ``heading_controller_node.hpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 55
+
+   parameter_callback_handle_ = add_on_set_parameters_callback(
+       std::bind(&HeadingControllerNode::on_parameters_set, this,
+                 std::placeholders::_1));
+
+Lines 64 and 65 declare the callback, and lines 73 and 74 keep the handle:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 64
+
+   rcl_interfaces::msg::SetParametersResult on_parameters_set(
+       const std::vector<rclcpp::Parameter> &parameters);
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 73
+
+   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+       parameter_callback_handle_;
+
+- The callback gets the parameters of one set command, and says if the node accepts them.
+- The callback stays registered only while the handle, a data member, exists.
+- ``SetParametersResult`` is in ``rcl_interfaces``: add it to ``package.xml`` and ``CMakeLists.txt``.
+
+The Callback, Part 1: Refuse a Parameter Read Only at Start
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Lines 68 to 81 of ``heading_controller_node.cpp``:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 68
+   :emphasize-lines: 9-13
+
+   rcl_interfaces::msg::SetParametersResult
+   HeadingControllerNode::on_parameters_set(
+       const std::vector<rclcpp::Parameter> &parameters) {
+       rcl_interfaces::msg::SetParametersResult result{};
+       // First check every new value. One bad value rejects the whole
+       // change.
+       for (const auto &parameter : parameters) {
+           const std::string &name{parameter.get_name()};
+           if (name == "target_headings_deg") {
+               result.successful = false;
+               result.reason =
+                   "target_headings_deg is read once, at start";
+               return result;
+           }
+
+- Lines 76 to 80: the node never reads the list again, so a new list would change nothing. The callback says so instead of accepting it.
+
+The Callback, Part 2: Refuse a Bad Value
+""""""""""""""""""""""""""""""""""""""""
+
+Lines 82 to 96 of the same file, still inside the first loop:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 82
+   :emphasize-lines: 1, 6-8
+
+       if (name == "kp_angular" && parameter.as_double() < 0.0) {
+           result.successful = false;
+           result.reason = "kp_angular must not be negative";
+           return result;
+       }
+       if (name == "max_angular_rps" &&
+           (parameter.as_double() <= 0.0 ||
+            parameter.as_double() > rosbot_max_angular_rps)) {
+           result.successful = false;
+           result.reason =
+               "max_angular_rps must be more than 0 and at most "
+               "3.14 rad/s";
+           return result;
+       }
+   }
+
+- Line 82: a negative gain would turn the robot away from its target.
+- Lines 87 to 89: 3.14 rad/s is the ROSbot's turning limit.
+
+The Callback, Part 3: Store the New Values
+""""""""""""""""""""""""""""""""""""""""""
+
+Lines 97 to 114 of the same file:
+
+.. code-block:: cpp
+   :linenos:
+   :lineno-start: 97
+   :emphasize-lines: 5, 6, 16
+
+   // Every value is good: store the new ones, so the next
+   // control_callback uses them.
+   for (const auto &parameter : parameters) {
+       const std::string &name{parameter.get_name()};
+       if (name == "kp_angular") {
+           kp_angular_ = parameter.as_double();
+       } else if (name == "max_angular_rps") {
+           max_angular_rps_ = parameter.as_double();
+       } else if (name == "yaw_tolerance_rad") {
+           yaw_tolerance_rad_ = parameter.as_double();
+       }
+       const std::string value{parameter.value_to_string()};
+       RCLCPP_INFO_STREAM(get_logger(),
+                          "new value: " << name << " = " << value);
+   }
+   result.successful = true;
+   return result;
+
+
+Change a Gain While the ROSbot Turns
+""""""""""""""""""""""""""""""""""""
+
+The node runs with ``low_gain.yaml`` (gain 0.5). Five ``ros2 param set`` commands, in order:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 66
+
+   * - Set
+     - Answer
+   * - ``kp_angular -1.0``
+     - Setting parameter failed: kp_angular must not be negative
+   * - ``max_angular_rps 5.0``
+     - Setting parameter failed: max_angular_rps must be more than 0 and at most 3.14 rad/s
+   * - ``kp_angular 2``
+     - Setting parameter failed: Wrong parameter type [...]
+   * - ``target_headings_deg [10.0]``
+     - Setting parameter failed: target_headings_deg is read once, at start
+   * - ``kp_angular 1.5``
+     - Set parameter successful
+
+- ROS 2's own type check refused ``kp_angular 2``: the answer is its message, not one of the callback's.
+- The turn to 180° took 6.40 s at gain 0.5. The gain changed during the next turn, which took 3.20 s. The last turn, at 1.5, took 2.70 s.
+
+Parameters: What You Can Do Now
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Summary
+   :class: tip
+
+   - Declare a parameter with a default value, and read it with ``get_parameter``.
+   - List, get, set and dump the parameters of a running node.
+   - Set parameters at start: with ``-p``, from a YAML file, or from a launch file.
+   - Set ``use_sim_time`` for every node that runs with Gazebo.
+   - Check and store a new value while the node runs, with a parameter callback.
+
+Next Class
+----------
+
+- **Next lecture**: *L13: Frames and Transforms*. Poses, frames, and broadcasting, listening to and debugging transforms.
+- **Pre-work**: complete the L12 :doc:`exercises <l12_exercises>` and :doc:`quiz <l12_quiz>` on ReadTheDocs. GP2 is posted today. This lecture covers the simulation it runs in, proportional control and parameters. Optional, beyond the course: the :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading.
+- **Required reading**:
+
+  - `ROS 2 Jazzy: Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`__
+  - :doc:`ROSbot Simulation </setup/rosbot_simulation>`
+  - :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>`

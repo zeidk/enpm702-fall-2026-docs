@@ -139,7 +139,7 @@ robot forward:
    ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped "{twist: {linear: {x: 0.2}}}"
 
 The robot moves forward, and ``x`` grows. On the course computer, ``x`` was
-0.68 to 0.86 m after 5 s of this command (three runs). Press :kbd:`Ctrl+C`
+0.56 to 0.87 m after 5 s of this command (six runs). Press :kbd:`Ctrl+C`
 to stop the command. The robot stops by itself when no ``cmd_vel`` message
 arrives for 0.5 s.
 

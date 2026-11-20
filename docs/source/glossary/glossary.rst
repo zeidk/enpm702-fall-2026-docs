@@ -2478,30 +2478,91 @@ L12: Robots in Gazebo and Parameters
 
 .. glossary::
 
+   Controller
+      A node that brings one measured value to a target. It repeats four steps:
+      measure the value, compute the error, publish a command computed from the
+      error, and repeat. In L12, the value is the ROSbot's heading or its
+      distance from the start.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Differential Drive
+      A way to steer a wheeled robot: the wheels on each side turn together,
+      and the robot turns by driving its left and right sides at different
+      speeds. The ROSbot is a differential drive.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Error
+      In a controller, the target minus the measured value. For a turn, it is
+      the angle left to turn, the short way, in -pi to pi; a positive error
+      means turn left. For a drive, it is the distance left to drive.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Gain
+      The number a proportional controller multiplies the error by to get the
+      command, such as ``kp_angular`` in rad/s per rad of error. A larger gain
+      commands more for the same error, until the speed limit.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Gazebo
+      A simulator. It runs a robot and its sensors in a virtual world, computes
+      the physics and the sensor readings, and publishes the readings on ROS
+      topics.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Odometry
+      The robot's pose, computed from its wheels and its IMU. On the ROSbot, the
+      ``nav_msgs/msg/Odometry`` message on ``/odometry/filtered``, about 20
+      times per second.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    Parameter
-      A named, typed value of one ROS 2 node, such as ``speed_mps``. The node
-      declares it with ``declare_parameter<Type>(name, default)``. You set it
-      when the node starts or change it while the node runs, without a
-      rebuild.
+      A named, typed value of one ROS 2 node, such as ``kp_angular``. The node
+      declares it with ``declare_parameter(name, default)``, and the default
+      value sets the type. You set it when the node starts or change it while
+      the node runs, without a rebuild.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Parameter Callback
-      A function that ROS 2 calls before it stores a new value of a
-      parameter. It returns ``successful = false`` to reject the value, and
-      it can copy a valid value into the node's own variable.
-      ``add_on_set_parameters_callback`` registers it.
+      A function that ROS 2 calls when someone sets a parameter of the node. It
+      returns ``successful = false``, with a reason, to reject the new value,
+      and it can copy a valid value into the node's own variable.
+      ``add_on_set_parameters_callback`` registers it, and the callback stays
+      registered only while the node keeps the handle it returns.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Parameter File
       A YAML file that holds the parameters of one or more nodes: a node name,
-      then ``ros__parameters``, then one line per parameter. ``/**`` instead
-      of a node name gives a parameter to every node that declares it.
+      then ``ros__parameters``, then one line per parameter. The key ``/**``
+      instead of a node name gives a parameter to every node.
       ``--params-file`` or a launch file loads it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Proportional Controller
-      A controller that sets a command in proportion to an error: the command
-      is a gain times the error. The gain is a number that you tune.
+      A controller that sets a command in proportion to the error: the command
+      is a gain times the error, limited to a maximum speed. The gain is a
+      number that you tune.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Quaternion
+      Four numbers, ``x``, ``y``, ``z`` and ``w``, that give an orientation. The
+      odometry gives the robot's orientation as a quaternion; the yaw is
+      computed from it.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Tolerance
+      The margin within which a controller stops. The odometry never reads an
+      error of exactly 0, so the loop stops when the error is smaller than the
+      tolerance.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   use_sim_time
+      A parameter that every node has, false by default. When it is true, the
+      node's clock follows the ``/clock`` topic, so ``now()`` gives the
+      simulation's time. Set it to true for every node you run with Gazebo.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Yaw
+      The robot's heading: its angle counterclockwise from +x, in radians.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
 
