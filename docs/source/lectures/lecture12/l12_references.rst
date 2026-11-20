@@ -11,7 +11,7 @@ References
 
         **ENPM702 L12: Robots in Gazebo and Parameters**
 
-        The ROSbot in Gazebo: its sensors, the patrol world, the launch file, the topics, and driving it with ``ros2 topic pub`` and the keyboard. Proportional control: the error of a turn and of a drive, the control law with a gain, a limit and a tolerance, a heading controller and a distance controller. Parameters: declaring and reading them, an array parameter, ``ros2 param list``, ``get``, ``set`` and ``dump``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback.
+        The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, the launch file and the programs it starts, RViz, the topics, and driving it with ``ros2 topic pub`` and the keyboard. Proportional control: the error of a turn and of a drive, the control law with a gain, a limit and a tolerance, a heading controller and a distance controller. Parameters: declaring and reading them, an array parameter, ``ros2 param list``, ``get``, ``set`` and ``dump``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback. Remapping: ``--ros-args -r`` for topic names and for the namespace, and the two together.
 
         **Before the lecture**: read :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` and set up :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
 

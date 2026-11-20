@@ -2478,6 +2478,12 @@ L12: Robots in Gazebo and Parameters
 
 .. glossary::
 
+   Bridge
+      A node that copies topics between Gazebo and ROS 2. Gazebo's topics are not
+      ROS topics. The package ``ros_gz_bridge`` provides the ``parameter_bridge``
+      program, and the simulation launch file starts 5 of them.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
    Controller
       A node that brings one measured value to a target. It repeats four steps:
       measure the value, compute the error, publish a command computed from the
@@ -2495,6 +2501,11 @@ L12: Robots in Gazebo and Parameters
       In a controller, the target minus the measured value. For a turn, it is
       the angle left to turn, the short way, in -pi to pi; a positive error
       means turn left. For a drive, it is the distance left to drive.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Fixed Frame
+      The one frame in which RViz draws everything. For the ROSbot, the frame
+      ``odom``.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Gain
@@ -2547,6 +2558,24 @@ L12: Robots in Gazebo and Parameters
       Four numbers, ``x``, ``y``, ``z`` and ``w``, that give an orientation. The
       odometry gives the robot's orientation as a quaternion; the yaw is
       computed from it.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Remapping
+      Changing a name that a node uses, when the node starts, without editing its
+      code: ``--ros-args -r from:=to``. It changes where the node reads or writes,
+      not what the data means.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   ROS Namespace
+      A prefix added to the names of a node and of its relative topics, such as
+      ``/robot1``: ``-r __ns:=/robot1``. A name that starts with ``/`` is
+      absolute, and the namespace does not change it. This is not a C++ namespace.
+      :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   RViz
+      A ROS node that draws what the topics carry, in one fixed frame: the robot
+      model, its frames and the lidar's ranges. Gazebo draws the simulated world;
+      RViz draws what ROS sees.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Tolerance

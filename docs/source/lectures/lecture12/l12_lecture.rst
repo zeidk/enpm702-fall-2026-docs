@@ -102,6 +102,44 @@ Why you use a simulator in this course:
 - The simulation uses Husarion's own ROSbot packages, with the real robot's shape, wheels and sensor positions.
 - A crash costs nothing, and every student runs the same robot in the same world.
 
+Gazebo on Its Own: gz sim
+"""""""""""""""""""""""""
+
+Gazebo is a program of its own, not a ROS node. ROS 2 Jazzy installs it (Gazebo Harmonic), and ``gz sim`` opens a world file. ``shapes.sdf`` is a demo world that comes with Gazebo:
+
+.. code-block:: bash
+
+   gz sim shapes.sdf          # with a window; press Play to start
+   gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)
+
+With that world running, Gazebo has its own list of topics, and ROS has another:
+
+.. code-block:: bash
+
+   gz topic -l
+
+.. code-block:: text
+
+   /clock
+   /stats
+   /world/shapes/pose/info
+   /world/shapes/state
+   [...]
+
+.. code-block:: bash
+
+   ros2 topic list
+
+.. code-block:: text
+
+   /parameter_events
+   /rosout
+
+.. admonition:: Conclusion
+   :class: important
+
+   Gazebo's topics are not ROS topics. A bridge node, from the package ``ros_gz_bridge``, copies the ones you need between the two.
+
 The Husarion ROSbot
 """""""""""""""""""
 
@@ -125,6 +163,36 @@ The ROSbot is a small research robot with four wheels. The two wheels on each si
      - Measures the robot's orientation, turn rate and acceleration
    * - Odometry
      - The robot's pose, computed from the wheels and the IMU
+
+Command the ROSbot and Read Its Pose
+"""""""""""""""""""""""""""""""""""""
+
+Your nodes publish commands on ``/cmd_vel`` and read the robot's pose from ``/odometry/filtered``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 29 29 42
+
+   * - Topic
+     - Message
+     - Fields you use
+   * - ``/cmd_vel``
+     - ``geometry_msgs/msg/TwistStamped``
+     - ``twist.linear.x``: forward speed, m/s; ``twist.angular.z``: turn rate, rad/s, positive turns left
+   * - ``/odometry/filtered``
+     - ``nav_msgs/msg/Odometry``
+     - ``pose.pose.position``: x and y in m; ``pose.pose.orientation``: a quaternion, which gives the yaw
+
+Start the world with the robot in it, or the robot alone on an empty floor:
+
+.. code-block:: bash
+
+   ros2 launch gp2_bringup gp2_sim.launch.py
+   ros2 launch gp2_bringup gp2_sim.launch.py world:=empty
+
+.. note::
+
+   The ROSbot can also take mecanum wheels, which drive sideways too (``twist.linear.y``). Husarion's packages have a ``mecanum`` option; the course simulation removed its controller and does not offer it.
 
 The Patrol World
 """"""""""""""""
@@ -159,6 +227,30 @@ One command starts Gazebo, the patrol world and the ROSbot:
 
    Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.
 
+What the Launch File Starts
+"""""""""""""""""""""""""""
+
+``ros2 launch gp2_bringup gp2_sim.launch.py`` starts 10 programs. It also spawns the ROSbot into the world, a step that then ends.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 41 59
+
+   * - Program
+     - What it does
+   * - ``gz sim`` with ``patrol.sdf``
+     - Gazebo and the patrol world. ``differential_drive_controller`` runs inside it and reads ``/cmd_vel``.
+   * - 5 × ``parameter_bridge``
+     - Bridges from ``ros_gz_bridge``: they copy topics between Gazebo and ROS, such as the lidar's and the cameras'.
+   * - ``robot_state_publisher``
+     - Publishes the robot's description and the frames of its parts.
+   * - ``ekf``
+     - Combines the wheels and the IMU into ``/odometry/filtered``.
+   * - ``laser_filters``
+     - Publishes ``/scan_filtered``: the scan without the beams that hit the robot.
+   * - ``static_transform_publisher``
+     - Places the logical camera's frame on the robot.
+
 Launch Arguments
 """"""""""""""""
 
@@ -189,6 +281,29 @@ The launch file takes launch arguments, set on the command line as ``name:=value
    ros2 launch gp2_bringup gp2_sim.launch.py gui:=false rviz:=true
 
 To stop the simulation, press :kbd:`Ctrl+C` in the launch terminal.
+
+RViz: What ROS Sees
+"""""""""""""""""""
+
+Gazebo draws the simulated world. **RViz** is a ROS node that draws what the topics carry, in one **fixed frame**: the robot model, its frames, the lidar's ranges. Two ways to start it:
+
+1. With the simulation, using the ROSbot's RViz configuration:
+
+   .. code-block:: bash
+
+      ros2 launch gp2_bringup gp2_sim.launch.py rviz:=true
+
+   Fixed frame ``odom``; the robot model, its frames (TF), the lidar (``/scan_filtered``) and the camera image.
+
+2. By hand, in a second terminal:
+
+   .. code-block:: bash
+
+      ros2 run rviz2 rviz2 --ros-args -p use_sim_time:=true
+
+   Set **Fixed Frame** to ``odom``, then **Add** the displays: RobotModel (topic ``/robot_description``), TF and LaserScan (``/scan_filtered``).
+
+``use_sim_time`` gives RViz Gazebo's clock: :ref:`l12-use-sim-time` explains it.
 
 Topics and Driving
 ^^^^^^^^^^^^^^^^^^
@@ -288,7 +403,7 @@ The node ``teleop_twist_keyboard`` turns key presses into velocity commands:
       m    ,    .
 
 - ``i`` drives forward, ``,`` drives backward, ``j`` and ``l`` turn on the spot, and ``k`` stops.
-- ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. Parameters are the last section of this class.
+- ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. The Parameters section explains them.
 - The keys work only while the teleop terminal has the focus.
 
 Proportional Control
@@ -723,6 +838,20 @@ Parameters
 
 The controller keeps its gains and limits as numbers in its code, so each change needs a rebuild. A **parameter** is a named setting of a node that you change without recompiling.
 
+Why the Controller Needs Parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The heading controller of the last section has four numbers in its code: the target (90°), the gain (1.5), the speed limit (1.0 rad/s) and the tolerance (0.02 rad). Each one is a choice, and each one changes with the job:
+
+- **Another target.** Turning to 180° instead of 90° means editing the ``.cpp`` and building again.
+- **Tuning.** A good gain is found by trying values: later in this section, a gain of 0.5 takes 6.4 s for a 90° turn, and 1.5 takes 2.7 s. With constants, every try is edit, build, run.
+- **Another robot or world.** GP2 runs the same controller against the stand-in robot and in Gazebo, tuned for each: ``params_stand_in.yaml`` and ``params_gazebo.yaml``.
+
+.. admonition:: Conclusion
+   :class: important
+
+   Values that change with the task, the robot or the world belong outside the code: in parameters, which you set when the node starts or while it runs.
+
 What a Parameter Holds
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -973,6 +1102,8 @@ From the package folder, ``l12_rosbot``:
    ros2 run l12_rosbot heading_controller_exe \
      --ros-args --params-file config/controllers.yaml
 
+.. _l12-use-sim-time:
+
 use_sim_time for a Node That Runs with Gazebo
 """""""""""""""""""""""""""""""""""""""""""""
 
@@ -1060,12 +1191,12 @@ Each run turns through the four headings, so each turn is 90°. A turn's time is
      - ``controllers.yaml``, then ``-p kp_angular:=4.0``
      - 2.70, 2.70, 2.70
 
-The command stays at the 1.0 rad/s limit while the gain times the error is over 1.0: with a gain of 1.5, until the error is under 1.0 / 1.5 = 0.67 rad; with 4.0, until 1.0 / 4.0 = 0.25 rad. Most of a 90° turn (1.57 rad) is at the limit either way.
+The command stays at the 1.0 rad/s limit while the gain times the error is over 1.0: with a gain of 1.5, until the error is under 1.0 / 1.5 = 0.67 rad, so for the first 1.57 − 0.67 = 0.90 rad of a 90° turn; with 4.0, until 1.0 / 4.0 = 0.25 rad, so for the first 1.32 rad.
 
 .. admonition:: Conclusion
    :class: important
 
-   With gains of 1.5 and 4.0, the speed limit, not the gain, set the time of a turn.
+   A gain of 4.0 kept the command at the limit longer, yet the turn was no faster: 2.70 s with 1.5 and with 4.0.
 
 From a Launch File: Values Written in It
 """"""""""""""""""""""""""""""""""""""""
@@ -1253,6 +1384,105 @@ Parameters: What You Can Do Now
    - Set parameters at start: with ``-p``, from a YAML file, or from a launch file.
    - Set ``use_sim_time`` for every node that runs with Gazebo.
    - Check and store a new value while the node runs, with a parameter callback.
+
+Remapping
+---------
+
+Parameters changed a node's settings without recompiling. **Remapping** does the same for the topic names in its code, and a **namespace** puts a prefix in front of them. Both use the same controller, unchanged.
+
+Why Remap: Topic Names Written in the Code
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``heading_controller_node`` names its two topics in its code: ``"odometry/filtered"`` (line 29 of ``heading_controller_node.hpp``, stage 4) and ``"cmd_vel"`` (line 34). Two jobs need other names:
+
+- **Another source.** ``differential_drive_controller`` also publishes ``/odometry/wheels``, the pose from the wheels alone. To compare the two, the controller must read ``/odometry/wheels``.
+- **A fleet.** Each robot of a fleet has its own topics, such as ``/robot1/cmd_vel`` and ``/robot2/cmd_vel``, and each controller must use its own robot's.
+
+Editing the strings means one copy of the code per job. Instead, ``--ros-args`` changes the names when the node starts:
+
+- ``-r from:=to`` **remaps** one name to another.
+- ``-r __ns:=/robot1`` puts the node in a **namespace**: "a prefix added to the names of its nodes and of its relative topics", the definition of the previous lecture.
+
+Remap a Topic: Read the Wheel Odometry
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe \
+     --ros-args -r odometry/filtered:=odometry/wheels
+
+``ros2 node info /heading_controller_node``, first lines:
+
+.. code-block:: text
+
+   Subscribers:
+     /odometry/wheels: nav_msgs/msg/Odometry
+     /parameter_events: rcl_interfaces/msg/ParameterEvent
+
+- The node turned through its four headings, measured by the wheel odometry.
+- After these runs, the two topics gave two headings for the same robot: -0.70° on ``/odometry/filtered``, -84.39° on ``/odometry/wheels``. The first takes its heading from the IMU; the second counts wheel turns only.
+
+.. admonition:: Conclusion
+   :class: important
+
+   Remapping changes where a node reads, not what the data means. Check what the new topic carries.
+
+Put the Node in a Namespace
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the previous lecture, ``PushROSNamespace`` put the nodes of a launch file in a namespace. ``__ns`` does the same from the command line:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
+
+``ros2 node info /robot1/heading_controller_node``, first lines:
+
+.. code-block:: text
+
+   Subscribers:
+     /parameter_events: rcl_interfaces/msg/ParameterEvent
+     /robot1/odometry/filtered: nav_msgs/msg/Odometry
+   Publishers:
+     /parameter_events: rcl_interfaces/msg/ParameterEvent
+     /robot1/cmd_vel: geometry_msgs/msg/TwistStamped
+
+- The node and both relative topic names got the prefix ``/robot1``.
+- ``ros2 topic info /robot1/odometry/filtered``: "Publisher count: 0". No odometry arrives, so ``control_callback`` returns at once: the node logged nothing and published no command.
+
+A Namespace and Remapping Together
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The simulation has one ROSbot, with no namespace. Keep the node's namespace, and remap its two topics to the robot's absolute names:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot heading_controller_exe --ros-args \
+     -r __ns:=/robot1 \
+     -r odometry/filtered:=/odometry/filtered -r cmd_vel:=/cmd_vel
+
+.. code-block:: text
+
+   [INFO] [...] [robot1.heading_controller_node]: all 4 headings reached
+
+- ``ros2 node info`` lists ``/odometry/filtered`` and ``/cmd_vel``: a name that starts with ``/`` is absolute, and the namespace does not change it.
+- In a launch file, ``Node(...)`` takes the same settings as ``namespace=`` and ``remappings=``.
+
+.. admonition:: Conclusion
+   :class: important
+
+   The namespace names the node; the remapping points two of its topics at the robot. The code did not change.
+
+Remapping: What You Can Do Now
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Summary
+   :class: tip
+
+   - Remap a topic name when a node starts: ``--ros-args -r from:=to``.
+   - Put a node in a namespace: ``-r __ns:=/name``. Its relative names get the prefix; its absolute names do not.
+   - Combine the two, to give a node its own name and still reach a robot's topics.
+   - Check the result with ``ros2 node info`` and ``ros2 topic info``.
 
 Next Class
 ----------

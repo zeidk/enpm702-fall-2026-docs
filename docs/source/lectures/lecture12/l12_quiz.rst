@@ -2,7 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Parameters. Topics include the ROSbot in Gazebo (its topics and the ``TwistStamped`` command), proportional control (the error of a turn and of a drive, the gain, the limit and the tolerance) and parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback).
+This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Parameters. Topics include the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), proportional control (the error of a turn and of a drive, the gain, the limit and the tolerance) parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and remapping (topic names and namespaces).
 
 .. note::
 
@@ -15,7 +15,7 @@ This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Paramete
 ----
 
 
-Multiple Choice (Questions 1-10)
+Multiple Choice (Questions 1-12)
 ====================================================
 
 .. admonition:: Question 1
@@ -240,13 +240,55 @@ Multiple Choice (Questions 1-10)
    Gazebo publishes its own time on ``/clock``. With ``use_sim_time`` true, the node's clock follows it, so ``now()``, and the stamp of every ``TwistStamped``, gives the simulation's time. It is false unless you set it.
 
 
+.. admonition:: Question 11
+   :class: hint
+
+   Gazebo runs the demo world ``shapes.sdf`` with ``gz sim -s -r shapes.sdf``, and no ROS node runs. ``gz topic -l`` lists ``/clock``, ``/stats`` and ``/world/shapes/state``. ``ros2 topic list`` lists only ``/parameter_events`` and ``/rosout``. What does this show?
+
+   A. Gazebo's topics are not ROS topics. A bridge node from ``ros_gz_bridge`` copies the ones you need between the two.
+
+   B. ``ros2 topic list`` must be started before Gazebo.
+
+   C. Gazebo publishes its topics on ROS only when it has a window.
+
+   D. ``/clock`` is a ROS topic that ``ros2 topic list`` hides.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **A**
+
+   Gazebo is a program of its own, not a ROS node, and it has its own topics. The ROS list shows only ``/parameter_events`` and ``/rosout``. The simulation launch file starts 5 ``parameter_bridge`` programs from ``ros_gz_bridge``, and they copy topics such as the lidar's and the cameras' between Gazebo and ROS.
+
+
+.. admonition:: Question 12
+   :class: hint
+
+   A node subscribes to the relative topic name ``odometry/filtered``. It starts with ``--ros-args -r __ns:=/robot1``, and the robot publishes on ``/odometry/filtered``. What happens?
+
+   A. The node subscribes to ``/odometry/filtered`` and works as before.
+
+   B. The node does not start, because ``/robot1`` does not exist.
+
+   C. The node subscribes to ``/robot1/odometry/filtered``. No publisher is there, so the controller gets no odometry, does nothing and logs nothing.
+
+   D. The node subscribes to ``/robot1/odometry/filtered``, and the namespace copies the robot's messages to it.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **C**
+
+   The namespace puts the prefix ``/robot1`` in front of the node's name and of its relative topic names. In the lecture, ``ros2 topic info /robot1/odometry/filtered`` shows "Publisher count: 0". ``control_callback`` returns at once while it has no odometry, so the node logged nothing and published no command. Adding ``-r odometry/filtered:=/odometry/filtered -r cmd_vel:=/cmd_vel`` points the two topics back at the robot.
+
+
 ----
 
 
-True / False (Questions 11-15)
+True / False (Questions 13-18)
 ====================================================
 
-.. admonition:: Question 11
+.. admonition:: Question 13
    :class: hint
 
    **True or False:** A node started with ``-p kp_linear:=0.8`` has the parameter ``kp_linear`` even when it did not declare it.
@@ -259,20 +301,20 @@ True / False (Questions 11-15)
    A node accepts only the parameters it declared. The node starts with no message, and ``ros2 param get`` answers "Parameter not set". A wrong name on the command line at start is dropped without a message, so check what the node has with ``ros2 param list``.
 
 
-.. admonition:: Question 12
+.. admonition:: Question 14
    :class: hint
 
-   **True or False:** With gains of 1.5 and 4.0, a 90° turn of the ROSbot takes about the same time, because the speed limit sets the time.
+   **True or False:** In the lecture's runs, raising the gain from 1.5 to 4.0 made a 90° turn of the ROSbot faster.
 
 .. dropdown:: Answer
    :class-container: sd-border-success
 
-   **True.**
+   **False.**
 
-   The command stays at the 1.0 rad/s limit while the gain times the error is over 1.0: until the error is under 1.0 / 1.5 = 0.67 rad for a gain of 1.5, and under 1.0 / 4.0 = 0.25 rad for 4.0. Most of a 90° turn (1.57 rad) is at the limit either way. In the lecture, the turns took 2.65 s to 2.75 s at 1.5 and 2.70 s at 4.0. A gain of 0.5 never reaches the limit (0.5 × 1.57 = 0.785 rad/s at most), and its turns took 6.25 s to 6.45 s.
+   The turns took 2.65 s to 2.75 s at a gain of 1.5 and 2.70 s at 4.0. A gain of 4.0 keeps the command at the 1.0 rad/s limit longer (until the error is under 1.0 / 4.0 = 0.25 rad, against 1.0 / 1.5 = 0.67 rad), but the turn was no faster. A gain of 0.5 never reaches the limit (0.5 × 1.57 = 0.785 rad/s at most), and its turns took 6.25 s to 6.45 s.
 
 
-.. admonition:: Question 13
+.. admonition:: Question 15
    :class: hint
 
    **True or False:** If a parameter callback returns ``successful = false``, ``ros2 param set`` prints the callback's ``reason``, and the parameter keeps its old value.
@@ -285,7 +327,7 @@ True / False (Questions 11-15)
    In the lecture, ``ros2 param set /heading_controller_node kp_angular -1.0`` answers "Setting parameter failed: kp_angular must not be negative". The callback checks every value of a set command first, and one bad value rejects the whole command.
 
 
-.. admonition:: Question 14
+.. admonition:: Question 16
    :class: hint
 
    **True or False:** A parameter callback stays registered even if the node does not keep the handle that ``add_on_set_parameters_callback`` returned.
@@ -298,7 +340,7 @@ True / False (Questions 11-15)
    The callback stays registered only while the handle exists. That is why the lecture keeps it in a data member of the node.
 
 
-.. admonition:: Question 15
+.. admonition:: Question 17
    :class: hint
 
    **True or False:** The turning limit that the lecture's callback uses for ``max_angular_rps`` is 3.14 rad/s, the ROSbot's own turning limit, so ``max_angular_rps 5.0`` is rejected.
@@ -309,3 +351,16 @@ True / False (Questions 11-15)
    **True.**
 
    The callback accepts a ``max_angular_rps`` that is more than 0 and at most 3.14 rad/s. The answer to the set of 5.0 is "Setting parameter failed: max_angular_rps must be more than 0 and at most 3.14 rad/s".
+
+
+.. admonition:: Question 18
+   :class: hint
+
+   **True or False:** A node runs with ``-r __ns:=/robot1 -r cmd_vel:=/cmd_vel``. It publishes on ``/robot1/cmd_vel``.
+
+.. dropdown:: Answer
+   :class-container: sd-border-success
+
+   **False.**
+
+   A name that starts with ``/`` is absolute, and the namespace does not change it. The remapped name ``/cmd_vel`` is absolute, so the node publishes on ``/cmd_vel``. Only a relative name, such as ``cmd_vel`` without the slash, gets the prefix.
