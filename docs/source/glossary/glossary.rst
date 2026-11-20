@@ -2471,6 +2471,128 @@ L10: ROS 2 Foundations
    <p class="glossary-also">Also used here: <a href="#term-Action" target="_blank" rel="noopener">Action</a> (SA), <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-Inheritance" target="_blank" rel="noopener">Inheritance</a> (L9), <a href="#term-Lambda" target="_blank" rel="noopener">Lambda</a> (L6), <a href="#term-Service" target="_blank" rel="noopener">Service</a> (SA), <a href="#term-std-shared_ptr" target="_blank" rel="noopener">std::shared_ptr</a> (L7), <a href="#term-struct" target="_blank" rel="noopener">struct</a> (L6).</p>
 
 
+.. _g-l11:
+
+L11: ROS 2 Configuration and Orchestration
+==========================================
+
+.. glossary::
+
+   Callback Group
+      A set of callbacks of one node, with one rule: may its callbacks run in
+      parallel, or must they take turns? You create the groups and put each
+      callback in one.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Concurrency
+      Running two or more callbacks during the same period of time, taking
+      turns. On one thread, they never run at the same moment: a single-threaded
+      executor is concurrent, not parallel.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Condition
+      In a launch file, a part that reads a launch argument and decides whether
+      an action runs, such as ``IfCondition``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Custom Interface
+      A message type you write yourself, in a ``.msg`` file, when no type that
+      ROS 2 provides fits your data, such as ``RobotaxiStatus``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Event Handler
+      In a launch file, an action that waits for something to happen, such as a
+      process that starts or a launch that shuts down, and then runs actions.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Executor
+      The part of a ROS 2 program that runs callbacks. You add nodes to it. It
+      waits for events, such as a timer's period ending or a message arriving,
+      and runs the callback of each event, on one thread or on several.
+      ``rclcpp::spin(node)`` creates one for you.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Group
+      In a launch file, a set of actions with shared settings, such as a
+      namespace: ``GroupAction`` with ``PushROSNamespace``. Two copies of the
+      same nodes can then run side by side without their names colliding.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Interface
+      The data structure two nodes agree on. ROS 2 has three kinds: a message
+      (``.msg``), a service (``.srv``) and an action (``.action``).
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Interface Package
+      A package that holds only interface files, and no node code. Its name ends
+      with ``_interfaces`` or ``_msgs``. Every package whose nodes use one of its
+      messages depends on it.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Launch Action
+      A step that the launch system carries out, such as starting a node
+      (``Node``), including another launch file (``IncludeLaunchDescription``),
+      grouping nodes (``GroupAction``) or printing a message (``LogInfo``).
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Launch Argument
+      A value you set on the ``ros2 launch`` command, such as
+      ``with_dispatcher:=false``. A condition can read it to decide whether an
+      action runs.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Multi-Threaded Executor
+      An executor with several threads. Each thread runs one callback at a time,
+      so several callbacks can run at the same time.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Mutually Exclusive Group
+      A callback group whose callbacks run one at a time. While one of them runs,
+      every other callback of the group waits, even when threads are free. A
+      node's default group is of this type.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Parallelism
+      Running two or more callbacks at the same moment, each on its own thread.
+      Such callbacks run in parallel. C++ allows true parallelism: since C++11,
+      the threads of one program (``std::thread``) can run at the same moment,
+      each on its own CPU core.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Reentrant Group
+      A callback group with no "one at a time" rule. The executor starts each of
+      its callbacks as soon as it is ready, whatever else in the group is
+      running, even an earlier run of the same callback.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Relative Name
+      A name that does not begin with ``/``, such as ``robotaxi/position`` or
+      ``cmd_vel``. A namespace puts its prefix in front of it: in ``/robot1``,
+      ``/robot1/cmd_vel``.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   ROS Namespace
+      A prefix added to the names of a node and of its relative topics, such as
+      ``/robot1``: ``PushROSNamespace`` in a launch file, or ``-r __ns:=/robot1``
+      on the command line. A name that starts with ``/`` is absolute, and the
+      namespace does not change it. This is not a C++ namespace.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`L12 </lectures/lecture12/l12_lecture>`
+
+   Single-Threaded Executor
+      An executor that runs every callback on one thread, one at a time.
+      ``rclcpp::spin(node)`` uses one, so a slow callback delays every other
+      callback.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+   Substitution
+      In a launch file, a value computed when the file runs, such as
+      ``FindPackageShare``, which finds the ``share`` folder of a package.
+      :doc:`L11 </lectures/lecture11/l11_lecture>`
+
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Action" target="_blank" rel="noopener">Action</a> (SA), <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-colcon" target="_blank" rel="noopener">colcon</a> (L10), <a href="#term-Launch-File" target="_blank" rel="noopener">Launch File</a> (L10), <a href="#term-Message" target="_blank" rel="noopener">Message</a> (L10), <a href="#term-Node" target="_blank" rel="noopener">Node</a> (L10), <a href="#term-Package" target="_blank" rel="noopener">Package</a> (L10), <a href="#term-Publisher" target="_blank" rel="noopener">Publisher</a> (L10), <a href="#term-rclcpp" target="_blank" rel="noopener">rclcpp</a> (L10), <a href="#term-Service" target="_blank" rel="noopener">Service</a> (SA), <a href="#term-Subscriber" target="_blank" rel="noopener">Subscriber</a> (L10), <a href="#term-Thread" target="_blank" rel="noopener">Thread</a> (L10), <a href="#term-Topic" target="_blank" rel="noopener">Topic</a> (L10).</p>
+
 .. _g-l12:
 
 L12: Robots in Gazebo and Parameters
@@ -2571,23 +2693,12 @@ L12: Robots in Gazebo and Parameters
       computed from it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
-   Relative Name
-      A name that does not begin with ``/``, such as ``cmd_vel``. A namespace puts
-      its prefix in front of it: in ``/robot1``, ``/robot1/cmd_vel``.
-      :doc:`L12 </lectures/lecture12/l12_lecture>`
-
    Remapping
       Changing a name that a node uses, when the node starts, without editing its
       code: ``--ros-args -r match:=replacement``. It changes where the node reads
       or writes, not what the data means. A remapping rule renames topics, the
       node (``__node``) and its namespace (``__ns``), and does not rename
       parameters.
-      :doc:`L12 </lectures/lecture12/l12_lecture>`
-
-   ROS Namespace
-      A prefix added to the names of a node and of its relative topics, such as
-      ``/robot1``: ``-r __ns:=/robot1``. A name that starts with ``/`` is
-      absolute, and the namespace does not change it. This is not a C++ namespace.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    ROS Time
@@ -2630,6 +2741,9 @@ L12: Robots in Gazebo and Parameters
       The robot's heading: its angle counterclockwise from +x, in radians.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-colcon" target="_blank" rel="noopener">colcon</a> (L10), <a href="#term-Launch-Argument" target="_blank" rel="noopener">Launch Argument</a> (L11), <a href="#term-Launch-File" target="_blank" rel="noopener">Launch File</a> (L10), <a href="#term-Message" target="_blank" rel="noopener">Message</a> (L10), <a href="#term-Node" target="_blank" rel="noopener">Node</a> (L10), <a href="#term-Package" target="_blank" rel="noopener">Package</a> (L10), <a href="#term-Publisher" target="_blank" rel="noopener">Publisher</a> (L10), <a href="#term-rclcpp" target="_blank" rel="noopener">rclcpp</a> (L10), <a href="#term-Relative-Name" target="_blank" rel="noopener">Relative Name</a> (L11), <a href="#term-ROS-Namespace" target="_blank" rel="noopener">ROS Namespace</a> (L11), <a href="#term-Subscriber" target="_blank" rel="noopener">Subscriber</a> (L10), <a href="#term-Topic" target="_blank" rel="noopener">Topic</a> (L10).</p>
 
 .. _g-vc:
 
