@@ -411,6 +411,9 @@ var SHOWN = [], showIO = window.IntersectionObserver ? new IntersectionObserver(
 function onShow(e, fn){{ if (typeof e === "string") e = $id(e); if (!e || !document.contains(e)) return;
   SHOWN.push({{el:e, fn:fn, seen:false}});
   if (showIO) showIO.observe(e); else {{ e._vis = true; fn(true); }} }}
+/* onReset(el, fn): the slides put a frame back when the viewer leaves it; a docs panel stays as the reader left it,
+   so the panels register nothing (the frame scripts call it, so it must exist) */
+function onReset(){{}}
 {codeboxes}
 {frames}
 {sliders}

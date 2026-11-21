@@ -6,8 +6,8 @@
     <div>
       <p class="goal">With <span class="cmd">ros2 topic pub</span>, you chose the command and you watched the robot. A controller node does both: every 50&nbsp;ms, it reads where the robot is and publishes a command.</p>
       <ul class="pl">
-        <li><code>ekf</code> publishes the robot's pose, computed from the wheels and the IMU.</li>
-        <li><code>differential_drive_controller</code> turns each <code>/cmd_vel</code> command into wheel speeds.</li>
+        <li><code class="nd">ekf</code> publishes the robot's pose, computed from the wheels and the IMU.</li>
+        <li><code class="nd">differential_drive_controller</code> turns each <code class="tp">/cmd_vel</code> command into wheel speeds.</li>
         <li>You write the node in the middle. The graph shows only the nodes it exchanges data with.</li>
       </ul>
     </div>

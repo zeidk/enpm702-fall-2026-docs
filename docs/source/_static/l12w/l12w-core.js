@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"tspan":1,"image":1,"marker":1,"symbol":1,"circle":1,"stop":1,"rect":1,"line":1,"polyline":1,"path":1,"linearGradient":1,"mask":1,"clipPath":1,"polygon":1,"text":1,"ellipse":1,"defs":1,"pattern":1,"foreignObject":1,"g":1,"use":1,"svg":1};
+var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"ellipse":1,"polyline":1,"symbol":1,"marker":1,"text":1,"clipPath":1,"image":1,"polygon":1,"linearGradient":1,"mask":1,"rect":1,"path":1,"g":1,"stop":1,"defs":1,"line":1,"tspan":1,"svg":1,"use":1,"pattern":1,"foreignObject":1,"circle":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 function $id(id){ var e = document.getElementById(id); if (e) return e; var t = TAGS[id] || "div";
   e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; return e; }
@@ -51,6 +51,8 @@ function buttons(host, values, fmt, onPick, initial){
   values.forEach(function(v){ var b = document.createElement("button"); b.textContent = fmt(v); b.style.marginRight = "8px";
     b.onclick = function(e){ e.stopPropagation(); bs.forEach(function(x){ x.classList.remove("on"); }); b.classList.add("on"); onPick(v); };
     if (v === initial) b.classList.add("on"); host.appendChild(b); bs.push(b); });
+  /* leaving the slide puts the group back to its first choice (and runs its handler, so the slide shows that choice) */
+  if (initial !== undefined) onReset(host, function(){ bs.forEach(function(x, i){ x.classList.toggle("on", values[i] === initial); }); onPick(initial); });
   return {set:function(v){ bs.forEach(function(x, i){ x.classList.toggle("on", values[i] === v); }); }};
 }
 /* An axis frame: returns x() and y() mappers. */
@@ -116,6 +118,9 @@ var SHOWN = [], showIO = window.IntersectionObserver ? new IntersectionObserver(
 function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !document.contains(e)) return;
   SHOWN.push({el:e, fn:fn, seen:false});
   if (showIO) showIO.observe(e); else { e._vis = true; fn(true); } }
+/* onReset(el, fn): the slides put a frame back when the viewer leaves it; a docs panel stays as the reader left it,
+   so the panels register nothing (the frame scripts call it, so it must exist) */
+function onReset(){}
 /* ---------- code boxes: color, number and mark the lines of every <pre class="code"> ---------- */
 (function(){
   var KW = {
@@ -154,6 +159,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   var ICON_COPY = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
       ICON_DONE = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function copyText(s){
+    if (window.deckIsProbing && window.deckIsProbing()) return Promise.resolve();
     if (navigator.clipboard && window.isSecureContext !== false) return navigator.clipboard.writeText(s).catch(function(){ return fallback(s); });
     return Promise.resolve(fallback(s));
     function fallback(v){ var ta = document.createElement("textarea"); ta.value = v; ta.setAttribute("readonly", "");
@@ -174,10 +180,12 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   function copyBtn(cls, label, get){
     var b = document.createElement("button"); b.className = cls; b.type = "button"; b.innerHTML = ICON_COPY;
     b.setAttribute("aria-label", label); b.title = "Copy";
+    b._undo = function(){ clearTimeout(b._t); b.innerHTML = ICON_COPY; b.classList.remove("done"); b.title = "Copy"; b.setAttribute("aria-label", label); };
     b.addEventListener("click", function(e){ e.stopPropagation();
+      if (window.deckIsProbing && window.deckIsProbing()) return;   /* the load-time probe never reaches the clipboard (the browser would ask for permission) */
       copyText(get().replace(/\s+$/, "") + "\n").then(function(){
         b.innerHTML = ICON_DONE; b.classList.add("done"); b.title = "Copied"; b.setAttribute("aria-label", "Copied");
-        clearTimeout(b._t); b._t = setTimeout(function(){ b.innerHTML = ICON_COPY; b.classList.remove("done"); b.title = "Copy"; b.setAttribute("aria-label", label); }, 1600); }); });
+        clearTimeout(b._t); b._t = setTimeout(b._undo, 1600); }); });
     return b; }
   function copyButton(pre){
     var w = document.createElement("div"); w.className = "codewrap"; pre.parentNode.insertBefore(w, pre); w.appendChild(pre);
@@ -215,6 +223,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     s.addEventListener("click", function(e){ if (e.target.closest("a")) return; pick(s.dataset.step); });
     s.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(s.dataset.step); } });
   });
+  onReset(box, function(){ pick("1"); });   /* step 1 lit, as first shown */
 })();
 
 
@@ -295,12 +304,14 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       if (!twVis) return;
       twAnim = requestAnimationFrame(tick); }
     twAnim = requestAnimationFrame(tick); }
-  function onDrag(){ twDirty = true; twLast = performance.now();
+  function onDrag(){ if (window.deckIsResetting && window.deckIsResetting()) return; twDirty = true; twLast = performance.now();
     if (reduce){ if (!twFrame) twFrame = requestAnimationFrame(function(){ twDirty = false; update(); showAt(TW_T); }); return; }
     if (!twAnim || !twLoop) drive(true); }
   iv.addEventListener("input", onDrag); iw.addEventListener("input", onDrag);
   $id("tw-drive").onclick = function(e){ e.stopPropagation(); update(); drive(false); };
   update(); showAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
+  /* leaving the slide: the sliders are back at their start (the deck did it), the drive stops and the robot is at the start */
+  onReset(sv, function(){ stopDrive(); if (twFrame){ cancelAnimationFrame(twFrame); twFrame = null; } twDirty = false; twLoop = false; view = null; update(); showAt(0); });   /* view = null: the axes are chosen again for the start values */
 
 
   /* --- slide 9: the patrol world in 3D (user, 2026-11-20: "drag the image to pan and tilt, to zoom in and out"). The walls,
@@ -390,6 +401,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     $id("pw-robot").onclick = function(e){ e.stopPropagation(); setView("robot"); };
     $id("pw-reset").onclick = function(e){ e.stopPropagation(); setView("reset"); };
     size(); setView("reset");
+    onReset(box, function(){ controls.enableDamping = false; setView("reset"); controls.enableDamping = true; });   /* the camera goes back to the first view, with no drag left over */
     onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
     if (window.IntersectionObserver) new IntersectionObserver(function(es){ box.__on = es[0].isIntersecting;
       if (box.__on){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } } }).observe(box);
@@ -471,6 +483,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     $id("dr-reset").onclick = function(e){ e.stopPropagation(); setKnob(0, 0); st.x = 0.5; st.y = 1.0; st.th = 0; trail = []; show(); };
     $id("dr-clear").onclick = function(e){ e.stopPropagation(); trail = []; show(); };
     show();
+    onReset(sv, function(){ dragging = false; setKnob(0, 0); st.x = 0.5; st.y = 1.0; st.th = 0; trail = []; show(); });   /* the pad centered, the robot at its start */
   })();
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
@@ -522,6 +535,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       drawCv(); }, 50); };
   $id("cv-stop").onclick = function(e){ e.stopPropagation(); if (tStop === null){ tStop = Math.floor(tNow * 10) / 10; } this.disabled = true; };
   tNow = 3; tStop = 2.4; drawCv();
+  onReset(cs, function(){ cvStopTimer(); tNow = 3; tStop = 2.4; drawCv(); $id("cv-stop").disabled = true; $id("cv-t").textContent = "t = 0.0 s"; });
 
   /* --- slide 20: use_sim_time off and on, the measured logs (../figures/data/sim_time.txt) --- */
   var LOG = {off:["[...]: create_wall_timer: now() = 1795198889.261 s", "[...]: create_timer:      now() = 1795198889.261 s",
@@ -542,6 +556,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     st("on"); ["st-cmd", "st-log", "st-say"].forEach(function(id){ var e = $id(id); e.style.minHeight = e.offsetHeight + "px"; });
     st("off"); }
   stReserve(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(stReserve);   /* measured again with the real fonts */
+  onReset("st-cmd", function(){ st("off"); });
 
   /* --- slide 21: the measured pause run, replayed on the computer's clock (seconds from the first log line,
      1795198892.883 s; sim_time.txt): [time, timer ("w" wall, "n" node clock), now()] --- */
@@ -573,12 +588,14 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     if (reduce){ pzAt(TT); return; }
     var t0 = performance.now(); pzTimer = setInterval(function(){ var t = Math.min(TT, (performance.now() - t0) / 1000 * 1.5); pzAt(t); if (t >= TT) clearInterval(pzTimer); }, 40); };
   pzAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
+  onReset(ps, function(){ clearInterval(pzTimer); pzAt(0); });
 })();
 
   /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): each shows its first frame and plays with its
      own play button (no autoplay, user, 2026-11-21); a clip pauses when it leaves the screen --- */
   document.querySelectorAll("video.loopvid").forEach(function(v){ v.controls = true;
-    if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ if (!es[0].isIntersecting) v.pause(); }, {threshold:0.3}).observe(v); });
+    if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ if (!es[0].isIntersecting) v.pause(); }, {threshold:0.3}).observe(v);
+    onReset(v, function(){ v.pause(); try { v.currentTime = 0; } catch (err) {} }); });   /* a clip is stopped and rewound */
 
   /* --- the five bridges (user, 2026-11-21: "create slides to explain the bridges"): a click, Enter or Space on a card
      shows that bridge's details --- */
@@ -588,7 +605,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       box.querySelectorAll(".br-panel").forEach(function(p){ var off = p.dataset.br !== n; p.classList.toggle("off", off); p.setAttribute("aria-hidden", off); }); }
     box.querySelectorAll(".br-card").forEach(function(c){
       c.addEventListener("click", function(){ pick(c.dataset.br); });
-      c.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(c.dataset.br); } }); }); })();
+      c.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(c.dataset.br); } }); });
+    onReset(box, function(){ pick("0"); }); })();
 
   /* --- wheels and ground: the radius and separation multipliers (user, 2026-11-21: "Provide a visual aid showing the
      multipliers"). The wheel circles and the two separation lines are to scale (the wheel at 2824 px/m, the separations at
@@ -633,7 +651,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
    world's walls, door and objects (patrol.sdf, PATROL). The camera: 60 deg wide, 16:9 (luxonis_depthai.urdf.xacro). ROS
    time runs at the measured real-time factor 0.9997 (figures/data/sim_time.txt): ROS Time counts from the page load (Gazebo's start), ROS Elapsed and Wall Elapsed from the slide's first showing (RViz's start). The robot model is drawn as boxes. --- */
 (function(){
-  var root = $id("rv"); if (!root) return;
+  var root = $id("rv"); if (!root || !document.contains(root)) return;   /* in the docs a missing id gives a stand-in element: this window is not there */
   var view = $id("rv-view"), imgbox = $id("rv-imgbox");
   function fallback(){ root.style.display = "none"; $id("rv-drive").style.display = "none";
     var s = $id("rv-still"); s.style.display = "block"; }
@@ -919,7 +937,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   $id("rv-reset").onclick = function(){ scans = []; walk(S.items, function(d){ d.trail = []; }, true); t0ros = performance.now(); scans.push(scanNow()); buildAll(); };
   function restore(){ S = cfg(); pose = {x:0, y:0, yaw:0}; move = null; scans = [scanNow()]; sel = null; selItem = null; openGO = openGS = false;
     help.textContent = "Click a row to read what it does. In the 3D view: drag to turn, Shift+drag to move, the wheel to zoom.";
-    msg.textContent = "RViz is ready."; root.classList.remove("hide-left"); handle.innerHTML = "&#9666;"; pop.hidden = true;
+    msg.textContent = "RViz is ready."; root.classList.remove("hide-left"); handle.innerHTML = "&#9666;"; pop.hidden = true; pop.innerHTML = "";
     homeView(); buildAll(); renderTree(); }
   $id("rv-restore").onclick = restore;
 
@@ -955,6 +973,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   window.L12SIM = {FR:FR, WR:WR, CZ:CZ, LZ:LZ, ray:ray, scanAt:scanAt, framePosAt:framePosAt, robotModel:robotModel, axes:axes, label:label,
     pointsMat:pointsMat, rgb:rgb, worldView:worldView, clear:clear};
   restore();
+  /* leaving the slide: the panels, the displays, the view and the robot as on first showing; the elapsed clocks restart */
+  onReset(root, function(){ restore(); t0ros = t0wall = performance.now(); });
   onShow(root, function(first){ if (first){ t0ros = t0wall = performance.now(); } size(); if (!running){ running = true; requestAnimationFrame(loop); } });
 })();
 
@@ -966,7 +986,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
    Messages; their settings here are a small set. The robot drives at 0.25 m/s and turns at 0.52 rad/s (chosen for this
    copy); the odometry reports exactly what it does. --- */
 (function(){
-  var root = $id("fx"); if (!root) return;
+  var root = $id("fx"); if (!root || !document.contains(root)) return;   /* in the docs a missing id gives a stand-in element: this window is not there */
   var SIM = window.L12SIM;
   if (!SIM){ root.innerHTML = '<p style="padding:20px">This browser cannot draw 3D (WebGL), so the Foxglove copy is off.</p>';
     $id("fx-drive").style.display = "none"; return; }
@@ -1148,7 +1168,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     move = {from:{x:pose.x, y:pose.y, yaw:pose.yaw}, to:to, t0:performance.now(), dur:dur * 1000}; cmd = {v:v, w:w}; }
   document.querySelectorAll("#fx-drive [data-d]").forEach(function(b){ b.onclick = function(){ drive(b.dataset.d); }; });
   function restore(){ st = {on:false, panels:cfg()}; pose = {x:0, y:0, yaw:0}; cmd = {v:0, w:0}; move = null; hist = []; sel = null; filter = "";
-    pop.hidden = true; root.classList.remove("hide-side"); handle.innerHTML = "&#9666;"; homeView(); connect(false); tab("topics"); }
+    pop.hidden = true; pop.innerHTML = ""; root.classList.remove("hide-side"); handle.innerHTML = "&#9666;"; homeView(); connect(false); tab("topics"); }
   $id("fx-restore").onclick = restore;
   ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
     [root, $id("fx-drive")].forEach(function(el){ el.addEventListener(ev, function(e){ e.stopPropagation();
@@ -1199,6 +1219,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     if (panel("Image")){ var oak = SIM.framePosAt("oak_link", pose); WV.cam.position.set(oak.x, oak.y, oak.z);
       WV.cam.lookAt(oak.x + Math.cos(pose.yaw), oak.y + Math.sin(pose.yaw), oak.z); RC.render(WV.scene, WV.cam); } }
   restore();
+  onReset(root, restore);   /* not connected, the Topics tab, the first panels, the view and the robot as on first showing */
   onShow(root, function(){ size(); if (!running){ running = true; requestAnimationFrame(loop); } });
 })();
 
@@ -1207,7 +1228,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
    (window.RQTG, from figures/gz_capture/rqt_graph_layouts.py: rqt_graph's own dotcode generator and Graphviz dot, ROS 2
    Jazzy, 2026-11-21). The node and topic filters are not part of this copy. Nodes-only edges carry no topic labels here. --- */
 (function(){
-  var root = $id("rg"); if (!root || !window.RQTG) return;
+  var root = $id("rg"); if (!root || !document.contains(root) || !window.RQTG) return;   /* the docs give a stand-in for a missing id */
   var G = RQTG, cv = $id("rg-cv"), view = $id("rg-view"), ctx = cv.getContext("2d");
   var BOX = {actions:"Actions", group_tf:"tf", images:"Images", dead_sinks:"Dead sinks", leaf_topics:"Leaf topics", debug:"Debug", hide_tf:"tf", unreachable:"Unreachable", params:"Params"};
   var START = {mode:2, level:1, actions:1, group_tf:0, images:0, dead_sinks:1, leaf_topics:0, debug:1, hide_tf:0, unreachable:1, params:1, highlight:1, fit:1};
@@ -1273,6 +1294,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   new ResizeObserver(function(){ if (S && S.fit) fit(); draw(); }).observe(view);
   new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
   reset();
+  onReset(root, reset);   /* the first settings, view and zoom */
   onShow(root, function(){ fit(); draw(); });
 })();
 
@@ -1390,6 +1412,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   var cgPlay = $id("cg-play");
   cgPlay.onclick = function(e){ e.stopPropagation(); cgWant = !cgWant; cgOn = cgWant && cgDots.length > 0 && !!cgDots[0].c; cgPlay.textContent = cgWant ? "Pause" : "Play"; };
   onShow(gs, function(first){ if (first) againCg(); });
+  /* leaving the slide: the dots rest (Play again starts them) and the graph is drawn whole, with no new drawing animation */
+  onReset(gs, function(){ if (gs._rv){ clearInterval(gs._rv); gs._rv = null; } cgWant = false; cgPlay.textContent = "Play"; drawCg(); startCg(); });
 
   /* --- slide 25 (page 27): the four steps, played slowly, each clickable --- */
   var ls = $id("lc-svg"), lis = [].slice.call(document.querySelectorAll("#lc-steps li")), lcStep = 0, lcTimer = null, lcTween = null, lcCap = $id("lc-cap");
@@ -1413,6 +1437,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   $id("lc-next").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.min(3, lcStep + 1), true); };
   $id("lc-play").onclick = function(e){ e.stopPropagation(); lcPlay(); };
   lcSet(0, false);
+  onReset(ls, function(){ lcStop(); clearInterval(lcTween); lcSet(0, false); });   /* step 1 lit, no player running */
   onShow(ls, function(first){ if (first) reveal(ls, 1200); });   /* no autoplay (user, 2026-11-21): it waits for its button */
 
   /* --- slide 26 (page 28): the error of a turn, from two sliders --- */
@@ -1433,6 +1458,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   tH.addEventListener("input", drawTc); tT.addEventListener("input", drawTc);
   $id("tc-ex").onclick = function(e){ e.stopPropagation(); tH.value = 178.9; tT.value = -90; drawTc(); };
   drawTc();
+  onReset(ts, drawTc);
   onShow(ts, function(first){ if (first) reveal(ts, 1200); });
 
   /* --- slide 27 (2 of 2, page 29): a yaw into z, w and the formula's result --- */
@@ -1470,6 +1496,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   var kpb = buttons($id("pc-kp"), [0.5, 1.5, 4.0], function(v){ return v.toFixed(1); }, function(v){ kp = v; drawPc(); }, 1.5);
   pcRows.forEach(function(r){ r.style.cursor = "pointer"; r.addEventListener("click", function(ev){ ev.stopPropagation(); kp = 1.5; kpb.set(1.5); pe.value = +r.dataset.e; drawPc(); }); });
   pe.addEventListener("input", drawPc); drawPc();
+  onReset(ps, function(){ kp = 1.5; kpb.set(1.5); drawPc(); });
   onShow(ps, function(first){ if (first) reveal(ps, 1200); });
 
   /* --- slide 37 (2 of 2, page 39): the measured log of the turn (../figures/data/pc_heading_constants.txt), replayed --- */
@@ -1500,6 +1527,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   $id("rp-play").onclick = function(e){ e.stopPropagation(); rpPlay(); };
   $id("rp-next").onclick = function(e){ e.stopPropagation(); clearInterval(rTimer); rpAt(rshown >= 6 ? 1 : rshown + 1); };
   rpAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
+  onReset(rs, function(){ clearInterval(rTimer); rpAt(0); });
 })();
 
 
@@ -1509,7 +1537,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   function esc(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function lines(pre, arr, hl){ pre.innerHTML = arr.map(function(l, i){ return '<span class="cl' + (hl && hl(i, l) ? " hl" : "") + '">' + esc(l) + "</span>"; }).join(""); }
   function stop(fn){ return function(e){ e.stopPropagation(); fn(e); }; }
-  function pick(ids, fn, first){ ids.forEach(function(id, i){ $(id).onclick = stop(function(){ ids.forEach(function(x){ $(x).classList.remove("on"); }); $(id).classList.add("on"); fn(i); }); }); if (first != null){ fn(first); reserve(ids, fn, first); } }
+  function pick(ids, fn, first){ ids.forEach(function(id, i){ $(id).onclick = stop(function(){ ids.forEach(function(x){ $(x).classList.remove("on"); }); $(id).classList.add("on"); fn(i); }); }); if (first != null){ fn(first); reserve(ids, fn, first);
+    onReset($(ids[0]), function(){ ids.forEach(function(x, i){ $(x).classList.toggle("on", i === first); }); fn(first); }); } }   /* leaving the slide: the first choice again */
   /* Every state of a frame once, after the fonts load: each element of the frame (by id) keeps the height of its
      tallest state, so the deck fits the frame for that state and nothing moves or rescales on a click (user,
      2026-11-21). states: functions that show each state; back: shows the first state again. */
@@ -1530,7 +1559,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   function reserve(ids, fn, first){ reserveStates($(ids[0]).closest(".frame"), ids.map(function(x, i){ return function(){ fn(i); }; }), function(){ fn(first); }); }
   /* a drawing built up over 0.9 s: fn(p) with p from 0 to 1; a new run cancels the old one */
   var tok = {};
-  function anim(key, fn, dur){ var my = tok[key] = (tok[key] || 0) + 1; if (reduce){ fn(1); return; }
+  function anim(key, fn, dur){ var my = tok[key] = (tok[key] || 0) + 1;
+    if (reduce || (window.deckIsResetting && window.deckIsResetting())){ fn(1); return; }   /* a reset draws the finished picture, never an animation */
     var t0 = performance.now(); (function s(){ if (tok[key] !== my) return; var p = Math.min(1, (performance.now() - t0) / (dur || 900)); fn(p); if (p < 1) requestAnimationFrame(s); })(); }
   function key(id){ $(id).addEventListener("keydown", function(e){ e.stopPropagation(); }); }
 
@@ -1552,6 +1582,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     $("q42-next").onclick = stop(function(){ step = Math.min(4, step + 1); show(); });
     $("q42-m0").onclick = stop(function(){ mode = 0; show(); }); $("q42-m1").onclick = stop(function(){ mode = 1; show(); });
     show();
+    onReset($("q42-list"), function(){ step = 0; mode = 0; show(); });
   })();
 
   /* --- slide 43: the default value sets the type --- */
@@ -1601,6 +1632,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     $("q47-set").onclick = stop(function(){ n = E.indexOf("set") + 1; show(); });
     reserveStates($("q47-log").closest(".frame"), E.map(function(x, k){ return function(){ n = Math.max(3, k + 1); show(); }; }), function(){ n = 3; show(); });
     show();
+    onReset($("q47-log"), function(){ clearInterval(timer); n = 3; show(); });
   })();
 
   /* --- slide 47: -p kp_angular:=value (par_set_no_effect.txt, par_int_at_start.txt) --- */
@@ -1630,6 +1662,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       cls.forEach(function(c, i){ var ln = 3 + i; c.classList.toggle("hl", (ln >= 3 && ln <= 5) || (N.own && ln >= N.own[0] && ln <= N.own[1])); });
       $("q50-r").textContent = "use_sim_time: true (key /**)\n" + (nm === "heading_controller_node" ? "and its own 4 values (lines 7 to 12)" : N.vals.length ? "and lines 14 to 19: " + N.vals.join(", ") : "and no key of its own"); }
     $("q50-b").children[0].classList.add("on"); sel(names[0]);
+    onReset($("q50-b"), function(){ [].forEach.call($("q50-b").children, function(x, i){ x.classList.toggle("on", i === 0); }); sel(names[0]); });
     reserveStates($("q50-r").closest(".frame"), names.map(function(nm){ return function(){ sel(nm); }; }), function(){ sel(names[0]); });
   })();
 
@@ -1677,6 +1710,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     pick(["q54-b0", "q54-b1", "q54-b2"], sel, 1);
     $("q54-again").onclick = stop(function(){ anim("q54", chart, 1000); });
     onShow("q54-svg", function(first){ if (first) anim("q54", chart, 1000); });
+    onReset(sv, function(){ tok.q54 = (tok.q54 || 0) + 1; chart(1); });   /* an unfinished drawing is cancelled */
   })();
 
   /* --- slide 55: the callback's checks, as in heading_controller_node.cpp lines 74 to 95 --- */
@@ -1725,6 +1759,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     $("q57-again").onclick = stop(function(){ anim("q57", draw, 900); });
     onShow("q57-svg", function(first){ if (first) anim("q57", draw, 900); });
     vin.value = "-1.0"; sl.value = -1; out();
+    onReset(sv, function(){ tok.q57 = (tok.q57 || 0) + 1; vin.value = "-1.0"; sl.value = -1; out(); });   /* after the choice buttons: the first value */
   })();
 
   /* --- slide 56 (2 of 2): follow one accepted value through lines 97 to 114 --- */
@@ -1772,6 +1807,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       $("q59-turns").textContent = tt.join("; "); $("q59-t").textContent = "t = " + Math.min(upto, TT).toFixed(1) + " s"; }
     $("q59-play").onclick = stop(function(){ anim("q59", function(p){ draw(p * TT); }, 11000 / 1.5 * 1.0); });
     draw(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
+    onReset(sv, function(){ tok.q59 = (tok.q59 || 0) + 1; draw(0); });
   })();
 })();
 
@@ -1784,7 +1820,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
 (function(){
   var MONO = "Fira Mono, DejaVu Sans Mono, monospace";
   function esc(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-  function code(s){ return "<code>" + esc(s) + "</code>"; }
+  function code(s, k){ return "<code" + (k ? ' class="' + k + '"' : "") + ">" + esc(s) + "</code>"; }
   function live(s){ return '<span class="live-val">' + s + "</span>"; }
 
   /* --- names --- */
@@ -1902,7 +1938,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     var list = rs.map(function(R){ return R.fqn; }).sort();
     $id("g2-list").innerHTML = ["ros2 node list | grep heading"].concat(list).map(function(l, i){ return '<span class="cl' + (i ? "" : "") + '">' + esc(l) + "</span>"; }).join("");
     var pubs = rs.filter(function(R){ return R.names[1] === "/cmd_vel"; }).length + 1;
-    say($id("g2-cnt"), "<li>" + code("/cmd_vel") + " has " + live(pubs) + " publishers: " + (pubs - 1) + " of the controllers and " + code("rosbot_gz_bridge") + ".</li>");
+    say($id("g2-cnt"), "<li>" + code("/cmd_vel", "tp") + " has " + live(pubs) + " publishers: " + (pubs - 1) + " of the controllers and " + code("rosbot_gz_bridge", "nd") + ".</li>");
     var s = "";
     if (dup) s += '<li><span class="live-val">Warning</span>: "Be aware that there are nodes in the graph that share an exact name, which can have unintended side effects".</li>';
     var key = [A.ns, A.nm, B.ns, B.nm].join("|"), RUNS = {"/|heading_controller_node|/|heading_controller_node": "the first run", "/robot1|heading_controller_node|/robot2|heading_controller_node": "the second run", "/|heading_a|/|heading_b": "the run with __node"};
@@ -1947,7 +1983,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
               kind === "absolute" ? live(esc(w)) :
               live(nsd) + " + " + code("/") + " + " + live(esc(nm)) + " + " + live(esc(w.slice(1)));
     o.push("<li><b>Join:</b> " + sum + "</li>");
-    o.push("<li><b>Full name:</b> " + live("<code>" + esc(full) + "</code>") + "</li>");
+    o.push("<li><b>Full name:</b> " + live("<code class=\"tp\">" + esc(full) + "</code>") + "</li>");
     say($id("rs-out"), o.join(""));
     var key = ns + "|" + nm + "|" + w, n = $id("rs-note");
     n.innerHTML = SEEN[key] ? "<b>Same as in the run:</b> " + esc(SEEN[key]) : (w === "~/status" ? "The lecture's code has no private name, so no run printed this one." : "This combination was not run: the full name follows the design article's rules.");
@@ -2081,13 +2117,16 @@ document.querySelectorAll('.l12w input[type="range"]').forEach(function(inp){
     var after = walk(fr, "", {}), live = fr._live || (fr._live = {}), changed = [];
     Object.keys(after).forEach(function(p){ if (before[p] && before[p].txt !== after[p].txt) changed.push(p); });
     changed.forEach(function(p){ if (!changed.some(function(q){ return q !== p && q.indexOf(p + "/") === 0; })) live[p] = 1; });
-    Object.keys(live).forEach(function(p){ if (after[p]) after[p].el.classList.add("live-val"); }); }
-  function watch(ev){ var t = ev.target; if (!t || !t.closest) return;
+    Object.keys(live).forEach(function(p){ if (after[p]){ after[p].el.classList.add("live-val"); after[p].el._auto = 1; } }); }
+  function watch(ev){ if (window.deckIsResetting && window.deckIsResetting()) return; var t = ev.target; if (!t || !t.closest) return;
     var ctl = t.closest('input[type="range"], button'); if (!ctl) return;
     var fr = ctl.closest(".l12w"); if (!fr) return;
     var before = walk(fr, "", {}); setTimeout(function(){ mark(fr, before); }, 60); }
   document.addEventListener("input", watch, true);
   document.addEventListener("click", watch, true);
+  /* leaving a slide clears its marks (the frame is shown again as it was first shown) */
+  /* only the marks this code added: a frame's own live-val spans (a value its script writes in orange) stay */
+  window.deckLiveClear = function(fr){ fr._live = {}; [].forEach.call(fr.querySelectorAll(".live-val"), function(e){ if (e._auto){ e._auto = 0; e.classList.remove("live-val"); } }); };
 })();
 /* the helpers, for the panels' own extras */
 window.L12W = {el:el, txt:txt, tag:tag, tagR:tagR, halo:halo, poly:poly, frame:frame, f:f, nt:nt, tex:tex, mathIn:mathIn,

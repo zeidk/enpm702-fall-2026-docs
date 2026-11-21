@@ -2,10 +2,10 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="pause">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>Pause Gazebo: which timer stops</div>
 <div class="l12w-in">
-<p class="goal">With <code>use_sim_time</code> on, the world was paused, then resumed 4.3&nbsp;s later with the same command and <code>pause: false</code>:</p>
+<p class="goal">With <code class="pm">use_sim_time</code> on, the world was paused, then resumed 4.3&nbsp;s later with the same command and <code>pause: false</code>:</p>
 <pre class="code" data-lang="bash">gz service -s /world/patrol/control --reqtype gz.msgs.WorldControl \
   --reptype gz.msgs.Boolean --timeout 3000 --req 'pause: true'</pre>
-  <div class="row" style="margin:4px 0"><button id="pz-play">Play the run</button><span class="small" id="pz-t">computer's clock: +0.0 s</span><span class="small" id="pz-now"></span><span class="try">try it</span></div>
+  <div class="row" style="margin:4px 0"><button id="pz-play">Play the run</button><span class="try">try it</span><span class="small" id="pz-t">computer's clock: +0.0 s</span><span class="small" id="pz-now"></span></div>
   <svg id="pz-svg" class="plot" viewBox="0 0 1150 236" width="1150" height="236" role="img" aria-label="The measured run on a time line of the computer's clock, 0 to 12 s from the first log line. A shaded band from 2.8 s to 7.1 s marks the pause. Top row, create_wall_timer: a mark every second, with now() values 0, 0, 31.896, 32.892, then 32.896 four times during the pause, then 33.480, 34.396, 35.380, 36.380. Bottom row, create_timer: marks at now() 31.184, 32.000, then none during the pause, then 33.000 to 37.000 once per second." style="width:max(calc(1150 * var(--u)), calc(1150 * 12px / 20.5));max-width:none;height:auto"></svg>
   <div class="box concl"><span class="bt">The timers follow different clocks</span>A <code>create_timer</code> timer follows the simulation: it stopped while Gazebo was paused. A wall timer kept firing, and <code>now()</code> barely moved: 32.892&nbsp;s, then 32.896&nbsp;s.</div>
 </div>
