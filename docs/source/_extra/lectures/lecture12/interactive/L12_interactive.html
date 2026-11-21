@@ -828,12 +828,13 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 
 <section class="plate frame s1" data-scene="simulation-11" data-name="Slide 14 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 14 / 110</span></div>
   <h2>Gazebo worlds</h2><div class="fit"><div class="fitin">
-  <p class="goal">A world file can hold buildings, terrain, people, water. Three of Gazebo's own worlds, and the course's:</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;max-width:600px;margin:0 auto">
-    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_dem_moon.png" style="width:100%;margin:0" alt="Rendered view of a dark gray lunar terrain with three craters, built from a digital elevation model."><figcaption class="small"><span class="file">dem_moon.sdf</span>: terrain from elevation data of the Moon</figcaption></figure>
-    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_actor_crowd.png" style="width:100%;margin:0" alt="Rendered view of a square crowd of about one hundred human figures in green tops and blue trousers, on a gray floor."><figcaption class="small"><span class="file">actor_crowd.sdf</span>: animated people (actors)</figcaption></figure>
-    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_lrauv_control_demo.png" style="width:100%;margin:0" alt="Rendered view of an orange and yellow torpedo-shaped underwater vehicle with fins, in a cyan background of water."><figcaption class="small"><span class="file">lrauv_control_demo.sdf</span>: under water, with buoyancy</figcaption></figure>
-    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_patrol_overview.png" style="width:100%;margin:0" alt="Rendered view from above of the course's patrol world: a hall with colored discs and objects, two rooms, a red door and the small ROSbot."><figcaption class="small">The course's <span class="file">patrol.sdf</span>: a hall and two rooms</figcaption></figure>
+  <p class="goal">A world can hold terrain, people, water, a factory: three of Gazebo's own, NIST's ARIAC, and the course's.</p>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px 14px;max-width:900px;margin:0 auto">
+    <figure style="margin:0;grid-column:1 / 3"><img class="fig" src="L12_interactive_assets/gz_gallery_dem_moon.png" style="width:100%;margin:0" alt="Rendered view of a dark gray lunar terrain with three craters, built from a digital elevation model."><figcaption class="small"><span class="file">dem_moon.sdf</span>: the Moon</figcaption></figure>
+    <figure style="margin:0;grid-column:3 / 5"><img class="fig" src="L12_interactive_assets/gz_gallery_actor_crowd.png" style="width:100%;margin:0" alt="Rendered view of a square crowd of about one hundred human figures in green tops and blue trousers, on a gray floor."><figcaption class="small"><span class="file">actor_crowd.sdf</span>: people</figcaption></figure>
+    <figure style="margin:0;grid-column:5 / 7"><img class="fig" src="L12_interactive_assets/gz_gallery_lrauv_control_demo.png" style="width:100%;margin:0" alt="Rendered view of an orange and yellow torpedo-shaped underwater vehicle with fins, in a cyan background of water."><figcaption class="small">Under water (<span class="file">lrauv_control_demo</span>)</figcaption></figure>
+    <figure style="margin:0;grid-column:2 / 4"><video class="fig" id="ariac-vid" src="L12_interactive_assets/ariac_task_1d.mp4" muted loop playsinline preload="metadata" style="width:100%;margin:0;display:block" aria-label="Animation from a simulated factory: a gray robot arm on a stand takes a small blue battery cell from a voltage tester and places it on the tray of one of three gray AGVs, in a hall with shelves of boxes and a second arm."></video><figcaption class="small"><a href="https://pages.nist.gov/ARIAC_docs/en/latest/pages/scenario.html" target="_blank" rel="noopener">ARIAC</a> (NIST): a factory</figcaption></figure>
+    <figure style="margin:0;grid-column:4 / 6"><img class="fig" src="L12_interactive_assets/gz_patrol_overview.png" style="width:100%;margin:0" alt="Rendered view from above of the course's patrol world: a hall with colored discs and objects, two rooms, a red door and the small ROSbot."><figcaption class="small">The course's <span class="file">patrol.sdf</span></figcaption></figure>
   </div>
   <p class="small" style="margin:6px 0 0"><a href="https://gazebosim.org/" target="_blank" rel="noopener">Gazebo</a>; <a href="https://gazebosim.org/docs/harmonic/getstarted/" target="_blank" rel="noopener">Getting Started</a> (Harmonic, the version ROS&nbsp;2 Jazzy uses); <a href="https://gazebosim.org/docs/harmonic/sdf_worlds/" target="_blank" rel="noopener">SDF worlds</a> and the <a href="http://sdformat.org/spec" target="_blank" rel="noopener">SDFormat specification</a> (how a world file describes walls, objects, lights and robots); <a href="https://gazebosim.org/docs/harmonic/sensors/" target="_blank" rel="noopener">Sensors</a>.</p>
 </div></div></section>
@@ -3349,6 +3350,12 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   pzAt(TT);
   onShow("pz-svg", function(first){ if (first && !reduce) document.getElementById("pz-play").click(); });
 })();
+
+  /* --- the ARIAC loop on "Gazebo worlds" (user, 2026-11-21): plays while on screen; with reduced motion it stays still,
+     with play controls --- */
+  (function(){ var v = document.getElementById("ariac-vid"); if (!v) return;
+    if (reduce || !("IntersectionObserver" in window)){ v.controls = true; return; }
+    new IntersectionObserver(function(es){ if (es[0].isIntersecting){ var p = v.play(); if (p && p.catch) p.catch(function(){ v.controls = true; }); } else v.pause(); }, {threshold:0.3}).observe(v); })();
 
 
 /* the business card's logo: the cover's ROSbot drawing */
