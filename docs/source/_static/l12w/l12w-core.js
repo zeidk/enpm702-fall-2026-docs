@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-again":"button","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div"}, SVGT = {"mask":1,"clipPath":1,"svg":1,"defs":1,"path":1,"linearGradient":1,"polyline":1,"text":1,"symbol":1,"stop":1,"rect":1,"tspan":1,"polygon":1,"circle":1,"g":1,"marker":1,"foreignObject":1,"line":1,"pattern":1,"image":1,"ellipse":1,"use":1};
+var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div"}, SVGT = {"mask":1,"line":1,"clipPath":1,"ellipse":1,"stop":1,"svg":1,"g":1,"foreignObject":1,"polygon":1,"image":1,"linearGradient":1,"rect":1,"tspan":1,"symbol":1,"circle":1,"pattern":1,"text":1,"marker":1,"defs":1,"path":1,"polyline":1,"use":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 function $id(id){ var e = document.getElementById(id); if (e) return e; var t = TAGS[id] || "div";
   e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; return e; }
@@ -476,9 +476,10 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
   var picks = {gui:"true", world:"patrol", rviz:"false"}, defs = {gui:"true", world:"patrol", rviz:"false"}, cmd = $id("la-cmd");
-  function laCmd(){ var s = "ros2 launch gp2_bringup gp2_sim.launch.py";
-    ["gui", "world", "rviz"].forEach(function(k){ if (picks[k] !== defs[k]) s += " " + k + ":=" + picks[k]; });
-    cmd.innerHTML = '<span class="cl">' + s.replace(/(\w+:=)/g, '<span class="ty">$1</span>') + "</span>"; }
+  function laCmd(){ var a = [];   /* the arguments go on a continuation line: on one line the command was wider than the box */
+    ["gui", "world", "rviz"].forEach(function(k){ if (picks[k] !== defs[k]) a.push(k + ":=" + picks[k]); });
+    var L = ["ros2 launch gp2_bringup gp2_sim.launch.py" + (a.length ? " \\" : "")]; if (a.length) L.push("  " + a.join(" "));
+    cmd.innerHTML = L.map(function(l, i){ return '<span class="cl' + (i ? " cont" : "") + '">' + l.replace(/(\w+:=)/g, '<span class="ty">$1</span>') + "</span>"; }).join(""); }
   document.querySelectorAll("#la-t td[data-arg]").forEach(function(td){
     var k = td.dataset.arg;
     buttons(td, td.dataset.vals.split(","), function(v){ return v; }, function(v){ picks[k] = v; laCmd(); }, k === "gui" ? "false" : k === "rviz" ? "true" : defs[k]);
@@ -529,14 +530,19 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
              on: ["[...]: create_wall_timer: now() = 0.000 s", "[...]: create_wall_timer: now() = 0.000 s",
                   "[...]: create_timer:      now() = 31.184 s", "[...]: create_wall_timer: now() = 31.896 s"]};
   var SAY = {off:"<li><b>Off:</b> both read the computer's clock, in seconds since 1 January 1970.</li>",
-             on:"<li><b>On:</b> the node subscribes to <code>/clock</code>.</li><li>Until the first message arrives, <code>now()</code> is 0: the article says ROS time \"will return zero if nothing has been received\".</li>"};
+             on:"<li><b>On:</b> the node subscribes to <code>/clock</code>. Until the first message, <code>now()</code> is 0: ROS time \"will return zero if nothing has been received\".</li>"};
   function st(mode){ $id("st-off").classList.toggle("on", mode === "off"); $id("st-on").classList.toggle("on", mode === "on");
-    $id("st-cmd").innerHTML = '<span class="cl">ros2 run l12_rosbot sim_time_exe' + (mode === "on" ? ' <span class="op">--ros-args</span> <span class="op">-p</span> <span class="ty">use_sim_time:=</span>true' : "") + "</span>";
+    $id("st-cmd").innerHTML = '<span class="cl">ros2 run l12_rosbot sim_time_exe' + (mode === "on" ? ' \\</span><span class="cl cont">  <span class="op">--ros-args</span> <span class="op">-p</span> <span class="ty">use_sim_time:=</span>true' : "") + "</span>";   /* two lines when on: one line was wider than the box */
     $id("st-log").innerHTML = LOG[mode].map(function(l){ return '<span class="cl">' + l + "</span>"; }).join("");
     $id("st-say").innerHTML = SAY[mode]; }
   $id("st-off").onclick = function(e){ e.stopPropagation(); st("off"); };
   $id("st-on").onclick = function(e){ e.stopPropagation(); st("on"); };
-  st("off");
+  /* the frame is fitted once, at load: reserve the height of the taller state ("on": two command lines, longer text)
+     so a click never pushes the text past the frame */
+  function stReserve(){ ["st-cmd", "st-log", "st-say"].forEach(function(id){ $id(id).style.minHeight = ""; });
+    st("on"); ["st-cmd", "st-log", "st-say"].forEach(function(id){ var e = $id(id); e.style.minHeight = e.offsetHeight + "px"; });
+    st("off"); }
+  stReserve(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(stReserve);   /* measured again with the real fonts */
 
   /* --- slide 21: the measured pause run, replayed on the computer's clock (seconds from the first log line,
      1795198892.883 s; sim_time.txt): [time, timer ("w" wall, "n" node clock), now()] --- */
@@ -576,6 +582,16 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   document.querySelectorAll("video.loopvid").forEach(function(v){
     if (reduce || !("IntersectionObserver" in window)){ v.controls = true; return; }
     new IntersectionObserver(function(es){ if (es[0].isIntersecting){ var p = v.play(); if (p && p.catch) p.catch(function(){ v.controls = true; }); } else v.pause(); }, {threshold:0.3}).observe(v); });
+
+  /* --- the five bridges (user, 2026-11-21: "create slides to explain the bridges"): a click, Enter or Space on a card
+     shows that bridge's details --- */
+  (function(){ var box = $id("br"); if (!box) return;
+    function pick(n){
+      box.querySelectorAll(".br-card").forEach(function(c){ var on = c.dataset.br === n; c.classList.toggle("on", on); c.setAttribute("aria-pressed", on); });
+      box.querySelectorAll(".br-panel").forEach(function(p){ var off = p.dataset.br !== n; p.classList.toggle("off", off); p.setAttribute("aria-hidden", off); }); }
+    box.querySelectorAll(".br-card").forEach(function(c){
+      c.addEventListener("click", function(){ pick(c.dataset.br); });
+      c.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(c.dataset.br); } }); }); })();
 
 
 /* the business card's logo: the cover's ROSbot drawing */
@@ -808,7 +824,25 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   function esc(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
   function lines(pre, arr, hl){ pre.innerHTML = arr.map(function(l, i){ return '<span class="cl' + (hl && hl(i, l) ? " hl" : "") + '">' + esc(l) + "</span>"; }).join(""); }
   function stop(fn){ return function(e){ e.stopPropagation(); fn(e); }; }
-  function pick(ids, fn, first){ ids.forEach(function(id, i){ $(id).onclick = stop(function(){ ids.forEach(function(x){ $(x).classList.remove("on"); }); $(id).classList.add("on"); fn(i); }); }); if (first != null) fn(first); }
+  function pick(ids, fn, first){ ids.forEach(function(id, i){ $(id).onclick = stop(function(){ ids.forEach(function(x){ $(x).classList.remove("on"); }); $(id).classList.add("on"); fn(i); }); }); if (first != null){ fn(first); reserve(ids, fn, first); } }
+  /* Every state of a frame once, after the fonts load: each element of the frame (by id) keeps the height of its
+     tallest state, so the deck fits the frame for that state and nothing moves or rescales on a click (user,
+     2026-11-21). states: functions that show each state; back: shows the first state again. */
+  function reserveStates(f, states, back){ if (!f) return;
+    var els = [].filter.call(f.querySelectorAll("[id]"), function(e){ return !/^(BUTTON|INPUT|svg|SELECT)$/.test(e.tagName); });
+    var keep = els.map(function(){ return 0; });
+    function measure(){ els.forEach(function(e){ e.style.minHeight = ""; });
+      states.forEach(function(s){ s(); els.forEach(function(e, k){ keep[k] = Math.max(keep[k], e.offsetHeight); }); });
+      back(); els.forEach(function(e, k){ e.style.minHeight = keep[k] > e.offsetHeight ? keep[k] + "px" : ""; }); return keep.join(","); }
+    /* Line wraps depend on the frame's scale, and the scale on the reserved heights; at some widths they never agree
+       (a taller state lowers the scale, which unwraps it). The reserved heights only grow, so this ends at a scale
+       where the tallest state fits. */
+    function settle(){ var last = "", n = 0, now = measure();
+      while (typeof fitFrame === "function" && now !== last && n++ < 5){ fitFrame(f); last = now; now = measure(); }
+      if (typeof fitFrame === "function") fitFrame(f); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(settle); else settle();
+    window.addEventListener("load", function(){ setTimeout(settle, 60); });   /* the deck refits on load too: settle after it */ }
+  function reserve(ids, fn, first){ reserveStates($(ids[0]).closest(".frame"), ids.map(function(x, i){ return function(){ fn(i); }; }), function(){ fn(first); }); }
   /* a drawing built up over 0.9 s: fn(p) with p from 0 to 1; a new run cancels the old one */
   var tok = {};
   function anim(key, fn, dur){ var my = tok[key] = (tok[key] || 0) + 1; if (reduce){ fn(1); return; }
@@ -852,7 +886,9 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     var C = [["ros2 param list /heading_controller_node", LIST], ["ros2 param get /heading_controller_node kp_angular", ["Double value is: 1.5"]],
              ["ros2 param get /heading_controller_node target_headings_deg", ["Double values are: [90.0, 180.0, -90.0, 0.0]"]]];
     pick(["q46-b0", "q46-b1", "q46-b2"], function(i){
-      $("q46-cmd").innerHTML = '<span class="cl">' + esc(C[i][0]) + "</span>";
+      var c = C[i][0], cut = c.length > 44 ? c.lastIndexOf(" ") : -1;   /* a long command: its last argument on a continuation line */
+      $("q46-cmd").innerHTML = cut < 0 ? '<span class="cl">' + esc(c) + "</span>"
+        : '<span class="cl">' + esc(c.slice(0, cut)) + " \\</span>" + '<span class="cl cont">  ' + esc(c.slice(cut + 1)) + "</span>";
       lines($("q46-out"), C[i][1], i === 0 ? function(k, l){ return DECL.indexOf(l) >= 0; } : null);
       $("q46-n").textContent = i === 0 ? "The list has " + LIST.length + " names: " + DECL.length + " declared by the node (marked), " + (LIST.length - DECL.length) + " added by ROS 2." : ""; }, 0);
   })();
@@ -871,13 +907,14 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
         else if (e[1] === "reached") out.push("t=" + (e[0] - T0).toFixed(1) + " s  heading 90 deg reached");
         else { out.push("t=" + (e[0] - T0).toFixed(1) + " s  error " + e[1] + " rad, command " + e[2] + " rad/s");
           ratio = (e[2] / e[1]).toFixed(3); why = "0.5 × " + e[1] + " = " + (0.5 * e[1]).toPrecision(3) + " rad/s" + (stored === "1.5" ? "; 1.5 × " + e[1] + " would be " + (1.5 * e[1]).toPrecision(3) + " rad/s" : ""); } }
-      var shown = out.slice(-9);
+      var shown = out.slice(-8);
       lines($("q47-log"), shown, function(k, l){ return l.charAt(0) === "$" || l === "Set parameter successful" || l.indexOf("Double value") === 0; });
       $("q47-p").textContent = stored; $("q47-m").textContent = "0.5"; $("q47-r").textContent = ratio; $("q47-w").textContent = why;
       $("q47-t").textContent = "line " + n + " of " + E.length; $("q47-back").disabled = n <= 3; $("q47-next").disabled = n >= E.length; }
     $("q47-back").onclick = stop(function(){ n = Math.max(3, n - 1); show(); });
     $("q47-next").onclick = stop(function(){ n = Math.min(E.length, n + 1); show(); });
     $("q47-set").onclick = stop(function(){ n = E.indexOf("set") + 1; show(); });
+    reserveStates($("q47-log").closest(".frame"), E.map(function(x, k){ return function(){ n = Math.max(3, k + 1); show(); }; }), function(){ n = 3; show(); });
     show();
   })();
 
@@ -888,12 +925,12 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       var v = V[i];
       $("q49-cmd").innerHTML = '<span class="cl">ros2 run l12_rosbot heading_controller_exe \\</span><span class="cl cont">  <span class="op">--ros-args</span> <span class="op">-p</span> <span class="ty">kp_angular:=</span>' + v + "</span>";
       var o, n;
-      if (i === 0){ o = ["[...]: error 1.58335 rad, command 0.791676 rad/s"]; n = '<div class="note ok">0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command.</div>'; $("q49-s").textContent = "a double: measured"; }
-      else if (i === 1){ o = ["(not run)"]; n = '<div class="note ok">Not run. The value is a double, so the node would start. Its first command would be 1.0 × 1.583 = 1.583 rad/s, over the 1.0 rad/s limit, so 1.0 rad/s: the first error of the 0.5 run, 1.583 rad, and the node\'s clamp.</div>'; $("q49-s").textContent = "a double: computed"; }
+      if (i === 0){ o = ["[...]: error 1.58335 rad, command 0.791676 rad/s"]; n = ["ok", "0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command."]; $("q49-s").textContent = "a double: measured"; }
+      else if (i === 1){ o = ["(not run)"]; n = ["ok", "Not run. A double, so the node would start: 1.0 × 1.583 = 1.583 rad/s, over the 1.0 rad/s limit, so the node's clamp sends 1.0 rad/s (1.583 rad is the 0.5 run's first error)."]; $("q49-s").textContent = "a double: computed"; }
       else { o = ["terminate called after throwing an instance of 'rclcpp::exceptions::InvalidParameterTypeException'",
         "  what():  parameter 'kp_angular' has invalid type: Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed.", "[ros2run]: Aborted", "exit code: 250"];
-        n = '<div class="note bad">An integer is not a double. The node stops at start, before the first command. Write a double with a decimal point.</div>'; $("q49-s").textContent = "an integer: measured"; }
-      lines($("q49-out"), o); $("q49-n").outerHTML = n.replace("<div ", '<div id="q49-n" '); }, 0);
+        n = ["bad", "An integer is not a double. The node stops at start, before the first command. Write a double with a decimal point."]; $("q49-s").textContent = "an integer: measured"; }
+      lines($("q49-out"), o); $("q49-n").className = "note " + n[0]; $("q49-n").textContent = n[1];   /* in place: its reserved height stays */ }, 0);
   })();
 
   /* --- slide 48: which lines of controllers.yaml a node takes --- */
@@ -906,8 +943,9 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       b.onclick = stop(function(){ [].forEach.call($("q50-b").children, function(x){ x.classList.remove("on"); }); b.classList.add("on"); sel(nm); }); $("q50-b").appendChild(b); });
     function sel(nm){ var N = NODES[nm];
       cls.forEach(function(c, i){ var ln = 3 + i; c.classList.toggle("hl", (ln >= 3 && ln <= 5) || (N.own && ln >= N.own[0] && ln <= N.own[1])); });
-      $("q50-r").textContent = "use_sim_time: true (key /**)\n" + (nm === "heading_controller_node" ? "and its own 4 values (lines 7 to 12)" : N.vals.length ? "and its own key (lines 14 to 19): " + N.vals.join(", ") : "and no key of its own"); }
+      $("q50-r").textContent = "use_sim_time: true (key /**)\n" + (nm === "heading_controller_node" ? "and its own 4 values (lines 7 to 12)" : N.vals.length ? "and lines 14 to 19: " + N.vals.join(", ") : "and no key of its own"); }
     $("q50-b").children[0].classList.add("on"); sel(names[0]);
+    reserveStates($("q50-r").closest(".frame"), names.map(function(nm){ return function(){ sel(nm); }; }), function(){ sel(names[0]); });
   })();
 
   /* --- slide 49: use_sim_time (par_sim_time.txt) --- */
@@ -1124,6 +1162,23 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   }
   function anim(svg, again){ svg.querySelectorAll(".dl,.df").forEach(function(e){ e.style.opacity = ""; e.style.transition = ""; e.style.strokeDasharray = ""; e.style.strokeDashoffset = ""; }); if (again) play(svg); }
   function mk(host, values, fmt, onPick, initial){ return buttons(host, values, fmt, onPick, initial); }
+  /* Every state of a frame once, after the fonts load: each element of the frame (by id) keeps the height of its
+     tallest state, so the deck fits the frame for that state and nothing moves or rescales on a click (user,
+     2026-11-21). states: functions that show each state; back: shows the first state again. */
+  function reserveStates(f, states, back){ if (!f) return;
+    var els = [].filter.call(f.querySelectorAll("[id]"), function(e){ return !/^(BUTTON|INPUT|svg|SELECT)$/.test(e.tagName); });
+    var keep = els.map(function(){ return 0; });
+    function measure(){ els.forEach(function(e){ e.style.minHeight = ""; });
+      states.forEach(function(s){ s(); els.forEach(function(e, k){ keep[k] = Math.max(keep[k], e.offsetHeight); }); });
+      back(); els.forEach(function(e, k){ e.style.minHeight = keep[k] > e.offsetHeight ? keep[k] + "px" : ""; }); return keep.join(","); }
+    /* Line wraps depend on the frame's scale, and the scale on the reserved heights; at some widths they never agree
+       (a taller state lowers the scale, which unwraps it). The reserved heights only grow, so this ends at a scale
+       where the tallest state fits. */
+    function settle(){ var last = "", n = 0, now = measure();
+      while (typeof fitFrame === "function" && now !== last && n++ < 5){ fitFrame(f); last = now; now = measure(); }
+      if (typeof fitFrame === "function") fitFrame(f); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(settle); else settle();
+    window.addEventListener("load", function(){ setTimeout(settle, 60); });   /* the deck refits on load too: settle after it */ }
   function say(e, html){ e.innerHTML = html; }
 
   /* ================= p65 (2 of 2): two controllers ================= */
@@ -1218,15 +1273,18 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   var rsW = mk($id("rs-wr"), WR.map(function(x){ return x[0]; }), function(v){ return v; }, function(v){ RS.w = v; rs(); }, "cmd_vel");
   document.querySelectorAll("#rs-wr button").forEach(function(b){ b.style.marginBottom = "8px"; });
   rs();
+  (function(){ var all = []; ["/", "/robot1", "/robot2"].forEach(function(ns){ ["heading_controller_node", "heading_a"].forEach(function(nm){ WR.forEach(function(w){
+      all.push(function(){ RS.ns = ns; RS.nm = nm; RS.w = w[0]; rs(); }); }); }); });
+    reserveStates($id("rs-out").closest(".frame"), all, function(){ RS.ns = "/"; RS.nm = "heading_controller_node"; RS.w = "cmd_vel"; rs(); }); })();
 
   /* ================= p71 (2 of 2): the rule builder ================= */
   var G1 = $id("g1-svg"), S1 = {ns: "/", nm: "heading_controller_node", od: "", cv: ""};
   var MEAS = {
     "/|heading_controller_node||": "ros2 node info lists the subscriber /odometry/filtered and the publisher /cmd_vel.",
-    "/|heading_controller_node|odometry/wheels|": "The node turned through its four headings, and its log ended with all 4 headings reached. /odometry/wheels has one publisher.",
+    "/|heading_controller_node|odometry/wheels|": "Its log ended with all 4 headings reached; /odometry/wheels has one publisher.",
     "/robot1|heading_controller_node||": "/robot1/odometry/filtered has publisher count 0, so no odometry arrives: the node logged nothing.",
     "/robot1|heading_controller_node|/odometry/filtered|/cmd_vel": "The log ended with [robot1.heading_controller_node]: all 4 headings reached.",
-    "/robot1|heading_a|/odometry/filtered|/cmd_vel": "ros2 node list shows /robot1/heading_a, and the node turned the ROSbot through its four headings (the launch file's run)."};
+    "/robot1|heading_a|/odometry/filtered|/cmd_vel": "ros2 node list shows /robot1/heading_a; it turned the ROSbot through its four headings (the launch file's run)."};
   function g1(again){
     var svg = G1, cx = 250; svg.innerHTML = "";
     var rules = []; if (S1.ns !== "/") rules.push(["__ns", S1.ns]); if (S1.nm !== "heading_controller_node") rules.push(["__node", S1.nm]);
@@ -1243,14 +1301,19 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     if (dst) nbox(svg, cx, 338, dst, {d: 2.3}); else nbox(svg, cx, 338, "no subscriber", {ghost: true, d: 2.3});
     if (S1.od) tag(svg, cx - 34, 121, 1);
     if (S1.cv) tag(svg, cx - 34, 287, 2);
+    /* the tags' key, in the free top-right corner (it was a sentence under the controls) */
+    var ky = 24; if (S1.od){ tag(svg, 412, ky, 1); txt(svg, 432, ky + 6, "odometry/filtered rule", 16, C.ink, "start"); ky += 30; }
+    if (S1.cv){ tag(svg, 412, ky, 2); txt(svg, 432, ky + 6, "cmd_vel rule", 16, C.ink, "start"); }
     anim(svg, again);
     var L = ["ros2 run l12_rosbot heading_controller_exe"];
-    if (rules.length){ L[0] += " --ros-args \\"; rules.forEach(function(r, i){ L.push("  -r " + r[0] + ":=" + r[1] + (i < rules.length - 1 ? " \\" : "")); }); }
-    $id("g1-cmd").innerHTML = L.map(function(l){ return '<span class="cl' + (/\\$/.test(l) && l.charAt(0) === " " ? " cont" : "") + '">' + esc(l).replace(/(-r )/g, '<span class="op">$1</span>').replace(/(\S+:=)/g, '<span class="ty">$1</span>') + "</span>"; }).join("");
+    if (rules.length){ L[0] += " \\";   /* every line fits the box: --ros-args joins the first rule when that line stays short */
+      rules.forEach(function(r, i){ var s = "-r " + r[0] + ":=" + r[1], end = i < rules.length - 1 ? " \\" : "";
+        if (i === 0){ if (("  --ros-args " + s + end).length <= 44) L.push("  --ros-args " + s + end); else { L.push("  --ros-args \\"); L.push("  " + s + end); } }
+        else L.push("  " + s + end); }); }
+    $id("g1-cmd").innerHTML = L.map(function(l){ return '<span class="cl' + (l.charAt(0) === " " ? " cont" : "") + '">' + esc(l).replace(/(-r )/g, '<span class="op">$1</span>').replace(/(\S+:=)/g, '<span class="ty">$1</span>') + "</span>"; }).join("");
     var key = [S1.ns, S1.nm, S1.od, S1.cv].join("|"), n = $id("g1-note");
-    n.innerHTML = (MEAS[key] ? "<b>From the run:</b> " + esc(MEAS[key]) : "This combination was not run: the graph follows the design article's rules.") +
-      (S1.cv === "cmd_vel_nav" ? " <span class='small'>cmd_vel_nav is a name chosen for this example.</span>" : "") +
-      ((S1.od || S1.cv) ? " <span class='small'>Tag 1: the odometry/filtered rule. Tag 2: the cmd_vel rule.</span>" : "");
+    n.innerHTML = (MEAS[key] ? "<b>From the run:</b> " + esc(MEAS[key]) : "Not run: the graph follows the design article's rules.") +
+      (S1.cv === "cmd_vel_nav" ? " <span class='small'>cmd_vel_nav is a name chosen for this example.</span>" : "");
     var pk = {"/|heading_controller_node||": "n", "/|heading_controller_node|odometry/wheels|": "w", "/robot1|heading_controller_node||": "s", "/robot1|heading_controller_node|/odometry/filtered|/cmd_vel": "b", "/robot1|heading_a|/odometry/filtered|/cmd_vel": "l"}[key];
     gp.set(pk || "");
     nsb.set(S1.ns); nmb.set(S1.nm); odb.set(S1.od); cvb.set(S1.cv);
@@ -1265,6 +1328,10 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   var cvb = mk($id("g1-cv"), ["", "/cmd_vel", "cmd_vel_nav"], function(v){ return v === "" ? "none" : v; }, function(v){ S1.cv = v; g1(false); }, "");
   g1(false);
   $id("g1-again").onclick = function(e){ e.stopPropagation(); g1(true); };
+  (function(){ var all = []; ["/", "/robot1", "/robot2"].forEach(function(ns){ ["heading_controller_node", "heading_a", "heading_b"].forEach(function(nm){
+      ["", "odometry/wheels", "/odometry/filtered", "/odometry/wheels"].forEach(function(od){ ["", "/cmd_vel", "cmd_vel_nav"].forEach(function(cv){
+        all.push(function(){ S1.ns = ns; S1.nm = nm; S1.od = od; S1.cv = cv; g1(false); }); }); }); }); });
+    reserveStates(G1.closest(".frame"), all, function(){ S1.ns = "/"; S1.nm = "heading_controller_node"; S1.od = ""; S1.cv = ""; g1(false); }); })();
   onShow(G1, function(first){ if (first) g1(true); });
 
   /* ================= p73 (2 of 2): the launch file against the command line ================= */

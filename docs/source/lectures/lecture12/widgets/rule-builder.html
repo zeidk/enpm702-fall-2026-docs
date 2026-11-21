@@ -4,7 +4,10 @@
 <div class="l12w-in">
 <div class="rmx two" style="grid-template-columns:calc(700 * var(--u)) 1fr;gap:calc(24 * var(--u));align-items:start">
     <div>
-      <svg id="g1-svg" class="plot" viewBox="0 0 660 400" width="660" height="400" role="img" aria-label="ROS graph, top to bottom: the node that publishes the topic the controller reads, an arrow labeled with that topic and its type, the heading controller in a dashed namespace box when it has one, an arrow labeled with the topic it publishes, and the node that reads it. A dashed box reading no publisher or no subscriber replaces a node when nobody publishes or reads that topic. Tag 1 marks the rule for odometry/filtered and tag 2 the rule for cmd_vel." style="width:max(calc(660 * var(--u)), calc(660 * 12px / 20.5));max-width:none;height:auto"></svg>
+      <div style="position:relative">
+        <svg id="g1-svg" class="plot" viewBox="0 0 660 400" width="660" height="400" role="img" aria-label="ROS graph, top to bottom: the node that publishes the topic the controller reads, an arrow labeled with that topic and its type, the heading controller in a dashed namespace box when it has one, an arrow labeled with the topic it publishes, and the node that reads it. A dashed box reading no publisher or no subscriber replaces a node when nobody publishes or reads that topic. Tag 1 marks the rule for odometry/filtered and tag 2 the rule for cmd_vel." style="width:max(calc(660 * var(--u)), calc(660 * 12px / 20.5));max-width:none;height:auto"></svg>
+        <div class="row" style="position:absolute;left:calc(10 * var(--u));top:calc(8 * var(--u));margin:0;flex-direction:column;align-items:flex-start;gap:calc(6 * var(--u))"><button id="g1-again">Draw again</button><span class="try">try it</span></div>   <!-- over the graph's free top-left corner -->
+      </div>
       <pre class="code" data-lang="bash" id="g1-cmd" style="margin-top:calc(8 * var(--u));font-size:max(var(--fmin), calc(20 * var(--u)))"></pre>
     </div>
     <div>
@@ -17,7 +20,6 @@
       <div class="row" style="margin:2px 0"><span id="g1-od"></span></div>
       <div class="small" style="margin:4px 0 0"><code>cmd_vel</code> :=</div>
       <div class="row" style="margin:2px 0"><span id="g1-cv"></span></div>
-      <div class="row"><button id="g1-again">Draw again</button><span class="try">try it</span></div>
       <div class="note" id="g1-note" style="margin-top:calc(6 * var(--u))"></div>
     </div>
   </div>
