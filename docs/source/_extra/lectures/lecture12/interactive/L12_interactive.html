@@ -592,14 +592,11 @@ pre code{background:none;padding:0}
     </div>
   </div>
   <div class="strip">
-    <svg class="rb-drive" viewBox="0 0 1248 250" width="1248" height="236" role="img" aria-label="An animated top view of the ROSbot on a tiled floor, driven by the lecture's two proportional controllers: at each corner of a rectangle it turns on the spot to the next side's heading, then drives the side, slowing as the error shrinks; a line of text in the middle shows the controller running, its error and its command, and its lidar sends out scan pulses.">
+    <svg class="rb-drive" viewBox="0 0 1248 250" width="1248" height="236" role="img" aria-label="An animated top view of the ROSbot on a tiled floor: it drives in from the left, across the floor and out on the right, then comes back from the left, while its lidar sends out scan pulses.">
       <rect class="rb-floor" x="0" y="0" width="1248" height="250"/>
       <g class="rb-tiles"></g>
       <rect class="rb-wall" x="0" y="0" width="1248" height="8"/><rect class="rb-wall" x="0" y="242" width="1248" height="8"/>
-      <path class="rb-path" d="M 160 52 H 1088 V 198 H 160 Z"/>
       <g class="rb-pings"></g>
-      <text class="rb-read rb-read1" x="624" y="122" text-anchor="middle"></text>
-      <text class="rb-read rb-read2" x="624" y="152" text-anchor="middle"></text>
       <g class="rb-bot"><g transform="scale(1)">
         <rect class="rb-wheel" x="-30" y="-33" width="22" height="11" rx="3"/><rect class="rb-wheel" x="8" y="-33" width="22" height="11" rx="3"/>
         <rect class="rb-wheel" x="-30" y="22" width="22" height="11" rx="3"/><rect class="rb-wheel" x="8" y="22" width="22" height="11" rx="3"/>
@@ -3828,55 +3825,28 @@ document.querySelectorAll('input[type="range"]').forEach(function(inp){
   place();
 });
 
-/* ---------- the cover: the ROSbot drives the sides of a rectangle with the lecture's two proportional controllers (user,
-   2026-11-20: "make the robot drive using a proportional controller"), in real time, at 200 px per meter. At each corner
-   the heading controller turns it to the next side's heading (kp 1.5, limit 1.0 rad/s, tolerance 0.02 rad); then the
-   distance controller drives the side (kp 0.8, limit 0.5 m/s, tolerance 0.02 m): the constants of l12_rosbot. Both
-   compute command = clamp(kp x error, -limit, limit) every 50 ms, as the nodes do; the readout shows the live numbers.
-   The robot moves exactly by the command (no slip, no delay). Its lidar sends a pulse every second. ---------- */
+/* ---------- the cover: the ROSbot drives in from the left, across the floor, and out on the right, then comes back
+   from the left after a short pause (user, 2026-11-20: "make the robot drives from left to right and then disappears.
+   remove the numbers"). Its lidar sends a pulse every second while it is in view. ---------- */
 (function(){
   var sv = document.querySelector(".rb-drive"); if (!sv) return;
   var NSS = "http://www.w3.org/2000/svg", bot = sv.querySelector(".rb-bot"), pings = sv.querySelector(".rb-pings"), tiles = sv.querySelector(".rb-tiles");
-  var r1 = sv.querySelector(".rb-read1"), r2 = sv.querySelector(".rb-read2");
   for (var x = 0; x <= 1248; x += 52){ var l = document.createElementNS(NSS, "line"); l.setAttribute("class", "rb-tile");
     l.setAttribute("x1", x); l.setAttribute("x2", x); l.setAttribute("y1", 8); l.setAttribute("y2", 242); tiles.appendChild(l); }
   for (var y = 8; y <= 242; y += 52){ var l2 = document.createElementNS(NSS, "line"); l2.setAttribute("class", "rb-tile");
     l2.setAttribute("x1", 0); l2.setAttribute("x2", 1248); l2.setAttribute("y1", y); l2.setAttribute("y2", y); tiles.appendChild(l2); }
-  var PXM = 200, A = {kp:1.5, max:1.0, tol:0.02}, L = {kp:0.8, max:0.5, tol:0.02}, DT = 0.05;
-  /* the corners in px (y down on screen); the robot's state in meters and radians, y up, yaw counterclockwise from +x */
-  var C4 = [[160, 52], [1088, 52], [1088, 198], [160, 198]];
-  var k = 1, px = 160, py = 52, yaw = 0, mode = "turn", cmd = 0, err = 0, startX = 160, startY = 52, sideLen = 0, target = 0, tCtl = 0;
-  var last = performance.now(), lastPing = 0;
-  function wrap(a){ while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; }
-  function clamp(v, m){ return Math.max(-m, Math.min(m, v)); }
-  function nm(v, d){ return (v < 0 ? "−" : "") + Math.abs(v).toFixed(d); }
-  function aimAt(){ var g = C4[k]; target = Math.atan2(-(g[1] - py), g[0] - px); }   /* screen y down: the y-up heading */
-  function control(){   /* one 50 ms step of the node that runs now */
-    if (mode === "turn"){ err = wrap(target - yaw);
-      if (Math.abs(err) < A.tol){ mode = "drive"; startX = px; startY = py; var g = C4[k]; sideLen = Math.hypot(g[0] - px, g[1] - py) / PXM; cmd = 0; return; }
-      cmd = clamp(A.kp * err, A.max); }
-    else { var driven = Math.hypot(px - startX, py - startY) / PXM; err = sideLen - driven;
-      if (Math.abs(err) < L.tol){ mode = "turn"; k = (k + 1) % 4; aimAt(); cmd = 0; return; }
-      cmd = clamp(L.kp * err, L.max); } }
-  function readout(){
-    var deg = Math.round(target * 180 / Math.PI), lim = Math.abs(cmd) >= (mode === "turn" ? A.max : L.max) - 1e-9 ? ", at the limit" : "";
-    if (mode === "turn"){ r1.textContent = "Heading controller: error " + nm(err, 2) + " rad, command " + nm(cmd, 2) + " rad/s" + lim;
-      r2.textContent = "command = clamp(1.5 × error, −1.0, 1.0) every 50 ms, to face the next corner (" + nm(deg, 0) + "°)"; }
-    else { r1.textContent = "Distance controller: error " + nm(err, 2) + " m, command " + nm(cmd, 2) + " m/s" + lim;
-      r2.textContent = "command = clamp(0.8 × error, −0.5, 0.5) every 50 ms, for a " + sideLen.toFixed(2) + " m side"; } }
-  function draw(){ bot.setAttribute("transform", "translate(" + px.toFixed(1) + " " + py.toFixed(1) + ") rotate(" + (-yaw * 180 / Math.PI).toFixed(2) + ")"); }
-  function tick(now){
-    var dt = Math.min(0.1, (now - last) / 1000); last = now;
-    tCtl += dt; while (tCtl >= DT){ tCtl -= DT; control(); }
-    if (mode === "turn") yaw = wrap(yaw + cmd * dt);
-    else { px += Math.cos(yaw) * cmd * dt * PXM; py -= Math.sin(yaw) * cmd * dt * PXM; }
-    if (now - lastPing > 1000){ lastPing = now; var c = document.createElementNS(NSS, "circle"); c.setAttribute("class", "rb-ping");
-      c.setAttribute("cx", px - 5 * Math.cos(yaw)); c.setAttribute("cy", py + 5 * Math.sin(yaw)); c.setAttribute("r", 14); c.dataset.t0 = now; pings.appendChild(c); }
-    [].slice.call(pings.children).forEach(function(c){ var a = (now - +c.dataset.t0) / 1400; if (a >= 1){ c.remove(); return; }
-      c.setAttribute("r", (14 + 120 * a).toFixed(1)); c.style.opacity = (0.8 * (1 - a)).toFixed(2); });
-    draw(); readout(); }
-  aimAt(); control(); draw(); readout();
-  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var SPEED = 160, X0 = -80, X1 = 1328, Y = 125, PAUSE = 1.5, CROSS = (X1 - X0) / SPEED, PERIOD = CROSS + PAUSE;   /* px/s; off screen at both ends */
+  var t0 = performance.now(), lastPing = 0;
+  function place(xp){ bot.setAttribute("transform", "translate(" + xp.toFixed(1) + " " + Y + ")"); }
+  function tick(now){ var c = ((now - t0) / 1000) % PERIOD, xp = c < CROSS ? X0 + SPEED * c : X1;
+    place(xp);
+    if (c < CROSS && xp > 0 && xp < 1248 && now - lastPing > 1000){ lastPing = now; var p = document.createElementNS(NSS, "circle"); p.setAttribute("class", "rb-ping");
+      p.setAttribute("cx", xp - 5); p.setAttribute("cy", Y); p.setAttribute("r", 14); p.dataset.t0 = now; pings.appendChild(p); }
+    [].slice.call(pings.children).forEach(function(p){ var a = (now - +p.dataset.t0) / 1400; if (a >= 1){ p.remove(); return; }
+      p.setAttribute("r", (14 + 120 * a).toFixed(1)); p.style.opacity = (0.8 * (1 - a)).toFixed(2); }); }
+  /* reduced motion: the robot stands still in the middle */
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches){ place(624); return; }
+  place(X0);
   setInterval(function(){ tick(performance.now()); }, 33);   /* a timer, not requestAnimationFrame: it runs in headless checks too */
 })();
 
