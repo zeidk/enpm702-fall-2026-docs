@@ -341,12 +341,27 @@ html[data-theme="dark"] .l12w{
   --on-accent:#0E161E;   
 }
 html[data-theme="dark"] .l12w code{color:#F0C88A}
+.l12w #pq{display:grid;grid-template-columns:1.1fr 1fr;gap:calc(10 * var(--u)) calc(22 * var(--u));align-items:stretch}
+.l12w #pq .pq-step,.l12w #pq .pq-cmd{border:2px solid var(--plate-edge);border-radius:calc(12 * var(--u));background:var(--card);margin:0;box-sizing:border-box}
+.l12w #pq .pq-step{padding:calc(10 * var(--u)) calc(16 * var(--u));cursor:pointer;transition:border-color .2s,background .2s}
+.l12w #pq .pq-step:hover{background:var(--hover)}
+.l12w #pq .pq-step.on{border-color:var(--live);background:var(--hl)}
+.l12w #pq .pq-step:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+.l12w #pq .pq-cmd{padding:calc(8 * var(--u)) calc(12 * var(--u));display:flex;flex-direction:column;justify-content:center;gap:4px;transition:opacity .25s,border-color .2s}
+.l12w #pq .pq-cmd.lit{border-color:var(--live)}
+.l12w #pq .pq-cmd .pq-lab{font-weight:700;font-size:max(var(--fmin), calc(25 * var(--u)));color:var(--slate);margin:0}
+.l12w #pq .pq-cmd.off{opacity:.3}
+.l12w #pq .pq-cmd pre.code{margin:0}
+@media (prefers-reduced-motion: reduce){
+.l12w #pq .pq-step,.l12w #pq .pq-cmd{transition:none}
+}
 .l12w #pw-box{position:relative;width:100%;height:calc(405 * var(--u));border:2px solid var(--plate-edge);border-radius:calc(8 * var(--u));overflow:hidden;background:var(--card);touch-action:none;cursor:grab}
 .l12w #pw-box:active{cursor:grabbing}
 .l12w #pw-box canvas{display:block;width:100%;height:100%}
 .l12w #pw-box .pwt{position:absolute;transform:translate(-50%,-50%);pointer-events:none;margin:0}
 .l12w #pw-box svg.pwl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .l12w #pw-box .pwt.off{display:none}
+.l12w .fig.tilebg{background:#CAC8C1 !important}
 .l12w #rbcard{display:grid;grid-template-columns:0.9fr 1.35fr;gap:0;border-radius:calc(18 * var(--u));overflow:hidden;background:var(--card);
   box-shadow:0 14px 34px rgba(20,30,45,.22),0 2px 6px rgba(20,30,45,.12);border:1px solid var(--plate-edge)}
 .l12w #rbcard .rbc-left{background:linear-gradient(160deg,var(--s6),#4E3218);color:#fff;padding:calc(22 * var(--u)) calc(24 * var(--u));display:flex;flex-direction:column;gap:4px}
