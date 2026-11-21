@@ -278,7 +278,7 @@ def section_parts(sec):
     body = re.sub(r"</div></div>\s*$", "", body.strip())
     body = re.sub(r'<p class="docs">.*?</p>', "", body, flags=re.S)          # "more detail in the docs": these are the docs
     cls = re.match(r'<section class="plate frame([^"]*)"', sec).group(1).split()
-    cls = [c for c in cls if c not in ("plan", "follow", "extra", "s1", "s2", "s3", "s4")]
+    cls = [c for c in cls if c not in ("plan", "follow", "extra", "s1", "s2", "s3", "s4", "s5", "s6")]
     return body.strip(), cls
 
 
@@ -521,8 +521,10 @@ def main():
             html_ = html_.replace("\n</div>\n</div>\n", f'\n<div class="row" style="margin:6px 0 0"><button type="button" data-again="{AGAIN[name]}">Draw again</button></div>\n</div>\n</div>\n')
         html_ = deck_words(html_)
         for w_name, old, new in WORDING:
-            if w_name == name and old in html_:
-                html_ = html_.replace(old, new)
+            # "slide N" in a pattern matches any slide number: the deck numbers its frames when it is built
+            pat = re.escape(old).replace(re.escape("slide N"), r"slide \d+")
+            if w_name == name and re.search(pat, html_):
+                html_ = re.sub(pat, lambda m: new, html_)
                 used.add((w_name, old))
         (WDIR / f"{name}.html").write_text(html_)
     missing = [w for w in WORDING if (w[0], w[1]) not in used]
@@ -538,7 +540,7 @@ AGAIN = {"error": "tc-svg", "law": "pc-svg"}
 
 WORDING = [
     ("launch-args", ", the same form as <code>with_dispatcher:=false</code> last class. All optional;", ". All optional;"),
-    ("use-sim-time", '(<span class="go" data-go="p23">slide 21</span>)', "(see Simulation Time above)"),
+    ("use-sim-time", '(<span class="go" data-go="p23">slide N</span>)', "(see Simulation Time above)"),
     ("rule-builder", "Slides:", "Lecture examples:"),
 ]
 

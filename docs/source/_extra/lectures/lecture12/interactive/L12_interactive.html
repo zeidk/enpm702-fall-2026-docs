@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="katex/katex.min.css">
 <script src="katex/katex.min.js"></script>
 <script src="katex/contrib/auto-render.min.js"></script>
-<!-- three.js r128 (MIT, L12_interactive_assets/three/LICENSE), for slide 9's 3D patrol world -->
+<!-- three.js r128 (MIT, L12_interactive_assets/three/LICENSE), for the 3D patrol world (scene p14) -->
 <script src="L12_interactive_assets/three/three.min.js"></script>
 <script src="L12_interactive_assets/three/OrbitControls.js"></script>
 <style>
@@ -44,7 +44,7 @@
   --table:#E6EBF0; --hole:#C3CCD6; --plate:#F8FAFB; --plate-edge:#B9C4CF;
   --ink:#1E2935; --slate:#34506E; --muted:#5B6B7C;
   --plan-fill:#DCE9F8; --plan:#3E6FA8; --follow-fill:#FBE4CF; --follow:#B5622A;
-  --s1:#3E6FA8; --s2:#B5622A; --s3:#7B5EA7; --s4:#A63D6F;
+  --s1:#3E6FA8; --s2:#B5622A; --s3:#7B5EA7; --s4:#A63D6F; --s5:#2A7F62; --s6:#8A5A2B;
   --live:#16798A; --ok:#2E7D4F; --bad:#B3261E; --focus:#16798A; --livetext:#A84300;
   --on-accent:#fff;
   --card:#fff; --zebra:#F3F6F9; --hl:#D6EEF1; --hover:#EAF1F7; --chip:#EEF2F6; --now:#FFF8E6;
@@ -75,7 +75,7 @@ body.fs #viewport{background-image:none;background-color:var(--plate)}
 body.fs .plate:not(.active),body.fs .card:not(.active),body.fs .sechead,body.fs .node,body.fs .edge{visibility:hidden}
 body.fs .secblock{background:none;border-color:transparent;box-shadow:none}
 body.fs .plate.active,body.fs .card.active{border-left-color:transparent;border-right-color:transparent;border-bottom-color:transparent;border-radius:0;box-shadow:none}
-body.fs .plate.active:not(.s1):not(.s2):not(.s3):not(.s4),body.fs .card.active{border-top-color:transparent}   /* the section bar stays */
+body.fs .plate.active:not(.s1):not(.s2):not(.s3):not(.s4):not(.s5):not(.s6),body.fs .card.active{border-top-color:transparent}   /* the section bar stays */
 body.panning,body.panning *{cursor:grabbing !important;user-select:none}
 .plate h2{margin:0 0 18px;font-size:50px;line-height:1.1;font-weight:600;color:var(--slate);letter-spacing:-.01em}
 .plate h3{margin:0 0 10px;font-size:30px;color:var(--slate)}
@@ -383,6 +383,10 @@ tr[data-why]:hover td:first-child::before,tr[data-why]:focus td:first-child::bef
 /* ---------- L12: one color per section (frames' top bar, section trays, contents) ---------- */
 .plate.s1{border-top:10px solid var(--s1)} .plate.s2{border-top:10px solid var(--s2)}
 .plate.s3{border-top:10px solid var(--s3)} .plate.s4{border-top:10px solid var(--s4)}
+.plate.s5{border-top:10px solid var(--s5)} .plate.s6{border-top:10px solid var(--s6)}
+.secblock.s5 .sechead .num{background:var(--s5)} .secblock.s6 .sechead .num{background:var(--s6)}
+.toc .s.s5 .n{background:var(--s5)} .toc .s.s6 .n{background:var(--s6)}
+.opener .num.s5{color:var(--s5)} .opener .num.s6{color:var(--s6)}
 .secblock.s1 .sechead .num{background:var(--s1)} .secblock.s2 .sechead .num{background:var(--s2)}
 .secblock.s3 .sechead .num{background:var(--s3)} .secblock.s4 .sechead .num{background:var(--s4)}
 .toc .col.s1{border-top-color:var(--s1)} .toc .col.s3{border-top-color:var(--s3)}
@@ -554,7 +558,7 @@ pre code{background:none;padding:0}
   --table:#121820; --hole:#27313C; --plate:#1C242E; --plate-edge:#3A4757;
   --ink:#E4EAF0; --slate:#A8C0DA; --muted:#9CABBB;
   --plan-fill:#1F3248; --plan:#74A6DE; --follow-fill:#3F2B1C; --follow:#E39158;
-  --s1:#74A6DE; --s2:#E39158; --s3:#B49AE0; --s4:#E48AB4;
+  --s1:#74A6DE; --s2:#E39158; --s3:#B49AE0; --s4:#E48AB4; --s5:#5CC3A0; --s6:#D9A066;
   --live:#43BACB; --ok:#62C48F; --bad:#F2786F; --focus:#43BACB; --livetext:#FFA657;
   --card:#242E39; --zebra:#2A3541; --hl:#1D4950; --hover:#2C3A49; --chip:#2A3541; --now:#3A2E1A;
   --navbg:rgba(28,36,46,.94); --tray:rgba(28,36,46,.6);
@@ -619,42 +623,49 @@ pre code{background:none;padding:0}
   <p class="small" style="margin:0">Click a section to go to it.</p>
   <div class="toc">
     <div class="col s1">
-      <h3>The robot and its controller</h3>
-      <div class="s s1" data-go="sec-3"><span class="n">1</span>The ROSbot in Gazebo</div>
-      <div class="ss" data-go="sec-3">Gazebo and the ROSbot</div>
+      <h3>The tools and the robot</h3>
+      <div class="s s1" data-go="sec-3"><span class="n">1</span>Simulation</div>
+      <div class="ss" data-go="sec-3">Gazebo</div>
       <div class="ss" data-go="sec-3">Launch the Simulation</div>
-      <div class="ss" data-go="sec-3">Topics and Driving</div>
       <div class="ss" data-go="sec-3">Simulation Time</div>
-      <div class="s s2" data-go="sec-4"><span class="n">2</span>Proportional Control</div>
-      <div class="ss" data-go="sec-4">One Error, One Gain</div>
-      <div class="ss" data-go="sec-4">Turn to a Heading</div>
+      <div class="s s5" data-go="sec-4"><span class="n">2</span>Visualization</div>
+      <div class="ss" data-go="sec-4">RViz</div>
+      <div class="ss" data-go="sec-4">Foxglove</div>
+      <div class="ss" data-go="sec-4">RQT</div>
+      <div class="s s6" data-go="sec-5"><span class="n">3</span>The ROSbot</div>
+      <div class="ss" data-go="sec-5">How It Moves</div>
+      <div class="ss" data-go="sec-5">What It Senses and Where It Is</div>
+      <div class="ss" data-go="sec-5">Topics and Driving</div>
     </div>
     <div class="col s3">
-      <h3>Configure the nodes</h3>
-      <div class="s s3" data-go="sec-5"><span class="n">3</span>Parameters</div>
-      <div class="ss" data-go="sec-5">Declare and Read</div>
-      <div class="ss" data-go="sec-5">Set a Parameter</div>
-      <div class="ss" data-go="sec-5">React to a Change</div>
-      <div class="s s4" data-go="sec-6"><span class="n">4</span>Remapping</div>
-      <div class="ss" data-go="sec-6">Namespaces</div>
-      <div class="ss" data-go="sec-6">Remapping Rules</div>
-      <div class="s" data-go="sec-7"><span class="n">5</span>Next Class</div>
+      <h3>Control it, then configure it</h3>
+      <div class="s s2" data-go="sec-6"><span class="n">4</span>Proportional Control</div>
+      <div class="ss" data-go="sec-6">One Error, One Gain</div>
+      <div class="ss" data-go="sec-6">Turn to a Heading</div>
+      <div class="s s3" data-go="sec-7"><span class="n">5</span>Parameters</div>
+      <div class="ss" data-go="sec-7">Declare and Read</div>
+      <div class="ss" data-go="sec-7">Set a Parameter</div>
+      <div class="ss" data-go="sec-7">React to a Change</div>
+      <div class="s s4" data-go="sec-8"><span class="n">6</span>Remapping</div>
+      <div class="ss" data-go="sec-8">Namespaces</div>
+      <div class="ss" data-go="sec-8">Remapping Rules</div>
+      <div class="s" data-go="sec-9"><span class="n">7</span>Next Class</div>
     </div>
   </div>
 </div></div></section>
 </div></section>
-<section class="secblock" data-scene="sec-1" data-name="Changelog" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Changelog</span><span class="meta">slide 1</span></div><div class="grid" style="grid-template-columns:repeat(1,1280px)"><!-- The deck's Changelog page. -->
+<section class="secblock" data-scene="sec-1" data-name="Changelog" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Changelog</span><span class="meta">1 slide</span></div><div class="grid" style="grid-template-columns:repeat(1,1280px)"><!-- The deck's Changelog page. -->
 
-<section class="plate frame" data-scene="p3" data-name="Slide 1 · Changelog" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Changelog</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 1 / 78</span></div>
+<section class="plate frame" data-scene="p3" data-name="Slide 1 · Changelog" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Changelog</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 1 / 104</span></div>
   <div class="opener">
     <h1>Changelog</h1>
     <ul class="pl" style="font-size:30px"><li><b>v1.0:</b> Original version.</li></ul>
   </div>
 </section>
 </div></section>
-<section class="secblock" data-scene="sec-2" data-name="Prerequisites" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Prerequisites</span><span class="meta">slide 2</span></div><div class="grid" style="grid-template-columns:repeat(1,1280px)"><!-- The deck's Prerequisites page (lec-prereq). -->
+<section class="secblock" data-scene="sec-2" data-name="Prerequisites" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Prerequisites</span><span class="meta">1 slide</span></div><div class="grid" style="grid-template-columns:repeat(1,1280px)"><!-- The deck's Prerequisites page (lec-prereq). -->
 
-<section class="plate frame" data-scene="p4" data-name="Slide 2 · Prerequisites" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Prerequisites</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 2 / 78</span></div>
+<section class="plate frame" data-scene="p4" data-name="Slide 2 · Prerequisites" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Prerequisites</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 2 / 104</span></div>
   <h2>Prerequisites</h2><div class="fit"><div class="fitin">
   <ul class="st"><li>Get the latest edits of the course repository into your copy (you already followed the <a href="https://enpm702-fall-2026-docs.readthedocs.io/en/latest/setup/ros_setup.html#ros-2-workspace" target="_blank" rel="noopener">instructions</a>), from <span class="file">~/ros2_ws/src/enpm702-fall-2026-ros</span>:</li></ul>
 <pre class="code" data-lang="bash">git fetch upstream
@@ -668,8 +679,7 @@ source install/setup.bash</pre>
   <div class="box">In class, I do not explain the shell commands: you learned them in the shell exercises on ReadTheDocs, which every student was asked to do.</div>
 </div></div></section>
 </div></section>
-<section class="secblock s1" data-scene="sec-3" data-name="The ROSbot in Gazebo" tabindex="0"><div class="sechead"><span class="num">1</span><span>The ROSbot in Gazebo</span><span class="meta">slides 3 to 25</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 1 (slides 3 to 25, PDF pages 5 to 27) and its measured outputs:
-     ../figures/data/gz_shapes.txt, sim_time.txt (the use_sim_time runs and the pause). -->
+<section class="secblock s1" data-scene="sec-3" data-name="Simulation" tabindex="0"><div class="sechead"><span class="num">1</span><span>Simulation</span><span class="meta">21 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Section 1 of the interactive deck (its own structure, user, 2026-11-20): simulation and reality, Gazebo, launching the simulation, simulation time. Frames with data-page show the PDF's pages; the section's script (all of the old section 1's live parts) is at the end. -->
 
 <style>
 #pw-box{position:relative;width:100%;height:405px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--card);touch-action:none;cursor:grab}
@@ -680,28 +690,60 @@ source install/setup.bash</pre>
 #pw-box .pwt.off{display:none}
 </style>
 
-<section class="plate frame s1" data-scene="p5" data-name="Slide 3 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 3 / 78</span></div>
+<section class="plate frame s1" data-scene="p5" data-name="Slide 3 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 3 / 104</span></div>
   <div class="opener">
     <div class="num s1">Section 1</div>
-    <h1>The ROSbot in Gazebo</h1>
+    <h1>Simulation</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
-      <li>Last class set up launch files, executors and custom interfaces for the robotaxi.</li>
-      <li>This class moves to a simulated robot, the one GP2 uses.</li>
-      <li><b>Gazebo</b> is a simulator: it runs a robot and its sensors in a virtual world.</li></ul></div>
+      <li>A <b>simulation</b> runs a model of the robot and of its world on a computer: the program computes how the robot moves and what its sensors would read.</li>
+      <li>Your nodes talk to it over ROS topics, as they would to the real robot.</li>
+      <li>This section: what changes and what stays the same in simulation, then <b>Gazebo</b>, the simulator of this course.</li></ul></div>
   </div>
 </section>
 
-<section class="plate frame s1" data-scene="p6" data-name="Slide 4 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 4 / 78</span></div>
+<section class="plate frame s1" data-scene="simulation-2" data-name="Slide 4 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 4 / 104</span></div>
+  <h2>Simulation and reality differ: the nodes and the sensors</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li><b>The hardware nodes are replaced.</b> On the real ROSbot, <code>stm32_node</code> (micro-ROS) and <code>rosbot_system_node</code> talk to the motor board, and <code>imu_sensor_node</code> reads the IMU. In simulation, <code>gz_ros_control</code> and bridge nodes (<code>gz_bridge</code>, <code>rosbot_gz_bridge</code> and one for each sensor) connect the same controllers and sensors to Gazebo.</li>
+    <li><b>Sensors are models.</b> The simulated sensors add Gaussian noise with set values; the IMU's values come from its data sheet (the BNO055).</li>
+    <li><b>Some sensors exist only in simulation.</b> The course's logical camera "does not make a picture": it lists the models in its view, with their names and poses. A real camera gives images, and a program must find the objects in them.</li>
+  </ul>
+  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_ros/ROS_API.md</span>, <span class="file">rosbot_description/urdf/common/gazebo.urdf.xacro</span>, <span class="file">gp2_bringup/README.md</span>, in the course simulation's <span class="file">rosbot_sim</span>.</p>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="simulation-3" data-name="Slide 5 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 5 / 104</span></div>
+  <h2>Simulation and reality differ: wheels, time, battery</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li><b>Wheels and ground.</b> The wheel radius multiplier is 0.95 in Husarion's file for the real robot and 1.0 in the simulation. The wheel separation multiplier, 1.36, "can differ for various ground types".</li>
+    <li><b>Time.</b> Gazebo's clock can pause, and can run slower or faster than the computer's. The real-time factor is simulated seconds per real second: 0.9997 in the course simulation. Reality cannot pause.</li>
+    <li><b>Only the real robot</b> reports its battery (<code>/battery_state</code>).</li>
+  </ul>
+  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_controller/config/rosbot/controllers.yaml</span> and Husarion's file for the real robot, <span class="file">rosbot_ros/ROS_API.md</span>, and the deck's <span class="file">figures/data/sim_time.txt</span>.</p>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="simulation-4" data-name="Slide 6 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 6 / 104</span></div>
+  <h2>Simulation and reality: what stays the same</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li><b>The same robot model.</b> The ROSbot's URDF is "used for both simulation and as a source of transforms on physical robot": the same body, wheels and sensor positions.</li>
+    <li><b>The same controllers and nodes.</b> <code>controller_manager</code>, the drive controller (<code>DiffDriveController</code>), <code>ekf_node</code>, <code>imu_broadcaster</code>, <code>joint_state_broadcaster</code>, <code>laser_filter</code> and <code>robot_state_publisher</code> run in both.</li>
+    <li><b>The same topics and message types.</b> <code>cmd_vel</code>, <code>imu/data</code>, <code>odometry/filtered</code>, <code>odometry/wheels</code>, <code>scan</code>, <code>scan_filtered</code> and <code>tf</code> exist on both.</li>
+    <li><b>So your node does not change.</b> A node that reads <code>/odometry/filtered</code> and sends <code>/cmd_vel</code> in Gazebo reads and sends the same topics on the real ROSbot.</li>
+  </ul>
+  <div class="box concl"><span class="bt">Test in simulation, then on the robot</span>What you test in simulation is your node's logic, against the same interface. What only the real robot can test is how the hardware behaves: its sensors, its wheels on a real floor, its battery.</div>
+  <p class="small" style="margin:6px 0 0">Source: the node and topic tables of <span class="file">rosbot_ros/ROS_API.md</span>, which mark what runs on the robot and in simulation.</p>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="p6" data-name="Slide 7 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 7 / 104</span></div>
   <div class="opener sub">
     <div class="num s1">Section 1 · Part 1</div>
-    <h1>Gazebo and the ROSbot</h1>
+    <h1>Gazebo</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
-      <li>Gazebo computes the physics of the robot and the readings of its sensors.</li>
-      <li>The ROSbot is the robot you program in Gazebo for the rest of the course.</li></ul></div>
+      <li>Gazebo is the simulator of this course: it computes the physics of the robot and the readings of its sensors.</li>
+      <li>It runs many kinds of worlds and robots; the course uses one world and one robot, the ROSbot.</li></ul></div>
   </div>
 </section>
 
-<section class="plate frame s1" data-scene="p7" data-name="Slide 5 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 5 / 78</span></div>
+<section class="plate frame s1" data-scene="p7" data-name="Slide 8 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 8 / 104</span></div>
   <h2>What Gazebo simulates</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo runs a robot in a virtual world, so you can test your nodes without a real robot. It computes three things (click one):</p>
   <div class="tile"><b>Physics</b><div class="why">The wheels push the robot over the floor, and the walls stop it.</div></div>
@@ -714,21 +756,7 @@ source install/setup.bash</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p8" data-name="Slide 6 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 6 / 78</span></div>
-  <h2>A Gazebo world: the course's patrol world</h2><div class="fit"><div class="fitin">
-  <div class="two" style="grid-template-columns:1.45fr 1fr;gap:24px;align-items:center">
-    <div>
-      <img class="fig" src="L12_interactive_assets/gz_patrol_overview.png" style="width:100%" alt="Rendered view from the patrol world's fixed camera, high above the south side, looking north and down: a long hall along the bottom with four blue discs, a purple disc, a small orange cylinder, a green cylinder with a round head beside a red door panel, and a brown box against the south wall; two rooms above, joined to the hall by an open doorway on the left and the red door on the right; the small ROSbot near the left end of the hall.">
-      <p class="small" style="margin:4px 0 8px">The world's own fixed camera (<code>/patrol_cam/image</code>), saved from the course simulation. The robot is the small dark shape at the left of the hall.</p>
-    </div>
-    <ul class="pl">
-    <li><a href="https://gazebosim.org/" target="_blank" rel="noopener">Gazebo</a>: the simulator's home page. <a href="https://gazebosim.org/docs/harmonic/getstarted/" target="_blank" rel="noopener">Getting Started with Gazebo</a>: the Harmonic tutorials, the version ROS&nbsp;2 Jazzy uses.</li>
-    <li><a href="https://gazebosim.org/docs/harmonic/sdf_worlds/" target="_blank" rel="noopener">SDF worlds</a> and the <a href="http://sdformat.org/spec" target="_blank" rel="noopener">SDFormat specification</a>: how a world file describes walls, objects, lights and robots. <a href="https://gazebosim.org/docs/harmonic/sensors/" target="_blank" rel="noopener">Sensors</a>: how Gazebo simulates cameras, lidars and IMUs.</li>
-  </ul>
-  </div>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p9" data-name="Slide 7 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 7 / 78</span></div>
+<section class="plate frame s1" data-scene="p9" data-name="Slide 9 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 9 / 104</span></div>
   <h2>Gazebo on its own: gz sim</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo is a program of its own, not a ROS node. ROS&nbsp;2 Jazzy installs it (Gazebo Harmonic), and <span class="cmd">gz sim</span> opens a world file. <span class="file">shapes.sdf</span> is a demo world that comes with Gazebo:</p>
 <pre class="code" data-lang="bash">gz sim shapes.sdf          # with a window; press Play to start
@@ -747,7 +775,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <div class="box concl"><span class="bt">Gazebo's topics are not ROS topics</span>Gazebo publishes on its own topics, with its own message types. A ROS node does not see them: with only <span class="cmd">gz sim</span> running, <span class="cmd">ros2 topic list</span> shows none of Gazebo's topics. A bridge node connects the two: next frame.</div>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p10" data-name="Slide 8 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 8 / 78 (1 of 2)</span></div>
+<section class="plate frame s1" data-scene="p10" data-name="Slide 10 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 10 / 104</span></div>
   <h2>What gz sim shapes.sdf shows</h2><div class="fit"><div class="fitin">
   <img class="fig" src="L12_interactive_assets/gz_shapes_world.png" style="width:100%" alt="Rendered view of the shapes demo world: on a grey ground, from left to right, a yellow capsule, a green cylinder, a red box, a blue sphere, a magenta ellipsoid and an orange cone, each with its shadow.">
   <ul class="pl" style="margin-top:8px">
@@ -757,7 +785,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1 extra" data-part="2" data-scene="p10-2" data-name="Slide 8 (2 of 2) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 8 / 78 (2 of 2)</span></div>
+<section class="plate frame s1" data-scene="p10-2" data-name="Slide 11 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 11 / 104</span></div>
   <h2>Gazebo and ROS: the bridge between them</h2><div class="fit"><div class="fitin">
   <ul class="pl">
     <li>The two sides use different message types. Gazebo's clock is a <code>gz.msgs.Clock</code>; the ROS clock is a <code>rosgraph_msgs/msg/Clock</code>.</li>
@@ -769,108 +797,74 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   gz_type_name: gz.msgs.Clock
   direction: GZ_TO_ROS</pre>
   <ul class="pl">
-    <li><code>GZ_TO_ROS</code>: from Gazebo to ROS. This is the <code>/clock</code> that <code>use_sim_time</code> reads (<span class="go" data-go="p23">slide 21</span>).</li>
+    <li><code>GZ_TO_ROS</code>: from Gazebo to ROS. This is the <code>/clock</code> that <code>use_sim_time</code> reads (<span class="go" data-go="p23">slide 19</span>).</li>
     <li><span class="cmd">ros2 launch gp2_bringup gp2_sim.launch.py</span> runs five bridge nodes: for the clock, the velocity command <code>/cmd_vel</code>, the lidar, the robot's camera, and the patrol camera.</li>
     <li>More: <a href="https://gazebosim.org/docs/harmonic/ros2_integration/" target="_blank" rel="noopener">Use ROS 2 to interact with Gazebo</a> and the <a href="https://github.com/gazebosim/ros_gz/tree/jazzy/ros_gz_bridge" target="_blank" rel="noopener">ros_gz_bridge package</a>.</li>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p11" data-name="Slide 9 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 9 / 78</span></div>
-  <h2>The Husarion ROSbot</h2><div class="fit"><div class="fitin">
-  <div class="two" style="grid-template-columns:1.9fr 1fr;gap:26px;align-items:center">
-    <ul class="pl"><li>A small research robot with four wheels, made by <a href="https://husarion.com/" target="_blank" rel="noopener">Husarion</a>.</li><li>The two wheels on each side turn together, so the robot turns by driving its left and right sides at different speeds: a <b>differential drive</b>.</li></ul>
-    <img class="fig" src="L12_interactive_assets/rosbot.png" style="width:100%;max-height:230px;object-fit:contain" alt="Photo of the Husarion ROSbot: a black robot with four rubber wheels and red corners, a round RPLIDAR lidar on top, a depth camera on a bracket above the lidar, and an antenna at the back.">
+<section class="plate frame s1" data-scene="simulation-10" data-name="Slide 12 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 12 / 104</span></div>
+  <h2>Gazebo worlds</h2><div class="fit"><div class="fitin">
+  <p class="goal">A world file can hold buildings, terrain, people, water. Three of Gazebo's own worlds, and the course's:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;max-width:600px;margin:0 auto">
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_dem_moon.png" style="width:100%;margin:0" alt="Rendered view of a dark gray lunar terrain with three craters, built from a digital elevation model."><figcaption class="small"><span class="file">dem_moon.sdf</span>: terrain from elevation data of the Moon</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_actor_crowd.png" style="width:100%;margin:0" alt="Rendered view of a square crowd of about one hundred human figures in green tops and blue trousers, on a gray floor."><figcaption class="small"><span class="file">actor_crowd.sdf</span>: animated people (actors)</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_lrauv_control_demo.png" style="width:100%;margin:0" alt="Rendered view of an orange and yellow torpedo-shaped underwater vehicle with fins, in a cyan background of water."><figcaption class="small"><span class="file">lrauv_control_demo.sdf</span>: under water, with buoyancy</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_patrol_overview.png" style="width:100%;margin:0" alt="Rendered view from above of the course's patrol world: a hall with colored discs and objects, two rooms, a red door and the small ROSbot."><figcaption class="small">The course's <span class="file">patrol.sdf</span>: a hall and two rooms</figcaption></figure>
   </div>
-    <table class="t tight">
-      <tr><th style="width:30%">Part</th><th>What it is</th></tr>
-      <tr><td>Body</td><td>0.197&nbsp;m long, 0.150&nbsp;m wide, 0.080&nbsp;m high</td></tr>
-      <tr><td>Speed limits</td><td>1.0&nbsp;m/s forward, 3.14&nbsp;rad/s turning</td></tr>
-      <tr><td>Lidar</td><td>3000 beams over a full circle, 0.05&nbsp;m to 30&nbsp;m</td></tr>
-      <tr><td>Logical camera</td><td>Lists the objects in front of the robot, with the pose of each one</td></tr>
-      <tr><td>IMU</td><td>Measures the robot's orientation, turn rate and acceleration</td></tr>
-      <tr><td>Odometry</td><td>The robot's pose, computed from the wheels and the IMU</td></tr>
-    </table>
+  <p class="small" style="margin:6px 0 0"><a href="https://gazebosim.org/" target="_blank" rel="noopener">Gazebo</a>; <a href="https://gazebosim.org/docs/harmonic/getstarted/" target="_blank" rel="noopener">Getting Started</a> (Harmonic, the version ROS&nbsp;2 Jazzy uses); <a href="https://gazebosim.org/docs/harmonic/sdf_worlds/" target="_blank" rel="noopener">SDF worlds</a> and the <a href="http://sdformat.org/spec" target="_blank" rel="noopener">SDFormat specification</a> (how a world file describes walls, objects, lights and robots); <a href="https://gazebosim.org/docs/harmonic/sensors/" target="_blank" rel="noopener">Sensors</a>.</p>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p12" data-name="Slide 10 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 10 / 78</span></div>
-  <h2>The ROSbot in Gazebo</h2><div class="fit"><div class="fitin">
-  <div class="two" style="grid-template-columns:0.85fr 1.5fr;gap:22px;align-items:center;width:94%;margin:0 auto">
-    <img class="fig" src="L12_interactive_assets/gz_rosbot_closeup.png" style="width:100%" alt="Rendered close view of the simulated ROSbot on a grey floor: a dark grey body on four spiked black wheels, a light grey block on top, and a camera on a curved mast at the back.">
-    <img class="fig" src="L12_interactive_assets/gz_rosbot_hall.png" style="width:100%" alt="Rendered view from just behind the simulated ROSbot at its start, at robot height, looking east down the hall: the robot in the foreground, blue and purple discs on the floor, a small orange cylinder, a green cylinder with a round head in front of a red door, and a brown box against the right wall.">
-  </div>
-  <ul class="pl" style="margin-top:10px">
-    <li>Husarion's own model: the same body, wheels and sensor positions as the real robot. Left: up close. Right: at its start, from behind, facing east (+x) down the hall. Both saved from cameras added to the running simulation.</li>
-    <li>Husarion: the <a href="https://husarion.com/manuals/rosbot/" target="_blank" rel="noopener">ROSbot manual</a>, and <a href="https://github.com/husarion/rosbot_ros" target="_blank" rel="noopener">rosbot_ros</a>, the ROS&nbsp;2 packages the course simulation is built on.</li>
-  </ul>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p13" data-name="Slide 11 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 11 / 78 (1 of 4)</span></div>
-  <h2>Command the ROSbot and read its pose</h2><div class="fit"><div class="fitin">
-  <p class="goal">Your nodes publish commands and read the robot's pose on two topics:</p>
-  <table class="t tight">
-    <tr><th style="width:27%">Topic</th><th style="width:29%">Message</th><th>Fields you use</th></tr>
-    <tr><td><code>/cmd_vel</code></td><td><code>geometry_msgs/msg/</code><br><code>TwistStamped</code></td><td><code>twist.linear.x</code>: forward speed, m/s; <code>twist.angular.z</code>: turn rate, rad/s, positive turns left</td></tr>
-    <tr><td><code>/odometry/filtered</code></td><td><code>nav_msgs/msg/</code><br><code>Odometry</code></td><td><code>pose.pose.position</code>: x and y in m; <code>pose.pose.orientation</code>: a quaternion, which gives the yaw</td></tr>
-  </table>
-  <p style="margin-top:10px">Start the world with the robot in it, or the robot alone on an empty floor:</p>
-<pre class="code" data-lang="bash">ros2 launch gp2_bringup gp2_sim.launch.py
-ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
-  <div class="box">The ROSbot can also take mecanum wheels, which drive sideways too (<code>twist.linear.y</code>). Husarion's packages have a <code>mecanum</code> option; the course simulation removed its controller and does not offer it.</div>
-</div></div></section>
-
-<section class="plate frame s1 extra" data-part="2" data-scene="p13-2" data-name="Slide 11 (2 of 4) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 11 / 78 (2 of 4)</span></div>
-  <h2>Command the ROSbot: try a TwistStamped</h2><div class="fit"><div class="fitin">
-  <div class="two" style="grid-template-columns:1fr 1.05fr;gap:26px">
-    <div>
-      <div class="row"><span class="lbl"><code>linear.x</code></span><input type="range" id="tw-v" min="-1" max="1" step="0.05" value="0.2"><span class="small">m/s</span></div>
-      <div class="row"><span class="lbl"><code>angular.z</code></span><input type="range" id="tw-w" min="-3.14" max="3.14" step="0.02" value="0.5"><span class="small">rad/s</span></div>
-      <p class="small" style="margin:2px 0 6px">The slider ends are the ROSbot's speed limits. <span class="try">try it</span></p>
-      <div class="readout" id="tw-msg" style="font-size:21px"></div>
-      <ul class="pl" style="margin-top:10px" id="tw-pose"></ul>
-      <div class="row" style="margin:6px 0 0"><button id="tw-drive">Drive again</button><span class="small" id="tw-t">t = 3.0 s</span></div>
-      <p class="small" style="margin:4px 0 0">3&nbsp;s from the origin, facing +x, a mark every 0.5&nbsp;s: \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\), no slip, no delay. Equal axes; robot to scale.</p>
-    </div>
-    <div>
-      <svg id="tw-svg" class="plot" viewBox="0 0 520 480" width="520" height="480" role="img" aria-label="Top view, x to the right and y up, in meters, the same scale on both axes: the path the robot would follow for 3 s from the origin, facing +x, with a mark every 0.5 s, and the robot drawn to scale with an arrow for its heading."></svg>
-    </div>
+<section class="plate frame s1" data-scene="simulation-11" data-name="Slide 13 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 13 / 104</span></div>
+  <h2>Gazebo robots</h2><div class="fit"><div class="fitin">
+  <p class="goal">Each kind of robot drives differently. Five that come with Gazebo, and the ROSbot:</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 12px;max-width:1040px;margin:0 auto">
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_diff_drive.png" style="width:100%;margin:0" alt="Rendered view of two box-shaped vehicles, one green and one blue, each with two large wheels and a caster ball."><figcaption class="small">Differential drive</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_mecanum_drive.png" style="width:100%;margin:0" alt="Rendered view of a blue box-shaped vehicle on four mecanum wheels, whose rollers sit at an angle around each wheel."><figcaption class="small">Mecanum: also sideways</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_ackermann_steering.png" style="width:100%;margin:0" alt="Rendered view of a blue box-shaped vehicle on four wheels, the front wheels able to steer like a car's."><figcaption class="small">Ackermann: steers like a car</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_tracked_vehicle_simple.png" style="width:100%;margin:0" alt="Rendered view of a black tracked vehicle with two flippers, near a box and a black staircase."><figcaption class="small">Tracks with flippers</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_gallery_multicopter_velocity_control.png" style="width:100%;margin:0" alt="Rendered view of two quadcopters on a gray floor: an orange X3 in front and a dark X4 behind, its light shining."><figcaption class="small">Quadcopters X3 and X4</figcaption></figure>
+    <figure style="margin:0"><img class="fig" src="L12_interactive_assets/gz_rosbot_closeup.png" style="width:100%;margin:0" alt="Rendered close view of the simulated ROSbot: a dark gray body on four spiked wheels, a gray block on top and a camera on a mast."><figcaption class="small">The ROSbot</figcaption></figure>
   </div>
 </div></div></section>
 
-<section class="plate frame s1 extra" data-part="3" data-scene="p13-3" data-name="Slide 11 (3 of 4) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 11 / 78 (3 of 4)</span></div>
-  <h2>How the ROSbot moves: linear and angular velocity</h2><div class="fit"><div class="fitin">
+<section class="plate frame s1" data-scene="p15" data-name="Slide 14 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 14 / 104</span></div>
+  <div class="opener sub">
+    <div class="num s1">Section 1 · Part 2</div>
+    <h1>Launch the Simulation</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>One launch file starts Gazebo, the world and the ROSbot.</li>
+      <li>You start it once, then use it from other terminals.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s1" data-scene="p16" data-name="Slide 15 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 15 / 104</span></div>
+  <h2>Start the simulation</h2><div class="fit"><div class="fitin">
+  <p class="goal">One command starts Gazebo, the patrol world and the ROSbot:</p>
+<pre class="code" data-lang="bash">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
   <ul class="pl">
-    <li><b><code>linear.x</code></b> is \(v\): how fast the middle of the robot moves forward, in m/s, the way it faces. Negative drives backward.</li>
-    <li><b><code>angular.z</code></b> is \(\omega\): how fast it turns about the vertical axis, in rad/s. Positive turns left (counterclockwise from above).</li>
-    <li>No sideways speed: <code>linear.y</code> does nothing on a differential drive. To reach a point to its side, the robot turns first.</li>
-    <li>The controller gives each side a speed: \(v_L = v - \omega\,s/2\), \(v_R = v + \omega\,s/2\), and each wheel spins at \(v_{side}/r\). In the course simulation, \(s\) = 0.186&nbsp;m \(\times\) 1.36 = 0.253&nbsp;m and \(r\) = 0.0425&nbsp;m (<span class="file">rosbot_controller/config/rosbot/controllers.yaml</span>).</li>
-    <li>The pose follows: \(\dot x = v\cos\theta\), \(\dot y = v\sin\theta\), \(\dot\theta = \omega\). With both set, the robot drives a circle of radius \(R = v/\omega\).</li>
+    <li>The first start is the slowest, while Gazebo loads its models: wait before you check anything.</li>
+    <li>A later start without a window (<code>gui:=false</code>) sent odometry after 8.6&nbsp;s.</li>
+    <li>Check it from a second terminal: <span class="cmd">ros2 topic list</span> prints 31 topics.</li>
   </ul>
-  <table class="t tight" style="margin-top:6px">
-    <tr><th style="width:24%">Command</th><th style="width:40%">Wheels</th><th>Motion</th></tr>
-    <tr><td>\(v > 0\), \(\omega = 0\)</td><td>both sides the same</td><td>straight ahead</td></tr>
-    <tr><td>\(v = 0\), \(\omega > 0\)</td><td>left back, right forward</td><td>turns left on the spot</td></tr>
-    <tr><td>\(v > 0\), \(\omega > 0\)</td><td>right faster than left</td><td>a left arc, \(R = v/\omega\)</td></tr>
+  <div class="box">Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.</div>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="p17" data-name="Slide 16 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 16 / 104</span></div>
+  <h2>Launch arguments</h2><div class="fit"><div class="fitin">
+  <p class="goal">Set on the command line as <code>name:=value</code>, the same form as <code>with_dispatcher:=false</code> last class. All optional; click a value to build the command. <span class="try">try it</span></p>
+  <table class="t" id="la-t">
+    <tr><th style="width:17%">Argument</th><th style="width:15%">Default</th><th style="width:36%">What it does</th><th>Pick</th></tr>
+    <tr><td><code>gui</code></td><td><code>true</code></td><td><code>false</code> runs Gazebo without a window, for a slow computer.</td><td data-arg="gui" data-vals="true,false"></td></tr>
+    <tr><td><code>world</code></td><td><code>patrol</code></td><td><code>patrol</code>, <code>patrol_doors_swapped</code> or <code>empty</code>.</td><td data-arg="world" data-vals="patrol,patrol_doors_swapped,empty"></td></tr>
+    <tr><td><code>rviz</code></td><td><code>false</code></td><td><code>true</code> also opens RViz.</td><td data-arg="rviz" data-vals="false,true"></td></tr>
+    <tr><td><code>x</code>, <code>y</code>, <code>yaw</code></td><td><code>0.0</code></td><td>The robot's start pose, in meters and radians.</td><td class="small">type them yourself</td></tr>
   </table>
+<pre class="code" data-lang="bash" id="la-cmd">ros2 launch gp2_bringup gp2_sim.launch.py gui:=false rviz:=true</pre>
+  <p style="margin:4px 0 0">To stop the simulation, press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the launch terminal.</p>
 </div></div></section>
 
-<section class="plate frame s1 extra" data-part="4" data-scene="p13-4" data-name="Slide 11 (4 of 4) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 11 / 78 (4 of 4)</span></div>
-  <h2>Drive the ROSbot: watch the numbers</h2><div class="fit"><div class="fitin">
-  <div class="two" style="grid-template-columns:1.32fr 1fr;gap:22px;align-items:start">
-    <div>
-      <svg id="dr-svg" class="plot" viewBox="0 0 640 420" width="640" height="420" role="img" aria-label="Top view of a 3 m by 2 m floor with a 0.5 m grid, x to the right and y up: the ROSbot, drawn to scale, moves in real time with the command you set on the pad, leaving a trail; an arrow on each side shows that side's wheel speed."></svg>
-      <div class="row" style="margin:6px 0 0"><button id="dr-stop">Stop</button><button id="dr-reset">Back to the start</button><button id="dr-clear">Clear the trail</button><span class="try">try it</span></div>
-    </div>
-    <div>
-      <div style="display:flex;gap:16px;align-items:center">
-        <svg id="dr-pad" viewBox="0 0 200 200" width="160" height="160" style="touch-action:none;cursor:grab;flex:none" role="img" aria-label="A joystick pad: drag the knob up for forward speed, down for backward, left to turn left and right to turn right; release it and the command returns to zero."></svg>
-        <p class="small" style="margin:0">Drag the knob: up and down set <code>linear.x</code>, left and right set <code>angular.z</code> (left turns left). Release it, and the command goes back to 0, as with a keyboard teleop. The pad's edges are the speed limits.</p>
-      </div>
-      <table class="t tight" id="dr-t" style="margin-top:8px"></table>
-    </div>
-  </div>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p14" data-name="Slide 12 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 12 / 78</span></div>
+<section class="plate frame s1" data-scene="p14" data-name="Slide 17 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 17 / 104</span></div>
   <h2>The patrol world</h2><div class="fit"><div class="fitin">
   <p class="goal">One floor, 20&nbsp;m by 10&nbsp;m, with walls 1&nbsp;m high.</p>
   <div class="two" style="grid-template-columns:1.75fr 1fr;gap:22px;align-items:center">
@@ -891,104 +885,9 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p15" data-name="Slide 13 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 13 / 78</span></div>
-  <div class="opener sub">
-    <div class="num s1">Section 1 · Part 2</div>
-    <h1>Launch the Simulation</h1>
-    <div class="box" style="font-size:30px"><ul class="pl">
-      <li>One launch file starts Gazebo, the world and the ROSbot.</li>
-      <li>You start it once, then use it from other terminals.</li></ul></div>
-  </div>
-</section>
-
-<section class="plate frame s1" data-scene="p16" data-name="Slide 14 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 14 / 78</span></div>
-  <h2>Start the simulation</h2><div class="fit"><div class="fitin">
-  <p class="goal">One command starts Gazebo, the patrol world and the ROSbot:</p>
-<pre class="code" data-lang="bash">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
-  <ul class="pl">
-    <li>The first start is the slowest, while Gazebo loads its models: wait before you check anything.</li>
-    <li>A later start without a window (<code>gui:=false</code>) sent odometry after 8.6&nbsp;s.</li>
-    <li>Check it from a second terminal: <span class="cmd">ros2 topic list</span> prints 31 topics.</li>
-  </ul>
-  <div class="box">Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.</div>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p17" data-name="Slide 15 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 15 / 78</span></div>
-  <h2>Launch arguments</h2><div class="fit"><div class="fitin">
-  <p class="goal">Set on the command line as <code>name:=value</code>, the same form as <code>with_dispatcher:=false</code> last class. All optional; click a value to build the command. <span class="try">try it</span></p>
-  <table class="t" id="la-t">
-    <tr><th style="width:17%">Argument</th><th style="width:15%">Default</th><th style="width:36%">What it does</th><th>Pick</th></tr>
-    <tr><td><code>gui</code></td><td><code>true</code></td><td><code>false</code> runs Gazebo without a window, for a slow computer.</td><td data-arg="gui" data-vals="true,false"></td></tr>
-    <tr><td><code>world</code></td><td><code>patrol</code></td><td><code>patrol</code>, <code>patrol_doors_swapped</code> or <code>empty</code>.</td><td data-arg="world" data-vals="patrol,patrol_doors_swapped,empty"></td></tr>
-    <tr><td><code>rviz</code></td><td><code>false</code></td><td><code>true</code> also opens RViz.</td><td data-arg="rviz" data-vals="false,true"></td></tr>
-    <tr><td><code>x</code>, <code>y</code>, <code>yaw</code></td><td><code>0.0</code></td><td>The robot's start pose, in meters and radians.</td><td class="small">type them yourself</td></tr>
-  </table>
-<pre class="code" data-lang="bash" id="la-cmd">ros2 launch gp2_bringup gp2_sim.launch.py gui:=false rviz:=true</pre>
-  <p style="margin:4px 0 0">To stop the simulation, press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the launch terminal.</p>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p18" data-name="Slide 16 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 16 / 78</span></div>
-  <h2>RViz: what ROS sees</h2><div class="fit"><div class="fitin">
-  <p class="goal">Gazebo draws the simulated world. <b>RViz</b> is a ROS node that draws what the topics carry, in one <b>fixed frame</b>: the robot model, its frames, the lidar's ranges. Two ways to start it:</p>
-  <ol class="steps"><li>With the simulation, using the ROSbot's RViz configuration:</li></ol>
-<pre class="code" data-lang="bash">ros2 launch gp2_bringup gp2_sim.launch.py rviz:=true</pre>
-  <ul class="pl"><li>Fixed frame <code>odom</code>; the robot model, its frames (TF), the lidar (<code>/scan_filtered</code>) and the camera image.</li></ul>
-  <ol class="steps" start="2"><li>By hand, in a second terminal:</li></ol>
-<pre class="code" data-lang="bash">ros2 run rviz2 rviz2 --ros-args -p use_sim_time:=true</pre>
-  <ul class="pl"><li>Set <b>Fixed Frame</b> to <code>odom</code>, then <b>Add</b> the displays: RobotModel (topic <code>/robot_description</code>), TF and LaserScan (<code>/scan_filtered</code>).</li></ul>
-  <p style="margin:0"><code>use_sim_time</code> gives RViz Gazebo's clock: <span class="go" data-go="p55">slide 53</span> explains it.</p>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p19" data-name="Slide 17 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 17 / 78</span></div>
+<section class="plate frame s1" data-scene="p22" data-name="Slide 18 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 18 / 104</span></div>
   <div class="opener sub">
     <div class="num s1">Section 1 · Part 3</div>
-    <h1>Topics and Driving</h1>
-    <div class="box" style="font-size:30px"><ul class="pl">
-      <li>You control the ROSbot with topics.</li>
-      <li>This part lists them and drives the robot from a terminal.</li></ul></div>
-  </div>
-</section>
-
-<section class="plate frame s1" data-scene="p20" data-name="Slide 18 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 18 / 78</span></div>
-  <h2>The topics you use</h2><div class="fit"><div class="fitin">
-  <p class="goal">Of the 31 topics, your nodes use these:</p>
-  <table class="t tight">
-    <tr><th style="width:28%">Topic</th><th style="width:40%">Type</th><th>What it carries</th></tr>
-    <tr><td><code>/cmd_vel</code></td><td><code>geometry_msgs/msg/TwistStamped</code></td><td>The velocity command. You publish it.</td></tr>
-    <tr><td><code>/odometry/filtered</code></td><td><code>nav_msgs/msg/Odometry</code></td><td>The robot's pose, about 20 times per second.</td></tr>
-    <tr><td><code>/scan</code></td><td><code>sensor_msgs/msg/LaserScan</code></td><td>The lidar's ranges.</td></tr>
-    <tr><td><code>/logical_camera</code></td><td><code>ros_gz_interfaces/msg/</code><br><code>LogicalCameraImage</code></td><td>The objects in front of the robot.</td></tr>
-    <tr><td><code>/tf</code>, <code>/tf_static</code></td><td><code>tf2_msgs/msg/TFMessage</code></td><td>The robot's frames, next class.</td></tr>
-    <tr><td><code>/clock</code></td><td><code>rosgraph_msgs/msg/Clock</code></td><td>The simulation time.</td></tr>
-  </table>
-  <div class="box"><code>/cmd_vel</code> takes a <code>TwistStamped</code>: a <code>Twist</code> with a header that holds a time stamp. The two types do not connect, so a node that publishes <code>Twist</code> on <code>/cmd_vel</code> cannot move the robot.</div>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p21" data-name="Slide 19 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 19 / 78 (1 of 2)</span></div>
-  <h2>Drive forward and turn</h2><div class="fit"><div class="fitin">
-  <p class="goal"><span class="cmd">ros2 topic pub</span> publishes one message again and again; <code>-r 10</code> sends it 10 times per second. Drive forward at 0.2&nbsp;m/s:</p>
-<pre class="code" data-lang="bash">ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
-  "{twist: {linear: {x: 0.2}}}"</pre>
-  <p style="margin:4px 0">Turn on the spot at 0.5&nbsp;rad/s:</p>
-<pre class="code" data-lang="bash">ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
-  "{twist: {angular: {z: 0.5}}}"</pre>
-  <ul class="pl">
-    <li><code>linear.x</code> is the forward speed in m/s. <code>angular.z</code> is the turn rate in rad/s; a positive value turns left.</li>
-    <li><kbd>Ctrl</kbd>+<kbd>C</kbd> stops the command. The robot then stops by itself: its controller brakes when no command arrives for 0.5&nbsp;s.</li>
-  </ul>
-</div></div></section>
-
-<section class="plate frame s1 extra" data-part="2" data-scene="p21-2" data-name="Slide 19 (2 of 2) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 19 / 78 (2 of 2)</span></div>
-  <h2>Drive forward and turn: when the robot stops</h2><div class="fit"><div class="fitin">
-  <p class="goal">Each dot is one message on <code>/cmd_vel</code>, 10 per second. Press <b>Ctrl+C</b> to stop <span class="cmd">ros2 topic pub</span>: the controller waits 0.5&nbsp;s for a message, then brakes.</p>
-  <div class="row"><button id="cv-run">Start publishing</button><button id="cv-stop" disabled>Ctrl+C</button><span class="small" id="cv-t">t = 0.0 s</span><span class="try">try it</span></div>
-  <svg id="cv-svg" class="plot" viewBox="0 0 1150 250" width="1150" height="250" role="img" aria-label="A time line over 6 s. Top row: one dot per message on /cmd_vel, every 0.1 s while ros2 topic pub runs. Bottom row: the command the controller uses, 0.2 m/s while messages arrive, then 0 from 0.5 s after the last message."></svg>
-  <div class="note" id="cv-note">The controller uses the last message it received. With no new message for 0.5&nbsp;s, it sends 0 to the wheels.</div>
-</div></div></section>
-
-<section class="plate frame s1" data-scene="p22" data-name="Slide 20 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 20 / 78</span></div>
-  <div class="opener sub">
-    <div class="num s1">Section 1 · Part 4</div>
     <h1>Simulation Time</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>Gazebo keeps its own clock.</li>
@@ -996,7 +895,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </section>
 
-<section class="plate frame s1" data-scene="p23" data-name="Slide 21 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 21 / 78</span></div>
+<section class="plate frame s1" data-scene="p23" data-name="Slide 19 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 19 / 104</span></div>
   <h2>Two clocks: the computer's and Gazebo's</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo counts its own time from the moment the simulation starts, and publishes it on <code>/clock</code>:</p>
   <div class="two" style="grid-template-columns:1fr 1.1fr;gap:24px;align-items:center">
@@ -1017,7 +916,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p24" data-name="Slide 22 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 22 / 78</span></div>
+<section class="plate frame s1" data-scene="p24" data-name="Slide 20 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 20 / 104</span></div>
   <h2>In code: now() and two kinds of timer</h2><div class="fit"><div class="fitin">
   <p class="goal">A node reads its clock with <code>now()</code>. A timer runs on one of two clocks. Lines 13 to 22 of <span class="file">include/l12_rosbot/sim_time_node.hpp</span>:</p>
 <pre class="code" data-lang="cpp" data-first="13" data-hl="17,20">class SimTimeNode : public rclcpp::Node {
@@ -1037,7 +936,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p25" data-name="Slide 23 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 23 / 78</span></div>
+<section class="plate frame s1" data-scene="p25" data-name="Slide 21 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 21 / 104</span></div>
   <h2>create_timer and create_wall_timer, side by side</h2><div class="fit"><div class="fitin">
   <p class="goal">Both callbacks read <code>now()</code>, the node clock. What differs is the clock that fires each timer:</p>
   <table class="t tight">
@@ -1051,7 +950,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   <div class="box concl"><span class="bt">Pick the timer by the clock it should follow</span>A control loop on <code>create_timer</code> pauses with Gazebo. On <code>create_wall_timer</code>, its callback keeps running while the world is paused.</div>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p26" data-name="Slide 24 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 24 / 78</span></div>
+<section class="plate frame s1" data-scene="p26" data-name="Slide 22 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 22 / 104</span></div>
   <h2>Run it: use_sim_time off, then on</h2><div class="fit"><div class="fitin">
   <div class="row"><span class="lbl"><code>use_sim_time</code></span><button id="st-off" class="on">off</button><button id="st-on">on</button><span class="try">try it</span></div>
 <pre class="code" data-lang="bash" id="st-cmd">ros2 run l12_rosbot sim_time_exe</pre>
@@ -1060,7 +959,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   <ul class="pl" id="st-say"></ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p27" data-name="Slide 25 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 25 / 78</span></div>
+<section class="plate frame s1" data-scene="p27" data-name="Slide 23 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 23 / 104</span></div>
   <h2>Pause Gazebo: which timer stops</h2><div class="fit"><div class="fitin">
   <p class="goal">With <code>use_sim_time</code> on, the world was paused, then resumed 4.3&nbsp;s later with the same command and <code>pause: false</code>:</p>
 <pre class="code" data-lang="bash">gz service -s /world/patrol/control --reqtype gz.msgs.WorldControl \
@@ -1072,16 +971,277 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
 
 
 </div></section>
-<section class="secblock s2" data-scene="sec-4" data-name="Proportional Control" tabindex="0"><div class="sechead"><span class="num">2</span><span>Proportional Control</span><span class="meta">slides 26 to 42</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 2 (slides 26 to 42, PDF pages 28 to 44) and its measured outputs:
+<section class="secblock s5" data-scene="sec-4" data-name="Visualization" tabindex="0"><div class="sechead"><span class="num">2</span><span>Visualization</span><span class="meta">4 slides</span></div><div class="grid" style="grid-template-columns:repeat(2,1280px)"><!-- Section 2 of the interactive deck: RViz, Foxglove, RQT. -->
+
+<section class="plate frame s5" data-scene="visualization-1" data-name="Slide 24 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 24 / 104</span></div>
+  <div class="opener">
+    <div class="num s5">Section 2</div>
+    <h1>Visualization</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>Gazebo draws the simulated world. A <b>visualization</b> tool draws what ROS carries: the robot model, its frames, the lidar's ranges, the camera's images, a plot of a value against time.</li>
+      <li>It works the same with the simulation and with the real robot: it reads topics.</li>
+      <li>Three tools: <b>RViz</b>, <b>Foxglove</b> and <b>RQT</b>.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s5" data-scene="p18" data-name="Slide 25 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 25 / 104</span></div>
+  <h2>RViz: what ROS sees</h2><div class="fit"><div class="fitin">
+  <p class="goal">Gazebo draws the simulated world. <b>RViz</b> is a ROS node that draws what the topics carry, in one <b>fixed frame</b>: the robot model, its frames, the lidar's ranges. Two ways to start it:</p>
+  <ol class="steps"><li>With the simulation, using the ROSbot's RViz configuration:</li></ol>
+<pre class="code" data-lang="bash">ros2 launch gp2_bringup gp2_sim.launch.py rviz:=true</pre>
+  <ul class="pl"><li>Fixed frame <code>odom</code>; the robot model, its frames (TF), the lidar (<code>/scan_filtered</code>) and the camera image.</li></ul>
+  <ol class="steps" start="2"><li>By hand, in a second terminal:</li></ol>
+<pre class="code" data-lang="bash">ros2 run rviz2 rviz2 --ros-args -p use_sim_time:=true</pre>
+  <ul class="pl"><li>Set <b>Fixed Frame</b> to <code>odom</code>, then <b>Add</b> the displays: RobotModel (topic <code>/robot_description</code>), TF and LaserScan (<code>/scan_filtered</code>).</li></ul>
+  <p style="margin:0"><code>use_sim_time</code> gives RViz Gazebo's clock: <span class="go" data-go="p55">slide 72</span> explains it.</p>
+  <p class="small" style="margin:4px 0 0">RViz's source and docs: <a href="https://github.com/ros2/rviz" target="_blank" rel="noopener">github.com/ros2/rviz</a>.</p>
+</div></div></section>
+
+<section class="plate frame s5" data-scene="visualization-3" data-name="Slide 26 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 26 / 104</span></div>
+  <h2>Foxglove: ROS data in the browser</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li>A node, <code>foxglove_bridge</code>, serves your ROS topics over a WebSocket. It is installed with the course's ROS&nbsp;2 Jazzy.</li>
+    <li>The Foxglove app (in a browser or on the desktop) connects to it and shows the topics in panels.</li>
+  </ul>
+<pre class="code" data-lang="bash">ros2 launch foxglove_bridge foxglove_bridge_launch.xml</pre>
+  <ul class="pl">
+    <li>Then, in Foxglove: open a connection to the bridge (by default <code>ws://localhost:8765</code>), and add panels: 3D (the robot and the lidar), Image (<code>/oak/rgb/color</code>), Plot (a value against time), Raw Messages.</li>
+    <li>Docs: <a href="https://docs.foxglove.dev/docs/connecting-to-data/frameworks/ros2" target="_blank" rel="noopener">Foxglove with ROS 2</a>; the app: <a href="https://foxglove.dev/" target="_blank" rel="noopener">foxglove.dev</a>.</li>
+  </ul>
+</div></div></section>
+
+<section class="plate frame s5" data-scene="visualization-4" data-name="Slide 27 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 27 / 104</span></div>
+  <h2>RQT: one window, many tools</h2><div class="fit"><div class="fitin">
+  <p class="goal">Each tool is a plugin. Start one on its own, or <span class="cmd">rqt</span> and pick it from the Plugins menu. Some installed with the course's ROS&nbsp;2 Jazzy:</p>
+  <table class="t tight">
+    <tr><th style="width:36%">Command</th><th>What it shows</th></tr>
+    <tr><td><code>ros2 run rqt_graph rqt_graph</code></td><td>the nodes and topics of the running system, as a graph</td></tr>
+    <tr><td><code>ros2 run rqt_image_view rqt_image_view</code></td><td>an image topic, such as <code>/oak/rgb/color</code></td></tr>
+    <tr><td><code>ros2 run rqt_topic rqt_topic</code></td><td>every topic, its type, its rate and its last message</td></tr>
+    <tr><td><code>ros2 run rqt_reconfigure rqt_reconfigure</code></td><td>the parameters of a running node, which you can change</td></tr>
+    <tr><td><code>ros2 run rqt_console rqt_console</code></td><td>the log messages of every node</td></tr>
+    <tr><td><code>ros2 run rqt_tf_tree rqt_tf_tree</code></td><td>the tree of frames on <code>/tf</code> (next class)</td></tr>
+  </table>
+  <p class="small" style="margin:6px 0 0">Docs: <a href="https://docs.ros.org/en/jazzy/Concepts/Intermediate/About-RQt.html" target="_blank" rel="noopener">About RQt</a>.</p>
+</div></div></section>
+</div></section>
+<section class="secblock s6" data-scene="sec-5" data-name="The ROSbot" tabindex="0"><div class="sechead"><span class="num">3</span><span>The ROSbot</span><span class="meta">14 slides</span></div><div class="grid" style="grid-template-columns:repeat(4,1280px)"><!-- Section 3 of the interactive deck: the robot, how it moves, its sensors, odometry, the topics, driving. -->
+
+<style>
+#rbcard{display:grid;grid-template-columns:0.9fr 1.35fr;gap:0;border-radius:18px;overflow:hidden;background:var(--card);
+  box-shadow:0 14px 34px rgba(20,30,45,.22),0 2px 6px rgba(20,30,45,.12);border:1px solid var(--plate-edge)}
+#rbcard .rbc-left{background:linear-gradient(160deg,var(--s6),#4E3218);color:#fff;padding:22px 24px;display:flex;flex-direction:column;gap:4px}
+#rbcard .rbc-logo{width:74px;height:74px;border-radius:16px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center}
+#rbcard .rbc-name{font-size:46px;font-weight:700;letter-spacing:-.01em;line-height:1.05;margin-top:8px}
+#rbcard .rbc-maker{font-size:24px;opacity:.95} #rbcard .rbc-maker a{color:#fff}
+#rbcard .rbc-tag{font-size:21px;opacity:.9;margin-bottom:8px}
+#rbcard .rbc-left img{width:100%;max-height:150px;object-fit:contain;border-radius:10px;background:#fff;margin-top:auto}
+#rbcard .rbc-right{padding:16px 24px;display:flex;flex-direction:column;justify-content:center}
+#rbcard .rbc-row{display:grid;grid-template-columns:136px 1fr;gap:12px;padding:3px 0;border-bottom:1px solid var(--plate-edge);font-size:22px;line-height:1.25}
+#rbcard .rbc-row:last-child{border-bottom:0}
+#rbcard .rbc-k{font-weight:700;color:var(--s6);text-transform:uppercase;font-size:20px;letter-spacing:.05em;align-self:center}
+</style>
+
+<section class="plate frame s6" data-scene="the-rosbot-1" data-name="Slide 28 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 28 / 104</span></div>
+  <div class="opener">
+    <div class="num s6">Section 3</div>
+    <h1>The ROSbot</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>The robot you program for the rest of the course: what it is, how it moves, what it senses, and the topics you use to drive it and to know where it is.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s6" data-scene="the-rosbot-2" data-name="Slide 29 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 29 / 104</span></div>
+  <h2>The ROSbot, at a glance</h2><div class="fit"><div class="fitin">
+  <div id="rbcard">
+    <div class="rbc-left">
+      <div class="rbc-logo"><svg viewBox="-40 -40 80 80" width="74" height="74" aria-hidden="true"><g id="rbc-icon"></g></svg></div>
+      <div class="rbc-name">ROSbot</div>
+      <div class="rbc-maker">by <a href="https://husarion.com/" target="_blank" rel="noopener">Husarion</a></div>
+      <div class="rbc-tag">A small research robot for ROS&nbsp;2</div>
+      <img src="L12_interactive_assets/rosbot.png" alt="Photo of the Husarion ROSbot: a black robot with four rubber wheels and red corners, a round lidar on top, a depth camera on a bracket, and an antenna at the back.">
+    </div>
+    <div class="rbc-right">
+      <div class="rbc-row"><span class="rbc-k">Drive</span><span class="rbc-v">differential, four wheels (two per side)</span></div>
+      <div class="rbc-row"><span class="rbc-k">Body</span><span class="rbc-v">0.197 m &times; 0.150 m &times; 0.080 m</span></div>
+      <div class="rbc-row"><span class="rbc-k">Top speeds</span><span class="rbc-v">1.0 m/s forward, 3.14 rad/s turning</span></div>
+      <div class="rbc-row"><span class="rbc-k">Wheels</span><span class="rbc-v">radius 0.0425 m; sides 0.186 m apart, 0.253 m in the controller (&times;1.36)</span></div>
+      <div class="rbc-row"><span class="rbc-k">Lidar</span><span class="rbc-v">Slamtec RPLIDAR S2: 3000 beams, 0.05 m to 30 m</span></div>
+      <div class="rbc-row"><span class="rbc-k">Camera</span><span class="rbc-v">Luxonis OAK-D PRO: color and depth</span></div>
+      <div class="rbc-row"><span class="rbc-k">IMU</span><span class="rbc-v">BNO055: orientation, turn rate, acceleration</span></div>
+      <div class="rbc-row"><span class="rbc-k">Software</span><span class="rbc-v"><a href="https://github.com/husarion/rosbot_ros" target="_blank" rel="noopener">rosbot_ros</a>, the ROS&nbsp;2 packages</span></div>
+      <div class="rbc-row"><span class="rbc-k">Manual</span><span class="rbc-v"><a href="https://husarion.com/manuals/rosbot/" target="_blank" rel="noopener">husarion.com/manuals/rosbot</a></span></div>
+    </div>
+  </div>
+  <p class="small" style="margin:6px 0 0">Values from the course simulation's files: <span class="file">controllers.yaml</span> (wheels, speed limits), <span class="file">components.urdf.xacro</span> and <span class="file">basic.yaml</span> (lidar LDR02, camera CAM11), <span class="file">gazebo.urdf.xacro</span> (IMU) and <span class="file">body.urdf.xacro</span> (body).</p>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p12" data-name="Slide 30 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 30 / 104</span></div>
+  <h2>The ROSbot in Gazebo</h2><div class="fit"><div class="fitin">
+  <div class="two" style="grid-template-columns:0.85fr 1.5fr;gap:22px;align-items:center;width:94%;margin:0 auto">
+    <img class="fig" src="L12_interactive_assets/gz_rosbot_closeup.png" style="width:100%" alt="Rendered close view of the simulated ROSbot on a grey floor: a dark grey body on four spiked black wheels, a light grey block on top, and a camera on a curved mast at the back.">
+    <img class="fig" src="L12_interactive_assets/gz_rosbot_hall.png" style="width:100%" alt="Rendered view from just behind the simulated ROSbot at its start, at robot height, looking east down the hall: the robot in the foreground, blue and purple discs on the floor, a small orange cylinder, a green cylinder with a round head in front of a red door, and a brown box against the right wall.">
+  </div>
+  <ul class="pl" style="margin-top:10px">
+    <li>Husarion's own model: the same body, wheels and sensor positions as the real robot. Left: up close. Right: at its start, from behind, facing east (+x) down the hall. Both saved from cameras added to the running simulation.</li>
+    <li>Husarion: the <a href="https://husarion.com/manuals/rosbot/" target="_blank" rel="noopener">ROSbot manual</a>, and <a href="https://github.com/husarion/rosbot_ros" target="_blank" rel="noopener">rosbot_ros</a>, the ROS&nbsp;2 packages the course simulation is built on.</li>
+  </ul>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="the-rosbot-4" data-name="Slide 31 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 31 / 104</span></div>
+  <div class="opener sub">
+    <div class="num s6">Section 3 · Part 1</div>
+    <h1>How It Moves</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>A differential drive turns by driving its two sides at different speeds. You command it with two numbers: a linear and an angular velocity.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s6" data-scene="p13-3" data-name="Slide 32 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 32 / 104</span></div>
+  <h2>How the ROSbot moves: linear and angular velocity</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li><b><code>linear.x</code></b> is \(v\): how fast the middle of the robot moves forward, in m/s, the way it faces. Negative drives backward.</li>
+    <li><b><code>angular.z</code></b> is \(\omega\): how fast it turns about the vertical axis, in rad/s. Positive turns left (counterclockwise from above).</li>
+    <li>No sideways speed: <code>linear.y</code> does nothing on a differential drive. To reach a point to its side, the robot turns first.</li>
+    <li>The controller gives each side a speed: \(v_L = v - \omega\,s/2\), \(v_R = v + \omega\,s/2\), and each wheel spins at \(v_{side}/r\). In the course simulation, \(s\) = 0.186&nbsp;m \(\times\) 1.36 = 0.253&nbsp;m and \(r\) = 0.0425&nbsp;m (<span class="file">rosbot_controller/config/rosbot/controllers.yaml</span>).</li>
+    <li>The pose follows: \(\dot x = v\cos\theta\), \(\dot y = v\sin\theta\), \(\dot\theta = \omega\). With both set, the robot drives a circle of radius \(R = v/\omega\).</li>
+  </ul>
+  <table class="t tight" style="margin-top:6px">
+    <tr><th style="width:24%">Command</th><th style="width:40%">Wheels</th><th>Motion</th></tr>
+    <tr><td>\(v > 0\), \(\omega = 0\)</td><td>both sides the same</td><td>straight ahead</td></tr>
+    <tr><td>\(v = 0\), \(\omega > 0\)</td><td>left back, right forward</td><td>turns left on the spot</td></tr>
+    <tr><td>\(v > 0\), \(\omega > 0\)</td><td>right faster than left</td><td>a left arc, \(R = v/\omega\)</td></tr>
+  </table>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p13-4" data-name="Slide 33 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 33 / 104</span></div>
+  <h2>Drive the ROSbot: watch the numbers</h2><div class="fit"><div class="fitin">
+  <div class="two" style="grid-template-columns:1.32fr 1fr;gap:22px;align-items:start">
+    <div>
+      <svg id="dr-svg" class="plot" viewBox="0 0 640 420" width="640" height="420" role="img" aria-label="Top view of a 3 m by 2 m floor with a 0.5 m grid, x to the right and y up: the ROSbot, drawn to scale, moves in real time with the command you set on the pad, leaving a trail; an arrow on each side shows that side's wheel speed."></svg>
+      <div class="row" style="margin:6px 0 0"><button id="dr-stop">Stop</button><button id="dr-reset">Back to the start</button><button id="dr-clear">Clear the trail</button><span class="try">try it</span></div>
+    </div>
+    <div>
+      <div style="display:flex;gap:16px;align-items:center">
+        <svg id="dr-pad" viewBox="0 0 200 200" width="160" height="160" style="touch-action:none;cursor:grab;flex:none" role="img" aria-label="A joystick pad: drag the knob up for forward speed, down for backward, left to turn left and right to turn right; release it and the command returns to zero."></svg>
+        <p class="small" style="margin:0">Drag the knob: up and down set <code>linear.x</code>, left and right set <code>angular.z</code> (left turns left). Release it, and the command goes back to 0, as with a keyboard teleop. The pad's edges are the speed limits.</p>
+      </div>
+      <table class="t tight" id="dr-t" style="margin-top:8px"></table>
+    </div>
+  </div>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p13-2" data-name="Slide 34 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 34 / 104</span></div>
+  <h2>Command the ROSbot: try a TwistStamped</h2><div class="fit"><div class="fitin">
+  <div class="two" style="grid-template-columns:1fr 1.05fr;gap:26px">
+    <div>
+      <div class="row"><span class="lbl"><code>linear.x</code></span><input type="range" id="tw-v" min="-1" max="1" step="0.05" value="0.2"><span class="small">m/s</span></div>
+      <div class="row"><span class="lbl"><code>angular.z</code></span><input type="range" id="tw-w" min="-3.14" max="3.14" step="0.02" value="0.5"><span class="small">rad/s</span></div>
+      <p class="small" style="margin:2px 0 6px">Drag a slider: the robot drives the new path. <span class="try">try it</span></p>
+      <div class="readout" id="tw-msg" style="font-size:21px"></div>
+      <ul class="pl" style="margin-top:10px" id="tw-pose"></ul>
+      <div class="row" style="margin:6px 0 0"><button id="tw-drive">Drive again</button><span class="small" id="tw-t">t = 3.0 s</span></div>
+      <p class="small" style="margin:4px 0 0">3&nbsp;s from the origin, facing +x, a mark every 0.5&nbsp;s: \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\), no slip, no delay. Equal axes; robot to scale; sliders end at the speed limits.</p>
+    </div>
+    <div>
+      <svg id="tw-svg" class="plot" viewBox="0 0 520 480" width="520" height="480" role="img" aria-label="Top view, x to the right and y up, in meters, the same scale on both axes: the path the robot would follow for 3 s from the origin, facing +x, with a mark every 0.5 s, and the robot drawn to scale with an arrow for its heading."></svg>
+    </div>
+  </div>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="the-rosbot-8" data-name="Slide 35 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 35 / 104</span></div>
+  <div class="opener sub">
+    <div class="num s6">Section 3 · Part 2</div>
+    <h1>What It Senses and Where It Is</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>Its sensors publish on topics; odometry adds up its motion into a pose.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s6" data-scene="the-rosbot-9" data-name="Slide 36 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 36 / 104</span></div>
+  <h2>Sensors on the ROSbot</h2><div class="fit"><div class="fitin">
+  <table class="t tight">
+    <tr><th style="width:20%">Sensor</th><th style="width:44%">Topic: type</th><th>What it gives</th></tr>
+    <tr><td>Lidar</td><td><code>/scan</code>, <code>/scan_filtered</code>: <code>LaserScan</code></td><td>a distance for each direction around the robot</td></tr>
+    <tr><td>Depth camera</td><td><code>/oak/rgb/color</code>: <code>Image</code><br><code>/oak/stereo/depth</code>: <code>Image</code><br><code>/oak/stereo/depth/points</code>: <code>PointCloud2</code></td><td>a color picture; a distance for each pixel; the same distances as 3D points</td></tr>
+    <tr><td>IMU</td><td><code>/imu/data</code>: <code>Imu</code></td><td>orientation, turn rate, acceleration</td></tr>
+    <tr><td>Wheels</td><td><code>/joint_states</code>: <code>JointState</code></td><td>each wheel's position and speed</td></tr>
+    <tr><td>Logical camera, simulation only</td><td><code>/logical_camera</code>: <code>LogicalCameraImage</code></td><td>the models in view, with names and poses (0.3&nbsp;m to 3.5&nbsp;m, 115&deg; wide)</td></tr>
+  </table>
+  <p class="small" style="margin:6px 0 0">Types in <code>sensor_msgs/msg</code>, except <code>ros_gz_interfaces/msg/LogicalCameraImage</code>. Topics from <span class="cmd">ros2 topic list</span> in the course simulation; types from its bridge configurations.</p>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="the-rosbot-10" data-name="Slide 37 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 37 / 104</span></div>
+  <h2>Where the robot is: odometry</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li><b>Odometry</b> estimates the robot's pose by adding up its own motion since the start. It needs no map and no outside landmark, so its error grows as the robot drives.</li>
+    <li><code>/odometry/wheels</code>: from the wheels alone. The drive controller turns the wheel rotations into the robot's motion.</li>
+    <li><code>/odometry/filtered</code>: <code>ekf_node</code> fuses the wheels with the IMU. It takes the heading (yaw) from the IMU, the forward speed from the wheels, and the turn rate from both. It publishes about 20 times a second (19.8 Hz in the course simulation).</li>
+    <li>Both are <code>nav_msgs/msg/Odometry</code>: <code>pose.pose.position</code> (x and y in meters, in the <code>odom</code> frame) and <code>pose.pose.orientation</code> (a quaternion: four numbers that store the robot's rotation, from which you get the yaw), plus <code>twist</code>, the robot's speeds.</li>
+  </ul>
+  <div class="box">At the start, the robot is at x = 0, y = 0 and faces +x. <span class="cmd">ros2 topic echo --once /odometry/filtered --field pose.pose.position</span> gave x = &minus;7.4e&minus;18 m, y = 3.2e&minus;21 m, z = 0.0: zero, to the rounding of the computer.</div>
+  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_localization/config/config.yaml</span> (what <code>ekf_node</code> fuses), the deck's measurement (<span class="file">figures/data/sim_topics.txt</span>).</p>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p19" data-name="Slide 38 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 38 / 104</span></div>
+  <div class="opener sub">
+    <div class="num s6">Section 3 · Part 3</div>
+    <h1>Topics and Driving</h1>
+    <div class="box" style="font-size:30px"><ul class="pl">
+      <li>You control the ROSbot with topics.</li>
+      <li>This part lists them and drives the robot from a terminal.</li></ul></div>
+  </div>
+</section>
+
+<section class="plate frame s6" data-scene="p20" data-name="Slide 39 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 39 / 104</span></div>
+  <h2>The topics you use</h2><div class="fit"><div class="fitin">
+  <p class="goal">Of the 31 topics, your nodes use these:</p>
+  <table class="t tight">
+    <tr><th style="width:28%">Topic</th><th style="width:40%">Type</th><th>What it carries</th></tr>
+    <tr><td><code>/cmd_vel</code></td><td><code>geometry_msgs/msg/TwistStamped</code></td><td>The velocity command. You publish it.</td></tr>
+    <tr><td><code>/odometry/filtered</code></td><td><code>nav_msgs/msg/Odometry</code></td><td>The robot's pose, about 20 times per second.</td></tr>
+    <tr><td><code>/scan</code></td><td><code>sensor_msgs/msg/LaserScan</code></td><td>The lidar's ranges.</td></tr>
+    <tr><td><code>/logical_camera</code></td><td><code>ros_gz_interfaces/msg/</code><br><code>LogicalCameraImage</code></td><td>The objects in front of the robot.</td></tr>
+    <tr><td><code>/tf</code>, <code>/tf_static</code></td><td><code>tf2_msgs/msg/TFMessage</code></td><td>The robot's frames, next class.</td></tr>
+    <tr><td><code>/clock</code></td><td><code>rosgraph_msgs/msg/Clock</code></td><td>The simulation time.</td></tr>
+  </table>
+  <div class="box"><code>/cmd_vel</code> takes a <code>TwistStamped</code>: a <code>Twist</code> with a header that holds a time stamp. The two types do not connect, so a node that publishes <code>Twist</code> on <code>/cmd_vel</code> cannot move the robot.</div>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p21" data-name="Slide 40 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 40 / 104</span></div>
+  <h2>Drive forward and turn</h2><div class="fit"><div class="fitin">
+  <p class="goal"><span class="cmd">ros2 topic pub</span> publishes one message again and again; <code>-r 10</code> sends it 10 times per second. Drive forward at 0.2&nbsp;m/s:</p>
+<pre class="code" data-lang="bash">ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
+  "{twist: {linear: {x: 0.2}}}"</pre>
+  <p style="margin:4px 0">Turn on the spot at 0.5&nbsp;rad/s:</p>
+<pre class="code" data-lang="bash">ros2 topic pub -r 10 /cmd_vel geometry_msgs/msg/TwistStamped \
+  "{twist: {angular: {z: 0.5}}}"</pre>
+  <ul class="pl">
+    <li><code>linear.x</code> is the forward speed in m/s. <code>angular.z</code> is the turn rate in rad/s; a positive value turns left.</li>
+    <li><kbd>Ctrl</kbd>+<kbd>C</kbd> stops the command. The robot then stops by itself: its controller brakes when no command arrives for 0.5&nbsp;s.</li>
+  </ul>
+</div></div></section>
+
+<section class="plate frame s6" data-scene="p21-2" data-name="Slide 41 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 41 / 104</span></div>
+  <h2>Drive forward and turn: when the robot stops</h2><div class="fit"><div class="fitin">
+  <p class="goal">Each dot is one message on <code>/cmd_vel</code>, 10 per second. Press <b>Ctrl+C</b> to stop <span class="cmd">ros2 topic pub</span>: the controller waits 0.5&nbsp;s for a message, then brakes.</p>
+  <div class="row"><button id="cv-run">Start publishing</button><button id="cv-stop" disabled>Ctrl+C</button><span class="small" id="cv-t">t = 0.0 s</span><span class="try">try it</span></div>
+  <svg id="cv-svg" class="plot" viewBox="0 0 1150 250" width="1150" height="250" role="img" aria-label="A time line over 6 s. Top row: one dot per message on /cmd_vel, every 0.1 s while ros2 topic pub runs. Bottom row: the command the controller uses, 0.2 m/s while messages arrive, then 0 from 0.5 s after the last message."></svg>
+  <div class="note" id="cv-note">The controller uses the last message it received. With no new message for 0.5&nbsp;s, it sends 0 to the wheels.</div>
+</div></div></section>
+
+
+</div></section>
+<section class="secblock s2" data-scene="sec-6" data-name="Proportional Control" tabindex="0"><div class="sechead"><span class="num">4</span><span>Proportional Control</span><span class="meta">17 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 2 (slides 26 to 42, PDF pages 28 to 44) and its measured outputs:
      ../figures/data/control_graph.txt (the ROS graph), pc_heading_constants.txt (the turn's log), par_gains.txt (the gains 0.5 and 4.0). -->
 <style>
 #lc-steps li{cursor:pointer}
 .sw{display:inline-block;width:22px;height:12px;border-radius:4px;vertical-align:middle;margin:0 6px 0 2px}
 </style>
 
-<section class="plate frame s2" data-scene="p28" data-name="Slide 26 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 26 / 78</span></div>
+<section class="plate frame s2" data-scene="p28" data-name="Slide 42 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 42 / 104</span></div>
   <div class="opener">
-    <div class="num s2">Section 2</div>
+    <div class="num s2">Section 4</div>
     <h1>Proportional Control</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>The last section drove the ROSbot by hand with <span class="cmd">ros2 topic pub</span>.</li>
@@ -1090,7 +1250,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </section>
 
-<section class="plate frame s2" data-scene="p29" data-name="Slide 27 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 27 / 78</span></div>
+<section class="plate frame s2" data-scene="p29" data-name="Slide 43 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 43 / 104</span></div>
   <h2>From a terminal command to a node</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1fr 590px;gap:28px;align-items:center">
     <div>
@@ -1109,9 +1269,9 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p30" data-name="Slide 28 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 28 / 78</span></div>
+<section class="plate frame s2" data-scene="p30" data-name="Slide 44 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 44 / 104</span></div>
   <div class="opener sub">
-    <div class="num s2">Section 2 · Part 1</div>
+    <div class="num s2">Section 4 · Part 1</div>
     <h1>One Error, One Gain</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>A proportional controller sets a speed in proportion to the error that is left.</li>
@@ -1119,7 +1279,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </section>
 
-<section class="plate frame s2" data-scene="p31" data-name="Slide 29 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 29 / 78</span></div>
+<section class="plate frame s2" data-scene="p31" data-name="Slide 45 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 45 / 104</span></div>
   <h2>What a controller does</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1fr 430px;gap:30px;align-items:center">
     <div>
@@ -1140,7 +1300,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p32" data-name="Slide 30 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 30 / 78</span></div>
+<section class="plate frame s2" data-scene="p32" data-name="Slide 46 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 46 / 104</span></div>
   <h2>The error of a turn</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1fr 430px;gap:30px;align-items:start">
     <div>
@@ -1158,7 +1318,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p33" data-name="Slide 31 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 31 / 78 (1 of 2)</span></div>
+<section class="plate frame s2" data-scene="p33" data-name="Slide 47 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 47 / 104</span></div>
   <h2>Yaw from the odometry's quaternion</h2><div class="fit"><div class="fitin">
   <p class="goal">The odometry gives the robot's orientation as a <b>quaternion</b>, four numbers <code>x</code>, <code>y</code>, <code>z</code> and <code>w</code>. The controller needs one angle, the <b>yaw</b>: the heading, counterclockwise from +x. Lines 15 to 24 of <span class="file">include/l12_rosbot/geometry.hpp</span>:</p>
 <pre class="code" data-lang="cpp" data-first="15">inline double yaw_from_quaternion(
@@ -1177,7 +1337,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s2 extra" data-part="2" data-scene="p33-2" data-name="Slide 31 (2 of 2) · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 31 / 78 (2 of 2)</span></div>
+<section class="plate frame s2 extra" data-part="2" data-scene="p33-2" data-name="Slide 48 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 48 / 104</span></div>
   <h2>Yaw from the quaternion: try a yaw</h2><div class="fit"><div class="fitin">
 <pre class="code" data-lang="cpp" data-first="15" data-hl="17-19,20-22,23">inline double yaw_from_quaternion(
     const geometry_msgs::msg::Quaternion &amp;orientation) {
@@ -1198,7 +1358,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p34" data-name="Slide 32 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 32 / 78 (1 of 2)</span></div>
+<section class="plate frame s2" data-scene="p34" data-name="Slide 49 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 49 / 104</span></div>
   <h2>The proportional control law</h2><div class="fit"><div class="fitin">
   <p class="goal">A <b>proportional controller</b> commands a turn rate proportional to the error: the command is the error times a number you choose, the <b>gain</b> <i>k<sub>p</sub></i>. Then it limits the command to a maximum speed. With <i>k<sub>p</sub></i> = 1.5 (rad/s per rad of error) and a limit of 1.0&nbsp;rad/s:</p>
   <ol class="steps">
@@ -1210,7 +1370,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   <div class="box concl">The command shrinks with the error, so the robot slows down as it nears the target heading.</div>
 </div></div></section>
 
-<section class="plate frame s2 extra" data-part="2" data-scene="p34-2" data-name="Slide 32 (2 of 2) · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 32 / 78 (2 of 2)</span></div>
+<section class="plate frame s2 extra" data-part="2" data-scene="p34-2" data-name="Slide 50 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 50 / 104</span></div>
   <h2>The control law: try an error and a gain</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:520px 1fr;gap:20px;align-items:start">
     <div>
@@ -1231,9 +1391,9 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p35" data-name="Slide 33 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 33 / 78</span></div>
+<section class="plate frame s2" data-scene="p35" data-name="Slide 51 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 51 / 104</span></div>
   <div class="opener sub">
-    <div class="num s2">Section 2 · Part 2</div>
+    <div class="num s2">Section 4 · Part 2</div>
     <h1>Turn to a Heading</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>You write <code>heading_controller_node</code>, which turns the ROSbot on the spot to one heading.</li>
@@ -1241,7 +1401,7 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
   </div>
 </section>
 
-<section class="plate frame s2" data-scene="p36" data-name="Slide 34 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 34 / 78</span></div>
+<section class="plate frame s2" data-scene="p36" data-name="Slide 52 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 52 / 104</span></div>
   <h2>Step 1: create the files</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1.15fr 1fr;gap:28px;align-items:start">
     <div>
@@ -1268,7 +1428,7 @@ touch heading_controller_main.cpp</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p37" data-name="Slide 35 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 35 / 78</span></div>
+<section class="plate frame s2" data-scene="p37" data-name="Slide 53 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 53 / 104</span></div>
   <h2>Step 2: write the class</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px">Lines 15 to 30 of <span class="file">include/l12_rosbot/heading_controller_node.hpp</span>:</p>
 <pre class="code" data-lang="cpp" data-first="15" data-hl="19,24,27">class HeadingControllerNode : public rclcpp::Node {
@@ -1292,7 +1452,7 @@ touch heading_controller_main.cpp</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p38" data-name="Slide 36 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 36 / 78</span></div>
+<section class="plate frame s2" data-scene="p38" data-name="Slide 54 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 54 / 104</span></div>
   <h2>Step 2: write the class, its members</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px">Lines 32 to 43 of the same file:</p>
 <pre class="code" data-lang="cpp" data-first="32" data-hl="41,42">  private:
@@ -1313,7 +1473,7 @@ touch heading_controller_main.cpp</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p39" data-name="Slide 37 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 37 / 78</span></div>
+<section class="plate frame s2" data-scene="p39" data-name="Slide 55 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 55 / 104</span></div>
   <h2>Step 2: write the constants and odometry_callback</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px">Lines 11 to 23 of <span class="file">src/heading_controller_node.cpp</span>:</p>
 <pre class="code" data-lang="cpp" data-first="11" data-hl="13,14,15,16,21">namespace {
@@ -1331,11 +1491,11 @@ void HeadingControllerNode::odometry_callback(
 }</pre>
   <ul class="pl">
     <li><b>Lines 13 to 16</b>: the target, the gain, the limit and the tolerance. The unnamed namespace keeps them inside this file.</li>
-    <li><b>Line 21</b>: the helper of <span class="go" data-go="p33">slide 31</span> turns the quaternion into the yaw.</li>
+    <li><b>Line 21</b>: the helper of <span class="go" data-go="p33">slide 47</span> turns the quaternion into the yaw.</li>
   </ul>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p40" data-name="Slide 38 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 38 / 78</span></div>
+<section class="plate frame s2" data-scene="p40" data-name="Slide 56 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 56 / 104</span></div>
   <h2>Step 2: write control_callback, the error and the stop</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px">Lines 25 to 41 of the same file:</p>
 <pre class="code" data-lang="cpp" data-first="25" data-hl="33,34,35,36">void HeadingControllerNode::control_callback() {
@@ -1360,7 +1520,7 @@ void HeadingControllerNode::odometry_callback(
   </ul>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p41" data-name="Slide 39 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 39 / 78</span></div>
+<section class="plate frame s2" data-scene="p41" data-name="Slide 57 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 57 / 104</span></div>
   <h2>Step 2: write control_callback, the command</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px">Lines 43 to 57 of the same file:</p>
 <pre class="code" data-lang="cpp" data-first="43" data-hl="43,44,45,55">    const double command{
@@ -1379,12 +1539,12 @@ void HeadingControllerNode::publish_command(double angular_speed) {
     command_publisher_-&gt;publish(command);
 }</pre>
   <ul class="pl">
-    <li><b>Lines 43 to 45</b>: the law of <span class="go" data-go="p34">slide 32</span>, limited by <code>std::clamp</code>.</li>
+    <li><b>Lines 43 to 45</b>: the law of <span class="go" data-go="p34">slide 49</span>, limited by <code>std::clamp</code>.</li>
     <li><b>Line 55</b>: only <code>angular.z</code> is set, so the robot turns on the spot.</li>
   </ul>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p42" data-name="Slide 40 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 40 / 78</span></div>
+<section class="plate frame s2" data-scene="p42" data-name="Slide 58 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 58 / 104</span></div>
   <h2>Step 3: install the executable</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:4px"><span class="file">heading_controller_main.cpp</span> is the usual <code>main</code>: it creates the node and spins it. In <span class="file">CMakeLists.txt</span>, lines 39 to 43 build the executable:</p>
 <pre class="code" data-lang="cmake" data-first="39"># Turns the ROSbot on the spot to a heading.
@@ -1398,7 +1558,7 @@ ament_target_dependencies(heading_controller_exe
   <p style="margin:6px 0 0"><code>nav_msgs</code> holds the <code>Odometry</code> message. <span class="cmd">ros2 pkg create</span> already added it to <span class="file">package.xml</span> and to <code>find_package</code>.</p>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p43" data-name="Slide 41 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 41 / 78 (1 of 2)</span></div>
+<section class="plate frame s2" data-scene="p43" data-name="Slide 59 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 59 / 104</span></div>
   <h2>Step 4: build and run in Gazebo</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:2px">With the simulation running:</p>
 <pre class="code" data-lang="bash">colcon build --packages-select l12_rosbot
@@ -1417,7 +1577,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   <div class="box concl">The robot turned from 0 to 1.552&nbsp;rad (88.9°) by itself, and stopped within the 0.02&nbsp;rad tolerance.</div>
 </div></div></section>
 
-<section class="plate frame s2 extra" data-part="2" data-scene="p43-2" data-name="Slide 41 (2 of 2) · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 41 / 78 (2 of 2)</span></div>
+<section class="plate frame s2 extra" data-part="2" data-scene="p43-2" data-name="Slide 60 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 60 / 104</span></div>
   <h2>Step 4: the log, line by line</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:720px 1fr;gap:24px;align-items:start">
     <div>
@@ -1436,7 +1596,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s2" data-scene="p44" data-name="Slide 42 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 42 / 78</span></div>
+<section class="plate frame s2" data-scene="p44" data-name="Slide 61 · Proportional Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Proportional Control</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 61 / 104</span></div>
   <h2>Proportional control</h2><div class="fit"><div class="fitin">
   <div class="box" style="margin-top:0"><span class="bt">Proportional Control: What You Can Do Now</span><ul class="pl">
     <li>Compute an error: the angle left to turn, the short way.</li>
@@ -1448,7 +1608,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 
 
 </div></section>
-<section class="secblock s3" data-scene="sec-5" data-name="Parameters" tabindex="0"><div class="sechead"><span class="num">3</span><span>Parameters</span><span class="meta">slides 43 to 62</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 3 (slides 43 to 62, PDF pages 45 to 64) and its measured outputs in ../figures/data:
+<section class="secblock s3" data-scene="sec-7" data-name="Parameters" tabindex="0"><div class="sechead"><span class="num">5</span><span>Parameters</span><span class="meta">20 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 3 (slides 43 to 62, PDF pages 45 to 64) and its measured outputs in ../figures/data:
      par_cli.txt, par_set_no_effect.txt, par_int_at_start.txt, par_sim_time.txt, par_gains.txt, par_callback_final.txt.
      The callback's checks and reason strings are from L12/l12_rosbot/src/heading_controller_node.cpp. -->
 <style>
@@ -1461,9 +1621,9 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 .q-ok{color:var(--ok);font-weight:600} .q-no{color:var(--bad);font-weight:600}
 </style>
 
-<section class="plate frame s3" data-scene="p45" data-name="Slide 43 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 43 / 78</span></div>
+<section class="plate frame s3" data-scene="p45" data-name="Slide 62 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 62 / 104</span></div>
   <div class="opener">
-    <div class="num s3">Section 3</div>
+    <div class="num s3">Section 5</div>
     <h1>Parameters</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>The controller keeps its gains and limits as numbers in its code, so each change needs a rebuild.</li>
@@ -1471,7 +1631,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   </div>
 </section>
 
-<section class="plate frame s3" data-scene="p46" data-name="Slide 44 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 44 / 78</span></div>
+<section class="plate frame s3" data-scene="p46" data-name="Slide 63 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 63 / 104</span></div>
   <h2>Why the controller needs parameters</h2><div class="fit"><div class="fitin">
   <p class="goal">The heading controller has four numbers in its code, and each changes with the job. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.25fr;gap:24px;align-items:start">
@@ -1498,7 +1658,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   <div class="box concl" id="q42-c">Values that change with the task, the robot or the world belong outside the code: in parameters, which you set when the node starts or while it runs.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p47" data-name="Slide 45 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 45 / 78</span></div>
+<section class="plate frame s3" data-scene="p47" data-name="Slide 64 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 64 / 104</span></div>
   <h2>What a parameter holds</h2><div class="fit"><div class="fitin">
   <p class="goal">A parameter belongs to one node and has a name, a type and a value. Its type is one of nine, from <code>rcl_interfaces/msg/ParameterType</code>. In C++, an <code>rclcpp::Parameter</code> gives its value with an <code>as_...()</code> function:</p>
   <table class="t tight">
@@ -1513,9 +1673,9 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   <div class="box">Each <code>as_...()</code> function throws an exception when the parameter has another type.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p48" data-name="Slide 46 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 46 / 78</span></div>
+<section class="plate frame s3" data-scene="p48" data-name="Slide 65 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 65 / 104</span></div>
   <div class="opener sub">
-    <div class="num s3">Section 3 · Part 1</div>
+    <div class="num s3">Section 5 · Part 1</div>
     <h1>Declare and Read</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>A node must declare a parameter before it uses it.</li>
@@ -1523,7 +1683,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
   </div>
 </section>
 
-<section class="plate frame s3" data-scene="p49" data-name="Slide 47 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 47 / 78</span></div>
+<section class="plate frame s3" data-scene="p49" data-name="Slide 66 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 66 / 104</span></div>
   <h2>Declare, then read</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 35 to 49 of <span class="file">heading_controller_node.hpp</span>, the end of the constructor: <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:20px;align-items:start">
@@ -1555,7 +1715,7 @@ yaw_tolerance_rad_ =
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p50" data-name="Slide 48 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 48 / 78</span></div>
+<section class="plate frame s3" data-scene="p50" data-name="Slide 67 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 67 / 104</span></div>
   <h2>Command-line tools: list and get</h2><div class="fit"><div class="fitin">
   <p class="goal">Run a command against the running <code>heading_controller_node</code> (measured output). <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:330px 1fr;gap:24px;align-items:start">
@@ -1575,7 +1735,7 @@ yaw_tolerance_rad_ =
   <p style="margin:6px 0 0">The node declared four parameters (marked). ROS&nbsp;2 adds the others to every node, among them <code>use_sim_time</code>.</p>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p51" data-name="Slide 49 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 49 / 78</span></div>
+<section class="plate frame s3" data-scene="p51" data-name="Slide 68 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 68 / 104</span></div>
   <h2>Setting a value the node already read</h2><div class="fit"><div class="fitin">
   <p class="goal">The node was started with <code>kp_angular</code> 0.5. During its first turn, the gain is set to 1.5. Step through the measured log. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:22px;align-items:start">
@@ -1594,16 +1754,16 @@ yaw_tolerance_rad_ =
   <div class="box concl"><span class="bt">The set changes the stored value only</span><span class="cmd">ros2 param set</span> changes the stored value. The node read <code>kp_angular</code> once, in its constructor, so its commands do not change.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p52" data-name="Slide 50 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 50 / 78</span></div>
+<section class="plate frame s3" data-scene="p52" data-name="Slide 69 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 69 / 104</span></div>
   <div class="opener sub">
-    <div class="num s3">Section 3 · Part 2</div>
+    <div class="num s3">Section 5 · Part 2</div>
     <h1>Set a Parameter</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>You can set a parameter from the command line, from a YAML file, or from a launch file.</li></ul></div>
   </div>
 </section>
 
-<section class="plate frame s3" data-scene="p53" data-name="Slide 51 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 51 / 78</span></div>
+<section class="plate frame s3" data-scene="p53" data-name="Slide 70 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 70 / 104</span></div>
   <h2>On the command line, at start</h2><div class="fit"><div class="fitin">
   <p class="goal"><code>--ros-args</code> starts the arguments for ROS&nbsp;2, and each <code>-p name:=value</code> sets one parameter before the constructor reads it. <span class="try">try it</span></p>
   <div class="row"><span class="lbl"><code>kp_angular:=</code></span><button id="q49-b0" class="on">0.5</button><button id="q49-b1">1.0</button><button id="q49-b2">1</button><span class="small" id="q49-s"></span></div>
@@ -1612,7 +1772,7 @@ yaw_tolerance_rad_ =
   <div class="note" id="q49-n"></div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p54" data-name="Slide 52 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 52 / 78</span></div>
+<section class="plate frame s3" data-scene="p54" data-name="Slide 71 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 71 / 104</span></div>
   <h2>From a YAML file</h2><div class="fit"><div class="fitin">
   <p class="goal">A parameter file sets many parameters at once: <span class="file">config/controllers.yaml</span>. Pick a node. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:22px;align-items:start">
@@ -1640,9 +1800,9 @@ heading_controller_node:
   --ros-args --params-file config/controllers.yaml</pre>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p55" data-name="Slide 53 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 53 / 78</span></div>
+<section class="plate frame s3" data-scene="p55" data-name="Slide 72 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 72 / 104</span></div>
   <h2>use_sim_time for a node that runs with Gazebo</h2><div class="fit"><div class="fitin">
-  <p class="goal">Gazebo publishes its own time on <code>/clock</code> (<span class="go" data-go="p23">slide 21</span>). With <code>use_sim_time</code> true, a node's clock follows <code>/clock</code> instead of the computer's clock: <code>now()</code>, and so the stamp of every <code>TwistStamped</code>, gives the simulation's time. <span class="try">try it</span></p>
+  <p class="goal">Gazebo publishes its own time on <code>/clock</code> (<span class="go" data-go="p23">slide 19</span>). With <code>use_sim_time</code> true, a node's clock follows <code>/clock</code> instead of the computer's clock: <code>now()</code>, and so the stamp of every <code>TwistStamped</code>, gives the simulation's time. <span class="try">try it</span></p>
   <p style="margin:0 0 4px">Every node has <code>use_sim_time</code>, and it is false unless you set it. How was the node started?</p>
   <div class="row" style="margin:2px 0"><button id="q51-b0" class="on">plain ros2 run</button><button id="q51-b1">with controllers.yaml (the /** key)</button></div>
 <pre class="code" data-lang="bash" id="q51-cmd"></pre>
@@ -1650,7 +1810,7 @@ heading_controller_node:
   <div class="box concl"><span class="bt">Set it for every node that runs with Gazebo</span>Set <code>use_sim_time</code> to true for every node you run with Gazebo. The <code>/**</code> key of a parameter file does it for all of them.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p56" data-name="Slide 54 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 54 / 78</span></div>
+<section class="plate frame s3" data-scene="p56" data-name="Slide 73 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 73 / 104</span></div>
   <h2>From a launch file: a YAML file named by an argument</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 12 to 25 of <span class="file">launch/heading_launch.py</span>. How was it started? <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:12px;align-items:start">
@@ -1679,7 +1839,7 @@ heading_controller = Node(
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p57" data-name="Slide 55 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 55 / 78</span></div>
+<section class="plate frame s3" data-scene="p57" data-name="Slide 74 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 74 / 104</span></div>
   <h2>Install and run the launch file</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 59 and 60 of <span class="file">CMakeLists.txt</span> install the <span class="file">launch</span> and <span class="file">config</span> folders, where <span class="cmd">ros2 launch</span> and <code>FindPackageShare</code> look:</p>
 <pre class="code" data-lang="cmake" data-first="59">install(DIRECTORY launch config
@@ -1690,11 +1850,11 @@ ros2 launch l12_rosbot heading_launch.py \
   params_file:=install/l12_rosbot/share/l12_rosbot/config/low_gain.yaml</pre>
   <ul class="pl">
     <li><span class="file">low_gain.yaml</span> is <span class="file">controllers.yaml</span> without the distance controller, and with <code>kp_angular</code> 0.5 instead of 1.5.</li>
-    <li>The next slide (<span class="go" data-go="p58">slide 56</span>) compares three gains.</li>
+    <li>The next slide (<span class="go" data-go="p58">slide 75</span>) compares three gains.</li>
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p58" data-name="Slide 56 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 56 / 78</span></div>
+<section class="plate frame s3" data-scene="p58" data-name="Slide 75 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 75 / 104</span></div>
   <h2>Three gains, three separate runs</h2><div class="fit"><div class="fitin">
   <p class="goal">Each turn is 90°: its time is the gap between two "reached" lines of the log. Pick a run. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.05fr;gap:20px;align-items:start">
@@ -1713,9 +1873,9 @@ ros2 launch l12_rosbot heading_launch.py \
   <div class="box concl" style="margin:6px 0 0">A gain of 4.0 kept the command at the limit longer, yet the turn was no faster: 2.70&nbsp;s with 1.5 and with 4.0.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p59" data-name="Slide 57 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 57 / 78</span></div>
+<section class="plate frame s3" data-scene="p59" data-name="Slide 76 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 76 / 104</span></div>
   <div class="opener sub">
-    <div class="num s3">Section 3 · Part 3</div>
+    <div class="num s3">Section 5 · Part 3</div>
     <h1>React to a Change</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>A node can run a callback when someone sets a parameter.</li>
@@ -1723,7 +1883,7 @@ ros2 launch l12_rosbot heading_launch.py \
   </div>
 </section>
 
-<section class="plate frame s3" data-scene="p60" data-name="Slide 58 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 58 / 78</span></div>
+<section class="plate frame s3" data-scene="p60" data-name="Slide 77 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 77 / 104</span></div>
   <h2>Register the callback</h2><div class="fit"><div class="fitin">
   <p class="goal">The node registers <code>on_parameters_set</code> at the end of its constructor. Lines 55 to 57 of <span class="file">heading_controller_node.hpp</span>:</p>
 <pre class="code" data-lang="cpp" data-first="55">parameter_callback_handle_ = add_on_set_parameters_callback(
@@ -1743,7 +1903,7 @@ ros2 launch l12_rosbot heading_launch.py \
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p61" data-name="Slide 59 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 59 / 78 (1 of 2)</span></div>
+<section class="plate frame s3" data-scene="p61" data-name="Slide 78 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 78 / 104</span></div>
   <h2>The callback, part 1: refuse a bad value</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 82 to 96 of <span class="file">heading_controller_node.cpp</span>, the loop that checks each value:</p>
 <pre class="code" data-lang="cpp" data-first="82" data-hl="82,87,88,89">    if (name == "kp_angular" &amp;&amp; parameter.as_double() &lt; 0.0) {
@@ -1767,7 +1927,7 @@ ros2 launch l12_rosbot heading_launch.py \
   </ul>
 </div></div></section>
 
-<section class="plate frame s3 extra" data-part="2" data-scene="p61-2" data-name="Slide 59 (2 of 2) · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 59 / 78 (2 of 2)</span></div>
+<section class="plate frame s3 extra" data-part="2" data-scene="p61-2" data-name="Slide 79 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 79 / 104</span></div>
   <h2>The callback, part 1: try a value</h2><div class="fit"><div class="fitin">
   <div class="row" style="margin:0"><span class="lbl" style="min-width:0">Parameter</span><button id="q57-p0" class="on">kp_angular</button><button id="q57-p1">max_angular_rps</button><button id="q57-p2">target_headings_deg</button><span class="try">try it</span></div>
   <div class="row" style="margin:0"><span class="lbl" style="min-width:0">Value</span><input type="range" id="q57-v" min="-2" max="5" step="0.01" value="1.5"><input class="q-in" id="q57-in" value="1.5" aria-label="value to set"><span class="small">type a number; 2 is an integer, 2.0 a double</span></div>
@@ -1777,7 +1937,7 @@ ros2 launch l12_rosbot heading_launch.py \
   <div class="row" style="margin:2px 0 0"><button id="q57-again">Draw again</button><span class="small" id="q57-w"></span></div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p62" data-name="Slide 60 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 60 / 78 (1 of 2)</span></div>
+<section class="plate frame s3" data-scene="p62" data-name="Slide 80 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 80 / 104</span></div>
   <h2>The callback, part 2: store the new values</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 97 to 114 of the same file:</p>
 <pre class="code" data-lang="cpp" data-first="97" data-hl="101,102,112">// Every value is good: store the new ones, so the next
@@ -1800,7 +1960,7 @@ return result;
 }</pre>
 </div></div></section>
 
-<section class="plate frame s3 extra" data-part="2" data-scene="p62-2" data-name="Slide 60 (2 of 2) · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 60 / 78 (2 of 2)</span></div>
+<section class="plate frame s3 extra" data-part="2" data-scene="p62-2" data-name="Slide 81 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 81 / 104</span></div>
   <h2>The callback, part 2: follow one value</h2><div class="fit"><div class="fitin">
   <div class="row" style="margin:0"><span class="lbl" style="min-width:0">Parameter</span><button id="q58-p0" class="on">kp_angular</button><button id="q58-p1">max_angular_rps</button><button id="q58-p2">yaw_tolerance_rad</button><span class="lbl" style="min-width:0;margin-left:14px">Value</span><input class="q-in" id="q58-in" value="1.5" aria-label="value to set" style="width:110px"><span class="try">try it</span></div>
   <p class="small" style="margin:0">Values other than 1.5 are chosen for this example. The checks of part 1 run first.</p>
@@ -1828,7 +1988,7 @@ RCLCPP_INFO_STREAM(get_logger(),
   </div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p63" data-name="Slide 61 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 61 / 78 (1 of 2)</span></div>
+<section class="plate frame s3" data-scene="p63" data-name="Slide 82 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 82 / 104</span></div>
   <h2>Change a gain while the ROSbot turns</h2><div class="fit"><div class="fitin">
   <p class="goal">The node runs with <span class="file">low_gain.yaml</span> (gain 0.5). Five <span class="cmd">ros2 param set</span> commands, in order (click a row):</p>
   <table class="t tight" id="q59-tab">
@@ -1845,14 +2005,14 @@ RCLCPP_INFO_STREAM(get_logger(),
   </ul>
 </div></div></section>
 
-<section class="plate frame s3 extra" data-part="2" data-scene="p63-2" data-name="Slide 61 (2 of 2) · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 61 / 78 (2 of 2)</span></div>
+<section class="plate frame s3 extra" data-part="2" data-scene="p63-2" data-name="Slide 83 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 83 / 104</span></div>
   <h2>Change a gain while the ROSbot turns: replay the run</h2><div class="fit"><div class="fitin">
   <div class="row" style="margin:0"><button id="q59-play">Replay the run</button><span class="small" id="q59-t"></span><span class="try">try it</span></div>
   <svg id="q59-svg" class="plot" viewBox="0 0 1168 400" width="1168" height="400" role="img" aria-label="The measured run, command in rad/s against time in seconds since the first log line, 0 to 19 s. The command falls from 0.78 as each turn closes. Turns end at 6.3 s (90 degrees), 12.7 s (180), 15.9 s (minus 90) and 18.6 s (0). Until 14.03 s the gain is 0.5 and the command is 0.5 times the error; from 14.03 s, when kp_angular 1.5 was accepted, it is 1.5 times the error and reaches the 1.0 rad/s limit."></svg>
   <div id="q59-turns" style="font-size:25px;margin-top:4px"></div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p64" data-name="Slide 62 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 62 / 78</span></div>
+<section class="plate frame s3" data-scene="p64" data-name="Slide 84 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 84 / 104</span></div>
   <h2>Parameters: what you can do now</h2><div class="fit"><div class="fitin">
   <p class="goal">Click a line to go to its slide.</p>
   <div class="box keyb"><span class="bt">What you can do now</span>
@@ -1868,12 +2028,12 @@ RCLCPP_INFO_STREAM(get_logger(),
 
 
 </div></section>
-<section class="secblock s4" data-scene="sec-6" data-name="Remapping" tabindex="0"><div class="sechead"><span class="num">4</span><span>Remapping</span><span class="meta">slides 63 to 76</span></div><div class="grid" style="grid-template-columns:repeat(4,1280px)"><!-- Facts from the deck's section 4 (slides 63 to 76, PDF pages 65 to 78), the ROS 2 design articles it quotes (names, remapping)
+<section class="secblock s4" data-scene="sec-8" data-name="Remapping" tabindex="0"><div class="sechead"><span class="num">6</span><span>Remapping</span><span class="meta">14 slides</span></div><div class="grid" style="grid-template-columns:repeat(4,1280px)"><!-- Facts from the deck's section 4 (slides 63 to 76, PDF pages 65 to 78), the ROS 2 design articles it quotes (names, remapping)
      and its measured outputs: ../figures/data/namespaces.txt, remap_runs.txt, remap_wheels_yaw.txt, control_graph.txt. -->
 
-<section class="plate frame s4" data-scene="p65" data-name="Slide 63 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 63 / 78</span></div>
+<section class="plate frame s4" data-scene="p65" data-name="Slide 85 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 85 / 104</span></div>
   <div class="opener">
-    <div class="num s4">Section 4</div>
+    <div class="num s4">Section 6</div>
     <h1>Remapping</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>Parameters changed a node's settings without recompiling.</li>
@@ -1882,7 +2042,7 @@ RCLCPP_INFO_STREAM(get_logger(),
   </div>
 </section>
 
-<section class="plate frame s4" data-scene="p66" data-name="Slide 64 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 64 / 78</span></div>
+<section class="plate frame s4" data-scene="p66" data-name="Slide 86 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 86 / 104</span></div>
   <h2>Why remap: topic names written in the code</h2><div class="fit"><div class="fitin">
   <p class="goal"><code>heading_controller_node</code> names its two topics in its code: <code>"odometry/filtered"</code> (line 29 of <span class="file">heading_controller_node.hpp</span>) and <code>"cmd_vel"</code> (line 34). Two jobs need other names:</p>
   <ul class="pl">
@@ -1896,9 +2056,9 @@ RCLCPP_INFO_STREAM(get_logger(),
   </ul>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p67" data-name="Slide 65 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 65 / 78</span></div>
+<section class="plate frame s4" data-scene="p67" data-name="Slide 87 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 87 / 104</span></div>
   <div class="opener sub">
-    <div class="num s4">Section 4 · Part 1</div>
+    <div class="num s4">Section 6 · Part 1</div>
     <h1>Namespaces</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>A namespace is a prefix in front of a node's name and of its relative names.</li>
@@ -1906,7 +2066,7 @@ RCLCPP_INFO_STREAM(get_logger(),
   </div>
 </section>
 
-<section class="plate frame s4" data-scene="p68" data-name="Slide 66 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 66 / 78</span></div>
+<section class="plate frame s4" data-scene="p68" data-name="Slide 88 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 88 / 104</span></div>
   <h2>Two controllers with one name</h2><div class="fit"><div class="fitin">
   <p class="goal">A fleet runs one controller per robot: the same executable, started once per robot. Started twice as it is, in two terminals:</p>
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe  # in each terminal</pre>
@@ -1917,7 +2077,7 @@ RCLCPP_INFO_STREAM(get_logger(),
   <div class="box concl"><span class="bt">One name, one topic</span>The two nodes share one name, and both send commands on one <code>/cmd_vel</code>. A namespace gives each controller its own names.</div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p69" data-name="Slide 67 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 67 / 78 (1 of 2)</span></div>
+<section class="plate frame s4" data-scene="p69" data-name="Slide 89 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 89 / 104</span></div>
   <h2>One namespace per controller</h2><div class="fit"><div class="fitin">
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
 ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
@@ -1938,7 +2098,7 @@ ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
   <div class="box concl"><span class="bt">Two sets of names</span>The same code now runs with two sets of names, one per robot.</div>
 </div></div></section>
 
-<section class="plate frame s4 extra" data-part="2" data-scene="p69-2" data-name="Slide 67 (2 of 2) · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 67 / 78 (2 of 2)</span></div>
+<section class="plate frame s4 extra" data-part="2" data-scene="p69-2" data-name="Slide 90 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 90 / 104</span></div>
   <h2>Two controllers: pick each one's namespace and name</h2><div class="fit"><div class="fitin">
   <style>
     .rmx .row{margin:4px 0} .rmx .lbl{min-width:112px}
@@ -1966,7 +2126,7 @@ ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p70" data-name="Slide 68 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 68 / 78 (1 of 2)</span></div>
+<section class="plate frame s4" data-scene="p70" data-name="Slide 91 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 91 / 104</span></div>
   <h2>Relative, absolute and private names</h2><div class="fit"><div class="fitin">
   <p class="goal">Whether a namespace changes a name depends on how the code writes it. The ROS 2 design article on names <span class="cite" data-key="ros2names">[4]</span>:</p>
   <ul class="pl">
@@ -1977,7 +2137,7 @@ ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
   <div class="box"><span class="bt">What a namespace moves</span>The controllers write <code>"odometry/filtered"</code> and <code>"cmd_vel"</code> without a leading <code>/</code>, so a namespace moves them. A name written with <code>/</code> would stay the same in every namespace.</div>
 </div></div></section>
 
-<section class="plate frame s4 extra" data-part="2" data-scene="p70-2" data-name="Slide 68 (2 of 2) · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 68 / 78 (2 of 2)</span></div>
+<section class="plate frame s4 extra" data-part="2" data-scene="p70-2" data-name="Slide 92 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 92 / 104</span></div>
   <h2>Name resolver: from the name in the code to the full name</h2><div class="fit"><div class="fitin">
   <div class="rmx two" style="grid-template-columns:640px 1fr;gap:26px;align-items:start">
     <div>
@@ -1994,7 +2154,7 @@ ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p71" data-name="Slide 69 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 69 / 78</span></div>
+<section class="plate frame s4" data-scene="p71" data-name="Slide 93 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 93 / 104</span></div>
   <h2>What the namespace changed</h2><div class="fit"><div class="fitin">
   <p class="goal">Last class, <code>PushROSNamespace</code> put the nodes of a launch file in a namespace; <code>__ns</code> does it from the command line. One controller in <code>/robot1</code>:</p>
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1</pre>
@@ -2011,9 +2171,9 @@ Publishers:
   </ul>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p72" data-name="Slide 70 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 70 / 78</span></div>
+<section class="plate frame s4" data-scene="p72" data-name="Slide 94 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 94 / 104</span></div>
   <div class="opener sub">
-    <div class="num s4">Section 4 · Part 2</div>
+    <div class="num s4">Section 6 · Part 2</div>
     <h1>Remapping rules</h1>
     <div class="box" style="font-size:30px"><ul class="pl">
       <li>A remapping rule replaces a name the node uses, when the node starts.</li>
@@ -2021,7 +2181,7 @@ Publishers:
   </div>
 </section>
 
-<section class="plate frame s4" data-scene="p73" data-name="Slide 71 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 71 / 78</span></div>
+<section class="plate frame s4" data-scene="p73" data-name="Slide 95 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 95 / 104</span></div>
   <h2>A rule: match:=replacement</h2><div class="fit"><div class="fitin">
   <p class="goal">The ROS 2 design article on remapping <span class="cite" data-key="ros2remap">[3]</span>: "<b>Remapping rules</b> are the instructions describing how a node should change the names it uses". A rule has two parts, written <code>match:=replacement</code> after <code>-r</code>:</p>
   <ul class="pl">
@@ -2035,7 +2195,7 @@ Publishers:
   </ul>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p74" data-name="Slide 72 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 72 / 78</span></div>
+<section class="plate frame s4" data-scene="p74" data-name="Slide 96 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 96 / 104</span></div>
   <h2>Remap a topic: read the wheel odometry</h2><div class="fit"><div class="fitin">
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe \
   --ros-args -r odometry/filtered:=odometry/wheels</pre>
@@ -2050,7 +2210,7 @@ Publishers:
   <div class="box concl"><span class="bt">Check the new topic</span>Remapping changes where a node reads, not what the data means. Check what the new topic carries.</div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p75" data-name="Slide 73 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 73 / 78 (1 of 2)</span></div>
+<section class="plate frame s4" data-scene="p75" data-name="Slide 97 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 97 / 104</span></div>
   <h2>A namespace and remapping together</h2><div class="fit"><div class="fitin">
   <p class="goal">The simulation has one ROSbot, with no namespace. Keep the node's namespace, and remap its two topics to the robot's absolute names:</p>
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe --ros-args \
@@ -2066,7 +2226,7 @@ Publishers:
   </div>
 </div></div></section>
 
-<section class="plate frame s4 extra" data-part="2" data-scene="p75-2" data-name="Slide 73 (2 of 2) · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 73 / 78 (2 of 2)</span></div>
+<section class="plate frame s4 extra" data-part="2" data-scene="p75-2" data-name="Slide 98 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 98 / 104</span></div>
   <h2>Rule builder: the graph for the rules you pick</h2><div class="fit"><div class="fitin">
   <div class="rmx two" style="grid-template-columns:700px 1fr;gap:24px;align-items:start">
     <div>
@@ -2089,7 +2249,7 @@ Publishers:
   </div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p76" data-name="Slide 74 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 74 / 78</span></div>
+<section class="plate frame s4" data-scene="p76" data-name="Slide 99 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 99 / 104</span></div>
   <h2>Remapping and parameters</h2><div class="fit"><div class="fitin">
   <p style="margin:0 0 2px"><b>1.</b> A parameter set in a namespace:</p>
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe \
@@ -2100,7 +2260,7 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
   <div class="box concl"><span class="bt">Parameter names stay</span>Rules rename the node and its topics; parameter names stay. The design article's example says the same: "the parameter name remains unchanged".</div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p77" data-name="Slide 75 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 75 / 78 (1 of 2)</span></div>
+<section class="plate frame s4" data-scene="p77" data-name="Slide 100 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 100 / 104</span></div>
   <h2>In a launch file: name, namespace and remappings</h2><div class="fit"><div class="fitin">
   <p class="goal" style="margin-bottom:2px">Lines 9 to 20 of <span class="file">launch/remap_launch.py</span>:</p>
 <pre class="code" data-lang="py" data-first="9" data-hl="12-17">heading_controller = Node(
@@ -2121,7 +2281,7 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s4 extra" data-part="2" data-scene="p77-2" data-name="Slide 75 (2 of 2) · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 75 / 78 (2 of 2)</span></div>
+<section class="plate frame s4 extra" data-part="2" data-scene="p77-2" data-name="Slide 101 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 101 / 104</span></div>
   <h2>Launch file and command line: line by line</h2><div class="fit"><div class="fitin">
   <div class="rmx two" style="grid-template-columns:790px 1fr;gap:20px;align-items:start">
     <div>
@@ -2147,7 +2307,7 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
   </div>
 </div></div></section>
 
-<section class="plate frame s4" data-scene="p78" data-name="Slide 76 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 76 / 78</span></div>
+<section class="plate frame s4" data-scene="p78" data-name="Slide 102 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 102 / 104</span></div>
   <h2>Namespaces and remapping: what you can do now</h2><div class="fit"><div class="fitin">
   <div class="box" style="font-size:27px"><ul class="pl">
     <li>Put a node in a namespace: <code>-r __ns:=/robot1</code>, or <code>namespace=</code> in a launch file. Relative names get the prefix; absolute names do not.</li>
@@ -2159,9 +2319,9 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
 
 
 </div></section>
-<section class="secblock" data-scene="sec-7" data-name="Next Class" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Next Class</span><span class="meta">slides 77 to 78</span></div><div class="grid" style="grid-template-columns:repeat(2,1280px)"><!-- The deck's Next Class slide and References slide (PDF pages 75 and 76), ../L12.bib. -->
+<section class="secblock" data-scene="sec-9" data-name="Next Class" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Next Class</span><span class="meta">2 slides</span></div><div class="grid" style="grid-template-columns:repeat(2,1280px)"><!-- The deck's Next Class slide and References slide (PDF pages 75 and 76), ../L12.bib. -->
 
-<section class="plate frame" data-scene="p79" data-name="Slide 77 · Next Class" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Next Class</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 77 / 78</span></div>
+<section class="plate frame" data-scene="p79" data-name="Slide 103 · Next Class" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Next Class</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 103 / 104</span></div>
   <h2>Next class</h2><div class="fit"><div class="fitin">
   <style>
     #nx-list a{color:var(--plan);text-decoration:underline}
@@ -2184,7 +2344,7 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame" data-scene="p80" data-name="Slide 78 · Next Class" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Next Class</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 78 / 78</span></div>
+<section class="plate frame" data-scene="p80" data-name="Slide 104 · Next Class" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Next Class</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 104 / 104</span></div>
   <h2>References</h2><div class="fit"><div class="fitin">
   <ol class="refs" style="font-size:25px">
     <li value="1">Open Robotics. Parameters. <a href="https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html" target="_blank" rel="noopener">https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html</a>. ROS 2 Documentation: Jazzy. 2024. (Visited on 11/14/2026).</li>
@@ -2770,10 +2930,11 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
 
 /* ---------- section 1: the TwistStamped builder, launch arguments, the 0.5 s brake, use_sim_time, the pause replay ---------- */
 (function(){
-  /* --- slide 8 (2 of 2): a TwistStamped and the path it would give in 3 s. The pose is exact (the arc of a constant
+  /* --- the TwistStamped builder (scene p13-2): a TwistStamped and the path it would give in 3 s. The pose is exact (the arc of a constant
      v and w, no small steps), both axes have the same scale, the robot is to scale, and the axes change only when the
      path leaves the view (user, 2026-11-20: "choppy ... does not seem accurate"). A drag moves only the path and the
-     robot, once per screen frame. The robot drives the path in real time when the frame shows, and on "Drive again". --- */
+     robot, once per screen frame. The robot drives the path in real time when the frame shows, on "Drive again", and in a
+     loop while a slider moves. --- */
   var sv = document.getElementById("tw-svg"), iv = document.getElementById("tw-v"), iw = document.getElementById("tw-w");
   TICKS["tw-v"] = [0.2]; TICKS["tw-w"] = [0.5];
   var TW_T = 3, PX0 = 96, PY0 = 12, SIDE = 410, LEN = 0.197, WID = 0.150;   /* plot square in svg units; ROSbot body in m */
@@ -2824,12 +2985,30 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     var o = M(view, 0, 0); start.setAttribute("cx", o[0]); start.setAttribute("cy", o[1]);
     readouts(v, w); }
   function showAt(t){ drawRobot(poseAt(+iv.value, +iw.value, t)); document.getElementById("tw-t").textContent = "t = " + t.toFixed(1) + " s"; }
-  function stopDrive(){ if (twAnim){ clearInterval(twAnim); twAnim = null; } }
-  function drive(){ stopDrive(); if (reduce){ showAt(TW_T); return; } var t0 = performance.now();
-    twAnim = setInterval(function(){ var t = Math.min(TW_T, (performance.now() - t0) / 1000); showAt(t); if (t >= TW_T) stopDrive(); }, 30); }
-  function onDrag(){ stopDrive(); if (!twFrame) twFrame = requestAnimationFrame(function(){ update(); showAt(TW_T); }); }
+  /* The robot drives while the sliders move (user, 2026-11-21: "I want the robot to move while using the sliders"): a drag
+     starts a loop that drives the 3 s path, waits 0.8 s at its end and starts again, always with the sliders' current
+     values, so the robot follows the path as it changes. The loop ends two runs after the last drag, or when the drawing
+     leaves the screen. One update per screen frame. */
+  var TW_PAUSE = 0.8, twVis = true, twDirty = false, twLoop = false, twLast = 0;
+  if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ twVis = es[0].isIntersecting; if (!twVis) stopDrive(); }).observe(sv);
+  function stopDrive(){ if (twAnim){ cancelAnimationFrame(twAnim); twAnim = null; } }
+  function drive(loop){ stopDrive(); if (twDirty){ twDirty = false; update(); }
+    if (reduce){ showAt(TW_T); return; }
+    twLoop = !!loop; var t0 = null;
+    function tick(now){ twAnim = null; if (t0 === null) t0 = now;   /* the first frame's own time: a frame's stamp can be older than performance.now() */
+      if (twDirty){ twDirty = false; update(); }
+      var run = (now - t0) / 1000, per = TW_T + TW_PAUSE, t = twLoop ? Math.min(TW_T, run % per) : Math.min(TW_T, run);
+      showAt(t);
+      if (!twLoop && t >= TW_T) return;
+      if (twLoop && now - twLast > 2 * per * 1000 && run % per >= TW_T){ showAt(TW_T); return; }   /* two runs after the last drag: rest at the end */
+      if (!twVis) return;
+      twAnim = requestAnimationFrame(tick); }
+    twAnim = requestAnimationFrame(tick); }
+  function onDrag(){ twDirty = true; twLast = performance.now();
+    if (reduce){ if (!twFrame) twFrame = requestAnimationFrame(function(){ twDirty = false; update(); showAt(TW_T); }); return; }
+    if (!twAnim || !twLoop) drive(true); }
   iv.addEventListener("input", onDrag); iw.addEventListener("input", onDrag);
-  document.getElementById("tw-drive").onclick = function(e){ e.stopPropagation(); update(); drive(); };
+  document.getElementById("tw-drive").onclick = function(e){ e.stopPropagation(); update(); drive(false); };
   update(); showAt(TW_T);
   onShow(sv, function(first){ if (first) drive(); });
 
@@ -3098,6 +3277,10 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   pzAt(TT);
   onShow("pz-svg", function(first){ if (first && !reduce) document.getElementById("pz-play").click(); });
 })();
+
+
+/* the business card's logo: the cover's ROSbot drawing */
+(function(){ var g = document.getElementById("rbc-icon"); if (g) rosbotIcon(g, 0, 0, 52, 0); })();
 
 
 /* ---------- section 2: the ROS graph with moving messages, the four-step loop, the error of a turn, the yaw,
@@ -3774,7 +3957,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   }
   var PRE = {n: ["/", "heading_controller_node", "", ""], w: ["/", "heading_controller_node", "odometry/wheels", ""], s: ["/robot1", "heading_controller_node", "", ""],
              b: ["/robot1", "heading_controller_node", "/odometry/filtered", "/cmd_vel"], l: ["/robot1", "heading_a", "/odometry/filtered", "/cmd_vel"]};
-  var PL = {n: "none", w: "72", s: "67", b: "73", l: "75"};
+  var PL = {n: "none", w: "96", s: "89", b: "97", l: "100"};   /* the slides of the runs (make_interactive.py fills the numbers) */
   var gp = mk(document.getElementById("g1-pre"), ["n", "s", "w", "b", "l"], function(v){ return PL[v]; }, function(v){ var P = PRE[v]; S1.ns = P[0]; S1.nm = P[1]; S1.od = P[2]; S1.cv = P[3]; g1(false); }, "n");
   var nsb = mk(document.getElementById("g1-ns"), ["/", "/robot1", "/robot2"], nsLab, function(v){ S1.ns = v; g1(false); }, "/");
   var nmb = mk(document.getElementById("g1-nm"), ["heading_controller_node", "heading_a", "heading_b"], nmLab, function(v){ S1.nm = v; g1(false); }, "heading_controller_node");

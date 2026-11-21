@@ -6,11 +6,11 @@
     <div>
       <div class="row"><span class="lbl"><code>linear.x</code></span><input type="range" id="tw-v" min="-1" max="1" step="0.05" value="0.2"><span class="small">m/s</span></div>
       <div class="row"><span class="lbl"><code>angular.z</code></span><input type="range" id="tw-w" min="-3.14" max="3.14" step="0.02" value="0.5"><span class="small">rad/s</span></div>
-      <p class="small" style="margin:2px 0 calc(6 * var(--u))">The slider ends are the ROSbot's speed limits. <span class="try">try it</span></p>
+      <p class="small" style="margin:2px 0 calc(6 * var(--u))">Drag a slider: the robot drives the new path. <span class="try">try it</span></p>
       <div class="readout" id="tw-msg" style="font-size:max(var(--fmin), calc(21 * var(--u)))"></div>
       <ul class="pl" style="margin-top:calc(10 * var(--u))" id="tw-pose"></ul>
       <div class="row" style="margin:calc(6 * var(--u)) 0 0"><button id="tw-drive">Drive again</button><span class="small" id="tw-t">t = 3.0 s</span></div>
-      <p class="small" style="margin:4px 0 0">3&nbsp;s from the origin, facing +x, a mark every 0.5&nbsp;s: \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\), no slip, no delay. Equal axes; robot to scale.</p>
+      <p class="small" style="margin:4px 0 0">3&nbsp;s from the origin, facing +x, a mark every 0.5&nbsp;s: \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\), no slip, no delay. Equal axes; robot to scale; sliders end at the speed limits.</p>
     </div>
     <div>
       <svg id="tw-svg" class="plot" viewBox="0 0 520 480" width="520" height="480" role="img" aria-label="Top view, x to the right and y up, in meters, the same scale on both axes: the path the robot would follow for 3 s from the origin, facing +x, with a mark every 0.5 s, and the robot drawn to scale with an arrow for its heading." style="width:max(calc(520 * var(--u)), calc(520 * 12px / 20.5));max-width:none;height:auto"></svg>
