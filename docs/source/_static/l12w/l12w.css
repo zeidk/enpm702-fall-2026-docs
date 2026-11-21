@@ -233,6 +233,9 @@ html[data-theme="dark"] .l12w code,html[data-theme="dark"] .l12w pre.code{color:
 .l12w :is(.rb-drive,.rbi) .rb-cam{fill:#8A96A3}
 html[data-theme="dark"] .l12w :is(.rb-drive,.rbi) .rb-wheel{fill:#9AA6B2}
 html[data-theme="dark"] .l12w :is(.rb-drive,.rbi) .rb-body{fill:#C9D3DD}
+.l12w .slno-in{font:inherit;font-size:max(var(--fmin), calc(20 * var(--u)));line-height:1.1;width:3.1em;padding:0 4px;margin:0 2px;text-align:center;border:2px solid var(--live);border-radius:calc(6 * var(--u));background:var(--card);color:var(--ink)}
+.l12w .slno-in:focus{outline:none;box-shadow:0 0 0 3px var(--focus)}
+.l12w .slno-msg{color:var(--bad);font-weight:600;margin-left:calc(10 * var(--u))}
 .l12w #jump{position:fixed;top:calc(14 * var(--u));left:50%;transform:translateX(-50%);z-index:1050;display:none;align-items:center;gap:calc(10 * var(--u));padding:calc(8 * var(--u)) calc(14 * var(--u));border-radius:calc(12 * var(--u));
   background:var(--card);color:var(--ink);border:3px solid var(--live);box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 calc(26 * var(--u)) var(--sans);padding:calc(12 * var(--u)) calc(20 * var(--u))}
 .l12w #jump.on{display:flex}
