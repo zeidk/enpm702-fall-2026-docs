@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div"}, SVGT = {"polyline":1,"polygon":1,"symbol":1,"defs":1,"use":1,"svg":1,"image":1,"path":1,"circle":1,"mask":1,"line":1,"rect":1,"clipPath":1,"linearGradient":1,"text":1,"ellipse":1,"stop":1,"foreignObject":1,"g":1,"pattern":1,"tspan":1,"marker":1};
+var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"stop":1,"use":1,"symbol":1,"image":1,"foreignObject":1,"clipPath":1,"marker":1,"g":1,"polygon":1,"polyline":1,"circle":1,"line":1,"tspan":1,"path":1,"ellipse":1,"defs":1,"text":1,"svg":1,"linearGradient":1,"pattern":1,"mask":1,"rect":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 function $id(id){ var e = document.getElementById(id); if (e) return e; var t = TAGS[id] || "div";
   e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; return e; }
@@ -300,8 +300,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     if (!twAnim || !twLoop) drive(true); }
   iv.addEventListener("input", onDrag); iw.addEventListener("input", onDrag);
   $id("tw-drive").onclick = function(e){ e.stopPropagation(); update(); drive(false); };
-  update(); showAt(TW_T);
-  onShow(sv, function(first){ if (first) drive(); });
+  update(); showAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
 
 
   /* --- slide 9: the patrol world in 3D (user, 2026-11-20: "drag the image to pan and tilt, to zoom in and out"). The walls,
@@ -573,15 +572,13 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   $id("pz-play").onclick = function(e){ e.stopPropagation(); clearInterval(pzTimer);
     if (reduce){ pzAt(TT); return; }
     var t0 = performance.now(); pzTimer = setInterval(function(){ var t = Math.min(TT, (performance.now() - t0) / 1000 * 1.5); pzAt(t); if (t >= TT) clearInterval(pzTimer); }, 40); };
-  pzAt(TT);
-  onShow("pz-svg", function(first){ if (first && !reduce) $id("pz-play").click(); });
+  pzAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
 })();
 
-  /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): each plays while on screen; with reduced
-     motion they stay still, with play controls --- */
-  document.querySelectorAll("video.loopvid").forEach(function(v){
-    if (reduce || !("IntersectionObserver" in window)){ v.controls = true; return; }
-    new IntersectionObserver(function(es){ if (es[0].isIntersecting){ var p = v.play(); if (p && p.catch) p.catch(function(){ v.controls = true; }); } else v.pause(); }, {threshold:0.3}).observe(v); });
+  /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): each shows its first frame and plays with its
+     own play button (no autoplay, user, 2026-11-21); a clip pauses when it leaves the screen --- */
+  document.querySelectorAll("video.loopvid").forEach(function(v){ v.controls = true;
+    if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ if (!es[0].isIntersecting) v.pause(); }, {threshold:0.3}).observe(v); });
 
   /* --- the five bridges (user, 2026-11-21: "create slides to explain the bridges"): a click, Enter or Space on a card
      shows that bridge's details --- */
@@ -715,18 +712,21 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     controls.target.set(0, 0, 0); cam.position.set(d * Math.cos(ya) * Math.cos(pi), d * Math.sin(ya) * Math.cos(pi), d * Math.sin(pi)); controls.update(); }
 
   /* --- the camera's own scene: the world as Gazebo draws it --- */
-  var wscene = new THREE.Scene(), wcam = new THREE.PerspectiveCamera(2 * Math.atan(Math.tan(Math.PI / 6) / (16 / 9)) * 180 / Math.PI, 16 / 9, 0.02, 60);
-  wcam.up.set(0, 0, 1); wscene.background = new THREE.Color(0xcfd3d8);
-  wscene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.75));
-  var wsun = new THREE.DirectionalLight(0xffffff, 0.55); wsun.position.set(-6, -10, 18); wscene.add(wsun);
-  var wfloor = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.MeshLambertMaterial({color:new THREE.Color(0.80, 0.78, 0.72)}));
-  wfloor.position.set(7, 2, 0); wscene.add(wfloor);
-  PATROL.forEach(function(o){
-    var geo = o.kind === "box" ? new THREE.BoxGeometry(o.size[0], o.size[1], o.size[2])
-            : o.kind === "cylinder" ? new THREE.CylinderGeometry(o.size[0], o.size[0], o.size[1], 40) : new THREE.SphereGeometry(o.size[0], 32, 16);
-    if (o.kind === "cylinder") geo.rotateX(Math.PI / 2);
-    var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:new THREE.Color(o.color[0], o.color[1], o.color[2])}));
-    m.position.set(o.pose[0], o.pose[1], o.pose[2]); wscene.add(m); });
+  function worldView(){
+    var wscene = new THREE.Scene(), wcam = new THREE.PerspectiveCamera(2 * Math.atan(Math.tan(Math.PI / 6) / (16 / 9)) * 180 / Math.PI, 16 / 9, 0.02, 60);
+    wcam.up.set(0, 0, 1); wscene.background = new THREE.Color(0xcfd3d8);
+    wscene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.75));
+    var wsun = new THREE.DirectionalLight(0xffffff, 0.55); wsun.position.set(-6, -10, 18); wscene.add(wsun);
+    var wfloor = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.MeshLambertMaterial({color:new THREE.Color(0.80, 0.78, 0.72)}));
+    wfloor.position.set(7, 2, 0); wscene.add(wfloor);
+    PATROL.forEach(function(o){
+      var geo = o.kind === "box" ? new THREE.BoxGeometry(o.size[0], o.size[1], o.size[2])
+              : o.kind === "cylinder" ? new THREE.CylinderGeometry(o.size[0], o.size[0], o.size[1], 40) : new THREE.SphereGeometry(o.size[0], 32, 16);
+      if (o.kind === "cylinder") geo.rotateX(Math.PI / 2);
+      var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:new THREE.Color(o.color[0], o.color[1], o.color[2])}));
+      m.position.set(o.pose[0], o.pose[1], o.pose[2]); wscene.add(m); });
+    return {scene:wscene, cam:wcam}; }
+  var WV = worldView(), wscene = WV.scene, wcam = WV.cam;
 
   /* --- the lidar: a ray in the plane of the laser against every shape that reaches that height --- */
   var HIT = PATROL.filter(function(o){ var h = o.kind === "sphere" ? o.size[0] : o.size[o.kind === "box" ? 2 : 1] / 2;
@@ -742,7 +742,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
         if (disc >= 0){ t = b - Math.sqrt(disc); if (t <= 0) t = undefined; } }
       if (t !== undefined && t < best) best = t; });
     return best; }
-  function scanNow(){ var c = Math.cos(pose.yaw), s = Math.sin(pose.yaw), lx = pose.x + 0.02 * c, ly = pose.y + 0.02 * s, pts = [];
+  function scanNow(){ return scanAt(pose); }
+  function scanAt(pose){ var c = Math.cos(pose.yaw), s = Math.sin(pose.yaw), lx = pose.x + 0.02 * c, ly = pose.y + 0.02 * s, pts = [];
     for (var i = 0; i < 3000; i++){ var a = -Math.PI + i * 2 * Math.PI / 3000 + pose.yaw, dx = Math.cos(a), dy = Math.sin(a), r = ray(lx, ly, dx, dy);
       if (r >= 0.05 && r <= 30) pts.push(lx + r * dx, ly + r * dy, LZ); }
     return {t:performance.now(), pts:new Float32Array(pts)}; }
@@ -755,6 +756,14 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       fragmentShader:"uniform vec3 c; void main(){" + (round ? "if (length(gl_PointCoord - vec2(0.5)) > 0.5) discard;" : "") + "gl_FragColor = vec4(c, 1.0); }"}); }
   function rgb(s){ var v = s.split(";").map(function(x){ return +x / 255; }); return new THREE.Color(v[0], v[1], v[2]); }
 
+  /* the ROSbot as boxes: body, four wheels at the URDF's places, the lidar and the camera */
+  function robotModel(robot, al){ var tr = al < 1;
+    function M(c){ return new THREE.MeshLambertMaterial({color:c, transparent:tr, opacity:al}); }
+    var body = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), M(0x8c9096)); body.position.z = WR + 0.03; robot.add(body);
+    ["fl", "fr", "rl", "rr"].forEach(function(w){ var f = FR[w + "_wheel_link"], m = new THREE.Mesh(new THREE.CylinderGeometry(WR, WR, 0.036, 24), M(0x222222));
+      m.position.set(f[1], f[2], f[3]); robot.add(m); });
+    var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), M(0x55585c)); lid.rotation.x = Math.PI / 2; lid.position.set(0.02, 0, CZ + 0.02); robot.add(lid);
+    var oak = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.10, 0.03), M(0xb0b4ba)); oak.position.set(FR.oak_link[1], 0, FR.oak_link[3]); robot.add(oak); }
   /* --- every display draws itself from its properties --- */
   function walk(list, fn, parentOn){ list.forEach(function(d){ var on = parentOn && d.on; fn(d, on); if (d.kids) walk(d.kids, fn, on); }); }
   var labelCache = {};
@@ -767,7 +776,8 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     [[0xff0000, [0, 0, -Math.PI / 2]], [0x00ff00, [0, 0, 0]], [0x0000ff, [Math.PI / 2, 0, 0]]].forEach(function(a){
       var m = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 10), new THREE.MeshBasicMaterial({color:a[0]}));
       m.geometry.translate(0, len / 2, 0); m.rotation.set(a[1][0], a[1][1], a[1][2]); g.add(m); }); return g; }
-  function framePos(name){ /* the frame's pose in odom, from the robot's pose */
+  function framePos(name){ return framePosAt(name, pose); }
+  function framePosAt(name, pose){ /* the frame's pose in odom, from the robot's pose */
     if (name === "odom") return {x:0, y:0, z:0, yaw:0};
     var f = FR[name], c = Math.cos(pose.yaw), s = Math.sin(pose.yaw);
     return {x:pose.x + c * f[1] - s * f[2], y:pose.y + s * f[1] + c * f[2], z:f[3], yaw:pose.yaw + f[4]}; }
@@ -781,13 +791,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
         for (var i = 0; i <= n; i++){ var q = -half + i * c; v.push(q, -half, 0, q, half, 0, -half, q, 0, half, q, 0); }
         var bg = new THREE.BufferGeometry(); bg.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
         gridRoot.add(new THREE.LineSegments(bg, new THREE.LineBasicMaterial({color:rgb(p.Color), transparent:true, opacity:+p.Alpha}))); }
-      else if (d.type === "RobotModel"){ var al = +p.Alpha, tr = al < 1;
-        function M(c){ return new THREE.MeshLambertMaterial({color:c, transparent:tr, opacity:al}); }
-        var body = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), M(0x8c9096)); body.position.z = WR + 0.03; robot.add(body);
-        ["fl", "fr", "rl", "rr"].forEach(function(w){ var f = FR[w + "_wheel_link"], m = new THREE.Mesh(new THREE.CylinderGeometry(WR, WR, 0.036, 24), M(0x222222));
-          m.position.set(f[1], f[2], f[3]); robot.add(m); });
-        var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), M(0x55585c)); lid.rotation.x = Math.PI / 2; lid.position.set(0.02, 0, CZ + 0.02); robot.add(lid);
-        var oak = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.10, 0.03), M(0xb0b4ba)); oak.position.set(FR.oak_link[1], 0, FR.oak_link[3]); robot.add(oak); }
+      else if (d.type === "RobotModel") robotModel(robot, +p.Alpha);
       else if (d.type === "TF"){ var sc = +p["Marker Scale"];
         ["odom"].concat(Object.keys(FR)).forEach(function(name){ var fp = framePos(name), g = new THREE.Group();
           g.position.set(fp.x, fp.y, fp.z); g.rotation.z = fp.yaw;
@@ -947,8 +951,329 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       if (fpsT) fpsEl.textContent = Math.round(frames * 1000 / (now - fpsT)) + " fps"; frames = 0; fpsT = now; }
     if (now - lastDraw >= 1000 / S.rate - 2){ controls.update(); lastDraw = now; frames++; draw(now); } }
   controls.addEventListener("change", function(){ need = true; });
+  /* the pieces the Foxglove window (the next slide) uses too */
+  window.L12SIM = {FR:FR, WR:WR, CZ:CZ, LZ:LZ, ray:ray, scanAt:scanAt, framePosAt:framePosAt, robotModel:robotModel, axes:axes, label:label,
+    pointsMat:pointsMat, rgb:rgb, worldView:worldView, clear:clear};
   restore();
   onShow(root, function(first){ if (first){ t0ros = t0wall = performance.now(); } size(); if (!running){ running = true; requestAnimationFrame(loop); } });
+})();
+
+
+/* --- the Foxglove slide: a working copy of the Foxglove app connected to the course simulation through foxglove_bridge
+   (ws://localhost:8765, the bridge's default, as on the slide before). The topics and their types, the /odometry/filtered
+   frames (odom, base_link) and its 19.8 Hz rate are measured (figures/data/foxglove_topics.txt, sim_topics.txt). The robot,
+   the lidar and the camera are the RViz slide's (window.L12SIM). The panels' names are Foxglove's: 3D, Image, Plot, Raw
+   Messages; their settings here are a small set. The robot drives at 0.25 m/s and turns at 0.52 rad/s (chosen for this
+   copy); the odometry reports exactly what it does. --- */
+(function(){
+  var root = $id("fx"); if (!root) return;
+  var SIM = window.L12SIM;
+  if (!SIM){ root.innerHTML = '<p style="padding:20px">This browser cannot draw 3D (WebGL), so the Foxglove copy is off.</p>';
+    $id("fx-drive").style.display = "none"; return; }
+  var TOPICS = [["/clock", "rosgraph_msgs/msg/Clock"], ["/cmd_vel", "geometry_msgs/msg/TwistStamped"],
+    ["/controller_manager/activity", "controller_manager_msgs/msg/ControllerManagerActivity"],
+    ["/controller_manager/introspection_data/full", "pal_statistics_msgs/msg/Statistics"],
+    ["/controller_manager/introspection_data/names", "pal_statistics_msgs/msg/StatisticsNames"],
+    ["/controller_manager/introspection_data/values", "pal_statistics_msgs/msg/StatisticsValues"],
+    ["/controller_manager/statistics/full", "pal_statistics_msgs/msg/Statistics"],
+    ["/controller_manager/statistics/names", "pal_statistics_msgs/msg/StatisticsNames"],
+    ["/controller_manager/statistics/values", "pal_statistics_msgs/msg/StatisticsValues"],
+    ["/diagnostics", "diagnostic_msgs/msg/DiagnosticArray"], ["/dynamic_joint_states", "control_msgs/msg/DynamicJointState"],
+    ["/imu/data", "sensor_msgs/msg/Imu"], ["/joint_states", "sensor_msgs/msg/JointState"],
+    ["/logical_camera", "ros_gz_interfaces/msg/LogicalCameraImage"], ["/oak/camera_info", "sensor_msgs/msg/CameraInfo"],
+    ["/oak/rgb/color", "sensor_msgs/msg/Image"], ["/oak/stereo/camera_info", "sensor_msgs/msg/CameraInfo"],
+    ["/oak/stereo/depth", "sensor_msgs/msg/Image"], ["/oak/stereo/depth/points", "sensor_msgs/msg/PointCloud2"],
+    ["/odometry/filtered", "nav_msgs/msg/Odometry"], ["/odometry/wheels", "nav_msgs/msg/Odometry"],
+    ["/parameter_events", "rcl_interfaces/msg/ParameterEvent"], ["/patrol_cam/camera_info", "sensor_msgs/msg/CameraInfo"],
+    ["/patrol_cam/image", "sensor_msgs/msg/Image"], ["/robot_description", "std_msgs/msg/String"],
+    ["/rosout", "rcl_interfaces/msg/Log"], ["/scan", "sensor_msgs/msg/LaserScan"], ["/scan_filtered", "sensor_msgs/msg/LaserScan"],
+    ["/set_pose", "geometry_msgs/msg/PoseWithCovarianceStamped"], ["/tf", "tf2_msgs/msg/TFMessage"], ["/tf_static", "tf2_msgs/msg/TFMessage"]];
+  var RAWT = ["/odometry/filtered", "/cmd_vel", "/clock"];
+  var PATHS = ["/odometry/filtered.pose.pose.position.x", "/odometry/filtered.pose.pose.position.y",
+    "/odometry/filtered.twist.twist.linear.x", "/odometry/filtered.twist.twist.angular.z", "/cmd_vel.twist.linear.x", "/cmd_vel.twist.angular.z"];
+  var POINTC = {teal:0x16798a, red:0xff3b30, white:0xffffff};
+  var V = 0.25, W = 0.5236;   /* m/s and rad/s, chosen for this copy */
+
+  var st, pose, cmd, move, hist, sel, t0sim = performance.now(), filter = "";
+  function cfg(){ return [
+    {type:"3D", s:{frame:"odom", scan:true, size:"3", color:"teal", tf:true, urdf:true, odom:false}},
+    {type:"Image", s:{topic:"/oak/rgb/color", rot:"0", flip:false}},
+    {type:"Plot", s:{a:PATHS[0], b:PATHS[4]}},
+    {type:"Raw Messages", s:{topic:"/odometry/filtered"}}]; }
+  function now(){ return (performance.now() - t0sim) / 1000 * 0.9997; }   /* /clock: Gazebo's time, from the page load */
+
+  /* --- 3D: one renderer and one camera, put in the 3D panel --- */
+  var R3 = new THREE.WebGLRenderer({antialias:true}), RC = new THREE.WebGLRenderer({antialias:true});
+  var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(50, 1, 0.01, 200); cam.up.set(0, 0, 1);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x666666, 0.8)); var sun = new THREE.DirectionalLight(0xffffff, 0.5); sun.position.set(-3, -5, 8); scene.add(sun);
+  var fixedRoot = new THREE.Group(), dyn = new THREE.Group(), robot = new THREE.Group(), grid = new THREE.Group();
+  scene.add(fixedRoot); scene.add(grid); fixedRoot.add(dyn); fixedRoot.add(robot);
+  var controls = new THREE.OrbitControls(cam, R3.domElement);
+  controls.mouseButtons = {LEFT:THREE.MOUSE.PAN, MIDDLE:THREE.MOUSE.DOLLY, RIGHT:THREE.MOUSE.ROTATE};   /* drag moves, right-drag turns */
+  controls.screenSpacePanning = true; controls.minDistance = 0.2; controls.maxDistance = 60;
+  function homeView(){ controls.target.set(0, 0, 0); cam.position.set(-3.2, -2.6, 3.0); controls.update(); }
+  var WV = SIM.worldView();
+  R3.domElement.addEventListener("wheel", function(e){ e.preventDefault(); }, {passive:false});
+  function gridLines(dark){ SIM.clear(grid); var v = []; for (var i = -10; i <= 10; i++){ v.push(i, -10, 0, i, 10, 0, -10, i, 0, 10, i, 0); }
+    var g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
+    grid.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({color:dark ? 0x4a5563 : 0xb4bcc6}))); }
+  var lastScan = null;
+  function build3D(){ var p = panel("3D"); SIM.clear(dyn); SIM.clear(robot); if (!p || !st.on) return; var s = p.s;
+    if (s.urdf) SIM.robotModel(robot, 1);
+    if (s.tf) ["odom", "base_link", "laser", "oak_link", "imu_link"].forEach(function(n){ var fp = SIM.framePosAt(n, pose), g = new THREE.Group();
+      g.position.set(fp.x, fp.y, fp.z); g.rotation.z = fp.yaw; g.add(SIM.axes(0.12, 0.006)); var l = SIM.label(n, 0.05); l.position.set(0, 0, 0.09); g.add(l); dyn.add(g); });
+    if (s.scan && lastScan){ var pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(lastScan.pts, 3));
+      dyn.add(new THREE.Points(pg, SIM.pointsMat(POINTC[s.color], 0, false, +s.size))); }
+    if (s.odom){ var mat = new THREE.MeshLambertMaterial({color:0xd9694a}), g2 = new THREE.Group();
+      var sh = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.3, 12), mat); sh.geometry.translate(0, 0.15, 0); sh.rotation.z = -Math.PI / 2;
+      var hd = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.1, 16), mat); hd.geometry.translate(0, 0.35, 0); hd.rotation.z = -Math.PI / 2;
+      g2.add(sh); g2.add(hd); g2.position.set(pose.x, pose.y, 0.2); g2.rotation.z = pose.yaw; dyn.add(g2); }
+    place(); }
+  function place(){ robot.position.set(pose.x, pose.y, 0); robot.rotation.z = pose.yaw; var p = panel("3D");
+    if (p && p.s.frame === "base_link"){ var c = Math.cos(-pose.yaw), s = Math.sin(-pose.yaw);
+      fixedRoot.rotation.z = -pose.yaw; fixedRoot.position.set(-(c * pose.x - s * pose.y), -(s * pose.x + c * pose.y), 0); }
+    else { fixedRoot.rotation.z = 0; fixedRoot.position.set(0, 0, 0); } }
+
+  /* --- messages, as the bridge would send them --- */
+  function stamp(){ var t = now(); return {sec:Math.floor(t), nanosec:Math.round((t % 1) * 1e9)}; }
+  function msg(topic){ var t = stamp();
+    if (topic === "/clock") return {clock:t};
+    if (topic === "/cmd_vel") return {header:{stamp:t, frame_id:"base_link"}, twist:{linear:{x:cmd.v, y:0, z:0}, angular:{x:0, y:0, z:cmd.w}}};
+    return {header:{stamp:t, frame_id:"odom"}, child_frame_id:"base_link",
+      pose:{pose:{position:{x:pose.x, y:pose.y, z:0}, orientation:{x:0, y:0, z:Math.sin(pose.yaw / 2), w:Math.cos(pose.yaw / 2)}}, covariance:"(36 numbers)"},
+      twist:{twist:{linear:{x:cmd.v, y:0, z:0}, angular:{x:0, y:0, z:cmd.w}}, covariance:"(36 numbers)"}}; }
+  function yaml(o, ind){ var out = "";
+    for (var k in o){ var v = o[k], pad = new Array(ind + 1).join("  ");
+      if (v && typeof v === "object") out += pad + '<span class="k">' + k + ":</span>\n" + yaml(v, ind + 1);
+      else out += pad + '<span class="k">' + k + ":</span> " + (typeof v === "number" ? (Number.isInteger(v) ? v : v.toFixed(6)) : typeof v === "string" && v[0] !== "(" ? '"' + v + '"' : v) + "\n"; }
+    return out; }
+  function value(path){ if (path.indexOf("/cmd_vel") === 0) return path.slice(-1) === "x" ? cmd.v : cmd.w;
+    if (path.indexOf("position.x") > 0) return pose.x; if (path.indexOf("position.y") > 0) return pose.y;
+    return path.indexOf("linear.x") > 0 ? cmd.v : cmd.w; }
+
+  /* --- the panels --- */
+  var gridEl = $id("fx-grid"), side = $id("fx-sbody"), pop = $id("fx-pop");
+  function panel(type){ return st.panels.filter(function(p){ return p.type === type; })[0]; }
+  function sub(p){ return p.type === "3D" ? "frame " + p.s.frame : p.type === "Image" ? p.s.topic : ""; }
+  function renderPanels(){ gridEl.innerHTML = ""; gridEl.classList.toggle("hasmax", st.panels.some(function(p){ return p.max; }));
+    st.panels.forEach(function(p){ var d = document.createElement("div"); d.className = "fx-p" + (p === sel ? " sel" : "") + (p.max ? " max" : "");
+      var h = document.createElement("div"); h.className = "fx-ph"; h.innerHTML = "<b></b><span class='sub'></span>";
+      h.firstChild.textContent = p.type; h.children[1].textContent = sub(p);
+      [["⚙", "Settings", function(){ sel = p; tab("panel"); renderPanels(); }], [p.max ? "⤢" : "⤡", p.max ? "Back to the grid" : "Fill the window", function(){ p.max = !p.max; renderPanels(); }],
+       ["×", "Remove the panel", function(){ st.panels.splice(st.panels.indexOf(p), 1); if (sel === p) sel = null; renderPanels(); renderSide(); build3D(); }]]
+        .forEach(function(b){ var x = document.createElement("button"); x.textContent = b[0]; x.title = b[1]; x.setAttribute("aria-label", b[1]);
+          x.onclick = function(e){ e.stopPropagation(); b[2](); }; h.appendChild(x); });
+      h.onclick = function(){ sel = p; renderPanels(); if (curTab === "panel") renderSide(); };
+      var body = document.createElement("div"); body.className = "fx-pb"; p.body = body;
+      if (p.type === "3D") body.appendChild(R3.domElement);
+      else if (p.type === "Image"){ var w = document.createElement("div"); w.className = "fx-img"; w.appendChild(RC.domElement); body.appendChild(w);
+        RC.domElement.style.transform = "rotate(" + p.s.rot + "deg)" + (p.s.flip ? " scaleX(-1)" : ""); }
+      else if (p.type === "Plot"){ p.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); p.svg.setAttribute("class", "plot");
+        p.svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%"; body.appendChild(p.svg); }
+      else { var tp = document.createElement("div"); tp.className = "fx-rawt"; tp.textContent = p.s.topic; body.appendChild(tp);
+        p.pre = document.createElement("pre"); p.pre.className = "fx-raw"; body.appendChild(p.pre); }
+      if (!st.on){ var wt = document.createElement("div"); wt.className = "fx-wait"; wt.textContent = "No data: open a connection first."; body.appendChild(wt); }
+      d.appendChild(h); d.appendChild(body); gridEl.appendChild(d); });
+    requestAnimationFrame(size); }
+
+  /* --- the sidebar: Topics, or the selected panel's settings --- */
+  var curTab = "topics";
+  function tab(t){ curTab = t; root.querySelectorAll(".fx-tabs button").forEach(function(b){ b.classList.toggle("on", b.dataset.t === t); }); renderSide(); }
+  root.querySelectorAll(".fx-tabs button").forEach(function(b){ b.onclick = function(){ tab(b.dataset.t); }; });
+  function setRow(box, label, el){
+    if (el.type === "checkbox"){   /* a check box goes before its name, on a row of its own, so long topic names fit */
+      var w = document.createElement("label"); w.style.cssText = "grid-column:1/-1;display:flex;align-items:center;gap:8px;min-width:0";
+      var s = document.createElement("span"); s.textContent = label; w.appendChild(el); w.appendChild(s); box.appendChild(w); return; }
+    var l = document.createElement("span"); l.textContent = label; l.title = label; box.appendChild(l); box.appendChild(el); }
+  function selectOf(vals, cur, on){ var s = document.createElement("select"); vals.forEach(function(v){ var o = document.createElement("option"); o.value = o.textContent = v; s.appendChild(o); });
+    s.value = cur; s.onchange = function(){ on(s.value); }; return s; }
+  function checkOf(cur, on){ var c = document.createElement("input"); c.type = "checkbox"; c.checked = cur; c.onchange = function(){ on(c.checked); }; return c; }
+  function renderSide(){ var top = side.scrollTop; side.innerHTML = "";
+    if (curTab === "topics"){
+      if (!st.on){ side.textContent = "No topics: open a connection first."; return; }
+      var f = document.createElement("input"); f.type = "text"; f.placeholder = "Filter topics"; f.value = filter; f.setAttribute("aria-label", "Filter topics");
+      f.oninput = function(){ filter = f.value; list(); }; side.appendChild(f);
+      var lb = document.createElement("div"); side.appendChild(lb);
+      function list(){ lb.innerHTML = ""; TOPICS.filter(function(t){ return (t[0] + t[1]).toLowerCase().indexOf(filter.toLowerCase()) >= 0; }).forEach(function(t){
+        var d = document.createElement("div"); d.className = "fx-tp"; d.innerHTML = "<div></div><div class='ty'></div>"; d.firstChild.textContent = t[0]; d.lastChild.textContent = t[1]; d.title = t[0] + "  " + t[1];
+        d.onclick = function(){ var r = panel("Raw Messages"); if (r && RAWT.indexOf(t[0]) >= 0){ r.s.topic = t[0]; renderPanels(); } }; lb.appendChild(d); }); }
+      list(); return; }
+    if (!sel){ side.textContent = "Click a panel's title or its ⚙ to see its settings."; return; }
+    var p = sel, s = p.s, box = document.createElement("div"); box.className = "fx-set"; side.appendChild(box);
+    function h(t){ var x = document.createElement("div"); x.className = "h"; x.textContent = t; box.appendChild(x); }
+    function redo(){ build3D(); renderPanels(); renderSide(); }
+    if (p.type === "3D"){ h("Frame"); setRow(box, "Display frame", selectOf(["odom", "base_link"], s.frame, function(v){ s.frame = v; redo(); }));
+      h("Topics"); setRow(box, "/scan_filtered", checkOf(s.scan, function(v){ s.scan = v; build3D(); }));
+      setRow(box, "Point size (px)", selectOf(["1", "3", "6"], s.size, function(v){ s.size = v; build3D(); }));
+      setRow(box, "Point color", selectOf(["teal", "red", "white"], s.color, function(v){ s.color = v; build3D(); }));
+      setRow(box, "/tf", checkOf(s.tf, function(v){ s.tf = v; build3D(); }));
+      setRow(box, "/robot_description", checkOf(s.urdf, function(v){ s.urdf = v; build3D(); }));
+      setRow(box, "/odometry/filtered", checkOf(s.odom, function(v){ s.odom = v; build3D(); })); }
+    else if (p.type === "Image"){ h("General"); setRow(box, "Topic", selectOf(["/oak/rgb/color"], s.topic, function(){}));
+      setRow(box, "Rotation", selectOf(["0", "90", "180", "270"], s.rot, function(v){ s.rot = v; renderPanels(); }));
+      setRow(box, "Flip horizontal", checkOf(s.flip, function(v){ s.flip = v; renderPanels(); })); }
+    else if (p.type === "Plot"){ h("Series"); var a = selectOf(PATHS, s.a, function(v){ s.a = v; }), b = selectOf(PATHS, s.b, function(v){ s.b = v; });
+      a.style.gridColumn = b.style.gridColumn = "1/-1"; box.appendChild(a); box.appendChild(b); }
+    else { h("General"); setRow(box, "Topic", selectOf(RAWT, s.topic, function(v){ s.topic = v; renderPanels(); })); }
+    side.scrollTop = top; }
+
+  /* --- open a connection, add a panel --- */
+  function openPop(html){ pop.innerHTML = html; pop.hidden = false; }
+  $id("fx-open").onclick = function(){ if (!pop.hidden){ pop.hidden = true; return; }
+    openPop('<div style="font-weight:600;margin-bottom:6px">Open a new connection</div><div class="it on">Foxglove WebSocket</div>' +
+      '<div style="margin:8px 0 4px">WebSocket URL</div><input type="text" readonly value="ws://localhost:8765" aria-label="WebSocket URL">' +
+      '<div style="margin-top:8px;display:flex;gap:8px"><button id="fx-go">Open</button><button id="fx-cancel">Cancel</button></div>');
+    $id("fx-go").onclick = function(){ pop.hidden = true; connect(true); };
+    $id("fx-cancel").onclick = function(){ pop.hidden = true; }; };
+  $id("fx-addp").onclick = function(){ if (!pop.hidden){ pop.hidden = true; return; }
+    openPop('<div style="font-weight:600;margin-bottom:6px">Add panel</div>');
+    ["3D", "Image", "Plot", "Raw Messages"].forEach(function(t){ var d = document.createElement("div"); var have = !!panel(t);
+      d.className = "it" + (have ? " off" : ""); d.textContent = t + (have ? " (already in the layout)" : "");
+      if (!have) d.onclick = function(){ var c = cfg().filter(function(x){ return x.type === t; })[0]; st.panels.push(c); sel = c; pop.hidden = true; renderPanels(); build3D(); tab("panel"); };
+      pop.appendChild(d); });
+    var x = document.createElement("button"); x.textContent = "Cancel"; x.style.marginTop = "6px"; x.onclick = function(){ pop.hidden = true; }; pop.appendChild(x); };
+  function connect(on){ st.on = on; root.classList.toggle("on", on);
+    var src = $id("fx-src"); src.lastChild.textContent = on ? "ws://localhost:8765" : "Not connected";
+    $id("fx-open").textContent = on ? "Connected" : "Open connection"; $id("fx-open").disabled = on;
+    hist = []; lastScan = on ? SIM.scanAt(pose) : null; renderPanels(); renderSide(); build3D(); }
+
+  /* --- hide the sidebar; drive; restore --- */
+  var handle = $id("fx-handle");
+  handle.onclick = function(){ var hd = root.classList.toggle("hide-side"); handle.innerHTML = hd ? "&#9656;" : "&#9666;";
+    var t = hd ? "Show the sidebar" : "Hide the sidebar"; handle.setAttribute("aria-label", t); handle.title = t; };
+  function drive(k){ if (move) return; var c = Math.cos(pose.yaw), s = Math.sin(pose.yaw), to = {x:pose.x, y:pose.y, yaw:pose.yaw}, dur, v = 0, w = 0;
+    if (k === "f" || k === "b"){ var sg = k === "f" ? 1 : -1, free = SIM.ray(pose.x, pose.y, sg * c, sg * s), step = Math.max(0, Math.min(0.5, free - 0.25));
+      if (step < 0.02) return; to.x += sg * step * c; to.y += sg * step * s; dur = step / V; v = sg * V; }
+    else { var sw = k === "l" ? 1 : -1; to.yaw += sw * Math.PI / 4; dur = Math.PI / 4 / W; w = sw * W; }
+    move = {from:{x:pose.x, y:pose.y, yaw:pose.yaw}, to:to, t0:performance.now(), dur:dur * 1000}; cmd = {v:v, w:w}; }
+  document.querySelectorAll("#fx-drive [data-d]").forEach(function(b){ b.onclick = function(){ drive(b.dataset.d); }; });
+  function restore(){ st = {on:false, panels:cfg()}; pose = {x:0, y:0, yaw:0}; cmd = {v:0, w:0}; move = null; hist = []; sel = null; filter = "";
+    pop.hidden = true; root.classList.remove("hide-side"); handle.innerHTML = "&#9666;"; homeView(); connect(false); tab("topics"); }
+  $id("fx-restore").onclick = restore;
+  ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
+    [root, $id("fx-drive")].forEach(function(el){ el.addEventListener(ev, function(e){ e.stopPropagation();
+      if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); }); });
+
+  /* --- the plot: the last 20 s of two series --- */
+  function drawPlot(p){ var sv = p.svg, w = p.body.clientWidth, hh = p.body.clientHeight; if (!w || !hh) return;
+    sv.setAttribute("viewBox", "0 0 " + w + " " + hh); sv.innerHTML = ""; if (!hist.length) return;
+    var tN = hist[hist.length - 1].t, t0 = tN - 20, L = 64, R = w - 10, T = 56, B = hh - 34, ser = [p.s.a, p.s.b], cols = [C.plan, C.follow];
+    var lo = Infinity, hi = -Infinity; hist.forEach(function(r){ ser.forEach(function(k){ var v = r[k]; if (v < lo) lo = v; if (v > hi) hi = v; }); });
+    if (hi - lo < 0.2){ var m = (hi + lo) / 2; lo = m - 0.1; hi = m + 0.1; }
+    function X(t){ return L + (t - t0) / 20 * (R - L); } function Y(v){ return B - (v - lo) / (hi - lo) * (B - T); }
+    el(sv, "rect", {x:L, y:T, width:R - L, height:B - T, fill:"none", stroke:C.edge});
+    [lo, (lo + hi) / 2, hi].forEach(function(v){ txt(sv, L - 6, Y(v) + 7, v.toFixed(2), 20, C.muted, "end"); });
+    txt(sv, R, hh - 8, "/clock time: " + tN.toFixed(1) + " s", 20, C.muted, "end");
+    ser.forEach(function(k, i){ poly(sv, hist.filter(function(r){ return r.t >= t0; }).map(function(r){ return [X(r.t), Y(r[k])]; }), {stroke:cols[i], "stroke-width":3});
+      var y = 22 + i * 24; el(sv, "line", {x1:L, y1:y - 6, x2:L + 22, y2:y - 6, stroke:cols[i], "stroke-width":4});
+      var lab = k.replace("/odometry/filtered.", "odom: ").replace("/cmd_vel.", "cmd_vel: ").replace("pose.pose.position.", "position.").replace("twist.twist.", "twist.");
+      txt(sv, L + 28, y, lab, 20, C.ink, "start"); }); }
+
+  /* --- sizes and the loop --- */
+  function ratio(e){ var w = e.clientWidth, r = e.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((r.width / w) || 1)); }
+  function size(){ var p = panel("3D"); if (p && p.body && p.body.clientWidth){ R3.setPixelRatio(ratio(p.body)); R3.setSize(p.body.clientWidth, p.body.clientHeight, false);
+      cam.aspect = p.body.clientWidth / p.body.clientHeight; cam.updateProjectionMatrix(); }
+    var q = panel("Image"); if (q && q.body && q.body.clientHeight){ var ih = q.body.clientHeight, iw = Math.min(q.body.clientWidth, ih * 16 / 9);
+      RC.setPixelRatio(ratio(q.body)); RC.setSize(Math.round(iw), Math.round(iw * 9 / 16), false); }
+    draw(); }
+  new ResizeObserver(size).observe(gridEl);
+  var running = false, lastDraw = 0, lastMsg = 0, lastLidar = 0;
+  function loop(tm){ var fr = root.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; return; }
+    requestAnimationFrame(loop);
+    if (move){ var u = Math.min(1, (tm - move.t0) / move.dur), a = move.from, b = move.to;
+      pose = {x:a.x + (b.x - a.x) * u, y:a.y + (b.y - a.y) * u, yaw:a.yaw + (b.yaw - a.yaw) * u};
+      if (u >= 1){ move = null; cmd = {v:0, w:0}; pose.yaw = Math.atan2(Math.sin(pose.yaw), Math.cos(pose.yaw)); } place(); }
+    $id("fx-time").textContent = st.on ? "/clock " + now().toFixed(2) + " s" : "";
+    $id("fx-live").textContent = st.on ? "● Live: 3D drag moves, right-drag or Shift+drag turns, wheel zooms" : "Open a connection to see the topics.";
+    if (!st.on) return;
+    if (tm - lastMsg >= 50){ lastMsg = tm; var r = {t:now()}; PATHS.forEach(function(k){ r[k] = value(k); }); hist.push(r); while (hist.length && hist[0].t < r.t - 21) hist.shift();
+      var raw = panel("Raw Messages"); if (raw && raw.pre) raw.pre.innerHTML = yaml(msg(raw.s.topic), 0);
+      var pl = panel("Plot"); if (pl && pl.svg) drawPlot(pl); }
+    if (tm - lastLidar >= 100){ lastLidar = tm; lastScan = SIM.scanAt(pose); build3D(); }
+    if (tm - lastDraw >= 33){ lastDraw = tm; controls.update(); draw(); } }
+  /* a resize clears a canvas, so size() draws again at once */
+  function draw(){ if (!st || !st.on) return; var dk = document.documentElement.getAttribute("data-theme") === "dark"; R3.setClearColor(dk ? 0x1b2028 : 0xeceff3);
+    if (!grid.children.length || grid.userData.dark !== dk){ gridLines(dk); grid.userData.dark = dk; }
+    var k = R3.domElement.height / (2 * Math.tan(cam.fov * Math.PI / 360)); dyn.children.forEach(function(o){ if (o.material && o.material.uniforms) o.material.uniforms.k.value = k; });
+    if (panel("3D")) R3.render(scene, cam);
+    if (panel("Image")){ var oak = SIM.framePosAt("oak_link", pose); WV.cam.position.set(oak.x, oak.y, oak.z);
+      WV.cam.lookAt(oak.x + Math.cos(pose.yaw), oak.y + Math.sin(pose.yaw), oak.z); RC.render(WV.scene, WV.cam); } }
+  restore();
+  onShow(root, function(){ size(); if (!running){ running = true; requestAnimationFrame(loop); } });
+})();
+
+
+/* --- the rqt_graph slide: the graph of the running simulation as rqt_graph lays it out for each setting of its controls
+   (window.RQTG, from figures/gz_capture/rqt_graph_layouts.py: rqt_graph's own dotcode generator and Graphviz dot, ROS 2
+   Jazzy, 2026-11-21). The node and topic filters are not part of this copy. Nodes-only edges carry no topic labels here. --- */
+(function(){
+  var root = $id("rg"); if (!root || !window.RQTG) return;
+  var G = RQTG, cv = $id("rg-cv"), view = $id("rg-view"), ctx = cv.getContext("2d");
+  var BOX = {actions:"Actions", group_tf:"tf", images:"Images", dead_sinks:"Dead sinks", leaf_topics:"Leaf topics", debug:"Debug", hide_tf:"tf", unreachable:"Unreachable", params:"Params"};
+  var START = {mode:2, level:1, actions:1, group_tf:0, images:0, dead_sinks:1, leaf_topics:0, debug:1, hide_tf:0, unreachable:1, params:1, highlight:1, fit:1};
+  var S, cam = {s:1, x:0, y:0}, hover = -1, L = null;
+  var mode = $id("rg-mode"), level = $id("rg-level"), boxes = {};
+  G.modes.forEach(function(m, i){ var o = document.createElement("option"); o.value = i; o.textContent = m; mode.appendChild(o); });
+  G.levels.forEach(function(v){ var o = document.createElement("option"); o.value = v; o.textContent = v; level.appendChild(o); });
+  function cb(host, key, text){ var l = document.createElement("label"), c = document.createElement("input"); c.type = "checkbox";
+    c.onchange = function(){ S[key] = c.checked ? 1 : 0; pick(); }; l.appendChild(c); l.appendChild(document.createTextNode(text)); host.appendChild(l); boxes[key] = c; }
+  ["actions", "group_tf", "images"].forEach(function(k){ cb($id("rg-group"), k, BOX[k]); });
+  cb($id("rg-group"), "highlight", "Highlight"); cb($id("rg-group"), "fit", "Fit");
+  ["dead_sinks", "leaf_topics", "debug", "hide_tf", "unreachable", "params"].forEach(function(k){ cb($id("rg-hide"), k, BOX[k]); });
+  mode.onchange = function(){ S.mode = +mode.value; pick(); }; level.onchange = function(){ S.level = +level.value; pick(); };
+  function index(){ var bits = 0; G.bools.forEach(function(k){ bits = bits * 2 + (S[k] ? 1 : 0); });
+    return G.combos[(S.mode * G.levels.length + G.levels.indexOf(S.level)) * Math.pow(2, G.bools.length) + bits]; }
+  function pick(){ L = G.layouts[index()]; hover = -1; if (S.fit) fit(); draw(); }
+  function fit(){ var w = view.clientWidth, h = view.clientHeight; if (!L || !w) return; var bb = L[0], gw = bb[2] - bb[0], gh = bb[3] - bb[1];
+    cam.s = Math.min(w / (gw + 20), h / (gh + 20)); cam.x = (w - gw * cam.s) / 2 - bb[0] * cam.s; cam.y = (h - gh * cam.s) / 2; }
+  $id("rg-fitnow").onclick = function(){ fit(); draw(); };
+  $id("rg-refresh").onclick = function(){ pick(); };
+  /* drawing: Graphviz points, y up; the canvas, y down */
+  function P(x, y){ var bb = L[0]; return [cam.x + x * cam.s, cam.y + (bb[3] - y) * cam.s]; }
+  function draw(){ var w = view.clientWidth, h = view.clientHeight, r = window.devicePixelRatio || 1, sc = view.getBoundingClientRect().width / (w || 1) || 1;
+    r *= sc; if (cv.width !== Math.round(w * r) || cv.height !== Math.round(h * r)){ cv.width = Math.round(w * r); cv.height = Math.round(h * r); }
+    var dk = document.documentElement.getAttribute("data-theme") === "dark", ink = dk ? "#d8e0e8" : "#111111", hl = dk ? "#43BACB" : "#16798A", bg = dk ? "#1b2028" : "#ffffff";
+    ctx.setTransform(r, 0, 0, r, 0, 0); ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h); if (!L) return;
+    var lit = {}, litE = {};
+    if (S.highlight && hover >= 0){ lit[hover] = 1; L[3].forEach(function(e, i){ if (e[0] === hover || e[1] === hover){ litE[i] = 1; lit[e[0]] = lit[e[1]] = 1; } }); }
+    ctx.lineWidth = 1; ctx.font = "600 " + (14 * cam.s) + "px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    L[2].forEach(function(c){ var a = P(c[0], c[3]), b = P(c[2], c[1]); ctx.strokeStyle = ink; ctx.strokeRect(a[0], a[1], b[0] - a[0], b[1] - a[1]);
+      ctx.fillStyle = ink; ctx.fillText(G.labels[c[4]], (a[0] + b[0]) / 2, a[1] + 12 * cam.s); });
+    L[3].forEach(function(e, i){ var f = e[3], on = litE[i]; if (f.length < 4) return; ctx.strokeStyle = on ? hl : ink; ctx.lineWidth = on ? 2.5 : 1;
+      ctx.beginPath(); var p = P(f[0], f[1]); ctx.moveTo(p[0], p[1]);
+      for (var k = 2; k + 5 < f.length + 0; k += 6){ var c1 = P(f[k], f[k + 1]), c2 = P(f[k + 2], f[k + 3]), q = P(f[k + 4], f[k + 5]); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], q[0], q[1]); }
+      ctx.stroke();
+      if (e[2]){ var t = P(f[f.length - 2], f[f.length - 1]), hd = P(e[2][0], e[2][1]), ang = Math.atan2(hd[1] - t[1], hd[0] - t[0]), len = Math.hypot(hd[0] - t[0], hd[1] - t[1]);
+        ctx.fillStyle = on ? hl : ink; ctx.beginPath(); ctx.moveTo(hd[0], hd[1]);
+        ctx.lineTo(hd[0] - len * Math.cos(ang - 0.35), hd[1] - len * Math.sin(ang - 0.35)); ctx.lineTo(hd[0] - len * Math.cos(ang + 0.35), hd[1] - len * Math.sin(ang + 0.35)); ctx.fill(); } });
+    L[1].forEach(function(n, i){ var c = P(n[2], n[3]), ww = n[4] * cam.s, hh = n[5] * cam.s, on = lit[i];
+      ctx.fillStyle = bg; ctx.strokeStyle = on ? hl : ink; ctx.lineWidth = on ? 2.5 : 1; ctx.beginPath();
+      if (n[1]) ctx.rect(c[0] - ww / 2, c[1] - hh / 2, ww, hh); else ctx.ellipse(c[0], c[1], ww / 2, hh / 2, 0, 0, 2 * Math.PI);
+      ctx.fill(); ctx.stroke(); ctx.fillStyle = on ? hl : ink; ctx.fillText(G.labels[n[0]], c[0], c[1]); }); }
+  function nodeAt(mx, my){ if (!L) return -1; var hit = -1;
+    L[1].forEach(function(n, i){ var c = P(n[2], n[3]), ww = n[4] * cam.s / 2, hh = n[5] * cam.s / 2, dx = (mx - c[0]) / ww, dy = (my - c[1]) / hh;
+      if (n[1] ? Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : dx * dx + dy * dy <= 1) hit = i; }); return hit; }
+  /* zoom at the cursor, drag to move; the lecture's own wheel and drag stop here */
+  function local(e){ var r = view.getBoundingClientRect(), k = view.clientWidth / r.width; return [(e.clientX - r.left) * k, (e.clientY - r.top) * k]; }
+  view.addEventListener("wheel", function(e){ e.preventDefault(); e.stopPropagation(); var m = local(e), f = Math.exp(-e.deltaY * 0.0015);
+    f = Math.max(0.04, Math.min(10, cam.s * f)) / cam.s;   /* the zoom stays between 0.04 and 10 */
+    cam.x = m[0] - (m[0] - cam.x) * f; cam.y = m[1] - (m[1] - cam.y) * f; cam.s *= f; draw(); }, {passive:false});
+  var drag = null;
+  view.addEventListener("pointerdown", function(e){ e.stopPropagation(); drag = {x:e.clientX, y:e.clientY, cx:cam.x, cy:cam.y}; view.setPointerCapture(e.pointerId); });
+  view.addEventListener("pointermove", function(e){ var k = view.clientWidth / view.getBoundingClientRect().width;
+    if (drag){ cam.x = drag.cx + (e.clientX - drag.x) * k; cam.y = drag.cy + (e.clientY - drag.y) * k; draw(); return; }
+    var m = local(e), h = nodeAt(m[0], m[1]); if (h !== hover){ hover = h; draw(); } });
+  view.addEventListener("pointerup", function(){ drag = null; });
+  view.addEventListener("pointerleave", function(){ if (hover >= 0){ hover = -1; draw(); } });
+  ["mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){ root.addEventListener(ev, function(e){ e.stopPropagation(); }, {passive:true}); });
+  root.addEventListener("pointerdown", function(e){ e.stopPropagation(); });
+  root.addEventListener("wheel", function(e){ e.stopPropagation(); e.preventDefault(); }, {passive:false});   /* the deck never zooms from inside the window */
+  function reset(){ S = {}; for (var k in START) S[k] = START[k]; mode.value = S.mode; level.value = S.level;
+    for (var b in boxes) boxes[b].checked = !!S[b]; pick(); }
+  new ResizeObserver(function(){ if (S && S.fit) fit(); draw(); }).observe(view);
+  new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  reset();
+  onShow(root, function(){ fit(); draw(); });
 })();
 
 
@@ -1052,15 +1377,18 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     box(y2, 420, "differential_drive_controller");
     cgDots.forEach(function(d, i){ if (i >= 2) d.ph += 0.25; });
   }
+  var cgWant = false;   /* the dots move only after Play (no autoplay, user, 2026-11-21) */
   function startCg(){
     cgDots.forEach(function(d){ d.c = el(gs, "circle", {cx:215, cy:d.y1, r:8, fill:C.live, stroke:"#ffffff", "stroke-width":2}); });
     if (reduce) cgDots.forEach(function(d){ d.c.setAttribute("cy", (d.y1 + d.y2) / 2); });
-    cgOn = true; }
+    cgOn = cgWant; }
   drawCg(); startCg();
   setInterval(function(){ if (!cgOn || reduce || !active(gs)) return; var t = performance.now() / 1000;
     cgDots.forEach(function(d){ if (!d.c) return; var u = (t / 1.6 + d.ph) % 1; d.c.setAttribute("cy", d.y1 + (d.y2 - d.y1) * u); }); }, 40);
   function againCg(){ drawCg(); reveal(gs, 1500, startCg); }
   $id("cg-again").onclick = function(e){ e.stopPropagation(); againCg(); };
+  var cgPlay = $id("cg-play");
+  cgPlay.onclick = function(e){ e.stopPropagation(); cgWant = !cgWant; cgOn = cgWant && cgDots.length > 0 && !!cgDots[0].c; cgPlay.textContent = cgWant ? "Pause" : "Play"; };
   onShow(gs, function(first){ if (first) againCg(); });
 
   /* --- slide 25 (page 27): the four steps, played slowly, each clickable --- */
@@ -1085,7 +1413,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   $id("lc-next").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.min(3, lcStep + 1), true); };
   $id("lc-play").onclick = function(e){ e.stopPropagation(); lcPlay(); };
   lcSet(0, false);
-  onShow(ls, function(first){ if (first){ lcPlay(); reveal(ls, 1200); } });
+  onShow(ls, function(first){ if (first) reveal(ls, 1200); });   /* no autoplay (user, 2026-11-21): it waits for its button */
 
   /* --- slide 26 (page 28): the error of a turn, from two sliders --- */
   var ts = $id("tc-svg"), tH = $id("tc-h"), tT = $id("tc-t"), tSteps = $id("tc-steps");
@@ -1171,8 +1499,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       rpAt(n, Math.min(t, RS[5] - RS[0])); if (t >= RS[5] - RS[0]) clearInterval(rTimer); }, 40); }
   $id("rp-play").onclick = function(e){ e.stopPropagation(); rpPlay(); };
   $id("rp-next").onclick = function(e){ e.stopPropagation(); clearInterval(rTimer); rpAt(rshown >= 6 ? 1 : rshown + 1); };
-  rpAt(6);
-  onShow(rs, function(first){ if (first) rpPlay(); });
+  rpAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
 })();
 
 
@@ -1444,8 +1771,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
       for (var k = 1; k < r.length; k++) tt.push("turn to " + r[k][2] + ": " + (r[k][0] - r[k - 1][0]).toFixed(2) + " s");
       $("q59-turns").textContent = tt.join("; "); $("q59-t").textContent = "t = " + Math.min(upto, TT).toFixed(1) + " s"; }
     $("q59-play").onclick = stop(function(){ anim("q59", function(p){ draw(p * TT); }, 11000 / 1.5 * 1.0); });
-    onShow("q59-svg", function(first){ if (first) $("q59-play").click(); });
-    draw(TT);
+    draw(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
   })();
 })();
 
@@ -1743,12 +2069,12 @@ document.querySelectorAll('.l12w input[type="range"]').forEach(function(inp){
    class live-val (drawn in --live). The text is read just before the control's own handler runs (capture phase) and
    compared just after. Elements are matched by their position in the tree, so a list or a formula rebuilt with new
    numbers marks only what changed; the marked positions are kept and marked again after every rebuild. Figures (svg)
-   are left out. ---------- */
+   are left out, and so is anything inside class nolive (a copy of an app's window, whose text changes all the time). ---------- */
 (function(){
   var SKIP = { SVG:1, SCRIPT:1, STYLE:1, BUTTON:1, INPUT:1 };
   function walk(e, path, out){ var k = 0;
     for (var c = e.firstElementChild; c; c = c.nextElementSibling, k++){
-      if (SKIP[c.tagName.toUpperCase()] || (c.classList && (c.classList.contains("try") || c.classList.contains("rng")))) continue;
+      if (SKIP[c.tagName.toUpperCase()] || (c.classList && (c.classList.contains("try") || c.classList.contains("rng") || c.classList.contains("nolive")))) continue;
       var p = path + "/" + k; out[p] = {el:c, txt:c.textContent}; walk(c, p, out); }
     return out; }
   function mark(fr, before){
