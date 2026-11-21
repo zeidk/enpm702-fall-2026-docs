@@ -208,6 +208,15 @@ Start the world with the robot in it, or the robot alone on an empty floor:
 
    The ROSbot can also take mecanum wheels, which drive sideways too (``twist.linear.y``). Husarion's packages have a ``mecanum`` option; the course simulation removed its controller and does not offer it.
 
+.. raw:: html
+   :file: widgets/_head.html
+
+Move the two sliders to build a command and see the path the robot would drive for 3 s.
+
+.. raw:: html
+   :file: widgets/twist.html
+
+
 The Patrol World
 """"""""""""""""
 
@@ -296,6 +305,12 @@ The launch file takes launch arguments, set on the command line as ``name:=value
    ros2 launch gp2_bringup gp2_sim.launch.py gui:=false rviz:=true
 
 To stop the simulation, press :kbd:`Ctrl+C` in the launch terminal.
+
+Click a value in each row to build the launch command.
+
+.. raw:: html
+   :file: widgets/launch-args.html
+
 
 RViz: What ROS Sees
 """""""""""""""""""
@@ -423,6 +438,12 @@ Turn on the spot at 0.5 rad/s:
    - ``-p stamped:=true`` sets a parameter of the node, so it publishes ``TwistStamped``. The Parameters section explains them.
    - The keys work only while the teleop terminal has the focus.
 
+Press Start publishing, then press Ctrl+C, to see when the controller brakes.
+
+.. raw:: html
+   :file: widgets/brake.html
+
+
 .. _l12-simulation-time:
 
 Simulation Time
@@ -509,6 +530,12 @@ The first four lines:
 - Off: both read the computer's clock, in seconds since 1 January 1970.
 - On: the node subscribes to ``/clock``. Until the first message arrives, ``now()`` is 0: the article says ROS time "will return zero if nothing has been received."
 
+Switch use_sim_time between off and on to see the first lines the node printed.
+
+.. raw:: html
+   :file: widgets/sim-time.html
+
+
 Pause Gazebo: Which Timer Stops
 """""""""""""""""""""""""""""""
 
@@ -559,6 +586,12 @@ With ``use_sim_time`` on, the world was paused, then resumed 4.3 s later with th
    - A node that must stay in step with the simulation, when it runs slower than real time or is paused, uses ``create_timer``.
    - Elapsed time comes from two readings of the same clock: ``(now() - start).seconds()``.
 
+Replay the measured run, or watch it again, to see which timer stops while Gazebo is paused.
+
+.. raw:: html
+   :file: widgets/pause.html
+
+
 
 Proportional Control
 --------------------
@@ -581,6 +614,12 @@ With ``ros2 topic pub``, you chose the command and you watched the robot. A cont
 
    ``heading_controller_node`` receives the pose on ``/odometry/filtered`` and publishes the command on ``/cmd_vel``.
 
+Each dot is one message moving along its topic.
+
+.. raw:: html
+   :file: widgets/graph.html
+
+
 One Error, One Gain
 ^^^^^^^^^^^^^^^^^^^
 
@@ -598,6 +637,12 @@ A controller brings one measured value to a target. For a turn, the value is the
 
 The loop stops when the error is smaller than a **tolerance**, a margin you choose. Without a tolerance, the loop would wait for an error of exactly 0, which the odometry never reads.
 
+Click a step, or press Play, to see what each step adds to the picture.
+
+.. raw:: html
+   :file: widgets/loop.html
+
+
 The Error of a Turn
 """""""""""""""""""
 
@@ -613,6 +658,12 @@ Example: the robot faces 3.122 rad (179°), and the target is -90°, which is -1
    :class: important
 
    The error is the target minus the heading, moved into -π to π by adding or removing full turns.
+
+Move the heading and the target to see the error the short way round.
+
+.. raw:: html
+   :file: widgets/error.html
+
 
 Yaw from the Odometry's Quaternion
 """"""""""""""""""""""""""""""""""
@@ -637,6 +688,12 @@ The odometry gives the robot's orientation as a **quaternion**, four numbers ``x
 - The same file holds ``angle_difference``, which computes the error of the last section.
 - The :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading explains the quaternion and this formula.
 
+Move the yaw to see the quaternion that gives it, and the yaw the function returns.
+
+.. raw:: html
+   :file: widgets/yaw.html
+
+
 The Proportional Control Law
 """"""""""""""""""""""""""""
 
@@ -651,6 +708,12 @@ A **proportional controller** commands a turn rate proportional to the error: th
    :class: important
 
    The command shrinks with the error, so the robot slows down as it nears the target heading.
+
+Change the gain and the error to see the command the controller sends.
+
+.. raw:: html
+   :file: widgets/law.html
+
 
 Turn to a Heading
 ^^^^^^^^^^^^^^^^^
@@ -972,6 +1035,12 @@ With the simulation running:
 
       Near the target the command is small, so a smaller tolerance costs more time.
 
+Replay the log of the turn, or step through it one line at a time.
+
+.. raw:: html
+   :file: widgets/turn-log.html
+
+
 Proportional Control: What You Can Do Now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1003,6 +1072,12 @@ The heading controller of the last section has four numbers in its code: the tar
    :class: important
 
    Values that change with the task, the robot or the world belong outside the code: in parameters, which you set when the node starts or while it runs.
+
+Switch between numbers in the code and parameters, and step through the three reasons.
+
+.. raw:: html
+   :file: widgets/why-params.html
+
 
 What a Parameter Holds
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -1117,6 +1192,12 @@ Lines 35 to 49 of ``heading_controller_node.hpp``, the end of the constructor (i
    - Line 29: ``target_index_`` picks the heading to reach now. Within the tolerance, line 41 adds 1 to it.
    - Line 21: after the last heading, the node stops for good.
 
+Pick a default for line 39 to see which type the parameter gets.
+
+.. raw:: html
+   :file: widgets/declare.html
+
+
 Command-Line Tools: list and get
 """"""""""""""""""""""""""""""""
 
@@ -1146,6 +1227,12 @@ Command-Line Tools: list and get
    Double value is: 1.5
 
 The node declared four parameters. ROS 2 adds the others to every node, among them ``use_sim_time``.
+
+Pick a command to see what it prints for the running node.
+
+.. raw:: html
+   :file: widgets/param-list.html
+
 
 Setting a Value the Node Already Read
 """""""""""""""""""""""""""""""""""""
@@ -1201,6 +1288,12 @@ The node was started with ``kp_angular`` 0.5. During its first turn, the gain is
 
    The output is a parameter file: the next subsection loads files like it. ``[...]`` cuts the lines ROS 2 adds to every node.
 
+Step through the measured log to see that the set changes the stored value only.
+
+.. raw:: html
+   :file: widgets/set-no-effect.html
+
+
 Set a Parameter
 ^^^^^^^^^^^^^^^
 
@@ -1225,6 +1318,12 @@ On the Command Line, at Start
 .. note::
 
    Write a double with a decimal point. With ``-p kp_angular:=1``, an integer, the node stops at start with an ``InvalidParameterTypeException``: "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed".
+
+Pick the value of kp_angular to see what the node reads.
+
+.. raw:: html
+   :file: widgets/at-start.html
+
 
 From a YAML File
 """"""""""""""""
@@ -1257,6 +1356,12 @@ From the package folder, ``l12_rosbot``:
    ros2 run l12_rosbot heading_controller_exe \
      --ros-args --params-file config/controllers.yaml
 
+Pick a node to see which values it gets from the file.
+
+.. raw:: html
+   :file: widgets/yaml.html
+
+
 .. _l12-use-sim-time:
 
 use_sim_time for a Node That Runs with Gazebo
@@ -1273,6 +1378,12 @@ Every node has ``use_sim_time``, and it is false unless you set it:
    :class: important
 
    Set ``use_sim_time`` to true for every node you run with Gazebo. The ``/**`` key of a parameter file does it for all of them.
+
+Pick how the node was started to see its use_sim_time value.
+
+.. raw:: html
+   :file: widgets/use-sim-time.html
+
 
 From a Launch File: a YAML File Named by an Argument
 """"""""""""""""""""""""""""""""""""""""""""""""""""
@@ -1301,6 +1412,12 @@ Lines 12 to 25 of ``launch/heading_launch.py``:
 
 - Lines 13 to 16: the launch argument ``params_file``, by default the installed ``controllers.yaml``.
 - Line 23: a list, here with one file: the one the argument names.
+
+Pick how the launch file was started to see which parameter file the node gets.
+
+.. raw:: html
+   :file: widgets/launch-yaml.html
+
 
 Install and Run the Launch File
 """""""""""""""""""""""""""""""
@@ -1380,6 +1497,12 @@ The command stays at the 1.0 rad/s limit while the gain times the error is over 
       )
 
    With this launch file, the robot drove 0.981 m. A new value means editing the launch file, so values you tune belong in a YAML file.
+
+Pick a run to read the time of each of its 90 degree turns.
+
+.. raw:: html
+   :file: widgets/gains.html
+
 
 React to a Change
 ^^^^^^^^^^^^^^^^^
@@ -1476,6 +1599,12 @@ Lines 82 to 96 of ``heading_controller_node.cpp``, the loop that checks each val
 - Line 82: a negative gain would turn the robot away from its target.
 - Lines 87 to 89: 3.14 rad/s is the ROSbot's turning limit.
 
+Pick a parameter and a value to see what the callback answers.
+
+.. raw:: html
+   :file: widgets/validator.html
+
+
 The Callback, Part 2: Store the New Values
 """"""""""""""""""""""""""""""""""""""""""
 
@@ -1504,6 +1633,12 @@ Lines 97 to 114 of the same file:
    result.successful = true;
    return result;
 
+Pick a parameter and a value to follow it through the callback.
+
+.. raw:: html
+   :file: widgets/store.html
+
+
 
 Change a Gain While the ROSbot Turns
 """"""""""""""""""""""""""""""""""""
@@ -1530,6 +1665,12 @@ The node runs with ``low_gain.yaml`` (gain 0.5). Five ``ros2 param set`` command
 - ROS 2's own type check refused ``kp_angular 2``: the answer is its message, not one of the callback's.
 - The callback refused ``target_headings_deg`` with the check of the More detail box above: the node never reads the list again.
 - The turn to 180° took 6.40 s at gain 0.5. The gain changed during the next turn, which took 3.20 s. The last turn, at 1.5, took 2.70 s.
+
+Replay the measured run to see the command change when the gain changes.
+
+.. raw:: html
+   :file: widgets/gain-change.html
+
 
 Parameters: What You Can Do Now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1619,6 +1760,12 @@ One Namespace per Controller
 
    The same code now runs with two sets of names, one per robot.
 
+Pick a namespace and a node name for each controller to see the graph and its names.
+
+.. raw:: html
+   :file: widgets/namespaces.html
+
+
 Relative, Absolute and Private Names
 """"""""""""""""""""""""""""""""""""
 
@@ -1629,6 +1776,12 @@ Whether a namespace changes a name depends on how the code writes it. The `ROS 2
 - **Private**, such as ``"~/status"``: "The special single character token ~ will be replaced with a namespace snippet that is a concatenation of the namespace for the node and the node name." In ``/robot1``: ``/robot1/heading_controller_node/status``. This lecture's code has no private name.
 
 The controllers write ``"odometry/filtered"`` and ``"cmd_vel"`` without a leading ``/``, so a namespace moves them. A name written with ``/`` would stay the same in every namespace.
+
+Pick a namespace and a name written in the code to see the full name it becomes.
+
+.. raw:: html
+   :file: widgets/resolver.html
+
 
 What the Namespace Changed
 """"""""""""""""""""""""""
@@ -1736,6 +1889,12 @@ The simulation has one ROSbot, with no namespace. Keep the node's namespace, and
 
 The log ends with ``[robot1.heading_controller_node]: all 4 headings reached``. A name that starts with ``/`` is absolute, so the namespace does not change the two replacements.
 
+Pick a namespace, a node name and the two remapping rules to see the graph they give.
+
+.. raw:: html
+   :file: widgets/rule-builder.html
+
+
 Remapping and Parameters
 """"""""""""""""""""""""
 
@@ -1782,6 +1941,12 @@ Lines 9 to 20 of ``launch/remap_launch.py`` (stage 5, commit ``6d2b94b``):
 - Line 12 does what ``__node`` does, line 13 what ``__ns`` does, and lines 14 to 17 are two rules, each a (match, replacement) pair.
 - ``ros2 launch l12_rosbot remap_launch.py``: the node is ``/robot1/heading_a``, and it turned the ROSbot through its four headings.
 
+Click a button to match each line of the launch file with the part of the command it replaces.
+
+.. raw:: html
+   :file: widgets/launch-lines.html
+
+
 Namespaces and Remapping: What You Can Do Now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1804,3 +1969,6 @@ Next Class
   - `ROS 2 Jazzy: Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`__
   - :doc:`ROSbot Simulation </setup/rosbot_simulation>`
   - :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>`
+
+.. raw:: html
+   :file: widgets/_scripts.html

@@ -24,6 +24,9 @@
 <link rel="stylesheet" href="katex/katex.min.css">
 <script src="katex/katex.min.js"></script>
 <script src="katex/contrib/auto-render.min.js"></script>
+<!-- three.js r128 (MIT, L12_interactive_assets/three/LICENSE), for slide 9's 3D patrol world -->
+<script src="L12_interactive_assets/three/three.min.js"></script>
+<script src="L12_interactive_assets/three/OrbitControls.js"></script>
 <style>
 /* The deck ships its fonts (Fira Sans and Fira Mono, SIL Open Font License: L12_interactive_assets/fonts/OFL.txt).
    A browser without Fira installed (or a snap Firefox, which cannot see TeX Live's copy) drew the slides in a
@@ -401,6 +404,10 @@ pre.code[data-lang="bash"]{border-left-color:var(--ink);padding-right:48px}
 .copybtn{position:absolute;top:11px;right:8px;width:36px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--plate-edge);border-radius:7px;background:var(--card);color:var(--muted);opacity:.8}
 .copybtn:hover,.copybtn:focus-visible{opacity:1;color:var(--ink);border-color:var(--slate)}
 .copybtn.done{opacity:1;color:var(--ok);border-color:var(--ok)}
+/* a box with several commands: one smaller button per command, in the box's right padding, on the command's first line */
+pre.code.percmd .cl{position:relative}
+.copybtn.line{top:50%;right:-42px;transform:translateY(-50%);width:32px;height:26px}
+.copybtn.line svg{width:18px;height:18px}
 pre.code[data-lang="bash"] .cl::before{content:"$ ";color:var(--muted)}
 pre.code[data-lang="bash"] .cl.cont::before{content:"  "}
 pre.code[data-lang="text"]{background:var(--zebra);border-left-color:var(--muted)}
@@ -429,12 +436,12 @@ pre code{background:none;padding:0}
 .rb-drive{display:block;overflow:visible}
 .rb-drive .rb-floor{fill:var(--zebra)} .rb-drive .rb-tile{stroke:var(--plate-edge);stroke-width:1.5}
 .rb-drive .rb-wall{fill:var(--slate);opacity:.55}
-.rb-drive .rb-body{fill:var(--ink)} .rb-drive .rb-wheel{fill:#3A4150} .rb-drive .rb-corner{fill:#C8312A}
-.rb-drive .rb-lidar{fill:#5B6B7C;stroke:var(--card);stroke-width:2} .rb-drive .rb-cam{fill:#8A96A3}
+:is(.rb-drive,.rbi) .rb-body{fill:var(--ink)} :is(.rb-drive,.rbi) .rb-wheel{fill:#3A4150} :is(.rb-drive,.rbi) .rb-corner{fill:#C8312A}
+:is(.rb-drive,.rbi) .rb-lidar{fill:#5B6B7C;stroke:var(--card);stroke-width:2} :is(.rb-drive,.rbi) .rb-cam{fill:#8A96A3}
 .rb-drive .rb-path{fill:none;stroke:var(--s1);stroke-width:3;stroke-dasharray:2 10;stroke-linecap:round;opacity:.7}
 .rb-drive .rb-ping{fill:none;stroke:var(--live);stroke-width:2}
 .rb-drive .rb-goal{fill:none;stroke:var(--s2);stroke-width:3}
-:root[data-theme="dark"] .rb-drive .rb-wheel{fill:#9AA6B2} :root[data-theme="dark"] .rb-drive .rb-body{fill:#C9D3DD}
+:root[data-theme="dark"] :is(.rb-drive,.rbi) .rb-wheel{fill:#9AA6B2} :root[data-theme="dark"] :is(.rb-drive,.rbi) .rb-body{fill:#C9D3DD}
 
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -656,6 +663,15 @@ source install/setup.bash</pre>
 <section class="secblock s1" data-scene="sec-3" data-name="The ROSbot in Gazebo" tabindex="0"><div class="sechead"><span class="num">1</span><span>The ROSbot in Gazebo</span><span class="meta">slides 3 to 21</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Facts from the deck's section 1 (slides 3 to 21, PDF pages 5 to 23) and its measured outputs:
      ../figures/data/gz_shapes.txt, sim_time.txt (the use_sim_time runs and the pause). -->
 
+<style>
+#pw-box{position:relative;width:100%;height:405px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--card);touch-action:none;cursor:grab}
+#pw-box:active{cursor:grabbing}
+#pw-box canvas{display:block;width:100%;height:100%}
+#pw-box .pwt{position:absolute;transform:translate(-50%,-50%);pointer-events:none;margin:0}
+#pw-box svg.pwl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#pw-box .pwt.off{display:none}
+</style>
+
 <section class="plate frame s1" data-scene="p5" data-name="Slide 3 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 3</span></div>
   <div class="opener">
     <div class="num s1">Section 1</div>
@@ -677,7 +693,7 @@ source install/setup.bash</pre>
   </div>
 </section>
 
-<section class="plate frame s1" data-scene="p7" data-name="Slide 5 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 5</span></div>
+<section class="plate frame s1" data-scene="p7" data-name="Slide 5 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 5 (1 of 2)</span></div>
   <h2>What Gazebo simulates</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo runs a robot in a virtual world, so you can test your nodes without a real robot. It computes three things (click one):</p>
   <div class="tile"><b>Physics</b><div class="why">The wheels push the robot over the floor, and the walls stop it.</div></div>
@@ -690,7 +706,21 @@ source install/setup.bash</pre>
   </ul>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p8" data-name="Slide 6 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 6</span></div>
+<section class="plate frame s1 extra" data-part="2" data-scene="p7-2" data-name="Slide 5 (2 of 2) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 5 (2 of 2)</span></div>
+  <h2>A Gazebo world: the course's patrol world</h2><div class="fit"><div class="fitin">
+  <div class="two" style="grid-template-columns:1.45fr 1fr;gap:24px;align-items:center">
+    <div>
+      <img class="fig" src="L12_interactive_assets/gz_patrol_overview.png" style="width:100%" alt="Rendered view from the patrol world's fixed camera, high above the south side, looking north and down: a long hall along the bottom with four blue discs, a purple disc, a small orange cylinder, a green cylinder with a round head beside a red door panel, and a brown box against the south wall; two rooms above, joined to the hall by an open doorway on the left and the red door on the right; the small ROSbot near the left end of the hall.">
+      <p class="small" style="margin:4px 0 8px">The world's own fixed camera (<code>/patrol_cam/image</code>), saved from the course simulation. The robot is the small dark shape at the left of the hall.</p>
+    </div>
+    <ul class="pl">
+    <li><a href="https://gazebosim.org/" target="_blank" rel="noopener">Gazebo</a>: the simulator's home page. <a href="https://gazebosim.org/docs/harmonic/getstarted/" target="_blank" rel="noopener">Getting Started with Gazebo</a>: the Harmonic tutorials, the version ROS&nbsp;2 Jazzy uses.</li>
+    <li><a href="https://gazebosim.org/docs/harmonic/sdf_worlds/" target="_blank" rel="noopener">SDF worlds</a> and the <a href="http://sdformat.org/spec" target="_blank" rel="noopener">SDFormat specification</a>: how a world file describes walls, objects, lights and robots. <a href="https://gazebosim.org/docs/harmonic/sensors/" target="_blank" rel="noopener">Sensors</a>: how Gazebo simulates cameras, lidars and IMUs.</li>
+  </ul>
+  </div>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="p8" data-name="Slide 6 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 6 (1 of 3)</span></div>
   <h2>Gazebo on its own: gz sim</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo is a program of its own, not a ROS node. ROS&nbsp;2 Jazzy installs it (Gazebo Harmonic), and <span class="cmd">gz sim</span> opens a world file. <span class="file">shapes.sdf</span> is a demo world that comes with Gazebo:</p>
 <pre class="code" data-lang="bash">gz sim shapes.sdf          # with a window; press Play to start
@@ -706,13 +736,41 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 <pre class="code" data-lang="text">/parameter_events
 /rosout</pre></div>
   </div>
-  <div class="box concl"><span class="bt">Gazebo's topics are not ROS topics</span>A bridge node, from the package <code>ros_gz_bridge</code>, copies the ones you need between the two.</div>
+  <div class="box concl"><span class="bt">Gazebo's topics are not ROS topics</span>Gazebo publishes on its own topics, with its own message types. A ROS node does not see them: with only <span class="cmd">gz sim</span> running, <span class="cmd">ros2 topic list</span> shows none of Gazebo's topics. A bridge node connects the two: next frame.</div>
 </div></div></section>
 
-<section class="plate frame s1" data-scene="p9" data-name="Slide 7 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 7</span></div>
+<section class="plate frame s1 extra" data-part="2" data-scene="p8-2" data-name="Slide 6 (2 of 3) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 6 (2 of 3)</span></div>
+  <h2>What gz sim shapes.sdf shows</h2><div class="fit"><div class="fitin">
+  <img class="fig" src="L12_interactive_assets/gz_shapes_world.png" style="width:100%" alt="Rendered view of the shapes demo world: on a grey ground, from left to right, a yellow capsule, a green cylinder, a red box, a blue sphere, a magenta ellipsoid and an orange cone, each with its shadow.">
+  <ul class="pl" style="margin-top:8px">
+    <li>The six models of <span class="file">shapes.sdf</span>, from left to right: a capsule, a cylinder, a box, a sphere, an ellipsoid and a cone.</li>
+    <li>Saved without a window, from a camera added to a copy of the world. With <span class="cmd">gz sim shapes.sdf</span>, the window shows the same scene, and Play starts the physics.</li>
+    <li>The world file lists each model with its pose, shape, size and color: <a href="https://gazebosim.org/docs/harmonic/sdf_worlds/" target="_blank" rel="noopener">SDF worlds</a>.</li>
+  </ul>
+</div></div></section>
+
+<section class="plate frame s1 extra" data-part="3" data-scene="p8-3" data-name="Slide 6 (3 of 3) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 6 (3 of 3)</span></div>
+  <h2>Gazebo and ROS: the bridge between them</h2><div class="fit"><div class="fitin">
+  <ul class="pl">
+    <li>The two sides use different message types. Gazebo's clock is a <code>gz.msgs.Clock</code>; the ROS clock is a <code>rosgraph_msgs/msg/Clock</code>.</li>
+    <li>A <b>bridge</b> node, <code>parameter_bridge</code> from the package <code>ros_gz_bridge</code>, subscribes on one side, converts each message to the other side's type, and publishes it there.</li>
+    <li>Its configuration file lists the topics to copy: for each one, its name, the two types and the direction. The course simulation's <span class="file">rosbot_gazebo/config/gz_bridge.yaml</span> copies the clock:</li>
+  </ul>
+<pre class="code" data-lang="yaml">- topic_name: /clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  gz_type_name: gz.msgs.Clock
+  direction: GZ_TO_ROS</pre>
+  <ul class="pl">
+    <li><code>GZ_TO_ROS</code>: from Gazebo to ROS. This is the <code>/clock</code> that <code>use_sim_time</code> reads (<span class="go" data-go="p20">slide 18</span>).</li>
+    <li><span class="cmd">ros2 launch gp2_bringup gp2_sim.launch.py</span> runs five bridge nodes: for the clock, the velocity command <code>/cmd_vel</code>, the lidar, the robot's camera, and the patrol camera.</li>
+    <li>More: <a href="https://gazebosim.org/docs/harmonic/ros2_integration/" target="_blank" rel="noopener">Use ROS 2 to interact with Gazebo</a> and the <a href="https://github.com/gazebosim/ros_gz/tree/jazzy/ros_gz_bridge" target="_blank" rel="noopener">ros_gz_bridge package</a>.</li>
+  </ul>
+</div></div></section>
+
+<section class="plate frame s1" data-scene="p9" data-name="Slide 7 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 7 (1 of 2)</span></div>
   <h2>The Husarion ROSbot</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1.9fr 1fr;gap:26px;align-items:center">
-    <ul class="pl"><li>A small research robot with four wheels.</li><li>The two wheels on each side turn together, so the robot turns by driving its left and right sides at different speeds: a <b>differential drive</b>.</li></ul>
+    <ul class="pl"><li>A small research robot with four wheels, made by <a href="https://husarion.com/" target="_blank" rel="noopener">Husarion</a>.</li><li>The two wheels on each side turn together, so the robot turns by driving its left and right sides at different speeds: a <b>differential drive</b>.</li></ul>
     <img class="fig" src="L12_interactive_assets/rosbot.png" style="width:100%;max-height:230px;object-fit:contain" alt="Photo of the Husarion ROSbot: a black robot with four rubber wheels and red corners, a round RPLIDAR lidar on top, a depth camera on a bracket above the lidar, and an antenna at the back.">
   </div>
     <table class="t tight">
@@ -724,6 +782,18 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
       <tr><td>IMU</td><td>Measures the robot's orientation, turn rate and acceleration</td></tr>
       <tr><td>Odometry</td><td>The robot's pose, computed from the wheels and the IMU</td></tr>
     </table>
+</div></div></section>
+
+<section class="plate frame s1 extra" data-part="2" data-scene="p9-2" data-name="Slide 7 (2 of 2) · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 7 (2 of 2)</span></div>
+  <h2>The ROSbot in Gazebo</h2><div class="fit"><div class="fitin">
+  <div class="two" style="grid-template-columns:0.85fr 1.5fr;gap:22px;align-items:center;width:94%;margin:0 auto">
+    <img class="fig" src="L12_interactive_assets/gz_rosbot_closeup.png" style="width:100%" alt="Rendered close view of the simulated ROSbot on a grey floor: a dark grey body on four spiked black wheels, a light grey block on top, and a camera on a curved mast at the back.">
+    <img class="fig" src="L12_interactive_assets/gz_rosbot_hall.png" style="width:100%" alt="Rendered view from just behind the simulated ROSbot at its start, at robot height, looking east down the hall: the robot in the foreground, blue and purple discs on the floor, a small orange cylinder, a green cylinder with a round head in front of a red door, and a brown box against the right wall.">
+  </div>
+  <ul class="pl" style="margin-top:10px">
+    <li>Husarion's own model: the same body, wheels and sensor positions as the real robot. Left: up close. Right: at its start, from behind, facing east (+x) down the hall. Both saved from cameras added to the running simulation.</li>
+    <li>Husarion: the <a href="https://husarion.com/manuals/rosbot/" target="_blank" rel="noopener">ROSbot manual</a>, and <a href="https://github.com/husarion/rosbot_ros" target="_blank" rel="noopener">rosbot_ros</a>, the ROS&nbsp;2 packages the course simulation is built on.</li>
+  </ul>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="p10" data-name="Slide 8 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 8 (1 of 2)</span></div>
@@ -749,10 +819,11 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
       <p class="small" style="margin:2px 0 6px">The slider ends are the ROSbot's speed limits. <span class="try">try it</span></p>
       <div class="readout" id="tw-msg" style="font-size:21px"></div>
       <ul class="pl" style="margin-top:10px" id="tw-pose"></ul>
+      <div class="row" style="margin:6px 0 0"><button id="tw-drive">Drive again</button><span class="small" id="tw-t">t = 3.0 s</span></div>
+      <p class="small" style="margin:4px 0 0">3&nbsp;s from the origin, facing +x, a mark every 0.5&nbsp;s: \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\), no slip, no delay. Equal axes; robot to scale.</p>
     </div>
     <div>
-      <svg id="tw-svg" class="plot" viewBox="0 0 560 470" width="560" height="470" role="img" aria-label="Top view, x to the right and y up, in meters: the path the robot would follow for 3 s from the origin, facing +x, with the command set on the left, and the robot at its end pose with an arrow for its heading."></svg>
-      <p class="small" style="margin:6px 0 0">The path for 3&nbsp;s from the origin, facing +x, drawn from \(\dot x = v\cos\theta,\ \dot y = v\sin\theta,\ \dot\theta = \omega\): the command alone, with no slip and no delay.</p>
+      <svg id="tw-svg" class="plot" viewBox="0 0 520 480" width="520" height="480" role="img" aria-label="Top view, x to the right and y up, in meters, the same scale on both axes: the path the robot would follow for 3 s from the origin, facing +x, with a mark every 0.5 s, and the robot drawn to scale with an arrow for its heading."></svg>
     </div>
   </div>
 </div></div></section>
@@ -760,8 +831,14 @@ ros2 launch gp2_bringup gp2_sim.launch.py world:=empty</pre>
 <section class="plate frame s1" data-scene="p11" data-name="Slide 9 · The ROSbot in Gazebo" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot in Gazebo</span><span>Slide 9</span></div>
   <h2>The patrol world</h2><div class="fit"><div class="fitin">
   <p class="goal">One floor, 20&nbsp;m by 10&nbsp;m, with walls 1&nbsp;m high.</p>
-  <div class="two" style="grid-template-columns:1.7fr 1fr;gap:22px;align-items:center">
-    <img class="fig" src="L12_interactive_assets/patrol_world.png" style="width:100%" alt="Top view of the patrol world from Gazebo, with x in meters along the bottom and y in meters along the left. A long hall runs along the bottom with the small dark robot at the origin, tag 5, and four blue discs, tags 1 to 4. Two rooms lie above the hall, joined to it by two doorways in the wall at y equals 2: the left doorway, tag 11, is open, and the right one, tag 10, has a red panel. A purple disc, tag 9, a small orange cylinder, tag 6, a green cylinder with a round head, tag 8, and a brown box, tag 7, lie in the hall.">
+  <div class="two" style="grid-template-columns:1.75fr 1fr;gap:22px;align-items:center">
+    <div>
+      <div id="pw-box" role="img" aria-label="A 3D view of the patrol world built from its world file, which you can turn, tilt, pan and zoom: a long hall with four blue checkpoint pads, tags 1 to 4; the robot at the origin, tag 5; a small orange cylinder, a brown box, a green cylinder with a round head and a purple disc, tags 6 to 9; a red door panel, tag 10, and an open doorway, tag 11, in the wall between the hall and the two rooms.">
+        <img class="fig" id="pw-still" src="L12_interactive_assets/patrol_world.png" style="width:100%;display:none" alt="Top view of the patrol world from Gazebo, with x in meters along the bottom and y in meters along the left. A long hall runs along the bottom with the small dark robot at the origin, tag 5, and four blue discs, tags 1 to 4. Two rooms lie above the hall, joined to it by two doorways in the wall at y equals 2: the left doorway, tag 11, is open, and the right one, tag 10, has a red panel. A purple disc, tag 9, a small orange cylinder, tag 6, a green cylinder with a round head, tag 8, and a brown box, tag 7, lie in the hall.">
+      </div>
+      <div class="row" style="margin:6px 0 0"><button id="pw-top">Top view</button><button id="pw-robot">From the robot's start</button><button id="pw-reset">Reset</button><span class="try">try it</span></div>
+      <p class="small" style="margin:2px 0 0" id="pw-help">Drag to turn and tilt; right-drag (or Shift+drag) to pan; scroll to zoom. Built from the world file, <span class="file">patrol.sdf</span>.</p>
+    </div>
     <ul class="tags" style="font-size:25px">
       <li><span class="tg">1</span>to <span class="tg" style="margin-left:6px">4</span>checkpoints</li>
       <li><span class="tg">5</span>the robot's start, at the origin, facing east (+x)</li>
@@ -2123,7 +2200,8 @@ ros2 param get /robot1/heading_controller_node kp_angular</pre>
 <div id="modebadge" role="status"></div>
 
 <script>
-var BIB = {"ros2parameters":{"title":"Parameters"},"ros2clocktime":{"title":"Clock and Time"},"ros2names":{"title":"Topic and Service name mapping to DDS"},"ros2remap":{"title":"Remapping Names"}};   /* L12.bib: each entry's title (make_interactive.py) */
+var BIB = {"ros2parameters":{"title":"Parameters"},"ros2clocktime":{"title":"Clock and Time"},"ros2names":{"title":"Topic and Service name mapping to DDS"},"ros2remap":{"title":"Remapping Names"}};
+var PATROL = [{"name":"wall_west","kind":"box","size":[0.1,10.1,1.0],"pose":[-3.0,2.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_east","kind":"box","size":[0.1,10.1,1.0],"pose":[17.0,2.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_south","kind":"box","size":[20.1,0.1,1.0],"pose":[7.0,-3.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_north","kind":"box","size":[20.1,0.1,1.0],"pose":[7.0,7.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_rooms","kind":"box","size":[0.1,5.1,1.0],"pose":[7.0,4.5,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_hall_north_0","kind":"box","size":[4.6,0.1,1.0],"pose":[-0.75,2.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_hall_north_1","kind":"box","size":[6.1,0.1,1.0],"pose":[7.5,2.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"wall_hall_north_2","kind":"box","size":[3.6,0.1,1.0],"pose":[15.25,2.0,0.5,0.0,0.0,0.0],"color":[0.62,0.64,0.68]},{"name":"door_3","kind":"box","size":[3.0,0.08000000000000002,1.0],"pose":[12.0,2.0,0.5,0.0,0.0,0.0],"color":[0.8,0.1,0.1]},{"name":"crate","kind":"box","size":[1.2,0.8,0.8],"pose":[9.5,-2.4,0.4,0.0,0.0,0.0],"color":[0.55,0.35,0.15]},{"name":"fire_extinguisher","kind":"cylinder","size":[0.09,0.5],"pose":[7.6,1.3,0.25,0.0,0.0,0.0],"color":[0.95,0.45,0.05]},{"name":"person","kind":"cylinder","size":[0.22,1.3],"pose":[11.6,1.45,0.65,0.0,0.0,0.0],"color":[0.15,0.55,0.25]},{"name":"person","kind":"sphere","size":[0.14],"pose":[11.6,1.45,1.4300000000000002,0.0,0.0,0.0],"color":[0.9,0.72,0.55]},{"name":"spill","kind":"cylinder","size":[0.35,0.012],"pose":[3.6,1.3,0.006,0.0,0.0,0.0],"color":[0.3,0.05,0.4]},{"name":"checkpoint_pad_1","kind":"cylinder","size":[0.22,0.01],"pose":[5.0,-0.5,0.005,0.0,0.0,0.0],"color":[0.1,0.3,0.85]},{"name":"checkpoint_pad_2","kind":"cylinder","size":[0.22,0.01],"pose":[9.5,-1.4,0.005,0.0,0.0,0.0],"color":[0.1,0.3,0.85]},{"name":"checkpoint_pad_3","kind":"cylinder","size":[0.22,0.01],"pose":[12.0,0.4,0.005,0.0,0.0,0.0],"color":[0.1,0.3,0.85]},{"name":"checkpoint_pad_4","kind":"cylinder","size":[0.22,0.01],"pose":[3.0,0.4,0.005,0.0,0.0,0.0],"color":[0.1,0.3,0.85]}];   /* the patrol world's walls, door, pads and objects, from patrol.sdf (make_interactive.py) */   /* L12.bib: each entry's title (make_interactive.py) */
 (function(){
 "use strict";
 var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -2432,6 +2510,18 @@ function tag(svg, cx, cy, n){ var fs = Math.max(16, TXT_MIN / svgScale(svg));
 function poly(svg, pts, attrs){ var d = ""; pts.forEach(function(p, i){ if (p[1] == null || !isFinite(p[1])) return; d += (d === "" ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1); });
   var a = {d:d, fill:"none"}; for (var k in attrs) a[k] = attrs[k]; return el(svg, "path", a); }
 function f(x, n){ var s = x.toFixed(n); return s.replace("-", "−"); }
+/* rosbotIcon(parent, x, y, len, rotDeg): the cover's top view of the ROSbot (user, 2026-11-20: "use the robot icon from the
+   title slide in the rest of the deck"), centered on (x, y), its body len long, facing +x of the svg turned by rotDeg
+   (svg degrees, clockwise on screen). The body is 66 icon units long, the wheels stick out at the sides. */
+function rosbotIcon(parent, x, y, len, rotDeg){
+  var k = len / 66, g = el(parent, "g", {"class":"rbi", transform:"translate(" + x + " " + y + ") rotate(" + (rotDeg || 0) + ") scale(" + k + ")"});
+  [[-30, -33], [8, -33], [-30, 22], [8, 22]].forEach(function(w){ el(g, "rect", {"class":"rb-wheel", x:w[0], y:w[1], width:22, height:11, rx:3}); });
+  el(g, "rect", {"class":"rb-body", x:-33, y:-24, width:66, height:48, rx:7});
+  ["M 26 -24 h 7 v 9 h -4 v -5 h -3 z", "M 26 24 h 7 v -9 h -4 v 5 h -3 z", "M -26 -24 h -7 v 9 h 4 v -5 h 3 z", "M -26 24 h -7 v -9 h 4 v 5 h 3 z"]
+    .forEach(function(d){ el(g, "path", {"class":"rb-corner", d:d}); });
+  el(g, "rect", {"class":"rb-cam", x:20, y:-9, width:9, height:18, rx:2});
+  el(g, "circle", {"class":"rb-lidar", cx:-4, cy:0, r:12});
+  return g; }
 /* halo(t): a band of the plot's own background around a label, so a line that moves under it (a cursor, a
    circle that changes size) passes behind the words instead of through them. Draw the label after the line. */
 function halo(t){ t.style.stroke = "var(--card)"; t.setAttribute("stroke-width", 7);   /* the plot's background, in either theme */
@@ -2550,15 +2640,38 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     function fallback(v){ var ta = document.createElement("textarea"); ta.value = v; ta.setAttribute("readonly", "");
       ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select();
       try { document.execCommand("copy"); } finally { ta.remove(); } } }
+  /* the commands of a terminal box: its lines, a line that ends in "\" continuing into the next (user, 2026-11-20: "I need
+     to copy one at a time"); a box with several commands gets one button per command, on the command's first line */
+  function commandsOf(pre){ var groups = [], cur = null;
+    [].forEach.call(pre.querySelectorAll(".cl"), function(l){ if (!cur){ cur = []; groups.push(cur); } cur.push(l);
+      if (!/\\\s*$/.test(l.textContent)) cur = null; });
+    return groups; }
+  /* a trailing "# comment" (outside quotes) is not copied: the command alone pastes cleanly */
+  function noComment(s){ var q = null;
+    for (var i = 0; i < s.length; i++){ var c = s.charAt(i);
+      if (q){ if (c === q) q = null; } else if (c === '"' || c === "'") q = c;
+      else if (c === "#" && (i === 0 || /\s/.test(s.charAt(i - 1)))) return s.slice(0, i).replace(/\s+$/, ""); }
+    return s; }
+  function copyBtn(cls, label, get){
+    var b = document.createElement("button"); b.className = cls; b.type = "button"; b.innerHTML = ICON_COPY;
+    b.setAttribute("aria-label", label); b.title = "Copy";
+    b.addEventListener("click", function(e){ e.stopPropagation();
+      copyText(get().replace(/\s+$/, "") + "\n").then(function(){
+        b.innerHTML = ICON_DONE; b.classList.add("done"); b.title = "Copied"; b.setAttribute("aria-label", "Copied");
+        clearTimeout(b._t); b._t = setTimeout(function(){ b.innerHTML = ICON_COPY; b.classList.remove("done"); b.title = "Copy"; b.setAttribute("aria-label", label); }, 1600); }); });
+    return b; }
   function copyButton(pre){
     var w = document.createElement("div"); w.className = "codewrap"; pre.parentNode.insertBefore(w, pre); w.appendChild(pre);
-    var b = document.createElement("button"); b.className = "copybtn"; b.type = "button"; b.innerHTML = ICON_COPY;
-    b.setAttribute("aria-label", "Copy the commands"); b.title = "Copy"; w.appendChild(b);
-    b.addEventListener("click", function(e){ e.stopPropagation();
-      var lines = [].map.call(pre.querySelectorAll(".cl"), function(l){ return l.textContent; });
-      copyText((lines.length ? lines.join("\n") : pre.textContent).replace(/\s+$/, "") + "\n").then(function(){
-        b.innerHTML = ICON_DONE; b.classList.add("done"); b.title = "Copied"; b.setAttribute("aria-label", "Copied");
-        clearTimeout(b._t); b._t = setTimeout(function(){ b.innerHTML = ICON_COPY; b.classList.remove("done"); b.title = "Copy"; b.setAttribute("aria-label", "Copy the commands"); }, 1600); }); });
+    var groups = commandsOf(pre);
+    if (groups.length > 1){
+      pre.classList.add("percmd");
+      groups.forEach(function(g, k){ g[0].appendChild(copyBtn("copybtn line", "Copy command " + (k + 1),
+        function(){ return g.map(function(l){ return noComment(l.textContent); }).join("\n"); })); });
+      return; }
+    /* one command (or a box a frame script rebuilds later): one button for the box, reading the lines at click time */
+    w.appendChild(copyBtn("copybtn", "Copy the command", function(){
+      var lines = [].map.call(pre.querySelectorAll(".cl"), function(l){ return noComment(l.textContent); });
+      return lines.length ? lines.join("\n") : pre.textContent; }));
   }
   document.querySelectorAll("pre.code").forEach(function(pre){
     var lang = pre.dataset.lang || "text", src = pre.textContent.replace(/^\n/, "").replace(/\s+$/, "");
@@ -2574,34 +2687,157 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
 
 /* ---------- section 1: the TwistStamped builder, launch arguments, the 0.5 s brake, use_sim_time, the pause replay ---------- */
 (function(){
-  /* --- slide 8 (2 of 2): a TwistStamped and the path it would give in 3 s (unicycle formulas, no slip, no delay) --- */
+  /* --- slide 8 (2 of 2): a TwistStamped and the path it would give in 3 s. The pose is exact (the arc of a constant
+     v and w, no small steps), both axes have the same scale, the robot is to scale, and the axes change only when the
+     path leaves the view (user, 2026-11-20: "choppy ... does not seem accurate"). A drag moves only the path and the
+     robot, once per screen frame. The robot drives the path in real time when the frame shows, and on "Drive again". --- */
   var sv = document.getElementById("tw-svg"), iv = document.getElementById("tw-v"), iw = document.getElementById("tw-w");
   TICKS["tw-v"] = [0.2]; TICKS["tw-w"] = [0.5];
-  function drawTw(){
-    var v = +iv.value, w = +iw.value, T = 3, N = 120, pts = [], x = 0, y = 0, th = 0;
-    for (var i = 0; i <= N; i++){ pts.push([x, y, th]); var dt = T / N; x += v * Math.cos(th) * dt; y += v * Math.sin(th) * dt; th += w * dt; }
-    var xs = pts.map(function(p){ return p[0]; }), ys = pts.map(function(p){ return p[1]; });
-    var lo = Math.min(-0.5, Math.min.apply(null, xs), Math.min.apply(null, ys)), hi = Math.max(0.5, Math.max.apply(null, xs), Math.max.apply(null, ys));
-    var half = Math.max(0.6, (hi - lo) / 2 + 0.25), cx = (Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2, cy = (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2;
-    var step = half > 2 ? 1 : half > 1 ? 0.5 : 0.25, r0 = function(a){ return Math.round(a / step) * step; };
-    var xr = [r0(cx - half) - step, r0(cx + half) + step], yr = [r0(cy - half) - step, r0(cy + half) + step];
-    var ticks = function(r){ var o = []; for (var t = r[0]; t <= r[1] + 1e-9; t += step) o.push(+t.toFixed(2)); return o; };
-    sv.innerHTML = "";
-    /* the x axis skips its first tick label, which would sit on the y axis's lowest one */
-    var box = {x:20, y:12, w:520, h:400}, ax = frame(sv, box, xr, yr, ticks(xr).slice(1), ticks(yr), "x (m)", "y (m)");
-    poly(sv, pts.map(function(p){ return [ax.X(p[0]), ax.Y(p[1])]; }), {stroke:C.s1, "stroke-width":4});
-    el(sv, "circle", {cx:ax.X(0), cy:ax.Y(0), r:6, fill:C.ink});
-    var e = pts[N], L = 34, hx = ax.X(e[0]), hy = ax.Y(e[1]);
-    el(sv, "rect", {x:hx - 16, y:hy - 12, width:32, height:24, rx:5, fill:C.ink, transform:"rotate(" + (-e[2] * 180 / Math.PI) + " " + hx + " " + hy + ")"});
-    el(sv, "line", {x1:hx, y1:hy, x2:hx + L * Math.cos(e[2]), y2:hy - L * Math.sin(e[2]), stroke:C.live, "stroke-width":4});
-    var yaw = Math.atan2(Math.sin(e[2]), Math.cos(e[2]));
+  var TW_T = 3, PX0 = 96, PY0 = 12, SIDE = 410, LEN = 0.197, WID = 0.150;   /* plot square in svg units; ROSbot body in m */
+  function poseAt(v, w, t){ if (Math.abs(w) < 1e-9) return [v * t, 0, 0];
+    return [v / w * Math.sin(w * t), v / w * (1 - Math.cos(w * t)), w * t]; }
+  var view = null, gAxes = el(sv, "g", {}), gPath = el(sv, "g", {}), path = poly(gPath, [], {stroke:C.s1, "stroke-width":4});
+  var gMarks = el(sv, "g", {}), start = el(sv, "circle", {r:6, fill:C.ink});
+  var bot = el(sv, "g", {}), icon = rosbotIcon(bot, 0, 0, 66, 0), nose = el(bot, "line", {stroke:C.live, "stroke-width":4, "stroke-linecap":"round"});
+  icon.setAttribute("opacity", "0.8");   /* the cover's ROSbot, to scale; a little see-through so the path's end shows */
+  function M(view, x, y){ var k = SIDE / (2 * view.h); return [PX0 + (x - view.cx + view.h) * k, PY0 + (view.cy + view.h - y) * k]; }
+  function bbox(v, w){ var xs = [0], ys = [0]; for (var i = 1; i <= 60; i++){ var q = poseAt(v, w, TW_T * i / 60); xs.push(q[0]); ys.push(q[1]); }
+    return [Math.min.apply(null, xs), Math.max.apply(null, xs), Math.min.apply(null, ys), Math.max.apply(null, ys)]; }
+  var LEVELS = [0.5, 1, 2, 4];
+  function fits(vw, b){ var m = 0.12 * vw.h; return b[0] >= vw.cx - vw.h + m && b[1] <= vw.cx + vw.h - m && b[2] >= vw.cy - vw.h + m && b[3] <= vw.cy + vw.h - m; }
+  function pickView(b){ for (var i = 0; i < LEVELS.length; i++){ var h = LEVELS[i], st = h / 2;
+      var vw = {h:h, cx:Math.round((b[0] + b[1]) / 2 / st) * st, cy:Math.round((b[2] + b[3]) / 2 / st) * st};
+      if (fits(vw, b)) return vw; }
+    return {h:4, cx:0, cy:0}; }
+  function drawAxes(){ gAxes.innerHTML = ""; var st = view.h <= 0.5 ? 0.25 : view.h <= 1 ? 0.5 : 1;
+    el(gAxes, "rect", {x:PX0, y:PY0, width:SIDE, height:SIDE, fill:"none", stroke:C.edge, "stroke-width":1.5});
+    for (var g = Math.ceil((view.cx - view.h) / st) * st; g <= view.cx + view.h + 1e-9; g += st){ var a = M(view, g, view.cy - view.h);
+      el(gAxes, "line", {x1:a[0], y1:PY0, x2:a[0], y2:PY0 + SIDE, stroke:Math.abs(g) < 1e-9 ? C.edge : C.grid, "stroke-width":Math.abs(g) < 1e-9 ? 2 : 1});
+      if (Math.abs(g - (view.cx - view.h)) > 1e-9 && Math.abs(g - (view.cx + view.h)) > 1e-9)   /* no label at the corners */
+        txt(gAxes, a[0], PY0 + SIDE + 24, f(+g.toFixed(2), st < 1 ? 2 : 0).replace(/\.?0+$/, "") || "0", 16, C.muted); }
+    for (var h = Math.ceil((view.cy - view.h) / st) * st; h <= view.cy + view.h + 1e-9; h += st){ var b = M(view, view.cx - view.h, h);
+      el(gAxes, "line", {x1:PX0, y1:b[1], x2:PX0 + SIDE, y2:b[1], stroke:Math.abs(h) < 1e-9 ? C.edge : C.grid, "stroke-width":Math.abs(h) < 1e-9 ? 2 : 1});
+      if (Math.abs(h - (view.cy - view.h)) > 1e-9 && Math.abs(h - (view.cy + view.h)) > 1e-9)
+        txt(gAxes, PX0 - 10, b[1] + 6, f(+h.toFixed(2), st < 1 ? 2 : 0).replace(/\.?0+$/, "") || "0", 16, C.muted, "end"); }
+    txt(gAxes, PX0 + SIDE / 2, PY0 + SIDE + 52, "x (m)", 17, C.muted);
+    var yl = txt(gAxes, 26, PY0 + SIDE / 2, "y (m)", 17, C.muted); yl.setAttribute("transform", "rotate(-90 26 " + (PY0 + SIDE / 2) + ")"); }
+  function drawRobot(q){ var k = SIDE / (2 * view.h), c = M(view, q[0], q[1]), Lp = LEN * k, Wp = WID * k;
+    icon.setAttribute("transform", "scale(" + (Lp / 66).toFixed(4) + ")");   /* the icon's body is 66 units long: Lp px */
+    nose.setAttribute("x1", 0); nose.setAttribute("y1", 0); nose.setAttribute("x2", Lp / 2 + 18); nose.setAttribute("y2", 0);
+    bot.setAttribute("transform", "translate(" + c[0].toFixed(1) + " " + c[1].toFixed(1) + ") rotate(" + (-q[2] * 180 / Math.PI).toFixed(2) + ")"); }
+  function readouts(v, w){ var e = poseAt(v, w, TW_T), yaw = Math.atan2(Math.sin(e[2]), Math.cos(e[2]));
     document.getElementById("tw-msg").textContent = "{twist: {linear: {x: " + v.toFixed(2) + "},\n         angular: {z: " + w.toFixed(2) + "}}}";
     document.getElementById("tw-pose").innerHTML =
       "<li>After 3 s: x = " + f(e[0], 2) + " m, y = " + f(e[1], 2) + " m.</li>" +
       "<li>Yaw = " + f(yaw, 2) + " rad (" + f(yaw * 180 / Math.PI, 0) + "°), wrapped to −π to π.</li>" +
-      "<li>The quaternion that odometry sends: z = sin(yaw / 2) = " + f(Math.sin(yaw / 2), 3) + ", w = cos(yaw / 2) = " + f(Math.cos(yaw / 2), 3) + ".</li>";
-  }
-  iv.addEventListener("input", drawTw); iw.addEventListener("input", drawTw); drawTw();
+      "<li>The quaternion that odometry sends: z = sin(yaw / 2) = " + f(Math.sin(yaw / 2), 3) + ", w = cos(yaw / 2) = " + f(Math.cos(yaw / 2), 3) + ".</li>"; }
+  var twAnim = null, twFrame = null;
+  function update(){ twFrame = null; var v = +iv.value, w = +iw.value, b = bbox(v, w);
+    if (!view || !fits(view, b) || (LEVELS.indexOf(view.h) > 0 && fits(pickView(b), b) && pickView(b).h < view.h / 2)){ var nv = pickView(b);
+      if (!view || nv.h !== view.h || nv.cx !== view.cx || nv.cy !== view.cy){ view = nv; drawAxes(); } }
+    var pts = []; for (var i = 0; i <= 150; i++){ var q = poseAt(v, w, TW_T * i / 150); pts.push(M(view, q[0], q[1])); }
+    path.setAttribute("d", pts.map(function(p, i){ return (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(""));
+    gMarks.innerHTML = ""; for (var s = 0.5; s < TW_T - 1e-9; s += 0.5){ var mk = poseAt(v, w, s), mp = M(view, mk[0], mk[1]); el(gMarks, "circle", {cx:mp[0], cy:mp[1], r:4.5, fill:C.s1, stroke:"#ffffff", "stroke-width":1.5}); }
+    var o = M(view, 0, 0); start.setAttribute("cx", o[0]); start.setAttribute("cy", o[1]);
+    readouts(v, w); }
+  function showAt(t){ drawRobot(poseAt(+iv.value, +iw.value, t)); document.getElementById("tw-t").textContent = "t = " + t.toFixed(1) + " s"; }
+  function stopDrive(){ if (twAnim){ clearInterval(twAnim); twAnim = null; } }
+  function drive(){ stopDrive(); if (reduce){ showAt(TW_T); return; } var t0 = performance.now();
+    twAnim = setInterval(function(){ var t = Math.min(TW_T, (performance.now() - t0) / 1000); showAt(t); if (t >= TW_T) stopDrive(); }, 30); }
+  function onDrag(){ stopDrive(); if (!twFrame) twFrame = requestAnimationFrame(function(){ update(); showAt(TW_T); }); }
+  iv.addEventListener("input", onDrag); iw.addEventListener("input", onDrag);
+  document.getElementById("tw-drive").onclick = function(e){ e.stopPropagation(); update(); drive(); };
+  update(); showAt(TW_T);
+  onShow(sv, function(first){ if (first) drive(); });
+
+
+  /* --- slide 9: the patrol world in 3D (user, 2026-11-20: "drag the image to pan and tilt, to zoom in and out"). The walls,
+     door, pads and objects are patrol.sdf's own (PATROL, from make_interactive.py); the ROSbot is a box to the deck's body
+     size (0.197 m by 0.150 m by 0.080 m) with four wheels. Gazebo's frame: x east, y north, z up. Drag turns and tilts,
+     right-drag or Shift+drag pans, the wheel zooms. Renders only while slide 9 is on screen. Without WebGL, the still figure. --- */
+  (function(){
+    var box = document.getElementById("pw-box"); if (!box) return;
+    var still = document.getElementById("pw-still");
+    function fallback(){ still.style.display = "block"; box.style.height = "auto"; box.style.cursor = "default";
+      document.getElementById("pw-help").textContent = "A still top view: this browser cannot draw 3D (WebGL)."; }
+    if (!window.THREE || !THREE.OrbitControls || !PATROL){ fallback(); return; }
+    var renderer;
+    try { renderer = new THREE.WebGLRenderer({antialias:true}); } catch (err) { fallback(); return; }
+    box.appendChild(renderer.domElement);
+    var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, 1, 0.05, 200);
+    cam.up.set(0, 0, 1);   /* z up, as in Gazebo */
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.75));
+    var sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(-6, -10, 18); scene.add(sun);
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.MeshLambertMaterial({color:new THREE.Color(0.80, 0.78, 0.72)}));
+    floor.position.set(7, 2, 0); scene.add(floor);
+    /* 1 m squares inside the building (x from -3 to 17 m, y from -3 to 7 m), the x and y axes darker */
+    var gl = [], ga = [];
+    for (var gx = -3; gx <= 17; gx++) (gx === 0 ? ga : gl).push(gx, -3, 0.003, gx, 7, 0.003);
+    for (var gy = -3; gy <= 7; gy++) (gy === 0 ? ga : gl).push(-3, gy, 0.003, 17, gy, 0.003);
+    [[gl, 0xb3ada1], [ga, 0x7d776b]].forEach(function(q){ var bg = new THREE.BufferGeometry();
+      bg.setAttribute("position", new THREE.Float32BufferAttribute(q[0], 3)); scene.add(new THREE.LineSegments(bg, new THREE.LineBasicMaterial({color:q[1]}))); });
+    PATROL.forEach(function(o){
+      var geo = o.kind === "box" ? new THREE.BoxGeometry(o.size[0], o.size[1], o.size[2])
+              : o.kind === "cylinder" ? new THREE.CylinderGeometry(o.size[0], o.size[0], o.size[1], 40)
+              : new THREE.SphereGeometry(o.size[0], 32, 16);
+      if (o.kind === "cylinder") geo.rotateX(Math.PI / 2);   /* an SDF cylinder stands along z; three.js's along y */
+      var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:new THREE.Color(o.color[0], o.color[1], o.color[2])}));
+      m.position.set(o.pose[0], o.pose[1], o.pose[2]); m.rotation.set(o.pose[3], o.pose[4], o.pose[5], "ZYX"); scene.add(m); });
+    /* the ROSbot at the origin, facing +x: body, four wheels, a lidar on top and a camera at the front */
+    var bot = new THREE.Group(), dark = new THREE.MeshLambertMaterial({color:0x2b2f36}), tyre = new THREE.MeshLambertMaterial({color:0x111111});
+    var bodyM = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), dark); bodyM.position.z = 0.075; bot.add(bodyM);
+    [[0.06, 0.09], [-0.06, 0.09], [0.06, -0.09], [-0.06, -0.09]].forEach(function(q){ var wgeo = new THREE.CylinderGeometry(0.042, 0.042, 0.034, 24);
+      var wm = new THREE.Mesh(wgeo, tyre); wm.position.set(q[0], q[1], 0.042); bot.add(wm); });   /* a cylinder along y: a wheel's axle */
+    var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), new THREE.MeshLambertMaterial({color:0x666a70}));
+    lid.rotation.x = Math.PI / 2; lid.position.set(-0.01, 0, 0.135); bot.add(lid);
+    var camM = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.025), new THREE.MeshLambertMaterial({color:0xb0b4ba})); camM.position.set(0.09, 0, 0.17); bot.add(camM);
+    var arrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0.1, 0, 0.08), 0.45, 0x16798a, 0.12, 0.08); bot.add(arrow);
+    scene.add(bot);
+    /* the slide's tags, pinned just above their marks */
+    var TAGS = [[1, 5.0, -0.5, 0.05], [2, 9.5, -1.4, 0.05], [3, 12.0, 0.4, 0.05], [4, 3.0, 0.4, 0.05], [5, 0, 0, 0.25], [6, 7.6, 1.3, 0.55],
+                [7, 9.5, -2.4, 0.85], [8, 11.6, 1.45, 1.0], [9, 3.6, 1.3, 0.05], [10, 12.0, 2.0, 1.05], [11, 3.0, 2.0, 1.05]];
+    var lines = document.createElementNS("http://www.w3.org/2000/svg", "svg"); lines.setAttribute("class", "pwl"); box.appendChild(lines);
+    var tagEls = TAGS.map(function(g){ var s = document.createElement("span"); s.className = "tg pwt"; s.textContent = g[0]; box.appendChild(s);
+      var ln = document.createElementNS("http://www.w3.org/2000/svg", "line"); ln.setAttribute("stroke", "var(--ink)"); ln.setAttribute("stroke-width", "1.5"); lines.appendChild(ln);
+      return {el:s, ln:ln, p:new THREE.Vector3(g[1], g[2], g[3])}; });
+    var controls = new THREE.OrbitControls(cam, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.12; controls.screenSpacePanning = true;
+    controls.minDistance = 0.6; controls.maxDistance = 45; controls.maxPolarAngle = Math.PI / 2 - 0.03;   /* never under the floor */
+    var VIEWS = {reset:[[7, -10.5, 9.5], [7, 2, 0]], top:[[7, 1.999, 14.5], [7, 2, 0]], robot:[[-1.2, 0, 0.55], [6, 0, 0.2]]};
+    function setView(k){ var v = VIEWS[k]; cam.position.set(v[0][0], v[0][1], v[0][2]); controls.target.set(v[1][0], v[1][1], v[1][2]); controls.update(); draw(); }
+    /* the deck zooms and pans the whole page on wheel and drag: inside the view they belong to the 3D camera */
+    ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
+      renderer.domElement.addEventListener(ev, function(e){ e.stopPropagation(); if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); });
+    var v3 = new THREE.Vector3();
+    function size(){ var w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
+      var r = box.getBoundingClientRect(), k = r.width / w || 1;   /* the deck draws the frame scaled: render at the size seen */
+      renderer.setPixelRatio(Math.min(3, (window.devicePixelRatio || 1) * k)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+    function draw(){ var dk = document.documentElement.getAttribute("data-theme") === "dark";
+      renderer.setClearColor(dk ? 0x242e39 : 0xffffff); renderer.render(scene, cam);
+      var w = box.clientWidth, h = box.clientHeight;
+      /* each tag starts 26 px above its mark; tags closer than 36 px push each other apart (a few rounds), and a thin
+         line joins a tag to its mark, so no tag covers another or its own mark */
+      var on = [];
+      tagEls.forEach(function(t){ v3.copy(t.p).project(cam); t.off = v3.z > 1 || Math.abs(v3.x) > 1.05 || Math.abs(v3.y) > 1.05;
+        t.mx = (v3.x + 1) / 2 * w; t.my = (1 - v3.y) / 2 * h; t.x = t.mx; t.y = t.my - 26; if (!t.off) on.push(t); });
+      for (var it = 0; it < 40; it++) for (var a = 0; a < on.length; a++) for (var b = a + 1; b < on.length; b++){
+        var A = on[a], B = on[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 0.01;
+        if (d < 36){ var push = (36 - d) / 2, ux = dx / d, uy = dy / d; A.x -= ux * push; A.y -= uy * push; B.x += ux * push; B.y += uy * push; } }
+      tagEls.forEach(function(t){ t.el.classList.toggle("off", t.off); t.ln.style.display = t.off ? "none" : "";
+        if (t.off) return; t.el.style.left = t.x + "px"; t.el.style.top = t.y + "px";
+        var dx = t.mx - t.x, dy = t.my - t.y, d = Math.hypot(dx, dy) || 1, r = 15;   /* the line starts at the tag's edge */
+        t.ln.setAttribute("x1", t.x + dx / d * r); t.ln.setAttribute("y1", t.y + dy / d * r); t.ln.setAttribute("x2", t.mx); t.ln.setAttribute("y2", t.my); }); }
+    var running = false;
+    function loop(){ var fr = box.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; return; }
+      controls.update(); draw(); requestAnimationFrame(loop); }
+    document.getElementById("pw-top").onclick = function(e){ e.stopPropagation(); setView("top"); };
+    document.getElementById("pw-robot").onclick = function(e){ e.stopPropagation(); setView("robot"); };
+    document.getElementById("pw-reset").onclick = function(e){ e.stopPropagation(); setView("reset"); };
+    size(); setView("reset");
+    onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
+    window.addEventListener("resize", function(){ size(); draw(); });
+    new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  })();
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
   var picks = {gui:"true", world:"patrol", rviz:"false"}, defs = {gui:"true", world:"patrol", rviz:"false"}, cmd = document.getElementById("la-cmd");
@@ -2769,7 +3005,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     if (sh.h){ arrow(svg, c, c, hp[0], hp[1], C.plan); obs.push([c, c, hp[0], hp[1]]); }
     if (sh.arc && Math.abs(e) > 0.05) arc(svg, c, ra, o.h, o.h + e, C.live, obs);
     if (sh.cmd){ arc(svg, c, 40, o.h + (e >= 0 ? 140 : 240), o.h + (e >= 0 ? 240 : 140), C.slate, obs); }
-    var body = el(svg, "polygon", {points:"-22,-15 10,-15 25,0 10,15 -22,15", fill:C.ink, transform:"translate(" + c + " " + c + ") rotate(" + (-o.h) + ")"});
+    var body = rosbotIcon(svg, c, c, 46, -o.h);   /* the cover's ROSbot, facing the heading */
     if (o.tags){
       if (sh.h) putTag(svg, hp[0], hp[1], o.h, obs, S, 1);
       if (sh.t) putTag(svg, tp[0], tp[1], o.t, obs, S, 2);
