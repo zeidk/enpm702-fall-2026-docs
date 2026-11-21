@@ -711,7 +711,11 @@ source install/setup.bash</pre></div>
 
 
 </div></section>
-<section class="secblock s1" data-scene="sec-3" data-name="Simulation" tabindex="0"><div class="sechead"><span class="num">1</span><span>Simulation</span><span class="meta">27 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><!-- Section 1 of the interactive deck (its own structure, user, 2026-11-20): simulation and reality, Gazebo, launching the simulation, simulation time. Frames with data-page show the PDF's pages; the section's script (all of the old section 1's live parts) is at the end. -->
+<section class="secblock s1" data-scene="sec-3" data-name="Simulation" tabindex="0"><div class="sechead"><span class="num">1</span><span>Simulation</span><span class="meta">27 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><style>
+/* slide 6: the robot icon as a wireframe, so the lengths drawn over it show through */
+#mu-svg .mu-wire *{fill:none !important;stroke:var(--ink);stroke-width:2.5px;vector-effect:non-scaling-stroke}
+</style>
+<!-- Section 1 of the interactive deck (its own structure, user, 2026-11-20): simulation and reality, Gazebo, launching the simulation, simulation time. Frames with data-page show the PDF's pages; the section's script (all of the old section 1's live parts) is at the end. -->
 
 <style>
 #pw-box{position:relative;width:100%;height:405px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--card);touch-action:none;cursor:grab}
@@ -782,13 +786,13 @@ source install/setup.bash</pre></div>
     <svg id="mu-svg" class="plot" viewBox="0 0 560 360" width="480" height="309" role="img" aria-label="Two drawings. Left, a wheel seen from the side, standing on the ground: a solid circle for the wheel radius in the controller's file, tag 1, and a dashed circle slightly smaller, the radius times 0.95, tag 2. Right, the ROSbot seen from above, a box with two wheels on each side: a solid line between the left and right wheels, the wheel separation, tag 3, and a longer dashed line beyond the wheels, the separation times 1.36, tag 4."></svg>
     <ul class="pl" style="margin:0">
       <li><b>0.95, real robot:</b> "Based on real measurements": per turn, the real wheel moves the robot 5&nbsp;% less than a 0.0425&nbsp;m wheel.</li>
-      <li><b>1.0, Gazebo:</b> the simulated wheel is exactly 0.0425&nbsp;m. With 0.95, odometry read 2.919&nbsp;m for 3.074&nbsp;m driven.</li>
-      <li><b>1.36, both:</b> the four wheels slide sideways in a turn; the value "can differ for various ground types".</li>
+      <li><b>1.0, Gazebo:</b> the simulated wheel is exactly 0.0425&nbsp;m. Two 3&nbsp;m runs: with 0.95, odometry read 2.919&nbsp;m for 3.074&nbsp;m driven; with 1.0, 2.932&nbsp;m for 2.932&nbsp;m.</li>
+      <li><b>1.36, both:</b> in a turn the wheels skid sideways; the value "can differ for various ground types".</li>
     </ul>
   </div>
   <table class="t tight" style="margin-top:8px">
     <tr><th>Length</th><th>In the file</th><th>Simulation</th><th>Real robot</th></tr>
-    <tr><td>Wheel radius</td><td>1: 0.0425&nbsp;m</td><td>2: 1.0 &times; 0.0425 = 0.0425&nbsp;m</td><td>2: 0.95 &times; 0.0425 = 0.0404&nbsp;m</td></tr>
+    <tr><td>Wheel radius</td><td>1: 0.0425&nbsp;m</td><td>1: 1.0 &times; 0.0425 = 0.0425&nbsp;m</td><td>2: 0.95 &times; 0.0425 = 0.0404&nbsp;m</td></tr>
     <tr><td>Wheel separation</td><td>3: 0.186&nbsp;m</td><td>4: 1.36 &times; 0.186 = 0.253&nbsp;m</td><td>4: 1.36 &times; 0.186 = 0.253&nbsp;m</td></tr>
   </table>
   <p class="small" style="margin:6px 0 0">1 to 4: the drawing's tags. Sources: <span class="file">controllers.yaml</span>, Husarion's file, <span class="file">rosbot_sim/README.md</span>.</p>
@@ -1136,6 +1140,47 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 
 </div></section>
 <section class="secblock s5" data-scene="sec-4" data-name="Visualization" tabindex="0"><div class="sechead"><span class="num">2</span><span>Visualization</span><span class="meta">6 slides</span></div><div class="grid" style="grid-template-columns:repeat(3,1280px)"><!-- Section 2 of the interactive deck: RViz, Foxglove, RQT. -->
+<style>
+/* slide 32: a working copy of RViz (user, 2026-11-21: "simulate an actual RViz window where we can expand collapse the
+   left panel, change things"). The panels follow the deck's theme; the 3D view keeps the configuration's background. */
+#rv{position:relative;display:grid;grid-template-rows:minmax(0,1fr) 34px 34px;height:492px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--card);color:var(--ink);font-size:20px;line-height:1.2;user-select:none}
+#rv button{font-size:20px;padding:2px 10px;border-width:1px;border-radius:5px}
+#rv .rv-main{display:grid;grid-template-columns:420px 18px minmax(0,1fr);min-height:0}
+#rv.hide-left .rv-main{grid-template-columns:0 18px minmax(0,1fr)}
+#rv .rv-left{display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}
+#rv .rv-ph{flex:none;background:var(--chip);padding:1px 8px;font-weight:600;border-bottom:1px solid var(--plate-edge)}
+#rv .rv-tree{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;min-height:0}
+#rv .rv-row{display:grid;grid-template-columns:minmax(0,1fr) 168px;align-items:center;height:29px;cursor:default}
+#rv .rv-row:hover{background:var(--hover)}
+#rv .rv-row.sel{background:var(--hl)}
+#rv .rv-name{display:flex;align-items:center;white-space:nowrap;overflow:hidden;min-width:0}
+#rv .rv-name span.n{overflow:hidden;text-overflow:ellipsis}
+#rv .rv-name b{font-weight:600}
+#rv .rv-tw{flex:none;width:20px;text-align:center;cursor:pointer;color:var(--slate)}
+#rv .rv-ic{flex:none;width:22px;text-align:center}
+#rv .rv-ok{color:var(--ok)}
+#rv .rv-err{color:var(--bad)}
+#rv .rv-val{display:flex;align-items:center;height:100%;padding-left:6px;border-left:1px solid var(--plate-edge);white-space:nowrap;overflow:hidden;min-width:0}
+#rv .rv-val select,#rv .rv-name input{font:inherit;font-size:20px;width:100%;height:26px;background:var(--plate);color:var(--ink);border:1px solid var(--plate-edge);border-radius:3px;padding:0 2px}
+#rv .rv-val input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--live)}
+#rv .rv-help{flex:none;height:80px;padding:3px 8px;border-top:1px solid var(--plate-edge);overflow:hidden;color:var(--ink)}
+#rv .rv-btns{flex:none;display:flex;gap:4px;padding:4px;border-top:1px solid var(--plate-edge)}
+#rv .rv-btns button{flex:1 1 0;padding:2px 0}
+#rv .rv-img{height:104px;display:flex;justify-content:center;background:var(--chip)}
+#rv .rv-img canvas{display:block;height:100%;width:auto}
+#rv .rv-handle{border:none;border-left:1px solid var(--plate-edge);border-right:1px solid var(--plate-edge);border-radius:0;padding:0;background:var(--chip);color:var(--slate);font-size:20px}
+#rv .rv-view{position:relative;min-width:0;min-height:0;touch-action:none;cursor:grab;background:#303030}
+#rv .rv-view:active{cursor:grabbing}
+#rv .rv-view canvas{display:block;width:100%;height:100%}
+#rv .rv-time,#rv .rv-status{display:flex;gap:8px;align-items:center;padding:0 8px;border-top:1px solid var(--plate-edge);white-space:nowrap;overflow:hidden}
+#rv .rv-ph2{font-weight:600;margin-right:8px}
+#rv output{display:inline-block;min-width:82px;padding:0 5px;border:1px solid var(--plate-edge);background:var(--plate);font-variant-numeric:tabular-nums}
+#rv output.w{min-width:150px}
+#rv .rv-pop{position:absolute;left:12px;bottom:84px;width:400px;background:var(--card);border:2px solid var(--live);border-radius:8px;padding:6px 8px;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:5}
+#rv .rv-pop div.it{padding:2px 6px;border-radius:4px;cursor:pointer}
+#rv .rv-pop div.it:hover{background:var(--hover)}
+#rv-drive button{font-size:21px;padding:2px 12px}
+</style>
 
 <section class="plate frame s5" data-scene="visualization-1" data-name="Slide 30 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 30 / 114</span></div>
   <div class="opener">
@@ -1163,8 +1208,24 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 
 <section class="plate frame s5" data-scene="visualization-3" data-name="Slide 32 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 32 / 114</span></div>
   <h2>RViz with the course simulation</h2><div class="fit"><div class="fitin">
-  <img class="fig" src="L12_interactive_assets/viz_rviz.png" style="width:100%;max-width:840px;display:block;margin:0 auto" alt="Screenshot of RViz with the course simulation: on the left the Displays list (Global Options, Global Status Ok, Map, Robot, Sensors) and an Image panel showing the camera's view down the hall, with gray walls, a green cylinder, a red door and a brown box; in the large 3D view on the right, a dark grid, the small robot model with its coordinate frames at the center, and two long lines of red lidar points along the hall's walls; along the bottom, ROS time and wall time.">
-  <p class="small" style="margin:6px 0 0">The ROSbot's RViz configuration, fixed frame <code>odom</code>. 3D view: the robot model, its frames (TF), and the lidar's ranges on the walls (<code>/scan_filtered</code>, red). Lower left: the camera (<code>/oak/rgb/color</code>). Bottom: ROS time, Gazebo's clock, next to the wall time.</p>
+  <div id="rv" aria-label="A working copy of RViz with the ROSbot's configuration. Left: the Displays panel (Global Options, Global Status, the groups Map, Robot and Sensors), which you can expand, check and edit, and the camera image. Right: the 3D view, dark gray, with the grid, the robot, its frames and the lidar's points on the walls. Bottom: the Time panel.">
+    <div class="rv-main">
+      <div class="rv-left">
+        <div class="rv-ph">Displays</div>
+        <div class="rv-tree" id="rv-tree" role="tree"></div>
+        <div class="rv-help" id="rv-help"></div>
+        <div class="rv-btns"><button id="rv-b-add">Add</button><button id="rv-b-dup" disabled>Duplicate</button><button id="rv-b-rm" disabled>Remove</button><button id="rv-b-ren" disabled>Rename</button></div>
+        <div id="rv-imgwrap"><div class="rv-ph">Image</div><div class="rv-img" id="rv-imgbox"></div></div>
+      </div>
+      <button class="rv-handle" id="rv-handle" aria-label="Hide the left panels" title="Hide the left panels">&#9666;</button>
+      <div class="rv-view" id="rv-view"></div>
+    </div>
+    <div class="rv-time"><span class="rv-ph2">Time</span>ROS Time: <output id="rv-t1"></output>ROS Elapsed: <output id="rv-t2"></output>Wall Time: <output id="rv-t3" class="w"></output>Wall Elapsed: <output id="rv-t4"></output></div>
+    <div class="rv-status"><button id="rv-reset">Reset</button><span id="rv-msg">RViz is ready.</span><span id="rv-fps" style="margin-left:auto"></span></div>
+    <div class="rv-pop" id="rv-pop" hidden></div>
+  </div>
+  <img id="rv-still" class="fig" src="L12_interactive_assets/viz_rviz.png" style="display:none;width:100%;max-width:840px;margin:0 auto" alt="Screenshot of RViz with the course simulation: the Displays list on the left with the camera image below it, the 3D view with the grid, the robot and the lidar's points in red on the walls, and the Time panel at the bottom.">
+  <div class="row" id="rv-drive" style="margin:4px 0 0;align-items:center;gap:8px"><span class="small" style="margin:0">Gazebo, not RViz:</span><button data-d="l">&#8634; Left</button><button data-d="f">&#9650; Forward</button><button data-d="b">&#9660; Back</button><button data-d="r">Right &#8635;</button><button id="rv-restore">Restore</button><span class="try">try it</span></div>
 </div></div></section>
 
 <section class="plate frame s5" data-scene="visualization-4" data-name="Slide 33 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="-1" title="Go to a slide (G)">Slide 33 / 114</span></div>
@@ -1200,6 +1261,8 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <img class="fig" src="L12_interactive_assets/viz_rqt_graph.png" style="width:100%;max-width:960px;display:block;margin:0 auto" alt="Screenshot of rqt_graph showing the running simulation's nodes as ovals and topics as boxes: on the left the bridge nodes gz_bridge, patrol_cam_bridge, gz_ros_control, oak_CAM11_gz_bridge, LDR02_gz_bridge and rosbot_gz_bridge; LDR02_gz_bridge publishes /scan to laser_filters; rosbot_gz_bridge publishes /cmd_vel to differential_drive_controller, which publishes /odometry/wheels and /tf; imu_broadcaster publishes /imu/data; /imu/data, /odometry/wheels and /set_pose go into ekf, which publishes /tf; joint_state_broadcaster publishes /joint_states to robot_state_publisher, which publishes /tf, /tf_static and /robot_description.">
   <p class="small" style="margin:6px 0 0">Ovals are nodes, boxes are topics, an arrow goes from a publisher to a subscriber. <code>/cmd_vel</code> reaches <code>differential_drive_controller</code>; <code>ekf</code> fuses <code>/imu/data</code> and <code>/odometry/wheels</code>.</p>
 </div></div></section>
+
+
 </div></section>
 <section class="secblock s6" data-scene="sec-5" data-name="The ROSbot" tabindex="0"><div class="sechead"><span class="num">3</span><span>The ROSbot</span><span class="meta">16 slides</span></div><div class="grid" style="grid-template-columns:repeat(4,1280px)"><!-- Section 3 of the interactive deck: the robot, how it moves, its sensors, odometry, the topics, driving. -->
 
@@ -3533,7 +3596,8 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       c.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(c.dataset.br); } }); }); })();
 
   /* --- wheels and ground: the radius and separation multipliers (user, 2026-11-21: "Provide a visual aid showing the
-     multipliers"). Lengths to scale within each drawing: the wheel at 2824 px/m, the robot at 909 px/m. --- */
+     multipliers"). The wheel circles and the two separation lines are to scale (the wheel at 2824 px/m, the separations at
+     909 px/m); the robot icon is scaled only so its side wheel gap matches 0.186 m. --- */
   (function(){ var sv = document.getElementById("mu-svg"); if (!sv) return;
     var RE = C.follow;   /* the multiplied lengths, dashed, in the follow color */
     /* left: the wheel from the side */
@@ -3549,19 +3613,345 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     tag(sv, cx + 24, cy + 0.6 * R, 2);
     /* right: the robot from above, front up */
     txt(sv, 425, 26, "Top view: the robot", 18, C.slate);
-    var s = 909, ox = 425, oy = 175, bw = 0.150 * s, bl = 0.197 * s, half = 0.186 / 2 * s, eff = 0.186 * 1.36 / 2 * s;
-    el(sv, "rect", {x:ox - bw / 2, y:oy - bl / 2, width:bw, height:bl, rx:10, fill:"#f3f5f7", stroke:C.ink, "stroke-width":3});
-    [-1, 1].forEach(function(side){ [-1, 1].forEach(function(fr){
-      el(sv, "rect", {x:ox + side * half - 11, y:oy + fr * 0.055 * s - 27, width:22, height:54, rx:5, fill:C.ink}); }); });
+    var s = 909, ox = 425, oy = 175, half = 0.186 / 2 * s, eff = 0.186 * 1.36 / 2 * s;
+    /* the title slide's robot icon, front up, as a wireframe (user, 2026-11-21), scaled so its wheel centers (27.5 of its 66
+       units from the middle) sit 0.186 m apart: the dimension lines end at the wheel centers */
+    var ik = half / 27.5; rosbotIcon(sv, ox, oy, 66 * ik, -90).setAttribute("class", "rbi mu-wire");
     function dim(y, x1, x2, col, dash){ var a = {stroke:col, "stroke-width":3}; if (dash) a["stroke-dasharray"] = "9 6";
       el(sv, "line", Object.assign({x1:x1, y1:y, x2:x2, y2:y}, a));
       [x1, x2].forEach(function(x){ el(sv, "line", {x1:x, y1:y - 10, x2:x, y2:y + 10, stroke:col, "stroke-width":3}); }); }
     dim(296, ox - half, ox + half, C.ink, false);
     dim(336, ox - eff, ox + eff, RE, true);
-    [ox - half, ox + half].forEach(function(x){ el(sv, "line", {x1:x, y1:oy + 0.055 * s + 30, x2:x, y2:286, stroke:C.edge, "stroke-width":2, "stroke-dasharray":"3 4"}); });
+    [ox - half, ox + half].forEach(function(x){ el(sv, "line", {x1:x, y1:oy + 30 * ik + 6, x2:x, y2:286, stroke:C.edge, "stroke-width":2, "stroke-dasharray":"3 4"}); });
     tag(sv, ox - half - 28, 296, 3);   /* each tag at the left end of its line, beside it */
     tag(sv, ox - eff - 28, 336, 4);
   })();
+
+
+/* --- slide 32: a working copy of RViz. Every value is the ROSbot's rosbot.rviz (rosbot_description/rviz) unless a comment
+   says otherwise: fixed frame odom, background 48; 48; 48, frame rate 30, the groups Map (Grid), Robot (RobotModel, TF,
+   Odometry off) and Sensors (LaserScan on /scan_filtered, Image on /oak/rgb/color), the Orbit view (distance 5.69, pitch
+   0.320, yaw 5.508). Robot geometry from the URDF: wheel radius 0.0425 m, wheels 0.106 m apart front to back and 0.192 m
+   side to side (rosbot/wheel.urdf.xacro), body_to_cover 0.0603 m, imu (0.003, -0.0495, 0.04332), camera mount (-0.0141, 0,
+   0.125) (rosbot/body.urdf.xacro), lidar on the cover at x 0.02 (config/rosbot/basic.yaml), laser frame turned 180 deg
+   (slamtec_rplidar.urdf.xacro). The lidar: 3000 samples over a full turn, 0.05 to 30 m, 10 Hz (same file); it sees the
+   world's walls, door and objects (patrol.sdf, PATROL). The camera: 60 deg wide, 16:9 (luxonis_depthai.urdf.xacro). ROS
+   time runs at the measured real-time factor 0.9997 (figures/data/sim_time.txt): ROS Time counts from the page load (Gazebo's start), ROS Elapsed and Wall Elapsed from the slide's first showing (RViz's start). The robot model is drawn as boxes. --- */
+(function(){
+  var root = document.getElementById("rv"); if (!root) return;
+  var view = document.getElementById("rv-view"), imgbox = document.getElementById("rv-imgbox");
+  function fallback(){ root.style.display = "none"; document.getElementById("rv-drive").style.display = "none";
+    var s = document.getElementById("rv-still"); s.style.display = "block"; }
+  if (!window.THREE || !THREE.OrbitControls || !PATROL){ fallback(); return; }
+  var R3, RC;
+  try { R3 = new THREE.WebGLRenderer({antialias:true}); RC = new THREE.WebGLRenderer({antialias:true}); } catch (err){ fallback(); return; }
+  view.appendChild(R3.domElement); imgbox.appendChild(RC.domElement);
+
+  /* --- the robot's frames, in base_link (m) --- */
+  var WR = 0.0425, WX = 0.106 / 2, WY = 0.192 / 2, CZ = WR + 0.0603;
+  var FR = {   /* name: [parent, x, y, z, yaw] */
+    base_link:["odom", 0, 0, 0, 0], body_link:["base_link", 0, 0, WR, 0], cover_link:["body_link", 0, 0, CZ, 0],
+    imu_link:["body_link", 0.003, -0.0495, WR + 0.04332, 0], camera_mount_link:["body_link", -0.0141, 0, WR + 0.125, 0],
+    fl_wheel_link:["body_link", WX, WY, WR, 0], fr_wheel_link:["body_link", WX, -WY, WR, 0],
+    rl_wheel_link:["body_link", -WX, WY, WR, 0], rr_wheel_link:["body_link", -WX, -WY, WR, 0],
+    laser:["cover_link", 0.02, 0, CZ + 0.0285, Math.PI], oak_link:["camera_mount_link", -0.0241, 0, WR + 0.145, 0]};
+  var LZ = FR.laser[3];
+
+  /* --- the configuration (a fresh copy on Restore) --- */
+  function cfg(){ return {
+    fixed:"odom", bg:"48; 48; 48", rate:30,
+    items:[
+      {type:"Group", name:"Map", on:true, open:false, kids:[mk("Grid")]},
+      {type:"Group", name:"Robot", on:true, open:false, kids:[mk("RobotModel"), mk("TF"), mk("Odometry", {on:false})]},
+      {type:"Group", name:"Sensors", on:true, open:false, kids:[mk("LaserScan"), mk("Image")]}]}; }
+  var DEF = {
+    Grid:{"Plane Cell Count":"10", "Cell Size":"1", Color:"160; 160; 164", Alpha:"0.5"},
+    RobotModel:{"Description Topic":"/robot_description", Alpha:"1"},
+    TF:{"Show Names":"true", "Show Axes":"true", "Show Arrows":"true", "Marker Scale":"0.1"},
+    Odometry:{Topic:"odometry/filtered", Keep:"1000", Shape:"Arrow"},
+    LaserScan:{Topic:"/scan_filtered", Style:"Flat Squares", "Size (m)":"0.01", "Color Transformer":"Intensity", "Decay Time":"0"},
+    Image:{Topic:"/oak/rgb/color"}};
+  var CHOICES = {   /* the values a select offers; the configuration's own value is always one of them */
+    "Plane Cell Count":["5", "10", "20", "40"], "Cell Size":["0.5", "1", "2"], Color:["160; 160; 164", "255; 255; 255", "0; 200; 255"],
+    Alpha:["0.2", "0.5", "1"], "Show Names":["true", "false"], "Show Axes":["true", "false"], "Show Arrows":["true", "false"],
+    "Marker Scale":["0.1", "0.5", "1"], Keep:["1", "10", "100", "1000"], Shape:["Arrow", "Axes"],
+    Style:["Flat Squares", "Points", "Spheres"], "Size (m)":["0.01", "0.03", "0.05", "0.1"],
+    "Color Transformer":["Intensity", "FlatColor"], "Decay Time":["0", "1", "5"],
+    "Fixed Frame":["odom", "base_link"], "Background Color":["48; 48; 48", "0; 0; 0", "255; 255; 255"]};
+  var HELP = {
+    "Global Options":"Settings for the whole 3D view.",
+    "Fixed Frame":"The frame RViz draws everything in. odom: the robot drives over the grid. base_link: the robot stays put and the world moves around it.",
+    "Background Color":"The color behind everything in the 3D view.",
+    "Frame Rate":"The most times per second RViz redraws the 3D view.",
+    "Global Status":"Ok while the fixed frame exists in TF. Each display has a status of its own.",
+    Group:"A folder of displays. Its check box turns all of them on or off.",
+    Grid:"Lines on the ground (z = 0) of the fixed frame.", "Plane Cell Count":"The number of cells along each side of the grid.",
+    "Cell Size":"The side of one cell, in meters.", Color:"Red; green; blue, from 0 to 255.", Alpha:"0 is invisible, 1 is solid.",
+    RobotModel:"Draws the robot described on /robot_description at the poses TF gives. This copy draws it as boxes.",
+    "Description Topic":"The topic that carries the robot's URDF.",
+    TF:"Draws each frame on /tf and /tf_static as three axes: x red, y green, z blue.", "Show Names":"Writes each frame's name next to it.",
+    "Show Axes":"Draws each frame's three axes.", "Show Arrows":"Draws a line from each frame to its parent.", "Marker Scale":"The size of the axes and names.",
+    Odometry:"Draws an arrow at each pose on the odometry topic. Check it, then drive the robot.", Keep:"How many arrows stay on screen.",
+    Shape:"An arrow along the robot's x axis, or the three axes.",
+    LaserScan:"Draws each range of the scan as a point where the beam hit something.", Topic:"The topic this display subscribes to.",
+    Style:"How each point is drawn. Points uses a size in pixels (3).", "Size (m)":"The side of each point, in meters.",
+    "Color Transformer":"Intensity colors each point by its intensity (here all equal: red); FlatColor paints them all white.",
+    "Decay Time":"How many seconds a scan stays on screen. 0: only the latest one. Drive with 5 to see the walls build up.",
+    Image:"Shows each image on the topic in a panel of its own, the Image panel under the list."};
+  function mk(type, o){ var d = {type:type, name:type, on:true, open:false, p:{}}; for (var k in DEF[type]) d.p[k] = DEF[type][k];
+    for (var q in o || {}) d[q] = o[q]; d.trail = []; return d; }
+  var S, sel = null, pose, scans = [], move = null;
+
+  /* --- the 3D scene: the fixed frame's root holds everything that lives in odom --- */
+  var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, 1, 0.01, 200); cam.up.set(0, 0, 1);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x666666, 0.8));
+  var sun = new THREE.DirectionalLight(0xffffff, 0.5); sun.position.set(-3, -5, 8); scene.add(sun);
+  var fixedRoot = new THREE.Group(); scene.add(fixedRoot);
+  var gridRoot = new THREE.Group(); scene.add(gridRoot);   /* the grid sits at the fixed frame's origin */
+  var dyn = new THREE.Group(); fixedRoot.add(dyn);
+  var robot = new THREE.Group(); fixedRoot.add(robot);
+  var controls = new THREE.OrbitControls(cam, R3.domElement);
+  controls.mouseButtons = {LEFT:THREE.MOUSE.ROTATE, MIDDLE:THREE.MOUSE.PAN, RIGHT:THREE.MOUSE.DOLLY};   /* as RViz's Orbit view */
+  controls.enableDamping = false; controls.screenSpacePanning = true; controls.minDistance = 0.2; controls.maxDistance = 60;
+  function homeView(){ var d = 5.691, pi = 0.3204, ya = 5.5082;
+    controls.target.set(0, 0, 0); cam.position.set(d * Math.cos(ya) * Math.cos(pi), d * Math.sin(ya) * Math.cos(pi), d * Math.sin(pi)); controls.update(); }
+
+  /* --- the camera's own scene: the world as Gazebo draws it --- */
+  var wscene = new THREE.Scene(), wcam = new THREE.PerspectiveCamera(2 * Math.atan(Math.tan(Math.PI / 6) / (16 / 9)) * 180 / Math.PI, 16 / 9, 0.02, 60);
+  wcam.up.set(0, 0, 1); wscene.background = new THREE.Color(0xcfd3d8);
+  wscene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.75));
+  var wsun = new THREE.DirectionalLight(0xffffff, 0.55); wsun.position.set(-6, -10, 18); wscene.add(wsun);
+  var wfloor = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), new THREE.MeshLambertMaterial({color:new THREE.Color(0.80, 0.78, 0.72)}));
+  wfloor.position.set(7, 2, 0); wscene.add(wfloor);
+  PATROL.forEach(function(o){
+    var geo = o.kind === "box" ? new THREE.BoxGeometry(o.size[0], o.size[1], o.size[2])
+            : o.kind === "cylinder" ? new THREE.CylinderGeometry(o.size[0], o.size[0], o.size[1], 40) : new THREE.SphereGeometry(o.size[0], 32, 16);
+    if (o.kind === "cylinder") geo.rotateX(Math.PI / 2);
+    var m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:new THREE.Color(o.color[0], o.color[1], o.color[2])}));
+    m.position.set(o.pose[0], o.pose[1], o.pose[2]); wscene.add(m); });
+
+  /* --- the lidar: a ray in the plane of the laser against every shape that reaches that height --- */
+  var HIT = PATROL.filter(function(o){ var h = o.kind === "sphere" ? o.size[0] : o.size[o.kind === "box" ? 2 : 1] / 2;
+    return o.pose[2] - h <= LZ && o.pose[2] + h >= LZ; });
+  function ray(ox, oy, dx, dy){ var best = 30.0001;
+    HIT.forEach(function(o){ var t;
+      if (o.kind === "box"){ var hx = o.size[0] / 2, hy = o.size[1] / 2, x0 = o.pose[0] - hx - ox, x1 = o.pose[0] + hx - ox, y0 = o.pose[1] - hy - oy, y1 = o.pose[1] + hy - oy;
+        var tx0 = dx ? x0 / dx : (x0 <= 0 && x1 >= 0 ? -1e9 : 1e9), tx1 = dx ? x1 / dx : 1e9;   /* a beam along a slab: inside it, or never in the box */
+        var ty0 = dy ? y0 / dy : (y0 <= 0 && y1 >= 0 ? -1e9 : 1e9), ty1 = dy ? y1 / dy : 1e9;
+        var tn = Math.max(Math.min(tx0, tx1), Math.min(ty0, ty1)), tf = Math.min(Math.max(tx0, tx1), Math.max(ty0, ty1));
+        if (tf >= tn && tn > 0) t = tn; }
+      else { var cx = o.pose[0] - ox, cy = o.pose[1] - oy, r = o.size[0], b = cx * dx + cy * dy, c = cx * cx + cy * cy - r * r, disc = b * b - c;
+        if (disc >= 0){ t = b - Math.sqrt(disc); if (t <= 0) t = undefined; } }
+      if (t !== undefined && t < best) best = t; });
+    return best; }
+  function scanNow(){ var c = Math.cos(pose.yaw), s = Math.sin(pose.yaw), lx = pose.x + 0.02 * c, ly = pose.y + 0.02 * s, pts = [];
+    for (var i = 0; i < 3000; i++){ var a = -Math.PI + i * 2 * Math.PI / 3000 + pose.yaw, dx = Math.cos(a), dy = Math.sin(a), r = ray(lx, ly, dx, dy);
+      if (r >= 0.05 && r <= 30) pts.push(lx + r * dx, ly + r * dy, LZ); }
+    return {t:performance.now(), pts:new Float32Array(pts)}; }
+
+  /* points: a square or a round dot, its size in meters (or 3 px for Points), never under 2 px on screen */
+  function pointsMat(colorHex, sizeM, round, px){
+    return new THREE.ShaderMaterial({uniforms:{c:{value:new THREE.Color(colorHex)}, s:{value:sizeM}, k:{value:1}, px:{value:px || 0}},
+      vertexShader:"uniform float s; uniform float k; uniform float px; void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0);" +
+        "gl_PointSize = px > 0.0 ? px : max(2.0, s * k / -mv.z); gl_Position = projectionMatrix * mv; }",
+      fragmentShader:"uniform vec3 c; void main(){" + (round ? "if (length(gl_PointCoord - vec2(0.5)) > 0.5) discard;" : "") + "gl_FragColor = vec4(c, 1.0); }"}); }
+  function rgb(s){ var v = s.split(";").map(function(x){ return +x / 255; }); return new THREE.Color(v[0], v[1], v[2]); }
+
+  /* --- every display draws itself from its properties --- */
+  function walk(list, fn, parentOn){ list.forEach(function(d){ var on = parentOn && d.on; fn(d, on); if (d.kids) walk(d.kids, fn, on); }); }
+  var labelCache = {};
+  function label(text, h){ var key = text; var tex = labelCache[key];
+    if (!tex){ var cv = document.createElement("canvas"), g = cv.getContext("2d"); g.font = "600 40px sans-serif"; var w = Math.ceil(g.measureText(text).width) + 8;
+      cv.width = w; cv.height = 52; g.font = "600 40px sans-serif"; g.fillStyle = "#ffffff"; g.textBaseline = "middle"; g.fillText(text, 4, 27);
+      tex = labelCache[key] = new THREE.CanvasTexture(cv); tex.userData = {w:w}; }
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, depthTest:false, transparent:true})); sp.scale.set(h * tex.userData.w / 52, h, 1); return sp; }
+  function axes(len, rad){ var g = new THREE.Group();
+    [[0xff0000, [0, 0, -Math.PI / 2]], [0x00ff00, [0, 0, 0]], [0x0000ff, [Math.PI / 2, 0, 0]]].forEach(function(a){
+      var m = new THREE.Mesh(new THREE.CylinderGeometry(rad, rad, len, 10), new THREE.MeshBasicMaterial({color:a[0]}));
+      m.geometry.translate(0, len / 2, 0); m.rotation.set(a[1][0], a[1][1], a[1][2]); g.add(m); }); return g; }
+  function framePos(name){ /* the frame's pose in odom, from the robot's pose */
+    if (name === "odom") return {x:0, y:0, z:0, yaw:0};
+    var f = FR[name], c = Math.cos(pose.yaw), s = Math.sin(pose.yaw);
+    return {x:pose.x + c * f[1] - s * f[2], y:pose.y + s * f[1] + c * f[2], z:f[3], yaw:pose.yaw + f[4]}; }
+  function clear(g){ while (g.children.length){ var o = g.children[0]; g.remove(o);
+    o.traverse(function(x){ if (x.geometry) x.geometry.dispose(); if (x.material && !(x.material.map)) x.material.dispose(); else if (x.material) x.material.dispose(); }); } }
+  function buildAll(){
+    [dyn, robot, gridRoot].forEach(clear);
+    var anyImage = false;
+    walk(S.items, function(d, on){ if (!on || d.type === "Group") return; var p = d.p;
+      if (d.type === "Grid"){ var n = +p["Plane Cell Count"], c = +p["Cell Size"], half = n * c / 2, v = [];
+        for (var i = 0; i <= n; i++){ var q = -half + i * c; v.push(q, -half, 0, q, half, 0, -half, q, 0, half, q, 0); }
+        var bg = new THREE.BufferGeometry(); bg.setAttribute("position", new THREE.Float32BufferAttribute(v, 3));
+        gridRoot.add(new THREE.LineSegments(bg, new THREE.LineBasicMaterial({color:rgb(p.Color), transparent:true, opacity:+p.Alpha}))); }
+      else if (d.type === "RobotModel"){ var al = +p.Alpha, tr = al < 1;
+        function M(c){ return new THREE.MeshLambertMaterial({color:c, transparent:tr, opacity:al}); }
+        var body = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), M(0x8c9096)); body.position.z = WR + 0.03; robot.add(body);
+        ["fl", "fr", "rl", "rr"].forEach(function(w){ var f = FR[w + "_wheel_link"], m = new THREE.Mesh(new THREE.CylinderGeometry(WR, WR, 0.036, 24), M(0x222222));
+          m.position.set(f[1], f[2], f[3]); robot.add(m); });
+        var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), M(0x55585c)); lid.rotation.x = Math.PI / 2; lid.position.set(0.02, 0, CZ + 0.02); robot.add(lid);
+        var oak = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.10, 0.03), M(0xb0b4ba)); oak.position.set(FR.oak_link[1], 0, FR.oak_link[3]); robot.add(oak); }
+      else if (d.type === "TF"){ var sc = +p["Marker Scale"];
+        ["odom"].concat(Object.keys(FR)).forEach(function(name){ var fp = framePos(name), g = new THREE.Group();
+          g.position.set(fp.x, fp.y, fp.z); g.rotation.z = fp.yaw;
+          if (p["Show Axes"] === "true") g.add(axes(sc * 1.0, sc * 0.05));
+          if (p["Show Names"] === "true"){ var l = label(name, sc * 0.35); l.position.set(0, 0, sc * 0.6); g.add(l); }
+          dyn.add(g);
+          if (p["Show Arrows"] === "true" && name !== "odom"){ var pp = framePos(FR[name][0]), lg = new THREE.BufferGeometry();
+            lg.setAttribute("position", new THREE.Float32BufferAttribute([fp.x, fp.y, fp.z, pp.x, pp.y, pp.z], 3));
+            dyn.add(new THREE.Line(lg, new THREE.LineBasicMaterial({color:0xf0d060}))); } }); }
+      else if (d.type === "Odometry"){ var keep = d.trail.slice(-(+p.Keep));
+        keep.forEach(function(q){ var g = new THREE.Group(); g.position.set(q.x, q.y, 0); g.rotation.z = q.yaw;
+          if (p.Shape === "Arrow"){ var mat = new THREE.MeshLambertMaterial({color:rgb("255; 25; 0")});
+            var sh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.5, 12), mat); sh.geometry.translate(0, 0.25, 0); sh.rotation.z = -Math.PI / 2;
+            var hd = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.2, 16), mat); hd.geometry.translate(0, 0.6, 0); hd.rotation.z = -Math.PI / 2;
+            g.add(sh); g.add(hd); }
+          else g.add(axes(1, 0.1));
+          dyn.add(g); }); }
+      else if (d.type === "LaserScan"){ var now = performance.now(), dec = +p["Decay Time"] * 1000;
+        var use = dec ? scans.filter(function(s){ return now - s.t <= dec; }) : scans.slice(-1);
+        var n2 = 0; use.forEach(function(s){ n2 += s.pts.length; }); var all = new Float32Array(n2), o2 = 0;
+        use.forEach(function(s){ all.set(s.pts, o2); o2 += s.pts.length; });
+        var pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.BufferAttribute(all, 3));
+        var col = p["Color Transformer"] === "FlatColor" ? 0xffffff : 0xff0000;
+        var mat2 = pointsMat(col, +p["Size (m)"], p.Style === "Spheres", p.Style === "Points" ? 3 : 0); mat2.userData.scan = true;
+        dyn.add(new THREE.Points(pg, mat2)); }
+      else if (d.type === "Image") anyImage = true; }, true);
+    document.getElementById("rv-imgwrap").style.display = anyImage ? "" : "none";
+    placeRobot(); need = true; }
+  function placeRobot(){ robot.position.set(pose.x, pose.y, 0); robot.rotation.z = pose.yaw;
+    if (S.fixed === "base_link"){ var c = Math.cos(-pose.yaw), s = Math.sin(-pose.yaw);
+      fixedRoot.rotation.z = -pose.yaw; fixedRoot.position.set(-(c * pose.x - s * pose.y), -(s * pose.x + c * pose.y), 0); }
+    else { fixedRoot.rotation.z = 0; fixedRoot.position.set(0, 0, 0); } }
+
+  /* --- the Displays tree --- */
+  var tree = document.getElementById("rv-tree"), help = document.getElementById("rv-help");
+  function row(depth, opts){ var r = document.createElement("div"); r.className = "rv-row" + (sel && sel === opts.key ? " sel" : ""); r.setAttribute("role", "treeitem");
+    var nm = document.createElement("div"); nm.className = "rv-name"; nm.style.paddingLeft = (depth * 20) + "px";
+    var tw = document.createElement("span"); tw.className = "rv-tw"; tw.textContent = opts.open == null ? "" : (opts.open ? "▾" : "▸");
+    r.dataset.k = opts.key;
+    if (opts.open != null){ r.setAttribute("aria-expanded", opts.open); tw.onclick = function(e){ e.stopPropagation(); opts.toggle();
+      if (!opts.open){ var me = tree.querySelector('[data-k="' + opts.key + '"]'); if (me) tree.scrollTop = me.offsetTop - tree.offsetTop; } }; }
+    nm.appendChild(tw);
+    if (opts.icon){ var ic = document.createElement("span"); ic.className = "rv-ic" + (opts.iconClass ? " " + opts.iconClass : ""); ic.textContent = opts.icon; nm.appendChild(ic); }
+    var t = document.createElement("span"); t.className = "n"; t.innerHTML = opts.bold ? "<b></b>" : ""; (opts.bold ? t.firstChild : t).textContent = opts.name; t.title = opts.name; nm.appendChild(t);
+    var val = document.createElement("div"); val.className = "rv-val";
+    if (opts.check != null){ var cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = opts.check; cb.setAttribute("aria-label", opts.name);
+      cb.onchange = function(){ opts.onCheck(cb.checked); }; val.appendChild(cb); }
+    else if (opts.choices){ var se = document.createElement("select"); se.setAttribute("aria-label", opts.name);
+      opts.choices.forEach(function(c){ var o = document.createElement("option"); o.value = o.textContent = c; se.appendChild(o); });
+      se.value = opts.value; se.onchange = function(){ opts.onSet(se.value); }; val.appendChild(se); }
+    else if (opts.value != null) val.textContent = opts.value;
+    r.appendChild(nm); r.appendChild(val);
+    r.onclick = function(e){ if (e.target.closest("select,input")) return; sel = opts.key; selItem = opts.item || null; help.innerHTML = "<b></b> "; help.firstChild.textContent = opts.name + ":";
+      help.appendChild(document.createTextNode(HELP[opts.helpKey || opts.name] || "")); renderTree(); };
+    tree.appendChild(r); }
+  var selItem = null, openGO = false, openGS = false, renaming = null;
+  function renderTree(){ var top = tree.scrollTop; tree.innerHTML = "";
+    row(0, {key:"go", name:"Global Options", icon:"⚙", open:openGO, toggle:function(){ openGO = !openGO; renderTree(); }});
+    if (openGO){
+      row(1, {key:"go-bg", name:"Background Color", choices:CHOICES["Background Color"], value:S.bg, onSet:function(v){ S.bg = v; need = true; }});
+      row(1, {key:"go-ff", name:"Fixed Frame", choices:CHOICES["Fixed Frame"], value:S.fixed, onSet:function(v){ S.fixed = v; placeRobot(); buildAll(); renderTree(); }});
+      row(1, {key:"go-fr", name:"Frame Rate", value:String(S.rate)}); }
+    row(0, {key:"gs", name:"Global Status: Ok", helpKey:"Global Status", icon:"✓", iconClass:"rv-ok", open:openGS, toggle:function(){ openGS = !openGS; renderTree(); }});
+    if (openGS) row(1, {key:"gs-ff", name:"Fixed Frame", helpKey:"Fixed Frame", icon:"✓", iconClass:"rv-ok", value:"OK"});
+    (function list(items, depth, parentArr){ items.forEach(function(d, i){ var key = "d" + (d.id || (d.id = Math.random().toString(36).slice(2)));
+      row(depth, {key:key, item:{d:d, arr:parentArr}, name:d.name, helpKey:d.type, bold:d.type === "Group", icon:d.type === "Group" ? "📁" : "◉",
+        open:d.open, toggle:function(){ d.open = !d.open; renderTree(); }, check:d.on, onCheck:function(v){ d.on = v; if (!v && d.type === "Odometry") d.trail = []; buildAll(); }});
+      if (!d.open) return;
+      if (d.kids){ list(d.kids, depth + 1, d.kids); return; }
+      if (d.type === "Grid") row(depth + 1, {key:key + "rf", name:"Reference Frame", helpKey:"Fixed Frame", value:"<Fixed Frame>"});
+      Object.keys(d.p).forEach(function(k){ var ch = CHOICES[k];
+        row(depth + 1, {key:key + k, name:k, choices:ch, value:d.p[k], onSet:function(v){ d.p[k] = v; buildAll(); }}); }); }); })(S.items, 0, S.items);
+    tree.scrollTop = top;
+    if (sel && !tree.querySelector('[data-k="' + sel + '"]')){ sel = null; selItem = null; help.textContent = ""; }   /* its group was closed */
+    var disp = selItem && selItem.d;
+    document.getElementById("rv-b-dup").disabled = !disp; document.getElementById("rv-b-rm").disabled = !disp; document.getElementById("rv-b-ren").disabled = !disp; }
+
+  /* Add, Duplicate, Remove, Rename */
+  var pop = document.getElementById("rv-pop");
+  document.getElementById("rv-b-add").onclick = function(){
+    if (!pop.hidden){ pop.hidden = true; return; }
+    pop.innerHTML = "<div style='font-weight:600;margin-bottom:4px'>Create visualization, by display type:</div>";
+    Object.keys(DEF).forEach(function(t){ var it = document.createElement("div"); it.className = "it"; it.textContent = "rviz_default_plugins/" + t;
+      it.onclick = function(){ var d = mk(t); S.items.push(d); pop.hidden = true; sel = null; selItem = null; buildAll(); renderTree(); tree.scrollTop = 1e6; }; pop.appendChild(it); });
+    var cancel = document.createElement("button"); cancel.textContent = "Cancel"; cancel.style.marginTop = "4px"; cancel.onclick = function(){ pop.hidden = true; }; pop.appendChild(cancel);
+    pop.hidden = false; };
+  document.getElementById("rv-b-dup").onclick = function(){ if (!selItem) return; var src = selItem.d, cp = JSON.parse(JSON.stringify(src, function(k, v){ return k === "id" || k === "trail" ? undefined : v; }));
+    (function fix(d){ d.trail = []; (d.kids || []).forEach(fix); })(cp); cp.name = src.name + " (copy)";
+    selItem.arr.splice(selItem.arr.indexOf(src) + 1, 0, cp); buildAll(); renderTree(); };
+  document.getElementById("rv-b-rm").onclick = function(){ if (!selItem || selItem.arr.indexOf(selItem.d) < 0) return; selItem.arr.splice(selItem.arr.indexOf(selItem.d), 1);
+    sel = null; selItem = null; help.textContent = ""; buildAll(); renderTree(); };
+  document.getElementById("rv-b-ren").onclick = function(){ if (!selItem) return; var d = selItem.d, nm = tree.querySelector(".rv-row.sel .rv-name .n"); if (!nm) return;
+    var inp = document.createElement("input"); inp.type = "text"; inp.value = d.name; inp.setAttribute("aria-label", "New name"); nm.replaceWith(inp); inp.focus(); inp.select();
+    var ended = false; function done(ok){ if (ended) return; ended = true; if (ok && inp.value.trim()) d.name = inp.value.trim(); renderTree(); }
+    inp.onkeydown = function(e){ if (e.key === "Enter"){ e.preventDefault(); done(true); } else if (e.key === "Escape") done(false); };
+    inp.onblur = function(){ done(true); }; };
+
+  var msg = document.getElementById("rv-msg");
+
+  /* hide or show the left panels, as the small arrow on the 3D view's edge does in RViz */
+  var handle = document.getElementById("rv-handle");
+  handle.onclick = function(){ var h = root.classList.toggle("hide-left"); handle.innerHTML = h ? "&#9656;" : "&#9666;";
+    var t = h ? "Show the left panels" : "Hide the left panels"; handle.setAttribute("aria-label", t); handle.title = t; };
+
+  /* the deck zooms, pans and steps on wheel, drag and click: inside the window they belong to the window */
+  ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
+    [root, document.getElementById("rv-drive")].forEach(function(el){ el.addEventListener(ev, function(e){ e.stopPropagation();
+      if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); }); });
+  R3.domElement.addEventListener("wheel", function(e){ e.preventDefault(); }, {passive:false});
+
+  /* --- driving: 0.5 m or 45 deg per click, over one second; a wall closer than the step stops it --- */
+  function drive(k){ if (move) return; var c = Math.cos(pose.yaw), s = Math.sin(pose.yaw), to = {x:pose.x, y:pose.y, yaw:pose.yaw};
+    if (k === "f" || k === "b"){ var sg = k === "f" ? 1 : -1, free = ray(pose.x, pose.y, sg * c, sg * s);
+      var step = Math.max(0, Math.min(0.5, free - 0.25)); if (step < 0.02){ msg.textContent = "Gazebo: a wall is in the way."; return; }
+      to.x += sg * step * c; to.y += sg * step * s; }
+    else to.yaw += (k === "l" ? 1 : -1) * Math.PI / 4;
+    move = {from:{x:pose.x, y:pose.y, yaw:pose.yaw}, to:to, t0:performance.now()}; }
+  document.querySelectorAll("#rv-drive [data-d]").forEach(function(b){ b.onclick = function(){ drive(b.dataset.d); }; });
+
+  /* odometry arrows: a new one when the robot moved 0.1 m or turned 0.1 rad (Position and Angle Tolerance) */
+  function recordOdom(){ walk(S.items, function(d, on){ if (!on || d.type !== "Odometry") return; var l = d.trail[d.trail.length - 1];
+    if (!l || Math.hypot(pose.x - l.x, pose.y - l.y) >= 0.1 || Math.abs(pose.yaw - l.yaw) >= 0.1){ d.trail.push({x:pose.x, y:pose.y, yaw:pose.yaw}); if (d.trail.length > 1000) d.trail.shift(); } }, true); }
+
+  /* Reset (status bar): clears what the displays hold, as RViz's Reset does. Restore: the configuration, the view and the robot */
+  document.getElementById("rv-reset").onclick = function(){ scans = []; walk(S.items, function(d){ d.trail = []; }, true); t0ros = performance.now(); scans.push(scanNow()); buildAll(); };
+  function restore(){ S = cfg(); pose = {x:0, y:0, yaw:0}; move = null; scans = [scanNow()]; sel = null; selItem = null; openGO = openGS = false;
+    help.textContent = "Click a row to read what it does. In the 3D view: drag to turn, Shift+drag to move, the wheel to zoom.";
+    msg.textContent = "RViz is ready."; root.classList.remove("hide-left"); handle.innerHTML = "&#9666;"; pop.hidden = true;
+    homeView(); buildAll(); renderTree(); }
+  document.getElementById("rv-restore").onclick = restore;
+
+  /* --- sizes, the loop and the Time panel --- */
+  function ratio(el){ var w = el.clientWidth, r = el.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((r.width / w) || 1)); }
+  function size(){ var w = view.clientWidth, h = view.clientHeight; if (w && h){ R3.setPixelRatio(ratio(view)); R3.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+    var ih = imgbox.clientHeight; if (ih){ RC.setPixelRatio(ratio(imgbox)); RC.setSize(Math.round(ih * 16 / 9), ih, false);
+      RC.domElement.style.width = Math.round(ih * 16 / 9) + "px"; RC.domElement.style.height = ih + "px"; } need = true; }
+  new ResizeObserver(size).observe(view);
+  var need = true, running = false, lastDraw = 0, lastScan = 0, frames = 0, fpsT = 0, t0ros = 0, t0wall = 0, t0sim = performance.now();   /* Gazebo starts with the page, RViz with the slide */
+  var T = [1, 2, 3, 4].map(function(i){ return document.getElementById("rv-t" + i); }), fpsEl = document.getElementById("rv-fps");
+  function draw(now){ var bgc = rgb(S.bg); R3.setClearColor(bgc); view.style.background = "#" + bgc.getHexString();
+    var k = R3.domElement.height / (2 * Math.tan(cam.fov * Math.PI / 360));
+    dyn.children.forEach(function(o){ if (o.material && o.material.userData && o.material.userData.scan) o.material.uniforms.k.value = k; });
+    R3.render(scene, cam);
+    if (document.getElementById("rv-imgwrap").style.display !== "none"){ var oak = framePos("oak_link");
+      wcam.position.set(oak.x, oak.y, oak.z); wcam.lookAt(oak.x + Math.cos(pose.yaw), oak.y + Math.sin(pose.yaw), oak.z); RC.render(wscene, wcam); } }
+  function loop(now){ var fr = root.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; return; }
+    requestAnimationFrame(loop);
+    if (Math.abs(ratio(view) - R3.getPixelRatio()) > 0.02) size();
+    if (move){ var u = Math.min(1, (now - move.t0) / 1000), a = move.from, b = move.to;
+      pose = {x:a.x + (b.x - a.x) * u, y:a.y + (b.y - a.y) * u, yaw:a.yaw + (b.yaw - a.yaw) * u};
+      if (u >= 1){ move = null; pose.yaw = Math.atan2(Math.sin(pose.yaw), Math.cos(pose.yaw)); }
+      recordOdom(); placeRobot(); need = true; }
+    if (now - lastScan >= 100){ lastScan = now; scans.push(scanNow()); scans = scans.filter(function(s){ return now - s.t <= 5100; }); buildAll(); }
+    if (now - fpsT >= 500){ var rs = (now - t0ros) / 1000;
+      T[0].textContent = ((now - t0sim) / 1000 * 0.9997).toFixed(2); T[1].textContent = (rs * 0.9997).toFixed(2);
+      T[2].textContent = (Date.now() / 1000).toFixed(2); T[3].textContent = ((now - t0wall) / 1000).toFixed(2);
+      if (fpsT) fpsEl.textContent = Math.round(frames * 1000 / (now - fpsT)) + " fps"; frames = 0; fpsT = now; }
+    if (now - lastDraw >= 1000 / S.rate - 2){ controls.update(); lastDraw = now; frames++; draw(now); } }
+  controls.addEventListener("change", function(){ need = true; });
+  restore();
+  onShow(root, function(first){ if (first){ t0ros = t0wall = performance.now(); } size(); if (!running){ running = true; requestAnimationFrame(loop); } });
+})();
 
 
 /* the business card's logo: the cover's ROSbot drawing */
