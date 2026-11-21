@@ -33,12 +33,24 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
    - Put a node in a **namespace**, and tell how it changes a **relative**, an **absolute** and a **private** name.
    - Write a **remapping rule**, ``match:=replacement``, with ``--ros-args -r`` or in a launch file, to rename a topic, a node or a namespace, and combine rules with a namespace.
 
+Interactive Slides
+------------------
+
+The slides from class as a web page you can try: build a velocity command and see the path it gives, turn the heading-error dial, replay the measured runs, test a value against the parameter callback, and resolve names in a namespace. It runs in your browser, with nothing to install. The :doc:`l12_interactive` page says how to use it.
+
+.. button-link:: interactive/L12_interactive.html
+   :color: primary
+   :shadow:
+
+   Open the interactive slides
+
 .. toctree::
    :hidden:
    :maxdepth: 2
    :titlesonly:
 
    l12_lecture
+   l12_interactive
    l12_exercises
    l12_quiz
    l12_references

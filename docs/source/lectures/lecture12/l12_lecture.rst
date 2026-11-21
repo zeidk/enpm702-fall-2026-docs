@@ -13,7 +13,7 @@ Before this class, get the latest edits of the course repository into your copy 
    git merge --no-edit upstream/main
    git push
 
-Its ``rosbot_sim`` folder holds the simulation. Install and build it with the steps of the :doc:`ROSbot Simulation </setup/rosbot_simulation>` page. Its last step starts Gazebo with the ROSbot, which needs about 40 s the first time:
+Its ``rosbot_sim`` folder holds the simulation. Install and build it with the steps of the :doc:`ROSbot Simulation </setup/rosbot_simulation>` page. Its last step starts Gazebo with the ROSbot; the first start is the slowest:
 
 .. code-block:: bash
 
@@ -234,7 +234,7 @@ One command starts Gazebo, the patrol world and the ROSbot:
 
    ros2 launch gp2_bringup gp2_sim.launch.py
 
-- The first start takes about 40 s, while Gazebo loads its models. Wait before you check anything. A later start took under 10 s on the course computer.
+- The first start is the slowest, while Gazebo loads its models: wait before you check anything. A later start without a window (``gui:=false``) sent odometry after 8.6 s.
 - Check it from a second terminal: ``ros2 topic list`` prints 31 topics.
 
 .. note::
@@ -548,7 +548,7 @@ With ``use_sim_time`` on, the world was paused, then resumed 4.3 s later with th
 .. admonition:: Conclusion
    :class: important
 
-   A ``create_timer`` timer follows the simulation: it stopped while Gazebo was paused. A wall timer kept firing, and ``now()`` did not move.
+   A ``create_timer`` timer follows the simulation: it stopped while Gazebo was paused. A wall timer kept firing, and ``now()`` barely moved: 32.892 s, then 32.896 s.
 
 .. dropdown:: More detail: Simulation time in this lecture's nodes
    :class-container: more-detail

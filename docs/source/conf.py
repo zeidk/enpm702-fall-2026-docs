@@ -108,6 +108,10 @@ numfig_format = {
 }
 
 html_static_path = ["_static"]
+# Files served as they are, next to the pages: the L12 interactive slides
+# (_extra/lectures/lecture12/interactive/, copied by tools/sync_l12_interactive.sh).
+html_extra_path = ["_extra"]
+exclude_patterns.append("_extra/**")
 master_doc = "index"
 
 # Loaded without `defer` so the stored sidebar state is applied before the
