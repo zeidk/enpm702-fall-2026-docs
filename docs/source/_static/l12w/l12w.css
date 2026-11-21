@@ -231,6 +231,12 @@ html[data-theme="dark"] .l12w code,html[data-theme="dark"] .l12w pre.code{color:
 .l12w :is(.rb-drive,.rbi) .rb-cam{fill:#8A96A3}
 html[data-theme="dark"] .l12w :is(.rb-drive,.rbi) .rb-wheel{fill:#9AA6B2}
 html[data-theme="dark"] .l12w :is(.rb-drive,.rbi) .rb-body{fill:#C9D3DD}
+.l12w #jump{position:fixed;top:calc(14 * var(--u));left:50%;transform:translateX(-50%);z-index:1050;display:none;align-items:center;gap:calc(10 * var(--u));padding:calc(8 * var(--u)) calc(14 * var(--u));border-radius:calc(12 * var(--u));
+  background:var(--card);color:var(--ink);border:3px solid var(--live);box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 calc(26 * var(--u)) var(--sans);padding:calc(12 * var(--u)) calc(20 * var(--u))}
+.l12w #jump.on{display:flex}
+.l12w #jump input{font:600 calc(28 * var(--u)) var(--mono);width:3.6em;padding:2px calc(8 * var(--u));border:2px solid var(--plate-edge);border-radius:calc(8 * var(--u));background:var(--plate);color:var(--ink)}
+.l12w #jump #jump-of{color:var(--muted)}
+.l12w #jump #jump-msg{color:var(--bad);font-weight:400}
 .l12w .fig{background:var(--paper) !important}
 .l12w .fig[data-dark]{background:none !important}
 html[data-theme="dark"] .l12w :is(svg.plot,svg.pipe) [fill="#ffffff" i]{fill:var(--card)}

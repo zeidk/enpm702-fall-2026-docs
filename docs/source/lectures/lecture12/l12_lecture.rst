@@ -597,6 +597,30 @@ A node reads its clock with ``now()``. A timer runs on one of two clocks. Lines 
 - Line 20: a timer "that uses the wall clock to drive the callback".
 - Each callback logs ``now().seconds()``, the node clock's time.
 
+The two timers side by side. Both callbacks read ``now()``, the node clock; what differs is the clock that fires each timer:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 41 37
+
+   * -
+     - ``create_timer`` (line 17)
+     - ``create_wall_timer`` (line 20)
+   * - Its clock
+     - the node clock: ROS time
+     - the computer's steady clock
+   * - ``use_sim_time`` off
+     - ROS time is the computer's time: every 1 s of it
+     - every 1 s of the computer's time
+   * - ``use_sim_time`` on
+     - ROS time is Gazebo's ``/clock``: every 1 s of simulated time, after the first ``/clock``
+     - still every 1 s of the computer's time
+   * - Gazebo paused
+     - stops
+     - keeps firing
+
+``rcl/time.h``: ROS time "will report the latest value reported by a ROS time source, or if a ROS time source is not active it reports the same as ``RCL_SYSTEM_TIME``"; the steady clock "reports a value from a monotonically increasing clock". So a control loop on ``create_timer`` pauses with Gazebo, while on ``create_wall_timer`` its callback keeps running while the world is paused.
+
 Run It: use_sim_time Off, Then On
 """""""""""""""""""""""""""""""""
 
