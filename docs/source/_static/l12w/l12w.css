@@ -354,6 +354,8 @@ html[data-theme="dark"] .l12w code{color:#F0C88A}
 .l12w .rmx button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:4px calc(10 * var(--u));margin:0 calc(6 * var(--u)) 0 0}
 .l12w .rmx h3{font-size:max(var(--fmin), calc(25 * var(--u)));margin:calc(8 * var(--u)) 0 0;color:var(--slate)}
 .l12w .rmx .bar{display:flex;gap:calc(12 * var(--u));align-items:center;margin:0 0 calc(6 * var(--u))}
+/* a drawing wider than a phone's column scrolls sideways in its own box: its labels stay at least 12 px */
+.l12w .l12w-in{overflow-x:auto}
 /* docs body size: the light theme's orange and green text a little darker, to reach 4.5:1 on the panel */
 .l12w{--follow:#A3561F;--ok:#2A7348}
 /* the panel title carries the Try it badge, so the slide's own badge is not repeated */

@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","la-t":"table","la-cmd":"pre","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","cg-svg":"svg","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-again":"button","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div"}, SVGT = {"pattern":1,"polyline":1,"svg":1,"linearGradient":1,"ellipse":1,"image":1,"clipPath":1,"polygon":1,"text":1,"symbol":1,"foreignObject":1,"path":1,"g":1,"circle":1,"line":1,"rect":1,"use":1,"mask":1,"tspan":1,"defs":1,"marker":1,"stop":1};
+var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","la-t":"table","la-cmd":"pre","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","cg-svg":"svg","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-p":"span","q47-m":"span","q47-r":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-again":"button","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nx-list":"ul","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div"}, SVGT = {"stop":1,"g":1,"symbol":1,"rect":1,"use":1,"clipPath":1,"foreignObject":1,"ellipse":1,"pattern":1,"polygon":1,"line":1,"path":1,"image":1,"svg":1,"polyline":1,"tspan":1,"text":1,"linearGradient":1,"marker":1,"circle":1,"defs":1,"mask":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 function $id(id){ var e = document.getElementById(id); if (e) return e; var t = TAGS[id] || "div";
   e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; return e; }
@@ -17,7 +17,7 @@ function el(svg, tag, attrs, text){ var e = document.createElementNS(NS, tag);
    txt() never draws a label under TXT_MIN frame px: a label sized in viewBox units grows when its svg is drawn small. */
 var TXT_MIN = 20.5;
 function svgScale(svg){ var r = svg.ownerSVGElement || svg, vb = r.viewBox && r.viewBox.baseVal;
-  if (!vb || !vb.width) return 1; var inn = r.closest && r.closest(".l12w-in"), w = r.clientWidth && inn && inn.clientWidth ? r.clientWidth * 1168 / inn.clientWidth : parseFloat(r.getAttribute("width")) || vb.width;   /* in the slide's own frame px (1168 px of content) */ return w / vb.width; }
+  if (!vb || !vb.width) return 1; var inn = r.closest && r.closest(".l12w-in"), w = r.clientWidth && inn && inn.clientWidth ? r.clientWidth / Math.max(inn.clientWidth / 1168, 12 / TXT_MIN) : parseFloat(r.getAttribute("width")) || vb.width;   /* in the slide's own frame px (1168 px of content); a frame px is never under 12 / 20.5 screen px, as the drawings' own width (labels at least 12 px on a phone) */ return w / vb.width; }
 function txt(svg, x, y, s, size, fill, anchor, extra){ size = Math.max(size || 16, TXT_MIN / svgScale(svg));
   var a = {x:x,y:y,"text-anchor":anchor||"middle","font-size":size,fill:fill||C.ink,"font-family":FONT};
   for (var k in extra||{}) a[k] = extra[k]; return el(svg, "text", a, s); }
@@ -329,9 +329,12 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
     ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
       renderer.domElement.addEventListener(ev, function(e){ e.stopPropagation(); if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); });
     var v3 = new THREE.Vector3();
+    /* the deck draws the frame scaled (the camera's zoom, the frame's fill, full screen): render at the size seen on
+       screen, not the layout size, or the picture is stretched and blurry (user, 2026-11-20: "it's blurry"). The scale
+       changes while the deck flies to the slide, so the loop checks it every frame. */
+    function wantRatio(){ var w = box.clientWidth, r = box.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((r.width / w) || 1)); }
     function size(){ var w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
-      var r = box.getBoundingClientRect(), k = r.width / w || 1;   /* the deck draws the frame scaled: render at the size seen */
-      renderer.setPixelRatio(Math.min(3, (window.devicePixelRatio || 1) * k)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+      renderer.setPixelRatio(wantRatio()); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
     function draw(){ var dk = document.documentElement.getAttribute("data-theme") === "dark";
       renderer.setClearColor(dk ? 0x242e39 : 0xffffff); renderer.render(scene, cam);
       var w = box.clientWidth, h = box.clientHeight;
@@ -348,15 +351,94 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
         var dx = t.mx - t.x, dy = t.my - t.y, d = Math.hypot(dx, dy) || 1, r = 15;   /* the line starts at the tag's edge */
         t.ln.setAttribute("x1", t.x + dx / d * r); t.ln.setAttribute("y1", t.y + dy / d * r); t.ln.setAttribute("x2", t.mx); t.ln.setAttribute("y2", t.my); }); }
     var running = false;
-    function loop(){ var fr = box.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; return; }
+    function loop(){ if (!box.__on){ running = false; return; }
+      if (Math.abs(wantRatio() - renderer.getPixelRatio()) > 0.02) size();
       controls.update(); draw(); requestAnimationFrame(loop); }
     $id("pw-top").onclick = function(e){ e.stopPropagation(); setView("top"); };
     $id("pw-robot").onclick = function(e){ e.stopPropagation(); setView("robot"); };
     $id("pw-reset").onclick = function(e){ e.stopPropagation(); setView("reset"); };
     size(); setView("reset");
     onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
+    if (window.IntersectionObserver) new IntersectionObserver(function(es){ box.__on = es[0].isIntersecting;
+      if (box.__on){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } } }).observe(box);
     window.addEventListener("resize", function(){ size(); draw(); });
+    document.addEventListener("fullscreenchange", function(){ setTimeout(function(){ size(); draw(); }, 50); });
     new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  })();
+
+
+  /* --- slide 11 (3 and 4 of 4): drive the ROSbot with a pad and watch v, omega, the wheel speeds and the pose (user,
+     2026-11-20: "Allow us to move the robot and see the changes in numbers"). s and r are the course controller's
+     (rosbot_controller/config/rosbot/controllers.yaml: wheel_separation 0.186 x multiplier 1.36, wheel_radius 0.0425);
+     the limits are the ROSbot's (1.0 m/s, 3.14 rad/s). The pose moves by the exact arc of the command, no slip. --- */
+  (function(){
+    var sv = $id("dr-svg"), pad = $id("dr-pad"), tb = $id("dr-t");
+    if (!sv) return;
+    var S = 0.186 * 1.36, R_W = 0.0425, VMAX = 1.0, WMAX = 3.14, X0 = 20, Y0 = 10, PXM = 200, AW = 3, AH = 2;   /* the floor: 3 m by 2 m */
+    var st = {x:0.5, y:1.0, th:0, v:0, w:0}, trail = [];
+    function P(x, y){ return [X0 + x * PXM, Y0 + (AH - y) * PXM]; }
+    /* the floor, the grid and the axes, once */
+    el(sv, "rect", {x:X0, y:Y0, width:AW * PXM, height:AH * PXM, fill:"#f3f5f7", stroke:C.edge, "stroke-width":2});
+    for (var gx = 0.5; gx < AW; gx += 0.5){ var a = P(gx, 0), b = P(gx, AH); el(sv, "line", {x1:a[0], y1:a[1], x2:b[0], y2:b[1], stroke:C.grid, "stroke-width":1}); }
+    for (var gy = 0.5; gy < AH; gy += 0.5){ var c = P(0, gy), d = P(AW, gy); el(sv, "line", {x1:c[0], y1:c[1], x2:d[0], y2:d[1], stroke:C.grid, "stroke-width":1}); }
+    var trailP = poly(sv, [], {stroke:C.s1, "stroke-width":3, opacity:0.75});
+    var botG = el(sv, "g", {}), icon = rosbotIcon(botG, 0, 0, 66, 0);
+    var arL = el(botG, "line", {stroke:C.live, "stroke-width":5, "stroke-linecap":"round"}), arR = el(botG, "line", {stroke:C.live, "stroke-width":5, "stroke-linecap":"round"});
+    var hdL = el(botG, "path", {fill:C.live}), hdR = el(botG, "path", {fill:C.live});
+    txt(sv, X0 + 10, Y0 + AH * PXM - 10, "0.5 m grid", 18, C.muted, "start");
+    /* the pad: a knob in a circle; the knob's offset is the command */
+    var PC = 100, PR = 80;
+    el(pad, "circle", {cx:PC, cy:PC, r:PR, fill:"#f3f5f7", stroke:C.edge, "stroke-width":3});
+    el(pad, "line", {x1:PC, y1:PC - PR, x2:PC, y2:PC + PR, stroke:C.grid, "stroke-width":2}); el(pad, "line", {x1:PC - PR, y1:PC, x2:PC + PR, y2:PC, stroke:C.grid, "stroke-width":2});
+    var knob = el(pad, "circle", {cx:PC, cy:PC, r:24, fill:C.s1, stroke:"#ffffff", "stroke-width":3});
+    var dragging = false;
+    function setKnob(dx, dy){ var d = Math.hypot(dx, dy); if (d > PR){ dx *= PR / d; dy *= PR / d; }
+      knob.setAttribute("cx", PC + dx); knob.setAttribute("cy", PC + dy);
+      st.v = +(-dy / PR * VMAX).toFixed(2); st.w = +(-dx / PR * WMAX).toFixed(2); show(); }
+    function padXY(e){ var r = pad.getBoundingClientRect(), k = 200 / r.width; return [(e.clientX - r.left) * k - PC, (e.clientY - r.top) * k - PC]; }
+    pad.addEventListener("pointerdown", function(e){ e.stopPropagation(); e.preventDefault(); dragging = true; try { pad.setPointerCapture(e.pointerId); } catch (err) {} var q = padXY(e); setKnob(q[0], q[1]); });
+    pad.addEventListener("pointermove", function(e){ if (!dragging) return; e.stopPropagation(); var q = padXY(e); setKnob(q[0], q[1]); });
+    function release(e){ if (!dragging) return; dragging = false; setKnob(0, 0); }
+    pad.addEventListener("pointerup", release); pad.addEventListener("pointercancel", release);
+    ["click", "wheel"].forEach(function(ev){ pad.addEventListener(ev, function(e){ e.stopPropagation(); }); });
+    function fx(v, d){ return f(Math.abs(v) < 0.5 * Math.pow(10, -d) ? 0 : v, d); }
+    function arrow(line, head, y, sp){   /* a side's speed as an arrow along the robot, from its wheels; 1 m/s = 40 px */
+      var L = sp * 40; line.style.display = Math.abs(L) < 4 ? "none" : ""; line.setAttribute("x1", 0); line.setAttribute("y1", y); line.setAttribute("x2", L); line.setAttribute("y2", y);
+      var s = Math.sign(L) || 1; head.setAttribute("d", Math.abs(L) < 4 ? "" : "M" + (L + 9 * s) + "," + y + " L" + L + "," + (y - 7) + " L" + L + "," + (y + 7) + " Z"); }
+    function show(){
+      var vL = st.v - st.w * S / 2, vR = st.v + st.w * S / 2, th = Math.atan2(Math.sin(st.th), Math.cos(st.th)), c = P(st.x, st.y);
+      var k = PXM / 66 * 0.197;   /* the icon's body (66 units) is the ROSbot's 0.197 m */
+      icon.setAttribute("transform", "scale(" + k.toFixed(4) + ")");
+      botG.setAttribute("transform", "translate(" + c[0].toFixed(1) + " " + c[1].toFixed(1) + ") rotate(" + (-th * 180 / Math.PI).toFixed(2) + ")");
+      arrow(arL, hdL, -28, vL); arrow(arR, hdR, 28, vR);   /* screen y down: the left side is at -y */
+      trailP.setAttribute("d", trail.map(function(q, i){ var pp = P(q[0], q[1]); return (i ? "L" : "M") + pp[0].toFixed(1) + "," + pp[1].toFixed(1); }).join(""));
+      var Rtxt = Math.abs(st.w) < 1e-9 ? (Math.abs(st.v) < 1e-9 ? "none (still)" : "infinite (straight)") : (Math.abs(st.v) < 1e-9 ? "0 m (on the spot)" : fx(st.v / st.w, 2) + " m");
+      tb.innerHTML =
+        "<tr><td><code>linear.x</code>,  v</td><td>" + fx(st.v, 2) + " m/s</td></tr>" +
+        "<tr><td><code>angular.z</code>, ω</td><td>" + fx(st.w, 2) + " rad/s</td></tr>" +
+        "<tr><td>Left wheels, v<sub>L</sub></td><td>" + fx(vL, 2) + " m/s, " + fx(vL / R_W, 1) + " rad/s</td></tr>" +
+        "<tr><td>Right wheels, v<sub>R</sub></td><td>" + fx(vR, 2) + " m/s, " + fx(vR / R_W, 1) + " rad/s</td></tr>" +
+        "<tr><td>Turn radius R</td><td>" + Rtxt + "</td></tr>" +
+        "<tr><td>Position x, y</td><td>" + fx(st.x, 2) + " m, " + fx(st.y, 2) + " m</td></tr>" +
+        "<tr><td>Yaw θ</td><td>" + fx(th, 2) + " rad (" + fx(th * 180 / Math.PI, 0) + "°)</td></tr>" +
+        "<tr><td>Quaternion z, w</td><td>" + fx(Math.sin(th / 2), 3) + ", " + fx(Math.cos(th / 2), 3) + "</td></tr>"; }
+    var last = performance.now(), lastTrail = 0;
+    function step(now){ var dt = Math.min(0.1, (now - last) / 1000); last = now;
+      var fr = sv.closest(".plate"); if (fr && !fr.classList.contains("active") && !sv.__on) return;
+      if (st.v === 0 && st.w === 0) return;
+      var nx, ny, nth = st.th + st.w * dt;   /* the exact arc of a constant (v, omega) over dt */
+      if (Math.abs(st.w) < 1e-9){ nx = st.x + st.v * Math.cos(st.th) * dt; ny = st.y + st.v * Math.sin(st.th) * dt; }
+      else { nx = st.x + st.v / st.w * (Math.sin(nth) - Math.sin(st.th)); ny = st.y - st.v / st.w * (Math.cos(nth) - Math.cos(st.th)); }
+      /* the floor's edge stops the robot (it keeps turning on the spot) */
+      var m = 0.12; if (nx < m || nx > AW - m || ny < m || ny > AH - m){ nx = Math.max(m, Math.min(AW - m, nx)); ny = Math.max(m, Math.min(AH - m, ny)); }
+      st.x = nx; st.y = ny; st.th = nth;
+      if (now - lastTrail > 60){ lastTrail = now; trail.push([st.x, st.y]); if (trail.length > 600) trail.shift(); }
+      show(); }
+    setInterval(function(){ step(performance.now()); }, 30);
+    $id("dr-stop").onclick = function(e){ e.stopPropagation(); setKnob(0, 0); };
+    $id("dr-reset").onclick = function(e){ e.stopPropagation(); setKnob(0, 0); st.x = 0.5; st.y = 1.0; st.th = 0; trail = []; show(); };
+    $id("dr-clear").onclick = function(e){ e.stopPropagation(); trail = []; show(); };
+    show();
   })();
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
@@ -1132,7 +1214,7 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
   }
   var PRE = {n: ["/", "heading_controller_node", "", ""], w: ["/", "heading_controller_node", "odometry/wheels", ""], s: ["/robot1", "heading_controller_node", "", ""],
              b: ["/robot1", "heading_controller_node", "/odometry/filtered", "/cmd_vel"], l: ["/robot1", "heading_a", "/odometry/filtered", "/cmd_vel"]};
-  var PL = {n: "none", w: "68", s: "63", b: "69", l: "71"};
+  var PL = {n: "none", w: "71", s: "66", b: "72", l: "74"};
   var gp = mk($id("g1-pre"), ["n", "s", "w", "b", "l"], function(v){ return PL[v]; }, function(v){ var P = PRE[v]; S1.ns = P[0]; S1.nm = P[1]; S1.od = P[2]; S1.cv = P[3]; g1(false); }, "n");
   var nsb = mk($id("g1-ns"), ["/", "/robot1", "/robot2"], nsLab, function(v){ S1.ns = v; g1(false); }, "/");
   var nmb = mk($id("g1-nm"), ["heading_controller_node", "heading_a", "heading_b"], nmLab, function(v){ S1.nm = v; g1(false); }, "heading_controller_node");

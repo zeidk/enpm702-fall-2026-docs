@@ -14,7 +14,7 @@
       <p style="margin:calc(10 * var(--u)) 0 0">The loop stops when the error is smaller than a <b>tolerance</b>, a margin you choose. Without a tolerance, the loop would wait for an error of exactly 0, which the odometry never reads.</p>
     </div>
     <div>
-      <svg id="lc-svg" class="plot" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Top view of the robot at the center of a dial, with 0 degrees to the right and 90 degrees up. Arrows show the robot's heading and the target heading, and an arc shows the error between them, as the lit step adds them." style="width:calc(400 * var(--u));max-width:100%;height:auto"></svg>
+      <svg id="lc-svg" class="plot" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Top view of the robot at the center of a dial, with 0 degrees to the right and 90 degrees up. Arrows show the robot's heading and the target heading, and an arc shows the error between them, as the lit step adds them." style="width:max(calc(400 * var(--u)), calc(400 * 12px / 20.5));max-width:none;height:auto"></svg>
       <p class="small" style="margin:4px 0 2px" id="lc-cap"></p>
       <div class="row" style="margin:2px 0 0"><button id="lc-back">Back</button><button id="lc-next">Next</button><button id="lc-play">Play</button><span class="try">try it</span></div>
     </div>

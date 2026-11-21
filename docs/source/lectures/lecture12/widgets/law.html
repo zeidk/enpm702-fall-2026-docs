@@ -15,7 +15,7 @@
       </table>
     </div>
     <div>
-      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command." style="width:calc(600 * var(--u));max-width:100%;height:auto"></svg>
+      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command." style="width:max(calc(600 * var(--u)), calc(600 * 12px / 20.5));max-width:none;height:auto"></svg>
       <p class="small" style="margin:4px 0 0"><span class="sw" style="background:var(--live)"></span>command = gain × error <span class="sw" style="background:var(--s2);margin-left:calc(14 * var(--u))"></span>command at the limit, the dashed lines at ±1.0 rad/s</p>
     </div>
   </div>

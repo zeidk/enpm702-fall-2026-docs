@@ -109,6 +109,19 @@ Why you use a simulator in this course:
 - The simulation uses Husarion's own ROSbot packages, with the real robot's shape, wheels and sensor positions.
 - A crash costs nothing, and every student runs the same robot in the same world.
 
+.. figure:: /_static/images/l12/gz_patrol_overview.png
+   :alt: Rendered view from the patrol world's fixed camera, high above the south side, looking north and down: a long hall along the bottom with four blue discs, a purple disc, a small orange cylinder, a green cylinder with a round head beside a red door panel, and a brown box against the south wall; two rooms above, joined to the hall by an open doorway on the left and the red door on the right; the small ROSbot near the left end of the hall.
+   :align: center
+   :width: 90%
+
+   The course's patrol world, from its own fixed camera (``/patrol_cam/image``), saved from the simulation. The robot is the small dark shape at the left of the hall.
+
+Where to read more about Gazebo:
+
+- `Gazebo <https://gazebosim.org/>`__, the simulator's home page, and `Getting Started with Gazebo <https://gazebosim.org/docs/harmonic/getstarted/>`__, the tutorials of Gazebo Harmonic, the version ROS 2 Jazzy uses.
+- `SDF worlds <https://gazebosim.org/docs/harmonic/sdf_worlds/>`__ and the `SDFormat specification <http://sdformat.org/spec>`__: how a world file describes walls, objects, lights and robots.
+- `Sensors <https://gazebosim.org/docs/harmonic/sensors/>`__: how Gazebo simulates cameras, lidars and IMUs.
+
 Gazebo on Its Own: gz sim
 """""""""""""""""""""""""
 
@@ -147,6 +160,30 @@ With that world running, Gazebo has its own list of topics, and ROS has another:
 
    Gazebo's topics are not ROS topics. A bridge node, from the package ``ros_gz_bridge``, copies the ones you need between the two.
 
+.. figure:: /_static/images/l12/gz_shapes_world.png
+   :alt: Rendered view of the shapes demo world: on a grey ground, from left to right, a yellow capsule, a green cylinder, a red box, a blue sphere, a magenta ellipsoid and an orange cone, each with its shadow.
+   :align: center
+   :width: 90%
+
+   The six models of ``shapes.sdf``, from left to right: a capsule, a cylinder, a box, a sphere, an ellipsoid and a cone. Saved without a window, from a camera added to a copy of the world; with ``gz sim shapes.sdf``, the window shows the same scene.
+
+.. dropdown:: More detail: the bridge between Gazebo and ROS
+   :class-container: sd-border-secondary
+
+   - Gazebo publishes on its own topics, with its own message types. Gazebo's clock is a ``gz.msgs.Clock``; the ROS clock is a ``rosgraph_msgs/msg/Clock``.
+   - A bridge node, ``parameter_bridge`` from the package ``ros_gz_bridge``, subscribes on one side, converts each message to the other side's type, and publishes it there.
+   - Its configuration file lists the topics to copy: for each one, its name, the two types and the direction. The course simulation's ``rosbot_gazebo/config/gz_bridge.yaml`` copies the clock, from Gazebo to ROS (``GZ_TO_ROS``): the ``/clock`` that ``use_sim_time`` reads.
+
+   .. code-block:: yaml
+
+      - topic_name: /clock
+        ros_type_name: rosgraph_msgs/msg/Clock
+        gz_type_name: gz.msgs.Clock
+        direction: GZ_TO_ROS
+
+   - ``ros2 launch gp2_bringup gp2_sim.launch.py`` runs five bridge nodes: for the clock, the velocity command ``/cmd_vel``, the lidar, the robot's camera, and the patrol camera.
+   - More: `Use ROS 2 to interact with Gazebo <https://gazebosim.org/docs/harmonic/ros2_integration/>`__ and the `ros_gz_bridge package <https://github.com/gazebosim/ros_gz/tree/jazzy/ros_gz_bridge>`__.
+
 The Husarion ROSbot
 """""""""""""""""""
 
@@ -178,6 +215,26 @@ The ROSbot is a small research robot with four wheels. The two wheels on each si
 
    The Husarion ROSbot.
 
+The ROSbot is made by `Husarion <https://husarion.com/>`__: see the `ROSbot manual <https://husarion.com/manuals/rosbot/>`__, and `rosbot_ros <https://github.com/husarion/rosbot_ros>`__, the ROS 2 packages the course simulation is built on. The simulated ROSbot uses Husarion's own model, with the same body, wheels and sensor positions:
+
+.. grid:: 2
+
+   .. grid-item::
+
+      .. figure:: /_static/images/l12/gz_rosbot_closeup.png
+         :alt: Rendered close view of the simulated ROSbot on a grey floor: a dark grey body on four spiked black wheels, a light grey block on top, and a camera on a curved mast at the back.
+
+         Up close.
+
+   .. grid-item::
+
+      .. figure:: /_static/images/l12/gz_rosbot_hall.png
+         :alt: Rendered view from just behind the simulated ROSbot at its start, at robot height, looking east down the hall: the robot in the foreground, blue and purple discs on the floor, a small orange cylinder, a green cylinder with a round head in front of a red door, and a brown box against the right wall.
+
+         At its start, from behind, facing east (+x) down the hall.
+
+Both views were saved from cameras added to the running simulation.
+
 Command the ROSbot and Read Its Pose
 """""""""""""""""""""""""""""""""""""
 
@@ -208,6 +265,32 @@ Start the world with the robot in it, or the robot alone on an empty floor:
 
    The ROSbot can also take mecanum wheels, which drive sideways too (``twist.linear.y``). Husarion's packages have a ``mecanum`` option; the course simulation removed its controller and does not offer it.
 
+.. dropdown:: More detail: linear and angular velocity, and the wheels
+   :class-container: sd-border-secondary
+
+   - ``linear.x`` is :math:`v`: how fast the middle of the robot moves forward, in m/s, the way it faces. Negative drives backward.
+   - ``angular.z`` is :math:`\omega`: how fast it turns about the vertical axis, in rad/s. Positive turns left (counterclockwise from above).
+   - No sideways speed: ``linear.y`` does nothing on a differential drive. To reach a point to its side, the robot turns first.
+   - The controller gives each side a speed, :math:`v_L = v - \omega\,s/2` and :math:`v_R = v + \omega\,s/2`, and each wheel spins at :math:`v_{side}/r`. In the course simulation, :math:`s` = 0.186 m × 1.36 = 0.253 m and :math:`r` = 0.0425 m (``rosbot_controller/config/rosbot/controllers.yaml``).
+   - The pose follows: :math:`\dot x = v\cos\theta`, :math:`\dot y = v\sin\theta`, :math:`\dot\theta = \omega`. With both set, the robot drives a circle of radius :math:`R = v/\omega`.
+
+   .. list-table::
+      :header-rows: 1
+      :widths: 26 40 34
+
+      * - Command
+        - Wheels
+        - Motion
+      * - :math:`v > 0`, :math:`\omega = 0`
+        - both sides the same
+        - straight ahead
+      * - :math:`v = 0`, :math:`\omega > 0`
+        - left back, right forward
+        - turns left on the spot
+      * - :math:`v > 0`, :math:`\omega > 0`
+        - right faster than left
+        - a left arc, :math:`R = v/\omega`
+
 .. raw:: html
    :file: widgets/_head.html
 
@@ -215,6 +298,12 @@ Move the two sliders to build a command and see the path the robot would drive f
 
 .. raw:: html
    :file: widgets/twist.html
+
+Drag the knob on the pad to drive the robot, and watch its speeds, its wheels and its pose change.
+
+.. raw:: html
+   :file: widgets/drive.html
+
 
 
 The Patrol World
@@ -228,6 +317,12 @@ The patrol world is one floor, 20 m by 10 m, with walls 1 m high. The robot star
    :width: 90%
 
    The patrol world. Tags 1 to 4 are checkpoints, 5 is the robot's start, 6 to 9 are objects, 10 is a closed door and 11 is an open door.
+
+Drag to turn and tilt the world, right-drag (or Shift+drag) to pan, and scroll to zoom. The tags are the figure's.
+
+.. raw:: html
+   :file: widgets/world.html
+
 
 Launch the Simulation
 ^^^^^^^^^^^^^^^^^^^^^

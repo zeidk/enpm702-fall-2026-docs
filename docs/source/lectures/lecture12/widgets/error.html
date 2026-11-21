@@ -9,7 +9,7 @@
       <div class="box concl">The error is the target minus the heading, moved into −π to π by adding or removing full turns.</div>
     </div>
     <div>
-      <svg id="tc-svg" class="plot" viewBox="0 0 350 350" width="350" height="350" role="img" aria-label="Top view of the robot at the center of a dial. A blue arrow shows its heading, an orange arrow the target heading, and a teal arc with an arrowhead the short way from the heading to the target." style="width:calc(350 * var(--u));max-width:100%;height:auto"></svg>
+      <svg id="tc-svg" class="plot" viewBox="0 0 350 350" width="350" height="350" role="img" aria-label="Top view of the robot at the center of a dial. A blue arrow shows its heading, an orange arrow the target heading, and a teal arc with an arrowhead the short way from the heading to the target." style="width:max(calc(350 * var(--u)), calc(350 * 12px / 20.5));max-width:none;height:auto"></svg>
       <p class="small" style="margin:4px 0 2px"><span class="tg">1</span>heading <span class="tg">2</span>target <span class="tg">3</span>error</p>
       <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">heading °</span><input type="range" id="tc-h" min="-180" max="180" step="0.1" value="178.9" style="width:calc(270 * var(--u))"></div>
       <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">target °</span><input type="range" id="tc-t" min="-180" max="180" step="0.1" value="-90" style="width:calc(270 * var(--u))"></div>
