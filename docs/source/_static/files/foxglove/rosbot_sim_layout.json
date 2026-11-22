@@ -1,0 +1,84 @@
+{
+  "configById": {
+    "3D!rbs3d01": {
+      "followTf": "odom",
+      "fixedFrame": "odom",
+      "followMode": "follow-pose",
+      "cameraState": {
+        "distance": 8,
+        "perspective": true,
+        "phi": 60,
+        "target": [0, 0, 0],
+        "targetOffset": [0, 0, 0],
+        "targetOrientation": [0, 0, 0, 1],
+        "thetaOffset": 60,
+        "fovy": 45,
+        "near": 0.5,
+        "far": 5000
+      },
+      "scene": {},
+      "transforms": {},
+      "topics": {
+        "/tf": { "visible": true },
+        "/scan_filtered": { "visible": true }
+      },
+      "layers": {
+        "rbs-urdf-01": {
+          "visible": true,
+          "instanceId": "rbs-urdf-01",
+          "layerId": "foxglove.Urdf",
+          "label": "ROSbot",
+          "sourceType": "topic",
+          "topic": "/robot_description",
+          "controlMode": "transforms",
+          "framePrefix": ""
+        }
+      }
+    },
+    "Image!rbsimg01": {
+      "imageMode": {
+        "imageTopic": "/oak/rgb/color"
+      }
+    },
+    "Plot!rbsplt01": {
+      "paths": [
+        {
+          "id": "rbs-path-01",
+          "value": "/odometry/filtered.twist.twist.linear.x",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        },
+        {
+          "id": "rbs-path-02",
+          "value": "/odometry/filtered.twist.twist.angular.z",
+          "enabled": true,
+          "timestampMethod": "receiveTime"
+        }
+      ]
+    },
+    "RawMessages!rbsraw01": {
+      "topicPath": "/odometry/filtered"
+    }
+  },
+  "globalVariables": {},
+  "userNodes": {},
+  "playbackConfig": {
+    "speed": 1
+  },
+  "layout": {
+    "direction": "row",
+    "first": "3D!rbs3d01",
+    "second": {
+      "direction": "column",
+      "first": "Image!rbsimg01",
+      "second": {
+        "direction": "column",
+        "first": "Plot!rbsplt01",
+        "second": "RawMessages!rbsraw01",
+        "splitPercentage": 50
+      },
+      "splitPercentage": 34
+    },
+    "splitPercentage": 60
+  }
+}

@@ -27,6 +27,12 @@ are expected to work through these outside of class.
      - Selection statements (``if``, ``switch``), iteration statements
        (``while``, ``do-while``, ``for``), operators (arithmetic,
        relational, logical)
+   * - :doc:`foxglove/fx_index`
+     - Foxglove, a program that draws ROS 2 topics: what it is, installing
+       the ``foxglove_bridge`` package and the app, connecting to the ROSbot
+       simulation at ``ws://localhost:8765``, and a layout file with a 3D,
+       an Image, a Plot and a Raw Messages panel. Optional reading, not needed
+       for any assignment
    * - :doc:`linux_shell/ls_index`
      - The Linux command-line shell: common shell types, configuration
        files (``.bashrc``, ``.zshrc``), aliases, and functions
@@ -66,6 +72,7 @@ are expected to work through these outside of class.
    sphinx_breathe/sb_index
    exception_handling/eh_index
    flow_control/fc_index
+   foxglove/fx_index
    linux_shell/ls_index
    robot_messages/rmsg_index
    services_actions/sa_index
