@@ -955,7 +955,7 @@ source install/setup.bash</pre></div>
   <h2>Simulation and reality: what stays the same</h2><div class="fit"><div class="fitin">
   <ul class="pl">
     <li><b>The same robot model:</b> one URDF, "used for both simulation and as a source of transforms on physical robot".</li>
-    <li><b>The same nodes:</b> the drive controller, <code class="nd">ekf</code>, <code class="nd">robot_state_publisher</code> and four more run in both.</li>
+    <li><b>The same nodes:</b> the drive controller, <span class="termhover" data-out="ni-ekf" data-cmd="ros2 node info /ekf"><code class="nd">ekf</code></span>, <span class="termhover" data-out="ni-robot-state-publisher" data-cmd="ros2 node info /robot_state_publisher"><code class="nd">robot_state_publisher</code></span> and four more run in both.</li>
     <li><b>The same topics:</b> <code class="tp">/cmd_vel</code>, <code class="tp">/odometry/filtered</code>, <code class="tp">/scan</code>, <code class="tp">/tf</code> and more, with the same types.</li>
     <li><b>So your node does not change</b> between Gazebo and the real ROSbot.</li>
   </ul>
@@ -1156,6 +1156,65 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
     <li>Check it from a second terminal: <span class="cmd">ros2 topic list</span> prints <span class="termhover" data-out="topics31" data-cmd="ros2 topic list">31 topics</span>.</li>
   </ul>
   <div class="box">Keep the launch terminal open: the simulation runs until you stop it. Use other terminals for everything else.</div>
+<!-- measured: ../figures/data/terminal_cards.txt -->
+<template id="ni-ekf">
+/ekf
+  Subscribers:
+    /clock: rosgraph_msgs/msg/Clock
+    /imu/data: sensor_msgs/msg/Imu
+    /odometry/wheels: nav_msgs/msg/Odometry
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /set_pose: geometry_msgs/msg/PoseWithCovarianceStamped
+  Publishers:
+    /diagnostics: diagnostic_msgs/msg/DiagnosticArray
+    /odometry/filtered: nav_msgs/msg/Odometry
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /rosout: rcl_interfaces/msg/Log
+    /tf: tf2_msgs/msg/TFMessage
+  Service Servers:
+    /ekf/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /ekf/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /ekf/get_parameters: rcl_interfaces/srv/GetParameters
+    /ekf/get_type_description: type_description_interfaces/srv/GetTypeDescription
+    /ekf/list_parameters: rcl_interfaces/srv/ListParameters
+    /ekf/set_parameters: rcl_interfaces/srv/SetParameters
+    /ekf/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+    /enable: std_srvs/srv/Empty
+    /reset: std_srvs/srv/Empty
+    /set_pose: robot_localization/srv/SetPose
+    /toggle: robot_localization/srv/ToggleFilterProcessing
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+</template>
+<template id="ni-robot-state-publisher">
+/robot_state_publisher
+  Subscribers:
+    /clock: rosgraph_msgs/msg/Clock
+    /joint_states: sensor_msgs/msg/JointState
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+  Publishers:
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /robot_description: std_msgs/msg/String
+    /rosout: rcl_interfaces/msg/Log
+    /tf: tf2_msgs/msg/TFMessage
+    /tf_static: tf2_msgs/msg/TFMessage
+  Service Servers:
+    /robot_state_publisher/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /robot_state_publisher/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /robot_state_publisher/get_parameters: rcl_interfaces/srv/GetParameters
+    /robot_state_publisher/get_type_description: type_description_interfaces/srv/GetTypeDescription
+    /robot_state_publisher/list_parameters: rcl_interfaces/srv/ListParameters
+    /robot_state_publisher/set_parameters: rcl_interfaces/srv/SetParameters
+    /robot_state_publisher/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+</template>
 <template id="topics31">
 /clock
 /cmd_vel
@@ -1780,18 +1839,437 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 
 <section class="plate frame s6" data-scene="p20" data-name="Slide 51 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 51 of 121. Go to a slide">Slide 51 / 121</span></div>
   <h2>The topics you use</h2><div class="fit"><div class="fitin">
-  <p class="goal">Of the 31 topics, your nodes use these:</p>
+  <p class="goal">Of the 31 topics, your nodes use these. Point at a topic to see what <span class="cmd">ros2 topic info -v</span> prints; click it to keep the output open.</p>
   <table class="t tight dense" style="font-size:22px">
     <tr><th style="width:24%">Topic</th><th style="width:41%">Type</th><th>What it carries</th></tr>
-    <tr><td><code class="tp">/cmd_vel</code></td><td><code class="ty">geometry_msgs/msg/TwistStamped</code></td><td>The velocity command. You publish it.</td></tr>
-    <tr><td><code class="tp">/odometry/filtered</code></td><td><code class="ty">nav_msgs/msg/Odometry</code></td><td>The robot's pose, about 20 times per second.</td></tr>
-    <tr><td><code class="tp">/scan</code></td><td><code class="ty">sensor_msgs/msg/LaserScan</code></td><td>The lidar's ranges.</td></tr>
-    <tr><td><code class="tp">/logical_camera</code></td><td><code class="ty wrap">ros_gz_interfaces/msg/<wbr>LogicalCameraImage</code></td><td>The objects in front of the robot.</td></tr>
-    <tr><td><code class="tp">/tf</code>, <code class="tp">/tf_static</code></td><td><code class="ty">tf2_msgs/msg/TFMessage</code></td><td>The robot's frames, next class.</td></tr>
-    <tr><td><code class="tp">/clock</code></td><td><code class="ty">rosgraph_msgs/msg/Clock</code></td><td>The simulation time.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-cmd-vel" data-cmd="ros2 topic info -v /cmd_vel"><code class="tp">/cmd_vel</code></span></td><td><code class="ty">geometry_msgs/msg/TwistStamped</code></td><td>The velocity command. You publish it.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-odometry-filtered" data-cmd="ros2 topic info -v /odometry/filtered"><code class="tp">/odometry/filtered</code></span></td><td><code class="ty">nav_msgs/msg/Odometry</code></td><td>The robot's pose, about 20 times per second.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-scan" data-cmd="ros2 topic info -v /scan"><code class="tp">/scan</code></span></td><td><code class="ty">sensor_msgs/msg/LaserScan</code></td><td>The lidar's ranges.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-logical-camera" data-cmd="ros2 topic info -v /logical_camera"><code class="tp">/logical_camera</code></span></td><td><code class="ty wrap">ros_gz_interfaces/msg/<wbr>LogicalCameraImage</code></td><td>The objects in front of the robot.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-tf" data-cmd="ros2 topic info -v /tf"><code class="tp">/tf</code></span>, <code class="tp">/tf_static</code></td><td><code class="ty">tf2_msgs/msg/TFMessage</code></td><td>The robot's frames, next class.</td></tr>
+    <tr><td><span class="termhover" data-out="ti-clock" data-cmd="ros2 topic info -v /clock"><code class="tp">/clock</code></span></td><td><code class="ty">rosgraph_msgs/msg/Clock</code></td><td>The simulation time.</td></tr>
   </table>
   <div class="box"><code class="tp">/cmd_vel</code> takes a <code class="ty wrap">geometry_msgs/msg/<wbr>TwistStamped</code>: a <code class="ty wrap">geometry_msgs/msg/<wbr>Twist</code> with a header that holds a time stamp. The two types do not connect: a <code class="ty wrap">geometry_msgs/msg/<wbr>Twist</code> published there cannot move the robot.</div>
 </div></div></section>
+<!-- measured: ../figures/data/terminal_cards.txt -->
+<template id="ti-cmd-vel">
+Type: geometry_msgs/msg/TwistStamped
+
+Publisher count: 1
+
+Node name: rosbot_gz_bridge
+Node namespace: /
+Topic type: geometry_msgs/msg/TwistStamped
+Topic type hash: RIHS01_5f0fcd4f81d5d06ad9b4c4c63e3ea51b82d6ae4d0558f1d475229b1121db6f64
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.74.39.da.4d.00.00.00.00.00.00.15.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: differential_drive_controller
+Node namespace: /
+Topic type: geometry_msgs/msg/TwistStamped
+Topic type hash: RIHS01_5f0fcd4f81d5d06ad9b4c4c63e3ea51b82d6ae4d0558f1d475229b1121db6f64
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.60.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+</template>
+<template id="ti-odometry-filtered">
+Type: nav_msgs/msg/Odometry
+
+Publisher count: 1
+
+Node name: ekf
+Node namespace: /
+Topic type: nav_msgs/msg/Odometry
+Topic type hash: RIHS01_3cc97dc7fb7502f8714462c526d369e35b603cfc34d946e3f2eda2766dfec6e0
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.80.39.ac.05.00.00.00.00.00.00.29.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+</template>
+<template id="ti-scan">
+Type: sensor_msgs/msg/LaserScan
+
+Publisher count: 1
+
+Node name: LDR02_gz_bridge
+Node namespace: /
+Topic type: sensor_msgs/msg/LaserScan
+Topic type hash: RIHS01_64c191398013af96509d518dac71d5164f9382553fce5c1f8cca5be7924bd828
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.79.39.1a.93.00.00.00.00.00.00.15.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: laser_filters
+Node namespace: /
+Topic type: sensor_msgs/msg/LaserScan
+Topic type hash: RIHS01_64c191398013af96509d518dac71d5164f9382553fce5c1f8cca5be7924bd828
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.82.39.8b.6d.00.00.00.00.00.00.17.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+</template>
+<template id="ti-logical-camera">
+Type: ros_gz_interfaces/msg/LogicalCameraImage
+
+Publisher count: 1
+
+Node name: patrol_cam_bridge
+Node namespace: /
+Topic type: ros_gz_interfaces/msg/LogicalCameraImage
+Topic type hash: RIHS01_182c20bcbe04e080e79b496c6a2d1dcdd1773ad64048b245e2a21f7d46bd0d70
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.85.39.3d.89.00.00.00.00.00.00.17.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+</template>
+<template id="ti-tf">
+Type: tf2_msgs/msg/TFMessage
+
+Publisher count: 3
+
+Node name: differential_drive_controller
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.62.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: robot_state_publisher
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.7c.39.b6.53.00.00.00.00.00.00.15.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: ekf
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.80.39.ac.05.00.00.00.00.00.00.1d.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: transform_listener_impl_6270c5c8e980
+Node namespace: /
+Topic type: tf2_msgs/msg/TFMessage
+Topic type hash: RIHS01_e369d0f05a23ae52508854b66f6aa0437f3449d652e8cbf22d5abe85d020f087
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.80.39.ac.05.00.00.00.00.00.00.1a.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+</template>
+<template id="ti-clock">
+Type: rosgraph_msgs/msg/Clock
+
+Publisher count: 1
+
+Node name: gz_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: PUBLISHER
+GID: 01.0f.5a.5f.70.39.f9.1c.00.00.00.00.00.00.15.03
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 14
+
+Node name: gz_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.70.39.f9.1c.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: controller_manager
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.22.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: differential_drive_controller
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.57.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: imu_broadcaster
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.71.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: joint_state_broadcaster
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.73.39.9e.30.00.00.00.00.00.00.89.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: rosbot_gz_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.74.39.da.4d.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: LDR02_gz_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.79.39.1a.93.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: oak_CAM11_gz_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.7a.39.04.d2.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: robot_state_publisher
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.7c.39.b6.53.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: ekf
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.80.39.ac.05.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: transform_listener_impl_6270c5c8e980
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.80.39.ac.05.00.00.00.00.00.00.16.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: laser_filters
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.82.39.8b.6d.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: logical_camera_frame
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.84.39.27.16.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: patrol_cam_bridge
+Node namespace: /
+Topic type: rosgraph_msgs/msg/Clock
+Topic type hash: RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.5a.5f.85.39.3d.89.00.00.00.00.00.00.11.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+</template>
+
 
 <section class="plate frame s6" data-scene="p21" data-name="Slide 52 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 52 of 121. Go to a slide">Slide 52 / 121</span></div>
   <h2>Drive forward and turn</h2><div class="fit"><div class="fitin">
