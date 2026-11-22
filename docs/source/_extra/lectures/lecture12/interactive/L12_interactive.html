@@ -871,7 +871,7 @@ source install/setup.bash</pre></div>
   <h2>Simulation and reality: what stays the same</h2><div class="fit"><div class="fitin">
   <ul class="pl">
     <li><b>The same robot model:</b> one URDF, "used for both simulation and as a source of transforms on physical robot".</li>
-    <li><b>The same nodes:</b> the drive controller, <code class="nd">ekf_node</code>, <code class="nd">robot_state_publisher</code> and four more run in both.</li>
+    <li><b>The same nodes:</b> the drive controller, <code class="nd">ekf</code>, <code class="nd">robot_state_publisher</code> and four more run in both.</li>
     <li><b>The same topics:</b> <code class="tp">/cmd_vel</code>, <code class="tp">/odometry/filtered</code>, <code class="tp">/scan</code>, <code class="tp">/tf</code> and more, with the same types.</li>
     <li><b>So your node does not change</b> between Gazebo and the real ROSbot.</li>
   </ul>
@@ -1021,7 +1021,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <p class="goal">The ROSbot's controllers run inside <span class="cmd">gz sim</span>, loaded by the <code>gz_ros2_control</code> plugin of the robot's URDF. They talk to ROS directly:</p>
   <table class="t tight">
     <tr><th style="width:34%">Controller (inside Gazebo)</th><th style="width:28%">Reads</th><th>Publishes on ROS</th></tr>
-    <tr><td><code class="nd">differential_drive_controller</code></td><td><code class="tp">/cmd_vel</code>, from ROS</td><td><code class="tp">/odometry/wheels</code> (not <code class="tp">/tf</code>: <code class="nd">ekf_node</code> publishes it)</td></tr>
+    <tr><td><code class="nd">differential_drive_controller</code></td><td><code class="tp">/cmd_vel</code>, from ROS</td><td><code class="tp">/odometry/wheels</code> (not <code class="tp">/tf</code>: <code class="nd">ekf</code> publishes it)</td></tr>
     <tr><td><code class="nd">imu_broadcaster</code></td><td>the simulated IMU</td><td><code class="tp">/imu/data</code></td></tr>
     <tr><td><code class="nd">joint_state_broadcaster</code></td><td>the wheel joints</td><td><code class="tp">/joint_states</code></td></tr>
   </table>
@@ -1594,7 +1594,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <ul class="pl">
     <li><b>Odometry</b> estimates the robot's pose by adding up its own motion since the start. It needs no map and no outside landmark, so its error grows as the robot drives.</li>
     <li><code class="tp">/odometry/wheels</code>: from the wheels alone. The drive controller turns the wheel rotations into the robot's motion.</li>
-    <li><code class="tp">/odometry/filtered</code>: <code class="nd">ekf_node</code> fuses the wheels with the IMU. It takes the heading (yaw) from the IMU, the forward speed from the wheels, and the turn rate from both. It publishes about 20 times a second (19.8 Hz in the course simulation).</li>
+    <li><code class="tp">/odometry/filtered</code>: <code class="nd">ekf</code> fuses the wheels with the IMU. It takes the heading (yaw) from the IMU, the forward speed from the wheels, and the turn rate from both. It publishes about 20 times a second (19.8 Hz in the course simulation).</li>
   </ul>
 </div></div></section>
 
@@ -1610,7 +1610,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 <pre class="code" data-lang="bash">ros2 topic echo --once /odometry/filtered \
   --field pose.pose.position</pre>
   <p style="margin:4px 0 0">gave x = &minus;7.4e&minus;18&nbsp;m, y = 3.2e&minus;21&nbsp;m, z = 0.0: zero, to the rounding of the computer.</p>
-  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_localization/config/config.yaml</span> (what <code class="nd">ekf_node</code> fuses), the deck's measurement (<span class="file">figures/data/sim_topics.txt</span>).</p>
+  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_localization/config/config.yaml</span> (what <code class="nd">ekf</code> fuses), the deck's measurement (<span class="file">figures/data/sim_topics.txt</span>).</p>
 </div></div></section>
 
 <section class="plate frame s6" data-scene="p19" data-name="Slide 50 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 50 of 116. Go to a slide">Slide 50 / 116</span></div>
@@ -5389,7 +5389,8 @@ document.querySelectorAll('input[type="range"]').forEach(function(inp){
     if (s[0] === "x" || s[0] === "y"){ var b = {x: s[0] === "x" ? s[1] : pose.x, y: s[0] === "y" ? s[1] : pose.y, h: pose.h};
       d = Math.hypot(b.x - a.x, b.y - a.y) / SPEED; segs.push({k: "drive", a: a, b: b, t: T, d: d}); T += d; pose = b;
       if (s[2] !== undefined){ segs.push({k: "wait", a: b, t: T, d: WAIT, see: s[2]}); T += WAIT; } }
-    else { var e0 = (s[1] - pose.h) * Math.PI / 180; d = Math.log(Math.abs(e0) / TOL) / KP;
+    else { var e0 = (s[1] - pose.h) * Math.PI / 180; if (Math.abs(e0) <= TOL) return;   /* already facing it: no turn */
+      d = Math.log(Math.abs(e0) / TOL) / KP;
       segs.push({k: "turn", a: a, h1: s[1], e0: e0, t: T, d: d}); T += d; pose = {x: pose.x, y: pose.y, h: s[1]}; } });
   var PERIOD = T + PAUSE, t0 = performance.now(), lastPing = 0, lastSeg = -1;
   function place(p){ bot.setAttribute("transform", "translate(" + p.x.toFixed(1) + " " + p.y.toFixed(1) + ") rotate(" + p.h.toFixed(1) + ")"); }
