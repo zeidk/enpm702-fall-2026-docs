@@ -6,10 +6,14 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","la-t":"table","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"tspan":1,"polygon":1,"clipPath":1,"svg":1,"polyline":1,"symbol":1,"stop":1,"defs":1,"rect":1,"path":1,"ellipse":1,"linearGradient":1,"image":1,"marker":1,"use":1,"pattern":1,"text":1,"g":1,"foreignObject":1,"mask":1,"line":1,"circle":1};
+var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","topics31":"template","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","check-simulation":"section","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","check-rosbot":"section","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","plan-heading":"section","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","check-control":"section","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","check-parameters":"section","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","check-remapping":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"use":1,"mask":1,"tspan":1,"symbol":1,"circle":1,"svg":1,"clipPath":1,"image":1,"defs":1,"g":1,"pattern":1,"rect":1,"stop":1,"foreignObject":1,"ellipse":1,"text":1,"linearGradient":1,"path":1,"marker":1,"polyline":1,"line":1,"polygon":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
-function $id(id){ var e = document.getElementById(id); if (e) return e; var t = TAGS[id] || "div";
-  e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; return e; }
+/* one stand-in per id, so a script that fills an element and reads it again finds what it put there; the stand-ins sit in
+   a holder that is not in the page, so code that inserts next to one works and document.contains() still says "not here"
+   (a page with only some panels, such as the setup page's 3D world) */
+var STANDIN = {}, HOLDER = document.createElement("div");
+function $id(id){ var e = document.getElementById(id); if (e) return e; if (STANDIN[id]) return STANDIN[id]; var t = TAGS[id] || "div";
+  e = SVGT[t] ? document.createElementNS(NS, t) : document.createElement(t); e.id = id; STANDIN[id] = e; HOLDER.appendChild(e); return e; }
 /* ---------- small helpers ---------- */
 function el(svg, tag, attrs, text){ var e = document.createElementNS(NS, tag);
   for (var k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; }
@@ -121,6 +125,11 @@ function onShow(e, fn){ if (typeof e === "string") e = $id(e); if (!e || !docume
 /* onReset(el, fn): the slides put a frame back when the viewer leaves it; a docs panel stays as the reader left it,
    so the panels register nothing (the frame scripts call it, so it must exist) */
 function onReset(){}
+/* whyOpen(b): a "?" button on a slide opens the lecture's explanation window with b._why ({t: title, b: html}); the docs page
+   has no such window, so the explanation shows in a box under the panel's log, and the next "?" replaces it */
+function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.querySelector(".l12w-why");
+  if (!box){ box = document.createElement("div"); box.className = "box l12w-why"; box.setAttribute("aria-live", "polite"); pre.parentNode.insertBefore(box, pre.nextSibling); }
+  box.innerHTML = "<b>" + b._why.t + "</b>" + b._why.b; mathIn(box); }
 /* ---------- code boxes: color, number and mark the lines of every <pre class="code"> ---------- */
 (function(){
   var KW = {
@@ -196,7 +205,8 @@ function onReset(){}
         function(){ return g.map(function(l){ return noComment(l.textContent); }).join("\n"); })); });
       return; }
     /* one command (or a box a frame script rebuilds later): one button for the box, reading the lines at click time */
-    w.appendChild(copyBtn("copybtn", "Copy the command", function(){
+    var one = pre.querySelectorAll(".cl").length === 1;
+    w.appendChild(copyBtn(one ? "copybtn mid" : "copybtn", "Copy the command", function(){
       var lines = [].map.call(pre.querySelectorAll(".cl"), function(l){ return noComment(l.textContent); });
       return lines.length ? lines.join("\n") : pre.textContent; }));
   }
@@ -488,15 +498,26 @@ function onReset(){}
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
   var picks = {gui:"true", world:"patrol", rviz:"false"}, defs = {gui:"true", world:"patrol", rviz:"false"}, cmd = $id("la-cmd");
-  function laCmd(){ var a = [];   /* the arguments go on a continuation line: on one line the command was wider than the box */
+  /* x, y, yaw: typed numbers (user, 2026-11-21: "Give us the possibility to enter some numbers in the column Pick");
+     an empty box or 0 is the default, 0.0, and leaves the argument out */
+  function poseArgs(){ var a = [];
+    ["x", "y", "yaw"].forEach(function(k){ var v = $id("la-" + k).value.trim(), n = parseFloat(v);
+      if (v !== "" && isFinite(n) && n !== 0) a.push(k + ":=" + v); });
+    return a; }
+  function laCmd(){ var a = [], p = poseArgs();   /* the arguments go on continuation lines: on one line the command was wider than the box */
     ["gui", "world", "rviz"].forEach(function(k){ if (picks[k] !== defs[k]) a.push(k + ":=" + picks[k]); });
-    var L = ["ros2 launch gp2_bringup gp2_sim.launch.py" + (a.length ? " \\" : "")]; if (a.length) L.push("  " + a.join(" "));
+    var rows = [a, p].filter(function(r){ return r.length; });
+    var L = ["ros2 launch gp2_bringup gp2_sim.launch.py" + (rows.length ? " \\" : "")];
+    rows.forEach(function(r, i){ L.push("  " + r.join(" ") + (i < rows.length - 1 ? " \\" : "")); });
     cmd.innerHTML = L.map(function(l, i){ return '<span class="cl' + (i ? " cont" : "") + '">' + l.replace(/(\w+:=)/g, '<span class="ty">$1</span>') + "</span>"; }).join(""); }
   document.querySelectorAll("#la-t td[data-arg]").forEach(function(td){
     var k = td.dataset.arg;
     buttons(td, td.dataset.vals.split(","), function(v){ return v; }, function(v){ picks[k] = v; laCmd(); }, k === "gui" ? "false" : k === "rviz" ? "true" : defs[k]);
     td.querySelectorAll("button").forEach(function(b){ b.style.fontSize = "20px"; b.style.padding = "3px 10px"; });
   });
+  ["x", "y", "yaw"].forEach(function(k){ var b = $id("la-" + k);
+    b.addEventListener("input", laCmd); b.addEventListener("click", function(e){ e.stopPropagation(); }); });
+  onReset($id("la-t"), function(){ ["x", "y", "yaw"].forEach(function(k){ $id("la-" + k).value = ""; }); laCmd(); });   /* empty boxes on leaving the slide */
   picks.gui = "false"; picks.rviz = "true"; laCmd();
 
   /* --- slide 16 (2 of 2): messages at 10 Hz, Ctrl+C, the 0.5 s wait, then the brake --- */
@@ -543,10 +564,27 @@ function onReset(){}
              on: ["[...]: create_wall_timer: now() = 0.000 s", "[...]: create_wall_timer: now() = 0.000 s",
                   "[...]: create_timer:      now() = 31.184 s", "[...]: create_wall_timer: now() = 31.896 s"]};
   var SAY = {off:"<li><b>Off:</b> both read the computer's clock, in seconds since 1 January 1970.</li>",
-             on:"<li><b>On:</b> the node subscribes to <code>/clock</code>. Until the first message, <code>now()</code> is 0: ROS time \"will return zero if nothing has been received\".</li>"};
+             on:"<li><b>On:</b> the node subscribes to <code class=\"tp\">/clock</code>. Until the first message, <code>now()</code> is 0: ROS time \"will return zero if nothing has been received\".</li>"};
+  /* each log line has a ? in a circle that opens what the line shows (user, 2026-11-21, slide 28: "describe each line. An
+     alternative is to add ? in a circle next to each line. Clicking ? provides more information"); the times are the
+     measured run's (../figures/data/sim_time.txt) */
+  var WHY = {off:[
+      {t:"Off: the wall timer's first tick", b:"<p>The wall timer (<code>create_wall_timer</code>) fires every second of the computer's clock.</p><p>With <code class=\"pm\">use_sim_time</code> off, <code>now()</code> also reads the computer's clock: 1795198889.261&nbsp;s, counted from 1 January 1970.</p>"},
+      {t:"Off: the ROS timer's first tick", b:"<p>The ROS timer (<code>create_timer</code>) counts ROS time. With <code class=\"pm\">use_sim_time</code> off, ROS time is the computer's clock, so it fires at the same moment and prints the same time.</p>"},
+      {t:"Off: the wall timer, one second later", b:"<p>One second later on the computer's clock: 1795198890.261&nbsp;s.</p>"},
+      {t:"Off: the ROS timer, one second later", b:"<p>The same second again: while <code class=\"pm\">use_sim_time</code> is off, both timers count the computer's seconds.</p>"}],
+    on:[
+      {t:"On: the wall timer's first tick", b:"<p>The wall timer still fires every second of the computer's clock: <code class=\"pm\">use_sim_time</code> does not change it.</p><p>But <code>now()</code> reads ROS time, and the node has not received a <code class=\"tp\">/clock</code> message yet, so ROS time is 0.</p>"},
+      {t:"On: the wall timer, one second later", b:"<p>One more second on the computer's clock. Still no <code class=\"tp\">/clock</code> message, so <code>now()</code> is still 0.</p>"},
+      {t:"On: the ROS timer's first tick", b:"<p>The first <code class=\"tp\">/clock</code> message arrived: ROS time jumped to Gazebo's time, 31.184&nbsp;s, counted from the moment the simulation started.</p><p>The ROS timer counts ROS time, so it fires now, for the first time.</p>"},
+      {t:"On: the wall timer's next tick", b:"<p>The wall timer's next second on the computer's clock. <code>now()</code> now reads Gazebo's time, 31.896&nbsp;s: from here on it follows <code class=\"tp\">/clock</code>.</p>"}]};
+  /* the ? buttons stand in one column, after the longest line of both states, so switching off and on never moves them */
+  var LOGW = Math.max.apply(null, LOG.off.concat(LOG.on).map(function(l){ return l.length; }));
   function st(mode){ $id("st-off").classList.toggle("on", mode === "off"); $id("st-on").classList.toggle("on", mode === "on");
     $id("st-cmd").innerHTML = '<span class="cl">ros2 run l12_rosbot sim_time_exe' + (mode === "on" ? ' \\</span><span class="cl cont">  <span class="op">--ros-args</span> <span class="op">-p</span> <span class="ty">use_sim_time:=</span>true' : "") + "</span>";   /* two lines when on: one line was wider than the box */
-    $id("st-log").innerHTML = LOG[mode].map(function(l){ return '<span class="cl">' + l + "</span>"; }).join("");
+    $id("st-log").innerHTML = LOG[mode].map(function(l, k){ return '<span class="cl"><span style="display:inline-block;min-width:' + LOGW + 'ch">' + l + '</span><button class="qmark" data-k="' + k + '" aria-label="What line ' + (k + 1) + ' shows">?</button></span>'; }).join("");
+    [].forEach.call(document.querySelectorAll("#st-log .qmark"), function(b){ b._why = WHY[mode][+b.dataset.k];
+      b.onclick = function(e){ e.stopPropagation(); whyOpen(b); }; });
     $id("st-say").innerHTML = SAY[mode]; }
   $id("st-off").onclick = function(e){ e.stopPropagation(); st("off"); };
   $id("st-on").onclick = function(e){ e.stopPropagation(); st("on"); };
@@ -591,11 +629,16 @@ function onReset(){}
   onReset(ps, function(){ clearInterval(pzTimer); pzAt(0); });
 })();
 
-  /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): each shows its first frame and plays with its
-     own play button (no autoplay, user, 2026-11-21); a clip pauses when it leaves the screen --- */
+  /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): the three play by themselves each time the slide
+     comes on screen (user, 2026-11-21: "autoplay all 3 when the slide loads", an exception to no autoplay; the frame has
+     data-autoplay); each keeps its own controls, pauses when it leaves the screen, and is rewound when the slide is left --- */
   document.querySelectorAll("video.loopvid").forEach(function(v){ v.controls = true;
     if ("IntersectionObserver" in window) new IntersectionObserver(function(es){ if (!es[0].isIntersecting) v.pause(); }, {threshold:0.3}).observe(v);
     onReset(v, function(){ v.pause(); try { v.currentTime = 0; } catch (err) {} }); });   /* a clip is stopped and rewound */
+  (function(){ var lv = [].slice.call(document.querySelectorAll("video.loopvid")); if (!lv.length) return;
+    var still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    onShow(lv[0], function(){ if (still || (window.deckIsResetting && window.deckIsResetting())) return;
+      lv.forEach(function(v){ var pr = v.play(); if (pr && pr.catch) pr.catch(function(){}); }); }); })();   /* muted, so browsers allow it */
 
   /* --- the five bridges (user, 2026-11-21: "create slides to explain the bridges"): a click, Enter or Space on a card
      shows that bridge's details --- */
@@ -1417,11 +1460,11 @@ function onReset(){}
 
   /* --- slide 25 (page 27): the four steps, played slowly, each clickable --- */
   var ls = $id("lc-svg"), lis = [].slice.call(document.querySelectorAll("#lc-steps li")), lcStep = 0, lcTimer = null, lcTween = null, lcCap = $id("lc-cap");
-  var LCS = [{h:0, show:{h:1}, cap:"The heading arrow (1) is what the odometry reports."},
-             {h:0, show:{h:1, t:1, arc:1}, cap:"The target (2) minus the heading (1) is the error (3)."},
-             {h:0, show:{h:1, t:1, arc:1, cmd:1}, cap:"The command (4) is a turn rate computed from the error (3)."},
-             {h:30, ghost:0, show:{h:1, t:1, arc:1}, cap:"The robot has turned, so the error (3) is smaller. The dashed arrow is the old heading."}];
-  function lcDraw(h, s){ var d = LCS[s]; drawTurn(ls, 400, {h:h, t:90, show:d.show, ghost:d.ghost, tags:true}); }
+  var LCS = [{h:0, show:{h:1}, cap:"The blue arrow is the heading: what the odometry reports."},
+             {h:0, show:{h:1, t:1, arc:1}, cap:"The orange arrow is the target. The arc between the two arrows is the error: the target minus the heading."},
+             {h:0, show:{h:1, t:1, arc:1, cmd:1}, cap:"The small curved arrow at the robot is the command: a turn rate computed from the error."},
+             {h:30, ghost:0, show:{h:1, t:1, arc:1}, cap:"The robot has turned, so the arc, the error, is smaller. The dashed arrow is the old heading."}];
+  function lcDraw(h, s){ var d = LCS[s]; drawTurn(ls, 400, {h:h, t:90, show:d.show, ghost:d.ghost, tags:false}); }   /* no tags (user, 2026-11-21, slide 56): the captions name each mark */
   function lcSet(s, anim){
     clearInterval(lcTween); lcStep = s;
     lis.forEach(function(li, i){ li.classList.toggle("lit", i === s); }); lcCap.textContent = LCS[s].cap;

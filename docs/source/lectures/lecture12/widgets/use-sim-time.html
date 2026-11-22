@@ -2,8 +2,8 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="use-sim-time">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>use_sim_time, with and without the file</div>
 <div class="l12w-in">
-<p class="goal">Gazebo publishes its own time on <code class="tp">/clock</code> (see Simulation Time above). With <code class="pm">use_sim_time</code> true, a node's clock follows <code class="tp">/clock</code> instead of the computer's clock: <code>now()</code>, and so the stamp of every <code class="ty">TwistStamped</code>, gives the simulation's time. <span class="try">try it</span></p>
-  <p style="margin:0 0 4px">Every node has <code class="pm">use_sim_time</code>, and it is false unless you set it. How was the node started?</p>
+<p class="goal">Gazebo publishes its own time on <code class="tp">/clock</code> (see Simulation Time above). With <code class="pm">use_sim_time</code> true, a node's clock follows it instead of the computer's clock: <code>now()</code>, and so the stamp of every <code class="ty wrap">geometry_msgs/msg/<wbr>TwistStamped</code>, gives the simulation's time. <span class="try">try it</span></p>
+  <p style="margin:0 0 4px">Every node has <code class="pm">use_sim_time</code>, false unless you set it. How was the node started?</p>
   <div class="row" style="margin:2px 0"><button id="q51-b0" class="on">plain ros2 run</button><button id="q51-b1">with controllers.yaml (the /** key)</button></div>
 <pre class="code" data-lang="bash" id="q51-cmd"></pre>
 <pre class="code" data-lang="text" id="q51-out"></pre>

@@ -309,15 +309,10 @@ What Surprises People
 The Environment
 ---------------
 
-.. figure:: /_static/images/rosbot/patrol_world.png
-   :alt: Top view of the patrol world from Gazebo, 20 m by 10 m, with north at the top. A long hall runs along the bottom with the small dark robot near the left end and four blue discs. Two rooms lie above it, joined to the hall by two doorways. The left doorway is open. The right doorway has a red panel. A purple disc, a small orange cylinder, a green cylinder with a round head and a brown box lie on the hall floor. Numbered tags mark each item, and axes in meters run along the left and the bottom.
-   :width: 100%
+.. raw:: html
+   :file: widgets/patrol_world.html
 
-   The patrol world, rendered from above in Gazebo with a camera that is not
-   in the course files. The axes show meters at floor level. Tops of walls
-   look farther out than their bases because of perspective.
-
-The tags in the figure:
+The tags in the 3D view:
 
 .. list-table::
    :header-rows: 1
