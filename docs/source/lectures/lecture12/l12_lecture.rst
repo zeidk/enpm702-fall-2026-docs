@@ -212,11 +212,6 @@ Gazebo runs a robot in a virtual world, so you can test your nodes without a rea
 - **Sensors**: what each sensor would read in that world. The simulation publishes the readings on ROS topics.
 - **The world**: walls, doors and objects, read from a world file.
 
-Why you use a simulator in this course:
-
-- The simulation uses Husarion's own ROSbot packages, with the real robot's shape, wheels and sensor positions.
-- A crash costs nothing, and every student runs the same robot in the same world.
-
 .. figure:: /_static/images/l12/gz_patrol_overview.png
    :alt: Rendered view from the patrol world's fixed camera, high above the south side, looking north and down: a long hall along the bottom with four blue discs, a purple disc, a small orange cylinder, a green cylinder with a round head beside a red door panel, and a brown box against the south wall; two rooms above, joined to the hall by an open doorway on the left and the red door on the right; the small ROSbot near the left end of the hall.
    :align: center
