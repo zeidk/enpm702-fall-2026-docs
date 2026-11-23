@@ -1543,33 +1543,6 @@ Pick a command to see what it prints for the running node.
    :file: widgets/param-list.html
 
 
-Setting a Value the Node Already Read
-"""""""""""""""""""""""""""""""""""""
-
-The node was started with ``kp_angular`` 0.5. During its first turn, the gain is set to 1.5:
-
-.. code-block:: bash
-
-   ros2 param set /heading_controller_node kp_angular 1.5
-
-.. code-block:: text
-
-   Set parameter successful
-
-``ros2 param get`` then answers 1.5. The node's log, after the set:
-
-.. code-block:: text
-
-   [...]: error 0.068624 rad, command 0.034312 rad/s
-   [...]: error 0.0432666 rad, command 0.0216333 rad/s
-
-0.5 × 0.0686 = 0.0343 rad/s: the node still uses 0.5.
-
-.. admonition:: Conclusion
-   :class: important
-
-   ``ros2 param set`` changes the stored value. The node read ``kp_angular`` once, in its constructor, so its commands do not change.
-
 .. dropdown:: More detail: Command-line tools: dump
    :class-container: more-detail
    :icon: info
@@ -1596,11 +1569,6 @@ The node was started with ``kp_angular`` 0.5. During its first turn, the gain is
           yaw_tolerance_rad: 0.02
 
    The output is a parameter file: the next subsection loads files like it. ``[...]`` cuts the lines ROS 2 adds to every node.
-
-Step through the measured log to see that the set changes the stored value only.
-
-.. raw:: html
-   :file: widgets/set-no-effect.html
 
 
 Set a Parameter
@@ -1817,6 +1785,39 @@ React to a Change
 ^^^^^^^^^^^^^^^^^
 
 A node can run a callback when someone sets a parameter. The callback accepts or rejects the new value. The listings of this subsection are from stage 4 (commit ``94d4d64``). Stage 5 does not change these files.
+
+Setting a Value the Node Already Read
+"""""""""""""""""""""""""""""""""""""
+
+The node was started with ``kp_angular`` 0.5. During its first turn, the gain is set to 1.5:
+
+.. code-block:: bash
+
+   ros2 param set /heading_controller_node kp_angular 1.5
+
+.. code-block:: text
+
+   Set parameter successful
+
+``ros2 param get`` then answers 1.5. The node's log, after the set:
+
+.. code-block:: text
+
+   [...]: error 0.068624 rad, command 0.034312 rad/s
+   [...]: error 0.0432666 rad, command 0.0216333 rad/s
+
+0.5 × 0.0686 = 0.0343 rad/s: the node still uses 0.5.
+
+.. admonition:: Conclusion
+   :class: important
+
+   ``ros2 param set`` changes the stored value. The node read ``kp_angular`` once, in its constructor, so its commands do not change. So the node needs a callback that runs when a value is set.
+
+Step through the measured log to see that the set changes the stored value only.
+
+.. raw:: html
+   :file: widgets/set-no-effect.html
+
 
 Register the Callback
 """""""""""""""""""""

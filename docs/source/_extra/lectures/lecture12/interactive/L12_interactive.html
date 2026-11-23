@@ -75,6 +75,7 @@ body.zoomed .plate.active{cursor:default}
 body.fs #viewport{background-image:none;background-color:var(--plate)}
 body.fs .plate:not(.active),body.fs .card:not(.active),body.fs .sechead,body.fs .node,body.fs .edge{visibility:hidden}
 body.fs .secblock{background:none;border-color:transparent;box-shadow:none}
+body.fs .rowrng{visibility:hidden}   /* the section view's slide ranges, beside the frame: in the side bands of a wide screen */
 body.fs .plate.active,body.fs .card.active{border-left-color:transparent;border-right-color:transparent;border-bottom-color:transparent;border-radius:0;box-shadow:none}
 body.fs .plate.active:not(.s1):not(.s2):not(.s3):not(.s4):not(.s5):not(.s6):not(.s7),body.fs .card.active{border-top-color:transparent}   /* the section bar stays */
 body.panning,body.panning *{cursor:grabbing !important;user-select:none}
@@ -372,6 +373,7 @@ table.t.nowrap td, table.t.nowrap th{white-space:nowrap}
    dims it, and a left-to-right fade turns the banner's white right end into the plate's colour (in dark mode it showed as a grey
    patch). The opener keeps the band's room free at the bottom. */
 .plate.frame:has(> .opener:not(.sub) > .num){background:linear-gradient(to top,var(--banveil) 0,var(--banveil) 150px,var(--plate) 300px),linear-gradient(to right,transparent 30%,var(--plate) 92%),url(L12_interactive_assets/cube_banner_blue.jpg) center bottom/100% auto no-repeat,var(--plate)}
+.plate.frame.fswide:has(> .opener:not(.sub) > .num){background-position:0 0,0 0,center 320px,0 0}   /* a frame widened in full screen (fsWide): the banner spans the new width, so it grows with it; its top stays where it was (702 - 1248 x 587 / 1920 = 320 px), and its bottom is cut off */
 .frame:not(.titlepage) > .opener:not(.sub):has(> .num){padding-bottom:150px}
 :root{--nx:#3730A3; --nx-a:#F1F0FD; --nx-b:#D9D6F7; --nx-card:#FFFFFF; --nx-edge:#8D87D6}
 :root[data-theme="dark"]{--nx:#C4C0FF; --nx-a:#2B2A63; --nx-b:#1F2047; --nx-card:#15163A; --nx-edge:#6F6AC4}
@@ -1087,9 +1089,9 @@ source install/setup.bash</pre></div>
 .fig.tilebg{background:#CAC8C1 !important}
 /* the five bridges: a row of tabs, then the picked bridge's details. The panels share one grid cell and the hidden
    ones keep their place, so the box is always as tall as the tallest panel and nothing moves on a click */
-#br .br-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 6px}
+#br .br-list{display:grid;grid-template-columns:repeat(5,minmax(max-content,1fr));gap:8px;margin:0 0 6px}
 #br .br-card{border:2px solid var(--plate-edge);border-radius:12px;padding:6px 10px;background:var(--card);cursor:pointer;text-align:center}
-#br .br-card code{font-size:21px}
+#br .br-card code{font-size:21px;white-space:nowrap}   /* each node name on one line (user, 2026-11-23); the columns widen to fit it */
 #br .br-card span{display:block;font-size:21px;color:var(--ink)}
 #br .br-card:hover{background:var(--hover)}
 #br .br-card.on{border-color:var(--live);background:var(--hl)}
@@ -1278,10 +1280,10 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <div id="br">
     <div class="br-list">
       <div class="br-card on" data-br="0" role="button" tabindex="0" aria-pressed="true"><code class="nd">gz_bridge</code><span>the clock</span></div>
-      <div class="br-card" data-br="1" role="button" tabindex="0" aria-pressed="false"><code class="nd wrap">rosbot_<wbr>gz_bridge</code><span>velocity commands</span></div>
-      <div class="br-card" data-br="2" role="button" tabindex="0" aria-pressed="false"><code class="nd wrap">LDR02_<wbr>gz_bridge</code><span>the lidar</span></div>
-      <div class="br-card" data-br="3" role="button" tabindex="0" aria-pressed="false"><code class="nd wrap">oak_CAM11_<wbr>gz_bridge</code><span>the camera</span></div>
-      <div class="br-card" data-br="4" role="button" tabindex="0" aria-pressed="false"><code class="nd wrap">patrol_cam_<wbr>bridge</code><span>world cameras</span></div>
+      <div class="br-card" data-br="1" role="button" tabindex="0" aria-pressed="false"><code class="nd">rosbot_gz_bridge</code><span>velocity commands</span></div>
+      <div class="br-card" data-br="2" role="button" tabindex="0" aria-pressed="false"><code class="nd">LDR02_gz_bridge</code><span>the lidar</span></div>
+      <div class="br-card" data-br="3" role="button" tabindex="0" aria-pressed="false"><code class="nd">oak_CAM11_gz_bridge</code><span>the camera</span></div>
+      <div class="br-card" data-br="4" role="button" tabindex="0" aria-pressed="false"><code class="nd">patrol_cam_bridge</code><span>world cameras</span></div>
     </div>
     <div class="br-detail">
       <div class="br-panel" data-br="0">
@@ -1698,6 +1700,61 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 #rg .rg-view{position:relative;min-height:0;border-top:1px solid var(--plate-edge);touch-action:none;cursor:grab}
 #rg .rg-view:active{cursor:grabbing}
 #rg canvas{display:block;width:100%;height:100%}
+/* the rqt window (user, 2026-11-23: "show rqt with multiple plugins loaded (rqt_graph, rqt_image_view, rqt_topic,
+   rqt_reconfigure, rqt_console, rqt_tf_tree)"): six docks as rqt shows them, each plugin's title as rqt writes it; a click
+   on a title bar enlarges that dock to the window. The data: figures/gz_capture/rqt_window_js.py (L12_interactive_assets/rqt_window.js) */
+#rq{display:grid;grid-template-rows:32px minmax(0,1fr);height:540px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--chip);color:var(--ink);font-size:20px;line-height:1.2}
+#rq .rq-menu{display:flex;gap:22px;align-items:center;padding:0 12px;border-bottom:1px solid var(--plate-edge);user-select:none}
+#rq .rq-docks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:4px;padding:4px;min-height:0}
+#rq .rq-dock{display:grid;grid-template-rows:30px minmax(0,1fr);min-width:0;min-height:0;border:1px solid var(--plate-edge);background:var(--card)}
+#rq.mx .rq-dock:not(.max){display:none}
+#rq .rq-dock.max{grid-column:1 / -1;grid-row:1 / -1}
+#rq .rq-bar{display:flex;align-items:center;gap:10px;padding:0 6px 0 8px;background:var(--chip);border-bottom:1px solid var(--plate-edge);cursor:pointer;white-space:nowrap;overflow:hidden;user-select:none}
+#rq .rq-bar:hover{background:var(--hover)} #rq .rq-bar:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
+#rq .rq-bar b{flex:none} #rq .rq-pk{color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis}
+#rq .rq-mx{margin-left:auto;width:16px;height:16px;border:2px solid var(--muted);border-radius:2px;flex:none}
+#rq .rq-dock.max .rq-mx{width:14px;height:10px;box-shadow:3px -3px 0 -1px var(--card),3px -3px 0 1px var(--muted)}
+#rq .rq-body{min-width:0;min-height:0;overflow:hidden;position:relative}
+#rq .rq-scroll{overflow:auto;overscroll-behavior:contain}
+#rq:not(.mx) .rq-wide{display:none}
+#rq .rq-tool{display:flex;align-items:center;gap:10px;height:32px;padding:0 6px;border-bottom:1px solid var(--plate-edge);white-space:nowrap;overflow:hidden}
+#rq select,#rq input[type=text]{font:inherit;font-size:20px;height:26px;background:var(--plate);color:var(--ink);border:1px solid var(--plate-edge);border-radius:4px}
+#rq input[type=checkbox]{width:18px;height:18px;margin:0;vertical-align:-3px;accent-color:var(--live)}
+#rq .rq-t{border-collapse:collapse;width:100%;font-size:20px}
+#rq .rq-t th{position:sticky;top:0;background:var(--chip);text-align:left;font-weight:600;padding:2px 8px;border-bottom:1px solid var(--plate-edge);white-space:nowrap}
+#rq .rq-t td{padding:1px 8px;white-space:nowrap;border-bottom:1px solid var(--zebra)}
+#rq .rq-t tr:nth-child(even) td{background:var(--zebra)}
+#rq #rq-topics td:nth-child(n+3){text-align:right;font-variant-numeric:tabular-nums}
+#rq:not(.mx) #rq-topics td:first-child{max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis}
+#rq #rq-topics tr.off td{color:var(--muted)}
+#rq.mx #rq-topics td:nth-child(2){max-width:420px;overflow:hidden;text-overflow:ellipsis}
+#rq #rq-log td:nth-child(2){max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis}
+#rq.mx #rq-log td:nth-child(2){max-width:560px}
+#rq .sev-Warn{color:#8A5A00} #rq .sev-Error,#rq .sev-Fatal{color:#B3261E}
+:root[data-theme="dark"] #rq .sev-Warn{color:#F2C86B} :root[data-theme="dark"] #rq .sev-Error,:root[data-theme="dark"] #rq .sev-Fatal{color:#F2786F}
+#rq .rq-con{display:grid;grid-template-rows:32px minmax(0,1fr)}
+#rq.mx #rq-sev{display:flex;gap:6px} #rq #rq-sev button{font-size:18px;padding:0 8px;height:26px;border-width:1px;border-radius:5px}
+#rq #rq-sev button[aria-pressed="true"]{text-decoration:line-through;opacity:.7}
+#rq .rq-img{display:grid;grid-template-rows:32px minmax(0,1fr)}
+#rq .rq-imgbox{min-height:0;display:flex;align-items:center;justify-content:center;background:#000}
+#rq .rq-imgbox img{max-width:100%;max-height:100%;width:auto;height:auto;display:block}
+#rq .rq-param{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}   /* one row the height of the dock, so each list scrolls inside it */
+#rq .rq-pvals,#rq .rq-nodes{min-height:0}
+#rq.mx .rq-param{grid-template-columns:380px minmax(0,1fr)}
+#rq .rq-nodes{border-right:1px solid var(--plate-edge);padding:6px;overflow:auto}
+#rq .rq-filter{display:flex;gap:8px;align-items:center;white-space:nowrap} #rq .rq-filter input{flex:1;min-width:0}
+#rq #rq-plist{list-style:none;margin:6px 0 0;padding:0} #rq #rq-plist li{padding:1px 8px;border-radius:4px;cursor:pointer;white-space:nowrap}
+#rq #rq-plist li:hover{background:var(--hover)} #rq #rq-plist li.on{background:var(--hl)}
+#rq .rq-pnode{font-weight:600;padding:4px 8px;border-bottom:1px solid var(--plate-edge);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rq #rq-params td:first-child{color:var(--slate)} #rq #rq-params td:last-child{width:100%}
+#rq:not(.mx) #rq-params td:first-child{max-width:210px;overflow:hidden;text-overflow:ellipsis} #rq:not(.mx) #rq-params td:last-child{width:auto;max-width:150px}
+#rq #rq-params input[type=text]{width:100%;max-width:340px;height:24px;font-size:20px}
+#rq .rq-none{padding:8px;color:var(--muted);white-space:normal}
+#rq .rq-tfv{background:#fff;touch-action:none;cursor:grab} #rq .rq-tfv:active{cursor:grabbing}
+:root[data-theme="dark"] #rq .rq-tfv{background:#1b2028}
+#rq #rq-tfcv{display:block;width:100%;height:100%}
+#rq #rg{height:100%;border:0;border-radius:0}
+#rq:not(.mx) #rg{grid-template-rows:minmax(0,1fr)} #rq:not(.mx) #rg .rg-row{display:none}
 </style>
 <style>
 /* the Foxglove slide: a working copy of the Foxglove app (user, 2026-11-21: "do something similar with foxglove like
@@ -1772,7 +1829,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
     <p style="margin:4px 0 0">The ROSbot's RViz configuration: fixed frame <code class="fr">odom</code>, the robot model, its frames (TF), the lidar (<code class="tp">/scan_filtered</code>) and the camera image.</p></div>
   <div class="box" style="margin:6px 0;padding:4px 16px 6px"><span class="bt">By hand, in a second terminal</span>
 <pre class="code" data-lang="bash" style="font-size:23px">ros2 run rviz2 rviz2 --ros-args -p use_sim_time:=true</pre>
-    <p style="margin:4px 0 0">Set <b>Fixed Frame</b> to <code class="fr">odom</code>, then <b>Add</b> the displays: RobotModel (topic <code class="tp">/robot_description</code>), TF and LaserScan (<code class="tp">/scan_filtered</code>). <code class="pm">use_sim_time</code> gives RViz Gazebo's clock (<span class="go" data-go="p60">slide 102</span>).</p></div>
+    <p style="margin:4px 0 0">Set <b>Fixed Frame</b> to <code class="fr">odom</code>, then <b>Add</b> the displays: RobotModel (topic <code class="tp">/robot_description</code>), TF and LaserScan (<code class="tp">/scan_filtered</code>). <code class="pm">use_sim_time</code> gives RViz Gazebo's clock (<span class="go" data-go="p59">slide 101</span>).</p></div>
   <p class="small" style="margin:4px 0 0">RViz's source and docs: <a href="https://github.com/ros2/rviz" target="_blank" rel="noopener">github.com/ros2/rviz</a>.</p>
 </div></div></section>
 
@@ -1846,17 +1903,41 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 </div></div></section>
 
 <section class="plate frame s5" data-scene="visualization-7" data-name="Slide 47 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 47 of 134. Go to a slide">Slide 47 / 134</span></div>
-  <h2>rqt_graph with the course simulation</h2><div class="fit"><div class="fitin">
+  <h2>rqt with six plugins on the course simulation</h2><div class="fit"><div class="fitin">
   <script src="L12_interactive_assets/rqt_graph.js"></script>
-  <div id="rg" class="nolive" aria-label="A working copy of rqt_graph on the course simulation. Top: the view menu (Nodes only, Nodes/Topics active, Nodes/Topics all), the Group and Hide check boxes. Below: the graph, ovals for nodes and boxes for topics, an arrow from each publisher to each subscriber; the wheel zooms and a drag moves it.">
-    <div class="rg-row"><button id="rg-refresh" title="Refresh" aria-label="Refresh">&#10227;</button><select id="rg-mode" aria-label="What the graph shows"></select>
-      <input type="text" disabled aria-label="Node filter (not in this copy)"><input type="text" disabled aria-label="Topic filter (not in this copy)"></div>
-    <div class="rg-row"><span>Group:</span><select id="rg-level" aria-label="Namespace group level"></select><span>Namespaces</span><span id="rg-group"></span><button id="rg-fitnow" title="Fit in view" aria-label="Fit in view">&#10530;</button></div>
-    <div class="rg-row"><span>Hide:</span><span id="rg-hide"></span></div>
-    <div class="rg-view" id="rg-view"><canvas id="rg-cv"></canvas></div>
+  <script src="L12_interactive_assets/rqt_window.js"></script>
+  <div id="rq" class="nolive" aria-label="A working copy of one rqt window with six plugins docked in it, on the running course simulation. Top row: Node Graph (rqt_graph), Image View (rqt_image_view), Topic Monitor (rqt_topic). Bottom row: Parameter Reconfigure (rqt_reconfigure), Console (rqt_console), TF Tree (rqt_tf_tree). A click on a plugin's title bar enlarges it to the whole window; a second click shows all six again.">
+    <div class="rq-menu"><span>File</span><span>Plugins</span><span>Running</span><span>Perspectives</span><span>Help</span></div>
+    <div class="rq-docks">
+      <div class="rq-dock" data-k="graph"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Node Graph</b><span class="rq-pk">rqt_graph</span><span class="rq-mx" aria-hidden="true"></span></div>
+    <div class="rq-body">
+      <div id="rg" aria-label="A working copy of rqt_graph on the course simulation. Top: the view menu (Nodes only, Nodes/Topics active, Nodes/Topics all), the Group and Hide check boxes. Below: the graph, ovals for nodes and boxes for topics, an arrow from each publisher to each subscriber; the wheel zooms and a drag moves it.">
+        <div class="rg-row"><button id="rg-refresh" title="Refresh" aria-label="Refresh">&#10227;</button><select id="rg-mode" aria-label="What the graph shows"></select>
+          <input type="text" disabled aria-label="Node filter (not in this copy)"><input type="text" disabled aria-label="Topic filter (not in this copy)"></div>
+        <div class="rg-row"><span>Group:</span><select id="rg-level" aria-label="Namespace group level"></select><span>Namespaces</span><span id="rg-group"></span><button id="rg-fitnow" title="Fit in view" aria-label="Fit in view">&#10530;</button></div>
+        <div class="rg-row"><span>Hide:</span><span id="rg-hide"></span></div>
+        <div class="rg-view" id="rg-view"><canvas id="rg-cv"></canvas></div>
+      </div>
+    </div></div>
+      <div class="rq-dock" data-k="image"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Image View</b><span class="rq-pk">rqt_image_view</span><span class="rq-mx" aria-hidden="true"></span></div>
+        <div class="rq-body rq-img"><div class="rq-tool"><select aria-label="Image topic"><option>/oak/rgb/color</option></select></div>
+          <div class="rq-imgbox"><img src="L12_interactive_assets/rqt_camera.png" alt="The ROSbot's camera image: a gray floor between gray walls, a green post with a ball on top, a red and an orange block beside it, a brown box on the right, and flat purple and blue discs on the floor." width="1280" height="720"></div></div></div>
+      <div class="rq-dock" data-k="topic"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Topic Monitor</b><span class="rq-pk">rqt_topic</span><span class="rq-mx" aria-hidden="true"></span></div>
+        <div class="rq-body rq-scroll"><table class="rq-t" id="rq-topics"><thead><tr><th>Topic</th><th class="rq-wide">Type</th><th>Bandwidth</th><th>Hz</th><th class="rq-wide">Value</th></tr></thead><tbody></tbody></table></div></div>
+      <div class="rq-dock" data-k="param"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Parameter Reconfigure</b><span class="rq-pk">rqt_reconfigure</span><span class="rq-mx" aria-hidden="true"></span></div>
+        <div class="rq-body rq-param"><div class="rq-nodes rq-wide"><label class="rq-filter">Filter key: <input type="text" id="rq-pfilter" aria-label="Filter key"></label><ul id="rq-plist"></ul></div>
+          <div class="rq-scroll rq-pvals"><div class="rq-pnode" id="rq-pnode"></div><table class="rq-t" id="rq-params"><tbody></tbody></table></div></div></div>
+      <div class="rq-dock" data-k="console"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Console</b><span class="rq-pk">rqt_console</span><span class="rq-mx" aria-hidden="true"></span></div>
+        <div class="rq-body rq-con"><div class="rq-tool"><span id="rq-ccount"></span><span class="rq-wide rq-excl">Exclude:</span><span class="rq-wide" id="rq-sev"></span></div>
+          <div class="rq-scroll"><table class="rq-t" id="rq-log"><thead><tr><th>#</th><th>Message</th><th>Severity</th><th class="rq-wide">Node</th><th class="rq-wide">Stamp</th></tr></thead><tbody></tbody></table></div></div></div>
+      <div class="rq-dock" data-k="tf"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>TF Tree</b><span class="rq-pk">rqt_tf_tree</span><span class="rq-mx" aria-hidden="true"></span></div>
+        <div class="rq-body rq-tfv" id="rq-tfv"><canvas id="rq-tfcv"></canvas></div></div>
+    </div>
   </div>
-  <p class="small" style="margin:4px 0 0">Ovals: nodes. Boxes: topics. Arrows: publisher to subscriber. Wheel: zoom. Drag: move. Hover a node: its links.</p>
+  <p class="small" style="margin:4px 0 0">Each dock is one plugin. Click a title bar to enlarge it. Graph and tree: the wheel zooms, a drag moves.</p>
 </div></div></section>
+
+
 
 
 
@@ -2848,7 +2929,7 @@ QoS profile:
       <ul class="pl">
         <li><code class="nd">ekf</code> publishes the robot's pose, computed from the wheels and the IMU.</li>
         <li><code class="nd">heading_controller_node</code>, which you write in this section, reads the pose on <code class="tp">/odometry/filtered</code> and sends a <code class="tp">/cmd_vel</code> command that turns the ROSbot to a heading.</li>
-        <li><code class="nd wrap">differential_<wbr>drive_<wbr>controller</code> turns each <code class="tp">/cmd_vel</code> command into wheel speeds.</li>
+        <li><code class="nd">differential_drive_controller</code> turns each <code class="tp">/cmd_vel</code> command into wheel speeds.</li>
         <li>The graph shows only the nodes your node exchanges data with.</li>
       </ul>
     </div>
@@ -3856,24 +3937,7 @@ yaw_tolerance_rad_ =
   <p style="margin:6px 0 0">The node declared four parameters (marked). ROS&nbsp;2 adds the others to every node, among them <code class="pm">use_sim_time</code>.</p>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p56" data-name="Slide 98 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Declare and Read</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 98 of 134. Go to a slide">Slide 98 / 134</span></div>
-  <h2>Setting a value the node already read</h2><div class="fit"><div class="fitin">
-  <p class="goal">The node was started with <code class="pm">kp_angular</code> 0.5. During its first turn, the gain is set to 1.5. Step through the measured log. <span class="try">try it</span></p>
-  <div class="two" style="grid-template-columns:max-content 1fr;gap:0 22px;align-items:stretch">
-<pre class="code" data-lang="text" id="q47-log" style="margin:0"></pre>
-    <div class="stk">
-      <div class="q-val"><b>Stored parameter <code class="pm" style="font-size:20px">kp_angular</code></b><span id="q47-p"></span></div>
-      <div class="q-val"><b>Data member <code style="font-size:20px">kp_angular_</code>, read once</b><span id="q47-m"></span></div>
-      <div class="q-val"><b>Last log line: command / error</b><span id="q47-r"></span></div>
-    </div>
-    <div class="row" style="margin:2px 0 0"><button id="q47-back">Back</button><button id="q47-next">Next line</button><button id="q47-set">Run to the set</button><span class="small" id="q47-t"></span></div>
-    <div style="font-size:22px" id="q47-w"></div>
-  </div>
-<pre class="code" data-lang="cpp" data-first="45" style="margin:4px 0 2px">kp_angular_ = get_parameter("kp_angular").as_double();  // run once</pre>
-  <div class="box concl" style="margin-top:4px"><span class="bt">The set changes the stored value only</span><span class="cmd">ros2 param set</span> changes the stored value. The node read <code class="pm">kp_angular</code> once, in its constructor, so its commands do not change.</div>
-</div></div></section>
-
-<section class="plate frame s3" data-scene="p57" data-name="Slide 99 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 99 of 134. Go to a slide">Slide 99 / 134</span></div>
+<section class="plate frame s3" data-scene="p56" data-name="Slide 98 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 98 of 134. Go to a slide">Slide 98 / 134</span></div>
   <div class="opener sub">
     <div class="num s3">Section 6 · Part 2</div>
     <h1>Set a Parameter</h1>
@@ -3882,7 +3946,7 @@ yaw_tolerance_rad_ =
   </div>
 </section>
 
-<section class="plate frame s3" data-scene="p58" data-name="Slide 100 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 100 of 134. Go to a slide">Slide 100 / 134</span></div>
+<section class="plate frame s3" data-scene="p57" data-name="Slide 99 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 99 of 134. Go to a slide">Slide 99 / 134</span></div>
   <h2>On the command line, at start</h2><div class="fit"><div class="fitin">
   <p class="goal"><code>--ros-args</code> starts the arguments for ROS&nbsp;2, and each <code>-p name:=value</code> sets one parameter before the constructor reads it. <span class="try">try it</span></p>
   <div class="row"><span class="lbl"><code>kp_angular:=</code></span><button id="q49-b0" class="on">0.5</button><button id="q49-b1">1.0</button><button id="q49-b2">1</button><span class="small" id="q49-s"></span></div>
@@ -3891,7 +3955,7 @@ yaw_tolerance_rad_ =
   <div class="note" id="q49-n"></div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p59" data-name="Slide 101 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 101 of 134. Go to a slide">Slide 101 / 134</span></div>
+<section class="plate frame s3" data-scene="p58" data-name="Slide 100 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 100 of 134. Go to a slide">Slide 100 / 134</span></div>
   <h2>From a YAML file</h2><div class="fit"><div class="fitin">
   <p class="goal">A parameter file sets many parameters at once: <span class="file">config/controllers.yaml</span>. Pick a node. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:22px;align-items:start">
@@ -3919,7 +3983,7 @@ heading_controller_node:
   --ros-args --params-file config/controllers.yaml</pre>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p60" data-name="Slide 102 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 102 of 134. Go to a slide">Slide 102 / 134</span></div>
+<section class="plate frame s3" data-scene="p59" data-name="Slide 101 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 101 of 134. Go to a slide">Slide 101 / 134</span></div>
   <h2>use_sim_time for a node that runs with Gazebo</h2><div class="fit"><div class="fitin">
   <p class="goal">Gazebo publishes its own time on <code class="tp">/clock</code> (<span class="go" data-go="p28">slide 35</span>). With <code class="pm">use_sim_time</code> true, a node's clock follows it instead of the computer's clock: <code>now()</code>, and so the stamp of every <code class="ty wrap">geometry_msgs/msg/<wbr>TwistStamped</code>, gives the simulation's time. <span class="try">try it</span></p>
   <p style="margin:0 0 4px">Every node has <code class="pm">use_sim_time</code>, false unless you set it. How was the node started?</p>
@@ -3929,7 +3993,7 @@ heading_controller_node:
   <div class="box concl"><span class="bt">Set it for every node that runs with Gazebo</span>Set <code class="pm">use_sim_time</code> to true for every node you run with Gazebo. The <code>/**</code> key of a parameter file does it for all of them.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p61" data-name="Slide 103 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 103 of 134. Go to a slide">Slide 103 / 134</span></div>
+<section class="plate frame s3" data-scene="p60" data-name="Slide 102 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 102 of 134. Go to a slide">Slide 102 / 134</span></div>
   <h2>From a launch file: a YAML file named by an argument</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 12 to 25 of <span class="file">launch/heading_launch.py</span>. How was it started? <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:max-content 1fr;gap:12px;align-items:start">
@@ -3958,7 +4022,7 @@ heading_controller = Node(
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p62" data-name="Slide 104 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 104 of 134. Go to a slide">Slide 104 / 134</span></div>
+<section class="plate frame s3" data-scene="p61" data-name="Slide 103 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 103 of 134. Go to a slide">Slide 103 / 134</span></div>
   <h2>Install and run the launch file</h2><div class="fit"><div class="fitin">
   <p class="goal">Lines 59 and 60 of <span class="file">CMakeLists.txt</span> install the <span class="file">launch</span> and <span class="file">config</span> folders, where <span class="cmd">ros2 launch</span> and <code>FindPackageShare</code> look:</p>
 <pre class="code" data-lang="cmake" data-first="59">install(DIRECTORY launch config
@@ -3969,11 +4033,11 @@ ros2 launch l12_rosbot heading_launch.py \
   params_file:=install/l12_rosbot/share/l12_rosbot/config/low_gain.yaml</pre>
   <ul class="pl">
     <li><span class="file">low_gain.yaml</span> is <span class="file">controllers.yaml</span> without the distance controller, and with <code class="pm">kp_angular</code> 0.5 instead of 1.5.</li>
-    <li>The next slide (<span class="go" data-go="p63">slide 105</span>) compares three gains.</li>
+    <li>The next slide (<span class="go" data-go="p62">slide 104</span>) compares three gains.</li>
   </ul>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p63" data-name="Slide 105 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 105 of 134. Go to a slide">Slide 105 / 134</span></div>
+<section class="plate frame s3" data-scene="p62" data-name="Slide 104 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>Set a Parameter</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 104 of 134. Go to a slide">Slide 104 / 134</span></div>
   <h2>Three gains, three separate runs</h2><div class="fit"><div class="fitin">
   <p class="goal">Each turn is 90°: its time is the gap between two "reached" lines of the log. Pick a run. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.05fr;gap:20px;align-items:start">
@@ -3992,7 +4056,7 @@ ros2 launch l12_rosbot heading_launch.py \
   <div class="box concl" style="margin:6px 0 0">A gain of 4.0 kept the command at the limit longer, yet the turn was no faster: 2.70&nbsp;s with 1.5 and with 4.0.</div>
 </div></div></section>
 
-<section class="plate frame s3" data-scene="p64" data-name="Slide 106 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 106 of 134. Go to a slide">Slide 106 / 134</span></div>
+<section class="plate frame s3" data-scene="p63" data-name="Slide 105 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 105 of 134. Go to a slide">Slide 105 / 134</span></div>
   <div class="opener sub">
     <div class="num s3">Section 6 · Part 3</div>
     <h1>React to a Change</h1>
@@ -4001,6 +4065,23 @@ ros2 launch l12_rosbot heading_launch.py \
       <li>The callback accepts or rejects the new value.</li></ul></div>
   </div>
 </section>
+
+<section class="plate frame s3" data-scene="p64" data-name="Slide 106 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>React to a Change</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 106 of 134. Go to a slide">Slide 106 / 134</span></div>
+  <h2>Setting a value the node already read</h2><div class="fit"><div class="fitin">
+  <p class="goal">The node was started with <code class="pm">kp_angular</code> 0.5. During its first turn, the gain is set to 1.5. Step through the measured log. <span class="try">try it</span></p>
+  <div class="two" style="grid-template-columns:max-content 1fr;gap:0 22px;align-items:stretch">
+<pre class="code" data-lang="text" id="q47-log" style="margin:0"></pre>
+    <div class="stk">
+      <div class="q-val"><b>Stored parameter <code class="pm" style="font-size:20px">kp_angular</code></b><span id="q47-p"></span></div>
+      <div class="q-val"><b>Data member <code style="font-size:20px">kp_angular_</code>, read once</b><span id="q47-m"></span></div>
+      <div class="q-val"><b>Last log line: command / error</b><span id="q47-r"></span></div>
+    </div>
+    <div class="row" style="margin:2px 0 0"><button id="q47-back">Back</button><button id="q47-next">Next line</button><button id="q47-set">Run to the set</button><span class="small" id="q47-t"></span></div>
+    <div style="font-size:22px" id="q47-w"></div>
+  </div>
+<pre class="code" data-lang="cpp" data-first="45" style="margin:4px 0 2px">kp_angular_ = get_parameter("kp_angular").as_double();  // run once</pre>
+  <div class="box concl" style="margin-top:4px"><span class="bt">The set changes the stored value only</span><span class="cmd">ros2 param set</span> changes the stored value. The node read <code class="pm">kp_angular</code> once, in its constructor, so its commands do not change. So the node needs a callback that runs when a value is set.</div>
+</div></div></section>
 
 <section class="plate frame s3" data-scene="p65" data-name="Slide 107 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>React to a Change</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 107 of 134. Go to a slide">Slide 107 / 134</span></div>
   <h2>Register the callback</h2><div class="fit"><div class="fitin">
@@ -4608,6 +4689,19 @@ function loadImgs(el){
   (el.tagName === "IMG" ? [el] : [].slice.call(el.querySelectorAll("img[data-src]"))).forEach(function(i){
     if (i.dataset.src){ i.src = i.dataset.src; i.removeAttribute("data-src"); } });
 }
+/* fsWide(frame, e): the frame gets e px more on each side, as margin -e and padding +e, so its grid cell, its content box and
+   everything laid out in it stay put; the background, the top bar, the corner bolts and the slide-number line reach the
+   screen's edges. fsWide(null) undoes it. */
+var fsWideEl = null, FSK = ["width", "marginLeft", "marginRight", "paddingLeft", "paddingRight"];
+function fsWide(el, e){
+  if (fsWideEl){ var o = fsWideEl._fsOrig; FSK.forEach(function(k){ fsWideEl.style[k] = o[k]; }); fsWideEl.classList.remove("fswide"); fsWideEl = null; }
+  if (!el) return;
+  var cs = getComputedStyle(el), pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), w = el.offsetWidth;
+  el._fsOrig = {}; FSK.forEach(function(k){ el._fsOrig[k] = el.style[k]; });
+  el.style.width = (w + 2 * e) + "px"; el.style.marginLeft = el.style.marginRight = (-e) + "px";
+  el.style.paddingLeft = (pl + e) + "px"; el.style.paddingRight = (pr + e) + "px";
+  el.classList.add("fswide"); fsWideEl = el;
+}
 function go(scene){
   if (probing) return;   /* the load-time probe clicks inside frames that are not shown: a click there must not move the camera (plate click handler) */
   var prev = current, kind = kindOf(scene);
@@ -4616,9 +4710,14 @@ function go(scene){
   world.style.transitionDuration = "0ms";   /* an instant cut, never a fly or a pan */
   if (left){ leaving(left); if (window.deckUnpin) window.deckUnpin(); if (window.termUnpin) window.termUnpin(); }   /* a reference card does not follow the viewer to another slide */
   var full = kind === "card";
+  fsWide(null);
   var r = rectOf(scene), vw = window.innerWidth, vh = window.innerHeight - (full ? 0 : 70);
   /* full screen (F) on a slide: the slide fills the screen, edge to edge (user, 2026-11-20) */
   var fs = (!!document.fullscreenElement || isPhone()) && (full || kind === "plate");   /* a phone: the same edge-to-edge look */
+  /* a screen wider than 16:9 (user, 2026-11-23, an ultrawide: "have full screen mode actually use the full screen"): the height sets
+     the size, and the frame grows sideways to the screen's edges; its content keeps its width and place (fsWide) */
+  if (fs && byScene[scene].matches(".plate.frame")){   /* the cover (#title) keeps its 16:9 shape: its floor strip is a 16:9 drawing */
+     var e = Math.floor((vw * r.h / vh - r.w) / 2); if (e > 0){ fsWide(byScene[scene], e); r = rectOf(scene); } }
   var pad = fs ? 1 : kind === "map" ? 0.98 : kind === "card" ? 0.99 : 0.94;
   var s = Math.min(vw / r.w, vh / r.h) * pad;
   var tx = (vw - r.w * s) / 2 - r.x * s, ty = (vh - r.h * s) / 2 - r.y * s;
@@ -6736,6 +6835,111 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   reset();
   onReset(root, reset);   /* the first settings, view and zoom */
   onShow(root, function(){ fit(); draw(); });
+})();
+
+
+/* --- the rqt window: six plugins docked in one rqt window, on the data of the running simulation (window.RQW, written by
+   figures/gz_capture/rqt_window_js.py, 2026-11-23). The Node Graph dock holds the rqt_graph copy above. Topic Monitor: a
+   ticked topic shows the rate and bandwidth measured with ros2 topic hz and bw; only the measured topics can be ticked.
+   Console: the /rosout messages of the simulation's start (recorded for 150 s from just before the launch; the messages span 144 s), newest first. Parameter Reconfigure: the parameters of
+   differential_drive_controller (ros2 param dump), read-only in this copy. TF Tree: the frame tree as rqt_tf_tree lays it
+   out (its own dot generator). --- */
+(function(){
+  var root = document.getElementById("rq"); if (!root || !document.contains(root) || !window.RQW) return;   /* the docs give a stand-in for a missing id */
+  var D = RQW, docks = [].slice.call(root.querySelectorAll(".rq-dock"));
+  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;"}[c]; }); }
+  function keys(el){ el.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); el.click(); } }); }
+
+  /* a click on a title bar enlarges that dock to the whole window; a second click shows the six again */
+  function maxi(d){ docks.forEach(function(x){ var on = x === d; x.classList.toggle("max", on); x.querySelector(".rq-bar").setAttribute("aria-pressed", on ? "true" : "false"); });
+    root.classList.toggle("mx", !!d); }
+  docks.forEach(function(d){ var b = d.querySelector(".rq-bar"); keys(b);
+    b.addEventListener("click", function(){ maxi(d.classList.contains("max") ? null : d); }); });
+
+  /* Topic Monitor: rqt_topic's columns; a ticked topic shows its measured bandwidth and rate */
+  var START_ON = ["/clock", "/odometry/filtered", "/scan", "/oak/rgb/color"], checks = [], tb = document.querySelector("#rq-topics tbody");
+  D.topics.forEach(function(t){ var tr = document.createElement("tr"), td = document.createElement("td"), c = document.createElement("input");
+    c.type = "checkbox"; c.disabled = !t[4]; c.title = t[4] ? "Monitor this topic" : "Not measured in this copy"; c.setAttribute("aria-label", "Monitor " + t[0]);
+    td.appendChild(c); td.appendChild(document.createTextNode(" " + t[0])); tr.appendChild(td);
+    ["rq-wide", "", "", "rq-wide"].forEach(function(cl, i){ var x = document.createElement("td"); if (cl) x.className = cl; if (i === 0) x.textContent = t[1]; tr.appendChild(x); });
+    if (!t[4]) tr.className = "off";
+    function show(){ tr.children[2].textContent = c.checked ? t[3] : ""; tr.children[3].textContent = c.checked ? t[2] : ""; }
+    c.onchange = show; checks.push({c:c, t:t, show:show}); tb.appendChild(tr); });
+
+  /* Console: rqt_console's columns, newest first; a severity button hides that severity (rqt's "Exclude Messages ... with severities") */
+  var SEV = ["Debug", "Info", "Warn", "Error", "Fatal"], excl = {}, sevBtns = [], lb = document.querySelector("#rq-log tbody");
+  SEV.forEach(function(s){ var b = document.createElement("button"); b.textContent = s; b.title = "Exclude " + s + " messages"; b.setAttribute("aria-pressed", "false");
+    b.onclick = function(){ excl[s] = !excl[s]; b.setAttribute("aria-pressed", excl[s] ? "true" : "false"); fillLog(); };
+    sevBtns.push(b); document.getElementById("rq-sev").appendChild(b); });
+  function fillLog(){ var rows = [], n = 0;
+    D.log.forEach(function(r, i){ if (excl[r[1]]) return; n++;
+      rows.push('<tr><td>#' + (D.log.length - i) + '</td><td title="' + esc(r[3]) + '">' + esc(r[3]) + '</td><td class="sev-' + r[1] + '">' + r[1] +
+        '</td><td class="rq-wide">' + esc(r[2]) + '</td><td class="rq-wide">' + esc(r[0]) + '</td></tr>'); });
+    lb.innerHTML = rows.join(""); document.getElementById("rq-ccount").textContent = "Displaying " + n + " messages"; }
+
+  /* Parameter Reconfigure: the nodes it listed, and the parameters of differential_drive_controller */
+  var plist = document.getElementById("rq-plist"), pf = document.getElementById("rq-pfilter"), pt = document.querySelector("#rq-params tbody"),
+      pn = document.getElementById("rq-pnode"), SEL = "differential_drive_controller", sel = SEL;
+  function fillNodes(){ var f = pf.value.trim().toLowerCase(); plist.innerHTML = "";
+    D.reconfigure.forEach(function(n){ if (f && n.toLowerCase().indexOf(f) < 0) return;
+      var li = document.createElement("li"); li.textContent = n; li.tabIndex = 0; li.setAttribute("role", "button"); if (n === sel) li.className = "on";
+      li.onclick = function(){ sel = n; fillNodes(); fillParams(); }; keys(li); plist.appendChild(li); }); }
+  function fillParams(){ pn.textContent = "/" + sel;
+    if (sel !== SEL){ pt.innerHTML = '<tr><td class="rq-none" colspan="2">This copy holds the parameters of differential_drive_controller only.</td></tr>'; return; }
+    pt.innerHTML = D.params.map(function(p){ var v = p[1], w = v === "true" || v === "false"
+        ? '<input type="checkbox" disabled' + (v === "true" ? " checked" : "") + ' aria-label="' + esc(p[0]) + '">'
+        : '<input type="text" readonly value="' + esc(v) + '" aria-label="' + esc(p[0]) + '">';
+      return '<tr><td>' + esc(p[0]) + '</td><td>' + w + '</td></tr>'; }).join(""); }
+  pf.addEventListener("input", fillNodes);
+
+  /* TF Tree: rqt_tf_tree's layout, drawn in Graphviz points (y up) on a canvas (y down); wheel zooms at the cursor, drag moves */
+  var tv = document.getElementById("rq-tfv"), tc = document.getElementById("rq-tfcv"), tx = tc.getContext("2d"), T = D.tf, cam = {s:1, x:0, y:0};
+  function P(x, y){ return [cam.x + x * cam.s, cam.y + (T[0][3] - y) * cam.s]; }
+  function fit(){ var w = tv.clientWidth, h = tv.clientHeight; if (!w || !h) return; var bb = T[0], gw = bb[2] - bb[0], gh = bb[3] - bb[1];
+    cam.s = Math.min(w / (gw + 20), h / (gh + 20)); cam.x = (w - gw * cam.s) / 2 - bb[0] * cam.s; cam.y = (h - gh * cam.s) / 2; }
+  function text(lines, x, y, lh){ lines.forEach(function(l, k){ tx.fillText(l, x, y + (k - (lines.length - 1) / 2) * lh); }); }
+  function draw(){ var w = tv.clientWidth, h = tv.clientHeight; if (!w || !h) return; var r = (window.devicePixelRatio || 1) * (tv.getBoundingClientRect().width / w || 1);
+    if (tc.width !== Math.round(w * r) || tc.height !== Math.round(h * r)){ tc.width = Math.round(w * r); tc.height = Math.round(h * r); }
+    var dk = document.documentElement.getAttribute("data-theme") === "dark", ink = dk ? "#d8e0e8" : "#111111", bg = dk ? "#1b2028" : "#ffffff";
+    tx.setTransform(r, 0, 0, r, 0, 0); tx.fillStyle = bg; tx.fillRect(0, 0, w, h);
+    tx.strokeStyle = ink; tx.fillStyle = ink; tx.lineWidth = 1; tx.textAlign = "center"; tx.textBaseline = "middle"; tx.font = (14 * cam.s) + "px sans-serif";
+    T[2].forEach(function(e){ var f = e[3]; if (f.length < 4) return; tx.beginPath(); var p = P(f[0], f[1]); tx.moveTo(p[0], p[1]);
+      for (var k = 2; k + 5 < f.length + 0; k += 6){ var c1 = P(f[k], f[k + 1]), c2 = P(f[k + 2], f[k + 3]), q = P(f[k + 4], f[k + 5]); tx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], q[0], q[1]); }
+      tx.stroke();
+      if (e[2]){ var t = P(f[f.length - 2], f[f.length - 1]), hd = P(e[2][0], e[2][1]), ang = Math.atan2(hd[1] - t[1], hd[0] - t[0]), len = Math.hypot(hd[0] - t[0], hd[1] - t[1]);
+        tx.beginPath(); tx.moveTo(hd[0], hd[1]); tx.lineTo(hd[0] - len * Math.cos(ang - 0.35), hd[1] - len * Math.sin(ang - 0.35));
+        tx.lineTo(hd[0] - len * Math.cos(ang + 0.35), hd[1] - len * Math.sin(ang + 0.35)); tx.fill(); }
+      if (e[5]){ var c = P(e[5][0], e[5][1]); text(e[4].split("\n"), c[0], c[1], 16.8 * cam.s); } });
+    T[1].forEach(function(n){ var c = P(n[1], n[2]), ww = n[3] * cam.s, hh = n[4] * cam.s; tx.fillStyle = bg; tx.beginPath();
+      if (n[5]) tx.rect(c[0] - ww / 2, c[1] - hh / 2, ww, hh); else tx.ellipse(c[0], c[1], ww / 2, hh / 2, 0, 0, 2 * Math.PI);
+      tx.fill(); tx.stroke(); tx.fillStyle = ink; text(n[0].split("\n"), c[0], c[1], 16.8 * cam.s); }); }
+  function top(){ var w = tv.clientWidth, bb = T[0], r0 = T[1].filter(function(n){ return n[0] === "odom"; })[0] || [0, (bb[0] + bb[2]) / 2];
+    cam.s = 1; cam.x = w / 2 - r0[1]; cam.y = 10; }   /* scale 1: the 14 px labels of rqt_tf_tree, the root (odom) at the top */
+  function view(){ if (tv.closest(".rq-dock").classList.contains("max")) top(); else fit(); }   /* docked: the whole tree; enlarged: readable from the top */
+  function local(e){ var b = tv.getBoundingClientRect(), k = tv.clientWidth / b.width; return [(e.clientX - b.left) * k, (e.clientY - b.top) * k]; }
+  tv.addEventListener("wheel", function(e){ e.preventDefault(); e.stopPropagation(); var m = local(e), f = Math.exp(-e.deltaY * 0.0015);
+    f = Math.max(0.02, Math.min(10, cam.s * f)) / cam.s;   /* the zoom stays between 0.02 and 10 */
+    cam.x = m[0] - (m[0] - cam.x) * f; cam.y = m[1] - (m[1] - cam.y) * f; cam.s *= f; draw(); }, {passive:false});
+  var drag = null;
+  tv.addEventListener("pointerdown", function(e){ e.stopPropagation(); drag = {x:e.clientX, y:e.clientY, cx:cam.x, cy:cam.y}; tv.setPointerCapture(e.pointerId); });
+  tv.addEventListener("pointermove", function(e){ if (!drag) return; var k = tv.clientWidth / tv.getBoundingClientRect().width;
+    cam.x = drag.cx + (e.clientX - drag.x) * k; cam.y = drag.cy + (e.clientY - drag.y) * k; draw(); });
+  tv.addEventListener("pointerup", function(){ drag = null; }); tv.addEventListener("pointercancel", function(){ drag = null; });
+  new ResizeObserver(function(){ view(); draw(); }).observe(tv);
+  new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+
+  /* the deck's own click, drag and wheel stop at the window; lists inside it keep their own scrolling */
+  ["mousedown", "touchstart", "click", "contextmenu", "pointerdown", "wheel"].forEach(function(ev){ root.addEventListener(ev, function(e){ e.stopPropagation(); }, {passive:true}); });
+
+  function reset(){ maxi(null);
+    checks.forEach(function(k){ k.c.checked = START_ON.indexOf(k.t[0]) >= 0 && !!k.t[4]; k.show(); });
+    excl = {}; sevBtns.forEach(function(b){ b.setAttribute("aria-pressed", "false"); }); fillLog();
+    sel = SEL; pf.value = ""; fillNodes(); fillParams();
+    [].forEach.call(root.querySelectorAll(".rq-scroll, .rq-nodes"), function(x){ x.scrollTop = 0; x.scrollLeft = 0; });
+    view(); draw(); }
+  reset();
+  onReset(root, reset);   /* the six docks, the first ticks, every severity shown, the first node, the tree fitted */
+  onShow(root, function(){ view(); draw(); });
 })();
 
 
