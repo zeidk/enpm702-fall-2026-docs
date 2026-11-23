@@ -948,7 +948,7 @@ source install/setup.bash</pre></div>
 .posefig .axzl{stroke:#5B9BD5;stroke-width:3.5}   /* the z leader: the z blue, lighter so it shows on the dark body too */
 .posefig .yawarc{fill:none;stroke:var(--ink);stroke-width:3} .posefig .yawh{fill:var(--ink)}
 .posefig .lbl2{font:22px var(--sans);font-style:normal;fill:var(--ink)} .posefig .mono{font:20px var(--mono);font-style:normal;fill:var(--muted)}
-#qt-vals{font:25px var(--mono)} #qt-vals .vv{color:var(--livetext)}
+#qt-vals{font-size:25px;line-height:1.6} #qt-vals .vv{color:var(--livetext);font-family:var(--mono)}
 </style>
 
 <section class="plate frame s7" id="pose-def" data-scene="p6" data-name="Slide 4 · Pose and Orientation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose and Orientation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 4 of 135. Go to a slide">Slide 4 / 135</span></div>
@@ -5555,7 +5555,14 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     var g = document.createElementNS(NS, "g"); sv.appendChild(g); rosbotIcon(g, 0, 0, 90, -y);
     mk("line", {x1:0, y1:0, x2:(R - 16) * Math.cos(r), y2:-(R - 16) * Math.sin(r), stroke:"var(--plan)", "stroke-width":5, "stroke-linecap":"round"});
     var z = Math.sin(r / 2), w = Math.cos(r / 2), f = function(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); };
-    vals.innerHTML = "yaw = " + y + "° = <span class='vv'>" + f(r) + "</span> rad<br>x = 0, y = 0<br>z = sin(" + f(r / 2) + ") = <span class='vv'>" + f(z) + "</span><br>w = cos(" + f(r / 2) + ") = <span class='vv'>" + f(w) + "</span>"; }
+    set("qt-d", (y < 0 ? "−" + (-y) : y) + "°"); set("qt-r", f(r)); set("qt-h", f(r / 2)); set("qt-h2", f(r / 2)); set("qt-z", f(z)); set("qt-w", f(w)); }
+  function set(id, t){ document.getElementById(id).textContent = t; }
+  /* the formula in math mode, the live numbers in the orange spans (user, 2026-11-23: "slide 10 (box with numbers): use math mode") */
+  vals.innerHTML = '\\(\\text{yaw}\\) = <span class="vv" id="qt-d"></span> = <span class="vv" id="qt-r"></span> rad<br>' +
+    '\\(x = 0,\\ y = 0\\)<br>' +
+    '\\(z = \\sin\\frac{\\text{yaw}}{2}\\) = \\(\\sin\\)(<span class="vv" id="qt-h"></span>) = <span class="vv" id="qt-z"></span><br>' +
+    '\\(w = \\cos\\frac{\\text{yaw}}{2}\\) = \\(\\cos\\)(<span class="vv" id="qt-h2"></span>) = <span class="vv" id="qt-w"></span>';
+  mathIn(vals);
   sl.addEventListener("input", draw);
   var pre = document.getElementById("qt-pre");
   buttons(pre, [0, 90, 180, -90], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ sl.value = v; draw(); }, 90);
