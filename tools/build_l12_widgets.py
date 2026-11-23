@@ -567,7 +567,7 @@ AGAIN = {"error": "tc-svg", "law": "pc-svg"}
 
 WORDING = [
     ("launch-args", ", the same form as <code>with_dispatcher:=false</code> last class. All optional;", ". All optional;"),
-    ("use-sim-time", '(<span class="go" data-go="p28">slide N</span>)', "(see Simulation Time above)"),
+    ("use-sim-time", '(<span class="go" data-go="p30">slide N</span>)', "(see Simulation Time above)"),
     ("rule-builder", "Slides:", "Lecture examples:"),
 ]
 

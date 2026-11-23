@@ -131,10 +131,40 @@ The course simulation's ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and
 
 The same three turns in another order give another orientation. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". So a library always says which order it uses.
 
-**Orientation as a quaternion.** ROS messages hold an orientation as a **quaternion**, four numbers named x, y, z, w (not the position's x, y, z). REP 103 prefers it to three angles: a "Compact representation" with "No singularities".
+**The quaternion: four numbers for one turn.** Any orientation is one turn by an angle :math:`\theta` about one axis :math:`(a_x, a_y, a_z)` of length 1. ROS messages store it as a quaternion, four numbers x, y, z, w.
 
-#. A turn by an angle :math:`\theta` about an axis :math:`(a_x, a_y, a_z)` of length 1 is the quaternion :math:`x = a_x\sin\frac{\theta}{2}`, :math:`y = a_y\sin\frac{\theta}{2}`, :math:`z = a_z\sin\frac{\theta}{2}`, :math:`w = \cos\frac{\theta}{2}`.
-#. The ROSbot turns only about z, the axis (0, 0, 1): x = y = 0, :math:`z = \sin\frac{\text{yaw}}{2}`, :math:`w = \cos\frac{\text{yaw}}{2}`.
+.. admonition:: Quaternion
+   :class: tip
+
+   Four numbers :math:`q = (x, y, z, w)` of length 1, :math:`x^2 + y^2 + z^2 + w^2 = 1`, that store one turn: :math:`(x, y, z)` is the axis times :math:`\sin\frac{\theta}{2}`, and :math:`w = \cos\frac{\theta}{2}`.
+
+What it is:
+
+- No turn, :math:`\theta = 0`: (0, 0, 0, 1), the defaults of ``geometry_msgs/msg/Quaternion``.
+- 90° about z: half of 90° is 45°, and sin 45° = cos 45° = 0.707, so (0, 0, 0.707, 0.707).
+
+Why ROS uses it:
+
+#. Compact: four numbers; a rotation matrix needs nine. REP 103: "Compact representation".
+#. No singularities: at a pitch of ±90°, roll and yaw turn about the same axis, so one orientation has many sets of angles (gimbal lock). REP 103: "No singularities".
+#. No order to agree on: three angles need one of 24 orders. A quaternion stores the turn itself.
+
+**A turn by an angle about an axis.** Four steps turn an axis and an angle into the quaternion. Here: 90° about (0.707, 0.707, 0), an axis in the floor plane, halfway between x and y.
+
+.. figure:: /_static/images/l12/quat_axis_turn.png
+   :width: 70%
+   :alt: An airliner in 3D, its nose along x, its wings along y and its fin up z, turned 90 degrees about a purple axis that lies in the floor plane halfway between x and y; a faint copy of the airliner stays at the start pose, and the airliner's own x, y and z arrows show where its nose, left wing and fin now point.
+
+   Faint: the airplane before the turn. Purple: the axis.
+
+#. :math:`(a_x, a_y, a_z) = (0.707, 0.707, 0)`, length 1.
+#. Half the angle: :math:`\frac{\theta}{2}` = 45°, :math:`\sin\frac{\theta}{2} = \cos\frac{\theta}{2} = 0.707`.
+#. The axis times :math:`\sin\frac{\theta}{2}`: x = 0.707 × 0.707 = 0.5, y = 0.707 × 0.707 = 0.5, z = 0 × 0.707 = 0.
+#. :math:`w = \cos\frac{\theta}{2} = 0.707`.
+
+So q = (0.5, 0.5, 0, 0.707), of length 1: 0.25 + 0.25 + 0 + 0.5 = 1. The interactive slides let you pick other axes and angles.
+
+**The ROSbot's quaternion on a flat floor: a turn about z.** On a flat floor the ROSbot turns only about z, the axis (0, 0, 1), by its yaw, so the four steps give x = y = 0, :math:`z = \sin\frac{\text{yaw}}{2}`, :math:`w = \cos\frac{\text{yaw}}{2}`. (The quaternion's x, y, z are not the position's x, y, z.) On a ramp it would pitch too, and x and y would not be 0. The course's ``ekf`` sets ``two_d_mode: true`` in ``rosbot_localization/config/config.yaml``; robot_localization says that then "no 3D information will be used in your state estimate", for "a planar environment". The course world is flat.
 
 .. list-table::
    :header-rows: 1

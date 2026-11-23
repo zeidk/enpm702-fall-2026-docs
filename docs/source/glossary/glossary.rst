@@ -2688,9 +2688,10 @@ L12: Simulation, Control and Parameters
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Quaternion
-      Four numbers, ``x``, ``y``, ``z`` and ``w``, that give an orientation. The
-      odometry gives the robot's orientation as a quaternion; the yaw is
-      computed from it.
+      Four numbers, ``x``, ``y``, ``z`` and ``w``, of length 1, that store one
+      turn by an angle about an axis: ``(x, y, z)`` is the axis times the sine of
+      half the angle, and ``w`` its cosine. The odometry gives the robot's
+      orientation as a quaternion; the yaw is computed from it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Remapping
