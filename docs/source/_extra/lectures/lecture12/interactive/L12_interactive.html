@@ -381,6 +381,8 @@ table.t.nowrap td, table.t.nowrap th{white-space:nowrap}
 .plate.frame:has(> .opener.sub){background:linear-gradient(to top,var(--banveil) 0,var(--banveil) 120px,var(--plate) 260px),linear-gradient(to right,var(--plate) 25%,transparent 60%),url(L12_interactive_assets/part_banner.svg) center bottom/100% auto no-repeat,var(--plate)}
 .plate.frame.fswide:has(> .opener.sub){background-position:0 0,0 0,center bottom,0 0}
 .frame:not(.titlepage) > .opener.sub{padding-bottom:110px}
+/* dark mode: the yellow version (user, 2026-11-23: "subsection divider banner: use the yellow version in darkmode") */
+:root[data-theme="dark"] .plate.frame:has(> .opener.sub){background-image:linear-gradient(to top,rgba(28,36,46,.15) 0,rgba(28,36,46,.15) 120px,var(--plate) 260px),linear-gradient(to right,var(--plate) 25%,transparent 60%),url(L12_interactive_assets/part_banner_dark.svg)}
 :root{--nx:#3730A3; --nx-a:#F1F0FD; --nx-b:#D9D6F7; --nx-card:#FFFFFF; --nx-edge:#8D87D6}
 :root[data-theme="dark"]{--nx:#C4C0FF; --nx-a:#2B2A63; --nx-b:#1F2047; --nx-card:#15163A; --nx-edge:#6F6AC4}
 .plate.nextc{background:linear-gradient(135deg,var(--nx-a) 0%,var(--nx-b) 100%);border-top:10px solid var(--nx)}
@@ -1216,15 +1218,13 @@ source install/setup.bash</pre></div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-6" data-name="Slide 17 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 17 of 137. Go to a slide">Slide 17 / 137</span></div>
-  <h2>Battery: only the real robot reports it</h2><div class="fit"><div class="fitin">
-  <p class="goal">The real ROSbot publishes its battery state on <code class="tp">/battery_state</code>. Gazebo simulates no battery: none of the simulation's 31 topics carries it.</p>
+  <h2>Battery</h2><div class="fit"><div class="fitin">
+  <p class="goal">The real ROSbot reports its battery. Gazebo has no battery, so the simulation reports none.</p>
   <ul class="pl">
-    <li>A <code class="ty">sensor_msgs/msg/BatteryState</code> message holds <code>voltage</code> (V), <code>percentage</code> (0 to 1) and <code>current</code> (negative while discharging).</li>
-    <li>To test a node that reacts to a low battery, publish one by hand:</li>
+    <li><b>Real ROSbot:</b> it publishes the battery's state on <code class="tp">/battery_state</code>: the voltage, the charge left (0 to 1) and the current.</li>
+    <li><b>Simulated ROSbot:</b> none of the simulation's 31 topics is <code class="tp">/battery_state</code>.</li>
+    <li>So a node that reacts to a low battery gets no battery message in the simulation.</li>
   </ul>
-<pre class="code" data-lang="bash">ros2 topic pub --times 3 /battery_state \
-  sensor_msgs/msg/BatteryState \
-  "{voltage: 11.1, percentage: 0.15, present: true}"</pre>
   <p class="small" style="margin:6px 0 0">Key to ROS names in this deck: <code class="nd">node</code> <code class="tp">topic</code> <code class="ty">message type</code> <code class="pm">parameter</code> <code class="pk">package</code> <code class="fr">TF frame</code>. Other code, such as a flag or a value, has no mark.</p>
   <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_ros/ROS_API.md</span>, <span class="file">sensor_msgs/msg/BatteryState.msg</span> (ROS&nbsp;2 Jazzy), the deck's <span class="file">figures/data/foxglove_topics.txt</span>.</p>
 </div></div></section>
