@@ -375,6 +375,12 @@ table.t.nowrap td, table.t.nowrap th{white-space:nowrap}
 .plate.frame:has(> .opener:not(.sub) > .num){background:linear-gradient(to top,var(--banveil) 0,var(--banveil) 150px,var(--plate) 300px),linear-gradient(to right,transparent 30%,var(--plate) 92%),url(L12_interactive_assets/cube_banner_blue.jpg) center bottom/100% auto no-repeat,var(--plate)}
 .plate.frame.fswide:has(> .opener:not(.sub) > .num){background-position:0 0,0 0,center 320px,0 0}   /* a frame widened in full screen (fsWide): the banner spans the new width, so it grows with it; its top stays where it was (702 - 1248 x 587 / 1920 = 320 px), and its bottom is cut off */
 .frame:not(.titlepage) > .opener:not(.sub):has(> .num){padding-bottom:150px}
+/* a part divider (an opener.sub) carries its own banner along its bottom edge: rounded diamonds at the bottom right, drawn by
+   figures/decor/make_part_banner.py (user, 2026-11-23: "for the subdivision slides (e.g., slide 13). Can you create a banner
+   similar to the section division slide?"). Same placement and fades as the section banner; 1248 x 300 at the plate's width. */
+.plate.frame:has(> .opener.sub){background:linear-gradient(to top,var(--banveil) 0,var(--banveil) 120px,var(--plate) 260px),linear-gradient(to right,var(--plate) 25%,transparent 60%),url(L12_interactive_assets/part_banner.svg) center bottom/100% auto no-repeat,var(--plate)}
+.plate.frame.fswide:has(> .opener.sub){background-position:0 0,0 0,center bottom,0 0}
+.frame:not(.titlepage) > .opener.sub{padding-bottom:110px}
 :root{--nx:#3730A3; --nx-a:#F1F0FD; --nx-b:#D9D6F7; --nx-card:#FFFFFF; --nx-edge:#8D87D6}
 :root[data-theme="dark"]{--nx:#C4C0FF; --nx-a:#2B2A63; --nx-b:#1F2047; --nx-card:#15163A; --nx-edge:#6F6AC4}
 .plate.nextc{background:linear-gradient(135deg,var(--nx-a) 0%,var(--nx-b) 100%);border-top:10px solid var(--nx)}
