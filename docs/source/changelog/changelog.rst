@@ -5,10 +5,77 @@ Changelog
 All notable changes to the ENPM702 Fall 2026 course documentation are recorded here.
 
 
-.. dropdown:: v1.15.0: Lecture 9, L9 Design (2026-10-30)
+.. dropdown:: v1.19.0: Lecture 12, Simulation, Control and Parameters (2026-11-23)
    :icon: tag
    :class-container: sd-border-success
    :open:
+
+   - **Lecture 12**: new lecture: the ROSbot in Gazebo, the bridge, RViz, the
+     robot's topics, simulation time and timers, a proportional controller
+     that turns the ROSbot to a heading, parameters (declare, read, set with
+     ``-p``, a YAML file and a launch file, a parameter callback), namespaces
+     and remapping. Try it panels in the lecture page, and More detail boxes
+     for the parts the slides do not show.
+   - **Lecture 12**: the lecture opens with Pose and Orientation: a pose,
+     roll, pitch and yaw, and the quaternion.
+   - **Lecture 12**: Setting a Value the Node Already Read now comes right
+     after the React to a Change introduction, and says why the node needs a
+     parameter callback.
+   - **Lecture 12**: interactive slides, a page you can try in the browser:
+     working copies of RViz, Foxglove and rqt (six plugins on the course
+     simulation), the Gazebo worlds, a drive pad, the heading-error dial and
+     the measured runs.
+   - **Reading material**: Foxglove (optional).
+   - **Glossary**: an L11 section.
+
+.. dropdown:: v1.18.0: Lecture 11, GP1 and GP2 (2026-11-17)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 11** synced with its deck.
+   - **GP1: Patrol and Inspect**: published; it explains ``--ros-args -r
+     __ns``, the robot terms the lectures have not covered yet, and launch
+     files without event handlers or a group condition.
+   - **GP2: Patrol and Inspect in Gazebo**: published, on topics, with a
+     reference run and videos re-recorded from it.
+   - **Setup**: the ROSbot Simulation page.
+   - **Reading material**: Mobile Robot Messages, and Services and Actions
+     (optional).
+   - The ROS lectures were restructured.
+
+.. dropdown:: v1.17.0: Lecture 10, ROS 2 (2026-11-10)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **Lecture 10**: new lecture, synced with its deck: the pre-reading joins
+     the lecture page; ``RoboTaxiNode``, and the ``robotaxi_demo`` package
+     students create; spinning, publishers and the bus figures; the ROS 2
+     layers with one message followed down them; ``_node`` and ``_exe``
+     names; Why ROS 2 in a More detail box.
+   - **Lecture 10**: ROS exercises 1 to 3, the quiz and the glossary revised;
+     QoS removed from the lecture page and the quiz.
+   - **Lecture 10**: Before Class gives the git commands to get the latest
+     course code, and says to use the Tab key.
+   - **More detail boxes**: collapsed boxes for extra detail in lecture pages.
+   - **Setup**: ROS 2 distributions with LTS, ``ros2-apt-source``, Gazebo
+     Harmonic, the ``enpm702_env`` shell function, a checklist, and the course
+     code in each student's own private repository.
+
+.. dropdown:: v1.16.0: RWA3, Lectures 8 and 9 (2026-11-04)
+   :icon: tag
+   :class-container: sd-border-success
+
+   - **RWA3: Smart Pointers and OOP**: published, with three themes shown as
+     animated dioramas, build sections and a Troubleshooting section.
+   - **Lecture 9**: follows the reviewed deck; the setup page for L9 and the
+     ``week9.sh`` script; the reading page virtual Methods in Depth.
+   - **Lecture 8**: synced with deck v1.2; ``week8.sh`` and the
+     ``ride_service`` program.
+   - **Lecture 1**: quizzes are closed book under the honor pledge.
+
+.. dropdown:: v1.15.0: Lecture 9, L9 Design (2026-10-30)
+   :icon: tag
+   :class-container: sd-border-success
 
    - **Lecture 9**: every class diagram with members lists each data member in
      its box, and a line's end names the member too, such as ``-ride_``.

@@ -395,7 +395,7 @@ The drive controller turns :math:`v` and :math:`\omega` into a speed for each si
 - **From the sides to the robot:** :math:`v = \dfrac{v_R + v_L}{2}`, :math:`\omega = \dfrac{v_R - v_L}{s}`.
 - **From the robot to the sides** (what the drive controller does): :math:`v_L = v - \omega\,\dfrac{s}{2}`, :math:`v_R = v + \omega\,\dfrac{s}{2}`. Each wheel turns at :math:`v_{side}/r` rad/s.
 
-The ROSbot turning on the spot at :math:`\omega` = 1.0 rad/s. Its file sets :math:`s` = 0.186 m × 1.36 = 0.253 m (1.36: a correction for skidding wheels) and :math:`r` = 0.0425 m.
+The ROSbot turning on the spot at :math:`\omega` = 1.0 rad/s. Its file sets :math:`s` = 0.186 m × 1.36 = 0.253 m (1.36: Husarion's correction, which its file says depends on the floor) and :math:`r` = 0.0425 m.
 
 1. :math:`v_L` = 0 − 1.0 × 0.253 / 2 = −0.1265 m/s, and :math:`v_R` = +0.1265 m/s.
 2. Each wheel turns at 0.1265 / 0.0425 = 2.98 rad/s: the left ones backward, the right ones forward.

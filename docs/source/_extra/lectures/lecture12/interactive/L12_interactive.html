@@ -1140,7 +1140,7 @@ source install/setup.bash</pre></div>
     <svg id="mu-svg" class="plot" viewBox="0 0 560 360" width="464" height="298" role="img" aria-label="Two drawings. Left, a wheel seen from the side, standing on the ground: a solid circle for the wheel radius in the controller's file, tag 1, and a dashed circle slightly smaller, the radius times 0.95, tag 2. Right, the ROSbot seen from above, a box with two wheels on each side: a solid line between the left and right wheels, the wheel separation, tag 3, and a longer dashed line beyond the wheels, the separation times 1.36, tag 4."></svg>
     <ul class="pl" style="margin:0">
       <li><b>Radius, 0.95 and 1.0:</b> a real wheel moves the robot 5&nbsp;% less per turn than a 0.0425&nbsp;m wheel (Husarion measured it). The simulated wheel is exactly 0.0425&nbsp;m.</li>
-      <li><b>Separation, 1.36 in both:</b> it corrects for the wheels skidding sideways in a turn. The simulation kept the real robot's value: your nodes take the heading from the IMU, not from the wheels.</li>
+      <li><b>Separation, 1.36 in both:</b> Husarion's file says its turning model is not exact and depends on the floor. In Gazebo, the wheel odometry reads 10&nbsp;% less turn than the robot made; your nodes use the IMU's heading.</li>
     </ul>
   </div>
   <table class="t tight" style="margin-top:8px">
@@ -1148,7 +1148,7 @@ source install/setup.bash</pre></div>
     <tr><td>Wheel radius</td><td><span class="tg">1</span>0.0425&nbsp;m</td><td><span class="tg">1</span>1.0 &times; 0.0425 = 0.0425&nbsp;m</td><td><span class="tg">2</span>0.95 &times; 0.0425 = 0.0404&nbsp;m</td></tr>
     <tr><td>Wheel separation</td><td><span class="tg">3</span>0.186&nbsp;m</td><td><span class="tg">4</span>1.36 &times; 0.186 = 0.253&nbsp;m</td><td><span class="tg">4</span>1.36 &times; 0.186 = 0.253&nbsp;m</td></tr>
   </table>
-  <p class="small" style="margin:6px 0 0">Tags 2 and 4 are drawn 0.95 and 1.36 times as long as 1 and 3. Sources: <span class="file">controllers.yaml</span>, Husarion's file, <span class="file">rosbot_sim/README.md</span>.</p>
+  <p class="small" style="margin:6px 0 0">Tags 2 and 4 are 0.95 and 1.36 times as long as 1 and 3. Sources: Husarion's <span class="file">controllers.yaml</span>, <span class="file">rosbot_sim/README.md</span>.</p>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-4" data-name="Slide 14 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 14 of 134. Go to a slide">Slide 14 / 134</span></div>
@@ -1216,15 +1216,15 @@ source install/setup.bash</pre></div>
   <p class="goal">Gazebo is a program of its own, not a ROS node. ROS&nbsp;2 Jazzy installs it (Gazebo Harmonic), and <span class="cmd">gz sim</span> opens a world file. <span class="file">shapes.sdf</span> is a demo world that comes with Gazebo:</p>
 <pre class="code" data-lang="bash">gz sim shapes.sdf          # with a window; press Play to start
 gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
-  <div class="two" style="grid-template-columns:1.25fr 1fr;gap:24px">
-    <div><pre class="code" data-lang="bash">gz topic -l</pre>
-<pre class="code" data-lang="text">/clock
+  <div class="two" style="grid-template-columns:1.25fr 1fr;gap:24px;align-items:stretch">   <!-- the two outputs end level (2026-11-23) -->
+    <div style="display:flex;flex-direction:column"><pre class="code" data-lang="bash">gz topic -l</pre>
+<pre class="code" data-lang="text" style="flex:1">/clock
 /stats
 /world/shapes/pose/info
 /world/shapes/state
 [...]</pre></div>
-    <div><pre class="code" data-lang="bash">ros2 topic list</pre>
-<pre class="code" data-lang="text">/parameter_events
+    <div style="display:flex;flex-direction:column"><pre class="code" data-lang="bash">ros2 topic list</pre>
+<pre class="code" data-lang="text" style="flex:1">/parameter_events
 /rosout</pre></div>
   </div>
   <div class="box concl"><span class="bt">Gazebo's topics are not ROS topics</span>Gazebo publishes on its own topics, with its own message types. A ROS node does not see them: with only <span class="cmd">gz sim</span> running, <span class="cmd">ros2 topic list</span> shows none of Gazebo's topics. A bridge node connects the two: next frame.</div>
@@ -4283,12 +4283,12 @@ RCLCPP_INFO_STREAM(get_logger(),
   <h2>One namespace per controller</h2><div class="fit"><div class="fitin">
 <pre class="code" data-lang="bash">ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot1
 ros2 run l12_rosbot heading_controller_exe --ros-args -r __ns:=/robot2</pre>
-  <div class="two" style="grid-template-columns:1.1fr 1fr;gap:22px">
-    <div><pre class="code" data-lang="bash">ros2 node list | grep heading</pre>
-<pre class="code" data-lang="text">/robot1/heading_controller_node
+  <div class="two" style="grid-template-columns:1.1fr 1fr;gap:22px;align-items:stretch">   <!-- the two outputs end level (2026-11-23) -->
+    <div style="display:flex;flex-direction:column"><pre class="code" data-lang="bash">ros2 node list | grep heading</pre>
+<pre class="code" data-lang="text" style="flex:1">/robot1/heading_controller_node
 /robot2/heading_controller_node</pre></div>
-    <div><pre class="code" data-lang="bash">ros2 topic list | grep robot</pre>
-<pre class="code" data-lang="text">/robot1/cmd_vel
+    <div style="display:flex;flex-direction:column"><pre class="code" data-lang="bash">ros2 topic list | grep robot</pre>
+<pre class="code" data-lang="text" style="flex:1">/robot1/cmd_vel
 /robot1/odometry/filtered
 /robot2/cmd_vel
 /robot2/odometry/filtered
