@@ -108,7 +108,7 @@ Pose: Position and Orientation
 #. Rotations: point your thumb along an axis. Your fingers curl the positive way.
 #. With z up, a positive yaw turns counterclockwise, seen from above. So a positive ``angular.z`` turns the ROSbot left. REP 103: "the yaw component of orientation increases as the child frame rotates counter-clockwise".
 
-**Roll, pitch and yaw.** Three angles give an orientation, each a turn about one axis of the frame (REP 103):
+**Roll, pitch and yaw.** Three angles give an orientation, each a turn about one axis of the frame (REP 103). Three turns in a set order like these are called **Euler angles**:
 
 .. list-table::
    :header-rows: 1
@@ -128,6 +128,8 @@ Pose: Position and Orientation
      - its heading: changes each time it turns
 
 The course simulation's ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and pitch stay 0, and only the yaw changes. Angles are in radians, and the yaw is kept between :math:`-\pi` and :math:`\pi`.
+
+The same three turns in another order give another orientation. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". So a library always says which order it uses.
 
 **Orientation as a quaternion.** ROS messages hold an orientation as a **quaternion**, four numbers named x, y, z, w (not the position's x, y, z). REP 103 prefers it to three angles: a "Compact representation" with "No singularities".
 

@@ -976,7 +976,7 @@ source install/setup.bash</pre></div>
     </div>
     <div style="display:flex;gap:14px;align-items:flex-end;justify-content:center">
       <img class="fig" src="L12_interactive_assets/hand_axes.png" data-light="L12_interactive_assets/hand_axes.png" data-dark="L12_interactive_assets/hand_axes_dark.png" style="height:250px;width:auto;margin:0" alt="Line drawing of a right hand, palm toward the viewer: the thumb points up, the index finger points to the upper left, and the middle finger points down to the left, toward the viewer, while the ring and little fingers are curled. Three arrows start where the index finger meets the thumb: a red arrow x along the index finger, a green arrow y along the middle finger, and a blue arrow z along the thumb.">
-      <img class="fig" src="L12_interactive_assets/hand_rotation.png" data-light="L12_interactive_assets/hand_rotation.png" data-dark="L12_interactive_assets/hand_rotation_dark.png" style="height:290px;width:auto;margin:0" alt="Line drawing of a right hand in a thumbs-up fist, its palm toward the viewer. A blue vertical arrow, z, runs up through the four curled fingers, past the top of the fist, to the left of the thumb. Below the fist, an orange curved arrow circles the axis, turning counterclockwise when seen from above: the way the fingers curl.">
+      <img class="fig" src="L12_interactive_assets/hand_rotation.png" data-light="L12_interactive_assets/hand_rotation.png" data-dark="L12_interactive_assets/hand_rotation_dark.png" style="height:290px;width:auto;margin:0" alt="Line drawing of a right hand in a thumbs-up fist, its palm toward the viewer. A blue vertical arrow, z, runs up behind the four curled fingers, which hide it, and shows below the fist and above it, to the left of the thumb. Below the fist, an orange ring arrow circles the axis, its arrowhead in front, turning counterclockwise when seen from above: the way the fingers curl.">
     </div>
   </div>
   <div class="box" style="margin-top:10px">REP 103: "the yaw component of orientation increases as the child frame rotates counter-clockwise".</div>
@@ -1008,7 +1008,7 @@ source install/setup.bash</pre></div>
       <div class="row"><span class="lbl">yaw °</span><input type="range" id="eu-y" min="-180" max="180" step="1" value="0" aria-label="yaw in degrees"></div>
       <div class="row" id="eu-pre"></div>
       <div class="pread box nolive small" id="eu-read"></div>
-      <p class="small" style="margin:6px 0 0">The same three angles in another order give another orientation, so a library always says which order it uses.</p>
+      <p class="small" style="margin:6px 0 0">Three turns in a set order are <b>Euler angles</b>. Another order gives another orientation: REP 103 says "Euler angles are generally discouraged due to having 24 'valid' conventions". So a library always says which order it uses.</p>
     </div>
   </div>
 </div></div></section>
