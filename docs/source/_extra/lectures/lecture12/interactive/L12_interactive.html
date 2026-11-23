@@ -1082,8 +1082,8 @@ source install/setup.bash</pre></div>
 </div></div></section>
 
 <section class="plate frame s7 extra ckq" id="check-pose" data-scene="check-pose" data-name="Slide 11 · Pose and Orientation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose and Orientation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 11 of 135. Go to a slide">Slide 11 / 135</span></div>
-  <h2>Check: the ROSbot facing north</h2><div class="fit"><div class="fitin">
-  <p class="ckq-q">The ROSbot faces north, 90° to the left of east (\(+x\)), on a flat floor. Which orientation \((x, y, z, w)\) does <code class="tp">/odometry/filtered</code> report?</p>
+  <h2>Check: the ROSbot after a quarter turn to the left</h2><div class="fit"><div class="fitin">
+  <p class="ckq-q">On a flat floor, the ROSbot starts facing \(+x\) (yaw 0°). It turns 90° to the left, counterclockwise seen from above, and now faces \(+y\). Which orientation \((x, y, z, w)\) does <code class="tp">/odometry/filtered</code> report?</p>
   <div class="ckq-grid" style="grid-template-columns:1.2fr 1fr">
     <div class="ckq-opts" role="group" aria-label="Answers">
       <button class="ckq-o"><b>A.</b><span>\((0,\ 0,\ 0,\ 1)\)</span></button>
@@ -1092,7 +1092,7 @@ source install/setup.bash</pre></div>
       <button class="ckq-o"><b>D.</b><span>\((0.707,\ 0,\ 0,\ 0.707)\)</span></button>
     </div>
     <div class="ckq-side">
-      <div class="ckq-why"><p>Yaw is 90°, \(\frac{\pi}{2}\) rad, about \(z\): \(z = \sin\frac{\pi}{4} = 0.707\) and \(w = \cos\frac{\pi}{4} = 0.707\).</p><p>A is no turn at all, C is a turn of 180° (facing west), and D is a roll of 90° about \(x\).</p></div>
+      <div class="ckq-why"><p>Yaw is 90°, \(\frac{\pi}{2}\) rad, about \(z\): \(z = \sin\frac{\pi}{4} = 0.707\) and \(w = \cos\frac{\pi}{4} = 0.707\).</p><p>A is no turn at all, C is a turn of 180° (facing \(-x\)), and D is a roll of 90° about \(x\).</p></div>
       <button class="ckq-show" type="button">Show the answer</button>
       <span class="sr ckq-say" aria-live="polite"></span>
     </div>
