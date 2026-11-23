@@ -1173,7 +1173,7 @@ source install/setup.bash</pre></div>
 </section>
 
 <section class="plate frame s1" data-scene="simulation-3" data-name="Slide 14 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 14 of 137. Go to a slide">Slide 14 / 137</span></div>
-  <h2>Simulation and reality differ: the nodes and the sensors</h2><div class="fit"><div class="fitin">
+  <h2>The nodes and the sensors</h2><div class="fit"><div class="fitin">
   <p class="goal">In the simulation, Gazebo plays the part of the motor board and the sensors. So the real ROSbot's nodes that drive the motors and read the IMU are replaced by Gazebo plugins and bridge nodes.</p>
   <table class="t tight" style="margin-top:6px">
     <tr><th style="width:18%"></th><th style="width:41%">Real ROSbot</th><th>Simulated ROSbot</th></tr>
@@ -1187,7 +1187,7 @@ source install/setup.bash</pre></div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-4" data-name="Slide 15 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 15 of 137. Go to a slide">Slide 15 / 137</span></div>
-  <h2>Wheels and ground: the two multipliers</h2><div class="fit"><div class="fitin">
+  <h2>Wheels and ground</h2><div class="fit"><div class="fitin">
   <p class="goal">The drive controller turns wheel turns into motion with two lengths, the wheel radius and the wheel separation. A multiplier scales each one.</p>
   <div class="two" style="grid-template-columns:464px 1fr;gap:20px;align-items:center">
     <svg id="mu-svg" class="plot" viewBox="0 0 560 360" width="464" height="298" role="img" aria-label="Two drawings. Left, a wheel seen from the side, standing on the ground: a solid circle for the wheel radius in the controller's file, tag 1, and a dashed circle slightly smaller, the radius times 0.95, tag 2. Right, the ROSbot seen from above, a box with two wheels on each side: a solid line between the left and right wheels, the wheel separation, tag 3, and a longer dashed line beyond the wheels, the separation times 1.36, tag 4."></svg>
@@ -1205,7 +1205,7 @@ source install/setup.bash</pre></div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-5" data-name="Slide 16 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 16 of 137. Go to a slide">Slide 16 / 137</span></div>
-  <h2>Time: Gazebo keeps its own clock</h2><div class="fit"><div class="fitin">
+  <h2>Time</h2><div class="fit"><div class="fitin">
   <p class="goal">On the real robot, time is the computer's clock. In the simulation, time is a count that Gazebo keeps and publishes on <code class="tp">/clock</code>.</p>
   <table class="t tight" style="margin-top:6px">
     <tr><th style="width:1%"></th><th style="width:44%">Simulation</th><th>Real ROSbot</th></tr>
