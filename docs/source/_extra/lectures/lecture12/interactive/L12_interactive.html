@@ -1160,11 +1160,11 @@ source install/setup.bash</pre></div>
   <p class="goal">In the simulation, Gazebo plays the part of the motor board and the sensors. So the real ROSbot's nodes that drive the motors and read the IMU are replaced by Gazebo plugins and bridge nodes.</p>
   <table class="t tight" style="margin-top:6px">
     <tr><th style="width:18%"></th><th style="width:41%">Real ROSbot</th><th>Simulated ROSbot</th></tr>
-    <tr><td><b>Motors</b></td><td><code class="nd">stm32_node</code> (micro-ROS) and <code class="nd">rosbot_system_node</code> talk to the motor board</td><td>the <code>gz_ros2_control</code> plugin, which the robot's URDF loads into Gazebo, turns Gazebo's wheels</td></tr>
+    <tr><td><b>Motors</b></td><td><code class="nd">stm32_node</code> (micro-ROS) and <code class="nd">rosbot_system_node</code> talk to the motor board</td><td>the Gazebo plugin <code>gz_ros2_control</code>, loaded by the URDF, turns the wheels</td></tr>
     <tr><td><b>IMU</b></td><td><code class="nd">imu_sensor_node</code> reads the IMU</td><td>Gazebo's IMU model</td></tr>
     <tr><td><b>Into ROS</b></td><td>no bridge</td><td>five bridge nodes; the controllers and the IMU through <code>gz_ros2_control</code></td></tr>
     <tr><td><b>Noise</b></td><td>the sensors' own</td><td>Gaussian, with set values; the IMU's come from its data sheet (BNO055)</td></tr>
-    <tr><td><b>Logical camera</b></td><td>none: a program must find the objects in the camera's images</td><td>"does not make a picture": it lists the models in view, with their names and poses</td></tr>
+    <tr><td><b>Logical camera</b></td><td>no such sensor: a real camera gives only images, so a program must recognize each object in them</td><td>a Gazebo sensor with no images: on <code class="tp">/logical_camera</code> it lists each model 0.3 to 3.5&nbsp;m ahead, by name and pose</td></tr>
   </table>
   <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_ros/ROS_API.md</span>, <span class="file">rosbot_description/urdf/common/gazebo.urdf.xacro</span>, <span class="file">gp2_bringup/README.md</span>, in the course simulation's <span class="file">rosbot_sim</span>.</p>
 </div></div></section>
