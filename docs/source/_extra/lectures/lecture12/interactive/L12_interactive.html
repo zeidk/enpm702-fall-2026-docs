@@ -910,7 +910,7 @@ source install/setup.bash</pre></div>
 :root[data-theme="dark"] .p3d .ax.x{color:#F2786F} :root[data-theme="dark"] .p3d .ax.y{color:#62C48F} :root[data-theme="dark"] .p3d .ax.z{color:#6FA3D8}
 .pctl .row{margin:6px 0} .pctl .lbl{min-width:76px} .pctl input[type=range]{width:300px}
 .pread{font:22px var(--sans);line-height:1.45;margin-top:8px} .pread .vv{color:var(--livetext);font-family:var(--mono);font-size:21px}
-#aa-read{line-height:1.35}   /* the formula in four steps fits the slide */
+#aa-read{line-height:1.3}   /* the formula in four steps fits the slide */
 /* the quaternion slide: the four numbers as two parts, the axis part and w */
 .qparts{display:grid;grid-template-columns:repeat(3,64px) 26px 64px;gap:6px 6px;align-items:center;justify-content:start;margin:4px 0 2px}
 .qparts .qn{height:52px;border:2px solid var(--plate-edge);border-radius:8px;background:var(--chip);display:flex;align-items:center;justify-content:center;font:italic 600 28px KaTeX_Math,serif;color:var(--ink)}
@@ -1056,7 +1056,7 @@ source install/setup.bash</pre></div>
       <p class="small" style="margin:6px 0 0">Faint: before the turn. Purple: the axis. Drag to turn the view. \(w\) gives the size of the turn (1 at 0°, 0 at ±180°), the signs of \(x\), \(y\), \(z\) its direction. REP 103 prefers a quaternion: a "Compact representation" with "No singularities".</p>
     </div>
     <div class="pctl">
-      <div class="row"><span class="lbl">axis</span><span id="aa-axes"></span></div>
+      <div class="row" style="align-items:flex-start"><span class="lbl" style="padding-top:6px">axis</span><span id="aa-axes" style="display:flex;flex-wrap:wrap;row-gap:6px;flex:1 1 0;min-width:0"></span></div>
       <div class="row"><span class="lbl">\(\theta\) °</span><input type="range" id="aa-a" min="-180" max="180" step="1" value="90" aria-label="the angle theta in degrees"></div>
       <div class="pread box nolive small" id="aa-read"></div>
     </div>
@@ -5666,12 +5666,15 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   var A = view3D("aa-box", "plane");
   if (A){
     var sa = document.getElementById("aa-a"), outA = document.getElementById("aa-read"), axis = [0, 0, 1], axLine = null;
-    var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)]};
+    var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)],
+      /* two axes in the floor plane, a_z = 0 with a_x and a_y both turning (user, 2026-11-23: "provide examples where a_x and a_y
+         are not zero. a_z is 0"): halfway between x and y, and (0.6, -0.8, 0), length 1 since 0.36 + 0.64 = 1 */
+      d:[Math.SQRT1_2, Math.SQRT1_2, 0], e:[0.6, -0.8, 0]};
     /* the formula, step by step, with the numbers of the chosen axis and angle (user, 2026-11-23: "slide 8 is rushed. I want one
        slide only explaining and visualizing" the axis-and-angle formula) */
     outA.innerHTML = '<ol class="pl" style="margin:0;padding-left:1.4em">' +
-      '<li>The axis: \\((a_x, a_y, a_z)\\) = (<span class="vv" id="aa-ax"></span>), length <span class="vv" id="aa-al"></span>.</li>' +
-      '<li>Half the angle: \\(\\frac{\\theta}{2}\\) = <span class="vv" id="aa-h"></span>, \\(\\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-s"></span>, \\(\\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-c"></span>.</li>' +
+      '<li>\\((a_x, a_y, a_z)\\) = (<span class="vv" id="aa-ax"></span>), length <span class="vv" id="aa-al"></span>.</li>' +
+      '<li>\\(\\frac{\\theta}{2}\\) = <span class="vv" id="aa-h"></span>: \\(\\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-s"></span>, \\(\\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-c"></span>.</li>' +
       '<li>The axis times \\(\\sin\\frac{\\theta}{2}\\):<br>\\(x = a_x \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-x"></span><br>\\(y = a_y \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-y"></span><br>\\(z = a_z \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-z"></span></li>' +
       '<li>\\(w = \\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-w"></span>.</li></ol>' +
       '\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>), length <span class="vv" id="aa-n"></span>';
@@ -5692,7 +5695,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       ["x", "y", "z"].forEach(function(k, i){ set("aa-" + k, f3(axis[i]) + " × " + f3(s) + " = " + f3(q[i])); });
       set("aa-w", f3(c)); set("aa-q", q.map(f3).join(", ")); set("aa-n", f3(Math.hypot(q[0], q[1], q[2], q[3])));
       A.touch(); }
-    buttons(document.getElementById("aa-axes"), ["x", "y", "z", "t"], function(v){ return {x:"x: roll", y:"y: pitch", z:"z: yaw", t:"tilted"}[v]; },
+    buttons(document.getElementById("aa-axes"), ["x", "y", "z", "t", "d", "e"], function(v){ return {x:"x: roll", y:"y: pitch", z:"z: yaw", d:"(0.707, 0.707, 0)", e:"(0.6, −0.8, 0)", t:"tilted"}[v]; },
       function(v){ axis = AX[v]; drawAxis(); upd2(); }, "z");
     sa.addEventListener("input", upd2);
     drawAxis(); upd2();
