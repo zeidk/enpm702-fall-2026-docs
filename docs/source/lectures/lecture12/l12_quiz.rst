@@ -2,7 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 12: Robots in Gazebo and Parameters. Topics include the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), simulation time (``/clock``, ``use_sim_time`` and the two kinds of timer), proportional control (the error of a turn, the gain, the limit and the tolerance), parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and namespaces and remapping (relative and absolute names, and rules).
+This quiz covers the key concepts from Lecture 12: Simulation, Control and Parameters. Topics include the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), simulation time (``/clock``, ``use_sim_time`` and the two kinds of timer), proportional control (the error of a turn, the gain, the limit and the tolerance), parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and namespaces and remapping (relative and absolute names, and rules).
 
 .. note::
 

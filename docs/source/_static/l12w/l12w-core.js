@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","deck":"div","pq":"div","mu-svg":"svg","br":"div","ariac-vid":"video","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","check-simulation":"section","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-pose":"ul","tw-drive":"button","tw-t":"span","tw-svg":"svg","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","check-rosbot":"section","cg-svg":"svg","cg-play":"button","cg-again":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-steps":"ol","tc-svg":"svg","tc-h":"input","tc-t":"input","tc-ex":"button","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","plan-heading":"section","rp-play":"button","rp-next":"button","rp-clock":"p","rp-log":"pre","rp-svg":"svg","check-control":"section","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","check-parameters":"section","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","check-remapping":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","fx-go":"button","fx-cancel":"button"}, SVGT = {"mask":1,"polyline":1,"line":1,"defs":1,"symbol":1,"clipPath":1,"circle":1,"svg":1,"tspan":1,"marker":1,"g":1,"stop":1,"ellipse":1,"pattern":1,"rect":1,"text":1,"linearGradient":1,"path":1,"polygon":1,"use":1,"image":1,"foreignObject":1};
+var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","rb-wclip-0":"clipPath","rb-wclip-1":"clipPath","rb-wclip-2":"clipPath","rb-wclip-3":"clipPath","deck":"div","pq":"div","pose-def":"section","pd-svg":"svg","pd-bot":"g","pose-rhr":"section","pose-rpy":"section","pose-euler3d":"section","eu-box":"div","eu-r":"input","eu-p":"input","eu-y":"input","eu-pre":"div","eu-read":"div","pose-quat":"section","qt-yaw":"input","qt-pre":"div","qt-vals":"div","qt-svg":"svg","pose-axisangle":"section","aa-box":"div","aa-axes":"span","aa-a":"input","aa-read":"div","check-pose":"section","mu-svg":"svg","br":"div","ariac-vid":"video","gw-ariac":"section","aw-box":"div","aw-top":"button","aw-cell":"button","aw-reset":"button","gw-husarion":"section","hw-box":"div","hw-t":"span","hw-play":"button","hw-top":"button","hw-near":"button","hw-reset":"button","gw-warehouse":"section","ww-box":"div","ww-t":"span","ww-play":"button","ww-top":"button","ww-near":"button","ww-reset":"button","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-reset":"button","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","check-simulation":"section","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","kin":"section","kn-v":"input","kn-w":"input","kn-svg":"svg","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-svg":"svg","tw-drive":"button","tw-t":"span","sn-scan":"template","sn-scan-filtered":"template","sn-oak-rgb-color":"template","sn-oak-stereo-depth":"template","sn-oak-stereo-depth-points":"template","sn-imu-data":"template","sn-joint-states":"template","sn-logical-camera":"template","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","check-rosbot":"section","cg-svg":"svg","cg-hot-odom":"span","cg-hot-cmd":"span","cg-msg-odom":"template","cg-msg-cmd":"template","fb-def":"section","fb-pid":"section","pl-svg":"svg","fb-ah":"marker","pl-s1":"circle","pl-minus":"div","pl-pid":"rect","pl-p":"rect","pl-i":"rect","pl-d":"rect","pl-s2":"circle","pl-plant":"rect","pl-fbk":"rect","pl-spark":"g","pl-prev":"button","pl-next":"button","pl-say":"span","fb-pid2":"section","fb-head":"section","hl-svg":"svg","hl-ah":"marker","hl-tg":"div","hl-e":"div","hl-p":"rect","hl-lim":"rect","hl-u":"div","hl-odo":"rect","hl-th":"span","hl-flow":"g","hl-plot":"svg","hl-pg":"g","hl-dial":"svg","hl-say":"p","hl-tgts":"span","hl-play":"button","hl-reset":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-code":"pre","tc-h":"input","tc-ex":"button","tc-t":"input","tc-svg":"svg","tc-g":"g","tc-rows":"g","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","gr-g":"div","gr-s":"svg","gr-pin":"path","gr-pout":"path","gr-node":"div","gr-ocb":"div","gr-ccb":"div","gr-say":"div","gr-play":"button","gr-code":"div","gr-ti-odom":"template","gr-ti-cmd":"template","mb-code":"div","mb-d":"div","mb-w":"path","mb-wh":"polygon","mb-r":"path","mb-rh":"polygon","mb-ocb":"div","mb-yaw":"div","mb-has":"div","mb-ccb":"div","mb-say":"div","mb-play":"button","mb-back":"button","mb-fwd":"button","kc-code":"div","kc-uses":"div","kc-say":"div","dbg-odom":"section","oc-code":"div","oc-msg":"div","oc-z":"div","oc-w":"div","oc-yaw":"div","oc-has":"div","oc-dial":"svg","oc-say":"div","oc-play":"button","oc-back":"button","oc-fwd":"button","cc-runs":"span","cc-code":"div","cc-term":"div","cc-yaw":"div","cc-has":"div","cc-tgt":"div","cc-err":"div","cc-cmd":"div","cc-dial":"svg","cc-say":"div","cc-play":"button","cc-back":"button","cc-fwd":"button","pb-runs":"span","pb-code":"div","pb-msg":"div","pb-st":"div","pb-az":"div","pb-g":"div","pb-s":"svg","pb-say":"div","pb-play":"button","pb-back":"button","pb-fwd":"button","fb-dist":"section","dl-svg":"svg","dl-ah":"marker","dl-tg":"div","dl-e":"div","dl-p":"rect","dl-lim":"rect","dl-u":"div","dl-odo":"rect","dl-th":"span","dl-flow":"g","dl-plot":"svg","dl-pg":"g","dl-track":"svg","dl-say":"p","dl-tgts":"span","dl-play":"button","dl-reset":"button","rp-log":"pre","rp-svg":"svg","rp-say":"div","check-control":"section","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","check-parameters":"section","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","check-remapping":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","eu-q":"span","aa-ax":"span","aa-q":"span","aa-n":"span","fx-go":"button","fx-cancel":"button"}, SVGT = {"defs":1,"ellipse":1,"path":1,"rect":1,"text":1,"g":1,"pattern":1,"polyline":1,"tspan":1,"marker":1,"line":1,"linearGradient":1,"stop":1,"image":1,"clipPath":1,"foreignObject":1,"circle":1,"symbol":1,"svg":1,"use":1,"polygon":1,"mask":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 /* one stand-in per id, so a script that fills an element and reads it again finds what it put there; the stand-ins sit in
    a holder that is not in the page, so code that inserts next to one works and document.contains() still says "not here"
@@ -237,6 +237,131 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 })();
 
 
+/* ---------- pose: the ROSbot under base_link, and the quaternion of a yaw (pose-quat) ---------- */
+(function(){
+  var pd = $id("pd-bot"); if (pd && pd.isConnected) rosbotIcon(pd, 0, 0, 170, 0);
+  var sv = $id("qt-svg"); if (!sv || !sv.isConnected) return;
+  var sl = $id("qt-yaw"), vals = $id("qt-vals"), NS = "http://www.w3.org/2000/svg";
+  function mk(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; sv.appendChild(e); return e; }
+  function draw(){ var y = +sl.value, r = y * Math.PI / 180, R = 118; sv.innerHTML = "";
+    mk("circle", {cx:0, cy:0, r:R, fill:"none", stroke:"var(--plate-edge)", "stroke-width":3});
+    [[0, "0°", "start", R + 10, 7], [90, "90°", "middle", 0, -R - 12], [180, "180°", "end", -R - 10, 7], [-90, "−90°", "middle", 0, R + 28]].forEach(function(d){
+      var a = d[0] * Math.PI / 180; mk("line", {x1:(R - 7) * Math.cos(a), y1:-(R - 7) * Math.sin(a), x2:(R + 7) * Math.cos(a), y2:-(R + 7) * Math.sin(a), stroke:"var(--muted)", "stroke-width":3});
+      mk("text", {x:d[3], y:d[4], "text-anchor":d[2], class:"lbl2"}, d[1]); });
+    var g = document.createElementNS(NS, "g"); sv.appendChild(g); rosbotIcon(g, 0, 0, 90, -y);
+    mk("line", {x1:0, y1:0, x2:(R - 16) * Math.cos(r), y2:-(R - 16) * Math.sin(r), stroke:"var(--plan)", "stroke-width":5, "stroke-linecap":"round"});
+    var z = Math.sin(r / 2), w = Math.cos(r / 2), f = function(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); };
+    vals.innerHTML = "yaw = " + y + "° = <span class='vv'>" + f(r) + "</span> rad<br>x = 0, y = 0<br>z = sin(" + f(r / 2) + ") = <span class='vv'>" + f(z) + "</span><br>w = cos(" + f(r / 2) + ") = <span class='vv'>" + f(w) + "</span>"; }
+  sl.addEventListener("input", draw);
+  var pre = $id("qt-pre");
+  buttons(pre, [0, 90, 180, -90], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ sl.value = v; draw(); }, 90);
+  draw();
+  onReset(sv, function(){ sl.value = 90; draw(); });
+})();
+
+
+/* ---------- the section's 3D views: the ROSbot as a box with its body axes (x red, y green, z blue) and the fixed frame in grey ---------- */
+(function(){
+  function view3D(boxId){
+    var box = $id(boxId); if (!box || !box.isConnected) return null;
+    if (!window.THREE || !THREE.OrbitControls){ box.textContent = "This browser cannot draw 3D (WebGL)."; return null; }
+    var r; try { r = new THREE.WebGLRenderer({antialias:true}); } catch (e) { box.textContent = "This browser cannot draw 3D (WebGL)."; return null; }
+    box.appendChild(r.domElement);
+    var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 600 / 360, 0.05, 50); cam.up.set(0, 0, 1);
+    cam.position.set(1.45, -1.8, 1.15);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 0.9)); var sun = new THREE.DirectionalLight(0xffffff, 0.5); sun.position.set(-3, -4, 6); scene.add(sun);
+    function dk(){ return document.documentElement.getAttribute("data-theme") === "dark"; }
+    var C3 = {x:[0xB3261E, 0xF2786F], y:[0x2E7D4F, 0x62C48F], z:[0x2D6CA2, 0x6FA3D8]};
+    /* the fixed frame: thin grey lines */
+    var fixed = new THREE.Group(); scene.add(fixed);
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(function(d){ var g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(d[0] * 1.3, d[1] * 1.3, d[2] * 1.3)]);
+      fixed.add(new THREE.Line(g, new THREE.LineDashedMaterial({color:0x9aa6b2, dashSize:0.06, gapSize:0.05}))); fixed.children[fixed.children.length - 1].computeLineDistances(); });
+    /* the robot: a dark box on four wheels, facing +x, and its axes */
+    var bot = new THREE.Group(); scene.add(bot);
+    var body = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.46, 0.18), new THREE.MeshLambertMaterial({color:0x2b2f36})); body.position.z = 0.0; bot.add(body);
+    [[0.2, 0.27], [-0.2, 0.27], [0.2, -0.27], [-0.2, -0.27]].forEach(function(q){ var w = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 20), new THREE.MeshLambertMaterial({color:0x111111}));
+      w.position.set(q[0], q[1], -0.04); bot.add(w); });
+    var arrows = {};
+    ["x", "y", "z"].forEach(function(k){ var d = new THREE.Vector3(k === "x" ? 1 : 0, k === "y" ? 1 : 0, k === "z" ? 1 : 0);
+      arrows[k] = new THREE.ArrowHelper(d, new THREE.Vector3(0, 0, 0), 0.95, C3[k][0], 0.16, 0.09); bot.add(arrows[k]); });
+    /* the letters, in HTML over the view, at each arrow's tip */
+    var lab = {}; ["x", "y", "z"].forEach(function(k){ var s = document.createElement("span"); s.className = "ax " + k; s.textContent = k; box.appendChild(s); lab[k] = s; });
+    var controls = new THREE.OrbitControls(cam, r.domElement); controls.enableDamping = true; controls.dampingFactor = 0.12; controls.minDistance = 0.8; controls.maxDistance = 8;
+    ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){ r.domElement.addEventListener(ev, function(e){ e.stopPropagation(); if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); });
+    var extra = [], dirty = true;
+    function ratio(){ var b = box.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((b.width / box.clientWidth) || 1)); }
+    function size(){ r.setPixelRatio(ratio()); r.setSize(box.clientWidth, box.clientHeight, false); cam.aspect = box.clientWidth / box.clientHeight; cam.updateProjectionMatrix(); dirty = true; }
+    function draw(){ var d = dk(); r.setClearColor(d ? 0x242e39 : 0xffffff);
+      ["x", "y", "z"].forEach(function(k){ arrows[k].setColor(C3[k][d ? 1 : 0]); });
+      body.material.color.set(d ? 0xc9d3dd : 0x2b2f36);
+      r.render(scene, cam);
+      bot.updateMatrixWorld();
+      ["x", "y", "z"].forEach(function(k){ var tip = new THREE.Vector3(k === "x" ? 1.08 : 0, k === "y" ? 1.08 : 0, k === "z" ? 1.08 : 0).applyMatrix4(bot.matrixWorld).project(cam);
+        lab[k].style.left = ((tip.x + 1) / 2 * box.clientWidth - 6) + "px"; lab[k].style.top = ((1 - tip.y) / 2 * box.clientHeight - 14) + "px"; });
+      extra.forEach(function(f){ f(); }); }
+    controls.addEventListener("change", function(){ dirty = true; });
+    var running = false;
+    function loop(){ var fr = box.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; return; }
+      if (Math.abs(ratio() - r.getPixelRatio()) > 0.02) size();
+      controls.update(); if (dirty){ dirty = false; draw(); } requestAnimationFrame(loop); }
+    size(); draw();
+    onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
+    new MutationObserver(function(){ dirty = true; draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+    window.addEventListener("resize", function(){ size(); draw(); });
+    /* a handle for figures/pose3d/make_rpy_stills.sh, which sets the camera for the PDF's stills */
+    box._v3 = {cam:cam, controls:controls, scene:scene, bot:bot, touch:function(){ dirty = true; draw(); }};
+    return {scene:scene, bot:bot, cam:cam, controls:controls, touch:function(){ dirty = true; draw(); }, onDraw:function(f){ extra.push(f); }, home:function(){ cam.position.set(1.45, -1.8, 1.15); controls.target.set(0, 0, 0); controls.update(); dirty = true; draw(); }};
+  }
+  function f3(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); }
+
+  /* Euler angles: R = Rz(yaw) Ry(pitch) Rx(roll), the fixed-axis order of REP 103 (three.js order "ZYX" is that product) */
+  var E = view3D("eu-box");
+  if (E){
+    var sr = $id("eu-r"), sp = $id("eu-p"), sy = $id("eu-y"), out = $id("eu-read"), D = Math.PI / 180;
+    out.innerHTML = '\\(q = (x, y, z, w)\\) = (<span class="vv" id="eu-q">0, 0, 0, 1</span>)';
+    mathIn(out);
+    function upd(){ var r = +sr.value * D, p = +sp.value * D, y = +sy.value * D;
+      E.bot.rotation.set(r, p, y, "ZYX");
+      var cr = Math.cos(r / 2), s_r = Math.sin(r / 2), cp = Math.cos(p / 2), s_p = Math.sin(p / 2), cy = Math.cos(y / 2), s_y = Math.sin(y / 2);
+      var q = [s_r * cp * cy - cr * s_p * s_y, cr * s_p * cy + s_r * cp * s_y, cr * cp * s_y - s_r * s_p * cy, cr * cp * cy + s_r * s_p * s_y];   /* tf2's setRPY */
+      $id("eu-q").textContent = q.map(f3).join(", "); E.touch(); }
+    [sr, sp, sy].forEach(function(s){ s.addEventListener("input", upd); });
+    buttons($id("eu-pre"), ["zero", "yaw", "pitch", "roll"], function(v){ return {zero:"all 0", yaw:"yaw 90°", pitch:"pitch 30°", roll:"roll 45°"}[v]; },
+      function(v){ sr.value = v === "roll" ? 45 : 0; sp.value = v === "pitch" ? 30 : 0; sy.value = v === "yaw" ? 90 : 0; upd(); }, "zero");
+    upd();
+    onReset($id("eu-box"), function(){ sr.value = 0; sp.value = 0; sy.value = 0; upd(); E.home(); });
+  }
+
+  /* axis and angle: the robot turned by the angle about the chosen axis, the axis drawn in purple, the quaternion beside it */
+  var A = view3D("aa-box");
+  if (A){
+    var sa = $id("aa-a"), outA = $id("aa-read"), axis = [0, 0, 1], axLine = null;
+    var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)]};
+    outA.innerHTML = 'axis \\((a_x, a_y, a_z)\\) = (<span class="vv" id="aa-ax"></span>)<br>\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>)<br>\\(|q|\\) = <span class="vv" id="aa-n"></span>';
+    mathIn(outA);
+    function drawAxis(){ if (axLine) A.scene.remove(axLine);
+      var v = new THREE.Vector3(axis[0], axis[1], axis[2]);
+      axLine = new THREE.Group();
+      var g = new THREE.BufferGeometry().setFromPoints([v.clone().multiplyScalar(-1.2), v.clone().multiplyScalar(1.4)]);
+      axLine.add(new THREE.Line(g, new THREE.LineBasicMaterial({color:0x7B5EA7})));
+      axLine.add(new THREE.ArrowHelper(v, v.clone().multiplyScalar(1.15), 0.25, 0x7B5EA7, 0.14, 0.08));
+      A.scene.add(axLine); }
+    function upd2(){ var th = +sa.value * Math.PI / 180, s = Math.sin(th / 2), c = Math.cos(th / 2);
+      var q = [axis[0] * s, axis[1] * s, axis[2] * s, c];
+      A.bot.quaternion.set(q[0], q[1], q[2], q[3]);
+      $id("aa-ax").textContent = axis.map(f3).join(", ");
+      $id("aa-q").textContent = q.map(f3).join(", ");
+      $id("aa-n").textContent = f3(Math.hypot(q[0], q[1], q[2], q[3]));
+      A.touch(); }
+    buttons($id("aa-axes"), ["x", "y", "z", "t"], function(v){ return v === "t" ? "tilted" : v; },
+      function(v){ axis = AX[v]; drawAxis(); upd2(); }, "z");
+    sa.addEventListener("input", upd2);
+    drawAxis(); upd2();
+    onReset($id("aa-box"), function(){ sa.value = 90; upd2(); A.home(); });
+  }
+})();
+
+
 
 /* ---------- section 1: the TwistStamped builder, launch arguments, the 0.5 s brake, use_sim_time, the pause replay ---------- */
 (function(){
@@ -281,10 +406,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     bot.setAttribute("transform", "translate(" + c[0].toFixed(1) + " " + c[1].toFixed(1) + ") rotate(" + (-q[2] * 180 / Math.PI).toFixed(2) + ")"); }
   function readouts(v, w){ var e = poseAt(v, w, TW_T), yaw = Math.atan2(Math.sin(e[2]), Math.cos(e[2]));
     $id("tw-msg").textContent = "{twist: {linear: {x: " + v.toFixed(2) + "},\n         angular: {z: " + w.toFixed(2) + "}}}";
-    $id("tw-pose").innerHTML =
-      "<li>After 3 s: x = " + f(e[0], 2) + " m, y = " + f(e[1], 2) + " m.</li>" +
-      "<li>Yaw = " + f(yaw, 2) + " rad (" + f(yaw * 180 / Math.PI, 0) + "°), wrapped to −π to π.</li>" +
-      "<li>The quaternion that odometry sends: z = sin(yaw / 2) = " + f(Math.sin(yaw / 2), 3) + ", w = cos(yaw / 2) = " + f(Math.cos(yaw / 2), 3) + ".</li>"; }
+  }
   var twAnim = null, twFrame = null;
   function update(){ twFrame = null; var v = +iv.value, w = +iw.value, b = bbox(v, w);
     if (!view || !fits(view, b) || (LEVELS.indexOf(view.h) > 0 && fits(pickView(b), b) && pickView(b).h < view.h / 2)){ var nv = pickView(b);
@@ -421,12 +543,119 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   })();
 
 
+  /* --- the Gazebo worlds in 3D (WORLDS, make_interactive.py): each world's meshes placed as its world file places them, and its
+     robot replaying the true path Gazebo recorded. Gazebo's frame: x east, y north, z up. Drag turns and tilts, right-drag or
+     Shift+drag pans, the wheel zooms. Play replays the run at its own speed; leaving the slide stops it and puts the robot back
+     at the start. Renders only while its slide is on screen. --- */
+  function world3D(o){
+    var box = $id(o.id + "-box"); if (!box || !box.isConnected) return;
+    var W = WORLDS && WORLDS[o.world];
+    if (!window.THREE || !THREE.OrbitControls || !W){ box.textContent = "This browser cannot draw 3D (WebGL)."; return; }
+    var renderer; try { renderer = new THREE.WebGLRenderer({antialias:true}); } catch (err) { box.textContent = "This browser cannot draw 3D (WebGL)."; return; }
+    box.appendChild(renderer.domElement);
+    var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, 1, 0.05, 400); cam.up.set(0, 0, 1);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.8));
+    var sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(-8, -12, 20); scene.add(sun);
+    function m4(m){ var M = new THREE.Matrix4(); M.set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], 0, 0, 0, 1); return M; }
+    /* front faces only, as Gazebo draws a mesh: from outside a building you see in through its roof and walls */
+    function mat(c, both){ return new THREE.MeshLambertMaterial({color:new THREE.Color(c[0], c[1], c[2]), side:both ? THREE.DoubleSide : THREE.FrontSide}); }
+    W.prims.forEach(function(p){
+      var g = p.kind === "plane" ? new THREE.PlaneGeometry(p.size[0], p.size[1]) : p.kind === "box" ? new THREE.BoxGeometry(p.size[0], p.size[1], p.size[2])
+            : new THREE.CylinderGeometry(p.size[0], p.size[0], p.size[1], 32).rotateX(Math.PI / 2);
+      var mesh = new THREE.Mesh(g, mat(p.color, true)); mesh.matrixAutoUpdate = false; mesh.matrix.copy(m4(p.m)); scene.add(mesh); });
+    var parts = {};   /* each distinct mesh built once, then placed where the world puts it */
+    Object.keys(W.meshes).forEach(function(k){ parts[k] = W.meshes[k].map(function(pt){ var g = new THREE.BufferGeometry();
+      g.setAttribute("position", new THREE.Float32BufferAttribute(pt.pos, 3)); g.computeVertexNormals(); return {g:g, m:mat(pt.color)}; }); });
+    W.instances.forEach(function(inst){ var grp = new THREE.Group(); parts[inst.mesh].forEach(function(pt){ grp.add(new THREE.Mesh(pt.g, pt.m)); });
+      grp.matrixAutoUpdate = false; grp.matrix.copy(m4(inst.m)); scene.add(grp); });
+    /* the recorded path, just above where the robot moved */
+    /* o.lift: the warehouse's floor mesh is about 0.10 m above the ground plane the drone lands on (a ray down through the take-off
+       point hits the floor at z = 0.111), so the drone and its path are drawn that much higher, on the floor you see */
+    /* a world with no recorded path (ARIAC) has no line, no robot and no Play button */
+    var lift = o.lift || 0, P = W.path || [], pts = []; P.forEach(function(s){ pts.push(s[1], s[2], s[3] + lift + 0.012); });
+    if (P.length){ var pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
+      scene.add(new THREE.Line(pg, new THREE.LineBasicMaterial({color:0x16798a}))); }
+    var bot = P.length ? o.robot() : null; if (bot) scene.add(bot);
+    var tLabel = $id(o.id + "-t");
+    function poseAt(t){ var i = 0; while (i < P.length - 1 && P[i + 1][0] <= t) i++;
+      var a = P[i], b = P[Math.min(i + 1, P.length - 1)], u = b[0] > a[0] ? Math.max(0, Math.min(1, (t - a[0]) / (b[0] - a[0]))) : 0;
+      var dy = b[4] - a[4]; if (dy > Math.PI) dy -= 2 * Math.PI; if (dy < -Math.PI) dy += 2 * Math.PI;
+      return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, a[3] + (b[3] - a[3]) * u, a[4] + dy * u]; }
+    function place(t){ if (!bot) return; var q = poseAt(t); bot.position.set(q[0], q[1], q[2] + lift); bot.rotation.set(0, 0, q[3]); tLabel.textContent = "t = " + t.toFixed(1) + " s"; }
+    var controls = new THREE.OrbitControls(cam, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.12; controls.screenSpacePanning = true;
+    controls.minDistance = 0.5; controls.maxDistance = o.far || 60; controls.maxPolarAngle = Math.PI / 2 - 0.03;
+    var END = P.length ? P[P.length - 1][0] : 0, T = 0, playing = false, last = 0, btn = $id(o.id + "-play");
+    function setView(k){ var v;
+      if (k === "near"){ var q = poseAt(T); v = [[q[0] - o.nearBack * Math.cos(q[3]), q[1] - o.nearBack * Math.sin(q[3]), q[2] + o.nearUp], [q[0], q[1], q[2] + 0.1]]; }
+      else v = o.views[k];
+      cam.position.set(v[0][0], v[0][1], v[0][2]); controls.target.set(v[1][0], v[1][1], v[1][2]); controls.update(); draw(); }
+    ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
+      renderer.domElement.addEventListener(ev, function(e){ e.stopPropagation(); if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); });
+    function wantRatio(){ var w = box.clientWidth, r = box.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((r.width / w) || 1)); }
+    function size(){ var w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
+      renderer.setPixelRatio(wantRatio()); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+    function draw(){ var dk = document.documentElement.getAttribute("data-theme") === "dark"; renderer.setClearColor(dk ? 0x242e39 : 0xffffff); renderer.render(scene, cam); }
+    function stopPlay(){ playing = false; if (btn){ btn.textContent = "Play"; btn.classList.remove("on"); } }
+    if (btn) btn.onclick = function(e){ e.stopPropagation(); if (playing){ stopPlay(); return; } if (T >= END) T = 0;
+      if (reduce){ T = END; place(T); draw(); return; }   /* reduced motion: the end of the run, no movement */
+      playing = true; last = performance.now(); btn.textContent = "Pause"; btn.classList.add("on"); };
+    var running = false;
+    /* draw only when something changed (a drag, the damping after it, Play, a resize): a still scene is not redrawn every frame,
+       which kept a laptop's GPU busy and made a headless check of the ARIAC scene (62000 triangles) take minutes per frame */
+    var dirty = true;
+    controls.addEventListener("change", function(){ dirty = true; });
+    function loop(now){ var fr = box.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; stopPlay(); return; }
+      if (playing){ T = Math.min(END, T + (now - last) / 1000); last = now; place(T); dirty = true; if (T >= END) stopPlay(); }
+      if (Math.abs(wantRatio() - renderer.getPixelRatio()) > 0.02){ size(); dirty = true; }
+      controls.update(); if (dirty){ dirty = false; draw(); } requestAnimationFrame(loop); }
+    Object.keys(o.views).concat(["near"]).forEach(function(k){ var b = $id(o.id + "-" + k); if (b) b.onclick = function(e){ e.stopPropagation(); setView(k); }; });
+    size(); place(0); setView("reset");
+    onReset(box, function(){ stopPlay(); T = 0; place(0); controls.enableDamping = false; setView("reset"); controls.enableDamping = true; });
+    onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
+    window.addEventListener("resize", function(){ size(); draw(); });
+    document.addEventListener("fullscreenchange", function(){ setTimeout(function(){ size(); draw(); }, 50); });
+    new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  }
+  /* the ROSbot, the same model as the patrol view's: body, four wheels, the lidar and the camera, facing +x */
+  function rosbot3D(){ var bot = new THREE.Group(), dark = new THREE.MeshLambertMaterial({color:0x2b2f36}), tyre = new THREE.MeshLambertMaterial({color:0x111111});
+    var bodyM = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), dark); bodyM.position.z = 0.075; bot.add(bodyM);
+    [[0.06, 0.09], [-0.06, 0.09], [0.06, -0.09], [-0.06, -0.09]].forEach(function(q){ var wm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.034, 24), tyre);
+      wm.position.set(q[0], q[1], 0.042); bot.add(wm); });
+    var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), new THREE.MeshLambertMaterial({color:0x666a70}));
+    lid.rotation.x = Math.PI / 2; lid.position.set(-0.01, 0, 0.135); bot.add(lid);
+    var camM = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.025), new THREE.MeshLambertMaterial({color:0xb0b4ba})); camM.position.set(0.09, 0, 0.17); bot.add(camM);
+    bot.add(new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0.1, 0, 0.08), 0.45, 0x16798a, 0.12, 0.08));
+    return bot; }
+  /* the X3: its four rotors where its model file puts them (0.13 m forward or back, 0.2 to 0.22 m to the side, 0.1 m radius,
+     two red and two blue as in the close view); the body is drawn as a small orange box with arms to the rotors */
+  function x3D(){ var q = new THREE.Group(), orange = new THREE.MeshLambertMaterial({color:0xe07a1f}), arm = new THREE.MeshLambertMaterial({color:0x333333});
+    var body = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.06), orange); body.position.z = 0.0; q.add(body);
+    [[0.13, -0.22, 0xc0392b], [-0.13, 0.2, 0xc0392b], [0.13, 0.22, 0x2e6fb3], [-0.13, -0.2, 0x2e6fb3]].forEach(function(r){
+      var len = Math.hypot(r[0], r[1]), a = new THREE.Mesh(new THREE.BoxGeometry(len, 0.025, 0.02), arm);
+      a.position.set(r[0] / 2, r[1] / 2, 0.01); a.rotation.z = Math.atan2(r[1], r[0]); q.add(a);
+      var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.008, 32), new THREE.MeshLambertMaterial({color:r[2], transparent:true, opacity:0.8}));
+      disc.rotation.x = Math.PI / 2; disc.position.set(r[0], r[1], 0.023); q.add(disc); });
+    return q; }
+  world3D({id:"hw", world:"husarion", robot:rosbot3D, nearBack:2.2, nearUp:1.4,
+           views:{reset:[[0.4, -21, 16], [0.4, 2.2, 0]], top:[[0.4, 2.19, 34], [0.4, 2.2, 0]]}});
+  world3D({id:"ww", world:"warehouse", robot:x3D, nearBack:3.0, nearUp:1.6, far:90, lift:0.10,
+           views:{reset:[[0.5, 15.5, 8.6], [0.5, -8, 0]], top:[[0, -6, 55], [0, -5.99, 0]]}});
+  /* ARIAC: every mesh together spans x -2.7 to 11.9 m and y -4.1 to 10.4 m (the floor and walls); the inspection cell (conveyor, two robot
+     stands, the voltage testers, three AGVs) sits at x 0.5 to 3, y 0.6 to 1.5. Reset starts where the clip's camera was. */
+  world3D({id:"aw", world:"ariac", far:40,
+           views:{reset:[[5.8, -3.6, 8.2], [5.0, 4.0, 0]], top:[[4.6, 3.15, 19], [4.6, 3.16, 0]], cell:[[1.8, -1.4, 2.0], [1.8, 1.0, 0.4]]}});
+
   /* --- slide 11 (3 and 4 of 4): drive the ROSbot with a pad and watch v, omega, the wheel speeds and the pose (user,
      2026-11-20: "Allow us to move the robot and see the changes in numbers"). s and r are the course controller's
      (rosbot_controller/config/rosbot/controllers.yaml: wheel_separation 0.186 x multiplier 1.36, wheel_radius 0.0425);
      the limits are the ROSbot's (1.0 m/s, 3.14 rad/s). The pose moves by the exact arc of the command, no slip. --- */
   (function(){
     var sv = $id("dr-svg"), pad = $id("dr-pad"), tb = $id("dr-t");
+    /* the table's symbols as math (user, 2026-11-22: "use math for some of the symbols (v, w, v_L, etc)"): rendered once with
+       KaTeX, since the table is rebuilt on every frame while the robot drives */
+    var DL = {}; [["v", "v"], ["w", "\\omega"], ["vL", "v_L"], ["vR", "v_R"], ["R", "R"], ["x", "x"], ["y", "y"], ["th", "\\theta"], ["qz", "z"], ["qw", "w"]]
+      .forEach(function(k){ DL[k[0]] = window.katex ? katex.renderToString(k[1], {throwOnError:false}) : k[1]; });
     if (!sv) return;
     var S = 0.186 * 1.36, R_W = 0.0425, VMAX = 1.0, WMAX = 3.14, X0 = 20, Y0 = 10, PXM = 200, AW = 3, AH = 2;   /* the floor: 3 m by 2 m */
     var st = {x:0.5, y:1.0, th:0, v:0, w:0}, trail = [];
@@ -468,14 +697,14 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       trailP.setAttribute("d", trail.map(function(q, i){ var pp = P(q[0], q[1]); return (i ? "L" : "M") + pp[0].toFixed(1) + "," + pp[1].toFixed(1); }).join(""));
       var Rtxt = Math.abs(st.w) < 1e-9 ? (Math.abs(st.v) < 1e-9 ? "none (still)" : "infinite (straight)") : (Math.abs(st.v) < 1e-9 ? "0 m (on the spot)" : fx(st.v / st.w, 2) + " m");
       tb.innerHTML =
-        "<tr><td><code>linear.x</code>,  v</td><td>" + fx(st.v, 2) + " m/s</td></tr>" +
-        "<tr><td><code>angular.z</code>, ω</td><td>" + fx(st.w, 2) + " rad/s</td></tr>" +
-        "<tr><td>Left wheels, v<sub>L</sub></td><td>" + fx(vL, 2) + " m/s, " + fx(vL / R_W, 1) + " rad/s</td></tr>" +
-        "<tr><td>Right wheels, v<sub>R</sub></td><td>" + fx(vR, 2) + " m/s, " + fx(vR / R_W, 1) + " rad/s</td></tr>" +
-        "<tr><td>Turn radius R</td><td>" + Rtxt + "</td></tr>" +
-        "<tr><td>Position x, y</td><td>" + fx(st.x, 2) + " m, " + fx(st.y, 2) + " m</td></tr>" +
-        "<tr><td>Yaw θ</td><td>" + fx(th, 2) + " rad (" + fx(th * 180 / Math.PI, 0) + "°)</td></tr>" +
-        "<tr><td>Quaternion z, w</td><td>" + fx(Math.sin(th / 2), 3) + ", " + fx(Math.cos(th / 2), 3) + "</td></tr>"; }
+        "<tr><td><code>linear.x</code>, " + DL.v + "</td><td>" + fx(st.v, 2) + " m/s</td></tr>" +
+        "<tr><td><code>angular.z</code>, " + DL.w + "</td><td>" + fx(st.w, 2) + " rad/s</td></tr>" +
+        "<tr><td>Left wheels, " + DL.vL + "</td><td>" + fx(vL, 2) + " m/s, " + fx(vL / R_W, 1) + " rad/s</td></tr>" +
+        "<tr><td>Right wheels, " + DL.vR + "</td><td>" + fx(vR, 2) + " m/s, " + fx(vR / R_W, 1) + " rad/s</td></tr>" +
+        "<tr><td>Turn radius " + DL.R + "</td><td>" + Rtxt + "</td></tr>" +
+        "<tr><td>Position " + DL.x + ", " + DL.y + "</td><td>" + fx(st.x, 2) + " m, " + fx(st.y, 2) + " m</td></tr>" +
+        "<tr><td>Yaw " + DL.th + "</td><td>" + fx(th, 2) + " rad (" + fx(th * 180 / Math.PI, 0) + "°)</td></tr>" +
+        "<tr><td>Quaternion " + DL.qz + ", " + DL.qw + "</td><td>" + fx(Math.sin(th / 2), 3) + ", " + fx(Math.cos(th / 2), 3) + "</td></tr>"; }
     var last = performance.now(), lastTrail = 0;
     function step(now){ var dt = Math.min(0.1, (now - last) / 1000); last = now;
       var fr = sv.closest(".plate"); if (fr && !fr.classList.contains("active") && !sv.__on) return;
@@ -510,15 +739,24 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var L = ["ros2 launch gp2_bringup gp2_sim.launch.py" + (rows.length ? " \\" : "")];
     rows.forEach(function(r, i){ L.push("  " + r.join(" ") + (i < rows.length - 1 ? " \\" : "")); });
     cmd.innerHTML = L.map(function(l, i){ return '<span class="cl' + (i ? " cont" : "") + '">' + l.replace(/(\w+:=)/g, '<span class="ty">$1</span>') + "</span>"; }).join(""); }
+  /* the slide opens on the defaults, so the command has no arguments (user, 2026-11-22: "slide 22: load the slide with default values
+     selected") */
   document.querySelectorAll("#la-t td[data-arg]").forEach(function(td){
     var k = td.dataset.arg;
-    buttons(td, td.dataset.vals.split(","), function(v){ return v; }, function(v){ picks[k] = v; laCmd(); }, k === "gui" ? "false" : k === "rviz" ? "true" : defs[k]);
+    buttons(td, td.dataset.vals.split(","), function(v){ return v; }, function(v){ picks[k] = v; laCmd(); }, defs[k]);
     td.querySelectorAll("button").forEach(function(b){ b.style.fontSize = "20px"; b.style.padding = "3px 10px"; });
   });
   ["x", "y", "yaw"].forEach(function(k){ var b = $id("la-" + k);
     b.addEventListener("input", laCmd); b.addEventListener("click", function(e){ e.stopPropagation(); }); });
-  onReset($id("la-t"), function(){ ["x", "y", "yaw"].forEach(function(k){ $id("la-" + k).value = ""; }); laCmd(); });   /* empty boxes on leaving the slide */
-  picks.gui = "false"; picks.rviz = "true"; laCmd();
+  /* the defaults picked again and the boxes empty: on leaving the slide, and on the Defaults button (user, 2026-11-22: "slide 21:
+     provide a reset button to reset to default values") */
+  function laDefaults(){ ["x", "y", "yaw"].forEach(function(k){ $id("la-" + k).value = ""; });
+    document.querySelectorAll("#la-t td[data-arg]").forEach(function(td){ var k = td.dataset.arg; picks[k] = defs[k];
+      td.querySelectorAll("button").forEach(function(b){ b.classList.toggle("on", b.textContent === defs[k]); }); });
+    laCmd(); }
+  onReset($id("la-t"), laDefaults);
+  $id("la-reset").onclick = function(e){ e.stopPropagation(); laDefaults(); };
+  laCmd();
 
   /* --- slide 16 (2 of 2): messages at 10 Hz, Ctrl+C, the 0.5 s wait, then the brake --- */
   var cs = $id("cv-svg"), T = 6, x0 = 230, x1 = 1120, X = function(t){ return x0 + t / T * (x1 - x0); };
@@ -1344,6 +1582,65 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 
 /* the business card's logo: the cover's ROSbot drawing */
 (function(){ var g = $id("rbc-icon"); if (g) rosbotIcon(g, 0, 0, 52, 0); })();
+/* kinematics (user, 2026-11-22: "make this interactive. drag sliders to see values changing. Use robot drawing from title
+   slide"): v and omega give each side's speed and each wheel's turn rate, with the ROSbot's s and r from controllers.yaml */
+(function(){
+  var sv = $id("kn-svg"), iv = $id("kn-v"), iw = $id("kn-w"), ol = $id("kn-steps");
+  if (!sv) return;
+  var S = 0.186 * 1.36, R = 0.0425, CX = 230, CY = 160, PX = 140;   /* 1 m/s = 140 px: the largest side speed, 1.40 m/s, stays inside */
+  TICKS["kn-w"] = [1];
+  rosbotIcon(sv, CX, CY, 180, 0);
+  txt(sv, 124, 91, "left", 20, C.muted, "end"); txt(sv, 124, 243, "right", 20, C.muted, "end");
+  function mk(){ return {ln:el(sv, "line", {stroke:C.live, "stroke-width":6, "stroke-linecap":"round"}), hd:el(sv, "path", {fill:C.live}),
+    lb:el(sv, "text", {"font-size":22, fill:C.ink, "text-anchor":"middle", "font-family":FONT})}; }
+  var aL = mk(), aR = mk();
+  /* the driving direction (user, 2026-11-22: "show the driving direction with an arrow (going straight and turning)"): the
+     path of the robot's center for a short while, drawn from its front (or its back when it reverses), in the blue of the
+     motion arrows on the slide before; turning on the spot, a curved arrow around the robot */
+  var PXM = 180 / 0.197;   /* the icon's body is 180 px for the ROSbot's 0.197 m */
+  var pth = el(sv, "path", {fill:"none", stroke:C.plan, "stroke-width":5, "stroke-linecap":"round"}), phd = el(sv, "path", {fill:C.plan});
+  function head(x, y, a){ var c = Math.cos(a), s = Math.sin(a);
+    return "M" + (x + 14 * c) + "," + (y + 14 * s) + " L" + (x - 8 * s) + "," + (y + 8 * c) + " L" + (x + 8 * s) + "," + (y - 8 * c) + " Z"; }
+  function drawPath(v, w){ var pts = [], a = 0;
+    if (Math.abs(v) < 0.005 && Math.abs(w) < 0.005){ pth.setAttribute("d", ""); phd.setAttribute("d", ""); return; }
+    if (Math.abs(v) < 0.005){   /* on the spot: an arc around the center, counterclockwise on the map is up on the screen */
+      var sg = w > 0 ? -1 : 1, r = 140;   /* clear of the wheels: their outer corners are 122 px from the center */
+      for (var i = 0; i <= 24; i++){ var q = sg * (i / 24) * 0.75; pts.push([CX + r * Math.cos(q), CY + r * Math.sin(q)]); }
+      a = sg * 0.75 + sg * Math.PI / 2;
+    } else {   /* the center's path (x' = v cos th, y' = v sin th, th' = w), shifted to start at the front or the back */
+      var T = Math.min(0.11 / Math.abs(v), Math.abs(w) > 1e-9 ? 2.1 / Math.abs(w) : 1e9), x = 0, y = 0, th = 0, n = 40, dt = T / n;
+      var x0 = CX + (v > 0 ? 100 : -100);
+      for (var j = 0; j <= n; j++){ pts.push([x0 + x * PXM, CY - y * PXM]); x += v * Math.cos(th) * dt; y += v * Math.sin(th) * dt; th += w * dt; }
+      var p1 = pts[n], p0 = pts[n - 1]; a = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+    }
+    pth.setAttribute("d", pts.map(function(q, i){ return (i ? "L" : "M") + q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(""));
+    var e = pts[pts.length - 1]; phd.setAttribute("d", head(e[0], e[1], a)); }
+  function arrow(a, y, ty, name, sp){ var L = sp * PX, s = Math.sign(L) || 1, on = Math.abs(L) >= 4;
+    a.ln.style.display = on ? "" : "none"; a.ln.setAttribute("x1", CX); a.ln.setAttribute("y1", y); a.ln.setAttribute("x2", CX + L); a.ln.setAttribute("y2", y);
+    a.hd.setAttribute("d", on ? "M" + (CX + L + 12 * s) + "," + y + " L" + (CX + L) + "," + (y - 9) + " L" + (CX + L) + "," + (y + 9) + " Z" : "");
+    a.lb.setAttribute("x", CX); a.lb.setAttribute("y", ty);
+    a.lb.innerHTML = '<tspan class="mi">v</tspan><tspan class="mi" dy="6" font-size="20">' + name + '</tspan><tspan dy="-6"> = ' + f(sp, 3) + " m/s</tspan>"; }
+  function dir(x){ return Math.abs(x) < 5e-4 ? "still" : x > 0 ? "forward" : "backward"; }
+  function show(){ var v = +iv.value, w = +iw.value, t = w * S / 2, vL = v - t, vR = v + t;
+    arrow(aL, 48, 24, "L", vL); arrow(aR, 268, 300, "R", vR); drawPath(v, w);
+    var sv_ = Math.abs(v) < 0.005, sw_ = Math.abs(w) < 0.005;
+    var motion = sv_ && sw_ ? "none, the robot stands still." : sw_ ? "straight " + (v > 0 ? "forward" : "backward") + "." :
+      sv_ ? "on the spot, turning " + (w > 0 ? "left" : "right") + "." :
+      (v > 0 ? "forward" : "backward") + " on an arc to the " + ((v > 0) === (w > 0) ? "left" : "right") + ", radius \\(R = |v / \\omega|\\) = " + f(Math.abs(v / w), 2) + " m.";
+    var ts = f(Math.abs(t), 3), pm = t < 0;
+    if (ol) ol.innerHTML =
+      "<li>\\(\\omega\\,s/2\\) = " + f(w, 2) + " × 0.253 / 2 = " + f(t, 3) + ", so \\(v_L\\) = " + f(v, 2) + (pm ? " + " : " − ") + ts + " = " + f(vL, 3) +
+        " and \\(v_R\\) = " + f(v, 2) + (pm ? " − " : " + ") + ts + " = " + f(vR, 3) + " m/s.</li>" +
+      "<li>Wheels, at \\(v_{\\text{side}} / r\\): left " + f(Math.abs(vL) / R, 2) + " rad/s " + dir(vL) + ", right " + f(Math.abs(vR) / R, 2) + " rad/s " + dir(vR) + ".</li>" +
+      "<li>Path (blue arrow): " + motion + "</li>";
+    if (ol) mathIn(ol); }
+  iv.addEventListener("input", show); iw.addEventListener("input", show);
+  [].forEach.call(document.querySelectorAll("#kin .kn-step"), function(b){ b.addEventListener("click", function(e){ e.stopPropagation();
+    var inp = $id(b.dataset.for); if (+b.dataset.d > 0) inp.stepUp(); else inp.stepDown();
+    inp.dispatchEvent(new Event("input", {bubbles:true})); }); });
+  show();
+  onReset(sv, function(){ iv.value = 0; iw.value = 1; show(); });
+})();
 
 
 /* ---------- section 2: the ROS graph with moving messages, the four-step loop, the error of a turn, the yaw,
@@ -1385,6 +1682,34 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var ok = cands.filter(function(c){ return c.c >= 4; }); p = (ok.length ? ok[0] : cands.sort(function(a, b){ return b.c - a.c; })[0]).q;
     var t = tag(svg, p[0], p[1], n); t.previousSibling.setAttribute("class", "dt"); t.setAttribute("class", "dt");
     obs.push([p[0], p[1], tr]); }
+  /* putWord: the same search as putTag, for a word in its mark's colour (user, 2026-11-22, slide 64: "write heading, error, and
+     target directly on the figure (legend). remove tags"): the first spot whose box touches no line, label or other word */
+  /* rectClear: the gap between a box and the nearest obstacle (a segment [x1, y1, x2, y2] or a circle [x, y, r]); negative when one
+     crosses the box. Exact, so a line passing between sample points still counts. */
+  function rectClear(x0, y0, x1, y1, obs){
+    function inR(x, y){ return x >= x0 && x <= x1 && y >= y0 && y <= y1; }
+    function pr(x, y){ var dx = Math.max(x0 - x, 0, x - x1), dy = Math.max(y0 - y, 0, y - y1); return Math.hypot(dx, dy); }
+    function cross(a, b, c, d){ function o(p, q, r){ return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]); }
+      return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0; }
+    var E = [[[x0, y0], [x1, y0]], [[x1, y0], [x1, y1]], [[x1, y1], [x0, y1]], [[x0, y1], [x0, y0]]], m = 1e9;
+    obs.forEach(function(ob){
+      if (ob.length === 4){ var A = [ob[0], ob[1]], B = [ob[2], ob[3]];
+        if (inR(A[0], A[1]) || inR(B[0], B[1]) || E.some(function(e){ return cross(A, B, e[0], e[1]); })){ m = Math.min(m, -1); return; }
+        var d = Math.min(pr(A[0], A[1]), pr(B[0], B[1]));
+        [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].forEach(function(k){ d = Math.min(d, dseg(k[0], k[1], ob)); });
+        m = Math.min(m, d - 3); }
+      else m = Math.min(m, pr(ob[0], ob[1]) - ob[2]); });
+    return m; }
+  function putWord(svg, ax, ay, pref, obs, S, word, color){
+    var fs = Math.max(20, TXT_MIN / svgScale(svg)), w = word.length * fs * 0.56 + 8, h = fs + 4, cands = [];
+    [24, 36, 50, 66, 82, 98].forEach(function(rr){ for (var k = 0; k <= 18; k++){ var a = pref + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * 20, q = pt(ax, ay, rr, a),
+        x0 = q[0] - w / 2, y0 = q[1] - h / 2;
+      if (x0 < 3 || x0 + w > S - 3 || y0 < 3 || y0 + h > S - 3) continue;
+      cands.push({q:q, c:rectClear(x0, y0, x0 + w, y0 + h, obs)}); } });
+    var ok = cands.filter(function(c){ return c.c >= 4; }), q = (ok.length ? ok[0] : cands.sort(function(a, b){ return b.c - a.c; })[0]).q;
+    var tx = txt(svg, q[0], q[1] + fs * 0.36, word, fs, color, "middle", {"font-weight":600}); tx.setAttribute("class", "dt"); halo(tx);
+    var x0 = q[0] - w / 2, y0 = q[1] - h / 2;
+    obs.push([x0, y0, x0 + w, y0], [x0 + w, y0, x0 + w, y0 + h], [x0 + w, y0 + h, x0, y0 + h], [x0, y0 + h, x0, y0], [q[0], q[1], h / 2]); }
 
   function head(svg, x, y, dx, dy, color){ var L = Math.hypot(dx, dy) || 1; dx /= L; dy /= L; var s = 17, bx = x - dx * s, by = y - dy * s, px = -dy * 8, py = dx * 8;
     return el(svg, "polygon", {points:x + "," + y + " " + (bx + px) + "," + (by + py) + " " + (bx - px) + "," + (by - py), fill:color, class:"dt"}); }
@@ -1414,8 +1739,21 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     if (sh.t){ arrow(svg, c, c, tp[0], tp[1], C.s2); obs.push([c, c, tp[0], tp[1]]); }
     if (sh.h){ arrow(svg, c, c, hp[0], hp[1], C.plan); obs.push([c, c, hp[0], hp[1]]); }
     if (sh.arc && Math.abs(e) > 0.05) arc(svg, c, ra, o.h, o.h + e, C.live, obs);
+    /* o.dDeg: target minus heading before the full turn, drawn the long way, dashed grey, outside the error arc */
+    if (o.dDeg != null){ var rd = ra + 30, nd = Math.max(2, Math.ceil(Math.abs(o.dDeg) / 3)), dp = [];
+      for (var kd = 0; kd <= nd; kd++) dp.push(pt(c, c, rd, o.h + o.dDeg * kd / nd));
+      poly(svg, dp, {stroke:C.muted, "stroke-width":3, "stroke-dasharray":"7 6", class:"dr"});
+      for (kd = 1; kd < dp.length; kd++) obs.push([dp[kd - 1][0], dp[kd - 1][1], dp[kd][0], dp[kd][1]]);
+      var thd = (o.h + o.dDeg) * DEG, sd = o.dDeg >= 0 ? 1 : -1; head(svg, dp[nd][0], dp[nd][1], -Math.sin(thd) * sd, -Math.cos(thd) * sd, C.muted); }
     if (sh.cmd){ arc(svg, c, 40, o.h + (e >= 0 ? 140 : 240), o.h + (e >= 0 ? 240 : 140), C.slate, obs); }
     var body = rosbotIcon(svg, c, c, 46, -o.h);   /* the cover's ROSbot, facing the heading */
+    if (o.words){ var W = o.words === true ? {h:"heading", t:"target", e:"error"} : o.words;
+      /* the error first: it sits inside the other marks and has the least room */
+      if (sh.arc && Math.abs(e) > 0.05){ var mw = pt(c, c, ra, o.h + e / 2); putWord(svg, mw[0], mw[1], o.h + e / 2, obs, S, W.e, C.live); }
+      if (sh.h) putWord(svg, hp[0], hp[1], o.h, obs, S, W.h, C.plan);
+      if (sh.t) putWord(svg, tp[0], tp[1], o.t, obs, S, W.t, C.s2);
+      if (o.dDeg != null && W.d){ var md = pt(c, c, ra + 30, o.h + o.dDeg / 2); putWord(svg, md[0], md[1], o.h + o.dDeg / 2, obs, S, W.d, C.muted); }
+    }
     if (o.tags){
       if (sh.h) putTag(svg, hp[0], hp[1], o.h, obs, S, 1);
       if (sh.t) putTag(svg, tp[0], tp[1], o.t, obs, S, 2);
@@ -1424,39 +1762,146 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     }
     return e; }
 
-  /* --- slide 23 (PDF page 25): the ROS graph, with messages moving along the arrows --- */
-  var gs = $id("cg-svg"), cgDots = [], cgOn = false;
+
+  /* --- fb-head: the loop for a heading, step by step, with the course node's constants (see the frame's comment) --- */
+  (function(){
+    var hs = $id("hl-svg"); if (!hs || !hs.isConnected) return;
+    var dial = $id("hl-dial"), plot = $id("hl-plot"), say = $id("hl-say"), play = $id("hl-play");
+    var KP = 1.5, UMAX = 1.0, TOL = 0.02, DT = 0.05, D2R = Math.PI / 180;
+    var th = 0, tgt = 90, k = 0, timer = null, trace = [], ymax = 1.7, uNow = 0;
+    function wrap(a){ return Math.atan2(Math.sin(a), Math.cos(a)); }
+    function err(){ return wrap(tgt * D2R - th); }
+    function setv(id, s){ $id(id).textContent = s; }
+    function sayM(s){ say.innerHTML = "<span>" + s + "</span>"; mathIn(say); }
+    var pg = $id("hl-pg");
+    function drawPlot(){ pg.innerHTML = ""; var plot = pg;
+      var x0 = 60, x1 = 770, yc = 50, hh = 22,   /* the tick numbers end at y 94, inside the 104-unit plot (they were cut off at 106) */ T = Math.max(4, trace.length ? trace[trace.length - 1][0] + 0.3 : 0);
+      function X(tt){ return x0 + (x1 - x0) * tt / T; } function Y(v){ return yc - hh * v / ymax; }
+      el(plot, "line", {x1:x0, y1:yc, x2:x1, y2:yc, stroke:C.edge, "stroke-width":2});
+      el(plot, "line", {x1:x0, y1:yc - hh - 4, x2:x0, y2:yc + hh + 4, stroke:C.edge, "stroke-width":2});
+      for (var s = 0; s <= T + 1e-9; s += 1){ el(plot, "line", {x1:X(s), y1:yc + hh, x2:X(s), y2:yc + hh + 6, stroke:C.edge, "stroke-width":2});
+        txt(plot, X(s), yc + hh + 22, String(s), 20, C.muted); }
+      txt(plot, x0 - 8, yc + 7, "0", 20, C.muted, "end");
+      if (trace.length > 1){ poly(plot, trace.map(function(r){ return [X(r[0]), Y(r[1])]; }), {stroke:C.live, "stroke-width":4});
+        poly(plot, trace.map(function(r){ return [X(r[0]), Y(r[2])]; }), {stroke:C.slate, "stroke-width":4, "stroke-dasharray":"9 6"}); }
+    }
+    function show(){ var e = err();
+      setv("hl-th", f(wrap(th), 2) + " rad"); setv("hl-e", f(e, 2) + " rad"); setv("hl-u", f(uNow, 2)); setv("hl-tg", (tgt < 0 ? "−" + (-tgt) : tgt) + "°");
+      drawTurn(dial, 320, {h:wrap(th) / D2R, t:tgt, show:{h:1, t:1, arc:1, cmd:Math.abs(uNow) > 1e-3 ? 1 : 0}, words:{h:"heading", t:"target", e:"error"}});
+      drawPlot(); }
+    function stop(){ if (timer){ clearInterval(timer); timer = null; } hs.classList.remove("run", "sat"); play.textContent = "Play"; play.classList.remove("on"); }
+    function step(){ var e = err();
+      if (Math.abs(e) < TOL){ uNow = 0; stop(); show();
+        sayM("Reached after " + k + " steps (" + (k * DT).toFixed(2) + " s): \\(|e| = " + Math.abs(e).toFixed(3) + "\\) rad, under the tolerance. The node stops.");
+        return false; }
+      var raw = KP * e; uNow = Math.max(-UMAX, Math.min(UMAX, raw));
+      trace.push([k * DT, e, uNow]); th = wrap(th + uNow * DT); k++;
+      hs.classList.toggle("sat", Math.abs(raw) > UMAX);
+      sayM("Step " + k + ", \\(t = " + (k * DT).toFixed(2) + "\\) s: " + (Math.abs(raw) > UMAX ? "\\(1.5\\,e = " + f(raw, 2) + "\\) rad/s, so the limit sends \\(u = " + f(uNow, 2) + "\\)." : "\\(u = 1.5\\,e = " + f(uNow, 2) + "\\) rad/s."));
+      show(); return true; }
+    function start(){ if (timer){ stop(); return; }
+      if (Math.abs(err()) < TOL){ sayM("The robot already faces the target. Pick another target, then Play."); return; }
+      if (!k){ trace = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); }
+      if (reduce){ while (step()) {} return; }   /* reduced motion: the end of the run, no movement */
+      hs.classList.add("run"); play.textContent = "Pause"; play.classList.add("on"); timer = setInterval(step, DT * 1000); }
+    function fresh(){ stop(); k = 0; trace = []; uNow = 0; ymax = Math.max(1.2, Math.abs(err()) * 1.08); show();
+      sayM("Pick a target, then press Play: the loop runs every 50 ms."); }
+    buttons($id("hl-tgts"), [90, 180, -90, 0], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ tgt = v; fresh(); }, 90);
+    play.onclick = function(e){ e.stopPropagation(); start(); };
+    $id("hl-reset").onclick = function(e){ e.stopPropagation(); th = 0; fresh(); };
+    fresh();
+    onReset(hs, function(){ th = 0; fresh(); });
+    new MutationObserver(show).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  })();
+
+
+  /* --- fb-dist: the loop for a distance, step by step, with the course node's constants (see the frame's comment) --- */
+  (function(){
+    var hs = $id("dl-svg"); if (!hs || !hs.isConnected) return;
+    var trk = $id("dl-track"), say = $id("dl-say"), play = $id("dl-play"), pg = $id("dl-pg");
+    var KP = 0.8, UMAX = 0.5, TOL = 0.02, DT = 0.05;
+    var dist = 0, tgt = 1.0, k = 0, timer = null, trace = [], ymax = 1.1, uNow = 0;
+    function err(){ return tgt - dist; }
+    function setv(id, s){ $id(id).textContent = s; }
+    function sayM(s){ say.innerHTML = "<span>" + s + "</span>"; mathIn(say); }
+    /* the lane, seen from above: the start at the bottom, 120 px per metre, the robot facing up */
+    function drawTrack(){ trk.innerHTML = ""; var X0 = 120, X1 = 200, Y0 = 296, PX = 120, cx = (X0 + X1) / 2;
+      el(trk, "rect", {x:X0, y:20, width:X1 - X0, height:Y0 - 20, fill:"none", stroke:C.edge, "stroke-width":3});
+      for (var m = 0; m <= 2.0001; m += 0.5){ var yy = Y0 - m * PX; el(trk, "line", {x1:X0 - 8, y1:yy, x2:X0, y2:yy, stroke:C.edge, "stroke-width":3});
+        txt(trk, X0 - 14, yy + 7, (m ? m.toFixed(1) : "0") + " m", 20, C.muted, "end"); }
+      var yt = Y0 - tgt * PX, yr = Y0 - dist * PX;
+      el(trk, "line", {x1:X0 - 4, y1:yt, x2:X1 + 4, y2:yt, stroke:C.s2, "stroke-width":4, "stroke-dasharray":"9 6"});
+      txt(trk, X1 + 10, yt + 7, "target", 20, C.s2, "start");
+      if (dist > 0.01){ el(trk, "line", {x1:X1 + 22, y1:Y0, x2:X1 + 22, y2:yr, stroke:C.plan, "stroke-width":5, "stroke-linecap":"round"});
+        txt(trk, X1 + 30, (Y0 + yr) / 2 + 7, "driven", 20, C.plan, "start"); }
+      if (Math.abs(err()) > 0.02){ el(trk, "line", {x1:X1 + 22, y1:yr, x2:X1 + 22, y2:yt, stroke:C.live, "stroke-width":5, "stroke-linecap":"round"});
+        if (Math.abs(yr - yt) > 56) txt(trk, X1 + 30, (yr + yt) / 2 + 7, "error", 20, C.live, "start"); }   /* the word only when the segment can hold it clear of "target" */
+      var g = document.createElementNS("http://www.w3.org/2000/svg", "g"); trk.appendChild(g); rosbotIcon(g, cx, yr, 46, -90); }
+    function drawPlot(){ pg.innerHTML = ""; var plot = pg;
+      var x0 = 60, x1 = 770, yc = 50, hh = 22, T = Math.max(4, trace.length ? trace[trace.length - 1][0] + 0.3 : 0);
+      function X(tt){ return x0 + (x1 - x0) * tt / T; } function Y(v){ return yc - hh * v / ymax; }
+      el(plot, "line", {x1:x0, y1:yc, x2:x1, y2:yc, stroke:C.edge, "stroke-width":2});
+      el(plot, "line", {x1:x0, y1:yc - hh - 4, x2:x0, y2:yc + hh + 4, stroke:C.edge, "stroke-width":2});
+      for (var s = 0; s <= T + 1e-9; s += 1){ el(plot, "line", {x1:X(s), y1:yc + hh, x2:X(s), y2:yc + hh + 6, stroke:C.edge, "stroke-width":2});
+        txt(plot, X(s), yc + hh + 22, String(s), 20, C.muted); }
+      txt(plot, x0 - 8, yc + 7, "0", 20, C.muted, "end");
+      if (trace.length > 1){ poly(plot, trace.map(function(r){ return [X(r[0]), Y(r[1])]; }), {stroke:C.live, "stroke-width":4});
+        poly(plot, trace.map(function(r){ return [X(r[0]), Y(r[2])]; }), {stroke:C.slate, "stroke-width":4, "stroke-dasharray":"9 6"}); } }
+    function show(){ setv("dl-th", f(dist, 2) + " m"); setv("dl-e", f(err(), 2) + " m"); setv("dl-u", f(uNow, 2)); setv("dl-tg", tgt.toFixed(1) + " m");
+      drawTrack(); drawPlot(); }
+    function stop(){ if (timer){ clearInterval(timer); timer = null; } hs.classList.remove("run", "sat"); play.textContent = "Play"; play.classList.remove("on"); }
+    function step(){ var e = err();
+      if (Math.abs(e) < TOL){ uNow = 0; stop(); show();
+        sayM("Reached after " + k + " steps (" + (k * DT).toFixed(2) + " s): \\(|e| = " + Math.abs(e).toFixed(3) + "\\) m, under the tolerance. The node stops.");
+        return false; }
+      var raw = KP * e; uNow = Math.max(-UMAX, Math.min(UMAX, raw));
+      trace.push([k * DT, e, uNow]); dist += uNow * DT; k++;
+      hs.classList.toggle("sat", Math.abs(raw) > UMAX);
+      sayM("Step " + k + ", \\(t = " + (k * DT).toFixed(2) + "\\) s: " + (Math.abs(raw) > UMAX ? "\\(0.8\\,e = " + f(raw, 2) + "\\) m/s, so the limit sends \\(u = " + f(uNow, 2) + "\\)." : "\\(u = 0.8\\,e = " + f(uNow, 2) + "\\) m/s."));
+      show(); return true; }
+    function fresh(){ stop(); dist = 0; k = 0; trace = []; uNow = 0; ymax = Math.max(0.6, Math.abs(err()) * 1.08); show();
+      sayM("Pick a target, then press Play: the loop runs every 50 ms. Each run starts at 0 m."); }
+    function start(){ if (timer){ stop(); return; }
+      if (Math.abs(err()) < TOL) fresh();   /* a finished run starts again from 0 m: the node measures from where it starts */
+      if (reduce){ while (step()) {} return; }
+      hs.classList.add("run"); play.textContent = "Pause"; play.classList.add("on"); timer = setInterval(step, DT * 1000); }
+    buttons($id("dl-tgts"), [0.5, 1.0, 2.0], function(v){ return v.toFixed(1) + " m"; }, function(v){ tgt = v; fresh(); }, 1.0);
+    play.onclick = function(e){ e.stopPropagation(); start(); };
+    $id("dl-reset").onclick = function(e){ e.stopPropagation(); fresh(); };
+    fresh();
+    onReset(hs, function(){ fresh(); });
+    new MutationObserver(show).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  })();
+
+  /* --- slide 23 (PDF page 25): the ROS graph, a still drawing (user, 2026-11-22: "slide 57: remove interactions on the diagram.
+     remove animation") --- */
+  var gs = $id("cg-svg");
   function drawCg(){
-    gs.innerHTML = ""; cgDots = []; cgOn = false;
+    gs.innerHTML = "";
     var cx = 215, bh = 56, y0 = 10, y1 = y0 + bh + 112, y2 = y1 + bh + 124, MONO = {"font-family":"Fira Mono, monospace", "font-weight":700};
     function box(y, w, name){ el(gs, "rect", {x:cx - w / 2, y:y, width:w, height:bh, rx:14, fill:"#ffffff", stroke:C.slate, "stroke-width":3, class:"dr"});
       txt(gs, cx, y + bh / 2 + 8, name, 22, C.slate, "middle", MONO).setAttribute("class", "dt"); }
     function link(ya, yb, lines){ el(gs, "line", {x1:cx, y1:ya, x2:cx, y2:yb - 14, stroke:C.slate, "stroke-width":3, class:"dr"}); head(gs, cx, yb, 0, 1, C.slate);
-      var ym = (ya + yb) / 2 - 6 * (lines.length - 1);
-      lines.forEach(function(l, i){ txt(gs, cx + 18, ym + i * 26, l, i ? 20 : 22, i ? C.muted : C.slate, "start", {"font-family":"Fira Mono, monospace"}).setAttribute("class", "dt"); });
-      cgDots.push({y1:ya + 4, y2:yb - 4, ph:0}, {y1:ya + 4, y2:yb - 4, ph:0.5}); }
+      var ym = (ya + yb) / 2 - 6 * (lines.length - 1), first = null;
+      lines.forEach(function(l, i){ var e = txt(gs, cx + 18, ym + i * 26, l, i ? 20 : 22, i ? C.muted : C.slate, "start", {"font-family":"Fira Mono, monospace"});
+        e.setAttribute("class", "dt"); if (!i) first = e; });
+      return first; }
     box(y0, 110, "ekf");
-    link(y0 + bh, y1, ["/odometry/filtered", "nav_msgs/msg/Odometry"]);
+    var tOdom = link(y0 + bh, y1, ["/odometry/filtered", "nav_msgs/msg/Odometry"]);
     box(y1, 340, "heading_controller_node");
-    link(y1 + bh, y2, ["/cmd_vel", "geometry_msgs/msg/", "TwistStamped"]);
+    var tCmd = link(y1 + bh, y2, ["/cmd_vel", "geometry_msgs/msg/TwistStamped"]);   /* the type on one line (user, 2026-11-22) */
     box(y2, 420, "differential_drive_controller");
-    cgDots.forEach(function(d, i){ if (i >= 2) d.ph += 0.25; });
+    /* the box fits the drawing, the same margin on every side, so the diagram is centered and the box no larger than it needs
+       (user, 2026-11-22: "Center the diagram in the box. Decrease the box if it's too large"); each topic's hover target sits
+       on its label */
+    var b = gs.getBBox(), pad = 22, x = b.x - pad, y = b.y - pad, w = Math.ceil(b.width + 2 * pad), h = Math.ceil(b.height + 2 * pad);
+    gs.setAttribute("viewBox", x + " " + y + " " + w + " " + h); gs.setAttribute("width", w); gs.setAttribute("height", h);
+    gs.parentNode.style.width = w + "px";
+    [[tOdom, "cg-hot-odom"], [tCmd, "cg-hot-cmd"]].forEach(function(o){ var tb = o[0].getBBox(), s = $id(o[1]);
+      s.style.left = (tb.x - x - 4) + "px"; s.style.top = (tb.y - y - 2) + "px"; s.style.width = (tb.width + 8) + "px"; s.style.height = (tb.height + 4) + "px"; });
   }
-  var cgWant = false;   /* the dots move only after Play (no autoplay, user, 2026-11-21) */
-  function startCg(){
-    cgDots.forEach(function(d){ d.c = el(gs, "circle", {cx:215, cy:d.y1, r:8, fill:C.live, stroke:"#ffffff", "stroke-width":2}); });
-    if (reduce) cgDots.forEach(function(d){ d.c.setAttribute("cy", (d.y1 + d.y2) / 2); });
-    cgOn = cgWant; }
-  drawCg(); startCg();
-  setInterval(function(){ if (!cgOn || reduce || !active(gs)) return; var t = performance.now() / 1000;
-    cgDots.forEach(function(d){ if (!d.c) return; var u = (t / 1.6 + d.ph) % 1; d.c.setAttribute("cy", d.y1 + (d.y2 - d.y1) * u); }); }, 40);
-  function againCg(){ drawCg(); reveal(gs, 1500, startCg); }
-  $id("cg-again").onclick = function(e){ e.stopPropagation(); againCg(); };
-  var cgPlay = $id("cg-play");
-  cgPlay.onclick = function(e){ e.stopPropagation(); cgWant = !cgWant; cgOn = cgWant && cgDots.length > 0 && !!cgDots[0].c; cgPlay.textContent = cgWant ? "Pause" : "Play"; };
-  onShow(gs, function(first){ if (first) againCg(); });
-  /* leaving the slide: the dots rest (Play again starts them) and the graph is drawn whole, with no new drawing animation */
-  onReset(gs, function(){ if (gs._rv){ clearInterval(gs._rv); gs._rv = null; } cgWant = false; cgPlay.textContent = "Play"; drawCg(); startCg(); });
+  drawCg();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawCg);   /* measure again with the fonts loaded */
 
   /* --- slide 25 (page 27): the four steps, played slowly, each clickable --- */
   var ls = $id("lc-svg"), lis = [].slice.call(document.querySelectorAll("#lc-steps li")), lcStep = 0, lcTimer = null, lcTween = null, lcCap = $id("lc-cap");
@@ -1484,11 +1929,10 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   onShow(ls, function(first){ if (first) reveal(ls, 1200); });   /* no autoplay (user, 2026-11-21): it waits for its button */
 
   /* --- slide 26 (page 28): the error of a turn, from two sliders --- */
-  var ts = $id("tc-svg"), tH = $id("tc-h"), tT = $id("tc-t"), tSteps = $id("tc-steps");
+  var ts = $id("tc-svg"), tg = $id("tc-g"), tH = $id("tc-h"), tT = $id("tc-t"), tLabel = $id("tc-svg").getAttribute("aria-label");
   TICKS["tc-h"] = [178.9]; TICKS["tc-t"] = [-90];
   function drawTc(){
     var h = +tH.value, t = +tT.value;
-    drawTurn(ts, 350, {h:h, t:t, show:{h:1, t:1, arc:1}, tags:true});
     var hr = +(h * DEG).toFixed(3), tr_ = +(t * DEG).toFixed(3), d = +(tr_ - hr).toFixed(3), TP = 6.283, e = d, dirOf = function(x){ return x > 0 ? "left" : "right"; };
     var deg = function(x){ return Math.round(Math.abs(x) * 180 / Math.PI); }, par = function(x){ return x < 0 ? "(" + fm(x, 3) + ")" : fm(x, 3); };
     var l1 = "Target minus heading: " + fm(tr_, 3) + " − " + par(hr) + " = " + fm(d, 3) + " rad. " + (d === 0 ? "That is no turn." : "That is a turn " + dirOf(d) + " of " + deg(d) + "°."), l2;
@@ -1496,7 +1940,19 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     else if (d > Math.PI){ e = +(d - TP).toFixed(3); l2 = "Turning right is shorter. Subtract one full turn, 2π = 6.283 rad: " + fm(d, 3) + " − 6.283 = " + fm(e, 3) + " rad, a turn right of " + deg(e) + "°."; }
     else l2 = fm(d, 3) + " rad is already between −π and π, so no full turn is added.";
     var l3 = e === 0 ? "The error is 0 rad: the robot does not turn." : "The error is " + fm(e, 3) + " rad: the robot turns " + dirOf(e) + " " + deg(e) + "°.";
-    tSteps.innerHTML = "<li>" + l1 + "</li><li>" + l2 + "</li><li>" + l3 + "</li>";
+    /* the numbers on the dial (user, 2026-11-22, slide 64: "this takes too much space ... write the computed values directly in the
+       figure"): each mark with its value in rad, and target minus heading, the long way, when a full turn is added or removed */
+    var wrapped = d > Math.PI || d <= -Math.PI;
+    drawTurn(tg, 350, {h:h, t:t, show:{h:1, t:1, arc:1}, dDeg:wrapped ? t - h : null, words:{h:"heading", t:"target", e:"error", d:"d"}});
+    /* the values, one row each in the colour of its mark, under the dial */
+    var rows = $id("tc-rows"); rows.innerHTML = "";
+    [["heading = " + fm(hr, 3) + " rad", C.plan], ["target = " + fm(tr_, 3) + " rad", C.s2], ["d = target − heading = " + fm(d, 3) + " rad", C.muted],
+     ["error = d" + (d > Math.PI ? " − 2π" : d <= -Math.PI ? " + 2π" : "") + " = " + fm(e, 3) + " rad", C.live]].forEach(function(r, i){
+      txt(rows, 12, 378 + i * 26, r[0], 20, r[1], "start", {"font-weight":600}).setAttribute("class", "dt"); });
+    ts.setAttribute("aria-label", tLabel + " " + l1 + " " + l2 + " " + l3);   /* the steps, for a screen reader */
+    /* the pseudo code: mark the lines this target and heading run (line 1, the branch taken if any, line 4) */
+    var on = d > Math.PI ? [0, 1, 3] : d <= -Math.PI ? [0, 2, 3] : [0, 3];   /* every line this call runs */
+    [].forEach.call(document.querySelectorAll("#tc-code .cl"), function(l, k){ l.classList.toggle("hl", on.indexOf(k) >= 0); });
   }
   tH.addEventListener("input", drawTc); tT.addEventListener("input", drawTc);
   $id("tc-ex").onclick = function(e){ e.stopPropagation(); tH.value = 178.9; tT.value = -90; drawTc(); };
@@ -1546,31 +2002,380 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   var RS = [77.809681935, 78.359684881, 78.909592792, 79.409595631, 79.909654172, 80.459604419];
   var RL = [[1.56886, "error 1.56886 rad, command 1 rad/s", 1], [1.20115, "error 1.20115 rad, command 1 rad/s", 1], [0.58477, "error 0.58477 rad, command 0.877155 rad/s", 0],
             [0.24099, "error 0.24099 rad, command 0.361486 rad/s", 0], [0.0918069, "error 0.0918069 rad, command 0.13771 rad/s", 0], [0.0186762, "heading reached: yaw 1.55212 rad, error 0.0186762 rad", 0]];
-  var rs = $id("rp-svg"), rlog = $id("rp-log"), rshown = 0, rTimer = null;
+  /* what each logged line shows, from the numbers above; one dot per line, clicked to explain it (user, 2026-11-22) */
+  var RX = ["<b>t = 0.00 s.</b> The error is 1.569 rad. 1.5 &times; 1.569 = 2.35 rad/s is over the 1.0 rad/s limit, so <code>std::clamp</code> sends 1.0 rad/s.",
+            "<b>t = 0.55 s.</b> The error is 1.201 rad. 1.5 &times; 1.201 = 1.80 rad/s is still over the limit, so the command stays at 1.0 rad/s.",
+            "<b>t = 1.10 s.</b> The error, 0.585 rad, is under 0.67 rad. 1.5 &times; 0.585 = 0.877 rad/s is under the limit: the command is the gain times the error.",
+            "<b>t = 1.60 s.</b> The error is 0.241 rad, so the command is 1.5 &times; 0.241 = 0.361 rad/s. A smaller error gives a slower turn.",
+            "<b>t = 2.10 s.</b> The error is 0.092 rad, so the command is 1.5 &times; 0.092 = 0.138 rad/s. The robot turns slowly near the target.",
+            "<b>t = 2.65 s.</b> The error, 0.019 rad, is under the 0.02 rad tolerance: the node sends 0 and cancels the timer. The yaw is 1.552 rad (88.9&deg;)."];
+  var rs = $id("rp-svg"), rlog = $id("rp-log"), rsay = $id("rp-say"), rpick = 0;
+  rlog.innerHTML = RL.map(function(r){ return '<span class="cl">' + r[1] + "</span>"; }).join("");
   function drawRp(){
     rs.innerHTML = "";
-    var box = {x:20, y:14, w:390, h:380}, ax = frame(rs, box, [0, 3], [0, 1.8], [0, 0.5, 1, 1.5, 2, 2.5, 3], [0, 0.5, 1, 1.5], "time (s)", "error (rad)");
+    var box = {x:20, y:14, w:390, h:300}, ax = frame(rs, box, [-0.2, 3], [0, 1.8], [0, 0.5, 1, 1.5, 2, 2.5, 3], [0, 0.5, 1, 1.5], "time (s)", "error (rad)");
     var thr = 1 / 1.5;
     el(rs, "line", {x1:ax.X(0), y1:ax.Y(thr), x2:ax.X(3), y2:ax.Y(thr), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"8 6"});
     halo(txt(rs, ax.X(3) - 6, ax.Y(thr) - 10, "0.67", 20, C.slate, "end"));
     el(rs, "line", {x1:ax.X(0), y1:ax.Y(0.02), x2:ax.X(3), y2:ax.Y(0.02), stroke:C.ok, "stroke-width":2, "stroke-dasharray":"8 6"});
     halo(txt(rs, ax.X(0) + 8, ax.Y(0.02) - 10, "0.02", 20, C.ok, "start"));
-    var pts = RL.slice(0, rshown).map(function(r, i){ return [ax.X(RS[i] - RS[0]), ax.Y(r[0])]; });
-    if (pts.length > 1) poly(rs, pts, {stroke:C.muted, "stroke-width":3});
-    pts.forEach(function(p, i){ el(rs, "circle", {cx:p[0], cy:p[1], r:9, fill:RL[i][2] ? C.s2 : C.live, stroke:"#ffffff", "stroke-width":2.5}); });
+    var pts = RL.map(function(r, i){ return [ax.X(RS[i] - RS[0]), ax.Y(r[0])]; });
+    poly(rs, pts, {stroke:C.muted, "stroke-width":3});
+    pts.forEach(function(p, i){
+      if (i === rpick) el(rs, "circle", {cx:p[0], cy:p[1], r:15, fill:"none", stroke:C.ink, "stroke-width":3});
+      el(rs, "circle", {cx:p[0], cy:p[1], r:9, fill:RL[i][2] ? C.s2 : C.live, stroke:"#ffffff", "stroke-width":2.5});
+      var hit = el(rs, "circle", {cx:p[0], cy:p[1], r:20, fill:"transparent", tabindex:0, role:"button",
+                                  "aria-label":"Log line " + (i + 1) + ": " + RL[i][1], "aria-pressed":String(i === rpick)});
+      hit.style.cursor = "pointer";
+      hit.addEventListener("click", function(ev){ ev.stopPropagation(); rpAt(i); });
+      hit.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); ev.stopPropagation(); rpAt(i); } });
+    });
   }
-  function rpAt(n, t){
-    rshown = n; drawRp();
-    rlog.innerHTML = RL.slice(0, n).map(function(r){ return '<span class="cl">' + r[1] + "</span>"; }).join("") || '<span class="cl"> </span>';
-    $id("rp-clock").textContent = "t = " + (n ? (t == null ? RS[n - 1] - RS[0] : t).toFixed(2) : "0.00") + " s since the first line"; }
-  function rpPlay(){ clearInterval(rTimer); if (reduce){ rpAt(6, RS[5] - RS[0]); return; }
-    var t0 = performance.now(); rpAt(0, 0);
-    rTimer = setInterval(function(){ var t = (performance.now() - t0) / 1000 / 2, n = RS.filter(function(s){ return s - RS[0] <= t + 1e-9; }).length;
-      rpAt(n, Math.min(t, RS[5] - RS[0])); if (t >= RS[5] - RS[0]) clearInterval(rTimer); }, 40); }
-  $id("rp-play").onclick = function(e){ e.stopPropagation(); rpPlay(); };
-  $id("rp-next").onclick = function(e){ e.stopPropagation(); clearInterval(rTimer); rpAt(rshown >= 6 ? 1 : rshown + 1); };
-  rpAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
-  onReset(rs, function(){ clearInterval(rTimer); rpAt(0); });
+  function rpAt(i){
+    rpick = i; drawRp();
+    [].forEach.call(rlog.querySelectorAll(".cl"), function(l, k){ l.classList.toggle("hl", k === i); });
+    rsay.innerHTML = RX[i]; }
+  rpAt(0);   /* line 1 lit when the slide opens */
+  onReset(rs, function(){ rpAt(0); });
+})();
+
+
+/* ---------- Step 2 as a debugger: the graph and the constructor, the members, the constants, odometry_callback,
+   control_callback and publish_command (user, 2026-11-22). Every value is the measured turn,
+   ../figures/data/pc_heading_constants.txt: yaw_ = 1.5707963 - the logged error. ---------- */
+(function(){
+  var SVGNS = "http://www.w3.org/2000/svg";
+  /* the docs' copy of this script stands in a detached element for a missing id: each slide's code runs only on the page that has it */
+  function $(id){ return $id(id); }
+  function act(e){ var fr = e.closest(".plate"); return !!(fr && fr.classList.contains("active")); }
+  function mk(svg, tag, a){ var e = document.createElementNS(SVGNS, tag); for (var k in a) e.setAttribute(k, a[k]); svg.appendChild(e); return e; }
+
+  /* the moving line marker of a code box: it covers lines a to b (their numbers), and a box shorter than its code
+     (class scroll) slides the code so the marked lines stay in the middle */
+  function codeBar(wrap){
+    var inner = wrap.querySelector(".dbgin"), pre = inner.querySelector("pre.code"), bar = document.createElement("div"), L = {}, NOS = [];
+    var win = +(wrap.dataset.win || 0), folded = {};
+    bar.className = "pcbar"; inner.insertBefore(bar, inner.firstChild);
+    [].forEach.call(pre.querySelectorAll(".cl"), function(l){ var n = l.querySelector(".no"); if (n){ L[+n.textContent] = l; NOS.push(+n.textContent); } });
+    /* a window of win lines (data-win) shows whole lines only and moves to keep the marked lines in it, as a debugger does */
+    function view(a, b){ if (!win) return; var vis = NOS.filter(function(n){ return !folded[n]; }), i = vis.indexOf(a), j = vis.indexOf(b);
+      var s = Math.max(0, Math.min(vis.length - win, Math.round((i + j) / 2 - (win - 1) / 2)));
+      vis.forEach(function(n, k){ L[n].style.display = k >= s && k < s + win ? "" : "none"; }); }
+    function at(a, b){
+      if (a == null){ bar.style.opacity = 0; return; }
+      if (b == null) b = a; view(a, b);
+      var la = L[a], lb = L[b], y0 = pre.offsetTop + la.offsetTop, y1 = pre.offsetTop + lb.offsetTop + lb.offsetHeight;
+      bar.style.top = y0 + "px"; bar.style.height = (y1 - y0) + "px"; bar.style.opacity = 1; }
+    return {L:L, at:at, fold:function(a, b){ for (var k = a + 1; k <= b; k++){ folded[k] = 1; L[k].style.display = "none"; } }};
+  }
+  /* fold lines a+1 to b under line a, as an editor does: the text the node prints is too long for the box */
+  function fold(cb, a, b){ cb.fold(a, b);
+    var s = document.createElement("span"); s.className = "fold"; s.textContent = (b - a) + " more lines";
+    s.title = "Lines " + (a + 1) + " to " + b + ", folded: the rest of the text this line prints"; cb.L[a].appendChild(s); }
+  /* a box whose text changes keeps the height of its tallest text, so nothing below or beside it moves */
+  function reserve(box, texts){
+    function go(){ var keep = box.innerHTML, h = 0; box.style.minHeight = "";
+      texts.forEach(function(t){ box.innerHTML = t; h = Math.max(h, box.offsetHeight); });
+      box.innerHTML = keep; box.style.minHeight = h + "px"; }
+    go(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); window.addEventListener("load", go); }
+  /* a value in a panel: shown, changed (a short flash when it changes going forward) or gone */
+  function setV(row, v, flash){
+    if (v == null){ row.classList.add("gone"); return; }
+    row.classList.remove("gone"); var s = row.querySelector(".vv");
+    if (s.textContent !== v){ s.textContent = v;
+      if (flash && !reduce){ row.classList.add("flash"); clearTimeout(row._f); row._f = setTimeout(function(){ row.classList.remove("flash"); }, 800); } } }
+  function unflash(root){ [].forEach.call(root.querySelectorAll(".flash"), function(r){ clearTimeout(r._f); r.classList.remove("flash"); }); }
+  /* Play steps through a run, about 2.6 s a step; the buttons step by hand; a run button picks the call; leaving the slide
+     puts everything back (the first run, its first step) */
+  function player(o){
+    var run = 0, k = 0, tm = null, n = function(){ return o.runs[run].length; };
+    function paint(dir){ o.show(run, k, dir); o.back.disabled = k === 0; o.fwd.disabled = k === n() - 1; }
+    function stop(){ clearTimeout(tm); tm = null; o.play.textContent = "Play"; o.play.classList.remove("on"); }
+    function tick(){ if (!act(o.play)){ stop(); return; } if (k < n() - 1){ k++; paint(1); tm = setTimeout(tick, 2600); } else stop(); }
+    o.play.onclick = function(e){ e.stopPropagation(); if (tm){ stop(); return; }
+      if (k === n() - 1){ k = 0; paint(0); } o.play.textContent = "Pause"; o.play.classList.add("on"); tm = setTimeout(tick, 2600); };
+    o.back.onclick = function(e){ e.stopPropagation(); stop(); if (k > 0){ k--; paint(-1); } };
+    o.fwd.onclick = function(e){ e.stopPropagation(); stop(); if (k < n() - 1){ k++; paint(1); } };
+    function pickRun(i){ stop(); run = i; k = 0;
+      (o.runBtns || []).forEach(function(b, j){ b.classList.toggle("on", j === i); b.setAttribute("aria-pressed", String(j === i)); }); paint(0); }
+    (o.runBtns || []).forEach(function(b, i){ b.onclick = function(e){ e.stopPropagation(); pickRun(i); }; });
+    function reset(){ pickRun(0); if (o.reset) o.reset(); }
+    reset(); onReset(o.play, reset);
+    return {stop:stop, reset:reset};
+  }
+  /* the dial of headings (0 degrees to the right, counterclockwise positive): the heading, the target and the error arc */
+  function dial(svg, o){
+    /* a small dial (under 200 px) labels only 0 and 90 degrees, so its circle can be larger */
+    svg.innerHTML = ""; var S = svg.viewBox.baseVal.width, c = S / 2, small = S < 200, R = small ? S / 2 - 36 : S / 2 - 54;
+    function P(r, a){ return [c + r * Math.cos(a), c - r * Math.sin(a)]; }
+    function head(x, y, a, cls){ var b1 = P(0, 0), dx = Math.cos(a), dy = -Math.sin(a), px = -dy * 7, py = dx * 7;
+      mk(svg, "polygon", {"class":cls, points:x + "," + y + " " + (x - dx * 15 + px) + "," + (y - dy * 15 + py) + " " + (x - dx * 15 - px) + "," + (y - dy * 15 - py)}); }
+    mk(svg, "circle", {"class":"ring", cx:c, cy:c, r:R});
+    [[0, "0°", "start", R + 10, 7], [90, "90°", "middle", 0, -(R + 12)], [180, "180°", "end", -(R + 10), 7], [-90, "−90°", "middle", 0, R + 27]].forEach(function(d, i){
+      var a = d[0] * Math.PI / 180, p = P(R - 6, a), q = P(R + 6, a);
+      mk(svg, "line", {"class":"tick", x1:p[0], y1:p[1], x2:q[0], y2:q[1]});
+      if (small && i >= 2) return;
+      var t = mk(svg, "text", {"class":"lab", x:c + d[3], y:c + d[4], "text-anchor":d[2]}); t.textContent = d[1]; });
+    if (o.tgt != null){ var q = P(R - 2, o.tgt); mk(svg, "line", {"class":"tg", x1:c, y1:c, x2:P(R - 15, o.tgt)[0], y2:P(R - 15, o.tgt)[1]}); head(q[0], q[1], o.tgt, "tgh"); }
+    var h = P(R - 2, o.yaw); mk(svg, "line", {"class":"hd", x1:c, y1:c, x2:P(R - 15, o.yaw)[0], y2:P(R - 15, o.yaw)[1]}); head(h[0], h[1], o.yaw, "hdh");
+    if (o.err && o.tgt != null && Math.abs(o.tgt - o.yaw) > 0.12){
+      var r = R * 0.72, a0 = o.yaw + 0.1, a1 = o.tgt - 0.16, d = "", m = 24;
+      for (var i = 0; i <= m; i++){ var p = P(r, a0 + (a1 - a0) * i / m); d += (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1); }
+      mk(svg, "path", {"class":"er", d:d}); var e = P(r, o.tgt - 0.04); head(e[0], e[1], o.tgt - 0.04 + Math.PI / 2, "erh"); }
+    rosbotIcon(svg, c, c, R * 0.7, -o.yaw * 180 / Math.PI);
+  }
+
+  /* ===== its place in the ROS graph: the tags pick the constructor's lines; Play moves the messages ===== */
+  (function(){
+    var g = $("gr-g"); if (!g || !g.isConnected) return;
+    var snip = [].slice.call($("gr-code").querySelectorAll("pre.code")), say = $("gr-say"), s = $("gr-s");
+    var SAY = {1:'<span class="tg">1</span>Line 15: the class is an <code>rclcpp::Node</code>. Line 18 names the node <code class="nd">heading_controller_node</code>.',
+      2:'<span class="tg">2</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
+      3:'<span class="tg">3</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
+      4:'<span class="tg">4</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
+    reserve(say, [SAY[1], SAY[2], SAY[3], SAY[4]]);
+    var tags = [].slice.call(g.querySelectorAll("button.grt"));
+    function pick(k){
+      tags.forEach(function(t){ var on = +t.dataset.k === k; t.classList.toggle("on", on); t.setAttribute("aria-pressed", String(on)); });
+      [].forEach.call(s.querySelectorAll("[data-k]"), function(e){ e.classList.toggle("on", +e.dataset.k === k); });
+      $("gr-node").classList.toggle("on", k === 1);
+      snip.forEach(function(p, j){ p.style.visibility = j === k - 1 ? "visible" : "hidden"; }); say.innerHTML = SAY[k]; }
+    tags.forEach(function(t){ t.addEventListener("click", function(e){ e.stopPropagation(); pick(+t.dataset.k); }); });
+    /* Play: a message comes down /odometry/filtered and odometry_callback runs; the timer ticks, control_callback runs and its
+       command goes down /cmd_vel. One cycle of 3.2 s stands for about 50 ms of the run. */
+    var pin = $("gr-pin"), pout = $("gr-pout"), d1 = mk(s, "circle", {"class":"dot", r:8, cx:40, cy:46, opacity:0}),
+        d2 = mk(s, "circle", {"class":"dot", r:8, cx:584, cy:162, opacity:0}), clk = s.querySelector(".clk"),
+        ocb = $("gr-ocb"), ccb = $("gr-ccb"), on = false, t0 = 0, btn = $("gr-play");
+    function along(dot, path, u){ var L = path.getTotalLength(), p = path.getPointAtLength(L * u); dot.setAttribute("cx", p.x); dot.setAttribute("cy", p.y); }
+    function still(){ d1.setAttribute("opacity", 0); d2.setAttribute("opacity", 0); ocb.classList.remove("run"); ccb.classList.remove("run"); clk.classList.remove("tick"); }
+    setInterval(function(){
+      if (!on) return; if (!act(g)){ stop(); return; } if (reduce) return;
+      var t = ((performance.now() - t0) / 1000) % 3.2;
+      d1.setAttribute("opacity", t < 0.8 ? 1 : 0); if (t < 0.8) along(d1, pin, t / 0.8);
+      ocb.classList.toggle("run", t >= 0.8 && t < 1.5);
+      clk.classList.toggle("tick", t >= 1.6 && t < 1.9);
+      ccb.classList.toggle("run", t >= 1.8 && t < 2.4);
+      d2.setAttribute("opacity", t >= 2.2 && t < 3.0 ? 1 : 0); if (t >= 2.2 && t < 3.0) along(d2, pout, (t - 2.2) / 0.8);
+    }, 40);
+    function stop(){ on = false; btn.textContent = "Play"; btn.classList.remove("on"); still(); }
+    btn.onclick = function(e){ e.stopPropagation(); if (on){ stop(); return; } on = true; t0 = performance.now(); btn.textContent = "Pause"; btn.classList.add("on");
+      if (reduce){ along(d1, pin, 0.5); along(d2, pout, 0.5); d1.setAttribute("opacity", 1); d2.setAttribute("opacity", 1); ocb.classList.add("run"); ccb.classList.add("run"); } };   /* reduced motion: one still picture of both callbacks */
+    pick(1);
+    onReset(g, function(){ stop(); pick(1); });
+  })();
+
+  /* ===== the members: a click on a line says what it is; Play shows who writes and who reads yaw_ and has_odometry_ ===== */
+  (function(){
+    var wrap = $("mb-code"); if (!wrap || !wrap.isConnected) return;
+    var cb = codeBar(wrap), say = $("mb-say"), yaw = $("mb-yaw"), has = $("mb-has"), ocb = $("mb-ocb"), ccb = $("mb-ccb");
+    var GR = [[33, 35, 'Lines 33 to 35: three methods. <code>control_callback</code> calls <code>publish_command</code>.'],
+      [36, 40, 'Lines 36 to 40: what the constructor made. While the object keeps them, they keep working.'],
+      [41, 41, 'Line 41: <code>yaw_</code>, the heading in rad: <code>odometry_callback</code> writes it, <code>control_callback</code> reads it.'],
+      [42, 42, 'Line 42: <code>has_odometry_</code>, false until a message arrives. Until then, <code>control_callback</code> returns.']];
+    /* Play: three messages of the run; yaw_ = 1.5707963 - the logged error (0.00194 at 0.00 s, 0.98603 at 1.10 s, 1.55212 at 2.65 s) */
+    var ST = [["0.0", "false", 0, 'Before any message, <code>yaw_</code> is 0.0 and <code>has_odometry_</code> is false.'],
+      ["0.00194", "true", 1, 't = 0.00 s: <code>odometry_callback</code> writes 0.00194 in <code>yaw_</code>, true in <code>has_odometry_</code>.'],
+      ["0.00194", "true", 2, 'The timer fires. <code>control_callback</code> reads both members and sends a command.'],
+      ["0.98603", "true", 1, 't = 1.10 s: <code>odometry_callback</code> writes 0.98603 in <code>yaw_</code>.'],
+      ["0.98603", "true", 2, '<code>control_callback</code> reads the new <code>yaw_</code>.'],
+      ["1.55212", "true", 1, 't = 2.65 s: <code>yaw_</code> becomes 1.55212 rad, within 0.02 rad of 90°.'],
+      ["1.55212", "true", 2, '<code>control_callback</code> reads it and stops the turn.']];
+    reserve(say, GR.map(function(x){ return x[2]; }).concat(ST.map(function(x){ return x[3]; })));
+    function lightRW(w){ $("mb-w").classList.toggle("on", w === 1); $("mb-wh").classList.toggle("on", w === 1);
+      $("mb-r").classList.toggle("on", w === 2); $("mb-rh").classList.toggle("on", w === 2);
+      ocb.classList.toggle("run", w === 1); ccb.classList.toggle("run", w === 2); }
+    var pl = player({play:$("mb-play"), back:$("mb-back"), fwd:$("mb-fwd"), runs:[ST],
+      show:function(run, k, dir){ var st = ST[k]; setV(yaw, st[0], dir > 0); setV(has, st[1], dir > 0); lightRW(st[2]);
+        cb.at(41, 42); say.innerHTML = st[3]; },
+      reset:function(){ unflash($("mb-d")); }});
+    GR.forEach(function(gr){ for (var n = gr[0]; n <= gr[1]; n++){ var l = cb.L[n]; l.classList.add("pick");
+        l.addEventListener("click", function(e){ e.stopPropagation(); pl.stop(); cb.at(gr[0], gr[1]); say.innerHTML = gr[2]; lightRW(0); }); }
+      var f = cb.L[gr[0]]; f.tabIndex = 0; f.setAttribute("role", "button"); f.setAttribute("aria-label", "Lines " + gr[0] + " to " + gr[1]);
+      f.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); f.click(); } }); });
+  })();
+
+  /* ===== the constants: a click on a constant shows where control_callback uses it ===== */
+  (function(){
+    var wrap = $("kc-code"); if (!wrap || !wrap.isConnected) return;
+    var cb = codeBar(wrap), say = $("kc-say"), uses = [].slice.call($("kc-uses").querySelectorAll("pre.code"));
+    var SAY = ['<code>target_yaw_deg</code>, 90°: the heading to reach. Line 30 turns it into rad: 90 × π / 180 = 1.5708.',
+      '<code>kp_angular</code>, 1.5: rad/s of command per rad of error. For the run\'s first error, 1.569 rad: 1.5 × 1.569 = 2.35 rad/s.',
+      '<code>max_angular_rps</code>, 1.0 rad/s: the speed limit. <code>std::clamp</code> keeps the command between −1.0 and 1.0, so 2.35 becomes 1.0.',
+      '<code>yaw_tolerance_rad</code>, 0.02 rad (1.1°): close enough. Under it, line 34 stops the turn. The run stopped at an error of 0.019 rad.'];
+    reserve(say, SAY);
+    function pick(i){ cb.at(13 + i); say.innerHTML = SAY[i];
+      uses.forEach(function(u, j){ u.style.visibility = j === i ? "visible" : "hidden"; }); }
+    [0, 1, 2, 3].forEach(function(i){ var l = cb.L[13 + i]; l.classList.add("pick"); l.tabIndex = 0; l.setAttribute("role", "button");
+      l.setAttribute("aria-label", "Line " + (13 + i));
+      l.addEventListener("click", function(e){ e.stopPropagation(); pick(i); });
+      l.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); pick(i); } }); });
+    pick(0); onReset(wrap, function(){ pick(0); });
+  })();
+
+  /* ===== odometry_callback, line by line: the first message of the run (yaw 0.00194 rad: z and w of that yaw) ===== */
+  (function(){
+    var wrap = $("oc-code"); if (!wrap || !wrap.isConnected) return;
+    var cb = codeBar(wrap), say = $("oc-say"), yaw = $("oc-yaw"), has = $("oc-has"), msg = $("oc-msg"), dl = $("oc-dial");
+    var ST = [[19, 20, "0.0", "false", 0, '<code class="nd">ekf</code> publishes an Odometry message. The node calls <code>odometry_callback</code>, and <code>msg</code> is that message.'],
+      [21, 21, "0.00194", "false", 0.00194, '<code>yaw_from_quaternion</code> turns z = 0.0009682 and w = 0.9999995 into 0.00194 rad (0.11°), stored in <code>yaw_</code>.'],
+      [22, 22, "0.00194", "true", 0.00194, '<code>has_odometry_</code> becomes true: from now on, <code>control_callback</code> uses <code>yaw_</code>.'],
+      [23, 23, "0.00194", "true", 0.00194, 'The callback returns. The node keeps only <code>yaw_</code> and <code>has_odometry_</code>. The next message, about 50&nbsp;ms later, runs the same lines.']];
+    reserve(say, ST.map(function(x){ return x[5]; }));
+    player({play:$("oc-play"), back:$("oc-back"), fwd:$("oc-fwd"), runs:[ST],
+      show:function(run, k, dir){ var st = ST[k]; cb.at(st[0], st[1]); setV(yaw, st[2], dir > 0); setV(has, st[3], dir > 0);
+        msg.classList.toggle("dim", k === 3); $("oc-z").classList.toggle("flash", k === 1); $("oc-w").classList.toggle("flash", k === 1);
+        dial(dl, {yaw:st[4]}); say.innerHTML = st[5]; },
+      reset:function(){ unflash(wrap.closest(".plate")); }});
+  })();
+
+  /* ===== control_callback, line by line, for four calls of the run ===== */
+  (function(){
+    var wrap = $("cc-code"); if (!wrap || !wrap.isConnected) return;
+    var cb = codeBar(wrap), say = $("cc-say"), term = $("cc-term").querySelector(".tv"), dl = $("cc-dial");
+    fold(cb, 37, 39); fold(cb, 47, 49);
+    var R = {yaw:$("cc-yaw"), has:$("cc-has"), tgt:$("cc-tgt"), err:$("cc-err"), cmd:$("cc-cmd")}, TG = "1.57080";
+    /* a step: [first line, last line, {values; null = not there}, what it says, the log line] */
+    function call(t, yawS, yawV, err, kpe, cmd, last){
+      var m = {yaw:yawS, has:"true"}, L = [], lg = last ? "heading reached: yaw 1.55212 rad, error 0.0186762 rad" : "error " + err + " rad, command " + (cmd === "1.0" ? "1" : cmd) + " rad/s";
+      function S(a, b, extra, txt, log){ var v = {}; for (var k in m) v[k] = m[k]; for (k in extra) v[k] = extra[k]; L.push([a, b, v, txt, log || ""]); }
+      S(25, 25, {}, 't = ' + t + ' s: the timer calls <code>control_callback</code>. <code>yaw_</code> holds ' + yawS + ' rad, from the last message.');
+      S(26, 26, {}, '<code>has_odometry_</code> is true, so the callback goes on.');
+      S(29, 30, {tgt:TG}, 'A local variable: <code>target_yaw</code> = 90 × π / 180 = 1.57080 rad.');
+      S(31, 33, {tgt:TG, err:err}, last ? '<code>error</code> = 1.57080 − 1.55212 = 0.01868 rad; the log, with more digits, prints 0.0186762.'
+                                        : '<code>error</code> = 1.57080 − ' + yawS + ' = ' + err + ' rad, the angle left to turn. Positive: turn left.');
+      if (!last){
+        S(34, 34, {tgt:TG, err:err}, err + ' is not under 0.02, so the callback skips the stop.');
+        S(42, 45, {tgt:TG, err:err, cmd:cmd}, kpe > 1 ? '1.5 × ' + err + ' = ' + kpe.toFixed(5) + ' rad/s is over the limit, so <code>std::clamp</code> gives <code>command</code> = 1.0 rad/s.'
+                                                       : '1.5 × ' + err + ' = ' + cmd + ' rad/s is under the limit, so <code>command</code> is ' + cmd + ' rad/s.');
+        S(46, 46, {tgt:TG, err:err, cmd:cmd}, '<code>publish_command</code> sends ' + cmd + ' rad/s on <code class="tp">/cmd_vel</code>, line by line on the next slide.');
+        S(47, 47, {tgt:TG, err:err, cmd:cmd}, 'The node logs this line. <code>_THROTTLE</code> prints at most once every 500&nbsp;ms, so most calls print nothing.', lg);
+        S(50, 50, {}, 'The callback ends: <code>target_yaw</code>, <code>error</code> and <code>command</code> are gone. <code>yaw_</code> and <code>has_odometry_</code> stay.', lg);
+      } else {
+        S(34, 34, {tgt:TG, err:err}, err + ' is under 0.02: the ROSbot is close enough to 90°.');
+        S(35, 35, {tgt:TG, err:err}, '<code>publish_command(0.0)</code> sends a command of 0: the ROSbot stops turning.');
+        S(36, 36, {tgt:TG, err:err}, '<code>cancel()</code> stops the timer: <code>control_callback</code> never runs again.');
+        S(37, 37, {tgt:TG, err:err}, 'The node logs that the heading is reached.', lg);
+        S(40, 40, {}, 'The callback returns, and the turn is over. <code>yaw_</code> and <code>has_odometry_</code> stay in the object.', lg);
+      }
+      return L.map(function(x){ x.push(yawV); return x; });
+    }
+    var RUNS = [
+      [[25, 25, {yaw:"0.0", has:"false"}, 'Every 50&nbsp;ms, the timer calls <code>control_callback</code>. No message has arrived yet.', "", 0],
+       [26, 26, {yaw:"0.0", has:"false"}, '<code>!has_odometry_</code> is true: the node has no heading yet.', "", 0],
+       [27, 27, {yaw:"0.0", has:"false"}, 'The callback returns at once. It sends no command, so the ROSbot stays still.', "", 0]],
+      call("0.00", "0.00194", 0.00194, "1.56886", 2.35329, "1.0"),
+      call("1.10", "0.98603", 0.98603, "0.58477", 0.877155, "0.877155"),
+      call("2.65", "1.55212", 1.55212, "0.0186762", 0.0280143, null, true)];
+    reserve(say, [].concat.apply([], RUNS).map(function(x){ return x[3]; }));
+    player({play:$("cc-play"), back:$("cc-back"), fwd:$("cc-fwd"), runs:RUNS, runBtns:[].slice.call($("cc-runs").querySelectorAll("button")),
+      show:function(run, k, dir){ var st = RUNS[run][k], v = st[2];
+        cb.at(st[0], st[1]); ["yaw", "has", "tgt", "err", "cmd"].forEach(function(n){ setV(R[n], v[n] == null ? null : v[n], dir > 0); });
+        term.textContent = st[4]; say.innerHTML = st[3];
+        dial(dl, {yaw:st[5], tgt:v.tgt ? Math.PI / 2 : null, err:!!v.err}); },
+      reset:function(){ unflash(wrap.closest(".plate")); }});
+  })();
+
+  /* ===== publish_command, line by line: build the TwistStamped, send it, and the wheels turn ===== */
+  (function(){
+    var wrap = $("pb-code"); if (!wrap || !wrap.isConnected) return;
+    var cb = codeBar(wrap), say = $("pb-say"), msg = $("pb-msg"), st = $("pb-st"), az = $("pb-az"), s = $("pb-s");
+    /* the scene: /cmd_vel from the card to the controller, then the ROSbot, top view, facing right; its left wheels are on top */
+    var line = mk(s, "path", {"class":"ln", d:"M0 61 L90 61"}); mk(s, "polygon", {"class":"hh", points:"102,61 88,54 88,68"});
+    var env = mk(s, "g", {opacity:0});
+    mk(env, "rect", {x:-16, y:-11, width:32, height:22, rx:3, style:"fill:var(--card);stroke:var(--s3);stroke-width:3"});
+    mk(env, "path", {d:"M-16 -11 L0 2 L16 -11", style:"fill:none;stroke:var(--s3);stroke-width:3"});
+    var RX = 622, RY = 88, wh = mk(s, "g", {}), turn = mk(s, "g", {});
+    mk(s, "path", {"class":"ln", d:"M552 61 L570 74"});
+    rosbotIcon(s, RX, RY, 62, 0);
+    function arrowAt(g, x1, x2, y){ var dir = x2 > x1 ? 1 : -1;
+      mk(g, "line", {x1:x1, y1:y, x2:x2 - dir * 10, y2:y, style:"stroke:var(--livetext);stroke-width:4;stroke-linecap:round"});
+      mk(g, "polygon", {points:x2 + "," + y + " " + (x2 - dir * 14) + "," + (y - 7) + " " + (x2 - dir * 14) + "," + (y + 7), style:"fill:var(--livetext)"}); }
+    function drive(w){ wh.innerHTML = ""; turn.innerHTML = ""; if (!w) return;
+      arrowAt(wh, RX + 22, RX - 22, RY - 44); arrowAt(wh, RX - 22, RX + 22, RY + 44);   /* left wheels back, right wheels forward */
+      var r = 56, a0 = -0.5, a1 = a0 + 1.4 * w, d = "";   /* the arc grows with the command (1.4 rad of arc for 1.0 rad/s) */
+      for (var i = 0; i <= 20; i++){ var a = a0 + (a1 - a0) * i / 20; d += (i ? "L" : "M") + (RX + r * Math.cos(a)).toFixed(1) + "," + (RY - r * Math.sin(a)).toFixed(1); }
+      mk(turn, "path", {d:d, style:"fill:none;stroke:var(--live);stroke-width:4;stroke-linecap:round"});
+      var ex = RX + r * Math.cos(a1), ey = RY - r * Math.sin(a1), tx = -Math.sin(a1), ty = -Math.cos(a1);
+      mk(turn, "polygon", {points:(ex + tx * 10) + "," + (ey + ty * 10) + " " + (ex - tx * 4 - ty * 7) + "," + (ey - ty * 4 + tx * 7) + " " + (ex - tx * 4 + ty * 7) + "," + (ey - ty * 4 - tx * 7), style:"fill:var(--live)"}); }
+    var fly = null;
+    function send(){ clearInterval(fly); var t0 = performance.now(); env.setAttribute("opacity", 1);
+      if (reduce){ env.setAttribute("transform", "translate(60 61)"); return; }
+      fly = setInterval(function(){ var u = Math.min(1, (performance.now() - t0) / 900); env.setAttribute("transform", "translate(" + (8 + 80 * u) + " 61)");
+        if (u >= 1){ clearInterval(fly); env.setAttribute("opacity", 0); } }, 30); }
+    function calm(){ clearInterval(fly); env.setAttribute("opacity", 0); }
+    function run(w, ws, t, zero){
+      var a = 'x 0.0 y 0.0 z ' + ws;
+      return [[52, 52, 0, null, "", 0, '<code>control_callback</code> calls <code>publish_command</code>: <code>angular_speed</code> is ' + ws + ' rad/s (t = ' + t + ' s).'],
+        [53, 53, 1, "0", 'x 0.0 y 0.0 z 0.0', 0, '<code>command</code> starts with every number at 0 and an empty <code>frame_id</code>.'],
+        [54, 54, 1, "now()", 'x 0.0 y 0.0 z 0.0', 0, '<code>header.stamp</code> gets the node\'s clock: the time of this call.'],
+        [55, 55, 1, "now()", a, 0, zero ? '<code>twist.angular.z</code> stays 0. Every speed in the message is 0.'
+                                         : 'Only <code>twist.angular.z</code> changes. <code>linear.x</code> stays 0, so the ROSbot turns on the spot.'],
+        [56, 56, 1, "now()", a, 1, zero ? '<code>publish</code> sends it on <code class="tp">/cmd_vel</code>. The controller stops every wheel.'
+                                         : '<code>publish</code> sends it on <code class="tp">/cmd_vel</code>. The controller spins the left wheels back, the right ones forward.'],
+        [57, 57, 1, "now()", a, 2, '<code>publish_command</code> returns: its local <code>command</code> is gone, and the controller has its own copy.']]
+        .map(function(x){ x.push(w); return x; });
+    }
+    var RUNS = [run(1.0, "1.0", "0.00", false), run(0.877155, "0.877155", "1.10", false), run(0, "0.0", "2.65", true)];
+    reserve(say, [].concat.apply([], RUNS).map(function(x){ return x[6]; }));
+    player({play:$("pb-play"), back:$("pb-back"), fwd:$("pb-fwd"), runs:RUNS, runBtns:[].slice.call($("pb-runs").querySelectorAll("button")),
+      show:function(r, k, dir){ var x = RUNS[r][k]; cb.at(x[0], x[1]);
+        msg.classList.toggle("off", !x[2]);
+        if (x[2]){ setV(st, x[3], dir > 0); setV(az, x[4], dir > 0); }
+        if (x[5] === 1 && dir >= 0) send(); else calm();
+        drive(x[5] >= 1 ? x[7] : 0); say.innerHTML = x[6]; },
+      reset:function(){ calm(); unflash(wrap.closest(".plate")); }});
+  })();
+})();
+
+
+/* ---------- slide "PID controller" (fb-pid): the loop step by step (user, 2026-11-22: "follow the arrows like electricity running
+   through that box where you highlight what is happening. Create left and right arrows at the bottom to do step by step. When
+   the slide loads, run the animation once"). Each step sends a pulse along its wires and lights the blocks it reaches; the slide
+   plays the eight steps once each time it is shown (the frame has data-autoplay), then the arrows step by hand. ---------- */
+(function(){
+  var sv = $id("pl-svg"); if (!sv || !sv.isConnected) return;
+  var sp = $id("pl-spark"), say = $id("pl-say"), NS = "http://www.w3.org/2000/svg";
+  var STEPS = [
+    {w:["M20,130 H168"], on:["pl-s1"], t:"1. The target enters the first \\(\\Sigma\\)."},
+    {w:["M230,130 H318"], on:["pl-pid"], t:"2. The first \\(\\Sigma\\) subtracts the measured output: the difference is the error \\(e\\)."},
+    {w:["M320,130 H338 V84 H364", "M320,130 H364", "M338,130 V176 H364"], on:["pl-p", "pl-i", "pl-d"], t:"3. The error feeds three terms: P, I and D."},
+    {w:["M540,84 H590 V112", "M540,130 H572", "M540,176 H590 V148"], on:["pl-s2"], t:"4. The second \\(\\Sigma\\) adds the three terms: the control signal \\(u\\)."},
+    {w:["M608,130 H778"], on:["pl-plant"], t:"5. The control signal \\(u\\) drives the plant."},
+    {w:["M940,130 H1130"], on:[], t:"6. The plant's output changes: the heading (or the distance driven)."},
+    {w:["M1060,130 V235 H720"], on:["pl-fbk"], t:"7. The feedback measures the output."},
+    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output. The loop starts again."}];
+  /* the captions' math set by KaTeX once (user, 2026-11-22: "use math mode everywhere ... the sigma is not correct") */
+  STEPS.forEach(function(st){ var d = document.createElement("span"); d.textContent = st.t; mathIn(d); st.h = d.innerHTML; });
+  var k = -1, timer = null, anims = [];
+  var fades = [];
+  function clear(){ fades.forEach(clearTimeout); fades = []; anims.forEach(function(a){ try { a.cancel(); } catch (e) {} }); anims = []; sp.textContent = "";
+    [].forEach.call(sv.querySelectorAll(".on"), function(el){ el.classList.remove("on"); }); }
+  /* show step i; keep: add to what is lit (the run in one go) instead of clearing first; fade: once the pulse has passed, its
+     wires and blocks fade away (user, 2026-11-22: "the electricity does not stay after passing through something, it should
+     fade away"). Returns how long its pulse takes. */
+  function show(i, animate, keep, fade){ if (!keep) clear(); k = i;
+    if (i < 0){ say.textContent = "Step through the loop with the arrows."; return 0; }
+    var st = STEPS[i], dur = 0;
+    st.w.forEach(function(d){ var pth = document.createElementNS(NS, "path"); pth.setAttribute("d", d); pth.setAttribute("class", "spark"); sp.appendChild(pth);
+      if (animate && !reduce && pth.animate){ var L = pth.getTotalLength(), ms = Math.max(160, L * 1.1);   /* 1.1 ms per unit of wire (user, 2026-11-22: "make the electricity go faster", then "a bit slower": 1.6, then 0.8, now 1.1) */ dur = Math.max(dur, ms);
+        pth.style.strokeDasharray = L + " " + L;
+        anims.push(pth.animate([{strokeDashoffset:L}, {strokeDashoffset:0}], {duration:ms, easing:"linear", fill:"forwards"}));
+        if (fade) anims.push(pth.animate([{opacity:1}, {opacity:0}], {delay:ms, duration:450, easing:"ease-out", fill:"forwards"})); } });
+    st.on.forEach(function(id){ var el = $id(id); if (!el) return; el.classList.add("on");
+      if (fade) fades.push(setTimeout(function(){ el.classList.remove("on"); }, dur + 150)); });
+    say.innerHTML = "<span>" + st.h + "</span>"; return dur; }   /* one span: in the flex row, bare KaTeX spans lost their spaces */
+  function stop(){ if (timer){ clearTimeout(timer); timer = null; } }
+  /* the run in one go (user, 2026-11-22: "run the electricity through that diagram in one go, do not pause ... When you are
+     done, restore the diagram (without highlights)"): each step's pulse starts as the last one ends, everything stays lit,
+     then the diagram goes back to plain */
+  function play(){ stop(); clear(); var i = 0;
+    (function next(){ var ms = show(i, true, true, true); i++;
+      timer = setTimeout(i < STEPS.length ? next : function(){ timer = setTimeout(function(){ timer = null; show(-1); }, 700); }, ms); })(); }
+  $id("pl-prev").onclick = function(e){ e.stopPropagation(); stop(); show(Math.max(0, k - 1), true); };
+  $id("pl-next").onclick = function(e){ e.stopPropagation(); stop(); show(Math.min(STEPS.length - 1, k + 1), true); };
+  show(-1);
+  onShow(sv, function(){ if (reduce){ show(STEPS.length - 1, false); return; } play(); });
+  onReset(sv, function(){ stop(); show(-1); });
 })();
 
 
@@ -1785,7 +2590,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       if (name === KP && p >= 1) halo(txt(sv, X(0), 74, "0", 22, C.ink));
       if (name === MX && p >= 1) halo(txt(sv, X(0), 74, "0", 22, C.ink));
       var pv = parse(vin.value);
-      if (pv && name !== TG && pv.v >= lo && pv.v <= hi){ var mx = X(pv.v); el(sv, "path", {d:"M" + (mx - 11) + ",38 L" + (mx + 11) + ",38 L" + mx + ",66 Z", fill:C.live});
+      if (pv && name !== TG && pv.v >= lo && pv.v <= hi){ var mx = X(pv.v); el(sv, "path", {d:"M" + (mx - 11) + ",38 L" + (mx + 11) + ",38 L" + mx + ",66 Z", fill:C.ink});
         var anc = mx < 90 ? "start" : mx > 1090 ? "end" : "middle"; halo(txt(sv, mx, 28, vin.value.trim(), 22, C.ink, anc)); }
       if (name === TG) txt(sv, (x0 + x1) / 2, 62, "read once, at start: every new value is refused", 22, C.ink); }
     function out(){
@@ -2144,22 +2949,26 @@ document.querySelectorAll('.l12w input[type="range"]').forEach(function(inp){
 });
 
 
+
 /* ---------- live values: when a slider or a frame's button changes the slide's text, the parts that changed get the
    class live-val (drawn in --live). The text is read just before the control's own handler runs (capture phase) and
    compared just after. Elements are matched by their position in the tree, so a list or a formula rebuilt with new
    numbers marks only what changed; the marked positions are kept and marked again after every rebuild. Figures (svg)
-   are left out, and so is anything inside class nolive (a copy of an app's window, whose text changes all the time). ---------- */
+   are left out, and so is anything inside class nolive (a copy of an app's window, whose text changes all the time; a box that
+   narrates a step). A nolive box counts as a changed child of its parent, so the parent is not marked in its place. ---------- */
 (function(){
   var SKIP = { SVG:1, SCRIPT:1, STYLE:1, BUTTON:1, INPUT:1 };
   function walk(e, path, out){ var k = 0;
     for (var c = e.firstElementChild; c; c = c.nextElementSibling, k++){
-      if (SKIP[c.tagName.toUpperCase()] || (c.classList && (c.classList.contains("try") || c.classList.contains("rng") || c.classList.contains("nolive")))) continue;
-      var p = path + "/" + k; out[p] = {el:c, txt:c.textContent}; walk(c, p, out); }
+      if (SKIP[c.tagName.toUpperCase()] || (c.classList && (c.classList.contains("try") || c.classList.contains("rng")))) continue;
+      var p = path + "/" + k;
+      if (c.classList && c.classList.contains("nolive")){ out[p] = {el:c, txt:c.textContent, skip:1}; continue; }
+      out[p] = {el:c, txt:c.textContent}; walk(c, p, out); }
     return out; }
   function mark(fr, before){
     var after = walk(fr, "", {}), live = fr._live || (fr._live = {}), changed = [];
     Object.keys(after).forEach(function(p){ if (before[p] && before[p].txt !== after[p].txt) changed.push(p); });
-    changed.forEach(function(p){ if (!changed.some(function(q){ return q !== p && q.indexOf(p + "/") === 0; })) live[p] = 1; });
+    changed.forEach(function(p){ if (after[p].skip) return; if (!changed.some(function(q){ return q !== p && q.indexOf(p + "/") === 0; })) live[p] = 1; });
     Object.keys(live).forEach(function(p){ if (after[p]){ after[p].el.classList.add("live-val"); after[p].el._auto = 1; } }); }
   function watch(ev){ if (window.deckIsResetting && window.deckIsResetting()) return; var t = ev.target; if (!t || !t.closest) return;
     var ctl = t.closest('input[type="range"], button'); if (!ctl) return;

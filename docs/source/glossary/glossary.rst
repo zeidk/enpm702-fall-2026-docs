@@ -2595,8 +2595,8 @@ L11: ROS 2 Configuration and Orchestration
 
 .. _g-l12:
 
-L12: Robots in Gazebo and Parameters
-====================================
+L12: Simulation, Control and Parameters
+=======================================
 
 .. glossary::
 

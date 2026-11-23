@@ -6,7 +6,9 @@
 .l12w .rmx .lbl{min-width:calc(112 * var(--u))}
 .l12w .rmx button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:4px calc(10 * var(--u));margin:0 calc(6 * var(--u)) 0 0}
 .l12w .rmx h3{font-size:max(var(--fmin), calc(25 * var(--u)));margin:calc(8 * var(--u)) 0 0;color:var(--slate)}
-.l12w .rmx .bar{display:flex;gap:calc(12 * var(--u));align-items:center;margin:0 0 calc(6 * var(--u))}</style>
+.l12w .rmx .bar{display:flex;gap:calc(12 * var(--u));align-items:center;margin:0 0 calc(6 * var(--u))}
+.l12w .rmx .pick{display:grid;grid-template-columns:repeat(3,calc(132 * var(--u)));gap:calc(6 * var(--u))}
+.l12w .rmx .pick button{margin:0;width:100%;text-align:center}</style>
   <div class="rmx two" style="grid-template-columns:calc(720 * var(--u)) 1fr;gap:calc(24 * var(--u));align-items:start">
     <div>
       <svg id="g2-svg" class="plot" viewBox="0 0 720 386" width="720" height="386" role="img" aria-label="ROS graph, top to bottom. The node ekf publishes /odometry/filtered, which the two heading controllers read, each drawn in its own dashed namespace box when it has one. Each controller publishes its own cmd_vel topic. Only /cmd_vel reaches differential_drive_controller. A topic nobody publishes or reads is drawn with a dashed no publisher or no subscriber box." style="width:max(calc(720 * var(--u)), calc(720 * 12px / 20.5));max-width:none;height:auto"></svg>
@@ -14,13 +16,13 @@
       <ul class="pl" id="g2-cnt" style="margin-top:calc(6 * var(--u))"></ul>
     </div>
     <div>
-      <div class="bar"><span id="g2-pre"></span></div>
+      <div class="bar"><span class="pick" id="g2-pre"></span></div>
       <h3>Controller A: namespace, name</h3>
-      <div class="row"><span id="g2-a-ns"></span></div>
-      <div class="row"><span id="g2-a-nm"></span></div>
+      <div class="row"><span class="pick" id="g2-a-ns"></span></div>
+      <div class="row"><span class="pick" id="g2-a-nm"></span></div>
       <h3>Controller B: namespace, name</h3>
-      <div class="row"><span id="g2-b-ns"></span></div>
-      <div class="row"><span id="g2-b-nm"></span></div>
+      <div class="row"><span class="pick" id="g2-b-ns"></span></div>
+      <div class="row"><span class="pick" id="g2-b-nm"></span></div>
       <div class="row"><button id="g2-again">Draw again</button><span class="try">try it</span></div>
       <ul class="pl" id="g2-say" style="margin-top:calc(6 * var(--u))"></ul>
     </div>

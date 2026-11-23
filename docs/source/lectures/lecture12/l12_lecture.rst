@@ -85,10 +85,86 @@ The code grows in five stages, one commit each. The lecture quotes the stage a l
 
 To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository.
 
+Pose and Orientation
+--------------------
+
+The previous lecture set up launch files, executors and custom interfaces for the robotaxi. This lecture moves to a robot that reports where it is as a **pose**: a position and an orientation. This section explains both, and the two ways ROS writes an orientation: three angles, or a quaternion.
+
+Pose: Position and Orientation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. admonition:: Pose
+   :class: tip
+
+   The position and the orientation of a body, measured in a coordinate frame.
+
+- Every ROS frame is right-handed, with x forward, y left and z up (`REP 103 <https://www.ros.org/reps/rep-0103.html>`__).
+- The ROSbot's frame is ``base_link``. On a floor, its pose is three numbers: x, y and the heading, the **yaw**.
+- In 3D, a pose takes six: x, y, z and three angles.
+
+**The right-hand rule.** REP 103: "All systems are right handed".
+
+#. Axes: curl the fingers of your right hand from x toward y. Your thumb points along z.
+#. Rotations: point your thumb along an axis. Your fingers curl the positive way.
+#. With z up, a positive yaw turns counterclockwise, seen from above. So a positive ``angular.z`` turns the ROSbot left. REP 103: "the yaw component of orientation increases as the child frame rotates counter-clockwise".
+
+**Roll, pitch and yaw.** Three angles give an orientation, each a turn about one axis of the frame (REP 103):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 16 22 62
+
+   * - Angle
+     - About
+     - On the ROSbot
+   * - Roll
+     - x, forward
+     - tilts it sideways: 0 on a flat floor
+   * - Pitch
+     - y, left
+     - tilts its front up or down: 0 on a flat floor
+   * - Yaw
+     - z, up
+     - its heading: changes each time it turns
+
+The course simulation's ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and pitch stay 0, and only the yaw changes. Angles are in radians, and the yaw is kept between :math:`-\pi` and :math:`\pi`.
+
+**Orientation as a quaternion.** ROS messages hold an orientation as a **quaternion**, four numbers named x, y, z, w (not the position's x, y, z). REP 103 prefers it to three angles: a "Compact representation" with "No singularities".
+
+#. A turn by an angle :math:`\theta` about an axis :math:`(a_x, a_y, a_z)` of length 1 is the quaternion :math:`x = a_x\sin\frac{\theta}{2}`, :math:`y = a_y\sin\frac{\theta}{2}`, :math:`z = a_z\sin\frac{\theta}{2}`, :math:`w = \cos\frac{\theta}{2}`.
+#. The ROSbot turns only about z, the axis (0, 0, 1): x = y = 0, :math:`z = \sin\frac{\text{yaw}}{2}`, :math:`w = \cos\frac{\text{yaw}}{2}`.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 22 30 30
+
+   * - Yaw
+     - Facing
+     - :math:`z = \sin\frac{\text{yaw}}{2}`
+     - :math:`w = \cos\frac{\text{yaw}}{2}`
+   * - 0
+     - +x
+     - 0
+     - 1
+   * - 90°
+     - +y
+     - 0.707
+     - 0.707
+   * - 180°
+     - −x
+     - 1
+     - 0
+   * - −90°
+     - −y
+     - −0.707
+     - 0.707
+
+The odometry message carries this quaternion; :ref:`l12-yaw-from-quaternion` turns it back into the yaw.
+
 The ROSbot in Gazebo
 --------------------
 
-The previous lecture set up launch files, executors and custom interfaces for the robotaxi. This lecture moves to a simulated robot, the one GP2 uses. **Gazebo** is a simulator: it runs a robot and its sensors in a virtual world.
+The previous section said how ROS writes a pose. This section puts it to work on a simulated robot, the one GP2 uses. **Gazebo** is a simulator: it runs a robot and its sensors in a virtual world.
 
 Gazebo and the ROSbot
 ^^^^^^^^^^^^^^^^^^^^^
@@ -254,6 +330,13 @@ Your nodes publish commands on ``/cmd_vel`` and read the robot's pose from ``/od
      - ``nav_msgs/msg/Odometry``
      - ``pose.pose.position``: x and y in m; ``pose.pose.orientation``: a quaternion, which gives the yaw
 
+.. dropdown:: More detail: where the odometry comes from
+   :class-container: sd-border-secondary
+
+   - **Odometry** estimates the robot's pose by adding up its own motion since the start. It needs no map and no outside landmark, so its error grows as the robot drives.
+   - ``/odometry/wheels`` comes from the wheels alone: the drive controller turns the wheel rotations into the robot's motion.
+   - ``/odometry/filtered`` comes from ``ekf``, which fuses the wheels with the IMU. It takes the heading (yaw) from the IMU, the forward speed from the wheels, and the turn rate from both. It publishes about 20 times a second (19.8 Hz in the course simulation).
+
 Start the world with the robot in it, or the robot alone on an empty floor:
 
 .. code-block:: bash
@@ -303,6 +386,19 @@ Drag the knob on the pad to drive the robot, and watch its speeds, its wheels an
 
 .. raw:: html
    :file: widgets/drive.html
+
+Kinematics: From v and ω to Each Side's Wheels
+""""""""""""""""""""""""""""""""""""""""""""""
+
+The drive controller turns :math:`v` and :math:`\omega` into a speed for each side of the robot, :math:`v_L` and :math:`v_R` in m/s. The two wheels of a side turn together (``left_wheel_names: [fl_wheel_joint, rl_wheel_joint]`` in ``controllers.yaml``). :math:`s` is the distance between the two sides, and :math:`r` the wheel radius.
+
+- **From the sides to the robot:** :math:`v = \dfrac{v_R + v_L}{2}`, :math:`\omega = \dfrac{v_R - v_L}{s}`.
+- **From the robot to the sides** (what the drive controller does): :math:`v_L = v - \omega\,\dfrac{s}{2}`, :math:`v_R = v + \omega\,\dfrac{s}{2}`. Each wheel turns at :math:`v_{side}/r` rad/s.
+
+The ROSbot turning on the spot at :math:`\omega` = 1.0 rad/s. Its file sets :math:`s` = 0.186 m × 1.36 = 0.253 m (1.36: a correction for skidding wheels) and :math:`r` = 0.0425 m.
+
+1. :math:`v_L` = 0 − 1.0 × 0.253 / 2 = −0.1265 m/s, and :math:`v_R` = +0.1265 m/s.
+2. Each wheel turns at 0.1265 / 0.0425 = 2.98 rad/s: the left ones backward, the right ones forward.
 
 
 
@@ -410,7 +506,7 @@ Click a value in each row to build the launch command.
 RViz: What ROS Sees
 """""""""""""""""""
 
-Gazebo draws the simulated world. **RViz** is a ROS node that draws what the topics carry, in one **fixed frame**: the robot model, its frames, the lidar's ranges. Two ways to start it:
+Gazebo draws the simulated world. **RViz**, a ROS node, draws what the robot's topics hold: its model, its frames and the lidar's ranges. It places them all in one frame you choose, the **fixed frame** (here ``odom``). Two ways to start it:
 
 1. With the simulation, using the ROSbot's RViz configuration:
 
@@ -722,11 +818,12 @@ The last section drove the ROSbot by hand with ``ros2 topic pub``. This section 
 From a Terminal Command to a Node
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With ``ros2 topic pub``, you chose the command and you watched the robot. A controller node does both: every 50 ms, it reads where the robot is and publishes a command.
+A controller node reads where the robot is and publishes a command, every 50 ms.
 
 - ``ekf`` publishes the robot's pose, computed from the wheels and the IMU.
+- ``heading_controller_node``, which you write in this section, reads the pose on ``/odometry/filtered`` and sends a ``/cmd_vel`` command that turns the ROSbot to a heading.
 - ``differential_drive_controller`` turns each ``/cmd_vel`` command into wheel speeds.
-- You write the node in the middle. The graph shows only the nodes it exchanges data with.
+- The graph shows only the nodes your node exchanges data with.
 
 .. figure:: /_static/images/l12/control_graph.png
    :alt: ROS graph drawn top to bottom. A rounded box ekf has an arrow down to a rounded box heading_controller_node, labeled /odometry/filtered and nav_msgs/msg/Odometry. From heading_controller_node, an arrow down to a rounded box differential_drive_controller is labeled /cmd_vel and geometry_msgs/msg/TwistStamped.
@@ -735,16 +832,98 @@ With ``ros2 topic pub``, you chose the command and you watched the robot. A cont
 
    ``heading_controller_node`` receives the pose on ``/odometry/filtered`` and publishes the command on ``/cmd_vel``.
 
-Each dot is one message moving along its topic.
-
-.. raw:: html
-   :file: widgets/graph.html
-
 
 One Error, One Gain
 ^^^^^^^^^^^^^^^^^^^
 
 A proportional controller sets a speed in proportion to the error that is left. One gain sets how strongly it reacts.
+
+Feedback Control: Measure, Compare, Correct
+"""""""""""""""""""""""""""""""""""""""""""
+
+.. admonition:: Definition
+   :class: definition
+
+   A **feedback controller** measures the result of its own commands, compares it with the target, and uses the difference, the **error**, to choose the next command. It repeats this many times a second.
+
+For the heading controller of this section, one pass of the loop is:
+
+1. The target heading and the measured heading meet: their difference is the error :math:`e`.
+2. The controller turns :math:`e` into a command :math:`u`, published on ``/cmd_vel``.
+3. The ROSbot turns.
+4. The odometry measures the heading it reached, on ``/odometry/filtered``. This measurement is the feedback: it goes back to step 1.
+
+Feedback Controllers You Will Meet
+""""""""""""""""""""""""""""""""""
+
+They differ in how they turn the error into a command:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 47 38
+   :class: compact-table
+
+   * - Controller
+     - The command
+     - Where you meet it
+   * - On-off
+     - full on or full off, by the sign of the error
+     - a home thermostat switching the heater
+   * - P
+     - the error times a gain
+     - this section's ``heading_controller_node``
+   * - PI
+     - P, plus a term from the error summed over time
+     - a car's cruise control holding the speed uphill
+   * - PID
+     - PI, plus a term from how fast the error changes
+     - motor speed loops; a drone holding its attitude
+   * - MPC
+     - predicts the next seconds with a model of the robot, then picks the best commands
+     - self-driving cars following a path
+
+MPC is model predictive control. P, PI and PID are the same family: PID with some gains set to 0.
+
+PID Controller: the Error Now, Its Sum, and Its Trend
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. admonition:: Definition
+   :class: definition
+
+   A **PID controller** is a feedback controller whose control signal adds three terms: one in proportion to the error now (**P**), one to the error summed over time (**I**), and one to how fast the error changes (**D**).
+
+.. math::
+
+   u = K_p\, e + K_i \sum e\,\Delta t + K_d\, \frac{e_k - e_{k-1}}{\Delta t}
+
+:math:`K_p`, :math:`K_i`, :math:`K_d` are the gains you choose. :math:`\Delta t` is the time between two commands (0.05 s here). :math:`e_k` and :math:`e_{k-1}` are the error now and one step before.
+
+PID Controller: What Each Term Does for a Turn
+""""""""""""""""""""""""""""""""""""""""""""""
+
+Each term reads the error in its own way. For a turn to a heading:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 10 30 60
+   :class: compact-table
+
+   * - Term
+     - Reacts to
+     - Its job
+   * - P
+     - the error now
+     - turn faster the farther the robot is from the target
+   * - I
+     - the error summed over time
+     - keep pushing when a small error stays, for example when friction stops the turn short
+   * - D
+     - how fast the error changes
+     - slow the turn early, so the robot does not overshoot
+
+This section's controller is P alone (:math:`K_i = K_d = 0`). It needs neither I nor D: in Step 4's run, it stopped 0.019 rad short of the target, inside the 0.02 rad tolerance, so no error was left for I to remove and no overshoot for D to slow.
+
+A controller always has the P term: P, PI, PD or PID. D alone sends nothing while the error holds still, so the turn never starts. I alone starts at zero and keeps pushing after the error reaches zero, so the robot passes the target.
 
 What a Controller Does
 """"""""""""""""""""""
@@ -775,16 +954,25 @@ Example: the robot faces 3.122 rad (179°), and the target is -90°, which is -1
 2. Turning left is shorter. Add one full turn, 2π = 6.283 rad: -4.693 + 6.283 = 1.590 rad, a turn left of 91°.
 3. The error is 1.590 rad: the robot turns left 91°, past the 180° heading.
 
-.. admonition:: Conclusion
+.. admonition:: The Shorter Way: Add or Remove 2π
    :class: important
 
-   The error is the target minus the heading, moved into -π to π by adding or removing full turns.
+   Target minus heading is between -2π and 2π. Past half a turn (π), the other way is shorter: add or remove one full turn. In pseudo code:
+
+.. code-block:: python
+
+   d = target - heading          # between -2*pi and 2*pi
+   if d > pi:     d = d - 2*pi   # turn right instead
+   elif d <= -pi: d = d + 2*pi   # turn left instead
+   error = d                     # between -pi and pi
 
 Move the heading and the target to see the error the short way round.
 
 .. raw:: html
    :file: widgets/error.html
 
+
+.. _l12-yaw-from-quaternion:
 
 Yaw from the Odometry's Quaternion
 """"""""""""""""""""""""""""""""""
@@ -951,7 +1139,7 @@ Lines 11 to 23 of ``src/heading_controller_node.cpp``:
        has_odometry_ = true;
    }
 
-- Lines 13 to 16: the target, the gain, the limit and the tolerance. The unnamed namespace keeps them inside this file.
+- Lines 13 to 16: the unnamed namespace keeps the four constants inside this file. Nothing changes them, so they become data members only in the parameters section.
 - Line 21: the helper of the yaw section turns the quaternion into the yaw.
 
 Step 2: Write control_callback, the Error and the Stop
@@ -2083,8 +2271,8 @@ Namespaces and Remapping: What You Can Do Now
 Next Class
 ----------
 
-- **Next lecture**: *L13: Frames and Transforms*. Poses, frames, and broadcasting, listening to and debugging transforms.
-- **Pre-work**: complete the L12 :doc:`exercises <l12_exercises>` and :doc:`quiz <l12_quiz>` on ReadTheDocs. GP2 is posted today. This lecture covers the simulation it runs in, proportional control and parameters. Optional, beyond the course: the :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading.
+- **Next lecture**: *L13: Frames and Transforms*. Coordinate frames, and broadcasting, listening to and debugging transforms.
+- **Pre-work**: complete the L12 :doc:`exercises <l12_exercises>` and :doc:`quiz <l12_quiz>` on ReadTheDocs. The :doc:`GP2 instructions </assignments/gp2>` are on ReadTheDocs: start working on GP2 today. This lecture covers the simulation GP2 runs in, proportional control and parameters. Optional, beyond the course: the :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading.
 - **Required reading**:
 
   - `ROS 2 Jazzy: Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`__

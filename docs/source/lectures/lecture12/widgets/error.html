@@ -2,18 +2,23 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="error">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>The error of a turn</div>
 <div class="l12w-in">
-<div class="two" style="grid-template-columns:1fr calc(430 * var(--u));gap:calc(30 * var(--u));align-items:start">
+<div class="two" style="grid-template-columns:1fr calc(400 * var(--u));gap:calc(18 * var(--u));align-items:start">
     <div>
-      <p class="goal">The error is the angle left to turn, the short way. A positive error means turn left (counterclockwise), a negative one, turn right. Headings are in radians, from −π to π.</p>
-      <ol class="steps" id="tc-steps"></ol>
-      <div class="box concl">The error is the target minus the heading, moved into −π to π by adding or removing full turns.</div>
+      <p class="goal">The error is the angle left to turn, the short way. A positive error means turn left (counterclockwise), a negative one, turn right. Headings are in radians, from \(-\pi\) to \(\pi\).</p>
+      <div class="box concl" style="margin:4px 0 4px"><span class="bt">The shorter way: add or remove \(2\pi\)</span>Target minus heading is between \(-2\pi\) and \(2\pi\). Past half a turn (\(\pi\)), the other way is shorter: add or remove one full turn. In pseudo code:</div>
+<pre class="code" data-lang="py" id="tc-code" data-ln style="font-size:max(var(--fmin), calc(20 * var(--u)));margin:2px 0 0">d = target - heading          # between -2*pi and 2*pi
+if d &gt; pi:     d = d - 2*pi   # turn right instead
+elif d &lt;= -pi: d = d + 2*pi   # turn left instead
+error = d                     # between -pi and pi</pre>
+      <div style="display:grid;grid-template-columns:auto auto;gap:4px calc(18 * var(--u));align-items:center;margin-top:calc(10 * var(--u));justify-content:start">
+        <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">heading °</span><input type="range" id="tc-h" min="-180" max="180" step="0.1" value="178.9" style="width:calc(256 * var(--u))"></div>
+        <button id="tc-ex">The lecture's example</button>
+        <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">target °</span><input type="range" id="tc-t" min="-180" max="180" step="0.1" value="-90" style="width:calc(256 * var(--u))"></div>
+        <span class="try" style="justify-self:start">try it</span>
+      </div>
     </div>
     <div>
-      <svg id="tc-svg" class="plot" viewBox="0 0 350 350" width="350" height="350" role="img" aria-label="Top view of the robot at the center of a dial. A blue arrow shows its heading, an orange arrow the target heading, and a teal arc with an arrowhead the short way from the heading to the target." style="width:max(calc(350 * var(--u)), calc(350 * 12px / 20.5));max-width:none;height:auto"></svg>
-      <p class="small" style="margin:4px 0 2px"><span class="tg">1</span>heading <span class="tg">2</span>target <span class="tg">3</span>error</p>
-      <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">heading °</span><input type="range" id="tc-h" min="-180" max="180" step="0.1" value="178.9" style="width:calc(270 * var(--u))"></div>
-      <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(74 * var(--u))">target °</span><input type="range" id="tc-t" min="-180" max="180" step="0.1" value="-90" style="width:calc(270 * var(--u))"></div>
-      <div class="row" style="margin:2px 0 0"><button id="tc-ex">The lecture's example</button><span class="try">try it</span></div>
+      <svg id="tc-svg" class="plot" viewBox="0 0 400 470" width="400" height="470" role="img" aria-label="Top view of the robot at the center of a dial. A blue arrow, heading, shows the robot's heading, an orange arrow, target, the target heading, and a teal arc with an arrowhead, error, the short way from the heading to the target. When a full turn is added or removed, a dashed grey arc, d, shows target minus heading the long way. Under the dial, four rows give the heading, the target, d and the error in rad." style="width:max(calc(400 * var(--u)), calc(400 * 12px / 20.5));max-width:none;height:auto"><g id="tc-g" transform="translate(25 0)"></g><g id="tc-rows"></g></svg>
     </div>
   </div>
 <div class="row" style="margin:6px 0 0"><button type="button" data-again="tc-svg">Draw again</button></div>

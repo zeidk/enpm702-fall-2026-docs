@@ -665,7 +665,7 @@ autonomous robot in simulation.
      -
      - RWA3 due, GP1 posted
    * - 13 (Nov 24)
-     - L12: Robots in Gazebo and parameters (the ROSbot, a proportional controller, parameters)
+     - L12: Simulation, control and parameters (the ROSbot, a proportional controller, parameters)
      - Quiz 5
      - GP1 due, GP2 posted
    * - 14 (Dec 1)

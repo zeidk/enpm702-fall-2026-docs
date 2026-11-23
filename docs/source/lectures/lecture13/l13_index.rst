@@ -6,9 +6,8 @@ Overview
 --------
 
 This lecture covers **coordinate frames and transforms**, from the pose
-of a robot to the frame tree of TF2. A **pose** is a position and an
-orientation. On a robot that drives on a floor, the orientation is a
-**yaw**, which ROS stores as a **quaternion**. Every part of a robot
+of a robot to the frame tree of TF2. A **pose**, a position and an
+orientation, has a meaning only inside a frame. Every part of a robot
 has a frame: the base, each sensor, and the world. **TF2**, the ROS 2
 library for frames, keeps the tree of these frames, lets nodes broadcast
 the transform between two of them, and lets other nodes listen for it
@@ -26,7 +25,6 @@ explains the quaternion and the yaw of a robot on a floor.
 
    By the end of this lecture, you will be able to:
 
-   - Describe a **pose**, and convert between a **yaw** and a **quaternion**.
    - Explain what **coordinate frames** are and why a robot needs several.
    - Describe the **TF2 frame tree** and the standard frame names.
    - Use the ``TransformStamped`` message to represent a transform.

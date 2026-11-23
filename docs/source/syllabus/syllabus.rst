@@ -139,7 +139,7 @@ scheduled.
    * - Week 13
      - Nov 24
      -
-     - | ROS 2, Robots in Gazebo and Parameters (the ROSbot in Gazebo, Proportional Control, Parameters)
+     - | ROS 2, Simulation, Control and Parameters (the ROSbot in Gazebo, Proportional Control, Parameters)
        | :quiz:`Quiz 5`
      - | Submit Lecture 12 exercises
        | :assignment:`GP1 due, GP2 posted`

@@ -45,8 +45,7 @@ WIDGETS = [
     ("pause", ["pz-svg"], "Pause Gazebo: which timer stops", "Pause Gazebo: Which Timer Stops",
      "Replay the measured run, or watch it again, to see which timer stops while Gazebo is paused."),
     # ---- section 2
-    ("graph", ["cg-svg"], "The graph around the controller", "From a Terminal Command to a Node",
-     "Each dot is one message moving along its topic."),
+    # "graph" (cg-svg) left out: the slide became a still drawing (user, 2026-11-22), and the page shows control_graph.png
     ("loop", ["lc-svg"], "The four steps of the loop", "What a Controller Does",
      "Click a step, or press Play, to see what each step adds to the picture."),
     ("error", ["tc-svg"], "The error of a turn", "The Error of a Turn",
@@ -568,7 +567,7 @@ AGAIN = {"error": "tc-svg", "law": "pc-svg"}
 
 WORDING = [
     ("launch-args", ", the same form as <code>with_dispatcher:=false</code> last class. All optional;", ". All optional;"),
-    ("use-sim-time", '(<span class="go" data-go="p23">slide N</span>)', "(see Simulation Time above)"),
+    ("use-sim-time", '(<span class="go" data-go="p28">slide N</span>)', "(see Simulation Time above)"),
     ("rule-builder", "Slides:", "Lecture examples:"),
 ]
 

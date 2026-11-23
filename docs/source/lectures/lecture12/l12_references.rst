@@ -9,7 +9,7 @@ References
     .. card::
         :class-card: sd-border-secondary
 
-        **ENPM702 L12: Robots in Gazebo and Parameters**
+        **ENPM702 L12: Simulation, Control and Parameters**
 
         The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, starting the simulation, RViz, the topics, and driving it with ``ros2 topic pub``. Simulation time: ``/clock``, the computer's clock and ROS time, and which timer stops when Gazebo is paused. Proportional control: the error of a turn, the control law with a gain, a limit and a tolerance, and a heading controller. Parameters: declaring and reading them, ``ros2 param list``, ``get`` and ``set``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback. Namespaces and remapping: two controllers in two namespaces, relative, absolute and private names, a rule ``match:=replacement`` for a topic, a node name and a namespace, and the two together, on the command line and in a launch file.
 

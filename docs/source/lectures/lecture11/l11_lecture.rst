@@ -2046,7 +2046,7 @@ Services and actions are written the same way, in ``.srv`` and ``.action`` files
 Next Class
 ----------
 
-- **Next lecture**: *L12: Robots in Gazebo and Parameters*. The ROSbot in Gazebo, driven by a proportional controller, then parameters. Quiz 5.
+- **Next lecture**: *L12: Simulation, Control and Parameters*. The ROSbot in Gazebo, driven by a proportional controller, then parameters. Quiz 5.
 - **Pre-work**: install the :doc:`ROSbot simulation </setup/rosbot_simulation>`, and complete the L11 exercises and quiz on ReadTheDocs.
 - **Required reading**:
 

@@ -1,11 +1,11 @@
 ====================================================
-L12: Robots in Gazebo and Parameters
+L12: Simulation, Control and Parameters
 ====================================================
 
 Overview
 --------
 
-This lecture puts the Husarion ROSbot in a Gazebo world and writes the first controllers for it. The ROSbot is the robot of Lecture 12 to Lecture 14 and of Group Project 2. You start it with one launch file, see what the launch file starts, view the robot in **RViz**, read its pose from ``/odometry/filtered``, and drive it with ``TwistStamped`` messages on ``/cmd_vel``. Gazebo has its own topics, and a bridge copies the ones you need to ROS. Gazebo also has its own clock, **simulation time**: the lecture shows what ``use_sim_time`` changes for ``now()``, and which kind of timer stops when Gazebo is paused.
+This lecture opens with the **pose** of a robot: its position, and its orientation as roll, pitch and yaw or as a **quaternion**. It then puts the Husarion ROSbot in a Gazebo world and writes the first controllers for it. The ROSbot is the robot of Lecture 12 to Lecture 14 and of Group Project 2. You start it with one launch file, see what the launch file starts, view the robot in **RViz**, read its pose from ``/odometry/filtered``, and drive it with ``TwistStamped`` messages on ``/cmd_vel``. Gazebo has its own topics, and a bridge copies the ones you need to ROS. Gazebo also has its own clock, **simulation time**: the lecture shows what ``use_sim_time`` changes for ``now()``, and which kind of timer stops when Gazebo is paused.
 
 A **proportional controller** sets a speed in proportion to an error. The lecture writes one as a node that turns the ROSbot on the spot to a heading. It has a gain, a speed limit and a tolerance. A second node, which drives the ROSbot straight for a distance, is in a More detail box of the lecture page.
 
@@ -20,6 +20,7 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
 
    By the end of this lecture, you will be able to:
 
+   - Describe a **pose**, write an orientation as **roll, pitch and yaw** or as a **quaternion**, and convert between a yaw and a quaternion.
    - Start the **ROSbot** in **Gazebo**, and explain why Gazebo's own topics reach ROS only through a **bridge**.
    - View the robot in **RViz**, list its ROS topics, and drive it with a ``TwistStamped`` command on ``/cmd_vel``.
    - Read the robot's pose from ``/odometry/filtered``, and compute its **yaw** from the orientation.
@@ -58,8 +59,8 @@ The slides from class as a web page you can try: build a velocity command and se
 Next Steps
 ----------
 
-- In the next lecture (:doc:`L13: Frames and Transforms <../lecture13/l13_index>`), we will cover poses, frames, and broadcasting, listening to and debugging transforms. The ``/tf`` and ``/tf_static`` topics of the ROSbot are in the topic table of this lecture.
+- In the next lecture (:doc:`L13: Frames and Transforms <../lecture13/l13_index>`), we will cover coordinate frames, and broadcasting, listening to and debugging transforms. The ``/tf`` and ``/tf_static`` topics of the ROSbot are in the topic table of this lecture.
 - Before next class: complete the L12 exercises and quiz, and build and run ``l12_rosbot`` in your own workspace.
-- GP2 is posted today. This lecture covers the simulation it runs in, proportional control and parameters.
+- The :doc:`GP2 instructions </assignments/gp2>` are on ReadTheDocs: start working on GP2 today. This lecture covers the simulation GP2 runs in, proportional control and parameters.
 - Required reading: `ROS 2 Jazzy: Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`_, the :doc:`ROSbot Simulation </setup/rosbot_simulation>` page and the :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading.
 - Optional, beyond the course: the :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading.
