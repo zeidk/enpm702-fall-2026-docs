@@ -911,6 +911,7 @@ source install/setup.bash</pre></div>
 .pctl .row{margin:6px 0} .pctl .lbl{min-width:76px} .pctl input[type=range]{width:300px}
 .pread{font:22px var(--sans);line-height:1.45;margin-top:8px} .pread .vv{color:var(--livetext);font-family:var(--mono);font-size:21px}
 #aa-read{line-height:1.3}
+#aa-box{width:540px;height:324px}   /* the 600 x 360 view at 90%, so the right column holds q on one line */
 #aa-axes{display:grid;grid-template-columns:repeat(3, 1fr);gap:6px}   /* user, 2026-11-23: "properly align the 6 boxes. 3 boxes per line" */
 #aa-axes button{font-size:20px;padding:1px 0;margin:0;width:100%;letter-spacing:-0.02em}   /* room inside the widest box */   /* the formula in four steps fits the slide */
 /* the quaternion slide: the four numbers as two parts, the axis part and w */
@@ -1052,7 +1053,7 @@ source install/setup.bash</pre></div>
 <section class="plate frame s7" id="pose-axisangle" data-scene="p10" data-name="Slide 9 · Pose and Orientation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose and Orientation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 9 of 135. Go to a slide">Slide 9 / 135</span></div>
   <h2>A quaternion: a turn by an angle about an axis</h2><div class="fit"><div class="fitin">
   <p class="goal">Pick an axis and an angle: the four steps below turn them into the quaternion's four numbers, and the airplane shows the turn. <span class="try">try it</span></p>
-  <div class="two" style="grid-template-columns:600px 1fr;gap:22px;align-items:start">
+  <div class="two" style="grid-template-columns:540px 1fr;gap:22px;align-items:start">   <!-- left narrowed from 600 px so q fits one line (user, 2026-11-23) -->
     <div>
       <div class="p3d" id="aa-box" role="img" aria-label="A 3D view of an airliner, its nose along x, its wings along y and its tail fin up z, with its body axes, turned about a purple axis through its center by the angle the slider sets; a faint copy stays at the start, so the turn shows; drag to turn the view."></div>
       <p class="small" style="margin:6px 0 0">Faint: before the turn. Purple: the axis. Drag to turn the view. \(w\) gives the size of the turn (1 at 0°, 0 at ±180°), the signs of \(x\), \(y\), \(z\) its direction. REP 103 prefers a quaternion: a "Compact representation" with "No singularities".</p>
@@ -5681,7 +5682,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       '<li>\\(\\frac{\\theta}{2}\\) = <span class="vv" id="aa-h"></span>: \\(\\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-s"></span>, \\(\\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-c"></span>.</li>' +
       '<li>The axis times \\(\\sin\\frac{\\theta}{2}\\):<br>\\(x = a_x \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-x"></span><br>\\(y = a_y \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-y"></span><br>\\(z = a_z \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-z"></span></li>' +
       '<li>\\(w = \\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-w"></span>.</li></ol>' +
-      '\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>), length <span class="vv" id="aa-n"></span>';
+      '<span style="white-space:nowrap">\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>),</span> length <span class="vv" id="aa-n"></span>';
     mathIn(outA);
     function drawAxis(){ if (axLine) A.scene.remove(axLine);
       var v = new THREE.Vector3(axis[0], axis[1], axis[2]);
