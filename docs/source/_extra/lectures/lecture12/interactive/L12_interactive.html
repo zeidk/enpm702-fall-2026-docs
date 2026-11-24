@@ -4277,7 +4277,7 @@ RCLCPP_INFO_STREAM(get_logger(),
 
 <section class="plate frame s3" data-scene="p70" data-name="Slide 116 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>React to a Change</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 116 of 120. Go to a slide">Slide 116 / 120</span></div>
   <h2>Change a gain while the ROSbot turns</h2><div class="fit"><div class="fitin">
-  <p class="goal">The node runs with <span class="file">low_gain.yaml</span> (gain 0.5). Five <span class="cmd">ros2 param set</span> commands, in order (click a row). A refused set prints "Setting parameter failed:", then the reason:</p>
+  <p class="goal">The node runs with <span class="file">low_gain.yaml</span> (gain 0.5). Five <span class="cmd">ros2 param set</span> commands, in order. A refused set prints "Setting parameter failed:", then the reason:</p>
   <table class="t tight" id="q59-tab">
     <tr><th style="width:26%">Set</th><th style="width:50%">What it prints</th><th>Decided by</th></tr>
     <tr><td><code>kp_angular -1.0</code></td><td>kp_angular must not be negative</td><td>the callback, line 84</td></tr>
@@ -4294,9 +4294,9 @@ RCLCPP_INFO_STREAM(get_logger(),
 
 <section class="plate frame s3 extra" data-part="2" data-scene="p70-2" data-name="Slide 117 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>React to a Change</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 117 of 120. Go to a slide">Slide 117 / 120</span></div>
   <h2>Change a gain while the ROSbot turns: replay the run</h2><div class="fit"><div class="fitin">
-  <div class="row" style="margin:0"><button id="q59-play">Play the run</button><span class="try">try it</span><span class="small" id="q59-t"></span></div>
+  <div class="row" style="margin:0"><span class="try">try it</span><span class="small">click a ringed dot</span></div>
   <svg id="q59-svg" class="plot" viewBox="0 0 1168 400" width="1168" height="400" role="img" aria-label="The measured run, command in rad/s against time in seconds since the first log line, 0 to 19 s. The command falls from 0.78 as each turn closes. Turns end at 6.3 s (90 degrees), 12.7 s (180), 15.9 s (minus 90) and 18.6 s (0). Until 14.03 s the gain is 0.5 and the command is 0.5 times the error; from 14.03 s, when kp_angular 1.5 was accepted, it is 1.5 times the error and reaches the 1.0 rad/s limit."></svg>
-  <div id="q59-turns" style="font-size:25px;margin-top:4px"></div>
+  <div class="box nolive" id="q59-say" style="margin:4px 0 0;font-size:24px" aria-live="polite"></div>
 </div></div></section>
 
 
@@ -8048,8 +8048,21 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       [13.1,1.41654,0.708271],[13.7,1.02872,0.514358],[14.25,0.722785,1],[14.8,0.251447,0.377171],[15.3,0.0940787,0.141118],[15.8,0.0236045,0.0354067],[15.9,"r","−90°"],
       [16.3,1.38713,1],[16.85,0.825424,1],[17.4,0.344763,0.517144],[17.95,0.111504,0.167256],[18.45,0.0276917,0.0415375],[18.6,"r","0°"]];
     var TS = 14.029, TT = 19, sv = $("q59-svg"), pts = D.filter(function(d){ return d[1] !== "r"; }), rch = D.filter(function(d){ return d[1] === "r"; });
-    function draw(upto){
-      sv.innerHTML = "";
+    /* the whole run at once, and the dots that explain its shape (user, 2026-11-24: "What is happening after 180 deg? Why does it
+       have this shape? What is the dashed line? Show the full plot when the slide loads ... Allow us to click on some important
+       dots ... Each click provides an explanation"); the numbers are the log's, the products are 0.5 or 1.5 times the error */
+    var KEY = [
+      [0, "<b>t = 0 s, the start.</b> The error is 1.570 rad (90°). With gain 0.5 the command is 0.5 × 1.570 = 0.785 rad/s, under the 1.0 rad/s limit."],
+      [6.25, "<b>t = 6.25 s.</b> The command shrinks as the error shrinks: it is always 0.5 × the error, so the robot slows down near the target. At 6.3 s the error is under 0.02 rad: 90° reached."],
+      [6.85, "<b>t = 6.85 s, a new target, 180°.</b> The error jumps back up, and so does the command: 0.5 × 1.350 = 0.675 rad/s. The node logs at most every 0.5 s, so the turn's first command, 0.785, is not on the plot."],
+      [13.7, "<b>t = 13.7 s, the turn to −90°.</b> The short way from 180° is 90° to the left. The gain is still 0.5: 0.5 × 1.029 = 0.514 rad/s."],
+      [14.25, "<b>t = 14.25 s.</b> At 14.03 s (the green dashed line), <code>ros2 param set /heading_controller_node kp_angular 1.5</code> was accepted. The next command: 1.5 × 0.723 = 1.08 rad/s, over the limit, so the node sends 1.0. The error kept falling; the command jumped because the gain tripled."],
+      [15.8, "<b>t = 15.8 s.</b> −90° reached at 15.9 s. This turn took 3.20 s: part at gain 0.5, part at 1.5."],
+      [16.3, "<b>t = 16.3 s, the turn to 0° at gain 1.5.</b> 1.5 × 1.387 = 2.08 rad/s, over the limit: the command stays at 1.0 rad/s, the flat top, until the error is under 1.0 / 1.5 = 0.67 rad."],
+      [18.45, "<b>t = 18.45 s.</b> 0° reached at 18.6 s: this 90° turn took 2.70 s, against 6.40 s for the same turn at gain 0.5."]];
+    var pick = 0;
+    function draw(){
+      var upto = TT; sv.innerHTML = "";
       var box = {x:20, y:14, w:1130, h:300}, ax = frame(sv, box, [0, TT], [0, 1.6], [0, 2, 4, 6, 8, 10, 12, 14, 16, 18], [0, 0.5, 1], "time since the first log line (s)", "command (rad/s)");
       el(sv, "line", {x1:box.x, y1:ax.Y(1), x2:box.x + box.w, y2:ax.Y(1), stroke:C.edge, "stroke-width":2, "stroke-dasharray":"7 5"});
       halo(txt(sv, ax.X(0.3), ax.Y(1) - 8, "limit 1.0 rad/s", 20, C.muted, "start"));
@@ -8063,13 +8076,17 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       var ly = ax.Y(1.5);
       el(sv, "line", {x1:ax.X(0.4), y1:ly, x2:ax.X(1.0), y2:ly, stroke:C.slate, "stroke-width":4}); txt(sv, ax.X(1.2), ly + 7, "gain 0.5", 20, C.ink, "start");
       el(sv, "line", {x1:ax.X(3.4), y1:ly, x2:ax.X(4.0), y2:ly, stroke:C.live, "stroke-width":4}); txt(sv, ax.X(4.2), ly + 7, "gain 1.5", 20, C.ink, "start");
-      el(sv, "line", {x1:ax.X(6.4), y1:ly, x2:ax.X(7.0), y2:ly, stroke:C.ok, "stroke-width":3, "stroke-dasharray":"6 5"}); txt(sv, ax.X(7.2), ly + 7, "kp_angular 1.5 accepted", 20, C.ink, "start");
-      var tt = [], r = rch.filter(function(d){ return d[0] <= upto; });
-      for (var k = 1; k < r.length; k++) tt.push("turn to " + r[k][2] + ": " + (r[k][0] - r[k - 1][0]).toFixed(2) + " s");
-      $("q59-turns").textContent = tt.join("; "); $("q59-t").textContent = "t = " + Math.min(upto, TT).toFixed(1) + " s"; }
-    $("q59-play").onclick = stop(function(){ anim("q59", function(p){ draw(p * TT); }, 11000 / 1.5 * 1.0); });
-    draw(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
-    onReset(sv, function(){ tok.q59 = (tok.q59 || 0) + 1; draw(0); });
+      el(sv, "line", {x1:ax.X(6.4), y1:ly, x2:ax.X(7.0), y2:ly, stroke:C.ok, "stroke-width":3, "stroke-dasharray":"6 5"}); txt(sv, ax.X(7.2), ly + 7, "kp_angular set to 1.5 (14.03 s)", 20, C.ink, "start");
+      KEY.forEach(function(k, i){ var d = pts.filter(function(q){ return Math.abs(q[0] - k[0]) < 1e-6; })[0], x = ax.X(d[0]), y = ax.Y(d[2]);
+        el(sv, "circle", {cx:x, cy:y, r:12, fill:"none", stroke:i === pick ? C.ink : C.muted, "stroke-width":i === pick ? 4 : 2.5});
+        var hit = el(sv, "circle", {cx:x, cy:y, r:20, fill:"transparent", tabindex:0, role:"button", "aria-label":"Explain t = " + k[0] + " s", "aria-pressed":String(i === pick)});
+        hit.style.cursor = "pointer";
+        hit.addEventListener("click", function(ev){ ev.stopPropagation(); pick = i; draw(); });
+        hit.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); ev.stopPropagation(); pick = i; draw(); } }); });
+      $("q59-say").innerHTML = KEY[pick][1]; }
+    draw();
+    reserveStates(sv.closest(".frame"), KEY.map(function(k, i){ return function(){ pick = i; draw(); }; }), function(){ pick = 0; draw(); });   /* the tallest explanation sets the height: a click never moves the frame */
+    onReset(sv, function(){ pick = 0; draw(); });
   })();
 })();
 
