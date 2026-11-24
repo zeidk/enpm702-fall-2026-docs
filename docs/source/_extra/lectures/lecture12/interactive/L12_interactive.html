@@ -973,7 +973,7 @@ source install/setup.bash</pre></div>
 :root[data-theme="dark"] .posefig .axx{stroke:#F2786F} :root[data-theme="dark"] .posefig .axxh{fill:#F2786F}
 :root[data-theme="dark"] .posefig .axy{stroke:#62C48F} :root[data-theme="dark"] .posefig .axyh{fill:#62C48F}
 :root[data-theme="dark"] .posefig .axz{stroke:#6FA3D8} :root[data-theme="dark"] .posefig .axzd{fill:#6FA3D8}
-.posefig .axzl{stroke:#5B9BD5;stroke-width:3.5}   /* the z leader: the z blue, lighter so it shows on the dark body too */
+.posefig .zout{font:20px var(--sans);font-style:normal} .posefig .zout .zi{font:italic 24px KaTeX_Math,serif}   /* the key for z, under the robot (2026-11-23); a leader line read as an axis */
 .posefig .yawarc{fill:none;stroke:var(--ink);stroke-width:3} .posefig .yawh{fill:var(--ink)}
 .posefig .lbl2{font:22px var(--sans);font-style:normal;fill:var(--ink)} .posefig .mono{font:20px var(--mono);font-style:normal;fill:var(--muted)}
 #qt-vals{font-size:29px;line-height:1.6} #qt-vals .vv{color:var(--livetext);font-family:var(--mono)}
@@ -1000,15 +1000,18 @@ source install/setup.bash</pre></div>
       <li>The ROSbot's frame is <code class="fr">base_link</code>. On a floor, its pose is three numbers: \(x\), \(y\) and the heading, the <b>yaw</b>.</li>
       <li>In 3D, a pose takes six: \(x\), \(y\), \(z\) and three angles.</li>
     </ul>
-    <svg class="posefig" id="pd-svg" viewBox="-120 -190 400 330" width="310" height="256" role="img" aria-label="Top view of the ROSbot facing right, with its frame base_link at its center: a red arrow x points forward, to the right; a green arrow y points to the robot's left, up the page; a blue circle with a dot marks z, pointing up out of the page.">
+    <svg class="posefig" id="pd-svg" viewBox="-130 -190 410 350" width="310" height="265" role="img" aria-label="Top view of the ROSbot facing right, with its frame base_link at its center: a red arrow x points forward, to the right; a green arrow y points to the robot's left, up the page; a blue circle with a dot marks z, pointing up out of the page, and a key under the robot says so: z points out of the screen.">
       <g id="pd-bot"></g>
       <g class="ax">
         <line class="axx" x1="0" y1="0" x2="150" y2="0"/><polygon class="axxh" points="162,0 146,-8 146,8"/>
         <line class="axy" x1="0" y1="0" x2="0" y2="-130"/><polygon class="axyh" points="0,-142 -8,-126 8,-126"/>
         <circle class="axz" cx="0" cy="0" r="11"/><circle class="axzd" cx="0" cy="0" r="4"/>
         <text x="172" y="8">x</text><text x="-6" y="-152">y</text>
-        <line class="axzl" x1="-9" y1="7" x2="-98" y2="62"/><text x="-118" y="76">z</text></g>
-      <text class="mono" x="0" y="122" text-anchor="middle">base_link</text>
+        <!-- z points out of the screen: the circled dot says so, with its label beside it; the leader line read as an axis drawn in
+             the floor (user, 2026-11-23: "the z axis is missing the arrow", then picked "Label beside the dot") -->
+        <circle class="axz" cx="-112" cy="106" r="9"/><circle class="axzd" cx="-112" cy="106" r="3.5"/>
+        <text x="-96" y="114" class="zout"><tspan class="zi">z</tspan> points out of the screen</text></g>
+      <text class="mono" x="0" y="148" text-anchor="middle">base_link</text>
     </svg>
   </div>
 </div></div></section>
