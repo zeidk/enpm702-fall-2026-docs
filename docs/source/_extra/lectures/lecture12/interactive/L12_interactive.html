@@ -505,6 +505,7 @@ body.fs .plate.nextc.active{background:transparent}
 #termpop{position:fixed;z-index:1040;display:none;background:var(--card);color:var(--ink);border:3px solid var(--s2);
   border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:10px 16px;max-height:94vh;max-width:calc(100vw - 28px);overflow:auto}
 #termpop.on{display:block}
+#termpop.cols pre{columns:2;column-gap:40px}   /* data-cols: a long message in two columns, so it is all on screen */
 #termpop .x{display:none;position:sticky;top:0;float:right;margin:0 0 4px 12px;width:34px;height:34px;padding:0;font:600 24px/1 var(--sans);
   border:2px solid var(--plate-edge);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
 #termpop.pinned .x{display:block}
@@ -1237,7 +1238,7 @@ float64 w 1</template>
   <table class="t tight" style="margin-top:6px">
     <tr><th style="width:1%"></th><th style="width:44%">Simulation</th><th>Real ROSbot</th></tr>
     <tr><td style="white-space:nowrap"><b>Whose clock</b></td><td>Gazebo's, counted from the start</td><td>the computer's</td></tr>
-    <tr><td style="white-space:nowrap"><b>How fast</b></td><td>real-time factor 0.9997: simulated seconds per real second</td><td>one second per second</td></tr>
+    <tr><td style="white-space:nowrap"><b>How fast</b></td><td>0.78 simulated seconds per real second in one run</td><td>one second per second</td></tr>
     <tr><td style="white-space:nowrap"><b>Can it stop</b></td><td>yes, while Gazebo is paused</td><td>no: the robot keeps moving</td></tr>
   </table>
 </div></div></section>
@@ -1569,8 +1570,8 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 <pre class="code" data-lang="bash">gz topic -e -t /world/patrol/stats -n 1 \
   | grep real_time_factor</pre>
   <ul class="pl">
-    <li>Gazebo's real-time factor, from the last command, was <code>0.9997</code> in one sample.</li>
-    <li>The simulation ran at 99.97&nbsp;% of the speed of the computer's clock.</li>
+    <li>The command gives the speed of one 4&nbsp;ms step: <code>0.9997</code> here, but 0.08 to 1.40 in a later run (209 messages).</li>
+    <li>Gazebo's window smooths it: about 80&nbsp;% in that run. In 21.83 real seconds, <code class="tp">/clock</code> advanced 17.03&nbsp;s (17.03 / 21.83 = 0.78).</li>
   </ul>
 </div></div></section>
 
@@ -1693,7 +1694,14 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
    rqt_reconfigure, rqt_console, rqt_tf_tree)"): six docks as rqt shows them, each plugin's title as rqt writes it; a click
    on a title bar enlarges that dock to the window. The data: figures/gz_capture/rqt_window_js.py (L12_interactive_assets/rqt_window.js) */
 #rq{display:grid;grid-template-rows:32px minmax(0,1fr);height:540px;border:2px solid var(--plate-edge);border-radius:8px;overflow:hidden;background:var(--chip);color:var(--ink);font-size:20px;line-height:1.2}
-#rq .rq-menu{display:flex;gap:22px;align-items:center;padding:0 12px;border-bottom:1px solid var(--plate-edge);user-select:none}
+#rq .rq-menu{display:flex;gap:4px;align-items:stretch;padding:0 4px;border-bottom:1px solid var(--plate-edge);user-select:none}
+#rq .rq-mi{position:relative;display:flex}
+#rq .rq-mb{font:inherit;font-size:20px;background:none;border:0;border-radius:4px;color:var(--ink);padding:0 9px;margin:0;min-height:0;height:100%;cursor:pointer}
+#rq .rq-mb:hover{background:var(--hover)} #rq .rq-mb[aria-expanded="true"]{background:var(--hl)}
+#rq .rq-dd{position:absolute;left:0;top:100%;z-index:8;min-width:170px;background:var(--plate);border:1px solid var(--muted);border-radius:4px;padding:4px 0;box-shadow:0 4px 12px rgba(0,0,0,.25)} #rq .rq-dd[hidden]{display:none}
+#rq .rq-it{display:block;padding:3px 16px;white-space:nowrap} #rq .rq-dis{color:var(--muted)}
+#rq .rq-plug .rq-it:has(b){display:grid;grid-template-columns:200px 22px auto} #rq .rq-it b{font-weight:400} #rq .rq-it i{font-style:normal;color:var(--muted)}
+#rq .rq-sep{display:block;height:1px;margin:4px 0;background:var(--plate-edge)}
 #rq .rq-docks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:4px;padding:4px;min-height:0}
 #rq .rq-dock{display:grid;grid-template-rows:30px minmax(0,1fr);min-width:0;min-height:0;border:1px solid var(--plate-edge);background:var(--card)}
 #rq.mx .rq-dock:not(.max){display:none}
@@ -1912,7 +1920,9 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <script src="L12_interactive_assets/rqt_graph.js"></script>
   <script src="L12_interactive_assets/rqt_window.js"></script>
   <div id="rq" class="nolive" aria-label="A working copy of one rqt window with six plugins docked in it, on the running course simulation. Top row: Node Graph (rqt_graph), Image View (rqt_image_view), Topic Monitor (rqt_topic). Bottom row: Parameter Reconfigure (rqt_reconfigure), Console (rqt_console), TF Tree (rqt_tf_tree). A click on a plugin's title bar enlarges it to the whole window; a second click shows all six again.">
-    <div class="rq-menu"><span>File</span><span>Plugins</span><span>Running</span><span>Perspectives</span><span>Help</span></div>
+    <!-- the menus as rqt showed them with these six plugins open (ROS 2 Jazzy, 2026-11-24; figures/data/rqt_menus.txt); they only
+         open (user, 2026-11-24: "show the options under each menu ... Display them only") -->
+    <div class="rq-menu"><span class="rq-mi"><button class="rq-mb" aria-expanded="false">File</button><span class="rq-dd" hidden><span class="rq-it">Quit</span></span></span><span class="rq-mi"><button class="rq-mb" aria-expanded="false">Plugins</button><span class="rq-dd rq-plug" hidden><span class="rq-it">Container</span><span class="rq-sep"></span><span class="rq-it"><b>Actions</b><i>&#9656;</i><span>Action Type Browser</span></span><span class="rq-it"><b>Configuration</b><i>&#9656;</i><span>Dynamic Reconfigure</span></span><span class="rq-it"><b>Introspection</b><i>&#9656;</i><span>Node Graph</span></span><span class="rq-it"><b>Logging</b><i>&#9656;</i><span>Bag, Console</span></span><span class="rq-it"><b>Miscellaneous Tools</b><i>&#9656;</i><span>Python Console, Shell</span></span><span class="rq-it"><b>Robot Tools</b><i>&#9656;</i><span>Diagnostics Viewer</span></span><span class="rq-it"><b>Services</b><i>&#9656;</i><span>Service Caller, Service Type Browser</span></span><span class="rq-it"><b>Topics</b><i>&#9656;</i><span>Message Publisher, Message Type Browser, Topic Monitor</span></span><span class="rq-it"><b>Visualization</b><i>&#9656;</i><span>Image View, TF Tree</span></span></span></span><span class="rq-mi"><button class="rq-mb" aria-expanded="false">Running</button><span class="rq-dd" hidden><span class="rq-it">Close: Node Graph</span><span class="rq-it">Close: Image View</span><span class="rq-it">Close: Topic Monitor</span><span class="rq-it">Close: Parameter Reconfigure</span><span class="rq-it">Close: Console</span><span class="rq-it">Close: TF Tree</span></span></span><span class="rq-mi"><button class="rq-mb" aria-expanded="false">Perspectives</button><span class="rq-dd" hidden><span class="rq-it rq-dis">&#10003; Default</span><span class="rq-sep"></span><span class="rq-it">Create perspective...</span><span class="rq-it rq-dis">Remove perspective...</span><span class="rq-sep"></span><span class="rq-it">Import...</span><span class="rq-it">Export...</span></span></span><span class="rq-mi"><button class="rq-mb" aria-expanded="false">Help</button><span class="rq-dd" hidden><span class="rq-it">About</span></span></span></div>
     <div class="rq-docks">
       <div class="rq-dock" data-k="graph"><div class="rq-bar" role="button" tabindex="0" aria-pressed="false"><b>Node Graph</b><span class="rq-pk">rqt_graph</span><span class="rq-mx" aria-hidden="true"></span></div>
     <div class="rq-body">
@@ -1939,7 +1949,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
         <div class="rq-body rq-tfv" id="rq-tfv"><canvas id="rq-tfcv"></canvas></div></div>
     </div>
   </div>
-  <p class="small" style="margin:4px 0 0">Each dock is one plugin. Click a title bar to enlarge it. Graph and tree: the wheel zooms, a drag moves.</p>
+  <p class="small" style="margin:4px 0 0">Each dock is one plugin. Click a menu to see its options, or a title bar to enlarge a dock.</p>
 </div></div></section>
 
 
@@ -2049,23 +2059,27 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <div class="two" style="grid-template-columns:1fr 1fr;gap:6px 26px">   <!-- one row for the two boxes, so they share a height -->
     <div class="box def" style="margin:0"><span class="bt">Linear velocity \(v\)</span>How fast the robot moves the way it faces (\(d\): the distance driven).<div class="fml">\(v = \dfrac{\mathrm{d}d}{\mathrm{d}t}\) &nbsp; [m/s]</div>In the message: <code>linear.x</code>.</div>
     <div class="box def" style="margin:0"><span class="bt">Angular velocity \(\omega\)</span>How fast the robot's heading \(\theta\) turns.<div class="fml">\(\omega = \dfrac{\mathrm{d}\theta}{\mathrm{d}t}\) &nbsp; [rad/s]</div>In the message: <code>angular.z</code>.</div>
-    <svg class="vfig" style="align-self:center" viewBox="0 0 360 150" width="360" height="150" role="img" aria-label="Top view: the robot, drawn as a green dot facing right, at three times t0, t1 and t2, further right each time; a blue arrow under them points right, labeled v greater than 0.">
+    <svg class="vfig" style="align-self:center" viewBox="0 0 360 156" width="360" height="156" role="img" aria-label="Top view: the robot, a green body with four wheels and a white triangle at its front, which faces right, at three times t0, t1 and t2, paler for the earlier ones. With v greater than 0 each is further right and the blue arrow of its motion points right; with v less than 0 each is further left and the blue arrow points left, while the front still faces right.">
         <defs><marker id="vel-ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:context-stroke"/></marker></defs>
+        <!-- the robot seen from above, its front marked: no heading arrow (user, 2026-11-24: "for v < 0. can you redraw? Why is the black
+             arrow this direction and the blue arrow the other direction?"); the blue arrow is the motion -->
         <g id="vel-vp">
-        <g><text x="44" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">0</tspan></text><circle class="dot" cx="44" cy="52" r="11"/><path class="ar" d="M57,52 H86" marker-end="url(#vel-ah)"/></g>
-        <g><text x="154" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">1</tspan></text><circle class="dot" cx="154" cy="52" r="11"/><path class="ar" d="M167,52 H196" marker-end="url(#vel-ah)"/></g>
-        <g><text x="264" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">2</tspan></text><circle class="dot" cx="264" cy="52" r="11"/><path class="ar" d="M277,52 H306" marker-end="url(#vel-ah)"/></g>
-        <path class="pl" d="M44,88 H290" marker-end="url(#vel-ah)"/><text class="sg" x="167" y="116" text-anchor="middle"><tspan class="mi">v</tspan><tspan class="mn"> &gt; 0</tspan></text>
-        <text class="cap" x="180" y="144" text-anchor="middle">driving forward (top view)</text>
+        <g><text x="44" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">0</tspan></text><g opacity=".4"><g style="fill:var(--ink)"><rect x="26" y="34" width="12" height="6" rx="2"/><rect x="50" y="34" width="12" height="6" rx="2"/><rect x="26" y="66" width="12" height="6" rx="2"/><rect x="50" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="22" y="39" width="44" height="28" rx="5"/><path d="M51,44 L62,53 L51,62 z" style="fill:#fff"/></g></g>
+        <g><text x="154" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">1</tspan></text><g opacity=".65"><g style="fill:var(--ink)"><rect x="136" y="34" width="12" height="6" rx="2"/><rect x="160" y="34" width="12" height="6" rx="2"/><rect x="136" y="66" width="12" height="6" rx="2"/><rect x="160" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="132" y="39" width="44" height="28" rx="5"/><path d="M161,44 L172,53 L161,62 z" style="fill:#fff"/></g></g>
+        <g><text x="264" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">2</tspan></text><g opacity="1"><g style="fill:var(--ink)"><rect x="246" y="34" width="12" height="6" rx="2"/><rect x="270" y="34" width="12" height="6" rx="2"/><rect x="246" y="66" width="12" height="6" rx="2"/><rect x="270" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="242" y="39" width="44" height="28" rx="5"/><path d="M271,44 L282,53 L271,62 z" style="fill:#fff"/></g></g>
+        <text class="cap" x="294" y="60">front</text>
+        <path class="pl" d="M44,94 H290" marker-end="url(#vel-ah)"/><text class="sg" x="167" y="120" text-anchor="middle"><tspan class="mi">v</tspan><tspan class="mn"> &gt; 0</tspan></text>
+        <text class="cap" x="180" y="147" text-anchor="middle">faces right, moves right (top view)</text>
         </g>
         <!-- v < 0 (user, 2026-11-23: "you did not include situations where v < 0 and w < 0"): the robot still faces right and moves
              left, so the times run right to left -->
         <g id="vel-vn" style="visibility:hidden">
-        <g><text x="264" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">0</tspan></text><circle class="dot" cx="264" cy="52" r="11"/><path class="ar" d="M277,52 H306" marker-end="url(#vel-ah)"/></g>
-        <g><text x="154" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">1</tspan></text><circle class="dot" cx="154" cy="52" r="11"/><path class="ar" d="M167,52 H196" marker-end="url(#vel-ah)"/></g>
-        <g><text x="44" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">2</tspan></text><circle class="dot" cx="44" cy="52" r="11"/><path class="ar" d="M57,52 H86" marker-end="url(#vel-ah)"/></g>
-        <path class="pl" d="M290,88 H44" marker-end="url(#vel-ah)"/><text class="sg" x="167" y="116" text-anchor="middle"><tspan class="mi">v</tspan><tspan class="mn"> &lt; 0</tspan></text>
-        <text class="cap" x="180" y="144" text-anchor="middle">driving backward (top view)</text>
+        <g><text x="264" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">0</tspan></text><g opacity=".4"><g style="fill:var(--ink)"><rect x="246" y="34" width="12" height="6" rx="2"/><rect x="270" y="34" width="12" height="6" rx="2"/><rect x="246" y="66" width="12" height="6" rx="2"/><rect x="270" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="242" y="39" width="44" height="28" rx="5"/><path d="M271,44 L282,53 L271,62 z" style="fill:#fff"/></g></g>
+        <g><text x="154" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">1</tspan></text><g opacity=".65"><g style="fill:var(--ink)"><rect x="136" y="34" width="12" height="6" rx="2"/><rect x="160" y="34" width="12" height="6" rx="2"/><rect x="136" y="66" width="12" height="6" rx="2"/><rect x="160" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="132" y="39" width="44" height="28" rx="5"/><path d="M161,44 L172,53 L161,62 z" style="fill:#fff"/></g></g>
+        <g><text x="44" y="24" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">2</tspan></text><g opacity="1"><g style="fill:var(--ink)"><rect x="26" y="34" width="12" height="6" rx="2"/><rect x="50" y="34" width="12" height="6" rx="2"/><rect x="26" y="66" width="12" height="6" rx="2"/><rect x="50" y="66" width="12" height="6" rx="2"/></g><rect class="dot" x="22" y="39" width="44" height="28" rx="5"/><path d="M51,44 L62,53 L51,62 z" style="fill:#fff"/></g></g>
+        <text class="cap" x="294" y="60">front</text>
+        <path class="pl" d="M264,94 H18" marker-end="url(#vel-ah)"/><text class="sg" x="154" y="120" text-anchor="middle"><tspan class="mi">v</tspan><tspan class="mn"> &lt; 0</tspan></text>
+        <text class="cap" x="180" y="147" text-anchor="middle">faces right, moves left (top view)</text>
         </g>
       </svg>
     <svg class="vfig" style="align-self:center" viewBox="-30 0 360 190" width="360" height="190" role="img" aria-label="Top view: the robot, a green dot, with black heading arrows fanning from theta 0, pointing right, to theta n, pointing up; a blue arc around them turns counterclockwise, labeled omega greater than 0.">
@@ -2411,7 +2425,7 @@ model:
 
 <section class="plate frame s6" data-scene="the-rosbot-12" data-name="Slide 59 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot<span class="fsep" aria-hidden="true"></span>What It Senses and Where It Is</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 59 of 111. Go to a slide">Slide 59 / 111</span></div>
   <h2>Where the robot is: the odometry message</h2><div class="fit"><div class="fitin">
-  <p style="margin:0 0 4px">Both topics carry a <code class="ty">nav_msgs/msg/Odometry</code>:</p>   <!-- the size of the list under it (user, 2026-11-23) -->
+  <p style="margin:0 0 4px">Both topics carry a <code class="ty termhover" data-out="msg-odometry" data-cols="2" data-cmd="ros2 interface show --no-comments nav_msgs/msg/Odometry" aria-label="nav_msgs/msg/Odometry: point at it to see its fields">nav_msgs/msg/Odometry</code>:</p>   <!-- the size of the list under it (user, 2026-11-23) -->
   <!-- one box per field (user, 2026-11-23: "Place each bullet in a box") -->
   <div style="display:grid;grid-template-columns:1fr 1.25fr 0.75fr;gap:14px;margin:4px 0 0">
     <div class="box" style="margin:0"><span class="bt"><code>pose.pose.position</code></span>x and y in meters, in the <code class="fr">odom</code> frame.</div>
@@ -2424,6 +2438,36 @@ model:
   <p style="margin:4px 0 0">gave x = &minus;7.4e&minus;18&nbsp;m, y = 3.2e&minus;21&nbsp;m, z = 0.0: zero, within the computer's rounding error.</p>
   <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_localization/config/config.yaml</span> (what <code class="nd">ekf</code> fuses), the deck's measurement (<span class="file">figures/data/sim_topics.txt</span>).</p>
 </div></div></section>
+<!-- the output of ros2 interface show --no-comments nav_msgs/msg/Odometry (ROS 2 Jazzy) -->
+<template id="msg-odometry">std_msgs/Header header
+  builtin_interfaces/Time stamp
+    int32 sec
+    uint32 nanosec
+  string frame_id
+string child_frame_id
+geometry_msgs/PoseWithCovariance pose
+  Pose pose
+    Point position
+      float64 x
+      float64 y
+      float64 z
+    Quaternion orientation
+      float64 x 0
+      float64 y 0
+      float64 z 0
+      float64 w 1
+  float64[36] covariance
+geometry_msgs/TwistWithCovariance twist
+  Twist twist
+    Vector3 linear
+      float64 x
+      float64 y
+      float64 z
+    Vector3 angular
+      float64 x
+      float64 y
+      float64 z
+  float64[36] covariance</template>
 
 <section class="plate frame s6" data-scene="p26" data-name="Slide 60 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 60 of 111. Go to a slide">Slide 60 / 111</span></div>
   <div class="opener sub">
@@ -2944,13 +2988,12 @@ QoS profile:
 <section class="plate frame s2" data-scene="p36" data-name="Slide 66 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>The Controller Node</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 66 of 111. Go to a slide">Slide 66 / 111</span></div>
   <h2>From a terminal command to a node</h2><div class="fit"><div class="fitin">
   <div class="two" style="grid-template-columns:1fr auto;gap:28px;align-items:center">
-    <div>
-      <p class="goal">A controller node reads where the robot is and publishes a command, every 50&nbsp;ms.</p>
-      <ul class="pl">
-        <li><code class="nd">ekf</code> publishes the robot's pose, computed from the wheels and the IMU.</li>
-        <li><code class="nd">heading_controller_node</code>, which you write in this section, reads the pose on <code class="tp">/odometry/filtered</code> and sends a <code class="tp">/cmd_vel</code> command that turns the ROSbot to a heading.</li>
-        <li><code class="nd">differential_drive_controller</code> turns each <code class="tp">/cmd_vel</code> command into wheel speeds.</li>
-        <li>The graph shows only the nodes your node exchanges data with.</li>
+    <div style="font-size:32px;line-height:1.3">
+      <p class="goal" style="font-size:inherit">Your node reads where the robot is and sends a command, every 50&nbsp;ms.</p>
+      <ul class="pl" style="font-size:inherit">
+        <li><code class="nd">ekf</code> publishes the robot's pose.</li>
+        <li><code class="nd">heading_controller_node</code>, your node, turns the robot to a heading.</li>
+        <li><code class="nd">differential_drive_controller</code> sets the wheel speeds.</li>
       </ul>
     </div>
     <div>
@@ -3067,7 +3110,7 @@ svg.fbloop text.on{fill:var(--nowedge);font-weight:700}
   <p class="goal" style="margin:8px 0 4px">Feedback controllers differ in how they turn the error into a command:</p>
   <table class="t tight">
     <tr><th style="width:15%">Controller</th><th style="width:47%">The command</th><th>Where you meet it</th></tr>
-    <tr><td><b>On-off</b></td><td>full on or full off, by the sign of the error</td><td>a home thermostat switching the heater</td></tr>
+    <tr><td><b>On-off</b></td><td>full on when the error is positive, full off when it is negative</td><td>a home thermostat: heater on while the room is colder than its target</td></tr>
     <tr><td><b>P</b></td><td>the error times a gain</td><td>this section's <code class="nd">heading_controller_node</code></td></tr>
     <tr><td><b>PI</b></td><td>P, plus a term from the error summed over time</td><td>a car's cruise control holding the speed uphill</td></tr>
     <tr><td><b>PID</b></td><td>PI, plus a term from how fast the error changes</td><td>motor speed loops; a drone holding its attitude</td></tr>
@@ -3091,7 +3134,7 @@ svg.fbloop text.on{fill:var(--nowedge);font-weight:700}
     </div>
     <div>
       <svg id="lc-svg" class="plot" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Top view of the robot at the center of a dial, with 0 degrees to the right and 90 degrees up. Arrows show the robot's heading and the target heading, and an arc shows the error between them, as the lit step adds them."></svg>
-      <p class="small" style="margin:4px 0 2px" id="lc-cap"></p>
+      <p class="small" style="margin:4px 0 2px;min-height:4.2em" id="lc-cap"></p>
       <div class="row" style="margin:2px 0 0"><button id="lc-back">Back</button><button id="lc-next">Next</button><button id="lc-play">Play</button><span class="try">try it</span></div>
     </div>
   </div>
@@ -3139,9 +3182,8 @@ svg.fbloop text.on{fill:var(--nowedge);font-weight:700}
       <svg id="hl-plot" class="plot" viewBox="0 0 820 104" width="868" height="110" role="img" aria-label="A plot against time of the error e, in teal, and the turn rate u, dashed, as the loop runs."><g id="hl-pg"></g><foreignObject x="70" y="0" width="700" height="28"><div class="hlleg"><span><span class="sw" style="background:var(--hle)"></span>\(e\) (rad)&emsp;<span class="sw dash"></span>\(u\) (rad/s)&emsp;against time \(t\) (s)</span></div></foreignObject></svg>
     </div>
     <div>
-      <svg id="hl-dial" class="plot" viewBox="-28 -6 376 332" width="228" height="201" role="img" aria-label="Top view of the ROSbot on a dial, 0 degrees to the right and 90 up: a blue arrow for the heading, an orange arrow for the target, and a teal arc for the error between them; the robot turns as the loop runs."></svg>
-      <p id="hl-say" class="small nolive" style="margin:2px 0 0;line-height:1.3;min-height:4.05em" aria-live="polite"></p>
-      <p class="small" style="margin:2px 0 0;color:var(--muted)">Model robot: \(u \times 0.05\)&nbsp;s a step. 90° takes 3.2&nbsp;s; the ROSbot, 2.7&nbsp;s.</p>
+      <svg id="hl-dial" class="plot" viewBox="-14 -6 348 332" width="276" height="263" role="img" aria-label="Top view of the ROSbot on a dial, 0 degrees to the right and 90 up: a blue arrow for the heading, an orange arrow for the target, and a teal arc for the error between them; the robot turns as the loop runs."></svg>
+      <p id="hl-say" class="small nolive" style="margin:8px 0 0;line-height:1.3;min-height:4.05em" aria-live="polite"></p>
     </div>
   </div>
   <div class="row" style="margin:4px 0 0;align-items:center"><span class="lbl" style="min-width:0;margin-right:6px">target</span><span id="hl-tgts"></span>
@@ -3172,10 +3214,9 @@ error = d                     # between -pi and pi</pre>
 </div></div></section>
 
 <section class="plate frame s2" data-scene="p40" data-name="Slide 72 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Feedback Controllers</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 72 of 111. Go to a slide">Slide 72 / 111</span></div>
-  <h2>Yaw from the odometry's quaternion</h2><div class="fit"><div class="fitin">
-  <p class="goal">The odometry gives the robot's orientation as a <b>quaternion</b>, four numbers <code>x</code>, <code>y</code>, <code>z</code> and <code>w</code>. The controller needs one angle, the <b>yaw</b>: the heading, counterclockwise from +x. Lines 15 to 24 of <span class="file">include/l12_rosbot/geometry.hpp</span>:</p>
-<pre class="code" data-lang="cpp" data-first="15">inline double yaw_from_quaternion(
-    const geometry_msgs::msg::Quaternion &amp;orientation) {
+  <h2>Yaw from the odometry's quaternion</h2><div class="fit"><div class="fitin">   <!-- the signature on one line, so no line numbers here (user, 2026-11-24: "Can you fit lines 1 and 2 on one line?") -->
+  <p class="goal">The odometry gives the robot's orientation as a <b>quaternion</b>. The controller needs one angle, the <b>yaw</b>. Lines 15 to 24 of <span class="file">include/l12_rosbot/geometry.hpp</span>:</p>
+<pre class="code" data-lang="cpp" style="font-size:20.6px">inline double yaw_from_quaternion(const geometry_msgs::msg::Quaternion &amp;orientation) {
     const double siny_cosp{
         2.0 * (orientation.w * orientation.z +
                orientation.x * orientation.y)};
@@ -3185,8 +3226,10 @@ error = d                     # between -pi and pi</pre>
     return std::atan2(siny_cosp, cosy_cosp);
 }</pre>
   <ul class="pl">
+    <li><code>siny_cosp</code> is sin(yaw) × cos(pitch), and <code>cosy_cosp</code> is cos(yaw) × cos(pitch).</li>
+    <li>On a flat floor the pitch is 0, so cos(pitch) = 1: <code>atan2</code> gets the sine and the cosine of the yaw.</li>
     <li>The same file holds <code>angle_difference</code>, which computes the error of the last slide.</li>
-    <li>ROS&nbsp;2 has the same conversion: <code>tf2::getYaw(orientation)</code>, from <span class="file">tf2/utils.hpp</span> and <span class="file">tf2_geometry_msgs/tf2_geometry_msgs.hpp</span>. It gives the same yaw; the node keeps its own function, so the package needs no tf2 yet.</li>
+    <li><code>tf2::getYaw(orientation)</code> in ROS&nbsp;2 gives the same yaw. The node keeps its own function, so the package needs no tf2 yet.</li>
   </ul>
 </div></div></section>
 
@@ -4578,7 +4621,7 @@ function whyOpen(tr){ var w = whyPop(); whyFrom = tr;
       ? '<pre class="code" data-lang="' + lang + '">' + lines.map(function(l){ var t = document.createElement("textarea"); t.innerHTML = l;
           return '<span class="cl">' + window.deckColor(t.value, lang) + "</span>"; }).join("") + "</pre>"
       : "<pre>" + (el.dataset.type ? '<span class="tp-type">' + el.dataset.type + "</span>\n" : "") + (cmd ? '<span class="tp-cmd">' + cmd + "</span>\n" : "") + lines.join("\n") + "</pre>");
-    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); pop.classList.toggle("codepop", !!lang); shown = el;
+    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); pop.classList.toggle("cols", !!el.dataset.cols); pop.classList.toggle("codepop", !!lang); shown = el;
     pop.style.pointerEvents = el.dataset.center ? "none" : "";   /* a centered card may sit over the word: the pointer passes through until it is pinned */
     pop.setAttribute("role", "tooltip"); pop.removeAttribute("aria-label");
     pop.style.maxHeight = "";
@@ -5933,7 +5976,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
    0.125) (rosbot/body.urdf.xacro), lidar on the cover at x 0.02 (config/rosbot/basic.yaml), laser frame turned 180 deg
    (slamtec_rplidar.urdf.xacro). The lidar: 3000 samples over a full turn, 0.05 to 30 m, 10 Hz (same file); it sees the
    world's walls, door and objects (patrol.sdf, PATROL). The camera: 60 deg wide, 16:9 (luxonis_depthai.urdf.xacro). ROS
-   time runs at the measured real-time factor 0.9997 (figures/data/sim_time.txt): ROS Time counts from the page load (Gazebo's start), ROS Elapsed and Wall Elapsed from the slide's first showing (RViz's start). The robot model is drawn as boxes. --- */
+   time runs at the measured average real-time factor 0.97 (figures/data/rtf_stats.txt): ROS Time counts from the page load (Gazebo's start), ROS Elapsed and Wall Elapsed from the slide's first showing (RViz's start). The robot model is drawn as boxes. --- */
 (function(){
   var root = document.getElementById("rv"); if (!root || !document.contains(root)) return;   /* in the docs a missing id gives a stand-in element: this window is not there */
   var view = document.getElementById("rv-view"), imgbox = document.getElementById("rv-imgbox");
@@ -6248,7 +6291,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       recordOdom(); placeRobot(); need = true; }
     if (now - lastScan >= 100){ lastScan = now; scans.push(scanNow()); scans = scans.filter(function(s){ return now - s.t <= 5100; }); buildAll(); }
     if (now - fpsT >= 500){ var rs = (now - t0ros) / 1000;
-      T[0].textContent = ((now - t0sim) / 1000 * 0.9997).toFixed(2); T[1].textContent = (rs * 0.9997).toFixed(2);
+      T[0].textContent = ((now - t0sim) / 1000 * 0.97).toFixed(2); T[1].textContent = (rs * 0.97).toFixed(2);
       T[2].textContent = (Date.now() / 1000).toFixed(2); T[3].textContent = ((now - t0wall) / 1000).toFixed(2);
       if (fpsT) fpsEl.textContent = Math.round(frames * 1000 / (now - fpsT)) + " fps"; frames = 0; fpsT = now; }
     if (now - lastDraw >= 1000 / S.rate - 2){ controls.update(); lastDraw = now; frames++; draw(now); } }
@@ -6304,7 +6347,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     {type:"Image", s:{topic:"/oak/rgb/color", rot:"0", flip:false}},
     {type:"Plot", s:{a:PATHS[0], b:PATHS[4]}},
     {type:"Raw Messages", s:{topic:"/odometry/filtered"}}]; }
-  function now(){ return (performance.now() - t0sim) / 1000 * 0.9997; }   /* /clock: Gazebo's time, from the page load */
+  function now(){ return (performance.now() - t0sim) / 1000 * 0.97; }   /* /clock: Gazebo's time, from the page load */
 
   /* --- 3D: one renderer and one camera, put in the 3D panel --- */
   var R3 = new THREE.WebGLRenderer({antialias:true}), RC = new THREE.WebGLRenderer({antialias:true});
@@ -6683,6 +6726,13 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     [].forEach.call(root.querySelectorAll(".rq-scroll, .rq-nodes"), function(x){ x.scrollTop = 0; x.scrollLeft = 0; });
     view(); draw(); }
   reset();
+  /* the menus: a click opens one list and closes the others; a click elsewhere or Escape closes it; the options do nothing */
+  var mbs = [].slice.call(root.querySelectorAll(".rq-mb"));
+  function openMenu(b){ mbs.forEach(function(m){ var on = m === b; m.setAttribute("aria-expanded", on ? "true" : "false"); m.nextElementSibling.hidden = !on; }); }
+  mbs.forEach(function(m){ m.onclick = function(e){ e.stopPropagation(); openMenu(m.getAttribute("aria-expanded") === "true" ? null : m); };
+    m.onkeydown = function(e){ if (e.key === "Escape" && m.getAttribute("aria-expanded") === "true"){ e.stopPropagation(); openMenu(null); } }; });
+  document.addEventListener("click", function(){ openMenu(null); });
+  onReset(root, function(){ openMenu(null); });
   onReset(root, reset);   /* the six docks, the first ticks, every severity shown, the first node, the tree fitted */
   onShow(root, function(){ view(); draw(); });
 })();
@@ -6920,7 +6970,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       if (reduce){ while (step()) {} return; }   /* reduced motion: the end of the run, no movement */
       hs.classList.add("run"); play.textContent = "Pause"; play.classList.add("on"); timer = setInterval(step, DT * 1000); }
     function fresh(){ stop(); k = 0; trace = []; uNow = 0; hist = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); show();
-      sayM("Pick a target, then press Play: the loop runs every 50 ms."); }
+      say.textContent = ""; }
     buttons(document.getElementById("hl-tgts"), [90, 180, -90, 0], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ tgt = v; fresh(); }, 90);
     play.onclick = function(e){ e.stopPropagation(); start(); };
     nextB.onclick = function(e){ e.stopPropagation(); stop(); if (!k){ trace = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); } step(); };
@@ -6998,12 +7048,14 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   var gs = document.getElementById("cg-svg");
   function drawCg(){
     gs.innerHTML = "";
-    var cx = 215, bh = 56, y0 = 10, y1 = y0 + bh + 112, y2 = y1 + bh + 124, MONO = {"font-family":"Fira Mono, monospace", "font-weight":700};
+    var cx = 215, bh = 56, y0 = 10, y1 = y0 + bh + 146, y2 = y1 + bh + 146, MONO = {"font-family":"Fira Mono, monospace", "font-weight":700};
     function box(y, w, name){ el(gs, "rect", {x:cx - w / 2, y:y, width:w, height:bh, rx:14, fill:"#ffffff", stroke:C.slate, "stroke-width":3, class:"dr"});
       txt(gs, cx, y + bh / 2 + 8, name, 22, C.slate, "middle", MONO).setAttribute("class", "dt"); }
-    function link(ya, yb, lines){ el(gs, "line", {x1:cx, y1:ya, x2:cx, y2:yb - 14, stroke:C.slate, "stroke-width":3, class:"dr"}); head(gs, cx, yb, 0, 1, C.slate);
-      var ym = (ya + yb) / 2 - 6 * (lines.length - 1), first = null;
-      lines.forEach(function(l, i){ var e = txt(gs, cx + 18, ym + i * 26, l, i ? 20 : 22, i ? C.muted : C.slate, "start", {"font-family":"Fira Mono, monospace"});
+    /* the labels centered on the arrow, which breaks around them (user, 2026-11-24: "center topic and message names on the arrows") */
+    function link(ya, yb, lines){ var ym = (ya + yb - 14) / 2 - 13 * (lines.length - 1) + 7, first = null;
+      el(gs, "line", {x1:cx, y1:ya, x2:cx, y2:ym - 26, stroke:C.slate, "stroke-width":3, class:"dr"});
+      el(gs, "line", {x1:cx, y1:ym + (lines.length - 1) * 26 + 12, x2:cx, y2:yb - 14, stroke:C.slate, "stroke-width":3, class:"dr"}); head(gs, cx, yb, 0, 1, C.slate);
+      lines.forEach(function(l, i){ var e = txt(gs, cx, ym + i * 26, l, i ? 20 : 22, i ? C.muted : C.slate, "middle", {"font-family":"Fira Mono, monospace"});
         e.setAttribute("class", "dt"); if (!i) first = e; });
       return first; }
     box(y0, 110, "ekf");
@@ -7028,21 +7080,29 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   var LCS = [{h:0, show:{h:1}, cap:"The blue arrow is the heading: what the odometry reports."},
              {h:0, show:{h:1, t:1, arc:1}, cap:"The orange arrow is the target. The arc between the two arrows is the error: the target minus the heading."},
              {h:0, show:{h:1, t:1, arc:1, cmd:1}, cap:"The small curved arrow at the robot is the command: a turn rate computed from the error."},
-             {h:30, ghost:0, show:{h:1, t:1, arc:1}, cap:"The robot has turned, so the arc, the error, is smaller. The dashed arrow is the old heading."}];
+             {h:45, ghost:0, show:{h:1, t:1, arc:1}, cap:"In this picture, the robot turns by half its error. So the arc, the error, is smaller. Dashed: the old heading."}];
+  /* after step 4, each Next is one more pass of the four steps, all four lit, until the error is under the picture's tolerance; then
+     Next and Play have nothing left to do (user, 2026-11-24: "On step 4, when I click Next button, it should highlight steps 1-4 and
+     the robot keeps turning a little bit ... Gray out the Next button when the robot's heading reaches the target") */
+  var LCTOL = 3, d1 = function(x){ return (Math.round(x * 10) / 10) + "°"; };
+  for (var hk = 45; 90 - hk >= LCTOL;){ var hn = hk + (90 - hk) / 2, left = 90 - hn;
+    LCS.push({h:hn, ghost:hk, all:1, show:{h:1, t:1, arc:1}, cap:left < LCTOL ? "The error is now " + d1(left) + ", under the tolerance (3° in this picture). The loop stops."
+      : "Steps 1 to 4 again: the error was " + d1(90 - hk) + ", so the robot turned " + d1(hn - hk) + ". The error is now " + d1(left) + "."}); hk = hn; }
   function lcDraw(h, s){ var d = LCS[s]; drawTurn(ls, 400, {h:h, t:90, show:d.show, ghost:d.ghost, tags:false}); }   /* no tags (user, 2026-11-21, slide 56): the captions name each mark */
   function lcSet(s, anim){
     clearInterval(lcTween); lcStep = s;
-    lis.forEach(function(li, i){ li.classList.toggle("lit", i === s); }); lcCap.textContent = LCS[s].cap;
-    if (s === 3 && anim && !reduce){ var t0 = performance.now(); lcTween = setInterval(function(){ var p = Math.min(1, (performance.now() - t0) / 700);
-      lcDraw(30 * p, 3); if (p >= 1) clearInterval(lcTween); }, 30); }
+    lis.forEach(function(li, i){ li.classList.toggle("lit", !!LCS[s].all || i === s); }); lcCap.textContent = LCS[s].cap;
+    document.getElementById("lc-next").disabled = s === LCS.length - 1; document.getElementById("lc-back").disabled = s === 0;
+    if (s >= 3 && anim && !reduce){ var t0 = performance.now(), a = LCS[s].ghost, z = LCS[s].h; lcTween = setInterval(function(){ var p = Math.min(1, (performance.now() - t0) / 700);
+      lcDraw(a + (z - a) * p, s); if (p >= 1) clearInterval(lcTween); }, 30); }
     else lcDraw(LCS[s].h, s); }
   function lcStop(){ clearInterval(lcTimer); lcTimer = null; }
   function lcPlay(){ lcStop(); lcSet(0, false);
     if (reduce) return;
-    lcTimer = setInterval(function(){ if (!active(ls)){ lcStop(); return; } if (lcStep < 3) lcSet(lcStep + 1, true); else lcStop(); }, 2600); }
+    lcTimer = setInterval(function(){ if (!active(ls)){ lcStop(); return; } if (lcStep < LCS.length - 1) lcSet(lcStep + 1, true); else lcStop(); }, 2600); }
   lis.forEach(function(li, i){ li.addEventListener("click", function(e){ e.stopPropagation(); lcStop(); lcSet(i, true); }); });
-  document.getElementById("lc-back").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.max(0, lcStep - 1), true); };
-  document.getElementById("lc-next").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.min(3, lcStep + 1), true); };
+  document.getElementById("lc-back").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.max(0, lcStep - 1), false); };
+  document.getElementById("lc-next").onclick = function(e){ e.stopPropagation(); lcStop(); lcSet(Math.min(LCS.length - 1, lcStep + 1), true); };
   document.getElementById("lc-play").onclick = function(e){ e.stopPropagation(); lcPlay(); };
   lcSet(0, false);
   onReset(ls, function(){ lcStop(); clearInterval(lcTween); lcSet(0, false); });   /* step 1 lit, no player running */

@@ -710,7 +710,8 @@ Gazebo counts its own time from the moment the simulation starts, and publishes 
 
    gz topic -e -t /world/patrol/stats -n 1 | grep real_time_factor
 
-The command gave ``0.9997`` (one sample): the simulation ran at 99.97 % of the speed of the computer's clock.
+- The command gives the speed of one 4 ms step: ``0.9997`` here, but 0.08 to 1.40 in a later run (209 messages).
+- Gazebo's window smooths it: about 80 % in that run. In 21.83 real seconds, ``/clock`` advanced 17.03 s (17.03 / 21.83 = 0.78).
 
 The `ROS 2 design article on time <https://design.ros2.org/articles/clock_and_time.html>`__ names the two clocks a node can read:
 
@@ -770,6 +771,8 @@ The two timers side by side. Both callbacks read ``now()``, the node clock; what
 
 Run It: use_sim_time Off, Then On
 """""""""""""""""""""""""""""""""
+
+Start the simulation first: it publishes the ``/clock`` the node reads. With ``use_sim_time`` off, the node also runs without it.
 
 .. code-block:: bash
 
@@ -848,7 +851,7 @@ With ``use_sim_time`` on, the world was paused, then resumed 4.3 s later with th
    :icon: info
 
    - Every node that runs with Gazebo sets ``use_sim_time`` to true: its ``now()``, and so the stamp of every ``TwistStamped``, is then the simulation's time. :ref:`l12-use-sim-time` sets it for both controllers at once.
-   - The controllers of the next section run ``control_callback`` on a ``create_timer`` timer. With ``use_sim_time`` on, it fires every 50 ms of simulation; at a real-time factor of 0.9997 that is about 50 ms on the computer's clock too (50 / 0.9997 = 50.015 ms).
+   - The controllers of the next section run ``control_callback`` on a ``create_timer`` timer. With ``use_sim_time`` on, it fires every 50 ms of simulation; when the simulation runs at 0.78 of real time, that is about 64 ms on the computer's clock (50 / 0.78 = 64.1 ms).
    - A node that must stay in step with the simulation, when it runs slower than real time or is paused, uses ``create_timer``.
    - Elapsed time comes from two readings of the same clock: ``(now() - start).seconds()``.
 
@@ -916,8 +919,8 @@ They differ in how they turn the error into a command:
      - The command
      - Where you meet it
    * - On-off
-     - full on or full off, by the sign of the error
-     - a home thermostat switching the heater
+     - full on when the error is positive, full off when it is negative
+     - a home thermostat: heater on while the room is colder than its target
    * - P
      - the error times a gain
      - this section's ``heading_controller_node``
@@ -1041,6 +1044,7 @@ The odometry gives the robot's orientation as a **quaternion**, four numbers ``x
        return std::atan2(siny_cosp, cosy_cosp);
    }
 
+- ``siny_cosp`` is sin(yaw) × cos(pitch), and ``cosy_cosp`` is cos(yaw) × cos(pitch). On a flat floor the pitch is 0, so cos(pitch) = 1: ``atan2`` gets the sine and the cosine of the yaw. On a slope, cos(pitch) multiplies both numbers, and ``atan2`` uses only their ratio and signs, so the yaw stays the same (the pitch is between −90° and 90°, where cos(pitch) is positive).
 - The same file holds ``angle_difference``, which computes the error of the last section.
 - ROS 2 has the same conversion: ``tf2::getYaw(orientation)``, from ``tf2/utils.hpp`` and ``tf2_geometry_msgs/tf2_geometry_msgs.hpp``. It gives the same yaw; the node keeps its own function, so the package needs no tf2 yet.
 - The :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading explains the quaternion and this formula.
