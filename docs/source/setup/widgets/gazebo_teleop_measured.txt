@@ -1,0 +1,20 @@
+# Gazebo's Teleop panel driving the ROSbot, measured for setup/rosbot_simulation.rst and widgets/gazebo_teleop.html.
+# ros2 launch gp2_bringup gp2_sim.launch.py (gui true) on a virtual display (Xvfb), ROS 2 Jazzy, Gazebo Harmonic, patrol world,
+# ROS_DOMAIN_ID 79, GZ_PARTITION claude_teleop, 2026-11-23. The window's layout is husarion_gz_worlds/config/teleop.config
+# (the course launch keeps it): a Teleop panel on topic /cmd_vel, maximum velocity Forward 1.00 m/s, Vertical 1.00 m/s,
+# Yaw 0.50 rad/s, tabs BUTTONS (shown), KEYBOARD, SLIDERS. The bridge (rosbot_gazebo/config/rosbot_bridge.yaml) carries
+# gz /cmd_vel (gz.msgs.Twist) to ROS /cmd_vel (geometry_msgs/msg/TwistStamped), GZ_TO_ROS.
+# Each line: a button clicked once, the messages ROS /cmd_vel received, and the robot's pose from /odometry/filtered
+# after it settled. Under Xvfb the real-time factor was about 32 %, so only distances and angles are used, not times.
+#
+# start                       x 0.000 m   yaw   0.0 deg
+# forward (up arrow)          1 message: linear.x 1.0, angular.z 0.0     x 0.253 m   (drove 0.25 m, then stopped)
+# left (left arrow)           1 message: linear.x 1.0, angular.z 0.5     x 0.500 m   yaw 18.6 deg   (forward was kept: an arc)
+# Stop                        1 message: linear.x 0.0, angular.z 0.0     no motion
+# left (left arrow)           1 message: linear.x 0.0, angular.z 0.5     yaw 18.5 to 35.0 deg   (turned 16.4 deg in place)
+# Stop, then back (down)      linear.x -1.0, angular.z 0.0              x 0.500 to 0.291 m along a 35 deg heading (0.25 m back)
+# Stop, then right (right)    linear.x 0.0, angular.z -0.5              yaw 35.0 down (turning right)
+#
+# So: each click sends one message with the panel's current direction; the arrows set the direction (forward or back,
+# left or right) and keep it until Stop; the robot moves for a moment and stops, because its controller stops the wheels
+# 0.5 s after the last command (rosbot_controller/config/rosbot/controllers.yaml, cmd_vel_timeout 0.5).

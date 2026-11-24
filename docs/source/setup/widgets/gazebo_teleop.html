@@ -1,0 +1,118 @@
+<!-- Gazebo's Teleop panel, simulated (user, 2026-11-23: "Instead of a screen capture of the Gazebo window, simulate it
+     (pressing Gazebo buttons move the robot)"). Hand-written, not generated. The panel copies the real one in the course
+     simulation (husarion_gz_worlds/config/teleop.config); the scene is a top view of the patrol world around the robot's start,
+     from gp2_bringup/worlds/patrol.sdf; each click moves the robot by what one click did in a measured run
+     (gazebo_teleop_measured.txt): 0.25 m forward or back, 16.4 degrees left or right, both at once for an arc. -->
+<style>
+#gzt{--gz-blue:#03a9f4;--gz-orange:#ff5722;--gz-orange-dk:#bf360c;font-family:Roboto,"Segoe UI",system-ui,sans-serif;border:1px solid #9e9e9e;border-radius:6px;overflow:hidden;margin:1em 0;background:#fafafa;color:#212121}
+#gzt .gz-bar{display:flex;align-items:center;gap:14px;height:38px;padding:0 12px;background:#f5f5f5;border-bottom:1px solid #ddd;font-size:15px}
+#gzt .gz-bar .gz-menu{font-size:20px;line-height:1}
+#gzt .gz-body{display:flex;flex-wrap:wrap}
+#gzt .gz-scene{flex:1 1 300px;min-width:0;background:#cdc8c0;position:relative}
+#gzt .gz-scene svg{display:block;width:100%;height:100%;min-height:300px}
+#gzt code{color:#212121;background:none}   /* the docs theme colors code for its own background; this strip stays light */
+#gzt .gz-panel{flex:0 0 230px;background:#fafafa;border-left:1px solid #ddd;font-size:13px}
+#gzt .gz-ph{background:var(--gz-blue);color:#fff;padding:8px 10px;font-size:15px}
+#gzt .gz-pb{padding:8px 10px}
+#gzt .gz-lab{color:#616161;margin:6px 0 2px}
+#gzt .gz-topic{border-bottom:1px solid #9e9e9e;padding:2px 0 4px;margin-bottom:10px;font-size:14px}
+#gzt .gz-mv{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;margin-bottom:8px}
+#gzt .gz-mv span:nth-child(odd){color:#616161}
+#gzt .gz-mv span:nth-child(even){border:1px solid #bdbdbd;padding:2px 6px;text-align:right;background:#fff}
+#gzt .gz-tabs{display:flex;justify-content:space-between;margin:10px 0 12px;font-size:12px;font-weight:600}
+#gzt .gz-tabs span{flex:1;text-align:center;padding:4px 0;color:#424242}
+#gzt .gz-tabs span.gz-on{color:var(--gz-blue);border-bottom:2px solid var(--gz-blue)}
+#gzt .gz-pad{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,36px);gap:8px 6px;align-items:center;justify-items:center}
+#gzt .gz-pad button{width:100%;max-width:56px;height:30px;border:0;border-bottom:3px solid var(--gz-orange-dk);border-radius:2px;background:var(--gz-orange);color:#fff;font-weight:600;font-size:13px;line-height:1;cursor:pointer;padding:0}
+#gzt .gz-pad button:hover{filter:brightness(1.08)} #gzt .gz-pad button:active{transform:translateY(1px)}
+#gzt .gz-pad button:focus-visible{outline:3px solid #212121;outline-offset:2px}
+#gzt .gz-pad button.gz-vert{opacity:.45;cursor:not-allowed}
+#gzt .gz-pad button.gz-on{box-shadow:0 0 0 3px #212121 inset}
+#gzt .gz-foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:8px 12px;border-top:1px solid #ddd;background:#f5f5f5;font-size:14px}
+#gzt .gz-foot code{background:none;padding:0;font-size:13px}
+#gzt .gz-foot .gz-vv{color:#bf360c;font-weight:600}
+#gzt .gz-foot button{margin-left:auto;font-size:13px;padding:3px 10px;border:1px solid #9e9e9e;border-radius:4px;background:#fff;color:#212121;cursor:pointer}
+#gzt .gz-cap{font-size:12px;color:#616161;padding:0 12px 8px;background:#f5f5f5}
+</style>
+<div id="gzt">
+  <div class="gz-bar"><span class="gz-menu" aria-hidden="true">&#9776;</span><span>Gazebo Sim</span></div>
+  <div class="gz-body">
+    <div class="gz-scene">
+      <svg id="gzt-svg" viewBox="0 0 480 480" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Top view of the patrol world around the robot's start: the grey floor with a 1 m grid, the hall's north wall at the top with an open doorway and its south wall at the bottom, a blue checkpoint disc, a purple spill, and the ROSbot near the left, facing right. The robot moves when you press the Teleop buttons."></svg>
+    </div>
+    <div class="gz-panel">
+      <div class="gz-ph">Teleop</div>
+      <div class="gz-pb">
+        <div class="gz-lab">Topic</div>
+        <div class="gz-topic">/cmd_vel</div>
+        <div class="gz-lab">Maximum velocity</div>
+        <div class="gz-mv"><span>Forward (m/s)</span><span>1.00</span><span>Vertical (m/s)</span><span>1.00</span><span>Yaw (rad/s)</span><span>0.50</span></div>
+        <div class="gz-tabs" aria-hidden="true"><span class="gz-on">BUTTONS</span><span>KEYBOARD</span><span>SLIDERS</span></div>
+        <div class="gz-pad" role="group" aria-label="Teleop buttons">
+          <span></span><button data-k="f" aria-label="Forward">&#9650;</button><span></span><button class="gz-vert" disabled aria-label="Up (vertical; a ground robot does not use it)" title="Vertical: the ROSbot drives on the floor and ignores it">&#8593;</button>
+          <button data-k="l" aria-label="Turn left">&#9664;</button><button data-k="s" aria-label="Stop">Stop</button><button data-k="r" aria-label="Turn right">&#9654;</button><span></span>
+          <span></span><button data-k="b" aria-label="Back">&#9660;</button><span></span><button class="gz-vert" disabled aria-label="Down (vertical; a ground robot does not use it)" title="Vertical: the ROSbot drives on the floor and ignores it">&#8595;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gz-foot" aria-live="polite">
+    <span>Sent on <code>/cmd_vel</code>: <code>linear.x</code> <span class="gz-vv" id="gzt-lx">0.0</span>, <code>angular.z</code> <span class="gz-vv" id="gzt-az">0.0</span></span>
+    <span>Robot: x <span class="gz-vv" id="gzt-x">0.00</span> m, y <span class="gz-vv" id="gzt-y">0.00</span> m, yaw <span class="gz-vv" id="gzt-yaw">0</span>°</span>
+    <button id="gzt-reset">Back to the start</button>
+  </div>
+  <div class="gz-cap">A copy of the Gazebo window, seen from above. The robot is drawn twice its size; one click moves it as much as one click moved it in the course simulation. The outlined button is the direction the panel keeps until Stop (Gazebo does not outline it).</div>
+</div>
+<script>
+(function(){
+  var NS = "http://www.w3.org/2000/svg", sv = document.getElementById("gzt-svg"); if (!sv) return;
+  var PX = 80, X0 = -1.5, Y1 = 2.6;   /* 80 px per meter; the view spans x from -1.5 to 4.5 m and y from -3.4 to 2.6 m */
+  function X(x){ return (x - X0) * PX; } function Y(y){ return (Y1 - y) * PX; }
+  function el(tag, a, parent){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); (parent || sv).appendChild(e); return e; }
+  /* the floor's 1 m grid */
+  for (var gx = -1; gx <= 4; gx++) el("line", {x1:X(gx), y1:0, x2:X(gx), y2:480, stroke:"#b7b2aa", "stroke-width":1});
+  for (var gy = -3; gy <= 2; gy++) el("line", {x1:0, y1:Y(gy), x2:480, y2:Y(gy), stroke:"#b7b2aa", "stroke-width":1});
+  /* the hall's north wall at y = 2 (patrol.sdf: wall_hall_north_0 ends at x = 1.55, wall_hall_north_1 starts at x = 4.45) */
+  el("rect", {x:0, y:Y(2.05), width:X(1.55), height:0.1 * PX, fill:"#8f8f8f"});
+  el("rect", {x:X(4.45), y:Y(2.05), width:480 - X(4.45), height:0.1 * PX, fill:"#8f8f8f"});
+  el("rect", {x:0, y:Y(-2.95), width:480, height:0.1 * PX, fill:"#8f8f8f"});   /* the south wall at y = -3 */
+  /* checkpoint pad 4 (radius 0.22 m) and the spill (radius 0.35 m) */
+  [[3.0, 0.4, 0.22, "#3f7fcf"], [3.6, 1.3, 0.35, "#7b2d8e"]].forEach(function(d){
+    el("circle", {cx:X(d[0]), cy:Y(d[1]), r:d[2] * PX, fill:d[3]}); });
+  /* the robot, twice its size (0.197 m by 0.150 m body), facing +x at yaw 0 */
+  var bot = el("g", {}), K = 2 * PX;
+  [[-0.08, -0.095], [0.03, -0.095], [-0.08, 0.06], [0.03, 0.06]].forEach(function(w){
+    el("rect", {x:w[0] * K, y:w[1] * K, width:0.05 * K, height:0.035 * K, rx:2, fill:"#3a4150"}, bot); });
+  el("rect", {x:-0.0985 * K, y:-0.075 * K, width:0.197 * K, height:0.15 * K, rx:4, fill:"#1e2935"}, bot);
+  el("circle", {cx:-0.01 * K, cy:0, r:0.035 * K, fill:"#5b6b7c", stroke:"#fff", "stroke-width":2}, bot);
+  el("rect", {x:0.07 * K, y:-0.025 * K, width:0.02 * K, height:0.05 * K, rx:1, fill:"#8a96a3"}, bot);
+  var st = {x:0, y:0, th:0}, lin = 0, ang = 0, anim = null;
+  function draw(){ bot.setAttribute("transform", "translate(" + X(st.x).toFixed(1) + " " + Y(st.y).toFixed(1) + ") rotate(" + (-st.th * 180 / Math.PI).toFixed(1) + ")");
+    document.getElementById("gzt-x").textContent = st.x.toFixed(2); document.getElementById("gzt-y").textContent = st.y.toFixed(2);
+    var d = Math.round(st.th * 180 / Math.PI); d = ((d + 180) % 360 + 360) % 360 - 180; document.getElementById("gzt-yaw").textContent = d; }
+  /* one click: one message with the panel's current direction; the robot moves for a moment (its controller stops it 0.5 s
+     after the last command): 0.25 m per click forward or back, 16.4 degrees per click left or right (measured) */
+  var D = 0.25, A = 16.4 * Math.PI / 180, T = 600;
+  function send(){
+    document.getElementById("gzt-lx").textContent = (lin * 1.0).toFixed(1); document.getElementById("gzt-az").textContent = (ang * 0.5).toFixed(1);
+    if (anim) cancelAnimationFrame(anim);
+    if (!lin && !ang) return;
+    var t0 = performance.now(), prev = 0, v = lin * D, w = ang * A;
+    (function step(now){ var u = Math.min(1, (now - t0) / T), du = u - prev; prev = u;
+      var th = st.th + w * du / 2;   /* move along the arc: half the turn, the distance, the other half */
+      st.x += v * du * Math.cos(th); st.y += v * du * Math.sin(th); st.th += w * du;
+      st.x = Math.max(-1.3, Math.min(4.3, st.x)); st.y = Math.max(-2.85, Math.min(1.85, st.y));
+      draw(); if (u < 1) anim = requestAnimationFrame(step); else anim = null; })(t0); }
+  var pad = sv.closest("#gzt").querySelector(".gz-pad");
+  [].forEach.call(pad.querySelectorAll("button[data-k]"), function(b){ b.addEventListener("click", function(){
+    var k = b.dataset.k;
+    if (k === "f") lin = 1; else if (k === "b") lin = -1; else if (k === "l") ang = 1; else if (k === "r") ang = -1; else { lin = 0; ang = 0; }
+    [].forEach.call(pad.querySelectorAll("button[data-k]"), function(o){ var j = o.dataset.k;
+      o.classList.toggle("gz-on", (j === "f" && lin > 0) || (j === "b" && lin < 0) || (j === "l" && ang > 0) || (j === "r" && ang < 0)); });
+    send(); }); });
+  document.getElementById("gzt-reset").addEventListener("click", function(){ if (anim) cancelAnimationFrame(anim); anim = null; st = {x:0, y:0, th:0}; lin = 0; ang = 0;
+    [].forEach.call(pad.querySelectorAll("button.gz-on"), function(o){ o.classList.remove("gz-on"); });
+    document.getElementById("gzt-lx").textContent = "0.0"; document.getElementById("gzt-az").textContent = "0.0"; draw(); });
+  draw();
+})();
+</script>
