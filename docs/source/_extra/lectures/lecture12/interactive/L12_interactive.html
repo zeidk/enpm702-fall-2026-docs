@@ -212,7 +212,7 @@ body.phone #corner button{font-size:15px;min-height:36px}
    slide (title, text, figure labels, panels a control shows); arrows pick a result, Enter or a click goes, Esc closes */
 #search{position:fixed;inset:0;z-index:1100;display:none;align-items:flex-start;justify-content:center;padding-top:9vh;background:rgba(0,0,0,.4)}
 #search.on{display:flex}
-#search .sc{background:var(--card);color:var(--ink);border:2px solid var(--live);border-radius:12px;padding:16px 20px 12px;width:min(900px,92vw);max-height:78vh;display:flex;flex-direction:column;font-size:19px;line-height:1.35}
+#search .sc{background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:12px;padding:16px 20px 12px;width:min(900px,92vw);max-height:78vh;display:flex;flex-direction:column;font-size:19px;line-height:1.35}
 #search label{font:600 18px var(--sans);color:var(--slate);margin-bottom:6px}
 #search input{font:400 24px var(--sans);padding:8px 12px;border:2px solid var(--plate-edge);border-radius:8px;background:var(--plate);color:var(--ink)}
 #search input:focus{outline:none;border-color:var(--live);box-shadow:0 0 0 3px var(--focus)}
@@ -223,7 +223,7 @@ body.phone #corner button{font-size:15px;min-height:36px}
 #search li mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
 #search li.on{background:var(--hover);border-left-color:var(--live)}
 #search .smsg{color:var(--muted);font-size:17px;margin:8px 2px 0}
-#help .hc{background:var(--card);color:var(--ink);border:2px solid var(--live);border-radius:12px;padding:20px 30px 22px;width:min(860px,92vw);max-height:90vh;overflow:auto;font-size:19px;line-height:1.45;position:relative}
+#help .hc{background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:12px;padding:20px 30px 22px;width:min(860px,92vw);max-height:90vh;overflow:auto;font-size:19px;line-height:1.45;position:relative}
 #help h3{margin:0 0 10px;font-size:24px;color:var(--slate)}
 #help table{border-collapse:collapse;width:100%} #help td{padding:3px 10px 3px 0;vertical-align:top}
 #help td:first-child{white-space:nowrap;width:1%}
@@ -461,7 +461,7 @@ body.fs .plate.nextc.active{background:transparent}
 .cite{border-bottom:2px dotted var(--plan);cursor:help;border-radius:2px}
 .cite:hover,.cite:focus-visible,.cite.on{background:var(--hover);outline:none}
 #bibpop{position:fixed;z-index:60;display:none;max-height:calc(100vh - 24px);overflow:auto;border-radius:14px;
-  background:var(--card);color:var(--ink);border:1px solid var(--plate-edge);
+  background:var(--card);color:var(--ink);border:3px solid var(--s2);
   box-shadow:0 18px 50px rgba(15,25,40,.28),0 2px 8px rgba(15,25,40,.12);font-family:"Fira Sans",sans-serif;
   opacity:0;transform:translateY(6px) scale(.98);transition:opacity .16s ease,transform .16s ease}
 #bibpop.show{opacity:1;transform:none}
@@ -490,12 +490,15 @@ body.fs .plate.nextc.active{background:transparent}
   background:var(--card);color:var(--plan);font:600 .72em/1 var(--sans);vertical-align:.12em;cursor:pointer}
 .qmark:hover{background:var(--hover)} .qmark:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .termhover:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-#termpop{position:fixed;z-index:1040;display:none;background:var(--card);color:var(--ink);border:2px solid var(--plate-edge);border-left:8px solid var(--ink);
+/* every popup window has the same orange edge on all four sides, no left bar (user, 2026-11-23: "remove the left ruler and make
+   the edges of the popup window orange. Apply a color to edges of all popup windows"): #termpop, #bibpop, the why card, help,
+   search and the slide-number jump box, in --s2 */
+#termpop{position:fixed;z-index:1040;display:none;background:var(--card);color:var(--ink);border:3px solid var(--s2);
   border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:10px 16px;max-height:94vh;max-width:calc(100vw - 28px);overflow:auto}
 #termpop.on{display:block}
 #termpop .x{display:none;position:sticky;top:0;float:right;margin:0 0 4px 12px;width:34px;height:34px;padding:0;font:600 24px/1 var(--sans);
   border:2px solid var(--plate-edge);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer}
-#termpop.pinned .x{display:block} #termpop.pinned{border-left-color:var(--plan)}
+#termpop.pinned .x{display:block}
 #termpop .x:hover{background:var(--hover)} #termpop .x:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 /* the card sits outside the scaled slide, so its text is scaled by hand: --popk is the slide's scale when the card opens (1.52 on a
    1080p screen). At 20 px fixed it was half the body text on a projector (user, 2026-11-22, picked "Scale the popups"): now a
@@ -504,7 +507,6 @@ body.fs .plate.nextc.active{background:transparent}
 #termpop.big pre{font-size:calc(21px * var(--popk, 1))}   /* one whole message, larger (data-big on the word; user, 2026-11-22) */
 /* code on a word (data-lang, data-center; user, 2026-11-23, slide 102: "Make it bigger, centered on the screen, and with C++
    colors"): the code boxes' colors, 26 frame px, in the middle of the window */
-#termpop.codepop{border-left-color:var(--s2)}
 #termpop.codepop pre.code{font-size:calc(26px * var(--popk, 1));border:0;padding:4px 0;background:none;box-shadow:none;margin:0}
 #termpop .tp-cmd::before{content:"$ ";color:var(--muted)}
 #termpop .tp-type{font-weight:700;color:var(--slate)} #termpop .tp-type::before{content:"type: ";font-weight:400;color:var(--muted)}   /* data-type on the word: the message type, above the command */
@@ -521,7 +523,7 @@ tr[data-why]:hover td:first-child::before,tr[data-why]:focus td:first-child::bef
 .rowhint{font-size:20px;color:var(--muted);margin:2px 0 4px}
 #whypop{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.38)}
 #whypop.on{display:flex}
-#whypop .whycard{background:var(--card);color:var(--ink);border:2px solid var(--live);border-radius:12px;width:min(920px,92vw);height:auto;max-height:86vh;overflow:auto;
+#whypop .whycard{background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:12px;width:min(920px,92vw);height:auto;max-height:86vh;overflow:auto;
   padding:22px 30px 24px;font-size:25px;line-height:1.45;box-shadow:0 14px 40px rgba(0,0,0,.3);position:relative}
 #whypop h3{margin:0 40px 10px 0;font-size:28px;color:var(--plan)}
 #whypop p{margin:6px 0}
@@ -640,6 +642,8 @@ code.wrap{white-space:normal}
    Find a way to show the wheels are spinning") */
 .rb-drive .rb-tread{stroke:#8E99A6;stroke-width:1.6} :root[data-theme="dark"] .rb-drive .rb-tread{stroke:#3A4150}
 .rb-drive .rb-goal{fill:none;stroke:var(--s2);stroke-width:3}
+.rb-drive .rb-fov{fill:url(#rb-fovg);stroke:none} .rb-drive .rb-fove{fill:none;stroke:var(--s1);stroke-width:2;stroke-opacity:.45;stroke-dasharray:6 6}
+.rb-drive .rb-ring{fill:none;stroke:var(--s2);stroke-width:3}
 .rb-drive .rb-read{font:600 22px var(--sans);fill:var(--ink);stroke:var(--zebra);stroke-width:7px;stroke-linejoin:round;paint-order:stroke} .rb-drive .rb-read2{font:400 22px var(--sans);fill:var(--muted)}
 :root[data-theme="dark"] :is(.rb-drive,.rbi) .rb-wheel{fill:#9AA6B2} :root[data-theme="dark"] :is(.rb-drive,.rbi) .rb-body{fill:#C9D3DD}
 
@@ -652,7 +656,7 @@ code.wrap{white-space:normal}
 .slno-msg{color:var(--bad);font-weight:600;margin-left:10px}
 /* the jump box: type a slide number, Enter goes there, Esc closes */
 #jump{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:1050;display:none;align-items:center;gap:10px;padding:8px 14px;border-radius:12px;
-  background:var(--card);color:var(--ink);border:3px solid var(--live);box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 26px var(--sans);padding:12px 20px}
+  background:var(--card);color:var(--ink);border:3px solid var(--s2);box-shadow:0 10px 30px rgba(0,0,0,.25);font:600 26px var(--sans);padding:12px 20px}
 #jump.on{display:flex}
 #jump input{font:600 28px var(--mono);width:3.6em;padding:2px 8px;border:2px solid var(--plate-edge);border-radius:8px;background:var(--plate);color:var(--ink)}
 #jump #jump-of{color:var(--muted)} #jump #jump-msg{color:var(--bad);font-weight:400}
@@ -803,11 +807,14 @@ code.wrap{white-space:normal}
     </div>
   </div>
   <div class="strip">
-    <svg class="rb-drive" viewBox="0 0 1248 250" width="1248" height="236" role="img" aria-label="An animated top view of the ROSbot on a tiled floor. It drives slowly from the left edge to the right edge, stops, backs up to the left edge still facing right, and drives forward again, in a loop. The stripes on its wheels move as the wheels turn: forward while it drives forward, backward while it backs up.">
+    <svg class="rb-drive" viewBox="0 0 1248 250" width="1248" height="236" role="img" aria-label="An animated top view of the ROSbot standing still at the center of a tiled floor, facing right. Rings spread out from its lidar again and again, and a shaded wedge of 60 degrees in front of it shows what its camera sees.">
       <rect class="rb-floor" x="0" y="0" width="1248" height="250"/>
       <g class="rb-tiles"></g>
       <defs><clipPath id="rb-wclip-0"><rect x="-30" y="-33" width="22" height="11" rx="3"/></clipPath><clipPath id="rb-wclip-1"><rect x="8" y="-33" width="22" height="11" rx="3"/></clipPath>
         <clipPath id="rb-wclip-2"><rect x="-30" y="22" width="22" height="11" rx="3"/></clipPath><clipPath id="rb-wclip-3"><rect x="8" y="22" width="22" height="11" rx="3"/></clipPath></defs>
+      <defs><clipPath id="rb-floorclip"><rect x="0" y="0" width="1248" height="250"/></clipPath>
+        <linearGradient id="rb-fovg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--s1)" stop-opacity=".32"/><stop offset="1" stop-color="var(--s1)" stop-opacity="0"/></linearGradient></defs>
+      <g clip-path="url(#rb-floorclip)"><path class="rb-fov"/><path class="rb-fove"/><g class="rb-rings"></g></g>
       <g class="rb-bot"><g transform="scale(1.7)">
         <rect class="rb-wheel" x="-30" y="-33" width="22" height="11" rx="3"/><rect class="rb-wheel" x="8" y="-33" width="22" height="11" rx="3"/>
         <rect class="rb-wheel" x="-30" y="22" width="22" height="11" rx="3"/><rect class="rb-wheel" x="8" y="22" width="22" height="11" rx="3"/>
@@ -3830,12 +3837,33 @@ ament_target_dependencies(heading_controller_exe
   <p style="margin:6px 0 0"><code class="pk">nav_msgs</code> holds the <code class="ty wrap">nav_msgs/msg/<wbr>Odometry</code> message. <span class="cmd">ros2 pkg create</span> already added it to <span class="file">package.xml</span> and to <code>find_package</code>.</p>
 </div></div></section>
 
+<!-- the run and its log on one slide (user, 2026-11-23: "slide 100: find a way to move the plot to slide 99. Make the output in
+     slide 99 clickable (like in slide 100)", and remove its three notes); the "line by line" slide that held the plot is gone -->
+<section class="plate frame s2" data-scene="p50" data-name="Slide 98 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 98 of 144. Go to a slide">Slide 98 / 144</span></div>
+  <h2>Step 4: build and run in Gazebo</h2><div class="fit"><div class="fitin">
+  <p class="goal" style="margin-bottom:2px">With the simulation running:</p>
+<pre class="code" data-lang="bash">colcon build --packages-select l12_rosbot
+source install/setup.bash
+ros2 run l12_rosbot heading_controller_exe</pre>
+  <div class="two" style="grid-template-columns:1fr 420px;gap:20px;align-items:start;margin-top:6px">
+    <div>
+      <div class="row" style="margin:0 0 4px"><span class="small">The output:</span><span class="try">try it</span><span class="small">click a line or a dot</span></div>
+<pre class="code" data-lang="text" id="rp-log"></pre>
+      <div class="box nolive" id="rp-say" style="margin-top:8px;min-height:calc(2 * 1.32em + 20px)"></div>
+    </div>
+    <div>
+      <svg id="rp-svg" class="plot" viewBox="0 0 420 372" width="420" height="372" role="group" aria-label="Plot of the error in rad against time in s, from 0 to 2.65 s. The six logged errors fall from 1.569 to 0.019; each is a dot you can select. A dashed line marks 0.67 rad, where the command leaves the limit of 1.0 rad per s, and another marks the tolerance of 0.02 rad."></svg>
+      <p class="small" style="margin:4px 0 0"><span class="sw" style="background:var(--s2)"></span>at the limit <span class="sw" style="background:var(--live);margin-left:10px"></span>1.5 × error</p>
+    </div>
+  </div>
+</div></div></section>
+
 <!-- the loop for a distance (user, 2026-11-22: "I want a slide similar to slide 68 but for the other controller they will need to implement
      for GP2"; picked "Later in the section", after the slide that names distance_controller_exe). The constants are the course node's
      (l12_rosbot distance_controller_node.hpp: target_distance_m 1.0, kp_linear 0.8, max_linear_mps 0.5, distance_tolerance_m 0.02,
      a 50 ms timer; d is hypot from the start position); the robot is a model that moves by exactly u for 50 ms. The two controllers
      combined (GP2 R4) stay out of the deck (user, 2026-11-22, picked "Skip it in L12"). -->
-<section class="plate frame s2 extra" id="fb-dist" data-scene="fb-dist" data-name="Slide 98 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 98 of 144. Go to a slide">Slide 98 / 144</span></div>
+<section class="plate frame s2 extra" id="fb-dist" data-scene="fb-dist" data-name="Slide 99 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 99 of 144. Go to a slide">Slide 99 / 144</span></div>
   <h2>The loop for a distance: a P controller drives the ROSbot straight</h2><div class="fit"><div class="fitin">
   <div class="box" style="margin:0 0 1px"><span class="bt">Goal</span>Drive the ROSbot straight for a target distance \(d^*\). Every 50&nbsp;ms the controller compares the target with the distance driven, \(d\), and sends a forward speed \(u\), until the error is under 0.02&nbsp;m.</div>
   <div class="two" style="grid-template-columns:868px 276px;gap:16px;align-items:start">
@@ -3879,27 +3907,6 @@ ament_target_dependencies(heading_controller_exe
   <div class="row" style="margin:4px 0 0;align-items:center"><span class="lbl" style="min-width:0;margin-right:6px">target</span><span id="dl-tgts"></span>
     <button id="dl-play">Play</button><button id="dl-reset">Reset</button><span class="try">try it</span>
     <span class="small" style="margin-left:12px">Model robot: \(u \times 0.05\)&nbsp;s per step.</span></div>
-</div></div></section>
-
-<!-- the run and its log on one slide (user, 2026-11-23: "slide 100: find a way to move the plot to slide 99. Make the output in
-     slide 99 clickable (like in slide 100)", and remove its three notes); the "line by line" slide that held the plot is gone -->
-<section class="plate frame s2" data-scene="p50" data-name="Slide 99 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 99 of 144. Go to a slide">Slide 99 / 144</span></div>
-  <h2>Step 4: build and run in Gazebo</h2><div class="fit"><div class="fitin">
-  <p class="goal" style="margin-bottom:2px">With the simulation running:</p>
-<pre class="code" data-lang="bash">colcon build --packages-select l12_rosbot
-source install/setup.bash
-ros2 run l12_rosbot heading_controller_exe</pre>
-  <div class="two" style="grid-template-columns:1fr 420px;gap:20px;align-items:start;margin-top:6px">
-    <div>
-      <div class="row" style="margin:0 0 4px"><span class="small">The output:</span><span class="try">try it</span><span class="small">click a line or a dot</span></div>
-<pre class="code" data-lang="text" id="rp-log"></pre>
-      <div class="box nolive" id="rp-say" style="margin-top:8px;min-height:calc(2 * 1.32em + 20px)"></div>
-    </div>
-    <div>
-      <svg id="rp-svg" class="plot" viewBox="0 0 420 372" width="420" height="372" role="group" aria-label="Plot of the error in rad against time in s, from 0 to 2.65 s. The six logged errors fall from 1.569 to 0.019; each is a dot you can select. A dashed line marks 0.67 rad, where the command leaves the limit of 1.0 rad per s, and another marks the tolerance of 0.02 rad."></svg>
-      <p class="small" style="margin:4px 0 0"><span class="sw" style="background:var(--s2)"></span>at the limit <span class="sw" style="background:var(--live);margin-left:10px"></span>1.5 × error</p>
-    </div>
-  </div>
 </div></div></section>
 
 
@@ -3947,7 +3954,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 
 <section class="plate frame s3" data-scene="p53" data-name="Slide 102 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>What a Parameter Is</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 102 of 144. Go to a slide">Slide 102 / 144</span></div>
   <h2>Why the controller needs parameters</h2><div class="fit"><div class="fitin">
-  <p class="goal">The heading controller has <span class="termhover" data-out="kc-four" data-lang="cpp" data-center="1">four numbers</span> in its code, and each changes with the job. <span class="try">try it</span></p>
+  <p class="goal">The controller's <span class="termhover" data-out="kc-four" data-lang="cpp" data-center="1">four numbers</span> each change with the job. <button id="q42-back" aria-label="Back one reason">◀</button><button id="q42-next" aria-label="Next reason">▶</button> <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.25fr;gap:24px;align-items:start">
     <div>
       <table class="t tight" id="q42-t">
@@ -3963,10 +3970,9 @@ ros2 run l12_rosbot heading_controller_exe</pre>
     <div>
       <ol class="loop" id="q42-list">
         <li><b>Another target.</b> Turning to 180° instead of 90° means editing the <span class="file">.cpp</span> and building again.</li>
-        <li><b>Tuning.</b> A good gain is found by trying values: later in this section, a gain of 0.5 takes 6.4&nbsp;s for a 90° turn, and 1.5 takes 2.7&nbsp;s. With constants, every try is edit, build, run.</li>
+        <li><b>Tuning.</b> A good gain is found by trying values. With constants, every try is edit, build, run.</li>
         <li><b>Another robot or world.</b> In GP2, <code class="nd">controller_node</code> drives the GP1 stand-in robot and the ROSbot in Gazebo, each run with its world's checkpoints from <span class="file">params_stand_in.yaml</span> or <span class="file">params_gazebo.yaml</span>.</li>
       </ol>
-      <div class="row" style="margin:6px 0 0"><button id="q42-back">Back</button><button id="q42-next">Next</button></div>
     </div>
   </div>
   <div class="box concl" id="q42-c">Values that change with the task, the robot or the world belong outside the code: in parameters, which you set when the node starts or while it runs.</div>
@@ -8024,10 +8030,11 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
          with a parameter callback (user, 2026-11-23: "is it really one step?"; the slide "Setting a value the node already read"
          shows the value that does not take effect without one) */
       var chips = mode === 0 ? ["edit the .cpp", "build", "run"] : ["set the value", "run"];
-      $("q42-cy").innerHTML = "<div>Each change takes " + chips.length + " steps" + (mode === 1 ? ", no edit, no build" : "") + ":</div>" +
-        chips.map(function(c){ return '<span class="q-chip">' + c + "</span>"; }).join("→") +
-        (mode === 1 ? '<div class="small">While the node runs, <code>ros2 param set</code> is one step, but only a node with a parameter callback (Part 4) uses the new value.</div>' : "");
-      $("q42-back").disabled = step === 0; $("q42-next").textContent = step === 0 ? "Start" : "Next"; $("q42-next").disabled = step === 4; }
+      /* the count and the chips on one line, so the slide's text can grow (user, 2026-11-23: "Make the fonts bigger on that slide") */
+      $("q42-cy").innerHTML = "<div>" + chips.length + " steps" + (mode === 1 ? ", no build" : "") + ": " +
+        chips.map(function(c){ return '<span class="q-chip">' + c + "</span>"; }).join("→") + "</div>" +
+        (mode === 1 ? '<div class="small">While it runs: <code>ros2 param set</code>, if the node has a parameter callback (Part 4).</div>' : "");
+      $("q42-back").disabled = step === 0; $("q42-next").disabled = step === 4; }
     lis.forEach(function(l, i){ l.style.cursor = "pointer"; l.onclick = stop(function(){ step = i + 1; show(); }); });
     $("q42-back").onclick = stop(function(){ step = Math.max(0, step - 1); show(); });
     $("q42-next").onclick = stop(function(){ step = Math.min(4, step + 1); show(); });
@@ -8547,10 +8554,11 @@ document.querySelectorAll('input[type="range"]').forEach(function(inp){
 });
 
 
-/* ---------- the cover: the ROSbot drives slowly from the left edge to the right edge, stops, backs up to the left edge still facing
-   right, and drives forward again, in a loop. Only the robot and the floor (user, 2026-11-22: "title slide: remove sensors, walls,
-   obstacles. Just show the robot moving back and forth. Find a way to show the wheels are spinning"): each wheel shows tread stripes
-   that move with the distance driven, forward while it drives forward and backward while it backs up. No numbers (user, 2026-11-20). ---------- */
+/* ---------- the cover: the ROSbot stands still at the center of the floor (user, 2026-11-23: "title slide: do not move the robot.
+   Keep centered on the grid, with lidar pulsing and showing the camera fov"). Rings spread from the lidar, one every 1.2 s, and
+   fade; a wedge ahead of the camera shows its field of view, 60 degrees: the OAK camera of the course simulation
+   (husarion_components_description/urdf/luxonis_depthai.urdf.xacro, fov="${60.0/180.0*pi}"). Earlier the robot drove back and forth
+   (2026-11-22). No numbers (user, 2026-11-20). ---------- */
 (function(){
   var sv = document.querySelector(".rb-drive"); if (!sv) return;
   var NSS = "http://www.w3.org/2000/svg", bot = sv.querySelector(".rb-bot"), tiles = sv.querySelector(".rb-tiles"), treads = sv.querySelector(".rb-treads");
@@ -8558,20 +8566,26 @@ document.querySelectorAll('input[type="range"]').forEach(function(inp){
     l.setAttribute("x1", x); l.setAttribute("x2", x); l.setAttribute("y1", 0); l.setAttribute("y2", 250); tiles.appendChild(l); }
   for (var y = 0; y <= 250; y += 52){ var l2 = document.createElementNS(NSS, "line"); l2.setAttribute("class", "rb-tile");
     l2.setAttribute("x1", 0); l2.setAttribute("x2", 1248); l2.setAttribute("y1", y); l2.setAttribute("y2", y); tiles.appendChild(l2); }
-  /* four wheels, each with stripes across it, clipped to the wheel */
-  var WH = [[-30, -33], [8, -33], [-30, 22], [8, 22]], GAP = 6, stripes = [];
+  /* the wheels keep their tread stripes, still */
+  var WH = [[-30, -33], [8, -33], [-30, 22], [8, 22]], GAP = 6;
   WH.forEach(function(w, i){ var g = document.createElementNS(NSS, "g"); g.setAttribute("clip-path", "url(#rb-wclip-" + i + ")"); treads.appendChild(g);
-    for (var k = -1; k <= 5; k++){ var s = document.createElementNS(NSS, "line"); s.setAttribute("class", "rb-tread"); s.setAttribute("y1", w[1]); s.setAttribute("y2", w[1] + 11); g.appendChild(s);
-      stripes.push({el:s, x0:w[0] + k * GAP}); } });
-  var MID = 125, XL = 90, XR = 1158, SPEED = 35, BACK = 30, STOP = 1.0;   /* the robot is drawn 1.7 times larger: 112 px long */
-  var dF = (XR - XL) / SPEED, dB = (XR - XL) / BACK, PERIOD = dF + STOP + dB + STOP, t0 = performance.now();
-  function xAt(c){ if (c < dF) return XL + SPEED * c; c -= dF; if (c < STOP) return XR; c -= STOP; if (c < dB) return XR - BACK * c; return XL; }
-  function draw(now){ var x = xAt(((now - t0) / 1000) % PERIOD);
-    bot.setAttribute("transform", "translate(" + x.toFixed(1) + " " + MID + ")");
-    /* seen from above, the top of a wheel moves forward relative to the body as the robot drives forward: the stripes move with x */
-    var off = ((x * 0.9) % GAP + GAP) % GAP;
-    stripes.forEach(function(s){ var sx = (s.x0 + off).toFixed(2); s.el.setAttribute("x1", sx); s.el.setAttribute("x2", sx); }); }
-  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches){ t0 = performance.now() - (dF / 2) * 1000; draw(performance.now()); return; }
+    for (var k = -1; k <= 5; k++){ var st = document.createElementNS(NSS, "line"); st.setAttribute("class", "rb-tread"); st.setAttribute("y1", w[1]); st.setAttribute("y2", w[1] + 11);
+      st.setAttribute("x1", w[0] + k * GAP); st.setAttribute("x2", w[0] + k * GAP); g.appendChild(st); } });
+  var CX = 624, CY = 125, K = 1.7;   /* the centre of the floor; the robot is drawn 1.7 times larger */
+  bot.setAttribute("transform", "translate(" + CX + " " + CY + ")");
+  /* the camera's field of view: from the camera's front (29 units ahead), 30 degrees each side, out to the floor's right edge;
+     the two sides dashed, no far edge */
+  var cx0 = CX + 29 * K, L = 1248 - cx0, hw = L * Math.tan(30 * Math.PI / 180);
+  sv.querySelector(".rb-fov").setAttribute("d", "M" + cx0 + "," + CY + " L" + (cx0 + L) + "," + (CY - hw) + " L" + (cx0 + L) + "," + (CY + hw) + " Z");
+  sv.querySelector(".rb-fove").setAttribute("d", "M" + (cx0 + L) + "," + (CY - hw) + " L" + cx0 + "," + CY + " L" + (cx0 + L) + "," + (CY + hw));
+  /* the lidar's rings, from its centre (4 units behind the body's centre) */
+  var lx = CX - 4 * K, rings = sv.querySelector(".rb-rings"), RN = 3, PER = 3.6, RMAX = 300, R0 = 12 * K, rs = [];
+  for (var n = 0; n < RN; n++){ var c = document.createElementNS(NSS, "circle"); c.setAttribute("class", "rb-ring"); c.setAttribute("cx", lx); c.setAttribute("cy", CY); rings.appendChild(c); rs.push(c); }
+  var t0 = performance.now();
+  function draw(now){ var t = (now - t0) / 1000;
+    rs.forEach(function(c, n){ var u = ((t / PER + n / RN) % 1);   /* each ring's age, 0 to 1; one starts every PER / RN = 1.2 s */
+      c.setAttribute("r", (R0 + (RMAX - R0) * u).toFixed(1)); c.setAttribute("opacity", (0.8 * (1 - u)).toFixed(3)); }); }
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches){ draw(t0 + 600); return; }   /* one still picture of the rings */
   draw(t0);
   setInterval(function(){ draw(performance.now()); }, 33);   /* a timer, not requestAnimationFrame: it runs in headless checks too */
 })();
