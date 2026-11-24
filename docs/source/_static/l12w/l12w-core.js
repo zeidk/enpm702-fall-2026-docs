@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","rb-wclip-0":"clipPath","rb-wclip-1":"clipPath","rb-wclip-2":"clipPath","rb-wclip-3":"clipPath","rb-floorclip":"clipPath","rb-fovg":"linearGradient","deck":"div","pq":"div","pose-part-1":"section","pose-def":"section","pd-svg":"svg","pd-bot":"g","pose-rhr":"section","pose-part-2":"section","pose-rpy":"section","pose-euler3d":"section","eu-box":"div","eu-r":"input","eu-p":"input","eu-y":"input","eu-pre":"div","eu-read":"div","pose-part-3":"section","pose-quat-def":"section","pose-axisangle":"section","aa-box":"div","aa-axes":"div","aa-axdesc":"p","aa-a":"input","aa-pre":"span","aa-read":"div","pose-quat":"section","qt-yaw":"input","qt-pre":"div","qt-vals":"div","qt-svg":"svg","mu-svg":"svg","gz-tour":"section","gzt-view":"div","gzt-term":"div","gzt-cmd":"span","gzt-zoom":"div","gzt-over":"svg","gzt-prev":"button","gzt-next":"button","gzt-n":"span","gzt-say":"div","ariac-vid":"video","gw-ariac":"section","aw-box":"div","aw-play":"button","aw-top":"button","aw-cell":"button","aw-reset":"button","aw-t":"span","gw-husarion":"section","hw-box":"div","hw-t":"span","hw-play":"button","hw-top":"button","hw-near":"button","hw-reset":"button","gw-warehouse":"section","ww-box":"div","ww-t":"span","ww-play":"button","ww-top":"button","ww-near":"button","ww-reset":"button","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-reset":"button","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rq":"div","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rq-topics":"table","rq-pfilter":"input","rq-plist":"ul","rq-pnode":"div","rq-params":"table","rq-ccount":"span","rq-sev":"span","rq-log":"table","rq-tfv":"div","rq-tfcv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","vel-vp":"g","vel-vn":"g","vel-wp":"g","vel-wn":"g","vel-vb":"span","vel-wb":"span","kin":"section","kn-v":"input","kn-w":"input","kn-svg":"svg","tw-v":"input","tw-w":"input","tw-msg":"div","tw-svg":"svg","tw-drive":"button","tw-t":"span","sn-scan":"template","sn-scan-filtered":"template","sn-oak-rgb-color":"template","sn-oak-stereo-depth":"template","sn-oak-stereo-depth-points":"template","sn-imu-data":"template","sn-joint-states":"template","sn-logical-camera":"template","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-msg":"div","dr-t":"table","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","control-part-1":"section","cg-svg":"svg","cg-hot-odom":"span","cg-hot-cmd":"span","cg-msg-odom":"template","cg-msg-cmd":"template","fb-def":"section","fb-pid":"section","pl-svg":"svg","fb-ah":"marker","pl-s1":"circle","pl-minus":"div","pl-pid":"rect","pl-p":"rect","pl-i":"rect","pl-d":"rect","pl-s2":"circle","pl-plant":"rect","pl-fbk":"rect","pl-spark":"g","pl-prev":"button","pl-next":"button","pl-say":"span","fb-pid2":"section","fb-head":"section","hl-svg":"svg","hl-ah":"marker","hl-tg":"div","hl-e":"div","hl-p":"rect","hl-lim":"rect","hl-u":"div","hl-odo":"rect","hl-th":"span","hl-flow":"g","hl-plot":"svg","hl-pg":"g","hl-dial":"svg","hl-say":"p","hl-tgts":"span","hl-play":"button","hl-prev":"button","hl-next":"button","hl-reset":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-code":"pre","tc-h":"input","tc-ex":"button","tc-t":"input","tc-svg":"svg","tc-g":"g","tc-rows":"g","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","pc-gains":"table","gr-g":"div","gr-s":"svg","gr-pin":"path","gr-pout":"path","gr-node":"div","gr-ocb":"div","gr-ccb":"div","gr-say":"div","gr-play":"button","gr-code":"div","gr-ti-odom":"template","gr-ti-cmd":"template","mb-code":"div","mb-d":"div","mb-w":"path","mb-wh":"polygon","mb-r":"path","mb-rh":"polygon","mb-ocb":"div","mb-yaw":"div","mb-has":"div","mb-ccb":"div","mb-say":"div","mb-play":"button","mb-back":"button","mb-fwd":"button","kc-code":"div","kc-uses":"div","kc-say":"div","dbg-odom":"section","oc-code":"div","oc-msg":"div","oc-z":"div","oc-w":"div","oc-yaw":"div","oc-has":"div","oc-dial":"svg","oc-say":"div","oc-play":"button","oc-back":"button","oc-fwd":"button","cc-runs":"span","cc-code":"div","cc-term":"div","cc-yaw":"div","cc-has":"div","cc-tgt":"div","cc-err":"div","cc-cmd":"div","cc-dial":"svg","cc-say":"div","cc-play":"button","cc-back":"button","cc-fwd":"button","pb-runs":"span","pb-code":"div","pb-msg":"div","pb-st":"div","pb-az":"div","pb-g":"div","pb-s":"svg","pb-say":"div","pb-play":"button","pb-back":"button","pb-fwd":"button","rp-log":"pre","rp-say":"div","rp-svg":"svg","fb-dist":"section","dl-svg":"svg","dl-ah":"marker","dl-tg":"div","dl-e":"div","dl-p":"rect","dl-lim":"rect","dl-u":"div","dl-odo":"rect","dl-th":"span","dl-flow":"g","dl-plot":"svg","dl-pg":"g","dl-track":"svg","dl-say":"p","dl-tgts":"span","dl-play":"button","dl-reset":"button","param-part-1":"section","q42-back":"button","q42-next":"button","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-c":"div","kc-four":"template","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-svg":"svg","q59-say":"div","resources":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","qt-d":"span","qt-r":"span","qt-h":"span","qt-z":"span","qt-h2":"span","qt-w":"span","eu-q":"span","aa-al":"span","aa-h":"span","aa-s":"span","aa-c":"span","aa-x":"span","aa-y":"span","aa-z":"span","aa-w":"span","aa-q":"span","aa-n":"span","fx-go":"button","fx-cancel":"button"}, SVGT = {"tspan":1,"marker":1,"clipPath":1,"text":1,"pattern":1,"use":1,"linearGradient":1,"stop":1,"ellipse":1,"g":1,"symbol":1,"image":1,"circle":1,"foreignObject":1,"rect":1,"line":1,"polyline":1,"mask":1,"svg":1,"path":1,"polygon":1,"defs":1};
+var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","rb-wclip-0":"clipPath","rb-wclip-1":"clipPath","rb-wclip-2":"clipPath","rb-wclip-3":"clipPath","rb-floorclip":"clipPath","rb-fovg":"linearGradient","deck":"div","pq":"div","pose-part-1":"section","pose-def":"section","pose-part-2":"section","pose-rpy":"section","pose-euler3d":"section","eu-box":"div","eu-r":"input","eu-p":"input","eu-y":"input","eu-pre":"div","eu-read":"div","pose-part-3":"section","pose-quat-def":"section","pose-axisangle":"section","aa-box":"div","aa-axes":"div","aa-axdesc":"p","aa-a":"input","aa-pre":"span","aa-read":"div","pose-quat":"section","qt-yaw":"input","qt-pre":"div","qt-vals":"div","qt-svg":"svg","mu-svg":"svg","gz-tour":"section","gzt-view":"div","gzt-term":"div","gzt-cmd":"span","gzt-zoom":"div","gzt-over":"svg","gzt-prev":"button","gzt-next":"button","gzt-n":"span","gzt-say":"div","ariac-vid":"video","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-reset":"button","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rq":"div","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rq-topics":"table","rq-pfilter":"input","rq-plist":"ul","rq-pnode":"div","rq-params":"table","rq-ccount":"span","rq-sev":"span","rq-log":"table","rq-tfv":"div","rq-tfcv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","vel-vp":"g","vel-vn":"g","vel-wp":"g","vel-wn":"g","vel-vb":"span","vel-wb":"span","kin":"section","kn-v":"input","kn-w":"input","kn-svg":"svg","tw-v":"input","tw-w":"input","tw-msg":"div","tw-svg":"svg","tw-drive":"button","tw-t":"span","sn-scan":"template","sn-scan-filtered":"template","sn-oak-rgb-color":"template","sn-oak-stereo-depth":"template","sn-oak-stereo-depth-points":"template","sn-imu-data":"template","sn-joint-states":"template","sn-logical-camera":"template","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-msg":"div","dr-t":"table","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","control-part-1":"section","cg-svg":"svg","cg-hot-odom":"span","cg-hot-cmd":"span","cg-msg-odom":"template","cg-msg-cmd":"template","fb-def":"section","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","fb-head":"section","hl-svg":"svg","hl-ah":"marker","hl-tg":"div","hl-e":"div","hl-p":"rect","hl-lim":"rect","hl-u":"div","hl-odo":"rect","hl-th":"span","hl-flow":"g","hl-plot":"svg","hl-pg":"g","hl-dial":"svg","hl-say":"p","hl-tgts":"span","hl-play":"button","hl-prev":"button","hl-next":"button","hl-reset":"button","tc-code":"pre","tc-h":"input","tc-ex":"button","tc-t":"input","tc-svg":"svg","tc-g":"g","tc-rows":"g","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","pc-gains":"table","gr-g":"div","gr-s":"svg","gr-pin":"path","gr-pout":"path","gr-node":"div","gr-ocb":"div","gr-ccb":"div","gr-say":"div","gr-play":"button","gr-code":"div","gr-ti-odom":"template","gr-ti-cmd":"template","mb-code":"div","mb-d":"div","mb-w":"path","mb-wh":"polygon","mb-r":"path","mb-rh":"polygon","mb-ocb":"div","mb-yaw":"div","mb-has":"div","mb-ccb":"div","mb-say":"div","mb-play":"button","mb-back":"button","mb-fwd":"button","kc-code":"div","kc-uses":"div","kc-say":"div","dbg-odom":"section","oc-code":"div","oc-msg":"div","oc-z":"div","oc-w":"div","oc-yaw":"div","oc-has":"div","oc-dial":"svg","oc-say":"div","oc-play":"button","oc-back":"button","oc-fwd":"button","cc-runs":"span","cc-code":"div","cc-term":"div","cc-yaw":"div","cc-has":"div","cc-tgt":"div","cc-err":"div","cc-cmd":"div","cc-dial":"svg","cc-say":"div","cc-play":"button","cc-back":"button","cc-fwd":"button","pb-runs":"span","pb-code":"div","pb-msg":"div","pb-st":"div","pb-az":"div","pb-g":"div","pb-s":"svg","pb-say":"div","pb-play":"button","pb-back":"button","pb-fwd":"button","rp-log":"pre","rp-say":"div","rp-svg":"svg","fb-dist":"section","dl-svg":"svg","dl-ah":"marker","dl-tg":"div","dl-e":"div","dl-p":"rect","dl-lim":"rect","dl-u":"div","dl-odo":"rect","dl-th":"span","dl-flow":"g","dl-plot":"svg","dl-pg":"g","dl-track":"svg","dl-say":"p","dl-tgts":"span","dl-play":"button","dl-reset":"button","param-part-1":"section","q42-back":"button","q42-next":"button","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-c":"div","kc-four":"template","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q59-tab":"table","q59-svg":"svg","q59-say":"div","resources":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","qt-d":"span","qt-r":"span","qt-h":"span","qt-z":"span","qt-h2":"span","qt-w":"span","eu-q":"span","aa-al":"span","aa-h":"span","aa-s":"span","aa-c":"span","aa-x":"span","aa-y":"span","aa-z":"span","aa-w":"span","aa-q":"span","aa-n":"span","fx-go":"button","fx-cancel":"button"}, SVGT = {"text":1,"polyline":1,"stop":1,"path":1,"use":1,"tspan":1,"g":1,"svg":1,"line":1,"clipPath":1,"symbol":1,"ellipse":1,"foreignObject":1,"polygon":1,"rect":1,"defs":1,"linearGradient":1,"circle":1,"marker":1,"pattern":1,"mask":1,"image":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 /* one stand-in per id, so a script that fills an element and reads it again finds what it put there; the stand-ins sit in
    a holder that is not in the page, so code that inserts next to one works and document.contains() still says "not here"
@@ -245,7 +245,6 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 
 /* ---------- pose: the ROSbot under base_link, and the quaternion of a yaw (pose-quat) ---------- */
 (function(){
-  var pd = $id("pd-bot"); if (pd && pd.isConnected) rosbotIcon(pd, 0, 0, 170, 0);
   var sv = $id("qt-svg"); if (!sv || !sv.isConnected) return;
   var sl = $id("qt-yaw"), vals = $id("qt-vals"), NS = "http://www.w3.org/2000/svg";
   function mk(tag, a, txt){ var e = document.createElementNS(NS, tag); for (var k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; sv.appendChild(e); return e; }
@@ -265,9 +264,9 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     '\\(z = \\sin\\frac{\\text{yaw}}{2}\\) = \\(\\sin\\)(<span class="vv" id="qt-h"></span>) = <span class="vv" id="qt-z"></span><br>' +
     '\\(w = \\cos\\frac{\\text{yaw}}{2}\\) = \\(\\cos\\)(<span class="vv" id="qt-h2"></span>) = <span class="vv" id="qt-w"></span>';
   mathIn(vals);
-  sl.addEventListener("input", draw);
+  sl.addEventListener("input", function(){ qb.set(null); draw(); });   /* a moved slider is no preset */
   var pre = $id("qt-pre");
-  buttons(pre, [0, 90, 180, -90], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ sl.value = v; draw(); }, 90);
+  var qb = buttons(pre, [0, 90, 180, -90], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ sl.value = v; draw(); }, 90);
   draw();
   onReset(sv, function(){ sl.value = 90; draw(); });
 })();
@@ -368,8 +367,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       var cr = Math.cos(r / 2), s_r = Math.sin(r / 2), cp = Math.cos(p / 2), s_p = Math.sin(p / 2), cy = Math.cos(y / 2), s_y = Math.sin(y / 2);
       var q = [s_r * cp * cy - cr * s_p * s_y, cr * s_p * cy + s_r * cp * s_y, cr * cp * s_y - s_r * s_p * cy, cr * cp * cy + s_r * s_p * s_y];   /* tf2's setRPY */
       $id("eu-q").textContent = q.map(f3).join(", "); E.touch(); }
-    [sr, sp, sy].forEach(function(s){ s.addEventListener("input", upd); });
-    buttons($id("eu-pre"), ["zero", "yaw", "pitch", "roll"], function(v){ return {zero:"all 0", yaw:"yaw 90°", pitch:"pitch 30°", roll:"roll 45°"}[v]; },
+    [sr, sp, sy].forEach(function(s){ s.addEventListener("input", function(){ eb.set(null); upd(); }); });   /* a moved slider is no preset */
+    var eb = buttons($id("eu-pre"), ["zero", "yaw", "pitch", "roll"], function(v){ return {zero:"all 0", yaw:"yaw 90°", pitch:"pitch 30°", roll:"roll 45°"}[v]; },
       function(v){ sr.value = v === "roll" ? 45 : 0; sp.value = v === "pitch" ? 30 : 0; sy.value = v === "yaw" ? 90 : 0; upd(); }, "zero");
     upd();
     onReset($id("eu-box"), function(){ sr.value = 0; sp.value = 0; sy.value = 0; upd(); E.home(); });
@@ -382,7 +381,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)],
       /* examples with two or three components (user, 2026-11-23: "provide examples where a_x and a_y are not zero. a_z is 0", then
          "keep (0.707,0.707,0), change (0.6,-0.8,0) to use y and z axes, and add a third one to include x,y,z axes"): halfway
-         between x and y in the floor plane; (0, 0.6, 0.8), length 1 since 0.36 + 0.64 = 1; and t above, all three equal */
+         between x and y in the x-y plane; (0, 0.6, 0.8), length 1 since 0.36 + 0.64 = 1; and t above, all three equal */
       d:[Math.SQRT1_2, Math.SQRT1_2, 0], e:[0, 0.6, 0.8]};
     /* the formula, step by step, with the numbers of the chosen axis and angle (user, 2026-11-23: "slide 8 is rushed. I want one
        slide only explaining and visualizing" the axis-and-angle formula) */
@@ -405,7 +404,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
        directions are the airplane's at the start: x along the nose, y along the left wing, z up through the fin. Angles:
        atan2(0.8, 0.6) = 53.1 degrees; acos(0.577) = 54.7 degrees */
     var DESC = {x:"the x axis, along the nose: a roll.", y:"the y axis, along the left wing: a pitch.", z:"the z axis, up through the fin: a yaw.",
-      d:"in the floor plane, halfway between x and y, 45° from each.", e:"in the y–z plane, 53° from y toward z.",
+      d:"in the x-y plane, halfway between x and y, 45° from each.", e:"in the y-z plane, 53° from y toward z.",
       t:"equal parts of x, y and z, about 55° from each."};
     function say(v){ $id("aa-axdesc").innerHTML = v ? "<b>Axis:</b> " + DESC[v] : "<b>Axis:</b> pick one of the six above."; }
     function upd2(){ var deg = +sa.value, th = deg * Math.PI / 180, s = Math.sin(th / 2), c = Math.cos(th / 2);
@@ -614,127 +613,6 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   })();
 
 
-  /* --- the Gazebo worlds in 3D (WORLDS, make_interactive.py): each world's meshes placed as its world file places them, and its
-     robot replaying the true path Gazebo recorded. Gazebo's frame: x east, y north, z up. Drag turns and tilts, right-drag or
-     Shift+drag pans, the wheel zooms. Play replays the run at its own speed; leaving the slide stops it and puts the robot back
-     at the start. Renders only while its slide is on screen. --- */
-  function world3D(o){
-    var box = $id(o.id + "-box"); if (!box || !box.isConnected) return;
-    var W = WORLDS && WORLDS[o.world];
-    if (!window.THREE || !THREE.OrbitControls || !W){ box.textContent = "This browser cannot draw 3D (WebGL)."; return; }
-    var renderer; try { renderer = new THREE.WebGLRenderer({antialias:true}); } catch (err) { box.textContent = "This browser cannot draw 3D (WebGL)."; return; }
-    box.appendChild(renderer.domElement);
-    var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(45, 1, 0.05, 400); cam.up.set(0, 0, 1);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.8));
-    var sun = new THREE.DirectionalLight(0xffffff, 0.55); sun.position.set(-8, -12, 20); scene.add(sun);
-    function m4(m){ var M = new THREE.Matrix4(); M.set(m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9], m[10], m[11], 0, 0, 0, 1); return M; }
-    /* front faces only, as Gazebo draws a mesh: from outside a building you see in through its roof and walls */
-    function mat(c, both){ return new THREE.MeshLambertMaterial({color:new THREE.Color(c[0], c[1], c[2]), side:both ? THREE.DoubleSide : THREE.FrontSide}); }
-    W.prims.forEach(function(p){
-      var g = p.kind === "plane" ? new THREE.PlaneGeometry(p.size[0], p.size[1]) : p.kind === "box" ? new THREE.BoxGeometry(p.size[0], p.size[1], p.size[2])
-            : new THREE.CylinderGeometry(p.size[0], p.size[0], p.size[1], 32).rotateX(Math.PI / 2);
-      var mesh = new THREE.Mesh(g, mat(p.color, true)); mesh.matrixAutoUpdate = false; mesh.matrix.copy(m4(p.m)); scene.add(mesh); });
-    var parts = {};   /* each distinct mesh built once, then placed where the world puts it */
-    Object.keys(W.meshes).forEach(function(k){ parts[k] = W.meshes[k].map(function(pt){ var g = new THREE.BufferGeometry();
-      g.setAttribute("position", new THREE.Float32BufferAttribute(pt.pos, 3)); g.computeVertexNormals(); return {g:g, m:mat(pt.color)}; }); });
-    var GRP = W.instances.map(function(inst){ var grp = new THREE.Group(); parts[inst.mesh].forEach(function(pt){ grp.add(new THREE.Mesh(pt.g, pt.m)); });
-      grp.matrixAutoUpdate = false; grp.matrix.copy(m4(inst.m)); scene.add(grp); return grp; });
-    /* the recorded path, just above where the robot moved */
-    /* o.lift: the warehouse's floor mesh is about 0.10 m above the ground plane the drone lands on (a ray down through the take-off
-       point hits the floor at z = 0.111), so the drone and its path are drawn that much higher, on the floor you see */
-    /* movers (ARIAC's AGVs): world instances that move along their own recorded paths [t, x, y, z, yaw]; each keeps the offset
-       between its recorded model pose and its placement in the world file, so its mesh moves with the model */
-    var MV = [];
-    (W.movers || []).forEach(function(mv, k){
-      var p0 = mv.path[0], start = new THREE.Matrix4().compose(new THREE.Vector3(p0[1], p0[2], p0[3]), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), p0[4]), new THREE.Vector3(1, 1, 1));
-      var hit = null, bestD = 1e9;
-      W.instances.forEach(function(inst, j){ if (inst.mesh !== mv.mesh || inst._used) return; var d = Math.hypot(inst.m[3] - p0[1], inst.m[7] - p0[2]); if (d < bestD){ bestD = d; hit = j; } });
-      if (hit === null) return;
-      W.instances[hit]._used = true; MV.push({path:mv.path, inst:hit, off:new THREE.Matrix4().copy(start).invert().multiply(m4(W.instances[hit].m))}); });
-    W.instances.forEach(function(inst){ delete inst._used; });
-    /* a world with no recorded path has no line and no robot */
-    var lift = o.lift || 0, P = W.path || [], pts = []; P.forEach(function(s){ pts.push(s[1], s[2], s[3] + lift + 0.012); });
-    if (P.length){ var pg = new THREE.BufferGeometry(); pg.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-      scene.add(new THREE.Line(pg, new THREE.LineBasicMaterial({color:0x16798a}))); }
-    var bot = P.length ? o.robot() : null; if (bot) scene.add(bot);
-    var tLabel = $id(o.id + "-t");
-    function poseAt(t){ var i = 0; while (i < P.length - 1 && P[i + 1][0] <= t) i++;
-      var a = P[i], b = P[Math.min(i + 1, P.length - 1)], u = b[0] > a[0] ? Math.max(0, Math.min(1, (t - a[0]) / (b[0] - a[0]))) : 0;
-      var dy = b[4] - a[4]; if (dy > Math.PI) dy -= 2 * Math.PI; if (dy < -Math.PI) dy += 2 * Math.PI;
-      return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, a[3] + (b[3] - a[3]) * u, a[4] + dy * u]; }
-    function poseOn(PP, t){ var i = 0; while (i < PP.length - 1 && PP[i + 1][0] <= t) i++;
-      var a = PP[i], b = PP[Math.min(i + 1, PP.length - 1)], u = b[0] > a[0] ? Math.max(0, Math.min(1, (t - a[0]) / (b[0] - a[0]))) : 0;
-      var dy = b[4] - a[4]; if (dy > Math.PI) dy -= 2 * Math.PI; if (dy < -Math.PI) dy += 2 * Math.PI;
-      return [a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u, a[3] + (b[3] - a[3]) * u, a[4] + dy * u]; }
-    function place(t){
-      MV.forEach(function(mv){ var q = poseOn(mv.path, t);
-        var M = new THREE.Matrix4().compose(new THREE.Vector3(q[0], q[1], q[2]), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), q[3]), new THREE.Vector3(1, 1, 1));
-        GRP[mv.inst].matrix.copy(M.multiply(mv.off)); });
-      if (tLabel && (bot || MV.length)) tLabel.textContent = "t = " + t.toFixed(1) + " s";
-      if (!bot) return; var q = poseAt(t); bot.position.set(q[0], q[1], q[2] + lift); bot.rotation.set(0, 0, q[3]); }
-    var controls = new THREE.OrbitControls(cam, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = 0.12; controls.screenSpacePanning = true;
-    controls.minDistance = 0.5; controls.maxDistance = o.far || 60; controls.maxPolarAngle = Math.PI / 2 - 0.03;
-    var END = P.length ? P[P.length - 1][0] : MV.length ? Math.max.apply(null, MV.map(function(mv){ return mv.path[mv.path.length - 1][0]; })) : 0, T = 0, playing = false, last = 0, btn = $id(o.id + "-play");
-    function setView(k){ var v;
-      if (k === "near"){ var q = poseAt(T); v = [[q[0] - o.nearBack * Math.cos(q[3]), q[1] - o.nearBack * Math.sin(q[3]), q[2] + o.nearUp], [q[0], q[1], q[2] + 0.1]]; }
-      else v = o.views[k];
-      cam.position.set(v[0][0], v[0][1], v[0][2]); controls.target.set(v[1][0], v[1][1], v[1][2]); controls.update(); draw(); }
-    ["wheel", "pointerdown", "mousedown", "touchstart", "click", "contextmenu"].forEach(function(ev){
-      renderer.domElement.addEventListener(ev, function(e){ e.stopPropagation(); if (ev === "contextmenu") e.preventDefault(); }, {passive:false}); });
-    function wantRatio(){ var w = box.clientWidth, r = box.getBoundingClientRect(); return Math.min(4, (window.devicePixelRatio || 1) * ((r.width / w) || 1)); }
-    function size(){ var w = box.clientWidth, h = box.clientHeight; if (!w || !h) return;
-      renderer.setPixelRatio(wantRatio()); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
-    function draw(){ var dk = document.documentElement.getAttribute("data-theme") === "dark"; renderer.setClearColor(dk ? 0x242e39 : 0xffffff); renderer.render(scene, cam); }
-    function stopPlay(){ playing = false; if (btn){ btn.textContent = "Play"; btn.classList.remove("on"); } }
-    if (btn) btn.onclick = function(e){ e.stopPropagation(); if (playing){ stopPlay(); return; } if (T >= END) T = 0;
-      if (reduce){ T = END; place(T); draw(); return; }   /* reduced motion: the end of the run, no movement */
-      playing = true; last = performance.now(); btn.textContent = "Pause"; btn.classList.add("on"); };
-    var running = false;
-    /* draw only when something changed (a drag, the damping after it, Play, a resize): a still scene is not redrawn every frame,
-       which kept a laptop's GPU busy and made a headless check of the ARIAC scene (62000 triangles) take minutes per frame */
-    var dirty = true;
-    controls.addEventListener("change", function(){ dirty = true; });
-    function loop(now){ var fr = box.closest(".plate"); if (!fr || !fr.classList.contains("active")){ running = false; stopPlay(); return; }
-      if (playing){ T = Math.min(END, T + (now - last) / 1000); last = now; place(T); dirty = true; if (T >= END) stopPlay(); }
-      if (Math.abs(wantRatio() - renderer.getPixelRatio()) > 0.02){ size(); dirty = true; }
-      controls.update(); if (dirty){ dirty = false; draw(); } requestAnimationFrame(loop); }
-    Object.keys(o.views).concat(["near"]).forEach(function(k){ var b = $id(o.id + "-" + k); if (b) b.onclick = function(e){ e.stopPropagation(); setView(k); }; });
-    size(); place(0); setView("reset");
-    onReset(box, function(){ stopPlay(); T = 0; place(0); controls.enableDamping = false; setView("reset"); controls.enableDamping = true; });
-    onShow(box, function(){ size(); draw(); if (!running){ running = true; requestAnimationFrame(loop); } });
-    window.addEventListener("resize", function(){ size(); draw(); });
-    document.addEventListener("fullscreenchange", function(){ setTimeout(function(){ size(); draw(); }, 50); });
-    new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
-  }
-  /* the ROSbot, the same model as the patrol view's: body, four wheels, the lidar and the camera, facing +x */
-  function rosbot3D(){ var bot = new THREE.Group(), dark = new THREE.MeshLambertMaterial({color:0x2b2f36}), tyre = new THREE.MeshLambertMaterial({color:0x111111});
-    var bodyM = new THREE.Mesh(new THREE.BoxGeometry(0.197, 0.150, 0.080), dark); bodyM.position.z = 0.075; bot.add(bodyM);
-    [[0.06, 0.09], [-0.06, 0.09], [0.06, -0.09], [-0.06, -0.09]].forEach(function(q){ var wm = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.034, 24), tyre);
-      wm.position.set(q[0], q[1], 0.042); bot.add(wm); });
-    var lid = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.04, 24), new THREE.MeshLambertMaterial({color:0x666a70}));
-    lid.rotation.x = Math.PI / 2; lid.position.set(-0.01, 0, 0.135); bot.add(lid);
-    var camM = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.09, 0.025), new THREE.MeshLambertMaterial({color:0xb0b4ba})); camM.position.set(0.09, 0, 0.17); bot.add(camM);
-    bot.add(new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0.1, 0, 0.08), 0.45, 0x16798a, 0.12, 0.08));
-    return bot; }
-  /* the X3: its four rotors where its model file puts them (0.13 m forward or back, 0.2 to 0.22 m to the side, 0.1 m radius,
-     two red and two blue as in the close view); the body is drawn as a small orange box with arms to the rotors */
-  function x3D(){ var q = new THREE.Group(), orange = new THREE.MeshLambertMaterial({color:0xe07a1f}), arm = new THREE.MeshLambertMaterial({color:0x333333});
-    var body = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 0.06), orange); body.position.z = 0.0; q.add(body);
-    [[0.13, -0.22, 0xc0392b], [-0.13, 0.2, 0xc0392b], [0.13, 0.22, 0x2e6fb3], [-0.13, -0.2, 0x2e6fb3]].forEach(function(r){
-      var len = Math.hypot(r[0], r[1]), a = new THREE.Mesh(new THREE.BoxGeometry(len, 0.025, 0.02), arm);
-      a.position.set(r[0] / 2, r[1] / 2, 0.01); a.rotation.z = Math.atan2(r[1], r[0]); q.add(a);
-      var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.008, 32), new THREE.MeshLambertMaterial({color:r[2], transparent:true, opacity:0.8}));
-      disc.rotation.x = Math.PI / 2; disc.position.set(r[0], r[1], 0.023); q.add(disc); });
-    return q; }
-  world3D({id:"hw", world:"husarion", robot:rosbot3D, nearBack:2.2, nearUp:1.4,
-           views:{reset:[[0.4, -21, 16], [0.4, 2.2, 0]], top:[[0.4, 2.19, 34], [0.4, 2.2, 0]]}});
-  world3D({id:"ww", world:"warehouse", robot:x3D, nearBack:3.0, nearUp:1.6, far:90, lift:0.10,
-           views:{reset:[[0.5, 15.5, 8.6], [0.5, -8, 0]], top:[[0, -6, 55], [0, -5.99, 0]]}});
-  /* ARIAC: every mesh together spans x -2.7 to 11.9 m and y -4.1 to 10.4 m (the floor and walls); the inspection cell (conveyor, two robot
-     stands, the voltage testers, three AGVs) sits at x 0.5 to 3, y 0.6 to 1.5. Reset starts where the clip's camera was. */
-  world3D({id:"aw", world:"ariac", far:40,
-           views:{reset:[[5.8, -3.6, 8.2], [5.0, 4.0, 0]], top:[[4.6, 3.15, 19], [4.6, 3.16, 0]], cell:[[1.8, -1.4, 2.0], [1.8, 1.0, 0.4]]}});
 
   /* --- slide 11 (3 and 4 of 4): drive the ROSbot with a pad and watch v, omega, the wheel speeds and the pose (user,
      2026-11-20: "Allow us to move the robot and see the changes in numbers"). s and r are the course controller's
@@ -816,7 +694,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   })();
 
   /* --- slide 12: the launch command from the picked arguments (only values that differ from the default appear) --- */
-  var picks = {gui:"true", world:"patrol", rviz:"false"}, defs = {gui:"true", world:"patrol", rviz:"false"}, cmd = $id("la-cmd");
+  var picks = {gui:"true", world:"patrol", rviz:"false", logical_camera:"true"}, defs = {gui:"true", world:"patrol", rviz:"false", logical_camera:"true"}, cmd = $id("la-cmd");
   /* x, y, yaw: typed numbers (user, 2026-11-21: "Give us the possibility to enter some numbers in the column Pick");
      an empty box or 0 is the default, 0.0, and leaves the argument out */
   function poseArgs(){ var a = [];
@@ -824,7 +702,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       if (v !== "" && isFinite(n) && n !== 0) a.push(k + ":=" + v); });
     return a; }
   function laCmd(){ var a = [], p = poseArgs();   /* the arguments go on continuation lines: on one line the command was wider than the box */
-    ["gui", "world", "rviz"].forEach(function(k){ if (picks[k] !== defs[k]) a.push(k + ":=" + picks[k]); });
+    ["gui", "world", "rviz", "logical_camera"].forEach(function(k){ if (picks[k] !== defs[k]) a.push(k + ":=" + picks[k]); });
     var rows = [a, p].filter(function(r){ return r.length; });
     var L = ["ros2 launch gp2_bringup gp2_sim.launch.py" + (rows.length ? " \\" : "")];
     rows.forEach(function(r, i){ L.push("  " + r.join(" ") + (i < rows.length - 1 ? " \\" : "")); });
@@ -856,8 +734,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     txt(cs, 12, 62, "/cmd_vel messages", 25, C.ink, "start"); txt(cs, 12, 158, "speed command (m/s)", 25, C.ink, "start");
     el(cs, "line", {x1:x0, y1:56, x2:x1, y2:56, stroke:C.edge, "stroke-width":2});
     for (var k = 0; k <= T; k++){ el(cs, "line", {x1:X(k), y1:84, x2:X(k), y2:200, stroke:C.grid, "stroke-width":1}); txt(cs, X(k), 232, k + " s", 23, C.muted); }
-    var last = null;
-    for (var t = 0; t <= Math.min(tNow, tStop === null ? T : tStop) + 1e-9; t += 0.1){ last = t; el(cs, "circle", {cx:X(t), cy:56, r:6, fill:C.s1}); }
+    var last = null, empty = tNow === 0 && tStop === null;   /* t = 0, before Start publishing: the empty time line, no dot and no line */
+    for (var t = 0; !empty && t <= Math.min(tNow, tStop === null ? T : tStop) + 1e-9; t += 0.1){ last = t; el(cs, "circle", {cx:X(t), cy:56, r:6, fill:C.s1}); }
     var yV = function(v){ return 190 - v / 0.2 * 70; };
     el(cs, "line", {x1:x0, y1:yV(0), x2:x1, y2:yV(0), stroke:C.edge, "stroke-width":1.5});
     txt(cs, x0 - 10, yV(0) + 7, "0", 23, C.muted, "end"); txt(cs, x0 - 10, yV(0.2) + 7, "0.2", 23, C.muted, "end");
@@ -883,8 +761,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       if (tStop === null && tNow >= T - 0.6){ tStop = Math.floor(tNow * 10) / 10; $id("cv-stop").disabled = true; }
       drawCv(); }, 50); };
   $id("cv-stop").onclick = function(e){ e.stopPropagation(); if (tStop === null){ tStop = Math.floor(tNow * 10) / 10; } this.disabled = true; };
-  tNow = 3; tStop = 2.4; drawCv();
-  onReset(cs, function(){ cvStopTimer(); tNow = 3; tStop = 2.4; drawCv(); $id("cv-stop").disabled = true; $id("cv-t").textContent = "t = 0.0 s"; });
+  tNow = 0; tStop = null; drawCv();
+  onReset(cs, function(){ cvStopTimer(); tNow = 0; tStop = null; drawCv(); $id("cv-stop").disabled = true; $id("cv-t").textContent = "t = 0.0 s"; });
 
   /* --- slide 20: use_sim_time off and on, the measured logs (../figures/data/sim_time.txt) --- */
   var LOG = {off:["[...]: create_wall_timer: now() = 1795198889.261 s", "[...]: create_timer:      now() = 1795198889.261 s",
@@ -947,7 +825,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       halo(txt(ps, PX(r[0]) + dx, r[1] === "w" ? y - 16 : y + 30, r[2].toFixed(r[2] ? 3 : 0), 18, inP ? C.bad : C.ink, anc)); });
   }
   var pzTimer = null;
-  function pzAt(t){ drawPz(t); $id("pz-t").textContent = "computer's clock: +" + t.toFixed(1) + " s";
+  function pzAt(t){ drawPz(t); $id("pz-t").textContent = "run's clock: +" + t.toFixed(1) + " s (replay 1.5×)";
     var lastN = null; RUN.forEach(function(r){ if (r[0] <= t + 1e-9) lastN = r; });
     $id("pz-now").textContent = lastN ? "last line: " + (lastN[1] === "w" ? "create_wall_timer" : "create_timer") + ", now() = " + lastN[2].toFixed(3) + " s" + (t > P0 && t < P1 ? " (paused)" : "") : ""; }
   $id("pz-play").onclick = function(e){ e.stopPropagation(); clearInterval(pzTimer);
@@ -1033,14 +911,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     {z:[0,0,1200], img:"s07", act:[{move:[74,122]},{click:1}], hl:[[50,100,48,44]], say:"The Translate tool moves a model with the mouse."},
     {z:[0,150,1200], img:"s08", act:[{move:[592,535]},{click:1}], hl:[[380,300,260,290]], say:"Click the box again: three arrows appear, red for x, green for y and blue for z."},
     {z:[0,0,1600], img:"s09", act:[{move:[470,533]},{drag:[470,533,300,545]}], hl:[[1288,368,78,44]], say:"A drag that does not start on an arrowhead moves the camera instead: the view turns, and the box stays where it was (Y still 0.00)."},
-    {z:[0,0,1600], img:"s10", act:[{move:[222,548]},{drag:[222,548,120,556]}], hl:[[1288,368,78,44]], say:"Drag the green arrowhead: the box slides along y, and the inspector follows, Y = 1.73 m."},
-    {z:[800,0,800], img:"s11a", act:[{move:[1576,24]},{click:1}], hl:[[1418,6,170,40]], say:"The menu, top right, lists the plugins: the panels you can add. The search field at the top of the list finds one by name."},
-    {z:[800,0,800], img:"s11", act:[{type:"teleop", at:[880,200]}], hl:[[1400,52,192,42]], say:"Type <code>teleop</code>: only Teleop is left."},
-    {z:[0,0,1600], img:"s12", act:[{move:[1440,75]},{click:1}], hl:[[1184,800,400,100]], say:"Click it: the Teleop panel docks bottom right. It publishes speed commands; on the setup page you drive the ROSbot with it."},
-    {z:[0,225,1200], img:"s13", act:[{move:[25,852]},{click:1}], hl:[[948,826,182,70]], say:"Pause stops the simulation: sim time stays at 2:08.977 and the iterations at 128977."},
-    {z:[0,225,1200], img:"s14", act:[{move:[78,852]},{click:1}], hl:[[948,826,182,70]], say:"Step runs one iteration while paused: 128977 becomes 128978, and sim time moves 1 ms, to 2:08.978."},
-    {z:[0,225,1200], img:"s15", act:[{move:[127,852]},{click:1}], hl:[[550,381,500,140]], say:"Reset asks first."},
-    {z:[0,0,1600], img:"s16", act:[{move:[1009,493]},{click:1}], hl:[[1288,322,78,92,1327,290],[948,800,182,96,916,848]], say:"Reset puts every model back where the world file placed it: the box is at X 0.00, Y 0.00 (1), and the clocks and iterations restart at 0 (2)."}
+    {z:[0,0,1600], img:"s10", act:[{move:[222,548]},{drag:[222,548,120,556]}], hl:[[1288,368,78,44]], say:"Drag the green arrowhead: the box slides along y, and the inspector follows, Y = 1.73 m."}
   ];
   var k = 0, cur = [800,450], token = 0, END = [];
   S.forEach(function(st, i){ var e = i ? END[i - 1] : [800,450];
@@ -1907,7 +1778,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 /* kinematics (user, 2026-11-22: "make this interactive. drag sliders to see values changing. Use robot drawing from title
    slide"): v and omega give each side's speed and each wheel's turn rate, with the ROSbot's s and r from controllers.yaml */
 (function(){
-  var sv = $id("kn-svg"), iv = $id("kn-v"), iw = $id("kn-w"), ol = $id("kn-steps");
+  var sv = $id("kn-svg"), iv = $id("kn-v"), iw = $id("kn-w");
   if (!sv) return;
   var S = 0.186 * 1.36, R = 0.0425, CX = 230, CY = 160, PX = 140;   /* 1 m/s = 140 px: the largest side speed, 1.40 m/s, stays inside */
   TICKS["kn-w"] = [0];   /* both velocities start at 0 (user, 2026-11-23: "when it loads, the default value for each velocity should be 0") */
@@ -1950,20 +1821,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     a.hd.setAttribute("d", on ? "M" + (CX + L + 12 * s) + "," + y + " L" + (CX + L) + "," + (y - 9) + " L" + (CX + L) + "," + (y + 9) + " Z" : "");
     a.lb.setAttribute("x", CX); a.lb.setAttribute("y", ty);
     a.lb.innerHTML = '<tspan class="mi">v</tspan><tspan class="mi" dy="6" font-size="20">' + name + '</tspan><tspan dy="-6"> = ' + f(sp, 3) + " m/s</tspan>"; }
-  function dir(x){ return Math.abs(x) < 5e-4 ? "still" : x > 0 ? "forward" : "backward"; }
   function show(){ var v = +iv.value, w = +iw.value, t = w * S / 2, vL = v - t, vR = v + t;
-    arrow(aL, 48, 24, "L", vL); arrow(aR, 268, 300, "R", vR); drawPath(v, w);
-    var sv_ = Math.abs(v) < 0.005, sw_ = Math.abs(w) < 0.005;
-    var motion = sv_ && sw_ ? "none, the robot stands still." : sw_ ? "straight " + (v > 0 ? "forward" : "backward") + "." :
-      sv_ ? "on the spot, turning " + (w > 0 ? "left" : "right") + "." :
-      (v > 0 ? "forward" : "backward") + " on an arc to the " + ((v > 0) === (w > 0) ? "left" : "right") + ", radius \\(R = |v / \\omega|\\) = " + f(Math.abs(v / w), 2) + " m.";
-    var ts = f(Math.abs(t), 3), pm = t < 0;
-    if (ol) ol.innerHTML =
-      "<li>\\(\\omega\\,s/2\\) = " + f(w, 2) + " × 0.253 / 2 = " + f(t, 3) + ", so \\(v_L\\) = " + f(v, 2) + (pm ? " + " : " − ") + ts + " = " + f(vL, 3) +
-        " and \\(v_R\\) = " + f(v, 2) + (pm ? " − " : " + ") + ts + " = " + f(vR, 3) + " m/s.</li>" +
-      "<li>Wheels, at \\(v_{\\text{side}} / r\\): left " + f(Math.abs(vL) / R, 2) + " rad/s " + dir(vL) + ", right " + f(Math.abs(vR) / R, 2) + " rad/s " + dir(vR) + ".</li>" +
-      "<li>Path (blue arrow): " + motion + "</li>";
-    if (ol) mathIn(ol); }
+    arrow(aL, 48, 24, "L", vL); arrow(aR, 268, 300, "R", vR); drawPath(v, w); }
   iv.addEventListener("input", show); iw.addEventListener("input", show);
   [].forEach.call(document.querySelectorAll("#kin .kn-step"), function(b){ b.addEventListener("click", function(e){ e.stopPropagation();
     var inp = $id(b.dataset.for); if (+b.dataset.d > 0) inp.stepUp(); else inp.stepDown();
@@ -2482,8 +2341,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   (function(){
     var g = $("gr-g"); if (!g || !g.isConnected) return;
     var snip = [].slice.call($("gr-code").querySelectorAll("pre.code")), say = $("gr-say"), s = $("gr-s");
-    var SAY = {1:'<span class="tg">1</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
-      2:'<span class="tg">2</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
+    var SAY = {1:'<span class="tg">1</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, which keeps the 10 newest messages if the node falls behind. Line 22: for each one, call <code>odometry_callback</code>.',
+      2:'<span class="tg">2</span>Line 26: publish on <code class="tp">cmd_vel</code>, which keeps the 10 newest messages if the node falls behind. <code>publish_command</code> sends each command through it.',
       3:'<span class="tg">3</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
     reserve(say, [SAY[1], SAY[2], SAY[3]]);
     var tags = [].slice.call(g.querySelectorAll("button.grt"));
@@ -2690,65 +2549,6 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 })();
 
 
-/* ---------- slide "PID controller" (fb-pid): the loop step by step (user, 2026-11-22: "follow the arrows like electricity running
-   through that box where you highlight what is happening. Create left and right arrows at the bottom to do step by step. When
-   the slide loads, run the animation once"). Each step sends a pulse along its wires and lights the blocks it reaches; the slide
-   opens plain; the arrows step through the eight steps, and a click after step 8 runs the whole loop once (2026-11-23). ---------- */
-(function(){
-  var sv = $id("pl-svg"); if (!sv || !sv.isConnected) return;
-  var sp = $id("pl-spark"), say = $id("pl-say"), NS = "http://www.w3.org/2000/svg";
-  var STEPS = [
-    {w:["M20,130 H168"], on:["pl-s1"], t:"1. The target enters the first \\(\\Sigma\\)."},
-    {w:["M230,130 H318"], on:["pl-pid"], t:"2. The first \\(\\Sigma\\) subtracts the measured output: the difference is the error \\(e\\)."},
-    {w:["M320,130 H338 V84 H364", "M320,130 H364", "M338,130 V176 H364"], on:["pl-p", "pl-i", "pl-d"], t:"3. The error feeds three terms: P, I and D."},
-    {w:["M540,84 H590 V112", "M540,130 H572", "M540,176 H590 V148"], on:["pl-s2"], t:"4. The second \\(\\Sigma\\) adds the three terms: the control signal \\(u\\)."},
-    {w:["M608,130 H778"], on:["pl-plant"], t:"5. The control signal \\(u\\) drives the plant."},
-    {w:["M940,130 H1130"], on:[], t:"6. The plant's output changes: the heading (or the distance driven)."},
-    {w:["M1060,130 V235 H720"], on:["pl-fbk"], t:"7. The feedback measures the output."},
-    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output, and the loop starts again."}];
-  /* the captions' math set by KaTeX once (user, 2026-11-22: "use math mode everywhere ... the sigma is not correct") */
-  STEPS.forEach(function(st){ var d = document.createElement("span"); d.textContent = st.t; mathIn(d); st.h = d.innerHTML; });
-  var k = -1, timer = null, anims = [];
-  var fades = [];
-  function clear(){ fades.forEach(clearTimeout); fades = []; anims.forEach(function(a){ try { a.cancel(); } catch (e) {} }); anims = []; sp.textContent = "";
-    [].forEach.call(sv.querySelectorAll(".on"), function(el){ el.classList.remove("on"); }); }
-  /* show step i; keep: add to what is lit (the run in one go) instead of clearing first; fade: once the pulse has passed, its
-     wires and blocks fade away (user, 2026-11-22: "the electricity does not stay after passing through something, it should
-     fade away"). Returns how long its pulse takes. */
-  function show(i, animate, keep, fade){ if (!keep) clear(); k = i;
-    if (i < 0){ say.textContent = "Step through the loop with the arrows."; return 0; }
-    var st = STEPS[i], dur = 0;
-    st.w.forEach(function(d){ var pth = document.createElementNS(NS, "path"); pth.setAttribute("d", d); pth.setAttribute("class", "spark"); sp.appendChild(pth);
-      if (animate && !reduce && pth.animate){ var L = pth.getTotalLength(), ms = Math.max(160, L * 1.1);   /* 1.1 ms per unit of wire (user, 2026-11-22: "make the electricity go faster", then "a bit slower": 1.6, then 0.8, now 1.1) */ dur = Math.max(dur, ms);
-        pth.style.strokeDasharray = L + " " + L;
-        anims.push(pth.animate([{strokeDashoffset:L}, {strokeDashoffset:0}], {duration:ms, easing:"linear", fill:"forwards"}));
-        if (fade) anims.push(pth.animate([{opacity:1}, {opacity:0}], {delay:ms, duration:450, easing:"ease-out", fill:"forwards"})); } });
-    st.on.forEach(function(id){ var el = $id(id); if (!el) return; el.classList.add("on");
-      if (fade) fades.push(setTimeout(function(){ el.classList.remove("on"); }, dur + 150)); });
-    say.innerHTML = "<span>" + st.h + "</span>"; return dur; }   /* one span: in the flex row, bare KaTeX spans lost their spaces */
-  function stop(){ if (timer){ clearTimeout(timer); timer = null; } }
-  /* the description's box flashes once, in the electricity's color, when an arrow changes the step (user, 2026-11-23: "put a
-     box around the description and make it flash once with the same color as the electricity thing") */
-  function flash(){ if (reduce || !say.animate) return; var c = getComputedStyle(sv).getPropertyValue("--nowedge").trim() || "#E8590C";
-    anims.push(say.animate([{borderColor:c, boxShadow:"0 0 0 2px " + c + ", 0 0 14px " + c}, {borderColor:c, boxShadow:"0 0 0 2px " + c + ", 0 0 14px " + c, offset:0.35}, {}], {duration:1100, easing:"ease-out"})); }   /* 1.1 s, "a bit slower" than 0.7 s (user, 2026-11-23) */
-  /* the run in one go (user, 2026-11-22: "run the electricity through that diagram in one go, do not pause ... When you are
-     done, restore the diagram (without highlights)"): each step's pulse starts as the last one ends, everything stays lit,
-     then the diagram goes back to plain */
-  function play(){ stop(); clear(); var i = 0;
-    (function next(){ var ms = show(i, true, true, true); i++;
-      timer = setTimeout(i < STEPS.length ? next : function(){ timer = setTimeout(function(){ timer = null; show(-1); }, 700); }, ms); })(); }
-  $id("pl-prev").onclick = function(e){ e.stopPropagation(); stop(); show(Math.max(0, k - 1), true); flash(); };
-  /* after step 8, one more click runs the pulse through the whole loop in one go (user, 2026-11-23: "remove the flash
-     (electricity) going through the whole diagram when the slide loads. Instead, add it to the last step of clicking the right
-     arrow (after step 8)") */
-  $id("pl-next").onclick = function(e){ e.stopPropagation(); stop();
-    if (k === STEPS.length - 1){ if (reduce) show(-1); else play(); return; }
-    show(Math.min(STEPS.length - 1, k + 1), true); flash(); };
-  show(-1);
-  onReset(sv, function(){ stop(); show(-1); });
-})();
-
-
 /* ---------- section 3: the parameter frames. Data: ../figures/data/par_*.txt, and the callback's own code ---------- */
 (function(){
   var $ = function(i){ return $id(i); };
@@ -2844,7 +2644,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
         else if (e[1] === "reached") out.push("t=" + (e[0] - T0).toFixed(1) + " s  heading 90 deg reached");
         else { out.push("t=" + (e[0] - T0).toFixed(1) + " s  error " + e[1] + " rad, command " + e[2] + " rad/s");
           ratio = (e[2] / e[1]).toFixed(3); why = "0.5 × " + e[1] + " = " + (0.5 * e[1]).toPrecision(3) + " rad/s" + (stored === "1.5" ? "; 1.5 × " + e[1] + " would be " + (1.5 * e[1]).toPrecision(3) + " rad/s" : ""); } }
-      var shown = out.slice(-8);
+      var shown = out.slice(-7);   /* seven lines: the note under the log needs the room */
       lines($("q47-log"), shown, function(k, l){ return l.charAt(0) === "$" || l === "Set parameter successful" || l.indexOf("Double value") === 0; });
       $("q47-p").textContent = stored; $("q47-m").textContent = "0.5"; $("q47-r").textContent = ratio; $("q47-w").textContent = why;
       $("q47-t").textContent = "line " + n + " of " + E.length; $("q47-back").disabled = n <= 3; $("q47-next").disabled = n >= E.length; }
@@ -2863,7 +2663,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       var v = V[i];
       cmdLines($("q49-cmd"), ["ros2 run l12_rosbot heading_controller_exe \\", "  --ros-args -p kp_angular:=" + v]);
       var o, n;
-      if (i === 0){ o = ["[...]: error 1.58335 rad, command 0.791676 rad/s"]; n = ["ok", "0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command."]; $("q49-s").textContent = "a double: measured"; }
+      if (i === 0){ o = ["[...]: error 1.58335 rad, command 0.791676 rad/s"]; n = ["ok", "0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command. The error is still 1.583 rad because the robot has not started to move yet."]; $("q49-s").textContent = "a double: measured"; }
       else if (i === 1){ o = ["(not run)"]; n = ["ok", "Not run. A double, so the node would start: 1.0 × 1.583 = 1.583 rad/s, over the 1.0 rad/s limit, so the node's clamp sends 1.0 rad/s (1.583 rad is the 0.5 run's first error)."]; $("q49-s").textContent = "a double: computed"; }
       else { o = ["terminate called after throwing an instance of 'rclcpp::exceptions::InvalidParameterTypeException'",
         "  what():  parameter 'kp_angular' has invalid type: Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed.", "[ros2run]: Aborted", "exit code: 250"];
@@ -2938,7 +2738,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   var KP = "kp_angular", MX = "max_angular_rps", TG = "target_headings_deg";
   function parse(s){ s = s.trim(); if (/^[+-]?\d+$/.test(s)) return {type:"integer", v:+s}; if (/^[+-]?(\d+\.\d*|\.\d+)$/.test(s)) return {type:"double", v:parseFloat(s)}; return null; }
   function judge(name, p){   /* the answer of ros2 param set, and the code that decided it */
-    if (name === TG) return {ok:false, msg:"target_headings_deg is read once, at start", by:"callback, lines 76 to 80", hl:null};
+    if (name === TG) return {ok:false, msg:"target_headings_deg is read once, at start", by:"callback, its first check", hl:null};
     if (p.type === "integer") return {ok:false, msg:"Wrong parameter type, parameter {" + name + "} is of type {double}, setting it to {integer} is not allowed.", by:"ROS 2's type check, before the callback", hl:null};
     if (name === KP && p.v < 0) return {ok:false, msg:"kp_angular must not be negative", by:"callback, lines 82 to 86", hl:[82, 86]};
     if (name === MX && (p.v <= 0 || p.v > 3.14)) return {ok:false, msg:"max_angular_rps must be more than 0 and at most 3.14 rad/s", by:"callback, lines 87 to 95", hl:[87, 95]};
@@ -2981,21 +2781,6 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     onShow("q57-svg", function(first){ if (first) anim("q57", draw, 900); });
     vin.value = "-1.0"; sl.value = -1; out();
     onReset(sv, function(){ tok.q57 = (tok.q57 || 0) + 1; vin.value = "-1.0"; sl.value = -1; out(); });   /* after the choice buttons: the first value */
-  })();
-
-  /* --- slide 56 (2 of 2): follow one accepted value through lines 97 to 114 --- */
-  (function(){
-    var name = KP, defs = [KP, MX, "yaw_tolerance_rad"], vin = $("q58-in"), dflt = ["1.5", "2.0", "0.05"]; key("q58-in");
-    function out(){
-      var pv = parse(vin.value), c = $("q58-c"), m = $("q58-m"), log = $("q58-log");
-      if (!pv){ c.textContent = "type a number"; m.textContent = ""; lines(log, [""]); return; }
-      var r = name === "yaw_tolerance_rad" && pv.type === "double" ? {ok:true} : judge(name, pv);
-      [0, 1, 2].forEach(function(i){ $("q58-c" + i).style.display = defs[i] === name ? "" : "none"; });
-      c.textContent = r.ok ? "accepted" : "refused: " + (r.msg.length > 40 ? r.msg.slice(0, 37) + "..." : r.msg);
-      m.textContent = r.ok ? name + "_ = " + vin.value.trim() : "unchanged";
-      lines(log, r.ok ? ["[...]: new value: " + name + " = " + pv.v.toFixed(6)] : ["(nothing is stored or logged)"]); }
-    pick(["q58-p0", "q58-p1", "q58-p2"], function(i){ name = defs[i]; vin.value = dflt[i]; out(); }, 0);
-    vin.addEventListener("input", out);
   })();
 
   /* --- slide 57 (2 of 2): replay par_callback_final.txt: t in s from the first log line; [t, error, command] or [t, "reached", deg] --- */

@@ -77,8 +77,7 @@ WIDGETS = [
      "Pick a run to read the time of each of its 90 degree turns."),
     ("validator", ["q57-svg"], "The callback: try a value", "The Callback, Part 1: Refuse a Bad Value",
      "Pick a parameter and a value to see what the callback answers."),
-    ("store", ["q58-in"], "The callback: follow one value", "The Callback, Part 2: Store the New Values",
-     "Pick a parameter and a value to follow it through the callback."),
+    # "store" (the callback, part 2: follow one value) left the deck (2026-11-24), so its panel left the page too
     ("gain-change", ["q59-svg"], "Change a gain while the ROSbot turns", "Change a Gain While the ROSbot Turns",
      "Replay the measured run to see the command change when the gain changes."),
     # section 4 (namespaces and remapping) left the deck for the Namespaces and Remapping reading (2026-11-23); its four
@@ -556,7 +555,7 @@ def main():
 AGAIN = {"error": "tc-svg", "law": "pc-svg"}
 
 WORDING = [
-    ("launch-args", ", the same form as <code>with_dispatcher:=false</code> last class. All optional;", ". All optional;"),
+    ("launch-args", ", like any launch argument. Click or type to build the command.", ". Click or type to build the command."),
     ("use-sim-time", '(<span class="go" data-go="p30">slide N</span>)', "(see Simulation Time above)"),
 ]
 

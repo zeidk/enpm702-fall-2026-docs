@@ -2,14 +2,15 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="launch-args">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>Build the launch command</div>
 <div class="l12w-in">
-<p class="goal">Set on the command line as <code>name:=value</code>. All optional; click a value or type a number to build the command. <span class="try">try it</span> <button id="la-reset" style="font-size:max(var(--fmin), calc(20 * var(--u)));padding:2px calc(12 * var(--u));margin-left:calc(8 * var(--u));vertical-align:4px">Defaults</button></p>
+<p class="goal">Set as <code>name:=value</code>. Click or type to build the command. <span class="try">try it</span> <button id="la-reset" style="font-size:max(var(--fmin), calc(20 * var(--u)));padding:2px calc(12 * var(--u));margin-left:calc(8 * var(--u));vertical-align:4px">Defaults</button></p>
   <table class="t" id="la-t">
-    <tr><th style="width:18%">Argument</th><th style="width:47%">What it does</th><th>Pick</th></tr>
+    <tr><th style="width:19%">Argument</th><th style="width:43%">What it does</th><th>Pick</th></tr>
     <tr><td><code>gui</code></td><td>Default <code>true</code>; <code>false</code> runs Gazebo without a window, for a slow computer.</td><td data-arg="gui" data-vals="true,false"></td></tr>
     <tr><td><code>world</code></td><td>Default <code>patrol</code>; also <code>patrol_doors_swapped</code> and <code>empty</code>.</td><td data-arg="world" data-vals="patrol,patrol_doors_swapped,empty"></td></tr>
     <tr><td><code>rviz</code></td><td>Default <code>false</code>; <code>true</code> also opens RViz.</td><td data-arg="rviz" data-vals="false,true"></td></tr>
+    <tr><td><code>logical_camera</code></td><td>Default <code>true</code>; <code>false</code> leaves out the logical camera.</td><td data-arg="logical_camera" data-vals="true,false"></td></tr>
     <tr><td><code>x</code>, <code>y</code>, <code>yaw</code></td><td>Default <code>0.0</code>; the robot's start pose, in meters and radians.</td><td class="la-pose"><label>x <input type="number" step="0.1" id="la-x" placeholder="0.0" aria-label="start x in meters"></label><label>y <input type="number" step="0.1" id="la-y" placeholder="0.0" aria-label="start y in meters"></label><label>yaw <input type="number" step="0.1" id="la-yaw" placeholder="0.0" aria-label="start yaw in radians"></label></td></tr>
   </table>
-<pre class="code" data-lang="bash" id="la-cmd" style="min-height:calc(3 * 1.32em + calc(20 * var(--u)))">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
+<pre class="code" data-lang="bash" id="la-cmd" style="min-height:calc(3 * 1.32em + calc(16 * var(--u)))">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
 </div>
 </div>

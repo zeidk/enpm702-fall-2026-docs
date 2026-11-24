@@ -16,7 +16,7 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      ``-p``, a YAML file and a launch file, a parameter callback), namespaces
      and remapping. Try it panels in the lecture page, and More detail boxes
      for the parts the slides do not show.
-   - **Lecture 12**: the lecture opens with Pose and Orientation: a pose,
+   - **Lecture 12**: the lecture opens with Pose: a pose,
      roll, pitch and yaw, and the quaternion.
    - **Lecture 12**: Setting a Value the Node Already Read now comes right
      after the React to a Change introduction, and says why the node needs a

@@ -7,8 +7,9 @@
       <div class="row" style="margin:0 0 2px"><span class="lbl" style="min-width:calc(60 * var(--u))">gain</span><span id="pc-kp"></span><span class="try">try it</span></div>
       <div class="row" style="margin:0"><span class="lbl" style="min-width:calc(60 * var(--u))">error</span><input type="range" id="pc-e" min="-3.1415" max="3.1415" step="0.0001" value="1.569" style="width:calc(240 * var(--u))"><span class="small">rad</span></div>
       <ul class="pl" id="pc-out" style="margin-top:calc(6 * var(--u))"></ul>
-      <table class="t tight" id="pc-rows" style="margin-top:calc(6 * var(--u))">
-        <tr><th>Click a row</th><th>Error</th><th>1.5 × error</th><th>Sent</th></tr>
+      <p class="small" style="margin:calc(6 * var(--u)) 0 0">The measured run at gain 1.5, in Gazebo: click a row.</p>
+      <table class="t tight" id="pc-rows" style="margin-top:2px">
+        <tr><th>When</th><th>Error</th><th style="white-space:nowrap">1.5 × error</th><th>Sent</th></tr>
         <tr data-e="1.569"><td>At the start</td><td>1.569</td><td>2.35</td><td>1.0</td></tr>
         <tr data-e="0.5848"><td>Later</td><td>0.5848</td><td>0.877</td><td>0.877</td></tr>
         <tr data-e="0.092"><td>Near the end</td><td>0.092</td><td>0.138</td><td>0.138</td></tr>
@@ -19,12 +20,12 @@
       <!-- the three gains compared (user, 2026-11-23: "remove the text below the figure. I want you to say something on 0.5 vs
            1.5 vs 4.0"); turn times from ../figures/data/par_gains.txt: the time between two "reached" lines, 3 turns each -->
       <table class="t tight" id="pc-gains" style="margin-top:calc(6 * var(--u))">
-        <tr><th>Gain</th><th>Limit starts at</th><th>90° turn</th></tr>
+        <tr><th style="width:11%">Gain</th><th style="width:60%">Limited when error is over</th><th>90° turn</th></tr>
         <tr data-k="0.5"><td>0.5</td><td>1.0 / 0.5 = 2.0 rad</td><td>6.4 s</td></tr>
         <tr data-k="1.5"><td>1.5</td><td>1.0 / 1.5 = 0.67 rad</td><td>2.7 s</td></tr>
         <tr data-k="4"><td>4.0</td><td>1.0 / 4.0 = 0.25 rad</td><td>2.7 s</td></tr>
       </table>
-      <p style="margin:4px 0 0">90° turns in Gazebo. Over 1.5, the limit sets most of the turn, so 4.0 is no faster.</p>
+      <p style="margin:4px 0 0">At gain 1.5, 0.90 of the 1.57 rad turn (1.57 − 0.67) is at the limit; a larger gain changes only the rest.</p>
     </div>
   </div>
 <div class="row" style="margin:6px 0 0"><button type="button" data-again="pc-svg">Draw again</button></div>

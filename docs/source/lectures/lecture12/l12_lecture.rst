@@ -86,12 +86,12 @@ The code grows in six stages, one commit each. The lecture quotes the stage a li
      - ``fe5d602``
      - The two controllers time their loop with ``create_timer`` instead of ``create_wall_timer``, so they follow the node clock and stop while Gazebo is paused. This is the final code of the package.
 
-To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository, except one line: every listing shows the timer of stage 6, ``create_timer``, where stages 1 to 5 have ``create_wall_timer``.
+To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository, except two lines: every listing shows the timer of stage 6, ``create_timer``, where stages 1 to 5 have ``create_wall_timer``, and every listing that shows ``target_yaw`` declares it ``constexpr``, where the repository has ``const double target_yaw``.
 
-Pose and Orientation
---------------------
+Pose
+----
 
-The previous lecture set up launch files, executors and custom interfaces for the robotaxi. This lecture moves to a robot that reports where it is as a **pose**: a position and an orientation. This section explains both, and the two ways ROS writes an orientation: three angles, or a quaternion.
+A **pose** says where a robot is and which way it faces: a **position** and an **orientation**, measured in a coordinate frame. The position is three numbers, x, y and z, in meters. The orientation says how the robot is turned. ROS writes it in two ways, which this section explains: three angles (roll, pitch and yaw) or a quaternion (four numbers). The controller later in this class needs one part of the orientation, the yaw.
 
 Pose: Position and Orientation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -101,14 +101,13 @@ Pose: Position and Orientation
 
    The position and the orientation of a body, measured in a coordinate frame.
 
-- Every ROS frame is right-handed, with x forward, y left and z up (`REP 103 <https://www.ros.org/reps/rep-0103.html>`__).
-- The ROSbot's frame is ``base_link``. On a floor, its pose is three numbers: x, y and the heading, the **yaw**.
-- In 3D, a pose takes six: x, y, z and three angles.
+- **Position**: where the body is, three numbers, x, y and z, in meters along the frame's axes. In a robot's body frame (``base_link``), x is forward, y left and z up (`REP 103 <https://www.ros.org/reps/rep-0103.html>`__).
+- **Orientation**: how the body is turned. An orientation is given by rotations about the axes: **roll** about x, **pitch** about y and **yaw** about z.
 
 **The right-hand rule.** REP 103: "All systems are right handed".
 
-#. Axes: point the fingers of your right hand along x, then bend them toward y. Your thumb points along z.
-#. Rotations: point your thumb along an axis and close your hand. Your fingers bend the way a positive turn goes.
+#. Axes: the axes are right-handed. Point the fingers of your right hand along x, bend them toward y, and your thumb points along z.
+#. Rotations: a positive rotation follows the right-hand rule. Point your thumb along the axis, and your bent fingers show the turn.
 #. With z up, a positive yaw turns counterclockwise, seen from above. So a positive ``angular.z`` turns the ROSbot left. REP 103: "the yaw component of orientation increases as the child frame rotates counter-clockwise".
 
 **Roll, pitch and yaw.** Three angles give an orientation, each a turn about one axis of the frame (REP 103). Three turns in a set order like these are called **Euler angles**:
@@ -130,9 +129,9 @@ Pose: Position and Orientation
      - z, up
      - its heading: changes each time it turns
 
-The course simulation's ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and pitch stay 0, and only the yaw changes. Angles are in radians, and the yaw is kept between :math:`-\pi` and :math:`\pi`.
+On the course's flat floor, the ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and pitch stay 0, and only the yaw changes. Angles are in radians, and the yaw is kept between :math:`-\pi` and :math:`\pi`.
 
-The same three turns in another order give another orientation. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". So a library always says which order it uses.
+The same three turns in another order give another orientation. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". 24 orders and axis choices are in use. So a library always says which order it uses.
 
 **The quaternion: four numbers for one turn.** Any orientation is one turn by an angle :math:`\theta` about one axis :math:`(a_x, a_y, a_z)` of length 1. ROS messages store it as a quaternion, four numbers x, y, z, w.
 
@@ -146,17 +145,24 @@ What it is:
 - No turn, :math:`\theta = 0`: (0, 0, 0, 1), the defaults of ``geometry_msgs/msg/Quaternion``.
 - 90° about z: half of 90° is 45°, and sin 45° = cos 45° = 0.707, so (0, 0, 0.707, 0.707).
 
+.. dropdown:: More detail: quaternions and complex numbers
+   :class-container: more-detail
+   :icon: info
+
+   - A quaternion extends the complex numbers: :math:`q = w + x\,i + y\,j + z\,k`, with :math:`i^2 = j^2 = k^2 = ijk = -1`. ROS lists w last.
+   - A complex number of length 1 turns a point in the plane; a quaternion of length 1 turns a point in 3D.
+
 Why ROS uses it:
 
 #. Compact: four numbers; a rotation matrix needs nine. REP 103: "Compact representation".
 #. No singularities: at a pitch of ±90°, roll and yaw turn about the same axis, so one orientation has many sets of angles (gimbal lock). REP 103: "No singularities".
 #. No order to agree on: in another order, the same three angles give another orientation. A quaternion is one turn.
 
-**A turn by an angle about an axis.** Four steps turn an axis and an angle into the quaternion. Here: 90° about (0.707, 0.707, 0), an axis in the floor plane, halfway between x and y.
+**A turn by an angle about an axis.** Four steps turn an axis and an angle into the quaternion. Here: 90° about (0.707, 0.707, 0), an axis in the x-y plane, halfway between x and y.
 
 .. figure:: /_static/images/l12/quat_axis_turn.png
    :width: 70%
-   :alt: An airliner in 3D, its nose along x, its wings along y and its fin up z, turned 90 degrees about a purple axis that lies in the floor plane halfway between x and y; a faint copy of the airliner stays at the start pose, and the airliner's own x, y and z arrows show where its nose, left wing and fin now point.
+   :alt: An airliner in 3D, its nose along x, its wings along y and its fin up z, turned 90 degrees about a purple axis that lies in the x-y plane halfway between x and y; a faint copy of the airliner stays at the start pose, and the airliner's own x, y and z arrows show where its nose, left wing and fin now point.
 
    Faint: the airplane before the turn. Purple: the axis.
 
@@ -273,6 +279,16 @@ With that world running, Gazebo has its own list of topics, and ROS has another:
 
    The six models of ``shapes.sdf``, from left to right: a capsule, a cylinder, a box, a sphere, an ellipsoid and a cone. Saved without a window, from a camera added to a copy of the world; with ``gz sim shapes.sdf``, the window shows the same scene.
 
+.. dropdown:: More detail: more of the Gazebo window
+   :class-container: more-detail
+   :icon: info
+
+   Three more things the window does, after you have run, inspected and moved a model (``gz sim shapes.sdf``):
+
+   - **Plugins.** The menu at the top right lists the plugins, the panels you can add. Its search field finds one by name: type ``teleop`` and only Teleop is left. Click it and the Teleop panel docks at the bottom right. It publishes speed commands; on the setup page you drive the ROSbot with it.
+   - **Pause and Step.** Pause stops the simulation: sim time and the iteration count stay where they were (in the recorded tour, 2:08.977 and 128977). Step runs one iteration while paused: 128977 becomes 128978, and sim time moves 1 ms, to 2:08.978.
+   - **Reset.** Reset asks first. It puts every model back where the world file placed it, and the clocks and iterations restart at 0.
+
 .. dropdown:: More detail: the bridge between Gazebo and ROS
    :class-container: sd-border-secondary
 
@@ -308,7 +324,7 @@ The ROSbot is a small research robot with four wheels. The two wheels on each si
    * - Lidar
      - 3000 beams over a full circle, 0.05 m to 30 m
    * - Logical camera
-     - Lists the objects in front of the robot, with the pose of each one
+     - Lists the objects it sees, with their names and positions
    * - IMU
      - Measures the robot's orientation, turn rate and acceleration
    * - Odometry
@@ -363,7 +379,7 @@ Your nodes publish commands on ``/cmd_vel`` and read the robot's pose from ``/od
 .. dropdown:: More detail: where the odometry comes from
    :class-container: sd-border-secondary
 
-   - **Odometry** estimates the robot's pose by adding up its own motion since the start. It needs no map and no outside landmark, so its error grows as the robot drives.
+   - **Odometry** estimates the robot's pose by adding up its own motion since the start. It adds up small steps, and each step's error stays in the total, so the error grows as the robot drives. It needs no map.
    - ``/odometry/wheels`` comes from the wheels alone: the drive controller turns the wheel rotations into the robot's motion.
    - ``/odometry/filtered`` comes from ``ekf``, which fuses the wheels with the IMU. It takes the heading (yaw) from the IMU, the forward speed from the wheels, and the turn rate from both. It publishes about 20 times a second (19.8 Hz in the course simulation).
 
@@ -435,7 +451,7 @@ The ROSbot turning on the spot at :math:`\omega` = 1.0 rad/s. Its file sets :mat
 The Patrol World
 """"""""""""""""
 
-The patrol world is one floor, 20 m by 10 m, with walls 1 m high. The robot starts at the origin and faces east, along +x.
+The patrol world is a hall and rooms, 20 m by 10 m inside walls 1 m high. The robot starts at the origin and faces east, along +x.
 
 .. figure:: /_static/images/rosbot/patrol_world.png
    :alt: Top view of the patrol world from Gazebo, with x in meters along the bottom and y in meters along the left. A long hall runs along the bottom with the small dark robot at the origin, tag 5, and four blue discs, tags 1 to 4. Two rooms lie above the hall, joined to it by two doorways in the wall at y equals 2: the left doorway, tag 11, is open, and the right one, tag 10, has a red panel. A purple disc, tag 9, a small orange cylinder, tag 6, a green cylinder with a round head, tag 8, and a brown box, tag 7, lie in the hall.
@@ -499,7 +515,7 @@ One command starts Gazebo, the patrol world and the ROSbot:
 Launch Arguments
 """"""""""""""""
 
-The launch file takes launch arguments, set on the command line as ``name:=value``, the same form as ``with_dispatcher:=false`` in the previous lecture. The main ones, all optional:
+The launch file takes launch arguments, set on the command line as ``name:=value``, the same ``name:=value`` form as any launch argument. The main ones, all optional:
 
 .. list-table::
    :header-rows: 1
@@ -517,6 +533,9 @@ The launch file takes launch arguments, set on the command line as ``name:=value
    * - ``rviz``
      - ``false``
      - ``true`` also opens RViz.
+   * - ``logical_camera``
+     - ``true``
+     - ``false`` leaves out the front-facing logical camera.
    * - ``x``, ``y``, ``yaw``
      - ``0.0``
      - The robot's start pose, in meters and radians.
@@ -584,7 +603,7 @@ Of the 31 topics, your nodes use these:
      - The lidar's ranges.
    * - ``/logical_camera``
      - ``ros_gz_interfaces/msg/LogicalCameraImage``
-     - The objects in front of the robot.
+     - The objects it sees, with their names and positions.
    * - ``/tf``, ``/tf_static``
      - ``tf2_msgs/msg/TFMessage``
      - The robot's frames, next class.
@@ -691,7 +710,7 @@ Gazebo counts its own time from the moment the simulation starts, and publishes 
 
    gz topic -e -t /world/patrol/stats -n 1 | grep real_time_factor
 
-The command gave ``0.99971308234536693`` in one sample: the simulation ran at 99.97 % of the speed of the computer's clock.
+The command gave ``0.9997`` (one sample): the simulation ran at 99.97 % of the speed of the computer's clock.
 
 The `ROS 2 design article on time <https://design.ros2.org/articles/clock_and_time.html>`__ names the two clocks a node can read:
 
@@ -747,7 +766,7 @@ The two timers side by side. Both callbacks read ``now()``, the node clock; what
 
 ``rcl/time.h``: ROS time "will report the latest value reported by a ROS time source, or if a ROS time source is not active it reports the same as ``RCL_SYSTEM_TIME``"; the steady clock "reports a value from a monotonically increasing clock". So a control loop on ``create_timer`` pauses with Gazebo, while on ``create_wall_timer`` its callback keeps running while the world is paused.
 
-**Use** ``create_timer``. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use ``create_timer``, every 50 ms of the node clock. ``use_sim_time`` is off with a plain ``ros2 run``: the loop follows the computer's clock. It is on with ``controllers.yaml`` or a launch file: the loop follows ``/clock`` and stops while Gazebo is paused.
+**Use** ``create_timer``. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. This lecture's controllers use ``create_timer``, every 50 ms of the node clock. ``use_sim_time`` is off with a plain ``ros2 run``: the loop follows the computer's clock. It is on with ``controllers.yaml`` or a launch file: the loop follows ``/clock`` and stops while Gazebo is paused.
 
 Run It: use_sim_time Off, Then On
 """""""""""""""""""""""""""""""""
@@ -914,46 +933,44 @@ They differ in how they turn the error into a command:
 
 MPC is model predictive control. P, PI and PID are the same family: PID with some gains set to 0.
 
-PID Controller: the Error Now, Its Sum, and Its Trend
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. dropdown:: More detail: the PID controller
+   :class-container: more-detail
+   :icon: info
 
-.. admonition:: Definition
-   :class: definition
+   .. admonition:: Definition
+      :class: definition
 
-   A **PID controller** is a feedback controller whose control signal adds three terms: one in proportion to the error now (**P**), one to the error summed over time (**I**), and one to how fast the error changes (**D**).
+      A **PID controller** is a feedback controller whose control signal adds three terms: one in proportion to the error now (**P**), one to the error summed over time (**I**), and one to how fast the error changes (**D**).
 
-.. math::
+   .. math::
 
-   u = K_p\, e + K_i \sum e\,\Delta t + K_d\, \frac{e_k - e_{k-1}}{\Delta t}
+      u = K_p\, e + K_i \sum e\,\Delta t + K_d\, \frac{e_k - e_{k-1}}{\Delta t}
 
-:math:`K_p`, :math:`K_i`, :math:`K_d` are the gains you choose. :math:`\Delta t` is the time between two commands (0.05 s here). :math:`e_k` and :math:`e_{k-1}` are the error now and one step before.
+   :math:`K_p`, :math:`K_i`, :math:`K_d` are the gains you choose. :math:`\Delta t` is the time between two commands (0.05 s here). :math:`e_k` and :math:`e_{k-1}` are the error now and one step before.
 
-PID Controller: What Each Term Does for a Turn
-""""""""""""""""""""""""""""""""""""""""""""""
+   **What each term does for a turn.** Each term reads the error in its own way. For a turn to a heading:
 
-Each term reads the error in its own way. For a turn to a heading:
+   .. list-table::
+      :header-rows: 1
+      :widths: 10 30 60
+      :class: compact-table
 
-.. list-table::
-   :header-rows: 1
-   :widths: 10 30 60
-   :class: compact-table
+      * - Term
+        - Reacts to
+        - Its job
+      * - P
+        - the error now
+        - turn faster the farther the robot is from the target
+      * - I
+        - the error summed over time
+        - keep pushing when a small error stays, for example when friction stops the turn short
+      * - D
+        - how fast the error changes
+        - slow the turn early, so the robot does not overshoot
 
-   * - Term
-     - Reacts to
-     - Its job
-   * - P
-     - the error now
-     - turn faster the farther the robot is from the target
-   * - I
-     - the error summed over time
-     - keep pushing when a small error stays, for example when friction stops the turn short
-   * - D
-     - how fast the error changes
-     - slow the turn early, so the robot does not overshoot
+   This section's controller is P alone (:math:`K_i = K_d = 0`). It needs neither I nor D: in Step 4's run, it stopped 0.019 rad short of the target. The 0.019 rad left is inside the 0.02 rad tolerance, so I would add nothing, and there was no overshoot for D to slow.
 
-This section's controller is P alone (:math:`K_i = K_d = 0`). It needs neither I nor D: in Step 4's run, it stopped 0.019 rad short of the target, inside the 0.02 rad tolerance, so no error was left for I to remove and no overshoot for D to slow.
-
-A controller always has the P term: P, PI, PD or PID. D alone sends nothing while the error holds still, so the turn never starts. I alone starts at zero and keeps pushing after the error reaches zero, so the robot passes the target.
+   A controller always has the P term: P, PI, PD or PID. D alone sends nothing while the error holds still, so the turn never starts. I alone starts at zero and keeps pushing after the error reaches zero, so the robot passes the target.
 
 What a Controller Does
 """"""""""""""""""""""
@@ -1170,7 +1187,7 @@ Lines 11 to 23 of ``src/heading_controller_node.cpp``:
        has_odometry_ = true;
    }
 
-- Lines 13 to 16: the unnamed namespace keeps the four constants inside this file. Nothing changes them, so they become data members only in the parameters section.
+- Lines 13 to 16: the unnamed namespace keeps the four constants inside this file. Later, in the parameters section, they become data members, so you can change them without recompiling.
 - Line 21: the helper of the yaw section turns the quaternion into the yaw.
 
 Step 2: Write control_callback, the Error and the Stop
@@ -1456,7 +1473,7 @@ Each ``as_...()`` function throws an exception when the parameter has another ty
 Declare and Read
 ^^^^^^^^^^^^^^^^
 
-A node must declare a parameter before it uses it. You declare each one with a type and a default value, and then read its value. The listings of this subsection are from stage 2 (commit ``9434e00``), unless they say stage 4.
+A node must declare a parameter before it uses it. You declare each one with a default value, which sets its type, and then read its value. The listings of this subsection are from stage 2 (commit ``9434e00``), unless they say stage 4.
 
 Declare, Then Read
 """"""""""""""""""
@@ -1676,7 +1693,7 @@ Pick a node to see which values it gets from the file.
 use_sim_time for a Node That Runs with Gazebo
 """""""""""""""""""""""""""""""""""""""""""""
 
-Gazebo publishes its own time on ``/clock`` (:ref:`l12-simulation-time`). With ``use_sim_time`` true, a node's clock follows ``/clock`` instead of the computer's clock: ``now()``, and so the stamp of every ``TwistStamped``, gives the simulation's time.
+Gazebo publishes its own time on ``/clock`` (:ref:`l12-simulation-time`). With ``use_sim_time`` true, a node's clock follows ``/clock`` instead of the computer's clock: ``now()`` returns the simulation's time, so every ``TwistStamped`` stamp shows it too.
 
 Every node has ``use_sim_time``, and it is false unless you set it:
 
@@ -1974,11 +1991,6 @@ Lines 97 to 114 of the same file:
    }
    result.successful = true;
    return result;
-
-Pick a parameter and a value to follow it through the callback.
-
-.. raw:: html
-   :file: widgets/store.html
 
 
 
