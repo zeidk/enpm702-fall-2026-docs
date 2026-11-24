@@ -1571,9 +1571,10 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   nanosec: 988000000</pre>
 <pre class="code" data-lang="bash">gz topic -e -t /world/patrol/stats -n 1 \
   | grep real_time_factor</pre>
+<p style="margin:6px 0 4px">It might show, for example:</p>
+<pre class="code" data-lang="text">real_time_factor: 0.80</pre>
   <ul class="pl">
-    <li>The command gives the speed of one 4&nbsp;ms step: <code>0.9997</code> here, but 0.08 to 1.40 in a later run (209 messages).</li>
-    <li>Gazebo's window smooths it: about 80&nbsp;% in that run. In 21.83 real seconds, <code class="tp">/clock</code> advanced 17.03&nbsp;s (17.03 / 21.83 = 0.78).</li>
+    <li>In 1 real second, Gazebo simulates 0.80&nbsp;s. A drive of 10 simulated seconds takes 10 / 0.80 = 12.5 real seconds.</li>
   </ul>
 </div></div></section>
 
@@ -1603,9 +1604,9 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <table class="t tight">
     <tr><th style="width:22%"></th><th style="width:41%"><code>create_timer</code> (line 17)</th><th><code>create_wall_timer</code> (line 20)</th></tr>
     <tr><td>Its clock</td><td>the node clock: ROS time</td><td>the computer's steady clock</td></tr>
-    <tr><td><code class="pm">use_sim_time</code> off</td><td>ROS time is the computer's time: every 1&nbsp;s of it</td><td>every 1&nbsp;s of the computer's time</td></tr>
-    <tr><td><code class="pm">use_sim_time</code> on</td><td>ROS time is Gazebo's <code class="tp">/clock</code>: every 1&nbsp;s of simulated time, after the first <code class="tp">/clock</code></td><td>still every 1&nbsp;s of the computer's time</td></tr>
-    <tr><td>Gazebo paused</td><td>stops</td><td>keeps firing</td></tr>
+    <tr><td><code class="pm">use_sim_time</code> off</td><td>fires every 1&nbsp;s of the computer's time</td><td>fires every 1&nbsp;s of the computer's time</td></tr>
+    <tr><td><code class="pm">use_sim_time</code> on</td><td>fires every 1&nbsp;s of <code class="tp">/clock</code>, after its first message</td><td>still fires every 1&nbsp;s of the computer's time</td></tr>
+    <tr><td>on, Gazebo paused</td><td>stops</td><td>keeps firing, but <code>now()</code> stays the same</td></tr>
   </table>
   <div class="box concl"><span class="bt">Use <code>create_timer</code></span>Use <code>create_wall_timer</code> only for work that must run on the computer's clock even while the simulation is paused. This lecture's controllers use <code>create_timer</code>, every 50&nbsp;ms of the node clock. <code class="pm">use_sim_time</code> is off with a plain <code>ros2 run</code>: the loop follows the computer's clock. It is on with <code>controllers.yaml</code> or a launch file: the loop follows <code class="tp">/clock</code> and stops while Gazebo is paused.</div>
 </div></div></section>
@@ -5303,8 +5304,9 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       function(v){ sr.value = v === "roll" ? 45 : 0; sp.value = v === "pitch" ? 30 : 0; sy.value = v === "yaw" ? 90 : 0; upd(); }, "zero");
     /* with fewer than two angles set, every order gives the same orientation: the button sets all three */
     buttons(document.getElementById("eu-ord"), ["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"], function(v){ return v; }, function(v){ ord = v;
-      if (v !== "XYZ" && [sr, sp, sy].filter(function(s){ return +s.value !== 0; }).length < 2){ sr.value = 45; sp.value = 30; sy.value = 90; eb.set(null); }
-      upd(); }, "XYZ");
+      if (v !== "XYZ" && [sr, sp, sy].filter(function(s){ return +s.value !== 0; }).length < 2){ sr.value = 45; sp.value = 30; sy.value = 90; eb.set(null); upd();
+        var c = document.getElementById("eu-cmp"); c.textContent = "All three angles set. " + c.textContent.replace("In order XYZ, the same angles end", "In order XYZ:"); }
+      else upd(); }, "XYZ");
     upd();
     onReset(document.getElementById("eu-box"), function(){ sr.value = 0; sp.value = 0; sy.value = 0; upd(); E.home(); });
   }

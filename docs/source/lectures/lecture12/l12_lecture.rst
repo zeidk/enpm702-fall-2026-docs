@@ -710,8 +710,17 @@ Gazebo counts its own time from the moment the simulation starts, and publishes 
 
    gz topic -e -t /world/patrol/stats -n 1 | grep real_time_factor
 
-- The command gives the speed of one 4 ms step: ``0.9997`` here, but 0.08 to 1.40 in a later run (209 messages).
-- Gazebo's window smooths it: about 80 % in that run. In 21.83 real seconds, ``/clock`` advanced 17.03 s (17.03 / 21.83 = 0.78).
+It might show, for example:
+
+.. code-block:: text
+
+   real_time_factor: 0.80
+
+In 1 real second, Gazebo simulates 0.80 s. A drive of 10 simulated seconds takes 10 / 0.80 = 12.5 real seconds.
+
+.. dropdown:: More detail: the number in Gazebo's window
+
+   The command's number is the speed of one 4 ms step, so it changes from message to message: 0.08 to 1.40 in one run of 209 messages. Gazebo's window shows a smoothed value, about 80 % in that run. Over the whole run, ``/clock`` advanced 17.03 s in 21.83 real seconds (17.03 / 21.83 = 0.78).
 
 The `ROS 2 design article on time <https://design.ros2.org/articles/clock_and_time.html>`__ names the two clocks a node can read:
 
@@ -757,13 +766,13 @@ The two timers side by side. Both callbacks read ``now()``, the node clock; what
      - the computer's steady clock
    * - ``use_sim_time`` off
      - ROS time is the computer's time: every 1 s of it
-     - every 1 s of the computer's time
+     - fires every 1 s of the computer's time
    * - ``use_sim_time`` on
      - ROS time is Gazebo's ``/clock``: every 1 s of simulated time, after the first ``/clock``
-     - still every 1 s of the computer's time
-   * - Gazebo paused
+     - still fires every 1 s of the computer's time
+   * - on, Gazebo paused
      - stops
-     - keeps firing
+     - keeps firing, but ``now()`` stays the same
 
 ``rcl/time.h``: ROS time "will report the latest value reported by a ROS time source, or if a ROS time source is not active it reports the same as ``RCL_SYSTEM_TIME``"; the steady clock "reports a value from a monotonically increasing clock". So a control loop on ``create_timer`` pauses with Gazebo, while on ``create_wall_timer`` its callback keeps running while the world is paused.
 
