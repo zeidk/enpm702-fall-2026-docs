@@ -744,7 +744,7 @@ The two timers side by side. Both callbacks read ``now()``, the node clock; what
 
 ``rcl/time.h``: ROS time "will report the latest value reported by a ROS time source, or if a ROS time source is not active it reports the same as ``RCL_SYSTEM_TIME``"; the steady clock "reports a value from a monotonically increasing clock". So a control loop on ``create_timer`` pauses with Gazebo, while on ``create_wall_timer`` its callback keeps running while the world is paused.
 
-**Use** ``create_timer``. With ``use_sim_time`` off it fires like ``create_wall_timer``; on, it follows simulated time and pauses with Gazebo. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. The L12 controller uses ``create_wall_timer``, so its loop keeps running while Gazebo is paused.
+**Use** ``create_timer``. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use ``create_wall_timer``: their 50 ms loop runs on the computer's clock and keeps running while Gazebo is paused. ``use_sim_time`` is off with a plain ``ros2 run`` and on with ``controllers.yaml`` or a launch file; then ``now()``, which stamps each command, follows ``/clock``.
 
 Run It: use_sim_time Off, Then On
 """""""""""""""""""""""""""""""""
