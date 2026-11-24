@@ -532,9 +532,9 @@ tr[data-why]:hover td:first-child::before,tr[data-why]:focus td:first-child::bef
 .rowhint{font-size:20px;color:var(--muted);margin:2px 0 4px}
 #whypop{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.38)}
 #whypop.on{display:flex}
-#whypop .whycard{background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:12px;width:min(920px,92vw);height:auto;max-height:86vh;overflow:auto;
-  padding:22px 30px 24px;font-size:25px;line-height:1.45;box-shadow:0 14px 40px rgba(0,0,0,.3);position:relative}
-#whypop h3{margin:0 40px 10px 0;font-size:28px;color:var(--plan)}
+#whypop .whycard{background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:12px;width:min(1500px,92vw);height:auto;max-height:86vh;overflow:auto;
+  padding:30px 44px 34px;font-size:clamp(28px,2.4vw,48px);line-height:1.4;box-shadow:0 14px 40px rgba(0,0,0,.3);position:relative}
+#whypop h3{margin:0 40px 14px 0;font-size:clamp(32px,2.8vw,56px);color:var(--plan)}
 #whypop p{margin:6px 0}
 #whypop ol{margin:6px 0;padding-left:26px}
 #whypop .x{position:absolute;top:10px;right:14px;border:0;background:none;font-size:34px;line-height:1;color:var(--muted);cursor:pointer}
@@ -1132,6 +1132,9 @@ float64 w 1</template>
 
 </div></section>
 <section class="secblock s1" data-scene="sec-4" data-name="Simulation" tabindex="0"><div class="sechead"><span class="num">2</span><span>Simulation</span><span class="meta">25 slides</span></div><div class="grid" style="grid-template-columns:repeat(5,1280px)"><style>
+/* the dot popup on "Pause Gazebo": its caret points up at the dot */
+#pz-pop::before{content:"";position:absolute;left:calc(var(--car,50%) - 13px);top:-12px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:12px solid var(--s2)}
+#pz-pop{height:auto !important;min-height:0 !important}
 /* slide 6: the robot icon as a wireframe, so the lengths drawn over it show through */
 #mu-svg .mu-wire *{fill:none !important;stroke:var(--ink);stroke-width:2.5px;vector-effect:non-scaling-stroke}
 </style>
@@ -1289,8 +1292,8 @@ float64 w 1</template>
        models), rosbot_description/urdf/common/gazebo.urdf.xacro (IMU noise from the BNO055 data sheet), the deck's
        figures/data/rqt_topics.txt (/scan 9.7 Hz, /imu/data 77.09 Hz) and sensor_messages.txt (range_max 30.0) -->
   <div class="tile"><b>Physics</b><div class="why">Every 4&nbsp;ms of simulated time, Gazebo moves each body by the forces on it. The wheels turn at the speeds the controller sets, and their grip on the floor moves the robot. Gravity holds it down, and a wall stops it on contact.</div></div>
-  <div class="tile"><b>Sensors</b><div class="why">What each sensor would read in that world, with noise added: the lidar's ranges, out to 30&nbsp;m, about 10 times a second; the IMU's turn rates and accelerations, about 77 times a second on ROS; the camera's images. Bridge nodes and the <code>gz_ros2_control</code> plugin publish them on ROS topics.</div></div>
-  <div class="tile"><b>The world</b><div class="why">Everything around the robot, read from a world file (SDF), each model with its shape and pose. The patrol world holds 19: the floor, 8 walls, a door, a crate, a fire extinguisher, a person, a spill, 4 checkpoint pads and a fixed camera.</div></div>
+  <div class="tile"><b>Sensors</b><div class="why">What each sensor would read in that world, with noise added: the lidar's ranges, the IMU's turn rates and accelerations, the camera's images. They reach your nodes as ROS topics.</div></div>
+  <div class="tile"><b>The world</b><div class="why">Everything around the robot, read from a world file (SDF): each model with its shape and pose.</div></div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="p16" data-name="Slide 23 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Gazebo</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 23 of 110. Go to a slide">Slide 23 / 110</span></div>
@@ -1342,19 +1345,18 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   </div>
 </div></div></section>
 
-<!-- the bridges in two slides (user, 2026-11-23: "merge slides 25-29 (Gazebo bridge) into 2 slides. No need for great details");
-     the five slides they replace are in git history (the bridge file format, the click-through panels, the controllers' table) -->
+<!-- the bridge, drawn (user, 2026-11-24: "slide 25: Can you describe this through an interactive diagram?"): the three directions of
+     ros_gz_bridge (its own help: BIDIRECTIONAL, GZ_TO_ROS, ROS_TO_GZ; /chatter with std_msgs/String and gz.msgs.StringMsg is its
+     example, /clock is the course's own entry) -->
 <section class="plate frame s1" data-scene="p17-2" data-name="Slide 25 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Gazebo</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 25 of 110. Go to a slide">Slide 25 / 110</span></div>
   <h2>Gazebo and ROS: the bridge between them</h2><div class="fit"><div class="fitin">
-  <ul class="pl">
-    <li>Gazebo and ROS use different message types for the same thing.</li>
-    <li>A <b>bridge</b> node converts each message to the other side's type and publishes it there.</li>
-    <li>Its file lists each topic to copy, with a direction: <code>GZ_TO_ROS</code>, <code>ROS_TO_GZ</code> or both ways. The clock:</li>
-  </ul>
-<pre class="code" data-lang="yaml">- topic_name: /clock
-  ros_type_name: rosgraph_msgs/msg/Clock
-  gz_type_name: gz.msgs.Clock
-  direction: GZ_TO_ROS</pre>
+  <p class="goal" style="margin-bottom:6px">Gazebo and ROS use different message types for the same thing. A <b>bridge</b> node converts each message to the other side's type and publishes it there. Its file gives the direction:</p>
+  <div class="row" style="margin:0 0 4px"><span id="br-btns"></span><button id="br-send">Send a message</button><span class="try">try it</span></div>
+  <svg id="br-svg" class="plot" viewBox="0 0 1160 190" width="1160" height="190" role="img" aria-label="Three boxes in a row. Left, Gazebo, with a topic and its Gazebo message type. Middle, the bridge node, which converts the message. Right, ROS 2, with the same topic and its ROS message type. Arrows between the boxes show the direction: from Gazebo to ROS, from ROS to Gazebo, or both ways."></svg>
+  <div class="two" style="grid-template-columns:1fr 1.1fr;gap:20px;align-items:start;margin-top:8px">
+<pre class="code nolive" data-lang="yaml" id="br-yaml"></pre>
+    <div class="box nolive" id="br-say" style="margin:0" aria-live="polite"></div>
+  </div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-14" data-name="Slide 26 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Gazebo</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 26 of 110. Go to a slide">Slide 26 / 110</span></div>
@@ -1366,7 +1368,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
     <tr><td><code class="nd">rosbot_gz_bridge</code></td><td>the velocity commands of Gazebo's Teleop panel, onto <code class="tp">/cmd_vel</code></td></tr>
     <tr><td><code class="nd">LDR02_gz_bridge</code></td><td>the lidar, <code class="tp">/scan</code></td></tr>
     <tr><td><code class="nd">oak_CAM11_gz_bridge</code></td><td>the robot's camera, the <code class="tp">/oak</code> topics</td></tr>
-    <tr><td><code class="nd">patrol_cam_bridge</code></td><td>the fixed camera and the logical camera</td></tr>
+    <tr><td><code class="nd">patrol_cam_bridge</code></td><td>the <b>fixed camera</b>, high above the building: pictures on <code class="tp">/patrol_cam/image</code>; the <b>logical camera</b> on the ROSbot, which makes no picture: the models 0.3 to 3.5&nbsp;m ahead, by name and pose, on <code class="tp">/logical_camera</code></td></tr>
   </table>
   <div class="box concl" style="margin-top:10px"><span class="bt">Your command takes no bridge</span>The ROSbot's controllers run inside Gazebo (the <code>gz_ros2_control</code> plugin) and read <code class="tp">/cmd_vel</code> from ROS directly. The IMU and the wheels reach ROS the same way.</div>
 </div></div></section>
@@ -1504,13 +1506,13 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <p class="goal">Set as <code>name:=value</code>, like any launch argument. Click or type to build the command. <span class="try">try it</span> <button id="la-reset" style="font-size:20px;padding:2px 12px;margin-left:8px;vertical-align:4px">Defaults</button></p>
   <table class="t" id="la-t">
     <tr><th style="width:19%">Argument</th><th style="width:43%">What it does</th><th>Pick</th></tr>
-    <tr><td><code>gui</code></td><td>Default <code>true</code>; <code>false</code> runs Gazebo without a window, for a slow computer.</td><td data-arg="gui" data-vals="true,false"></td></tr>
+    <tr><td><code>gui</code></td><td>Default <code>true</code>; <code>false</code> runs without a window.</td><td data-arg="gui" data-vals="true,false"></td></tr>
     <tr><td><code>world</code></td><td>Default <code>patrol</code>; also <code>patrol_doors_swapped</code> and <code>empty</code>.</td><td data-arg="world" data-vals="patrol,patrol_doors_swapped,empty"></td></tr>
     <tr><td><code>rviz</code></td><td>Default <code>false</code>; <code>true</code> also opens RViz.</td><td data-arg="rviz" data-vals="false,true"></td></tr>
-    <tr><td><code>logical_camera</code></td><td>Default <code>true</code>; <code>false</code> leaves out the logical camera.</td><td data-arg="logical_camera" data-vals="true,false"></td></tr>
+    <tr><td><code>logical_camera</code></td><td>Default <code>true</code>; <code>false</code> turns it off.</td><td data-arg="logical_camera" data-vals="true,false"></td></tr>
     <tr><td><code>x</code>, <code>y</code>, <code>yaw</code></td><td>Default <code>0.0</code>; the robot's start pose, in meters and radians.</td><td class="la-pose"><label>x <input type="number" step="0.1" id="la-x" placeholder="0.0" aria-label="start x in meters"></label><label>y <input type="number" step="0.1" id="la-y" placeholder="0.0" aria-label="start y in meters"></label><label>yaw <input type="number" step="0.1" id="la-yaw" placeholder="0.0" aria-label="start yaw in radians"></label></td></tr>
   </table>
-<pre class="code" data-lang="bash" id="la-cmd" style="min-height:calc(3 * 1.32em + 16px)">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
+<pre class="code" data-lang="bash" id="la-cmd" style="min-height:calc(3 * 1.32em + 16px);font-size:26px">ros2 launch gp2_bringup gp2_sim.launch.py</pre>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="p21" data-name="Slide 31 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Launch the Simulation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 31 of 110. Go to a slide">Slide 31 / 110</span></div>
@@ -1603,8 +1605,8 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <div class="row"><span class="lbl"><code class="pm">use_sim_time</code></span><button id="st-off" class="on">off</button><button id="st-on">on</button><span class="try">try it</span></div>
 <pre class="code" data-lang="bash" id="st-cmd">ros2 run l12_rosbot sim_time_exe</pre>
   <p class="small" style="margin:2px 0" id="st-cap">What it printed (the first lines):</p>
-<pre class="code" data-lang="text" id="st-log"></pre>
-  <ul class="pl" id="st-say"></ul>
+<pre class="code nolive" data-lang="text" id="st-log"></pre>
+  <ul class="pl nolive" id="st-say"></ul>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="p34" data-name="Slide 37 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Simulation Time</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 37 of 110. Go to a slide">Slide 37 / 110</span></div>
@@ -1612,10 +1614,15 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
   <p class="goal">With <code class="pm">use_sim_time</code> on, the world was paused, then resumed 4.3&nbsp;s later with the same command and <code>pause: false</code>:</p>
 <pre class="code" data-lang="bash">gz service -s /world/patrol/control --reqtype gz.msgs.WorldControl \
   --reptype gz.msgs.Boolean --timeout 3000 --req 'pause: true'</pre>
-  <div class="row" style="margin:4px 0"><button id="pz-play">Play the run</button><span class="try">try it</span><span class="small" id="pz-t">run's clock: +0.0 s (replay 1.5×)</span><span class="small" id="pz-now"></span></div>
+  <div class="row" style="margin:4px 0"><span class="try">try it</span><span class="small">click a dot</span></div>
+  <div id="pz-wrap" style="position:relative;width:1150px">
   <svg id="pz-svg" class="plot" viewBox="0 0 1150 236" width="1150" height="236" role="img" aria-label="The measured run on a time line of the computer's clock, 0 to 12 s from the first log line. A shaded band from 2.8 s to 7.1 s marks the pause. Top row, create_wall_timer: a mark every second, with now() values 0, 0, 31.896, 32.892, then 32.896 four times during the pause, then 33.480, 34.396, 35.380, 36.380. Bottom row, create_timer: marks at now() 31.184, 32.000, then none during the pause, then 33.000 to 37.000 once per second."></svg>
+    <div id="pz-pop" role="status" class="nolive" style="display:none;pointer-events:none;position:absolute;z-index:6;width:420px;box-sizing:border-box;background:var(--card);color:var(--ink);border:3px solid var(--s2);border-radius:10px;padding:8px 12px;font-size:22px;line-height:1.3;box-shadow:0 8px 24px rgba(0,0,0,.28)"></div>
+  </div>
   <div class="box concl"><span class="bt">The timers follow different clocks</span>A <code>create_timer</code> timer follows the simulation: it stopped while Gazebo was paused. A wall timer kept firing, and <code>now()</code> barely moved: 32.892&nbsp;s, then 32.896&nbsp;s.</div>
 </div></div></section>
+
+
 
 
 
@@ -5680,22 +5687,33 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     for (var k = 0; k <= TT; k += 2) txt(ps, PX(k), 216, "+" + k + " s", 18, C.muted);
     RUN.forEach(function(r, i){ if (r[0] > upto + 1e-9) return;
       var y = r[1] === "w" ? 70 : 150, inP = r[0] > P0 && r[0] < P1;
-      el(ps, "circle", {cx:PX(r[0]), cy:y, r:8, fill:r[1] === "w" ? (inP ? C.bad : C.slate) : C.live});
+      if (i === pick) el(ps, "circle", {cx:PX(r[0]), cy:y, r:15, fill:"none", stroke:C.ink, "stroke-width":3});
+      el(ps, "circle", {cx:PX(r[0]), cy:y, r:8, fill:r[1] === "w" ? (inP ? C.bad : C.slate) : C.live, "pointer-events":"none"});
+      var hit = el(ps, "circle", {cx:PX(r[0]), cy:y, r:20, fill:"transparent", tabindex:0, role:"button", "data-dot":"1", "aria-label":"Explain the tick at +" + r[0].toFixed(1) + " s, " + (r[1] === "w" ? "wall timer" : "node timer"), "aria-pressed":String(i === pick)});
+      hit.style.cursor = "pointer"; hit.addEventListener("click", function(e){ e.stopPropagation(); openPop(i); });
+      hit.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); openPop(i); } });
       /* the now() value beside each mark: above the wall row, below the node row; every other wall mark in the pause, so labels do not touch */
       if (r[1] === "w" && inP && r[0] !== 4 && r[0] !== 6) return;
       /* the first two node-clock marks are 0.8 s apart: their labels go left and right of the marks */
       var anc = r[0] === 1.284 ? "end" : r[0] === 2.104 ? "start" : "middle", dx = anc === "end" ? -10 : anc === "start" ? 10 : 0;
       halo(txt(ps, PX(r[0]) + dx, r[1] === "w" ? y - 16 : y + 30, r[2].toFixed(r[2] ? 3 : 0), 18, inP ? C.bad : C.ink, anc)); });
   }
-  var pzTimer = null;
-  function pzAt(t){ drawPz(t); document.getElementById("pz-t").textContent = "run's clock: +" + t.toFixed(1) + " s (replay 1.5×)";
-    var lastN = null; RUN.forEach(function(r){ if (r[0] <= t + 1e-9) lastN = r; });
-    document.getElementById("pz-now").textContent = lastN ? "last line: " + (lastN[1] === "w" ? "create_wall_timer" : "create_timer") + ", now() = " + lastN[2].toFixed(3) + " s" + (t > P0 && t < P1 ? " (paused)" : "") : ""; }
-  document.getElementById("pz-play").onclick = function(e){ e.stopPropagation(); clearInterval(pzTimer);
-    if (reduce){ pzAt(TT); return; }
-    var t0 = performance.now(); pzTimer = setInterval(function(){ var t = Math.min(TT, (performance.now() - t0) / 1000 * 1.5); pzAt(t); if (t >= TT) clearInterval(pzTimer); }, 40); };
-  pzAt(0);   /* no autoplay (user, 2026-11-21): it waits for its button */
-  onReset(ps, function(){ clearInterval(pzTimer); pzAt(0); });
+  /* the whole run at once; a click on a dot opens a popup under that dot (user, 2026-11-24: "Remove \"Play the run\" and load the
+     graph. Provide the ability to click on each dot to show a popup below the dots"); the notes follow the log, sim_time.txt */
+  var pop = document.getElementById("pz-pop"), wrap = document.getElementById("pz-wrap"), pick = -1;
+  function why(r){ var t = r[0], now = r[2], wall = r[1] === "w", at = "<b>+" + t.toFixed(1) + " s, " + (wall ? "create_wall_timer" : "create_timer") + ".</b> <code>now()</code> = " + now.toFixed(3) + " s. ";
+    if (wall){ if (now === 0) return at + "The wall timer fires every second of the computer's clock. No <code class=\"tp\">/clock</code> message has arrived yet, so <code>now()</code> is 0.";
+      if (t > P0 && t < P1) return at + "Gazebo is paused: the wall timer still fires every second, but <code>now()</code> stays at " + now.toFixed(3) + " s.";
+      return at + (t < P0 ? "<code>now()</code> follows Gazebo's clock: the wall timer fires on the computer's clock all the same." : "Gazebo runs again: <code>now()</code> follows its clock; the wall timer never stopped."); }
+    return at + (t < 2 ? "The first <code class=\"tp\">/clock</code> message arrived; the node's timer counts ROS time, so it fires now." : t < P0 ? "One second of simulated time later." : t < P1 + 0.5 ? "The first tick after the pause: no <code>create_timer</code> tick came while Gazebo was paused (from " + P0.toFixed(1) + " s to " + P1.toFixed(1) + " s)." : "Every second of simulated time again."); }
+  function closePop(){ pick = -1; pop.style.display = "none"; drawPz(TT); }
+  function openPop(k){ if (k === pick){ closePop(); return; } pick = k; drawPz(TT);
+    var r = RUN[k], x = PX(r[0]), y = r[1] === "w" ? 70 : 150; pop.innerHTML = why(r); pop.style.display = "block";
+    var left = Math.max(0, Math.min(1150 - 420, x - 210)); pop.style.left = left + "px"; pop.style.top = "218px"; pop.style.setProperty("--car", Math.max(18, Math.min(402, x - left)) + "px"); }
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && pick >= 0) closePop(); });
+  wrap.addEventListener("click", function(e){ if (e.target.closest("#pz-pop") || (e.target.getAttribute && e.target.getAttribute("data-dot"))) return; if (pick >= 0) closePop(); });
+  drawPz(TT);
+  onReset(ps, closePop);
 })();
 
   /* --- the looping clips on "Gazebo worlds in motion" (user, 2026-11-21): the three play by themselves each time the slide
@@ -5862,6 +5880,41 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   document.getElementById("gzt-prev").addEventListener("click", function(){ if (k > 0) { token++; k--; render(k); } });
   onReset(view, function(){ token++; k = 0; cur = [800,450]; render(0); });
   render(0);
+})();
+
+
+/* the bridge diagram: pick a direction, then send a message along it */
+(function(){
+  var sv = document.getElementById("br-svg"); if (!sv || !sv.isConnected) return;
+  var NS = "http://www.w3.org/2000/svg", say = document.getElementById("br-say"), yaml = document.getElementById("br-yaml"), DIRS = [
+    {k:"GZ_TO_ROS", lab:"Gazebo to ROS", topic:"/clock", gz:"gz.msgs.Clock", ros:"rosgraph_msgs/msg/Clock", go:["r"], say:"<b>Gazebo to ROS.</b> The course simulation's five bridges run in this direction. This one brings Gazebo's clock to <code class=\"tp\">/clock</code>, which <code class=\"pm\">use_sim_time</code> reads."},
+    {k:"ROS_TO_GZ", lab:"ROS to Gazebo", topic:"/chatter", gz:"gz.msgs.StringMsg", ros:"std_msgs/msg/String", go:["l"], say:"<b>ROS to Gazebo.</b> A ROS node publishes, and Gazebo receives. The course simulation uses none: the ROSbot's controllers read <code class=\"tp\">/cmd_vel</code> from ROS directly. The topic shown is the bridge's own example."},
+    {k:"BIDIRECTIONAL", lab:"Both ways", topic:"/chatter", gz:"gz.msgs.StringMsg", ros:"std_msgs/msg/String", go:["r", "l"], say:"<b>Both ways.</b> Each side's messages reach the other. The course simulation uses none: the topic shown is the bridge's own example."}];
+  function t(x, y, s, st){ var e = document.createElementNS(NS, "text"); e.setAttribute("x", x); e.setAttribute("y", y); e.setAttribute("text-anchor", "middle"); e.setAttribute("style", st || ""); e.textContent = s; sv.appendChild(e); return e; }
+  function box(x, w, cls){ var r = document.createElementNS(NS, "rect"); r.setAttribute("x", x); r.setAttribute("y", 20); r.setAttribute("width", w); r.setAttribute("height", 150); r.setAttribute("rx", 12); r.setAttribute("style", "fill:var(--card);stroke:var(--slate);stroke-width:3"); sv.appendChild(r); return r; }
+  box(20, 320); box(440, 280); box(820, 320);
+  t(180, 56, "Gazebo", "font-size:26px;font-weight:600;fill:var(--slate)"); t(580, 56, "bridge node", "font-size:26px;font-weight:600;fill:var(--slate)"); t(980, 56, "ROS 2", "font-size:26px;font-weight:600;fill:var(--slate)");
+  var MONO = "font-family:var(--mono);font-size:21px;fill:var(--ink)", SML = "font-size:20px;fill:var(--muted)";
+  var gT = t(180, 98, "", MONO), gY = t(180, 132, "", MONO), rT = t(980, 98, "", MONO), rY = t(980, 132, "", MONO), mid = t(580, 100, "converts", SML);
+  var mid2 = t(580, 132, "", "font-size:20px;fill:var(--muted)");
+  var wires = document.createElementNS(NS, "g"); sv.appendChild(wires); var sparks = document.createElementNS(NS, "g"); sv.appendChild(sparks);
+  /* the two wires at y 95, each an arrow pointing the message's way */
+  function arrow(x1, x2){ var d = x2 > x1 ? 1 : -1, g = document.createElementNS(NS, "g"); [["line", {x1:x1, y1:95, x2:x2 - d * 12, y2:95, style:"stroke:var(--slate);stroke-width:4"}], ["polygon", {points:x2 + ",95 " + (x2 - d * 16) + ",87 " + (x2 - d * 16) + ",103", style:"fill:var(--slate)"}]].forEach(function(q){ var e = document.createElementNS(NS, q[0]); for (var k in q[1]) e.setAttribute(k, q[1][k]); g.appendChild(e); }); wires.appendChild(g); }
+  var cur = 0, anims = [], timers = [];
+  function calm(){ timers.forEach(clearTimeout); timers = []; anims.forEach(function(a){ try { a.cancel(); } catch (e) {} }); anims = []; sparks.innerHTML = ""; }
+  function show(i){ cur = i; calm(); var d = DIRS[i]; wires.innerHTML = "";
+    if (d.k !== "ROS_TO_GZ"){ arrow(346, 436); arrow(724, 814); } if (d.k !== "GZ_TO_ROS"){ arrow(814, 724); arrow(436, 346); }
+    gT.textContent = d.topic; gY.textContent = d.gz; rT.textContent = d.topic; rY.textContent = d.ros; mid2.textContent = d.k === "ROS_TO_GZ" ? "ROS type to Gazebo type" : d.k === "GZ_TO_ROS" ? "Gazebo type to ROS type" : "each way";
+    cmdLines(yaml, ["- topic_name: " + d.topic, "  ros_type_name: " + d.ros, "  gz_type_name: " + d.gz, "  direction: " + d.k]); say.innerHTML = d.say; bt.set(d.k); }
+  function pulse(dir, delay){ var path = dir === "r" ? [["M346 95 H436", 0], ["M724 95 H814", 420]] : [["M814 95 H724", 0], ["M436 95 H346", 420]];
+    path.forEach(function(w){ var p = document.createElementNS(NS, "path"); p.setAttribute("d", w[0]); p.setAttribute("style", "fill:none;stroke:var(--nowedge);stroke-width:8;stroke-linecap:round;filter:drop-shadow(0 0 4px var(--nowedge))"); sparks.appendChild(p);
+      if (!p.animate) return; var L = p.getTotalLength(); p.style.strokeDasharray = L + " " + L; p.style.strokeDashoffset = L;
+      anims.push(p.animate([{strokeDashoffset:L}, {strokeDashoffset:0}], {delay:delay + w[1], duration:360, easing:"linear", fill:"forwards"}));
+      anims.push(p.animate([{opacity:1}, {opacity:0}], {delay:delay + w[1] + 360, duration:450, easing:"ease-out", fill:"forwards"})); }); }
+  function send(){ calm(); if (reduce) return; DIRS[cur].go.forEach(function(d, i){ pulse(d, i * 1500); }); }
+  var host = document.getElementById("br-btns"), bt = buttons(host, DIRS.map(function(d){ return d.k; }), function(v){ return DIRS.filter(function(d){ return d.k === v; })[0].lab; }, function(v){ show(DIRS.map(function(d){ return d.k; }).indexOf(v)); }, "GZ_TO_ROS");
+  document.getElementById("br-send").onclick = function(e){ e.stopPropagation(); send(); };
+  show(0); onReset(sv, function(){ show(0); });
 })();
 
 

@@ -531,6 +531,8 @@ html[data-theme="dark"] .l12w .p3d .ax.z{color:#6FA3D8}
 .l12w .posefig .mono{font:calc(22 * var(--u)) var(--mono);font-style:normal;fill:var(--muted)}
 .l12w #qt-vals{font-size:max(var(--fmin), calc(29 * var(--u)));line-height:1.6}
 .l12w #qt-vals .vv{color:var(--livetext);font-family:var(--mono)}
+.l12w #pz-pop::before{content:"";position:absolute;left:calc(var(--car,50%) - calc(13 * var(--u)));top:-12px;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:12px solid var(--s2)}
+.l12w #pz-pop{height:auto !important;min-height:0 !important}
 .l12w #mu-svg .mu-wire *{fill:none !important;stroke:var(--ink);stroke-width:2.5px;vector-effect:non-scaling-stroke}
 .l12w #pw-box{position:relative;width:100%;height:calc(405 * var(--u));border:2px solid var(--plate-edge);border-radius:calc(8 * var(--u));overflow:hidden;background:var(--card);touch-action:none;cursor:grab}
 .l12w #pw-box:active{cursor:grabbing}
