@@ -842,7 +842,7 @@ code.wrap{white-space:normal}
 <section class="secblock" data-scene="sec-0" data-name="Title and contents" tabindex="0"><div class="sechead"><span class="num">&#9654;</span><span>Title and contents</span><span class="meta">contents</span></div><div class="grid" style="grid-template-columns:repeat(1,1280px)"><!-- Table of contents (the deck's TOC page). The deck's title page is not shown: the cover replaces it. -->
 
 <section class="plate frame" data-scene="p2" data-name="Contents" tabindex="0"><span class="bolt"></span><div class="fhead"><span></span><span>Contents</span></div>
-  <h2 class="tochead">Table of contents<img class="tocband" src="L12_interactive_assets/circuit_bg.jpg" alt=""></h2><div class="fit"><div class="fitin">
+  <h2 class="tochead">Table of contents<img class="tocband partband" src="L12_interactive_assets/part_banner_pink.svg" alt=""></h2><div class="fit"><div class="fitin">
   <p class="small" style="margin:0">Click a section to go to it.</p>
   <div class="toc">
     <div class="col s1">
@@ -2199,7 +2199,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
         </g>
         <!-- v < 0 (user, 2026-11-23: "you did not include situations where v < 0 and w < 0"): the robot still faces right and moves
              left, so the times run right to left -->
-        <g id="vel-vn" style="display:none">
+        <g id="vel-vn" style="visibility:hidden">
         <g><text x="264" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">0</tspan></text><circle class="dot" cx="264" cy="52" r="11"/><path class="ar" d="M277,52 H306" marker-end="url(#vel-ah)"/></g>
         <g><text x="154" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">1</tspan></text><circle class="dot" cx="154" cy="52" r="11"/><path class="ar" d="M167,52 H196" marker-end="url(#vel-ah)"/></g>
         <g><text x="44" y="28" text-anchor="middle"><tspan class="mi">t</tspan><tspan class="mn" dy="6" font-size="20">2</tspan></text><circle class="dot" cx="44" cy="52" r="11"/><path class="ar" d="M57,52 H86" marker-end="url(#vel-ah)"/></g>
@@ -2221,7 +2221,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
         <text class="cap" x="150" y="184" text-anchor="middle">turning left on the spot (top view)</text>
         </g>
         <!-- omega < 0: the same drawing mirrored top to bottom, a clockwise turn -->
-        <g id="vel-wn" style="display:none">
+        <g id="vel-wn" style="visibility:hidden">
         <circle class="dot" cx="130" cy="40" r="11"/>
         <path class="ar" d="M141,40 H200" marker-end="url(#vel-ah)"/>
         <path class="ar" d="M140,46 L191,73" marker-end="url(#vel-ah)"/>
@@ -7191,7 +7191,8 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
 /* the signs of v and omega on "Linear and angular velocity" (user, 2026-11-23): two buttons per figure */
 (function(){
   var vb = document.getElementById("vel-vb"), wb = document.getElementById("vel-wb"); if (!vb || !vb.isConnected) return;
-  function sh(p, n, neg){ document.getElementById(p).style.display = neg ? "none" : ""; document.getElementById(n).style.display = neg ? "" : "none"; }
+  /* visibility, not display: a hidden drawing keeps its real box, so the label check measures it where it is */
+  function sh(p, n, neg){ document.getElementById(p).style.visibility = neg ? "hidden" : "visible"; document.getElementById(n).style.visibility = neg ? "visible" : "hidden"; }
   buttons(vb, [1, -1], function(v){ return v > 0 ? "v > 0" : "v < 0"; }, function(v){ sh("vel-vp", "vel-vn", v < 0); }, 1);
   buttons(wb, [1, -1], function(v){ return v > 0 ? "ω > 0" : "ω < 0"; }, function(v){ sh("vel-wp", "vel-wn", v < 0); }, 1);
 })();
