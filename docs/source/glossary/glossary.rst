@@ -2569,14 +2569,14 @@ L11: ROS 2 Configuration and Orchestration
       A name that does not begin with ``/``, such as ``robotaxi/position`` or
       ``cmd_vel``. A namespace puts its prefix in front of it: in ``/robot1``,
       ``/robot1/cmd_vel``.
-      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`L12 </lectures/lecture12/l12_lecture>`
+      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`NR </reading_material/remapping/remap_lecture>`
 
    ROS Namespace
       A prefix added to the names of a node and of its relative topics, such as
       ``/robot1``: ``PushROSNamespace`` in a launch file, or ``-r __ns:=/robot1``
       on the command line. A name that starts with ``/`` is absolute, and the
       namespace does not change it. This is not a C++ namespace.
-      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`L12 </lectures/lecture12/l12_lecture>`
+      :doc:`L11 </lectures/lecture11/l11_lecture>`, :doc:`NR </reading_material/remapping/remap_lecture>`
 
    Single-Threaded Executor
       An executor that runs every callback on one thread, one at a time.
@@ -2599,11 +2599,6 @@ L12: Simulation, Control and Parameters
 =======================================
 
 .. glossary::
-
-   Absolute Name
-      A name that begins with ``/``, such as ``/rosout``. A namespace does not
-      change it.
-      :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    Bridge
       A node that copies topics between Gazebo and ROS 2. Gazebo's topics are not
@@ -2674,13 +2669,6 @@ L12: Simulation, Control and Parameters
       ``--params-file`` or a launch file loads it.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
-   Private Name
-      A name that begins with ``~``, such as ``~/status``. The ``~`` is replaced
-      by the node's namespace and the node's name: in ``/robot1``, node
-      ``heading_controller_node``, the name is
-      ``/robot1/heading_controller_node/status``.
-      :doc:`L12 </lectures/lecture12/l12_lecture>`
-
    Proportional Controller
       A controller that sets a command in proportion to the error: the command
       is a gain times the error, limited to a maximum speed. The gain is a
@@ -2692,14 +2680,6 @@ L12: Simulation, Control and Parameters
       turn by an angle about an axis: ``(x, y, z)`` is the axis times the sine of
       half the angle, and ``w`` its cosine. The odometry gives the robot's
       orientation as a quaternion; the yaw is computed from it.
-      :doc:`L12 </lectures/lecture12/l12_lecture>`
-
-   Remapping
-      Changing a name that a node uses, when the node starts, without editing its
-      code: ``--ros-args -r match:=replacement``. It changes where the node reads
-      or writes, not what the data means. A remapping rule renames topics, the
-      node (``__node``) and its namespace (``__ns``), and does not rename
-      parameters.
       :doc:`L12 </lectures/lecture12/l12_lecture>`
 
    ROS Time
@@ -2744,7 +2724,7 @@ L12: Simulation, Control and Parameters
 
 .. raw:: html
 
-   <p class="glossary-also">Also used here: <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-colcon" target="_blank" rel="noopener">colcon</a> (L10), <a href="#term-Launch-Argument" target="_blank" rel="noopener">Launch Argument</a> (L11), <a href="#term-Launch-File" target="_blank" rel="noopener">Launch File</a> (L10), <a href="#term-Message" target="_blank" rel="noopener">Message</a> (L10), <a href="#term-Node" target="_blank" rel="noopener">Node</a> (L10), <a href="#term-Package" target="_blank" rel="noopener">Package</a> (L10), <a href="#term-Publisher" target="_blank" rel="noopener">Publisher</a> (L10), <a href="#term-rclcpp" target="_blank" rel="noopener">rclcpp</a> (L10), <a href="#term-Relative-Name" target="_blank" rel="noopener">Relative Name</a> (L11), <a href="#term-ROS-Namespace" target="_blank" rel="noopener">ROS Namespace</a> (L11), <a href="#term-Subscriber" target="_blank" rel="noopener">Subscriber</a> (L10), <a href="#term-Topic" target="_blank" rel="noopener">Topic</a> (L10).</p>
+   <p class="glossary-also">Also used here: <a href="#term-Callback" target="_blank" rel="noopener">Callback</a> (L6), <a href="#term-colcon" target="_blank" rel="noopener">colcon</a> (L10), <a href="#term-Launch-Argument" target="_blank" rel="noopener">Launch Argument</a> (L11), <a href="#term-Launch-File" target="_blank" rel="noopener">Launch File</a> (L10), <a href="#term-Message" target="_blank" rel="noopener">Message</a> (L10), <a href="#term-Node" target="_blank" rel="noopener">Node</a> (L10), <a href="#term-Package" target="_blank" rel="noopener">Package</a> (L10), <a href="#term-Publisher" target="_blank" rel="noopener">Publisher</a> (L10), <a href="#term-rclcpp" target="_blank" rel="noopener">rclcpp</a> (L10), <a href="#term-Subscriber" target="_blank" rel="noopener">Subscriber</a> (L10), <a href="#term-Topic" target="_blank" rel="noopener">Topic</a> (L10).</p>
 
 .. _g-vc:
 
@@ -2991,3 +2971,35 @@ Reading: Services and Actions
       service. ``create_service`` makes it, with a callback that fills in the
       response.
       :doc:`SA </reading_material/services_actions/sa_lecture>`
+
+
+.. _g-nr:
+
+Reading: Namespaces and Remapping
+=================================
+
+.. glossary::
+
+   Absolute Name
+      A name that begins with ``/``, such as ``/rosout``. A namespace does not
+      change it.
+      :doc:`NR </reading_material/remapping/remap_lecture>`
+
+   Private Name
+      A name that begins with ``~``, such as ``~/status``. The ``~`` is replaced
+      by the node's namespace and the node's name: in ``/robot1``, node
+      ``heading_controller_node``, the name is
+      ``/robot1/heading_controller_node/status``.
+      :doc:`NR </reading_material/remapping/remap_lecture>`
+
+   Remapping
+      Changing a name that a node uses, when the node starts, without editing its
+      code: ``--ros-args -r match:=replacement``. It changes where the node reads
+      or writes, not what the data means. A remapping rule renames topics, the
+      node (``__node``) and its namespace (``__ns``), and does not rename
+      parameters.
+      :doc:`NR </reading_material/remapping/remap_lecture>`
+
+.. raw:: html
+
+   <p class="glossary-also">Also used here: <a href="#term-Launch-File" target="_blank" rel="noopener">Launch File</a> (L10), <a href="#term-Node" target="_blank" rel="noopener">Node</a> (L10), <a href="#term-Parameter" target="_blank" rel="noopener">Parameter</a> (L12), <a href="#term-Relative-Name" target="_blank" rel="noopener">Relative Name</a> (L11), <a href="#term-ROS-Namespace" target="_blank" rel="noopener">ROS Namespace</a> (L11), <a href="#term-Topic" target="_blank" rel="noopener">Topic</a> (L10).</p>

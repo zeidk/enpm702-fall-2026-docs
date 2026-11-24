@@ -2,7 +2,7 @@
 Quiz
 ====================================================
 
-This quiz covers the key concepts from Lecture 12: Simulation, Control and Parameters. Topics include the pose and the quaternion, the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), simulation time (``/clock``, ``use_sim_time`` and the two kinds of timer), proportional control (the error of a turn, the gain, the limit and the tolerance), parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback), and namespaces and remapping (relative and absolute names, and rules).
+This quiz covers the key concepts from Lecture 12: Simulation, Control and Parameters. Topics include the pose and the quaternion, the ROSbot in Gazebo (Gazebo's topics and the bridge, its topics and the ``TwistStamped`` command), simulation time (``/clock``, ``use_sim_time`` and the two kinds of timer), proportional control (the error of a turn, the gain, the limit and the tolerance), parameters (declaring and reading them, setting them at start, ``use_sim_time``, and the parameter callback).
 
 .. note::
 
@@ -15,7 +15,7 @@ This quiz covers the key concepts from Lecture 12: Simulation, Control and Param
 ----
 
 
-Multiple Choice (Questions 1-14)
+Multiple Choice (Questions 1-13)
 ====================================================
 
 .. admonition:: Question 1
@@ -264,27 +264,6 @@ Multiple Choice (Questions 1-14)
 .. admonition:: Question 12
    :class: hint
 
-   A node subscribes to the relative topic name ``odometry/filtered``. It starts with ``--ros-args -r __ns:=/robot1``, and the robot publishes on ``/odometry/filtered``. What happens?
-
-   A. The node subscribes to ``/odometry/filtered`` and works as before.
-
-   B. The node does not start, because ``/robot1`` does not exist.
-
-   C. The node subscribes to ``/robot1/odometry/filtered``. No publisher is there, so the controller gets no odometry, does nothing and logs nothing.
-
-   D. The node subscribes to ``/robot1/odometry/filtered``, and the namespace copies the robot's messages to it.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **C**
-
-   The namespace puts the prefix ``/robot1`` in front of the node's name and of its relative topic names. In the lecture, ``ros2 topic info /robot1/odometry/filtered`` shows "Publisher count: 0". ``control_callback`` returns at once while it has no odometry, so the node logged nothing and published no command. Adding ``-r odometry/filtered:=/odometry/filtered -r cmd_vel:=/cmd_vel`` points the two topics back at the robot.
-
-
-.. admonition:: Question 13
-   :class: hint
-
    A node runs with ``use_sim_time`` true. It has one timer made with ``create_timer`` and one made with ``create_wall_timer``. Gazebo is paused. What happens?
 
    A. Both timers stop, because the node's clock is the simulation's.
@@ -304,7 +283,7 @@ Multiple Choice (Questions 1-14)
 
 
 
-.. admonition:: Question 14
+.. admonition:: Question 13
    :class: hint
 
    On a flat floor, the ROSbot starts facing :math:`+x` (yaw 0°). It turns 90° to the left, counterclockwise seen from above, and now faces :math:`+y`. Which orientation :math:`(x, y, z, w)` does ``/odometry/filtered`` report?
@@ -327,10 +306,10 @@ Multiple Choice (Questions 1-14)
 ----
 
 
-True / False (Questions 15-21)
+True / False (Questions 14-19)
 ====================================================
 
-.. admonition:: Question 15
+.. admonition:: Question 14
    :class: hint
 
    **True or False:** A node declared ``kp_angular`` with the default 1.5. Started with ``-p kp_angular:=1``, it uses a gain of 1.
@@ -343,7 +322,7 @@ True / False (Questions 15-21)
    ``1`` is an integer, and ``kp_angular`` is a double, so the node does not start: it stops with an ``InvalidParameterTypeException``, "Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed". Write a double with a decimal point: ``-p kp_angular:=1.0``.
 
 
-.. admonition:: Question 16
+.. admonition:: Question 15
    :class: hint
 
    **True or False:** In the lecture's runs, raising the gain from 1.5 to 4.0 made a 90° turn of the ROSbot faster.
@@ -356,7 +335,7 @@ True / False (Questions 15-21)
    The turns took 2.65 s to 2.75 s at a gain of 1.5 and 2.70 s at 4.0. A gain of 4.0 keeps the command at the 1.0 rad/s limit longer (until the error is under 1.0 / 4.0 = 0.25 rad, against 1.0 / 1.5 = 0.67 rad), but the turn was no faster. A gain of 0.5 never reaches the limit (0.5 × 1.57 = 0.785 rad/s at most), and its turns took 6.25 s to 6.45 s.
 
 
-.. admonition:: Question 17
+.. admonition:: Question 16
    :class: hint
 
    **True or False:** If a parameter callback returns ``successful = false``, ``ros2 param set`` prints the callback's ``reason``, and the parameter keeps its old value.
@@ -369,7 +348,7 @@ True / False (Questions 15-21)
    In the lecture, ``ros2 param set /heading_controller_node kp_angular -1.0`` answers "Setting parameter failed: kp_angular must not be negative". The callback checks the values of a set command first, and stores the new ones only when every value is good, so one bad value rejects the whole command.
 
 
-.. admonition:: Question 18
+.. admonition:: Question 17
    :class: hint
 
    **True or False:** A parameter callback stays registered even if the node does not keep the handle that ``add_on_set_parameters_callback`` returned.
@@ -382,7 +361,7 @@ True / False (Questions 15-21)
    The callback stays registered only while the handle exists. That is why the lecture keeps it in a data member of the node.
 
 
-.. admonition:: Question 19
+.. admonition:: Question 18
    :class: hint
 
    **True or False:** The turning limit that the lecture's callback uses for ``max_angular_rps`` is 3.14 rad/s, the ROSbot's own turning limit, so ``max_angular_rps 5.0`` is rejected.
@@ -395,20 +374,7 @@ True / False (Questions 15-21)
    The callback accepts a ``max_angular_rps`` that is more than 0 and at most 3.14 rad/s. The answer to the set of 5.0 is "Setting parameter failed: max_angular_rps must be more than 0 and at most 3.14 rad/s".
 
 
-.. admonition:: Question 20
-   :class: hint
-
-   **True or False:** A node runs with ``-r __ns:=/robot1 -r cmd_vel:=/cmd_vel``. It publishes on ``/robot1/cmd_vel``.
-
-.. dropdown:: Answer
-   :class-container: sd-border-success
-
-   **False.**
-
-   A name that starts with ``/`` is absolute, and the namespace does not change it. The remapped name ``/cmd_vel`` is absolute, so the node publishes on ``/cmd_vel``. Only a relative name, such as ``cmd_vel`` without the slash, gets the prefix.
-
-
-.. admonition:: Question 21
+.. admonition:: Question 19
    :class: hint
 
    **True or False:** A node starts with ``-p use_sim_time:=true``, and Gazebo is not running. ``now()`` returns the computer's time.

@@ -26,6 +26,9 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      simulation), the Gazebo worlds, a drive pad, the heading-error dial and
      the measured runs.
    - **Reading material**: Foxglove (optional).
+   - **Lecture 12**: the Remapping section moved to a new reading, Namespaces
+     and Remapping, with its Try it panels and two quiz questions. The
+     Lecture 12 quiz now has 19 questions.
    - **Glossary**: an L11 section.
    - **Lecture 12**: quiz question 14, the quaternion after a quarter turn.
    - **Setup**: ROSbot Simulation installs the simulation and tests it with

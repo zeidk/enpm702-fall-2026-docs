@@ -15,8 +15,16 @@
       </table>
     </div>
     <div>
-      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command." style="width:max(calc(600 * var(--u)), calc(600 * 12px / 20.5));max-width:none;height:auto"></svg>
-      <p class="small" style="margin:4px 0 0">Each point is one error (across) and the command the controller sends for it (up). Key: <span class="tg">1</span> the command is \(k_p\) × error; <span class="tg">2</span> \(k_p\) × error is over 1.0&nbsp;rad/s, so the command stays at the limit; <span class="tg">3</span> the error you picked, and its command.</p>
+      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="480" height="320" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command." style="width:max(calc(480 * var(--u)), calc(480 * 12px / 20.5));max-width:none;height:auto"></svg>
+      <!-- the three gains compared (user, 2026-11-23: "remove the text below the figure. I want you to say something on 0.5 vs
+           1.5 vs 4.0"); turn times from ../figures/data/par_gains.txt: the time between two "reached" lines, 3 turns each -->
+      <table class="t tight" id="pc-gains" style="margin-top:calc(6 * var(--u))">
+        <tr><th>Gain</th><th>Limit starts at</th><th>90° turn</th></tr>
+        <tr data-k="0.5"><td>0.5</td><td>1.0 / 0.5 = 2.0 rad</td><td>6.4 s</td></tr>
+        <tr data-k="1.5"><td>1.5</td><td>1.0 / 1.5 = 0.67 rad</td><td>2.7 s</td></tr>
+        <tr data-k="4"><td>4.0</td><td>1.0 / 4.0 = 0.25 rad</td><td>2.7 s</td></tr>
+      </table>
+      <p style="margin:4px 0 0">90° turns in Gazebo. Over 1.5, the limit sets most of the turn, so 4.0 is no faster.</p>
     </div>
   </div>
 <div class="row" style="margin:6px 0 0"><button type="button" data-again="pc-svg">Draw again</button></div>

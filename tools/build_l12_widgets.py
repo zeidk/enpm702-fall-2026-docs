@@ -81,15 +81,8 @@ WIDGETS = [
      "Pick a parameter and a value to follow it through the callback."),
     ("gain-change", ["q59-svg"], "Change a gain while the ROSbot turns", "Change a Gain While the ROSbot Turns",
      "Replay the measured run to see the command change when the gain changes."),
-    # ---- section 4
-    ("namespaces", ["g2-svg"], "Two controllers: pick each one's namespace and name", "One Namespace per Controller",
-     "Pick a namespace and a node name for each controller to see the graph and its names."),
-    ("resolver", ["rs-ns"], "Name resolver", "Relative, Absolute and Private Names",
-     "Pick a namespace and a name written in the code to see the full name it becomes."),
-    ("rule-builder", ["g1-svg"], "Rule builder", "A Namespace and Remapping Together",
-     "Pick a namespace, a node name and the two remapping rules to see the graph they give."),
-    ("launch-lines", ["lf-code"], "The launch file, line by line", "In a Launch File: name, namespace and remappings",
-     "Click a button to match each line of the launch file with the part of the command it replaces."),
+    # section 4 (namespaces and remapping) left the deck for the Namespaces and Remapping reading (2026-11-23); its four
+    # panels are frozen copies in reading_material/remapping/widgets/
 ]
 
 SVG_TAGS = {"svg", "g", "path", "text", "tspan", "line", "rect", "circle", "ellipse", "polyline", "polygon", "use", "defs",
@@ -500,11 +493,8 @@ def main():
     css = re.sub(r'"?Fira (Sans|Mono)"?(?=\s*[,;}])', lambda m: f'"L12W Fira {m.group(1)}", "Fira {m.group(1)}"', css)
     (STATIC / "l12w.css").write_text(FONT_FACES + DOCS_CSS.replace('font-family:"Fira Sans"', 'font-family:"L12W Fira Sans","Fira Sans"') + css + TAIL)
     core = build_js(main_js, page)
-    # The rule builder's preset buttons name the slides of the runs. The interactive slides number their own frames;
-    # this page follows the PDF deck, so its buttons show the PDF's slide numbers (pages 74, 69, 75 and 77, minus 2).
-    core, n_pl = re.subn(r'var PL = \{[^}]*\};', 'var PL = {n: "none", w: "72", s: "67", b: "73", l: "75"};', core)
-    if n_pl != 1:
-        die("the rule builder's preset labels (var PL) were not found once in the slides' script")
+    # (The rule builder's preset labels were patched here until its slides left the deck, 2026-11-23: the reading's frozen
+    # copy, _static/remapw/remapw-core.js, keeps them.)
     (STATIC / "l12w-core.js").write_text(core)
 
     (WDIR / "_head.html").write_text(
@@ -568,7 +558,6 @@ AGAIN = {"error": "tc-svg", "law": "pc-svg"}
 WORDING = [
     ("launch-args", ", the same form as <code>with_dispatcher:=false</code> last class. All optional;", ". All optional;"),
     ("use-sim-time", '(<span class="go" data-go="p30">slide N</span>)', "(see Simulation Time above)"),
-    ("rule-builder", "Slides:", "Lecture examples:"),
 ]
 
 # light theme only: two of the slides' text colors pass 4.5:1 as the slides' large text, not at the docs' body size

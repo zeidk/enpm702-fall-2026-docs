@@ -510,6 +510,7 @@ html[data-theme="dark"] .l12w .p3d .ax.z{color:#6FA3D8}
 .l12w #eu-box{width:calc(540 * var(--u));height:calc(324 * var(--u))}
 .l12w #aa-axes{display:grid;grid-template-columns:repeat(3, 1fr);gap:calc(6 * var(--u))}
 .l12w #aa-axes button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:1px 0;margin:0;width:100%;letter-spacing:-0.02em}
+.l12w #aa-pre button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:1px calc(10 * var(--u));margin:0 0 0 calc(6 * var(--u))}
 .l12w .qparts{display:grid;grid-template-columns:repeat(3,calc(64 * var(--u))) calc(26 * var(--u)) calc(64 * var(--u));gap:calc(6 * var(--u)) calc(6 * var(--u));align-items:center;justify-content:start;margin:4px 0 2px}
 .l12w .qparts .qn{height:calc(52 * var(--u));border:2px solid var(--plate-edge);border-radius:calc(8 * var(--u));background:var(--chip);display:flex;align-items:center;justify-content:center;font:italic 600 calc(28 * var(--u)) KaTeX_Math,serif;color:var(--ink)}
 .l12w .qparts .qb{grid-column:1 / 4;border-top:3px solid var(--slate);padding-top:4px;text-align:center;font-size:max(var(--fmin), calc(21 * var(--u)));color:var(--ink)}
@@ -564,6 +565,14 @@ html[data-theme="dark"] .l12w .posefig .axzd{fill:#6FA3D8}
 .l12w #br .br-panel table td{padding-top:1px;padding-bottom:1px}
 .l12w #br .br-meta{margin:0 0 calc(8 * var(--u))}
 .l12w #br .br-note{margin:calc(8 * var(--u)) 0 0}
+.l12w .gzt-view{position:relative;width:calc(824 * var(--u));height:calc(465 * var(--u));border:2px solid var(--plate-edge);border-radius:calc(6 * var(--u));overflow:hidden;background:#1b2430}
+.l12w .gzt-zoom{position:absolute;left:0;top:0;width:calc(820 * var(--u));height:calc(461 * var(--u));transform-origin:0 0}
+.l12w .gzt-view img.gzt-shot{position:absolute;inset:0;width:100%;height:100%;margin:0;display:none}
+.l12w .gzt-view img.gzt-shot.on{display:block}
+.l12w .gzt-over{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.l12w .gzt-term{position:absolute;inset:0;padding:calc(28 * var(--u)) calc(30 * var(--u));font:calc(30 * var(--u)) var(--mono);color:#E4EAF0;background:#1B2430}
+.l12w .gzt-prompt{color:#62C48F}
+.l12w .gzt-caret{display:inline-block;width:calc(14 * var(--u));height:calc(30 * var(--u));background:#E4EAF0;vertical-align:-5px;margin-left:2px}
 .l12w .br-head{font-weight:700;color:var(--slate);margin:calc(10 * var(--u)) 0 calc(6 * var(--u))}
 .l12w #la-t .la-pose{white-space:nowrap}
 .l12w #la-t .la-pose label{margin-right:calc(10 * var(--u));font-size:max(var(--fmin), calc(20 * var(--u)))}
@@ -899,7 +908,6 @@ html[data-theme="dark"] .l12w :is(#fb-head,#fb-dist){--hle:#43BACB}
 @media (prefers-reduced-motion: reduce){
 .l12w .pcbar,.l12w .vars .vr,.l12w .msgc,.l12w .grcb{transition:none}
 }
-.l12w .vars code.ku{box-shadow:inset 0 -5px 0 var(--k)}
 .l12w #q46-out,.l12w #q49-out{white-space:pre-wrap;overflow-wrap:anywhere}
 .l12w .q-val{font-family:var(--mono);font-size:max(var(--fmin), calc(24 * var(--u)));background:var(--card);border:2px solid var(--plate-edge);border-radius:calc(8 * var(--u));padding:4px calc(12 * var(--u));margin:4px 0}
 .l12w .stk{display:flex;flex-direction:column;gap:calc(8 * var(--u))}
@@ -910,15 +918,6 @@ html[data-theme="dark"] .l12w :is(#fb-head,#fb-dist){--hle:#43BACB}
 .l12w .q-in{font:inherit;font-family:var(--mono);font-size:max(var(--fmin), calc(24 * var(--u)));width:calc(150 * var(--u));padding:5px calc(10 * var(--u));border:2px solid var(--slate);border-radius:calc(8 * var(--u));background:var(--card);color:var(--ink)}
 .l12w .q-ok{color:var(--ok);font-weight:600}
 .l12w .q-no{color:var(--bad);font-weight:600}
-.l12w .rmx .row{margin:4px 0}
-.l12w .rmx .lbl{min-width:calc(112 * var(--u))}
-.l12w .rmx button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:4px calc(10 * var(--u));margin:0 calc(6 * var(--u)) 0 0}
-.l12w .rmx h3{font-size:max(var(--fmin), calc(25 * var(--u)));margin:calc(8 * var(--u)) 0 0;color:var(--slate)}
-.l12w .rmx .bar{display:flex;gap:calc(12 * var(--u));align-items:center;margin:0 0 calc(6 * var(--u))}
-.l12w .rmx .pick{display:grid;grid-template-columns:repeat(3,calc(132 * var(--u)));gap:calc(6 * var(--u))}
-.l12w .rmx .pick button{margin:0;width:100%;text-align:center}
-.l12w #check-remapping .ckq-o{padding-top:calc(6 * var(--u));padding-bottom:calc(6 * var(--u))}
-.l12w #check-remapping .ckq-opts{gap:calc(8 * var(--u))}
 /* a drawing wider than a phone's column scrolls sideways in its own box: its labels stay at least 12 px */
 .l12w .l12w-in{overflow-x:auto}
 /* docs body size: the light theme's orange and green text a little darker, to reach 4.5:1 on the panel */

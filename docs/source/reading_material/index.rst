@@ -41,6 +41,11 @@ are expected to work through these outside of class.
        (REP 103), ``Twist`` and ``TwistStamped`` on ``cmd_vel``,
        ``Odometry`` and the ``odom`` frame, quaternion and yaw,
        ``LaserScan`` and the angle of each beam
+   * - :doc:`remapping/remap_index`
+     - Namespaces and remapping rules: a namespace in front of a node's name
+       and relative names, relative, absolute and private names, a rule
+       ``match:=replacement`` for a topic, a node name and a namespace, on
+       the command line and in a launch file
    * - :doc:`services_actions/sa_index`
      - Services and actions in C++: the ``.srv`` and ``.action`` files, a
        server and a client for each, feedback, a cancel request and a
@@ -75,6 +80,7 @@ are expected to work through these outside of class.
    foxglove/fx_index
    linux_shell/ls_index
    robot_messages/rmsg_index
+   remapping/remap_index
    services_actions/sa_index
    input_validation/iv_index
    value_categories/vcat_index

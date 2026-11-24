@@ -11,7 +11,7 @@ A **proportional controller** sets a speed in proportion to an error. The lectur
 
 Those numbers are then moved out of the code into **parameters**: named values of a node that you set at start or change while the node runs, without a rebuild. The lecture declares and reads them, sets them with ``-p``, a YAML file and a launch file, and uses a parameter callback to accept or reject a new value while the ROSbot turns.
 
-The last section is **namespaces** and **remapping**. A namespace is a prefix in front of a node's name and of its relative names, so the same code runs once per robot. A remapping rule, ``match:=replacement``, changes a name the node uses without editing its code. The lecture runs two copies of the heading controller in two namespaces, reads the wheel odometry with a rule, combines a namespace with two rules, and writes the same settings in a launch file.
+The :doc:`Namespaces and Remapping </reading_material/remapping/remap_index>` reading follows this lecture. It runs two copies of the heading controller in two namespaces, and uses remapping rules to rename topics, a node and a namespace.
 
 Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` and set up the :doc:`ROSbot Simulation </setup/rosbot_simulation>`. Then do the two steps of the Before Class part of the :doc:`l12_lecture`: update your copy of the course repository, and build the package ``l12_rosbot``.
 
@@ -31,8 +31,6 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
    - Set parameters at start with ``-p``, with a **parameter file**, and with a **launch file**, and set ``use_sim_time`` for a node that runs with Gazebo.
    - List, get and set the parameters of a running node, and explain why a value the node already read does not change its behavior.
    - Check and store a new value while the node runs, with a **parameter callback**.
-   - Put a node in a **namespace**, and tell how it changes a **relative**, an **absolute** and a **private** name.
-   - Write a **remapping rule**, ``match:=replacement``, with ``--ros-args -r`` or in a launch file, to rename a topic, a node or a namespace, and combine rules with a namespace.
 
 Interactive Slides
 ------------------
@@ -63,4 +61,5 @@ Next Steps
 - Before next class: complete the L12 exercises and quiz, and build and run ``l12_rosbot`` in your own workspace.
 - The :doc:`GP2 instructions </assignments/gp2>` are on ReadTheDocs: start working on GP2 today. This lecture covers the simulation GP2 runs in, proportional control and parameters.
 - Required reading: `ROS 2 Jazzy: Parameters <https://docs.ros.org/en/jazzy/Concepts/Basic/About-Parameters.html>`_, the :doc:`ROSbot Simulation </setup/rosbot_simulation>` page and the :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading.
+- Optional: the :doc:`Namespaces and Remapping </reading_material/remapping/remap_index>` reading.
 - Optional, beyond the course: the :doc:`Services and Actions </reading_material/services_actions/sa_index>` reading.

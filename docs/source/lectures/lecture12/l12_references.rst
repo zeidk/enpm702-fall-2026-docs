@@ -11,7 +11,7 @@ References
 
         **ENPM702 L12: Simulation, Control and Parameters**
 
-        The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, starting the simulation, RViz, the topics, and driving it with ``ros2 topic pub``. Simulation time: ``/clock``, the computer's clock and ROS time, and which timer stops when Gazebo is paused. Proportional control: the error of a turn, the control law with a gain, a limit and a tolerance, and a heading controller. Parameters: declaring and reading them, ``ros2 param list``, ``get`` and ``set``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback. Namespaces and remapping: two controllers in two namespaces, relative, absolute and private names, a rule ``match:=replacement`` for a topic, a node name and a namespace, and the two together, on the command line and in a launch file.
+        The ROSbot in Gazebo: ``gz sim`` and the bridge between Gazebo's topics and ROS, its sensors, the patrol world, starting the simulation, RViz, the topics, and driving it with ``ros2 topic pub``. Simulation time: ``/clock``, the computer's clock and ROS time, and which timer stops when Gazebo is paused. Proportional control: the error of a turn, the control law with a gain, a limit and a tolerance, and a heading controller. Parameters: declaring and reading them, ``ros2 param list``, ``get`` and ``set``, setting them with ``-p``, a YAML file and a launch file, ``use_sim_time``, and a parameter callback.
 
         **Before the lecture**: read :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` and set up :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
 
@@ -37,5 +37,3 @@ References
     **ROS 2 Design** (Open Robotics)
 
     - `Clock and Time <https://design.ros2.org/articles/clock_and_time.html>`_
-    - `Topic and Service name mapping to DDS <https://design.ros2.org/articles/topic_and_service_names.html>`_
-    - `Remapping Names <https://design.ros2.org/articles/static_remapping.html>`_
