@@ -2209,7 +2209,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
      wheel_radius 0.0425, left_wheel_names [fl, rl], right_wheel_names [fr, rr] -->
 <section class="plate frame s6" id="kin" data-scene="the-rosbot-7" data-name="Slide 63 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot<span class="fsep" aria-hidden="true"></span>How It Moves</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 63 of 147. Go to a slide">Slide 63 / 147</span></div>
   <h2>Kinematics: from \(v\) and \(\omega\) to each side's wheels</h2><div class="fit"><div class="fitin">
-  <p class="goal">The drive controller turns \(v\) and \(\omega\) into a speed for each side, \(v_L\) and \(v_R\) in m/s. \(s\) is the distance between the sides.</p>
+  <p class="goal">The drive controller turns \(v\) and \(\omega\) into a speed for each side, \(v_L\) and \(v_R\) in m/s. \(s\) is the distance between the sides: 0.186&nbsp;m on the robot, and 1.36 &times; 0.186 = 0.253&nbsp;m in the controller, which these numbers use.</p>
   <div class="two" style="grid-template-columns:1.2fr 1fr;gap:22px;align-items:center">
     <div>
       <div class="kfml"><b>Sides to robot:</b>&ensp;\(v = \dfrac{v_R + v_L}{2}, \qquad \omega = \dfrac{v_R - v_L}{s}\)</div>
@@ -2217,7 +2217,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
       <div class="row"><span class="lbl">\(v\)</span><button class="kn-step" data-for="kn-v" data-d="-1" aria-label="v one step down">−</button><input type="range" id="kn-v" min="-1" max="1" step="0.05" value="0" aria-label="linear velocity v, m/s"><button class="kn-step" data-for="kn-v" data-d="1" aria-label="v one step up">+</button><span class="small">m/s</span></div>
       <div class="row"><span class="lbl">\(\omega\)</span><button class="kn-step" data-for="kn-w" data-d="-1" aria-label="omega one step down">−</button><input type="range" id="kn-w" min="-3.1" max="3.1" step="0.1" value="1" aria-label="angular velocity omega, rad/s"><button class="kn-step" data-for="kn-w" data-d="1" aria-label="omega one step up">+</button><span class="small">rad/s</span><span class="try">try it</span></div>
     </div>
-    <svg class="kfig" id="kn-svg" viewBox="0 0 460 316" width="460" height="316" role="img" aria-label="Top view of the ROSbot, the cover's drawing, facing right, its left side at the top. An arrow along each side shows that side's speed: forward to the right, backward to the left, its length in proportion to the speed. The values of v_L and v_R are written beside the arrows. A blue arrow from the robot shows its driving direction: straight, along an arc when it turns while driving, or around the robot when it turns on the spot."></svg>
+    <svg class="kfig" id="kn-svg" viewBox="0 0 460 316" width="460" height="316" role="img" aria-label="Top view of the ROSbot, the cover's drawing, facing right, its left side at the top. A two-headed arrow at its left, s, spans the distance between the left and right wheels. An arrow along each side shows that side's speed: forward to the right, backward to the left, its length in proportion to the speed. The values of v_L and v_R are written beside the arrows. A blue arrow from the robot shows its driving direction: straight, along an arc when it turns while driving, or around the robot when it turns on the spot."></svg>
   </div>
 </div></div></section>
 
@@ -7191,7 +7191,15 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   var S = 0.186 * 1.36, R = 0.0425, CX = 230, CY = 160, PX = 140;   /* 1 m/s = 140 px: the largest side speed, 1.40 m/s, stays inside */
   TICKS["kn-w"] = [1];
   rosbotIcon(sv, CX, CY, 180, 0);
-  txt(sv, 124, 91, "left", 20, C.muted, "end"); txt(sv, 124, 243, "right", 20, C.muted, "end");
+  txt(sv, 92, 91, "left", 20, C.muted, "end"); txt(sv, 92, 243, "right", 20, C.muted, "end");
+  /* s on the drawing (user, 2026-11-23: "slide 63: show s on the robot figure"): a two-headed arrow from one side's wheel
+     centers to the other's, at the robot's left. The icon is scaled by 180 / 66, and its wheels are centered 27.5 units above
+     and below the body's center: 75 px. */
+  (function(){ var x = 116, y1 = CY - 75, y2 = CY + 75, col = "var(--ink)";   /* the theme's text colour, in either theme */
+    [y1, y2].forEach(function(y){ el(sv, "line", {x1:x - 8, y1:y, x2:146, y2:y, stroke:col, "stroke-width":1.5, "stroke-dasharray":"4 3"}); });
+    el(sv, "line", {x1:x, y1:y1 + 10, x2:x, y2:y2 - 10, stroke:col, "stroke-width":2});
+    el(sv, "path", {fill:col, d:"M" + x + "," + y1 + " l-6,11 h12 z M" + x + "," + y2 + " l-6,-11 h12 z"});
+    var t = el(sv, "text", {x:x - 10, y:CY + 9, "font-size":30, fill:col, "text-anchor":"end", "font-family":FONT}); t.innerHTML = '<tspan class="mi">s</tspan>'; })();
   function mk(){ return {ln:el(sv, "line", {stroke:C.live, "stroke-width":6, "stroke-linecap":"round"}), hd:el(sv, "path", {fill:C.live}),
     lb:el(sv, "text", {"font-size":22, fill:C.ink, "text-anchor":"middle", "font-family":FONT})}; }
   var aL = mk(), aR = mk();
