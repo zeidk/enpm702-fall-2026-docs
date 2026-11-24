@@ -1694,9 +1694,10 @@ With ``-p kp_angular:=1.0``:
 .. code-block:: text
 
    [...]: error 1.56985 rad, command 1 rad/s
+   [...]: error 1.28071 rad, command 1 rad/s
    [...]: error 0.689536 rad, command 0.689536 rad/s
 
-First, 1.0 × 1.570 = 1.570 rad/s is over the limit, so the clamp sends 1.0 rad/s. Under the limit, 1.0 × error is the error itself (the second line, 1.05 s later).
+First, 1.0 × 1.570 = 1.570 rad/s is over the limit, so the clamp sends 1.0 rad/s. Under the limit, 1.0 × error is the error itself (the third line, 1.05 s after the first).
 
 .. note::
 

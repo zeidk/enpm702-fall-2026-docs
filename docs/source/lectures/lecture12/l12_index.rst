@@ -7,7 +7,7 @@ Overview
 
 This lecture opens with the **pose** of a robot: its position, and its orientation as roll, pitch and yaw (Euler angles) or as a **quaternion**. It then puts the Husarion ROSbot in a Gazebo world and writes the first controllers for it. The ROSbot is the robot of Lecture 12 to Lecture 14 and of Group Project 2. You start it with one launch file, see what the launch file starts, view the robot in **RViz**, read its pose from ``/odometry/filtered``, and drive it with ``TwistStamped`` messages on ``/cmd_vel``. Gazebo has its own topics, and a bridge copies the ones you need to ROS. Gazebo also has its own clock, **simulation time**: the lecture shows what ``use_sim_time`` changes for ``now()``, and which kind of timer stops when Gazebo is paused.
 
-A **proportional controller** sets a speed in proportion to an error. The lecture writes one as a node that turns the ROSbot on the spot to a heading. It has a gain, a speed limit and a tolerance. A second node, which drives the ROSbot straight for a distance, is in a More detail box of the lecture page.
+A **proportional controller** sets a speed in proportion to an error. The lecture writes one as a node that turns the ROSbot on the spot to a heading. It has a gain, a speed limit and a tolerance. A second node, which drives the ROSbot straight for a distance, is run in the lecture page, with its code in a More detail box.
 
 Those numbers are then moved out of the code into **parameters**: named values of a node that you set at start or change while the node runs, without a rebuild. The lecture declares and reads them, sets them with ``-p``, a YAML file and a launch file, and uses a parameter callback to accept or reject a new value while the ROSbot turns.
 
