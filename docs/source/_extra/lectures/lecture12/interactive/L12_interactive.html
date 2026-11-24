@@ -515,6 +515,7 @@ body.fs .plate.nextc.active{background:transparent}
    message (big) is the code boxes' size, 21 frame px, and a list 18 frame px. A long one scrolls once pinned. */
 #termpop pre{margin:0;font:calc(18px * var(--popk, 1))/1.32 var(--mono);white-space:pre}
 #termpop.big pre{font-size:calc(21px * var(--popk, 1))}   /* one whole message, larger (data-big on the word; user, 2026-11-22) */
+#termpop.big2 pre{font-size:calc(24px * var(--popk, 1))}   /* data-big="2": a short message, larger still (user, 2026-11-24, slide 10) */
 /* code on a word (data-lang, data-center; user, 2026-11-23, slide 102: "Make it bigger, centered on the screen, and with C++
    colors"): the code boxes' colors, 26 frame px, in the middle of the window */
 #termpop.codepop pre.code{font-size:calc(26px * var(--popk, 1));border:0;padding:4px 0;background:none;box-shadow:none;margin:0}
@@ -1040,7 +1041,7 @@ source install/setup.bash</pre></div>
 </div></div></section>
 
 <section class="plate frame s7 extra" id="pose-euler3d" data-scene="pose-euler3d" data-name="Slide 8 · Pose" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose<span class="fsep" aria-hidden="true"></span>Roll, Pitch and Yaw</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 8 of 111. Go to a slide">Slide 8 / 111</span></div>
-  <h2>Roll, pitch and yaw in 3D: fixed axes, roll first</h2><div class="fit"><div class="fitin">
+  <h2>Roll, pitch and yaw in 3D: fixed axes</h2><div class="fit"><div class="fitin">
   <p class="goal">Each angle turns the robot about one axis of the fixed frame. REP 103: "fixed axis roll, pitch, yaw about X, Y, Z axes respectively", roll first. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:540px 1fr;gap:22px;align-items:stretch">   <!-- the 3D box reaches the bottom of the column beside it (user, 2026-11-24) -->
     <div class="p3d" id="eu-box" role="img" aria-label="A 3D view of the ROSbot's 3D model (its body, four wheels, the lidar on top and the camera on a mast at the back), with its body axes: x red, forward; y green, to its left; z blue, up. Faint grey lines show the fixed frame. The three sliders turn the robot; drag to turn the view."></div>
@@ -1049,8 +1050,9 @@ source install/setup.bash</pre></div>
       <div class="row"><span class="lbl">pitch °</span><input type="range" id="eu-p" min="-89" max="89" step="1" value="0" aria-label="pitch in degrees"></div>
       <div class="row"><span class="lbl">yaw °</span><input type="range" id="eu-y" min="-180" max="180" step="1" value="0" aria-label="yaw in degrees"></div>
       <div class="row" id="eu-pre"></div>
+      <div class="row" style="flex-wrap:nowrap"><span class="lbl" style="min-width:0;margin-right:8px">order</span><span id="eu-ord"></span></div>   <!-- the order of the three turns (user, 2026-11-24: "provide preset buttons like XYZ, ZYX, etc") -->
       <div class="pread box nolive" id="eu-read"></div>
-      <p style="margin:6px 0 0">Three turns in a set order are <b>Euler angles</b>. Another order gives another orientation: REP 103 says "Euler angles are generally discouraged due to having 24 'valid' conventions". 24 orders and axis choices are in use. So a library always says which order it uses.</p>
+      <p style="margin:6px 0 0">Three turns in a set order are <b>Euler angles</b>. Another order gives another orientation. REP 103 says "Euler angles are generally discouraged due to having 24 'valid' conventions".</p>
     </div>
   </div>
 </div></div></section>
@@ -1075,7 +1077,7 @@ source install/setup.bash</pre></div>
     <div class="qcol">
       <h3>What it is</h3>
       <ul class="pl">
-        <li>No turn: \((0, 0, 0, 1)\), the defaults of <code class="ty termhover" data-out="msg-quaternion" data-cmd="ros2 interface show geometry_msgs/msg/Quaternion" aria-label="geometry_msgs/msg/Quaternion: point at it to see its fields">geometry_msgs/msg/Quaternion</code>.</li>
+        <li>No turn: \((0, 0, 0, 1)\), the defaults of <code class="ty termhover" data-out="msg-quaternion" data-big="2" data-cmd="ros2 interface show geometry_msgs/msg/Quaternion" aria-label="geometry_msgs/msg/Quaternion: point at it to see its fields">geometry_msgs/msg/Quaternion</code>.</li>
       </ul>
     </div>
     <div class="qcol">
@@ -4621,7 +4623,7 @@ function whyOpen(tr){ var w = whyPop(); whyFrom = tr;
       ? '<pre class="code" data-lang="' + lang + '">' + lines.map(function(l){ var t = document.createElement("textarea"); t.innerHTML = l;
           return '<span class="cl">' + window.deckColor(t.value, lang) + "</span>"; }).join("") + "</pre>"
       : "<pre>" + (el.dataset.type ? '<span class="tp-type">' + el.dataset.type + "</span>\n" : "") + (cmd ? '<span class="tp-cmd">' + cmd + "</span>\n" : "") + lines.join("\n") + "</pre>");
-    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); pop.classList.toggle("cols", !!el.dataset.cols); pop.classList.toggle("codepop", !!lang); shown = el;
+    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); pop.classList.toggle("big2", el.dataset.big === "2"); pop.classList.toggle("cols", !!el.dataset.cols); pop.classList.toggle("codepop", !!lang); shown = el;
     pop.style.pointerEvents = el.dataset.center ? "none" : "";   /* a centered card may sit over the word: the pointer passes through until it is pinned */
     pop.setAttribute("role", "tooltip"); pop.removeAttribute("aria-label");
     pop.style.maxHeight = "";
@@ -5279,20 +5281,30 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   }
   function f3(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); }
 
-  /* Euler angles: R = Rz(yaw) Ry(pitch) Rx(roll), the fixed-axis order of REP 103 (three.js order "ZYX" is that product) */
+  /* Euler angles about fixed axes; REP 103's order is XYZ: R = Rz(yaw) Ry(pitch) Rx(roll) */
   var E = view3D("eu-box");
   if (E){
     var sr = document.getElementById("eu-r"), sp = document.getElementById("eu-p"), sy = document.getElementById("eu-y"), out = document.getElementById("eu-read"), D = Math.PI / 180;
-    out.innerHTML = '\\(q = (x, y, z, w)\\) = (<span class="vv" id="eu-q">0, 0, 0, 1</span>)';
+    out.innerHTML = '\\(q = (x, y, z, w)\\) = (<span class="vv" id="eu-q">0, 0, 0, 1</span>)<br><span id="eu-cmp"></span>';
     mathIn(out);
-    function upd(){ var r = +sr.value * D, p = +sp.value * D, y = +sy.value * D;
-      E.bot.rotation.set(r, p, y, "ZYX");
-      var cr = Math.cos(r / 2), s_r = Math.sin(r / 2), cp = Math.cos(p / 2), s_p = Math.sin(p / 2), cy = Math.cos(y / 2), s_y = Math.sin(y / 2);
-      var q = [s_r * cp * cy - cr * s_p * s_y, cr * s_p * cy + s_r * cp * s_y, cr * cp * s_y - s_r * s_p * cy, cr * cp * cy + s_r * s_p * s_y];   /* tf2's setRPY */
-      document.getElementById("eu-q").textContent = q.map(f3).join(", "); E.touch(); }
+    /* the turns are about the fixed axes, in the order of the letters: XYZ is roll, then pitch, then yaw (tf2's setRPY) */
+    var ord = "XYZ";
+    function mul(a, b){ return [a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1], a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0],
+      a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3], a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2]]; }
+    function quat(o){ var A = {X:[0, +sr.value], Y:[1, +sp.value], Z:[2, +sy.value]}, q = [0, 0, 0, 1];
+      o.split("").forEach(function(c){ var h = A[c][1] * D / 2, t = [0, 0, 0, Math.cos(h)]; t[A[c][0]] = Math.sin(h); q = mul(t, q); }); return q; }
+    function upd(){ var q = quat(ord), z = quat("XYZ"), d = Math.abs(q[0] * z[0] + q[1] * z[1] + q[2] * z[2] + q[3] * z[3]);
+      E.bot.quaternion.set(q[0], q[1], q[2], q[3]);
+      document.getElementById("eu-q").textContent = q.map(f3).join(", ");
+      document.getElementById("eu-cmp").textContent = ord === "XYZ" ? "XYZ: about x first, then y, then z (REP 103)." : "In order XYZ, the same angles end " + Math.round(2 * Math.acos(Math.min(1, d)) / D) + "° away.";
+      E.touch(); }
     [sr, sp, sy].forEach(function(s){ s.addEventListener("input", function(){ eb.set(null); upd(); }); });   /* a moved slider is no preset */
     var eb = buttons(document.getElementById("eu-pre"), ["zero", "yaw", "pitch", "roll"], function(v){ return {zero:"all 0", yaw:"yaw 90°", pitch:"pitch 30°", roll:"roll 45°"}[v]; },
       function(v){ sr.value = v === "roll" ? 45 : 0; sp.value = v === "pitch" ? 30 : 0; sy.value = v === "yaw" ? 90 : 0; upd(); }, "zero");
+    /* with fewer than two angles set, every order gives the same orientation: the button sets all three */
+    buttons(document.getElementById("eu-ord"), ["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"], function(v){ return v; }, function(v){ ord = v;
+      if (v !== "XYZ" && [sr, sp, sy].filter(function(s){ return +s.value !== 0; }).length < 2){ sr.value = 45; sp.value = 30; sy.value = 90; eb.set(null); }
+      upd(); }, "XYZ");
     upd();
     onReset(document.getElementById("eu-box"), function(){ sr.value = 0; sp.value = 0; sy.value = 0; upd(); E.home(); });
   }

@@ -273,6 +273,7 @@ html[data-theme="dark"] .l12w{--nx:#C4C0FF; --nx-a:#2B2A63; --nx-b:#1F2047; --nx
 .l12w #termpop .x:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .l12w #termpop pre{margin:0;font:calc(calc(18 * var(--u)) * var(--popk, 1))/1.32 var(--mono);white-space:pre}
 .l12w #termpop.big pre{font-size:calc(calc(21 * var(--u)) * var(--popk, 1))}
+.l12w #termpop.big2 pre{font-size:calc(calc(24 * var(--u)) * var(--popk, 1))}
 .l12w #termpop.codepop pre.code{font-size:calc(calc(26 * var(--u)) * var(--popk, 1));border:0;padding:4px 0;background:none;box-shadow:none;margin:0}
 .l12w #termpop .tp-cmd::before{content:"$ ";color:var(--muted)}
 .l12w #termpop .tp-type{font-weight:700;color:var(--slate)}
