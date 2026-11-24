@@ -110,12 +110,11 @@ body.zoomed #title:hover{outline:none}
 #title .course{font-size:22px;color:var(--muted);letter-spacing:.04em;margin:0 0 14px}
 #title .lec{font-size:34px;font-weight:300;color:var(--slate);margin:0 0 2px}
 #title h1{margin:0;font-size:64px;line-height:1.05;font-weight:600;color:var(--slate);letter-spacing:-.015em}
-#title .rule{display:flex;height:7px;width:380px;margin:20px 0 16px}
-#title .rule i{flex:1} #title .rule i:nth-child(1){background:var(--s1)} #title .rule i:nth-child(2){background:var(--s2)} #title .rule i:nth-child(3){background:var(--s3)} #title .rule i:nth-child(4){background:var(--s4)}
+#title .rule{height:7px;width:380px;margin:20px 0 16px;background:var(--slate)}   /* one color (user, 2026-11-23: "Make this line one color"); four section colors until then */
 #title .sub{font-size:27px;color:var(--ink);line-height:1.3;margin:0}
-#title .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-top:26px}
+#title .foot{display:flex;align-items:flex-end;justify-content:flex-end;gap:24px;margin-top:6px}
 #title .who{font-size:23px;color:var(--ink);line-height:1.35}
-#title .who b{color:var(--slate);font-weight:600}
+#title .who b{color:var(--slate);font-weight:600} #title .who a{color:var(--plan)}
 #title .side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 #title .begin{display:flex;align-items:center;gap:12px;font-size:24px;color:var(--live);font-weight:600}
 #title kbd{font-family:var(--sans);font-size:24px;font-weight:600;border:2px solid var(--live);border-bottom-width:4px;border-radius:7px;padding:0 12px;background:var(--card);color:var(--live)}
@@ -424,6 +423,11 @@ body.fs .plate.nextc.active{background:transparent}
    "I would prefer using that abstract image as a small image somewhere else", picked "Contents page strip") */
 .plate h2.tochead{display:flex;align-items:center;gap:28px}
 .tocband{flex:1 1 auto;min-width:0;height:44px;object-fit:cover;object-position:center 62%;border-radius:6px}   /* on the heading's line, to its right */
+/* a section divider's title has the same stripe, cut from the section banner (user, 2026-11-23: "in section divider slide. Reuse the
+   banner as a stripe after the section title ... The strip should have the same dimension as the one used after "Table of
+   contents"") */
+.opener h1.sectitle{display:flex;align-items:center;gap:28px}   /* not "sechead": the section view's headers use that class */
+.tocband.secband{object-position:center 45%;-webkit-mask-image:linear-gradient(to right,#000 55%,transparent);mask-image:linear-gradient(to right,#000 55%,transparent)}   /* the banner's white right end fades out, so dark mode shows no white block */
 .toc .col{background:var(--card);border:2px solid var(--plate-edge);border-top:10px solid var(--slate);border-radius:10px;padding:18px 28px 20px}
 .toc .col.plan{border-top-color:var(--plan)} .toc .col.follow{border-top-color:var(--follow)}
 .toc h3{font-size:21px;letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px;color:var(--muted)}
@@ -794,10 +798,11 @@ code.wrap{white-space:normal}
     <div class="course">ENPM702 Introductory Robot Programming, deck v1.0</div>
     <div class="lec">L12</div>
     <h1>Simulation, Control and Parameters</h1>
-    <div class="rule" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-    <p class="sub">Drive the ROSbot in Gazebo with a proportional controller, then tune it with parameters and remapping.</p>
+    <div class="rule" aria-hidden="true"></div>
+    <!-- the author where the tagline was (user, 2026-11-23: "remove "Drive the ROSbot in Gazebo ..." Place my name and
+         affiliation there. also add my email: zeidk@umd.edu") -->
+    <div class="who"><b>Zeid Kootbally</b><br>University of Maryland, College Park<br><a href="mailto:zeidk@umd.edu">zeidk@umd.edu</a></div>
     <div class="foot">
-      <div class="who"><b>Zeid Kootbally</b><br>University of Maryland, College Park</div>
       <div class="side">
         <div class="begin"><kbd>&#8594;</kbd><span>press to begin</span></div>
         <div class="tools" role="group" aria-label="Color theme and help">
@@ -944,7 +949,7 @@ source install/setup.bash</pre></div>
 <section class="plate frame s7" data-scene="p5" data-name="Slide 3 · Pose and Orientation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose and Orientation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 3 of 144. Go to a slide">Slide 3 / 144</span></div>
   <div class="opener">
     <div class="num s7">Section 1</div>
-    <h1>Pose and Orientation</h1>
+    <h1 class="sectitle">Pose and Orientation<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>Last class set up launch files, executors and custom interfaces for the robotaxi.</li>
       <li>This class moves to a robot that reports where it is as a <b>pose</b>: a position and an orientation.</li>
@@ -1202,7 +1207,7 @@ source install/setup.bash</pre></div>
 <section class="plate frame s1" data-scene="p12" data-name="Slide 15 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 15 of 144. Go to a slide">Slide 15 / 144</span></div>
   <div class="opener">
     <div class="num s1">Section 2</div>
-    <h1>Simulation</h1>
+    <h1 class="sectitle">Simulation<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>The last section said how ROS writes a pose. This section runs a robot that reports one, in a simulation.</li>
       <li>A <b>simulation</b> runs a model of the robot and of its world on a computer: the program computes how the robot moves and what its sensors would read.</li>
@@ -1917,7 +1922,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 <section class="plate frame s5" data-scene="visualization-1" data-name="Slide 47 · Visualization" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Visualization</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 47 of 144. Go to a slide">Slide 47 / 144</span></div>
   <div class="opener">
     <div class="num s5">Section 3</div>
-    <h1>Visualization</h1>
+    <h1 class="sectitle">Visualization<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>Gazebo draws the simulated world. A <b>visualization</b> tool draws what ROS carries: the robot model, its frames, the lidar's ranges, the camera's images, a plot of a value against time.</li>
       <li>It works the same with the simulation and with the real robot: it reads topics.</li>
@@ -2101,7 +2106,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
 <section class="plate frame s6" data-scene="the-rosbot-1" data-name="Slide 57 · The ROSbot" tabindex="0"><span class="bolt"></span><div class="fhead"><span>The ROSbot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 57 of 144. Go to a slide">Slide 57 / 144</span></div>
   <div class="opener">
     <div class="num s6">Section 4</div>
-    <h1>The ROSbot</h1>
+    <h1 class="sectitle">The ROSbot<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>The robot you program for the rest of the course: what it is, how it moves, what it senses, and the topics you use to drive it and to know where it is.</li></ul></div>
   </div>
@@ -3050,7 +3055,7 @@ QoS profile:
 <section class="plate frame s2" data-scene="p35" data-name="Slide 75 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 75 of 144. Go to a slide">Slide 75 / 144</span></div>
   <div class="opener">
     <div class="num s2">Section 5</div>
-    <h1>Feedback Control</h1>
+    <h1 class="sectitle">Feedback Control<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>The last section drove the ROSbot by hand with <span class="cmd">ros2 topic pub</span>.</li>
       <li>This section replaces your hand with a node.</li>
@@ -3933,7 +3938,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 <section class="plate frame s3" data-scene="p52" data-name="Slide 100 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 100 of 144. Go to a slide">Slide 100 / 144</span></div>
   <div class="opener">
     <div class="num s3">Section 6</div>
-    <h1>Parameters</h1>
+    <h1 class="sectitle">Parameters<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>The controller keeps its gains and limits as numbers in its code, so each change needs a rebuild.</li>
       <li>A <b>parameter</b> is a named setting of a node that you change without recompiling.</li></ul></div>
@@ -4365,7 +4370,7 @@ RCLCPP_INFO_STREAM(get_logger(),
 <section class="plate frame s4" data-scene="p72" data-name="Slide 124 · Remapping" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Remapping</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 124 of 144. Go to a slide">Slide 124 / 144</span></div>
   <div class="opener">
     <div class="num s4">Section 7</div>
-    <h1>Remapping</h1>
+    <h1 class="sectitle">Remapping<img class="tocband secband" src="L12_interactive_assets/cube_banner_blue.jpg" alt=""></h1>
     <div class="box"><ul class="pl">
       <li>Parameters changed a node's settings without recompiling.</li>
       <li><b>Remapping</b> does the same for the names it uses: its topics, its own name and its <b>namespace</b>.</li>
