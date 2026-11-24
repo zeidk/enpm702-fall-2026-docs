@@ -58,7 +58,7 @@ The ``L12`` folder of the course repository holds one package, ``l12_rosbot``. I
        ├── sim_time_main.cpp
        └── sim_time_node.cpp
 
-The code grows in five stages, one commit each. The lecture quotes the stage a listing belongs to, because the line numbers change from stage to stage:
+The code grows in six stages, one commit each. The lecture quotes the stage a listing belongs to, because the line numbers change from stage to stage:
 
 .. list-table::
    :header-rows: 1
@@ -81,9 +81,12 @@ The code grows in five stages, one commit each. The lecture quotes the stage a l
      - A parameter callback in ``heading_controller_node``.
    * - 5
      - ``6d2b94b``
-     - ``sim_time_node``, which shows what ``use_sim_time`` changes, and ``remap_launch.py``, a launch file with a name, a namespace and two remappings; the :doc:`Namespaces and Remapping </reading_material/remapping/remap_index>` reading uses it. This is the final code of the package.
+     - ``sim_time_node``, which shows what ``use_sim_time`` changes, and ``remap_launch.py``, a launch file with a name, a namespace and two remappings; the :doc:`Namespaces and Remapping </reading_material/remapping/remap_index>` reading uses it.
+   * - 6
+     - ``fe5d602``
+     - The two controllers time their loop with ``create_timer`` instead of ``create_wall_timer``, so they follow the node clock and stop while Gazebo is paused. This is the final code of the package.
 
-To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository.
+To read a stage, check out its commit in the course repository. The listings below name their stage; a listing that says "stage 4" matches the files you get from the repository, except one line: every listing shows the timer of stage 6, ``create_timer``, where stages 1 to 5 have ``create_wall_timer``.
 
 Pose and Orientation
 --------------------
