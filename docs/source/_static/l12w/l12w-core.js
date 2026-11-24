@@ -6,7 +6,7 @@ var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: re
 var C = {ink:"#1E2935", slate:"#34506E", muted:"#5B6B7C", edge:"#B9C4CF", plan:"#3E6FA8", planFill:"#DCE9F8",
   follow:"#B5622A", followFill:"#FBE4CF", s1:"#3E6FA8", s2:"#B5622A", s3:"#7B5EA7", s4:"#A63D6F", live:"#16798A", ok:"#2E7D4F", bad:"#B3261E", grid:"#E3E8EE"};
 var NS = "http://www.w3.org/2000/svg", FONT = "L12W Fira Sans, Fira Sans, Segoe UI, sans-serif";
-var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","rb-wclip-0":"clipPath","rb-wclip-1":"clipPath","rb-wclip-2":"clipPath","rb-wclip-3":"clipPath","deck":"div","pq":"div","pose-def":"section","pd-svg":"svg","pd-bot":"g","pose-rhr":"section","pose-rpy":"section","pose-euler3d":"section","eu-box":"div","eu-r":"input","eu-p":"input","eu-y":"input","eu-pre":"div","eu-read":"div","pose-quat":"section","qt-yaw":"input","qt-pre":"div","qt-vals":"div","qt-svg":"svg","pose-axisangle":"section","aa-box":"div","aa-axes":"span","aa-a":"input","aa-read":"div","check-pose":"section","mu-svg":"svg","br":"div","ariac-vid":"video","gw-ariac":"section","aw-box":"div","aw-top":"button","aw-cell":"button","aw-reset":"button","gw-husarion":"section","hw-box":"div","hw-t":"span","hw-play":"button","hw-top":"button","hw-near":"button","hw-reset":"button","gw-warehouse":"section","ww-box":"div","ww-t":"span","ww-play":"button","ww-top":"button","ww-near":"button","ww-reset":"button","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-reset":"button","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","check-simulation":"section","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","kin":"section","kn-v":"input","kn-w":"input","kn-svg":"svg","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-t":"table","tw-v":"input","tw-w":"input","tw-msg":"div","tw-svg":"svg","tw-drive":"button","tw-t":"span","sn-scan":"template","sn-scan-filtered":"template","sn-oak-rgb-color":"template","sn-oak-stereo-depth":"template","sn-oak-stereo-depth-points":"template","sn-imu-data":"template","sn-joint-states":"template","sn-logical-camera":"template","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","check-rosbot":"section","cg-svg":"svg","cg-hot-odom":"span","cg-hot-cmd":"span","cg-msg-odom":"template","cg-msg-cmd":"template","fb-def":"section","fb-pid":"section","pl-svg":"svg","fb-ah":"marker","pl-s1":"circle","pl-minus":"div","pl-pid":"rect","pl-p":"rect","pl-i":"rect","pl-d":"rect","pl-s2":"circle","pl-plant":"rect","pl-fbk":"rect","pl-spark":"g","pl-prev":"button","pl-next":"button","pl-say":"span","fb-pid2":"section","fb-head":"section","hl-svg":"svg","hl-ah":"marker","hl-tg":"div","hl-e":"div","hl-p":"rect","hl-lim":"rect","hl-u":"div","hl-odo":"rect","hl-th":"span","hl-flow":"g","hl-plot":"svg","hl-pg":"g","hl-dial":"svg","hl-say":"p","hl-tgts":"span","hl-play":"button","hl-reset":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-code":"pre","tc-h":"input","tc-ex":"button","tc-t":"input","tc-svg":"svg","tc-g":"g","tc-rows":"g","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","gr-g":"div","gr-s":"svg","gr-pin":"path","gr-pout":"path","gr-node":"div","gr-ocb":"div","gr-ccb":"div","gr-say":"div","gr-play":"button","gr-code":"div","gr-ti-odom":"template","gr-ti-cmd":"template","mb-code":"div","mb-d":"div","mb-w":"path","mb-wh":"polygon","mb-r":"path","mb-rh":"polygon","mb-ocb":"div","mb-yaw":"div","mb-has":"div","mb-ccb":"div","mb-say":"div","mb-play":"button","mb-back":"button","mb-fwd":"button","kc-code":"div","kc-uses":"div","kc-say":"div","dbg-odom":"section","oc-code":"div","oc-msg":"div","oc-z":"div","oc-w":"div","oc-yaw":"div","oc-has":"div","oc-dial":"svg","oc-say":"div","oc-play":"button","oc-back":"button","oc-fwd":"button","cc-runs":"span","cc-code":"div","cc-term":"div","cc-yaw":"div","cc-has":"div","cc-tgt":"div","cc-err":"div","cc-cmd":"div","cc-dial":"svg","cc-say":"div","cc-play":"button","cc-back":"button","cc-fwd":"button","pb-runs":"span","pb-code":"div","pb-msg":"div","pb-st":"div","pb-az":"div","pb-g":"div","pb-s":"svg","pb-say":"div","pb-play":"button","pb-back":"button","pb-fwd":"button","fb-dist":"section","dl-svg":"svg","dl-ah":"marker","dl-tg":"div","dl-e":"div","dl-p":"rect","dl-lim":"rect","dl-u":"div","dl-odo":"rect","dl-th":"span","dl-flow":"g","dl-plot":"svg","dl-pg":"g","dl-track":"svg","dl-say":"p","dl-tgts":"span","dl-play":"button","dl-reset":"button","rp-log":"pre","rp-svg":"svg","rp-say":"div","check-control":"section","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-back":"button","q42-next":"button","q42-c":"div","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","check-parameters":"section","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","check-remapping":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","eu-q":"span","aa-ax":"span","aa-q":"span","aa-n":"span","fx-go":"button","fx-cancel":"button"}, SVGT = {"defs":1,"ellipse":1,"path":1,"rect":1,"text":1,"g":1,"pattern":1,"polyline":1,"tspan":1,"marker":1,"line":1,"linearGradient":1,"stop":1,"image":1,"clipPath":1,"foreignObject":1,"circle":1,"symbol":1,"svg":1,"use":1,"polygon":1,"mask":1};
+var TAGS = {"ID":"template","viewport":"div","world":"div","title":"div","t-help":"button","rb-wclip-0":"clipPath","rb-wclip-1":"clipPath","rb-wclip-2":"clipPath","rb-wclip-3":"clipPath","rb-floorclip":"clipPath","rb-fovg":"linearGradient","deck":"div","pq":"div","pose-part-1":"section","pose-def":"section","pd-svg":"svg","pd-bot":"g","pose-rhr":"section","pose-part-2":"section","pose-rpy":"section","pose-euler3d":"section","eu-box":"div","eu-r":"input","eu-p":"input","eu-y":"input","eu-pre":"div","eu-read":"div","pose-part-3":"section","pose-quat-def":"section","pose-axisangle":"section","aa-box":"div","aa-axes":"div","aa-axdesc":"p","aa-a":"input","aa-read":"div","pose-quat":"section","qt-yaw":"input","qt-pre":"div","qt-vals":"div","qt-svg":"svg","mu-svg":"svg","ariac-vid":"video","gw-ariac":"section","aw-box":"div","aw-top":"button","aw-cell":"button","aw-reset":"button","gw-husarion":"section","hw-box":"div","hw-t":"span","hw-play":"button","hw-top":"button","hw-near":"button","hw-reset":"button","gw-warehouse":"section","ww-box":"div","ww-t":"span","ww-play":"button","ww-top":"button","ww-near":"button","ww-reset":"button","ni-ekf":"template","ni-robot-state-publisher":"template","topics31":"template","la-reset":"button","la-t":"table","la-x":"input","la-y":"input","la-yaw":"input","la-cmd":"pre","pw-box":"div","pw-still":"img","pw-top":"button","pw-robot":"button","pw-reset":"button","pw-help":"p","st-off":"button","st-on":"button","st-cmd":"pre","st-cap":"p","st-log":"pre","st-say":"ul","pz-play":"button","pz-t":"span","pz-now":"span","pz-svg":"svg","check-simulation":"section","rv":"div","rv-tree":"div","rv-help":"div","rv-b-add":"button","rv-b-dup":"button","rv-b-rm":"button","rv-b-ren":"button","rv-imgwrap":"div","rv-imgbox":"div","rv-handle":"button","rv-view":"div","rv-t1":"output","rv-t2":"output","rv-t3":"output","rv-t4":"output","rv-reset":"button","rv-msg":"span","rv-fps":"span","rv-pop":"div","rv-still":"img","rv-drive":"div","rv-restore":"button","fx":"div","fx-open":"button","fx-src":"span","fx-addp":"button","fx-side":"div","fx-sbody":"div","fx-handle":"button","fx-grid":"div","fx-live":"span","fx-time":"span","fx-pop":"div","fx-drive":"div","fx-restore":"button","rq":"div","rg":"div","rg-refresh":"button","rg-mode":"select","rg-level":"select","rg-group":"span","rg-fitnow":"button","rg-hide":"span","rg-view":"div","rg-cv":"canvas","rq-topics":"table","rq-pfilter":"input","rq-plist":"ul","rq-pnode":"div","rq-params":"table","rq-ccount":"span","rq-sev":"span","rq-log":"table","rq-tfv":"div","rq-tfcv":"canvas","rbcard":"div","rbc-icon":"g","vel":"section","vel-ah":"marker","vel-vp":"g","vel-vn":"g","vel-wp":"g","vel-wn":"g","vel-vb":"span","vel-wb":"span","kin":"section","kn-v":"input","kn-w":"input","kn-svg":"svg","tw-v":"input","tw-w":"input","tw-msg":"div","tw-svg":"svg","tw-drive":"button","tw-t":"span","sn-scan":"template","sn-scan-filtered":"template","sn-oak-rgb-color":"template","sn-oak-stereo-depth":"template","sn-oak-stereo-depth-points":"template","sn-imu-data":"template","sn-joint-states":"template","sn-logical-camera":"template","ti-cmd-vel":"template","ti-odometry-filtered":"template","ti-scan":"template","ti-logical-camera":"template","ti-tf":"template","ti-clock":"template","dr-svg":"svg","dr-stop":"button","dr-reset":"button","dr-clear":"button","dr-pad":"svg","dr-msg":"div","dr-t":"table","cv-run":"button","cv-stop":"button","cv-t":"span","cv-svg":"svg","cv-note":"div","check-rosbot":"section","control-part-1":"section","cg-svg":"svg","cg-hot-odom":"span","cg-hot-cmd":"span","cg-msg-odom":"template","cg-msg-cmd":"template","fb-def":"section","fb-pid":"section","pl-svg":"svg","fb-ah":"marker","pl-s1":"circle","pl-minus":"div","pl-pid":"rect","pl-p":"rect","pl-i":"rect","pl-d":"rect","pl-s2":"circle","pl-plant":"rect","pl-fbk":"rect","pl-spark":"g","pl-prev":"button","pl-next":"button","pl-say":"span","fb-pid2":"section","fb-head":"section","hl-svg":"svg","hl-ah":"marker","hl-tg":"div","hl-e":"div","hl-p":"rect","hl-lim":"rect","hl-u":"div","hl-odo":"rect","hl-th":"span","hl-flow":"g","hl-plot":"svg","hl-pg":"g","hl-dial":"svg","hl-say":"p","hl-tgts":"span","hl-play":"button","hl-reset":"button","lc-steps":"ol","lc-svg":"svg","lc-cap":"p","lc-back":"button","lc-next":"button","lc-play":"button","tc-code":"pre","tc-h":"input","tc-ex":"button","tc-t":"input","tc-svg":"svg","tc-g":"g","tc-rows":"g","qy":"input","qy-out":"ul","pc-kp":"span","pc-e":"input","pc-out":"ul","pc-rows":"table","pc-svg":"svg","gr-g":"div","gr-s":"svg","gr-pin":"path","gr-pout":"path","gr-node":"div","gr-ocb":"div","gr-ccb":"div","gr-say":"div","gr-play":"button","gr-code":"div","gr-ti-odom":"template","gr-ti-cmd":"template","mb-code":"div","mb-d":"div","mb-w":"path","mb-wh":"polygon","mb-r":"path","mb-rh":"polygon","mb-ocb":"div","mb-yaw":"div","mb-has":"div","mb-ccb":"div","mb-say":"div","mb-play":"button","mb-back":"button","mb-fwd":"button","kc-code":"div","kc-uses":"div","kc-say":"div","dbg-odom":"section","oc-code":"div","oc-msg":"div","oc-z":"div","oc-w":"div","oc-yaw":"div","oc-has":"div","oc-dial":"svg","oc-say":"div","oc-play":"button","oc-back":"button","oc-fwd":"button","cc-runs":"span","cc-code":"div","cc-term":"div","cc-yaw":"div","cc-has":"div","cc-tgt":"div","cc-err":"div","cc-cmd":"div","cc-dial":"svg","cc-say":"div","cc-play":"button","cc-back":"button","cc-fwd":"button","pb-runs":"span","pb-code":"div","pb-msg":"div","pb-st":"div","pb-az":"div","pb-g":"div","pb-s":"svg","pb-say":"div","pb-play":"button","pb-back":"button","pb-fwd":"button","rp-log":"pre","rp-say":"div","rp-svg":"svg","fb-dist":"section","dl-svg":"svg","dl-ah":"marker","dl-tg":"div","dl-e":"div","dl-p":"rect","dl-lim":"rect","dl-u":"div","dl-odo":"rect","dl-th":"span","dl-flow":"g","dl-plot":"svg","dl-pg":"g","dl-track":"svg","dl-say":"p","dl-tgts":"span","dl-play":"button","dl-reset":"button","param-part-1":"section","q42-back":"button","q42-next":"button","q42-t":"table","q42-m0":"button","q42-m1":"button","q42-cy":"div","q42-list":"ol","q42-c":"div","kc-four":"template","q45-b":"div","q45-l":"span","q45-t":"div","q46-b0":"button","q46-b1":"button","q46-b2":"button","q46-n":"p","q46-cmd":"pre","q46-out":"pre","q49-b0":"button","q49-b1":"button","q49-b2":"button","q49-s":"span","q49-cmd":"pre","q49-out":"pre","q49-n":"div","q50-code":"pre","q50-b":"div","q50-r":"div","q51-b0":"button","q51-b1":"button","q51-cmd":"pre","q51-out":"pre","q52-code":"pre","q52-b0":"button","q52-b1":"button","q52-r":"div","q54-b0":"button","q54-b1":"button","q54-b2":"button","q54-again":"button","q54-by":"p","q54-t":"table","q54-lim":"div","q54-svg":"svg","q47-log":"pre","q47-p":"span","q47-m":"span","q47-r":"span","q47-back":"button","q47-next":"button","q47-set":"button","q47-t":"span","q47-w":"div","q57-p0":"button","q57-p1":"button","q57-p2":"button","q57-v":"input","q57-in":"input","q57-cmd":"pre","q57-out":"pre","q57-svg":"svg","q57-again":"button","q57-w":"span","q58-p0":"button","q58-p1":"button","q58-p2":"button","q58-in":"input","q58-c0":"pre","q58-c1":"pre","q58-c2":"pre","q58-c":"span","q58-m":"span","q58-log":"pre","q59-tab":"table","q59-play":"button","q59-t":"span","q59-svg":"svg","q59-turns":"div","check-parameters":"section","remap-part-1":"section","g2-svg":"svg","g2-list":"pre","g2-cnt":"ul","g2-pre":"span","g2-a-ns":"span","g2-a-nm":"span","g2-b-ns":"span","g2-b-nm":"span","g2-again":"button","g2-say":"ul","rs-ns":"span","rs-nm":"span","rs-wr":"div","rs-out":"ul","rs-note":"div","g1-svg":"svg","g1-again":"button","g1-cmd":"pre","g1-pre":"span","g1-ns":"span","g1-nm":"span","g1-od":"span","g1-cv":"span","g1-note":"div","lf-code":"pre","lf-cmd":"pre","lf-btns":"div","check-remapping":"section","nav":"div","nav-prev":"button","where":"span","nav-next":"button","nav-home":"button","nav-theme":"button","hotspot":"div","ph-prev":"button","ph-next":"button","ph-turn":"div","corner":"div","c-prev":"button","c-home":"button","c-next":"button","c-theme":"button","c-full":"button","c-help":"button","help":"div","search":"div","search-in":"input","search-list":"ol","search-msg":"p","jump":"div","jump-in":"input","jump-of":"span","jump-msg":"span","bibpop":"div","ink":"canvas","laser":"div","modebadge":"div","qt-d":"span","qt-r":"span","qt-h":"span","qt-z":"span","qt-h2":"span","qt-w":"span","eu-q":"span","aa-al":"span","aa-h":"span","aa-s":"span","aa-c":"span","aa-x":"span","aa-y":"span","aa-z":"span","aa-w":"span","aa-q":"span","aa-n":"span","fx-go":"button","fx-cancel":"button"}, SVGT = {"defs":1,"foreignObject":1,"line":1,"use":1,"pattern":1,"circle":1,"linearGradient":1,"stop":1,"polygon":1,"path":1,"g":1,"marker":1,"text":1,"tspan":1,"ellipse":1,"clipPath":1,"image":1,"mask":1,"rect":1,"polyline":1,"symbol":1,"svg":1};
 /* an element a script asks for: the page's, or a detached one when its panel is not on this page */
 /* one stand-in per id, so a script that fills an element and reads it again finds what it put there; the stand-ins sit in
    a holder that is not in the page, so code that inserts next to one works and document.contains() still says "not here"
@@ -160,6 +160,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       rules = rules.map(function(r){ var src = r[1].source; return src.charAt(0) === "^" ? [r[0], new RegExp("(?!)")] : r; });
     }
     return out; }
+  window.deckColor = color;   /* the termhover cards color code with it (data-lang on the word) */
   function ranges(spec){ var on = {}; (spec || "").split(",").forEach(function(p){ p = p.trim(); if (!p) return;
     var ab = p.split("-"), a = +ab[0], b = +(ab[1] || ab[0]); for (var k = a; k <= b; k++) on[k] = 1; }); return on; }
   /* ---------- a copy button on every terminal box (user, 2026-11-20: "the ability to copy terminal commands with a copy
@@ -251,7 +252,14 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var g = document.createElementNS(NS, "g"); sv.appendChild(g); rosbotIcon(g, 0, 0, 90, -y);
     mk("line", {x1:0, y1:0, x2:(R - 16) * Math.cos(r), y2:-(R - 16) * Math.sin(r), stroke:"var(--plan)", "stroke-width":5, "stroke-linecap":"round"});
     var z = Math.sin(r / 2), w = Math.cos(r / 2), f = function(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); };
-    vals.innerHTML = "yaw = " + y + "° = <span class='vv'>" + f(r) + "</span> rad<br>x = 0, y = 0<br>z = sin(" + f(r / 2) + ") = <span class='vv'>" + f(z) + "</span><br>w = cos(" + f(r / 2) + ") = <span class='vv'>" + f(w) + "</span>"; }
+    set("qt-d", (y < 0 ? "−" + (-y) : y) + "°"); set("qt-r", f(r)); set("qt-h", f(r / 2)); set("qt-h2", f(r / 2)); set("qt-z", f(z)); set("qt-w", f(w)); }
+  function set(id, t){ $id(id).textContent = t; }
+  /* the formula in math mode, the live numbers in the orange spans (user, 2026-11-23: "slide 10 (box with numbers): use math mode") */
+  vals.innerHTML = '\\(\\text{yaw}\\) = <span class="vv" id="qt-d"></span> = <span class="vv" id="qt-r"></span> rad<br>' +
+    '\\(x = 0,\\ y = 0\\)<br>' +
+    '\\(z = \\sin\\frac{\\text{yaw}}{2}\\) = \\(\\sin\\)(<span class="vv" id="qt-h"></span>) = <span class="vv" id="qt-z"></span><br>' +
+    '\\(w = \\cos\\frac{\\text{yaw}}{2}\\) = \\(\\cos\\)(<span class="vv" id="qt-h2"></span>) = <span class="vv" id="qt-w"></span>';
+  mathIn(vals);
   sl.addEventListener("input", draw);
   var pre = $id("qt-pre");
   buttons(pre, [0, 90, 180, -90], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ sl.value = v; draw(); }, 90);
@@ -260,15 +268,39 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 })();
 
 
-/* ---------- the section's 3D views: the ROSbot as a box with its body axes (x red, y green, z blue) and the fixed frame in grey ---------- */
+/* ---------- the section's 3D views: the ROSbot's 3D model with its body axes (x red, y green, z blue) and the fixed frame in grey ---------- */
 (function(){
-  function view3D(boxId){
+  var GEOMS = null;   /* one set of geometries for both views: millimetres to scene units, three times life size */
+  function rosbotGeoms(){ if (GEOMS) return GEOMS; GEOMS = ((window.ROSBOT && ROSBOT.parts) || []).map(function(p){ var a = new Float32Array(p.pos.length);
+      for (var i = 0; i < a.length; i++) a[i] = p.pos[i] * 0.003;
+      var g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(a, 3)); g.computeVertexNormals(); return {g:g, c:p.color}; });
+    return GEOMS; }
+  /* an airliner for the axis-and-angle slide (user, 2026-11-23: "It would be easier with a plane", figure-common's
+     noun_Airplane_8391999.svg): drawn from simple shapes in that icon's style, a white body with dark wings, fin and windows;
+     nose along +x, wings along y, fin up z, so roll, pitch and yaw are its own motions. About 1.41 long, centred on the wings */
+  function trap(pts, depth){ var sh = new THREE.Shape(); sh.moveTo(pts[0][0], pts[0][1]); for (var i = 1; i < pts.length; i++) sh.lineTo(pts[i][0], pts[i][1]);
+    return new THREE.ExtrudeGeometry(sh, {depth:depth, bevelEnabled:false}); }
+  function planeParts(){ var W = [0.97, 0.97, 0.97], D = [0.16, 0.17, 0.19], M = [0.62, 0.64, 0.67], out = [];
+    function add(g, c, p, r, sc){ out.push({g:g, c:c, p:p || [0, 0, 0], r:r || [0, 0, 0], s:sc || [1, 1, 1]}); }
+    add(new THREE.CylinderGeometry(0.1, 0.1, 0.9, 28), W, [0, 0, 0], [0, 0, Math.PI / 2]);                         /* fuselage */
+    add(new THREE.SphereGeometry(0.1, 28, 16, 0, 2 * Math.PI, 0, Math.PI / 2), W, [0.45, 0, 0], [0, 0, -Math.PI / 2], [1, 1.9, 1]);   /* nose */
+    add(new THREE.ConeGeometry(0.1, 0.32, 28), W, [-0.61, 0, 0.0], [0, 0, Math.PI / 2]);                            /* tail cone */
+    add(trap([[0.2, 0.09], [-0.1, 0.09], [-0.34, 0.72], [-0.22, 0.72]], 0.025), D, [0, 0, -0.05]);                  /* left wing */
+    add(trap([[0.2, -0.09], [-0.22, -0.72], [-0.34, -0.72], [-0.1, -0.09]], 0.025), D, [0, 0, -0.05]);              /* right wing */
+    add(trap([[-0.47, 0.05], [-0.63, 0.05], [-0.73, 0.3], [-0.65, 0.3]], 0.018), D, [0, 0, 0.0]);                   /* tailplane */
+    add(trap([[-0.47, -0.05], [-0.65, -0.3], [-0.73, -0.3], [-0.63, -0.05]], 0.018), D, [0, 0, 0.0]);
+    add(trap([[-0.44, 0.06], [-0.64, 0.06], [-0.76, 0.42], [-0.64, 0.42]], 0.02), D, [0, 0.01, 0], [Math.PI / 2, 0, 0]);   /* fin */
+    [0.32, -0.32].forEach(function(y){ add(new THREE.CylinderGeometry(0.045, 0.045, 0.2, 18), M, [0.1, y, -0.1], [0, 0, Math.PI / 2]); });   /* engines */
+    for (var k = 0; k < 9; k++) [0.098, -0.098].forEach(function(y){ add(new THREE.BoxGeometry(0.035, 0.008, 0.028), D, [0.3 - k * 0.075, y, 0.035]); });   /* windows */
+    [0.06, -0.06].forEach(function(y){ add(new THREE.BoxGeometry(0.03, 0.05, 0.03), D, [0.56, y, 0.045], [0, 0.6, 0]); });   /* cockpit */
+    return out; }
+  function view3D(boxId, model){
     var box = $id(boxId); if (!box || !box.isConnected) return null;
     if (!window.THREE || !THREE.OrbitControls){ box.textContent = "This browser cannot draw 3D (WebGL)."; return null; }
     var r; try { r = new THREE.WebGLRenderer({antialias:true}); } catch (e) { box.textContent = "This browser cannot draw 3D (WebGL)."; return null; }
     box.appendChild(r.domElement);
     var scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 600 / 360, 0.05, 50); cam.up.set(0, 0, 1);
-    cam.position.set(1.45, -1.8, 1.15);
+    cam.position.set(1.67, -2.07, 1.32);   /* 15 % further than the box robot's view, so the z arrow's tip and its letter stay inside */
     scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 0.9)); var sun = new THREE.DirectionalLight(0xffffff, 0.5); sun.position.set(-3, -4, 6); scene.add(sun);
     function dk(){ return document.documentElement.getAttribute("data-theme") === "dark"; }
     var C3 = {x:[0xB3261E, 0xF2786F], y:[0x2E7D4F, 0x62C48F], z:[0x2D6CA2, 0x6FA3D8]};
@@ -276,11 +308,16 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var fixed = new THREE.Group(); scene.add(fixed);
     [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(function(d){ var g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(d[0] * 1.3, d[1] * 1.3, d[2] * 1.3)]);
       fixed.add(new THREE.Line(g, new THREE.LineDashedMaterial({color:0x9aa6b2, dashSize:0.06, gapSize:0.05}))); fixed.children[fixed.children.length - 1].computeLineDistances(); });
-    /* the robot: a dark box on four wheels, facing +x, and its axes */
+    /* the robot: the ROSbot's own 3D model (ROSBOT, from its URDF and meshes; user, 2026-11-23: "slides 7 and 9, use the ROSbot
+       model"), three times life size, facing +x, turned about base_link on the floor, and its axes */
     var bot = new THREE.Group(); scene.add(bot);
-    var body = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.46, 0.18), new THREE.MeshLambertMaterial({color:0x2b2f36})); body.position.z = 0.0; bot.add(body);
-    [[0.2, 0.27], [-0.2, 0.27], [0.2, -0.27], [-0.2, -0.27]].forEach(function(q){ var w = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 20), new THREE.MeshLambertMaterial({color:0x111111}));
-      w.position.set(q[0], q[1], -0.04); bot.add(w); });
+    var src = model === "plane" ? planeParts() : rosbotGeoms(), ghost = null;
+    function mesh(q, mat){ var m = new THREE.Mesh(q.g, mat); if (q.p) m.position.set(q.p[0], q.p[1], q.p[2]); if (q.r) m.rotation.set(q.r[0], q.r[1], q.r[2]); if (q.s) m.scale.set(q.s[0], q.s[1], q.s[2]); return m; }
+    var parts = src.map(function(q){ var m = mesh(q, new THREE.MeshLambertMaterial({color:new THREE.Color(q.c[0], q.c[1], q.c[2])})); m.userData.c = q.c; bot.add(m); return m; });
+    if (model === "plane"){   /* a faint copy at the start, so the turn shows */
+      ghost = new THREE.Group(); scene.add(ghost);
+      var gm = new THREE.MeshBasicMaterial({color:0x9aa6b2, transparent:true, opacity:0.22, depthWrite:false});
+      src.forEach(function(q){ ghost.add(mesh(q, gm)); }); }
     var arrows = {};
     ["x", "y", "z"].forEach(function(k){ var d = new THREE.Vector3(k === "x" ? 1 : 0, k === "y" ? 1 : 0, k === "z" ? 1 : 0);
       arrows[k] = new THREE.ArrowHelper(d, new THREE.Vector3(0, 0, 0), 0.95, C3[k][0], 0.16, 0.09); bot.add(arrows[k]); });
@@ -293,11 +330,12 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     function size(){ r.setPixelRatio(ratio()); r.setSize(box.clientWidth, box.clientHeight, false); cam.aspect = box.clientWidth / box.clientHeight; cam.updateProjectionMatrix(); dirty = true; }
     function draw(){ var d = dk(); r.setClearColor(d ? 0x242e39 : 0xffffff);
       ["x", "y", "z"].forEach(function(k){ arrows[k].setColor(C3[k][d ? 1 : 0]); });
-      body.material.color.set(d ? 0xc9d3dd : 0x2b2f36);
+      parts.forEach(function(m){ var c = m.userData.c, k = d ? 0.6 : 0.25; m.material.color.setRGB(c[0] + (0.79 - c[0]) * k, c[1] + (0.83 - c[1]) * k, c[2] + (0.87 - c[2]) * k); });   /* a little lighter than its URDF colour, as Gazebo's lights show it, and more on the dark background */
       r.render(scene, cam);
       bot.updateMatrixWorld();
       ["x", "y", "z"].forEach(function(k){ var tip = new THREE.Vector3(k === "x" ? 1.08 : 0, k === "y" ? 1.08 : 0, k === "z" ? 1.08 : 0).applyMatrix4(bot.matrixWorld).project(cam);
-        lab[k].style.left = ((tip.x + 1) / 2 * box.clientWidth - 6) + "px"; lab[k].style.top = ((1 - tip.y) / 2 * box.clientHeight - 14) + "px"; });
+        var L = (tip.x + 1) / 2 * box.clientWidth - 6 + (k === "z" ? 16 : 0), T = (1 - tip.y) / 2 * box.clientHeight - 14;   /* z beside its arrowhead, not on it */   /* kept inside the view: a tip above it put the z over the text */
+        lab[k].style.left = Math.max(4, Math.min(box.clientWidth - 24, L)) + "px"; lab[k].style.top = Math.max(2, Math.min(box.clientHeight - 32, T)) + "px"; });
       extra.forEach(function(f){ f(); }); }
     controls.addEventListener("change", function(){ dirty = true; });
     var running = false;
@@ -310,7 +348,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     window.addEventListener("resize", function(){ size(); draw(); });
     /* a handle for figures/pose3d/make_rpy_stills.sh, which sets the camera for the PDF's stills */
     box._v3 = {cam:cam, controls:controls, scene:scene, bot:bot, touch:function(){ dirty = true; draw(); }};
-    return {scene:scene, bot:bot, cam:cam, controls:controls, touch:function(){ dirty = true; draw(); }, onDraw:function(f){ extra.push(f); }, home:function(){ cam.position.set(1.45, -1.8, 1.15); controls.target.set(0, 0, 0); controls.update(); dirty = true; draw(); }};
+    return {scene:scene, bot:bot, cam:cam, controls:controls, touch:function(){ dirty = true; draw(); }, onDraw:function(f){ extra.push(f); }, home:function(){ cam.position.set(1.67, -2.07, 1.32); controls.target.set(0, 0, 0); controls.update(); dirty = true; draw(); }};
   }
   function f3(v){ var s = v.toFixed(3); return (s === "-0.000" ? "0.000" : s).replace("-", "−"); }
 
@@ -333,31 +371,57 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   }
 
   /* axis and angle: the robot turned by the angle about the chosen axis, the axis drawn in purple, the quaternion beside it */
-  var A = view3D("aa-box");
+  var A = view3D("aa-box", "plane");
   if (A){
-    var sa = $id("aa-a"), outA = $id("aa-read"), axis = [0, 0, 1], axLine = null;
-    var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)]};
-    outA.innerHTML = 'axis \\((a_x, a_y, a_z)\\) = (<span class="vv" id="aa-ax"></span>)<br>\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>)<br>\\(|q|\\) = <span class="vv" id="aa-n"></span>';
+    var sa = $id("aa-a"), outA = $id("aa-read"), axis = null, axLine = null;   /* no axis until one is picked (user, 2026-11-23: "when loaded, make sure no axis is selected") */
+    var AX = {x:[1, 0, 0], y:[0, 1, 0], z:[0, 0, 1], t:[1 / Math.sqrt(3), 1 / Math.sqrt(3), 1 / Math.sqrt(3)],
+      /* examples with two or three components (user, 2026-11-23: "provide examples where a_x and a_y are not zero. a_z is 0", then
+         "keep (0.707,0.707,0), change (0.6,-0.8,0) to use y and z axes, and add a third one to include x,y,z axes"): halfway
+         between x and y in the floor plane; (0, 0.6, 0.8), length 1 since 0.36 + 0.64 = 1; and t above, all three equal */
+      d:[Math.SQRT1_2, Math.SQRT1_2, 0], e:[0, 0.6, 0.8]};
+    /* the formula, step by step, with the numbers of the chosen axis and angle (user, 2026-11-23: "slide 8 is rushed. I want one
+       slide only explaining and visualizing" the axis-and-angle formula) */
+    outA.innerHTML = '<ol class="pl" style="margin:0;padding-left:1.4em">' +
+      '<li>Magnitude, must be 1: \\(\\sqrt{a_x^2 + a_y^2 + a_z^2}\\) = <span class="vv" id="aa-al"></span>.</li>' +
+      '<li>\\(\\frac{\\theta}{2}\\) = <span class="vv" id="aa-h"></span>: \\(\\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-s"></span>, \\(\\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-c"></span>.</li>' +
+      '<li>The axis times \\(\\sin\\frac{\\theta}{2}\\):<br>\\(x = a_x \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-x"></span><br>\\(y = a_y \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-y"></span><br>\\(z = a_z \\sin\\frac{\\theta}{2}\\) = <span class="vv" id="aa-z"></span></li>' +
+      '<li>\\(w = \\cos\\frac{\\theta}{2}\\) = <span class="vv" id="aa-w"></span>.</li></ol>' +
+      '<span style="white-space:nowrap">\\(q = (x, y, z, w)\\) = (<span class="vv" id="aa-q"></span>),</span> length <span class="vv" id="aa-n"></span>';
     mathIn(outA);
-    function drawAxis(){ if (axLine) A.scene.remove(axLine);
+    function drawAxis(){ if (axLine) A.scene.remove(axLine); axLine = null; if (!axis){ A.touch(); return; }
       var v = new THREE.Vector3(axis[0], axis[1], axis[2]);
       axLine = new THREE.Group();
       var g = new THREE.BufferGeometry().setFromPoints([v.clone().multiplyScalar(-1.2), v.clone().multiplyScalar(1.4)]);
       axLine.add(new THREE.Line(g, new THREE.LineBasicMaterial({color:0x7B5EA7})));
       axLine.add(new THREE.ArrowHelper(v, v.clone().multiplyScalar(1.15), 0.25, 0x7B5EA7, 0.14, 0.08));
       A.scene.add(axLine); }
-    function upd2(){ var th = +sa.value * Math.PI / 180, s = Math.sin(th / 2), c = Math.cos(th / 2);
+    function set(id, t){ $id(id).textContent = t; }
+    /* each axis in words (user, 2026-11-23: "For all 6 examples, find a way to say which axis of rotation we are using"); the
+       directions are the airplane's at the start: x along the nose, y along the left wing, z up through the fin. Angles:
+       atan2(0.8, 0.6) = 53.1 degrees; acos(0.577) = 54.7 degrees */
+    var DESC = {x:"the x axis, along the nose: a roll.", y:"the y axis, along the left wing: a pitch.", z:"the z axis, up through the fin: a yaw.",
+      d:"in the floor plane, halfway between x and y, 45° from each.", e:"in the y–z plane, 53° from y toward z.",
+      t:"equal parts of x, y and z, about 55° from each."};
+    function say(v){ $id("aa-axdesc").innerHTML = v ? "<b>Axis:</b> " + DESC[v] : "<b>Axis:</b> pick one of the six above."; }
+    function upd2(){ var deg = +sa.value, th = deg * Math.PI / 180, s = Math.sin(th / 2), c = Math.cos(th / 2);
+      set("aa-h", (deg / 2 < 0 ? "−" + (-deg / 2) : deg / 2) + "°"); set("aa-s", f3(s)); set("aa-c", f3(c));
+      if (!axis){   /* no axis yet: no turn, and the steps that need the axis wait */
+        A.bot.quaternion.set(0, 0, 0, 1);
+        ["aa-al", "aa-x", "aa-y", "aa-z", "aa-w", "aa-q", "aa-n"].forEach(function(id){ set(id, "?"); }); A.touch(); return; }
       var q = [axis[0] * s, axis[1] * s, axis[2] * s, c];
       A.bot.quaternion.set(q[0], q[1], q[2], q[3]);
-      $id("aa-ax").textContent = axis.map(f3).join(", ");
-      $id("aa-q").textContent = q.map(f3).join(", ");
-      $id("aa-n").textContent = f3(Math.hypot(q[0], q[1], q[2], q[3]));
+      set("aa-al", f3(Math.hypot(axis[0], axis[1], axis[2])));
+      set("aa-h", (deg / 2 < 0 ? "−" + (-deg / 2) : deg / 2) + "°"); set("aa-s", f3(s)); set("aa-c", f3(c));
+      ["x", "y", "z"].forEach(function(k, i){ set("aa-" + k, f3(axis[i]) + " × " + f3(s) + " = " + f3(q[i])); });
+      set("aa-w", f3(c)); set("aa-q", q.map(f3).join(", ")); set("aa-n", f3(Math.hypot(q[0], q[1], q[2], q[3])));
       A.touch(); }
-    buttons($id("aa-axes"), ["x", "y", "z", "t"], function(v){ return v === "t" ? "tilted" : v; },
-      function(v){ axis = AX[v]; drawAxis(); upd2(); }, "z");
+    buttons($id("aa-axes"), ["x", "y", "z", "d", "e", "t"], function(v){ return {x:"(1, 0, 0)", y:"(0, 1, 0)", z:"(0, 0, 1)", d:"(0.707, 0.707, 0)", e:"(0, 0.6, 0.8)", t:"(0.577, 0.577, 0.577)"}[v]; },
+      function(v){ axis = AX[v]; say(v); drawAxis(); upd2(); });
+    say(null);
     sa.addEventListener("input", upd2);
     drawAxis(); upd2();
-    onReset($id("aa-box"), function(){ sa.value = 90; upd2(); A.home(); });
+    onReset($id("aa-box"), function(){ [].forEach.call(document.querySelectorAll("#aa-axes button"), function(b){ b.classList.remove("on"); });
+      axis = null; say(null); drawAxis(); sa.value = 90; upd2(); A.home(); });   /* no axis, 90°, and the first view */
   }
 })();
 
@@ -696,15 +760,15 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       arrow(arL, hdL, -28, vL); arrow(arR, hdR, 28, vR);   /* screen y down: the left side is at -y */
       trailP.setAttribute("d", trail.map(function(q, i){ var pp = P(q[0], q[1]); return (i ? "L" : "M") + pp[0].toFixed(1) + "," + pp[1].toFixed(1); }).join(""));
       var Rtxt = Math.abs(st.w) < 1e-9 ? (Math.abs(st.v) < 1e-9 ? "none (still)" : "infinite (straight)") : (Math.abs(st.v) < 1e-9 ? "0 m (on the spot)" : fx(st.v / st.w, 2) + " m");
+      /* what the pad publishes on /cmd_vel: the two twist fields it sets; the other four are 0 */
+      var mb = $id("dr-msg");
+      if (mb) mb.innerHTML = "twist.linear.x:  <span class='vv'>" + fx(st.v, 2) + "</span>\ntwist.angular.z: <span class='vv'>" + fx(st.w, 2) + "</span>";
       tb.innerHTML =
-        "<tr><td><code>linear.x</code>, " + DL.v + "</td><td>" + fx(st.v, 2) + " m/s</td></tr>" +
-        "<tr><td><code>angular.z</code>, " + DL.w + "</td><td>" + fx(st.w, 2) + " rad/s</td></tr>" +
         "<tr><td>Left wheels, " + DL.vL + "</td><td>" + fx(vL, 2) + " m/s, " + fx(vL / R_W, 1) + " rad/s</td></tr>" +
         "<tr><td>Right wheels, " + DL.vR + "</td><td>" + fx(vR, 2) + " m/s, " + fx(vR / R_W, 1) + " rad/s</td></tr>" +
         "<tr><td>Turn radius " + DL.R + "</td><td>" + Rtxt + "</td></tr>" +
         "<tr><td>Position " + DL.x + ", " + DL.y + "</td><td>" + fx(st.x, 2) + " m, " + fx(st.y, 2) + " m</td></tr>" +
-        "<tr><td>Yaw " + DL.th + "</td><td>" + fx(th, 2) + " rad (" + fx(th * 180 / Math.PI, 0) + "°)</td></tr>" +
-        "<tr><td>Quaternion " + DL.qz + ", " + DL.qw + "</td><td>" + fx(Math.sin(th / 2), 3) + ", " + fx(Math.cos(th / 2), 3) + "</td></tr>"; }
+        "<tr><td>Yaw " + DL.th + "</td><td>" + fx(th, 2) + " rad (" + fx(th * 180 / Math.PI, 0) + "°)</td></tr>"; }
     var last = performance.now(), lastTrail = 0;
     function step(now){ var dt = Math.min(0.1, (now - last) / 1000); last = now;
       var fr = sv.closest(".plate"); if (fr && !fr.classList.contains("active") && !sv.__on) return;
@@ -1580,6 +1644,119 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 })();
 
 
+/* --- the rqt window: six plugins docked in one rqt window, on the data of the running simulation (window.RQW, written by
+   figures/gz_capture/rqt_window_js.py, 2026-11-23). The Node Graph dock holds the rqt_graph copy above. Topic Monitor: a
+   ticked topic shows the rate and bandwidth measured with ros2 topic hz and bw; only the measured topics can be ticked.
+   Console: the /rosout messages of the simulation's start (recorded for 150 s from just before the launch; the messages span 144 s), newest first. Parameter Reconfigure: the parameters of
+   differential_drive_controller (ros2 param dump), read-only in this copy. TF Tree: the frame tree as rqt_tf_tree lays it
+   out (its own dot generator). --- */
+(function(){
+  var root = $id("rq"); if (!root || !document.contains(root) || !window.RQW) return;   /* the docs give a stand-in for a missing id */
+  var D = RQW, docks = [].slice.call(root.querySelectorAll(".rq-dock"));
+  function esc(t){ return String(t).replace(/[&<>"]/g, function(c){ return {"&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;"}[c]; }); }
+  function keys(el){ el.addEventListener("keydown", function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); el.click(); } }); }
+
+  /* a click on a title bar enlarges that dock to the whole window; a second click shows the six again */
+  function maxi(d){ docks.forEach(function(x){ var on = x === d; x.classList.toggle("max", on); x.querySelector(".rq-bar").setAttribute("aria-pressed", on ? "true" : "false"); });
+    root.classList.toggle("mx", !!d); }
+  docks.forEach(function(d){ var b = d.querySelector(".rq-bar"); keys(b);
+    b.addEventListener("click", function(){ maxi(d.classList.contains("max") ? null : d); }); });
+
+  /* Topic Monitor: rqt_topic's columns; a ticked topic shows its measured bandwidth and rate */
+  var START_ON = ["/clock", "/odometry/filtered", "/scan", "/oak/rgb/color"], checks = [], tb = document.querySelector("#rq-topics tbody");
+  D.topics.forEach(function(t){ var tr = document.createElement("tr"), td = document.createElement("td"), c = document.createElement("input");
+    c.type = "checkbox"; c.disabled = !t[4]; c.title = t[4] ? "Monitor this topic" : "Not measured in this copy"; c.setAttribute("aria-label", "Monitor " + t[0]);
+    td.appendChild(c); td.appendChild(document.createTextNode(" " + t[0])); tr.appendChild(td);
+    ["rq-wide", "", "", "rq-wide"].forEach(function(cl, i){ var x = document.createElement("td"); if (cl) x.className = cl; if (i === 0) x.textContent = t[1]; tr.appendChild(x); });
+    if (!t[4]) tr.className = "off";
+    function show(){ tr.children[2].textContent = c.checked ? t[3] : ""; tr.children[3].textContent = c.checked ? t[2] : ""; }
+    c.onchange = show; checks.push({c:c, t:t, show:show}); tb.appendChild(tr); });
+
+  /* Console: rqt_console's columns, newest first; a severity button hides that severity (rqt's "Exclude Messages ... with severities") */
+  var SEV = ["Debug", "Info", "Warn", "Error", "Fatal"], excl = {}, sevBtns = [], lb = document.querySelector("#rq-log tbody");
+  SEV.forEach(function(s){ var b = document.createElement("button"); b.textContent = s; b.title = "Exclude " + s + " messages"; b.setAttribute("aria-pressed", "false");
+    b.onclick = function(){ excl[s] = !excl[s]; b.setAttribute("aria-pressed", excl[s] ? "true" : "false"); fillLog(); };
+    sevBtns.push(b); $id("rq-sev").appendChild(b); });
+  function fillLog(){ var rows = [], n = 0;
+    D.log.forEach(function(r, i){ if (excl[r[1]]) return; n++;
+      rows.push('<tr><td>#' + (D.log.length - i) + '</td><td title="' + esc(r[3]) + '">' + esc(r[3]) + '</td><td class="sev-' + r[1] + '">' + r[1] +
+        '</td><td class="rq-wide">' + esc(r[2]) + '</td><td class="rq-wide">' + esc(r[0]) + '</td></tr>'); });
+    lb.innerHTML = rows.join(""); $id("rq-ccount").textContent = "Displaying " + n + " messages"; }
+
+  /* Parameter Reconfigure: the nodes it listed, and the parameters of differential_drive_controller */
+  var plist = $id("rq-plist"), pf = $id("rq-pfilter"), pt = document.querySelector("#rq-params tbody"),
+      pn = $id("rq-pnode"), SEL = "differential_drive_controller", sel = SEL;
+  function fillNodes(){ var f = pf.value.trim().toLowerCase(); plist.innerHTML = "";
+    D.reconfigure.forEach(function(n){ if (f && n.toLowerCase().indexOf(f) < 0) return;
+      var li = document.createElement("li"); li.textContent = n; li.tabIndex = 0; li.setAttribute("role", "button"); if (n === sel) li.className = "on";
+      li.onclick = function(){ sel = n; fillNodes(); fillParams(); }; keys(li); plist.appendChild(li); }); }
+  function fillParams(){ pn.textContent = "/" + sel;
+    if (sel !== SEL){ pt.innerHTML = '<tr><td class="rq-none" colspan="2">This copy holds the parameters of differential_drive_controller only.</td></tr>'; return; }
+    pt.innerHTML = D.params.map(function(p){ var v = p[1], w = v === "true" || v === "false"
+        ? '<input type="checkbox" disabled' + (v === "true" ? " checked" : "") + ' aria-label="' + esc(p[0]) + '">'
+        : '<input type="text" readonly value="' + esc(v) + '" aria-label="' + esc(p[0]) + '">';
+      return '<tr><td>' + esc(p[0]) + '</td><td>' + w + '</td></tr>'; }).join(""); }
+  pf.addEventListener("input", fillNodes);
+
+  /* TF Tree: rqt_tf_tree's layout, drawn in Graphviz points (y up) on a canvas (y down); wheel zooms at the cursor, drag moves */
+  var tv = $id("rq-tfv"), tc = $id("rq-tfcv"), tx = tc.getContext("2d"), T = D.tf, cam = {s:1, x:0, y:0};
+  function P(x, y){ return [cam.x + x * cam.s, cam.y + (T[0][3] - y) * cam.s]; }
+  function fit(){ var w = tv.clientWidth, h = tv.clientHeight; if (!w || !h) return; var bb = T[0], gw = bb[2] - bb[0], gh = bb[3] - bb[1];
+    cam.s = Math.min(w / (gw + 20), h / (gh + 20)); cam.x = (w - gw * cam.s) / 2 - bb[0] * cam.s; cam.y = (h - gh * cam.s) / 2; }
+  function text(lines, x, y, lh){ lines.forEach(function(l, k){ tx.fillText(l, x, y + (k - (lines.length - 1) / 2) * lh); }); }
+  function draw(){ var w = tv.clientWidth, h = tv.clientHeight; if (!w || !h) return; var r = (window.devicePixelRatio || 1) * (tv.getBoundingClientRect().width / w || 1);
+    if (tc.width !== Math.round(w * r) || tc.height !== Math.round(h * r)){ tc.width = Math.round(w * r); tc.height = Math.round(h * r); }
+    var dk = document.documentElement.getAttribute("data-theme") === "dark", ink = dk ? "#d8e0e8" : "#111111", bg = dk ? "#1b2028" : "#ffffff";
+    tx.setTransform(r, 0, 0, r, 0, 0); tx.fillStyle = bg; tx.fillRect(0, 0, w, h);
+    tx.strokeStyle = ink; tx.fillStyle = ink; tx.lineWidth = 1; tx.textAlign = "center"; tx.textBaseline = "middle"; tx.font = (14 * cam.s) + "px sans-serif";
+    T[2].forEach(function(e){ var f = e[3]; if (f.length < 4) return; tx.beginPath(); var p = P(f[0], f[1]); tx.moveTo(p[0], p[1]);
+      for (var k = 2; k + 5 < f.length + 0; k += 6){ var c1 = P(f[k], f[k + 1]), c2 = P(f[k + 2], f[k + 3]), q = P(f[k + 4], f[k + 5]); tx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], q[0], q[1]); }
+      tx.stroke();
+      if (e[2]){ var t = P(f[f.length - 2], f[f.length - 1]), hd = P(e[2][0], e[2][1]), ang = Math.atan2(hd[1] - t[1], hd[0] - t[0]), len = Math.hypot(hd[0] - t[0], hd[1] - t[1]);
+        tx.beginPath(); tx.moveTo(hd[0], hd[1]); tx.lineTo(hd[0] - len * Math.cos(ang - 0.35), hd[1] - len * Math.sin(ang - 0.35));
+        tx.lineTo(hd[0] - len * Math.cos(ang + 0.35), hd[1] - len * Math.sin(ang + 0.35)); tx.fill(); }
+      if (e[5]){ var c = P(e[5][0], e[5][1]); text(e[4].split("\n"), c[0], c[1], 16.8 * cam.s); } });
+    T[1].forEach(function(n){ var c = P(n[1], n[2]), ww = n[3] * cam.s, hh = n[4] * cam.s; tx.fillStyle = bg; tx.beginPath();
+      if (n[5]) tx.rect(c[0] - ww / 2, c[1] - hh / 2, ww, hh); else tx.ellipse(c[0], c[1], ww / 2, hh / 2, 0, 0, 2 * Math.PI);
+      tx.fill(); tx.stroke(); tx.fillStyle = ink; text(n[0].split("\n"), c[0], c[1], 16.8 * cam.s); }); }
+  function top(){ var w = tv.clientWidth, bb = T[0], r0 = T[1].filter(function(n){ return n[0] === "odom"; })[0] || [0, (bb[0] + bb[2]) / 2];
+    cam.s = 1; cam.x = w / 2 - r0[1]; cam.y = 10; }   /* scale 1: the 14 px labels of rqt_tf_tree, the root (odom) at the top */
+  function view(){ if (tv.closest(".rq-dock").classList.contains("max")) top(); else fit(); }   /* docked: the whole tree; enlarged: readable from the top */
+  function local(e){ var b = tv.getBoundingClientRect(), k = tv.clientWidth / b.width; return [(e.clientX - b.left) * k, (e.clientY - b.top) * k]; }
+  tv.addEventListener("wheel", function(e){ e.preventDefault(); e.stopPropagation(); var m = local(e), f = Math.exp(-e.deltaY * 0.0015);
+    f = Math.max(0.02, Math.min(10, cam.s * f)) / cam.s;   /* the zoom stays between 0.02 and 10 */
+    cam.x = m[0] - (m[0] - cam.x) * f; cam.y = m[1] - (m[1] - cam.y) * f; cam.s *= f; draw(); }, {passive:false});
+  var drag = null;
+  tv.addEventListener("pointerdown", function(e){ e.stopPropagation(); drag = {x:e.clientX, y:e.clientY, cx:cam.x, cy:cam.y}; tv.setPointerCapture(e.pointerId); });
+  tv.addEventListener("pointermove", function(e){ if (!drag) return; var k = tv.clientWidth / tv.getBoundingClientRect().width;
+    cam.x = drag.cx + (e.clientX - drag.x) * k; cam.y = drag.cy + (e.clientY - drag.y) * k; draw(); });
+  tv.addEventListener("pointerup", function(){ drag = null; }); tv.addEventListener("pointercancel", function(){ drag = null; });
+  new ResizeObserver(function(){ view(); draw(); }).observe(tv);
+  new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+
+  /* the lecture's own click, drag and wheel stop at the window; lists inside it keep their own scrolling */
+  ["mousedown", "touchstart", "click", "contextmenu", "pointerdown", "wheel"].forEach(function(ev){ root.addEventListener(ev, function(e){ e.stopPropagation(); }, {passive:true}); });
+
+  function reset(){ maxi(null);
+    checks.forEach(function(k){ k.c.checked = START_ON.indexOf(k.t[0]) >= 0 && !!k.t[4]; k.show(); });
+    excl = {}; sevBtns.forEach(function(b){ b.setAttribute("aria-pressed", "false"); }); fillLog();
+    sel = SEL; pf.value = ""; fillNodes(); fillParams();
+    [].forEach.call(root.querySelectorAll(".rq-scroll, .rq-nodes"), function(x){ x.scrollTop = 0; x.scrollLeft = 0; });
+    view(); draw(); }
+  reset();
+  onReset(root, reset);   /* the six docks, the first ticks, every severity shown, the first node, the tree fitted */
+  onShow(root, function(){ view(); draw(); });
+})();
+
+
+/* the signs of v and omega on "Linear and angular velocity" (user, 2026-11-23): two buttons per figure */
+(function(){
+  var vb = $id("vel-vb"), wb = $id("vel-wb"); if (!vb || !vb.isConnected) return;
+  /* visibility, not display: a hidden drawing keeps its real box, so the label check measures it where it is */
+  function sh(p, n, neg){ $id(p).style.visibility = neg ? "hidden" : "visible"; $id(n).style.visibility = neg ? "visible" : "hidden"; }
+  buttons(vb, [1, -1], function(v){ return v > 0 ? "v > 0" : "v < 0"; }, function(v){ sh("vel-vp", "vel-vn", v < 0); }, 1);
+  buttons(wb, [1, -1], function(v){ return v > 0 ? "ω > 0" : "ω < 0"; }, function(v){ sh("vel-wp", "vel-wn", v < 0); }, 1);
+})();
 /* the business card's logo: the cover's ROSbot drawing */
 (function(){ var g = $id("rbc-icon"); if (g) rosbotIcon(g, 0, 0, 52, 0); })();
 /* kinematics (user, 2026-11-22: "make this interactive. drag sliders to see values changing. Use robot drawing from title
@@ -1588,9 +1765,17 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
   var sv = $id("kn-svg"), iv = $id("kn-v"), iw = $id("kn-w"), ol = $id("kn-steps");
   if (!sv) return;
   var S = 0.186 * 1.36, R = 0.0425, CX = 230, CY = 160, PX = 140;   /* 1 m/s = 140 px: the largest side speed, 1.40 m/s, stays inside */
-  TICKS["kn-w"] = [1];
+  TICKS["kn-w"] = [0];   /* both velocities start at 0 (user, 2026-11-23: "when it loads, the default value for each velocity should be 0") */
   rosbotIcon(sv, CX, CY, 180, 0);
-  txt(sv, 124, 91, "left", 20, C.muted, "end"); txt(sv, 124, 243, "right", 20, C.muted, "end");
+  txt(sv, 92, 91, "left", 20, C.muted, "end"); txt(sv, 92, 243, "right", 20, C.muted, "end");
+  /* s on the drawing (user, 2026-11-23: "slide 63: show s on the robot figure"): a two-headed arrow from one side's wheel
+     centers to the other's, at the robot's left. The icon is scaled by 180 / 66, and its wheels are centered 27.5 units above
+     and below the body's center: 75 px. */
+  (function(){ var x = 116, y1 = CY - 75, y2 = CY + 75, col = "var(--ink)";   /* the theme's text colour, in either theme */
+    [y1, y2].forEach(function(y){ el(sv, "line", {x1:x - 8, y1:y, x2:146, y2:y, stroke:col, "stroke-width":1.5, "stroke-dasharray":"4 3"}); });
+    el(sv, "line", {x1:x, y1:y1 + 10, x2:x, y2:y2 - 10, stroke:col, "stroke-width":2});
+    el(sv, "path", {fill:col, d:"M" + x + "," + y1 + " l-6,11 h12 z M" + x + "," + y2 + " l-6,-11 h12 z"});
+    var t = el(sv, "text", {x:x - 10, y:CY + 9, "font-size":30, fill:col, "text-anchor":"end", "font-family":FONT}); t.innerHTML = '<tspan class="mi">s</tspan>'; })();
   function mk(){ return {ln:el(sv, "line", {stroke:C.live, "stroke-width":6, "stroke-linecap":"round"}), hd:el(sv, "path", {fill:C.live}),
     lb:el(sv, "text", {"font-size":22, fill:C.ink, "text-anchor":"middle", "font-family":FONT})}; }
   var aL = mk(), aR = mk();
@@ -1639,7 +1824,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var inp = $id(b.dataset.for); if (+b.dataset.d > 0) inp.stepUp(); else inp.stepDown();
     inp.dispatchEvent(new Event("input", {bubbles:true})); }); });
   show();
-  onReset(sv, function(){ iv.value = 0; iw.value = 1; show(); });
+  onReset(sv, function(){ iv.value = 0; iw.value = 0; show(); });
 })();
 
 
@@ -1824,10 +2009,11 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     function err(){ return tgt - dist; }
     function setv(id, s){ $id(id).textContent = s; }
     function sayM(s){ say.innerHTML = "<span>" + s + "</span>"; mathIn(say); }
-    /* the lane, seen from above: the start at the bottom, 120 px per metre, the robot facing up */
-    function drawTrack(){ trk.innerHTML = ""; var X0 = 120, X1 = 200, Y0 = 296, PX = 120, cx = (X0 + X1) / 2;
+    /* the lane, seen from above: the start at the bottom, the robot facing up; 0 to 2 m (120 px per metre), or 0 to 10 m
+       (24 px per metre) for the 10 m target (user, 2026-11-23: "add a 10 m distance as well") */
+    function drawTrack(){ trk.innerHTML = ""; var LEN = tgt > 2 ? 10 : 2, TICK = tgt > 2 ? 2 : 0.5, X0 = 120, X1 = 200, Y0 = 296, PX = 240 / LEN, cx = (X0 + X1) / 2;
       el(trk, "rect", {x:X0, y:20, width:X1 - X0, height:Y0 - 20, fill:"none", stroke:C.edge, "stroke-width":3});
-      for (var m = 0; m <= 2.0001; m += 0.5){ var yy = Y0 - m * PX; el(trk, "line", {x1:X0 - 8, y1:yy, x2:X0, y2:yy, stroke:C.edge, "stroke-width":3});
+      for (var m = 0; m <= LEN + 1e-4; m += TICK){ var yy = Y0 - m * PX; el(trk, "line", {x1:X0 - 8, y1:yy, x2:X0, y2:yy, stroke:C.edge, "stroke-width":3});
         txt(trk, X0 - 14, yy + 7, (m ? m.toFixed(1) : "0") + " m", 20, C.muted, "end"); }
       var yt = Y0 - tgt * PX, yr = Y0 - dist * PX;
       el(trk, "line", {x1:X0 - 4, y1:yt, x2:X1 + 4, y2:yt, stroke:C.s2, "stroke-width":4, "stroke-dasharray":"9 6"});
@@ -1842,7 +2028,8 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       function X(tt){ return x0 + (x1 - x0) * tt / T; } function Y(v){ return yc - hh * v / ymax; }
       el(plot, "line", {x1:x0, y1:yc, x2:x1, y2:yc, stroke:C.edge, "stroke-width":2});
       el(plot, "line", {x1:x0, y1:yc - hh - 4, x2:x0, y2:yc + hh + 4, stroke:C.edge, "stroke-width":2});
-      for (var s = 0; s <= T + 1e-9; s += 1){ el(plot, "line", {x1:X(s), y1:yc + hh, x2:X(s), y2:yc + hh + 6, stroke:C.edge, "stroke-width":2});
+      var TS = T > 16 ? 5 : T > 8 ? 2 : 1;   /* a label every 1, 2 or 5 s, so a 10 m run's 21 s stay readable */
+      for (var s = 0; s <= T + 1e-9; s += TS){ el(plot, "line", {x1:X(s), y1:yc + hh, x2:X(s), y2:yc + hh + 6, stroke:C.edge, "stroke-width":2});
         txt(plot, X(s), yc + hh + 22, String(s), 20, C.muted); }
       txt(plot, x0 - 8, yc + 7, "0", 20, C.muted, "end");
       if (trace.length > 1){ poly(plot, trace.map(function(r){ return [X(r[0]), Y(r[1])]; }), {stroke:C.live, "stroke-width":4});
@@ -1865,7 +2052,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       if (Math.abs(err()) < TOL) fresh();   /* a finished run starts again from 0 m: the node measures from where it starts */
       if (reduce){ while (step()) {} return; }
       hs.classList.add("run"); play.textContent = "Pause"; play.classList.add("on"); timer = setInterval(step, DT * 1000); }
-    buttons($id("dl-tgts"), [0.5, 1.0, 2.0], function(v){ return v.toFixed(1) + " m"; }, function(v){ tgt = v; fresh(); }, 1.0);
+    buttons($id("dl-tgts"), [0.5, 1.0, 2.0, 10.0], function(v){ return v.toFixed(1) + " m"; }, function(v){ tgt = v; fresh(); }, 1.0);
     play.onclick = function(e){ e.stopPropagation(); start(); };
     $id("dl-reset").onclick = function(e){ e.stopPropagation(); fresh(); };
     fresh();
@@ -1986,11 +2173,19 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     poly(ps, [[ax.X(-xc), ax.Y(-LIM)], [ax.X(xc), ax.Y(LIM)]], {stroke:C.live, "stroke-width":6, "stroke-linecap":"round", class:"dr"});
     if (xc < X0){ poly(ps, [[ax.X(xc), ax.Y(LIM)], [ax.X(X0), ax.Y(LIM)]], {stroke:C.s2, "stroke-width":6, "stroke-linecap":"round", class:"dr"});
       poly(ps, [[ax.X(-xc), ax.Y(-LIM)], [ax.X(-X0), ax.Y(-LIM)]], {stroke:C.s2, "stroke-width":6, "stroke-linecap":"round", class:"dr"}); }
+    /* the reading of the dot (user, 2026-11-23: "I don't understand the diagram. Redo it differently or explain better"): up
+       from the error on the x axis to the dot, then across to the command on the y axis; numbered tags on the three parts */
     el(ps, "line", {x1:ax.X(e), y1:ax.Y(0), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
+    el(ps, "line", {x1:ax.X(-X0), y1:ax.Y(cmd), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
     el(ps, "circle", {cx:ax.X(e), cy:ax.Y(cmd), r:9, fill:Math.abs(kp * e) > LIM ? C.s2 : C.live, stroke:"#ffffff", "stroke-width":3});
+    var tx = (e >= 0 ? -1 : 1) * xc * 0.5;   /* tag 1 on the half of the sloped part the dot is not on, tag 2 on the flat part at the right, tag 3 beside the dot */
+    tag(ps, ax.X(tx) + 26, ax.Y(kp * tx) + 8, 1);
+    if (xc < X0) tag(ps, ax.X(Math.min(X0 - 0.35, xc + (X0 - xc) * 0.75)), ax.Y(LIM) - 24, 2);
+    tag(ps, ax.X(e) + (e > 2.6 ? -28 : 28), ax.Y(cmd) + (cmd > 0.5 ? 28 : -28), 3);
     var lim = Math.abs(kp * e) > LIM;
-    $id("pc-out").innerHTML = "<li>kp × error = " + fm(kp, 1) + " × " + fe(e) + " = " + fp(kp * e) + " rad/s</li>" +
+    $id("pc-out").innerHTML = "<li>\\(k_p\\) × error = " + fm(kp, 1) + " × " + fe(e) + " = " + fp(kp * e) + " rad/s</li>" +
       "<li>The limit is ±1.0 rad/s, so the command is " + fp(cmd) + " rad/s" + (lim ? " (limited)." : ", sent as it is.") + "</li>";
+    mathIn($id("pc-out"));
     pcRows.forEach(function(r){ r.querySelector("td").classList.toggle("hl", kp === 1.5 && Math.abs(+r.dataset.e - e) < 0.00005); }); }
   var kpb = buttons($id("pc-kp"), [0.5, 1.5, 4.0], function(v){ return v.toFixed(1); }, function(v){ kp = v; drawPc(); }, 1.5);
   pcRows.forEach(function(r){ r.style.cursor = "pointer"; r.addEventListener("click", function(ev){ ev.stopPropagation(); kp = 1.5; kpb.set(1.5); pe.value = +r.dataset.e; drawPc(); }); });
@@ -2011,12 +2206,16 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
             "<b>t = 2.65 s.</b> The error, 0.019 rad, is under the 0.02 rad tolerance: the node sends 0 and cancels the timer. The yaw is 1.552 rad (88.9&deg;)."];
   var rs = $id("rp-svg"), rlog = $id("rp-log"), rsay = $id("rp-say"), rpick = 0;
   rlog.innerHTML = RL.map(function(r){ return '<span class="cl">' + r[1] + "</span>"; }).join("");
+  /* a click on a log line picks it, as a click on its dot does (user, 2026-11-23: "Make the output in slide 99 clickable") */
+  [].forEach.call(rlog.querySelectorAll(".cl"), function(l, k){ l.style.cursor = "pointer"; l.setAttribute("role", "button"); l.setAttribute("tabindex", "0");
+    l.addEventListener("click", function(ev){ ev.stopPropagation(); rpAt(k); });
+    l.addEventListener("keydown", function(ev){ if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); ev.stopPropagation(); rpAt(k); } }); });
   function drawRp(){
     rs.innerHTML = "";
     var box = {x:20, y:14, w:390, h:300}, ax = frame(rs, box, [-0.2, 3], [0, 1.8], [0, 0.5, 1, 1.5, 2, 2.5, 3], [0, 0.5, 1, 1.5], "time (s)", "error (rad)");
     var thr = 1 / 1.5;
     el(rs, "line", {x1:ax.X(0), y1:ax.Y(thr), x2:ax.X(3), y2:ax.Y(thr), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"8 6"});
-    halo(txt(rs, ax.X(3) - 6, ax.Y(thr) - 10, "0.67", 20, C.slate, "end"));
+    halo(txt(rs, ax.X(3) - 6, ax.Y(thr) - 10, "0.67 = 1.0 / 1.5", 20, C.slate, "end"));   /* where 1.5 x error drops under the limit */
     el(rs, "line", {x1:ax.X(0), y1:ax.Y(0.02), x2:ax.X(3), y2:ax.Y(0.02), stroke:C.ok, "stroke-width":2, "stroke-dasharray":"8 6"});
     halo(txt(rs, ax.X(0) + 8, ax.Y(0.02) - 10, "0.02", 20, C.ok, "start"));
     var pts = RL.map(function(r, i){ return [ax.X(RS[i] - RS[0]), ax.Y(r[0])]; });
@@ -2125,20 +2324,20 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     rosbotIcon(svg, c, c, R * 0.7, -o.yaw * 180 / Math.PI);
   }
 
-  /* ===== its place in the ROS graph: the tags pick the constructor's lines; Play moves the messages ===== */
+  /* ===== its place in the ROS graph: the tags pick the constructor's lines, in the code's order (21, 26, 28); the node's own tag
+     went in the goal line (user, 2026-11-23: "Do you think the tag orders are correct? can we remove some tags and keep the
+     necessary ones?"); Play moves the messages ===== */
   (function(){
     var g = $("gr-g"); if (!g || !g.isConnected) return;
     var snip = [].slice.call($("gr-code").querySelectorAll("pre.code")), say = $("gr-say"), s = $("gr-s");
-    var SAY = {1:'<span class="tg">1</span>Line 15: the class is an <code>rclcpp::Node</code>. Line 18 names the node <code class="nd">heading_controller_node</code>.',
-      2:'<span class="tg">2</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
-      3:'<span class="tg">3</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
-      4:'<span class="tg">4</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
-    reserve(say, [SAY[1], SAY[2], SAY[3], SAY[4]]);
+    var SAY = {1:'<span class="tg">1</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
+      2:'<span class="tg">2</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
+      3:'<span class="tg">3</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
+    reserve(say, [SAY[1], SAY[2], SAY[3]]);
     var tags = [].slice.call(g.querySelectorAll("button.grt"));
     function pick(k){
       tags.forEach(function(t){ var on = +t.dataset.k === k; t.classList.toggle("on", on); t.setAttribute("aria-pressed", String(on)); });
       [].forEach.call(s.querySelectorAll("[data-k]"), function(e){ e.classList.toggle("on", +e.dataset.k === k); });
-      $("gr-node").classList.toggle("on", k === 1);
       snip.forEach(function(p, j){ p.style.visibility = j === k - 1 ? "visible" : "hidden"; }); say.innerHTML = SAY[k]; }
     tags.forEach(function(t){ t.addEventListener("click", function(e){ e.stopPropagation(); pick(+t.dataset.k); }); });
     /* Play: a message comes down /odometry/filtered and odometry_callback runs; the timer ticks, control_callback runs and its
@@ -2284,14 +2483,23 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     var env = mk(s, "g", {opacity:0});
     mk(env, "rect", {x:-16, y:-11, width:32, height:22, rx:3, style:"fill:var(--card);stroke:var(--s3);stroke-width:3"});
     mk(env, "path", {d:"M-16 -11 L0 2 L16 -11", style:"fill:none;stroke:var(--s3);stroke-width:3"});
-    var RX = 622, RY = 88, wh = mk(s, "g", {}), turn = mk(s, "g", {});
-    mk(s, "path", {"class":"ln", d:"M552 61 L570 74"});
-    rosbotIcon(s, RX, RY, 62, 0);
+    /* the controller drives the ROSbot: a straight arrow from the controller's box to the robot, at the box's height (it was a
+       short oblique stroke, user, 2026-11-23: "check robot figure, it has a weird oblique line in the front") */
+    var RX = 622, RY = 61, turn = mk(s, "g", {});
+    mk(s, "path", {"class":"ln", d:"M448 61 L572 61"}); mk(s, "polygon", {"class":"hh", points:"584,61 570,54 570,68"});
+    var bot = mk(s, "g", {}), wh = mk(bot, "g", {}); rosbotIcon(bot, 0, 0, 62, 0); bot.setAttribute("transform", "translate(" + RX + " " + RY + ")");   /* the wheel arrows turn with the robot */
+    /* the robot turns while the command is sent (user, 2026-11-23: "turn the robot when executing the code"): from line 56 on,
+       at the command's rate, counterclockwise on the screen for a positive angular.z; back to facing right otherwise */
+    var spin = null, sw = 0, ang = 0;
+    function face(a){ ang = a; bot.setAttribute("transform", "translate(" + RX + " " + RY + ") rotate(" + (-a * 180 / Math.PI).toFixed(2) + ")"); }
+    function turning(w){ if (spin && sw === w) return; clearInterval(spin); spin = null; sw = w; if (!w){ face(0); return; } if (reduce){ face(0.6); return; }
+      var t0 = performance.now(), a0 = ang; spin = setInterval(function(){ if (!act(s)){ clearInterval(spin); spin = null; return; }
+        face(a0 + w * (performance.now() - t0) / 1000); }, 30); }
     function arrowAt(g, x1, x2, y){ var dir = x2 > x1 ? 1 : -1;
       mk(g, "line", {x1:x1, y1:y, x2:x2 - dir * 10, y2:y, style:"stroke:var(--livetext);stroke-width:4;stroke-linecap:round"});
       mk(g, "polygon", {points:x2 + "," + y + " " + (x2 - dir * 14) + "," + (y - 7) + " " + (x2 - dir * 14) + "," + (y + 7), style:"fill:var(--livetext)"}); }
     function drive(w){ wh.innerHTML = ""; turn.innerHTML = ""; if (!w) return;
-      arrowAt(wh, RX + 22, RX - 22, RY - 44); arrowAt(wh, RX - 22, RX + 22, RY + 44);   /* left wheels back, right wheels forward */
+      arrowAt(wh, 22, -22, -44); arrowAt(wh, -22, 22, 44);   /* left wheels back, right wheels forward (in the robot's own frame) */
       var r = 56, a0 = -0.5, a1 = a0 + 1.4 * w, d = "";   /* the arc grows with the command (1.4 rad of arc for 1.0 rad/s) */
       for (var i = 0; i <= 20; i++){ var a = a0 + (a1 - a0) * i / 20; d += (i ? "L" : "M") + (RX + r * Math.cos(a)).toFixed(1) + "," + (RY - r * Math.sin(a)).toFixed(1); }
       mk(turn, "path", {d:d, style:"fill:none;stroke:var(--live);stroke-width:4;stroke-linecap:round"});
@@ -2321,9 +2529,10 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
       show:function(r, k, dir){ var x = RUNS[r][k]; cb.at(x[0], x[1]);
         msg.classList.toggle("off", !x[2]);
         if (x[2]){ setV(st, x[3], dir > 0); setV(az, x[4], dir > 0); }
+        else { setV(st, "0", false); setV(az, "x 0.0 y 0.0 z 0.0", false); }   /* the hidden message starts over, so a return to the slide shows what the first showing did */
         if (x[5] === 1 && dir >= 0) send(); else calm();
-        drive(x[5] >= 1 ? x[7] : 0); say.innerHTML = x[6]; },
-      reset:function(){ calm(); unflash(wrap.closest(".plate")); }});
+        drive(x[5] >= 1 ? x[7] : 0); turning(x[5] >= 1 ? x[7] : 0); say.innerHTML = x[6]; },
+      reset:function(){ calm(); turning(0); unflash(wrap.closest(".plate")); }});
   })();
 })();
 
@@ -2331,7 +2540,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
 /* ---------- slide "PID controller" (fb-pid): the loop step by step (user, 2026-11-22: "follow the arrows like electricity running
    through that box where you highlight what is happening. Create left and right arrows at the bottom to do step by step. When
    the slide loads, run the animation once"). Each step sends a pulse along its wires and lights the blocks it reaches; the slide
-   plays the eight steps once each time it is shown (the frame has data-autoplay), then the arrows step by hand. ---------- */
+   opens plain; the arrows step through the eight steps, and a click after step 8 runs the whole loop once (2026-11-23). ---------- */
 (function(){
   var sv = $id("pl-svg"); if (!sv || !sv.isConnected) return;
   var sp = $id("pl-spark"), say = $id("pl-say"), NS = "http://www.w3.org/2000/svg";
@@ -2343,7 +2552,7 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     {w:["M608,130 H778"], on:["pl-plant"], t:"5. The control signal \\(u\\) drives the plant."},
     {w:["M940,130 H1130"], on:[], t:"6. The plant's output changes: the heading (or the distance driven)."},
     {w:["M1060,130 V235 H720"], on:["pl-fbk"], t:"7. The feedback measures the output."},
-    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output. The loop starts again."}];
+    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output, and the loop starts again. Next: the whole loop at once."}];
   /* the captions' math set by KaTeX once (user, 2026-11-22: "use math mode everywhere ... the sigma is not correct") */
   STEPS.forEach(function(st){ var d = document.createElement("span"); d.textContent = st.t; mathIn(d); st.h = d.innerHTML; });
   var k = -1, timer = null, anims = [];
@@ -2372,9 +2581,13 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     (function next(){ var ms = show(i, true, true, true); i++;
       timer = setTimeout(i < STEPS.length ? next : function(){ timer = setTimeout(function(){ timer = null; show(-1); }, 700); }, ms); })(); }
   $id("pl-prev").onclick = function(e){ e.stopPropagation(); stop(); show(Math.max(0, k - 1), true); };
-  $id("pl-next").onclick = function(e){ e.stopPropagation(); stop(); show(Math.min(STEPS.length - 1, k + 1), true); };
+  /* after step 8, one more click runs the pulse through the whole loop in one go (user, 2026-11-23: "remove the flash
+     (electricity) going through the whole diagram when the slide loads. Instead, add it to the last step of clicking the right
+     arrow (after step 8)") */
+  $id("pl-next").onclick = function(e){ e.stopPropagation(); stop();
+    if (k === STEPS.length - 1){ if (reduce) show(-1); else play(); return; }
+    show(Math.min(STEPS.length - 1, k + 1), true); };
   show(-1);
-  onShow(sv, function(){ if (reduce){ show(STEPS.length - 1, false); return; } play(); });
   onReset(sv, function(){ stop(); show(-1); });
 })();
 
@@ -2418,13 +2631,17 @@ function whyOpen(b){ var pre = b.closest("pre") || b, box = pre.parentNode.query
     function show(){
       lis.forEach(function(l, i){ l.classList.toggle("lit", step === i + 1); });
       rows.forEach(function(r, i){ var on = step === 1 ? i === 0 : step === 2 ? i === 1 : step === 3; [].forEach.call(r.cells, function(c){ c.classList.toggle("hl", on); }); });
-      $("q42-c").style.opacity = 1;
+      $("q42-c").style.visibility = step === 4 ? "visible" : "hidden";   /* hidden, its space kept, until the fourth click (user, 2026-11-23: it looked disabled when dimmed) */
       $("q42-m0").classList.toggle("on", mode === 0); $("q42-m1").classList.toggle("on", mode === 1);
-      var chips = mode === 0 ? ["edit the .cpp", "build", "run"] : ["set the parameter"];
-      $("q42-cy").innerHTML = "<div>Each change takes " + chips.length + " step" + (chips.length > 1 ? "s" : "") + ":</div>" +
-        chips.map(function(c){ return '<span class="q-chip">' + c + "</span>"; }).join("→") +
-        (mode === 1 ? '<div class="small">At start, or while the node runs.</div>' : "");
-      $("q42-back").disabled = step === 0; $("q42-next").textContent = step === 0 ? "Start" : "Next"; $("q42-next").disabled = step === 4; }
+      /* with parameters: set the value, then run; no edit, no build. Changing it while the node runs is one step only for a node
+         with a parameter callback (user, 2026-11-23: "is it really one step?"; the slide "Setting a value the node already read"
+         shows the value that does not take effect without one) */
+      var chips = mode === 0 ? ["edit the .cpp", "build", "run"] : ["set the value", "run"];
+      /* the count and the chips on one line, so the slide's text can grow (user, 2026-11-23: "Make the fonts bigger on that slide") */
+      $("q42-cy").innerHTML = "<div>" + chips.length + " steps" + (mode === 1 ? ", no build" : "") + ": " +
+        chips.map(function(c){ return '<span class="q-chip">' + c + "</span>"; }).join("→") + "</div>" +
+        (mode === 1 ? '<div class="small">While it runs: <code>ros2 param set</code>, if the node has a parameter callback (Part 4).</div>' : "");
+      $("q42-back").disabled = step === 0; $("q42-next").disabled = step === 4; }
     lis.forEach(function(l, i){ l.style.cursor = "pointer"; l.onclick = stop(function(){ step = i + 1; show(); }); });
     $("q42-back").onclick = stop(function(){ step = Math.max(0, step - 1); show(); });
     $("q42-next").onclick = stop(function(){ step = Math.min(4, step + 1); show(); });
