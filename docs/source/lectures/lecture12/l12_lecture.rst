@@ -1204,7 +1204,7 @@ Lines 11 to 23 of ``src/heading_controller_node.cpp``:
 
   - They are not object members: the values never change and are the same for every object, so no object needs its own copy.
   - They are not class members (``static constexpr``): those go in the class definition, in the header, which other files include. Only this file uses the four constants.
-  - In the parameters section they become object members, so you can change them without recompiling.
+  - In the parameters section they become object members, so you can change them at run time.
 - Line 21: the helper of the yaw section turns the quaternion into the yaw.
 
 Step 2: Write control_callback, the Error and the Stop
