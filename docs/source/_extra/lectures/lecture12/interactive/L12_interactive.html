@@ -3194,7 +3194,7 @@ svg.fbloop text.on{fill:var(--nowedge);font-weight:700}
   <p class="small" style="margin:6px 0 0">MPC: model predictive control. P, PI and PID are the same family: PID with some gains set to 0.</p>
 </div></div></section>
 
-<section class="plate frame s2 extra" id="fb-pid" data-autoplay data-scene="fb-pid" data-name="Slide 80 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Feedback Controllers</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 80 of 146. Go to a slide">Slide 80 / 146</span></div>
+<section class="plate frame s2 extra" id="fb-pid" data-scene="fb-pid" data-name="Slide 80 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Feedback Controllers</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 80 of 146. Go to a slide">Slide 80 / 146</span></div>
   <h2 class="notitle" aria-hidden="true"></h2><div class="fit"><div class="fitin">
   <div class="box def"><span class="bt">PID controller</span>A feedback controller whose control signal adds three terms: one in proportion to the error now (<b>P</b>), one to the error summed over time (<b>I</b>), and one to how fast the error changes (<b>D</b>).</div>
   <svg class="fbloop" viewBox="0 0 1160 264" width="1160" height="264" id="pl-svg" style="display:block;margin:6px auto 0" role="img" aria-label="Block diagram of a feedback loop with a PID controller. The target enters a summing circle; the error e leaves it for the PID controller box, where it splits into three terms, P equals K_p times e, I equals K_i times the sum of e delta t, and D equals K_d times the change of e over delta t. A second summing circle adds the three terms into the control signal u, sent to the plant box, the system being controlled. Its output leaves on the right. A blue line takes the output back through a feedback box to the first summing circle, where the measured output is subtracted.">
@@ -3385,13 +3385,12 @@ error = d                     # between -pi and pi</pre>
 
 <section class="plate frame s2" data-scene="p41" data-name="Slide 87 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Feedback Controllers</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 87 of 146. Go to a slide">Slide 87 / 146</span></div>
   <h2>The proportional control law</h2><div class="fit"><div class="fitin">
-  <p class="goal">A <b>proportional controller</b> commands a turn rate proportional to the error: the command is the error times a number you choose, the <b>gain</b> \(k_p\). Then it limits the command to a maximum speed. With \(k_p\) = 1.5 (rad/s per rad of error) and a limit of 1.0&nbsp;rad/s:</p>
-  <ol class="steps">
-    <li>At the start, the error is 1.569&nbsp;rad: 1.5 × 1.569 = 2.35&nbsp;rad/s.</li>
-    <li>That is above the limit, so the controller sends 1.0&nbsp;rad/s.</li>
-    <li>Later, the error is 0.5848&nbsp;rad: 1.5 × 0.5848 = 0.877&nbsp;rad/s, under the limit, so it is sent as it is.</li>
-    <li>Near the end, the error is 0.092&nbsp;rad: 1.5 × 0.092 = 0.138&nbsp;rad/s.</li>
-  </ol>
+  <p class="goal">A <b>proportional controller</b> commands a turn rate in proportion to the error. Then it limits the command to a maximum speed.</p>
+  <div class="box def" style="font-size:30px;text-align:center;margin:10px 0">command = \(k_p\) × error, then cut to ±1.0&nbsp;rad/s</div>
+  <ul class="pl">
+    <li>The <b>gain</b> \(k_p\) is a number you choose. This lecture uses \(k_p\) = 1.5 (rad/s per rad of error).</li>
+    <li>Example: an error of 0.5848&nbsp;rad gives 1.5 × 0.5848 = 0.877&nbsp;rad/s. That is under the limit, so the controller sends it as it is.</li>
+  </ul>
   <div class="box concl">The command shrinks with the error, so the robot slows down as it nears the target heading.</div>
 </div></div></section>
 
@@ -3411,7 +3410,7 @@ error = d                     # between -pi and pi</pre>
     </div>
     <div>
       <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command."></svg>
-      <p class="small" style="margin:4px 0 0"><span class="sw" style="background:var(--live)"></span>command = gain × error <span class="sw" style="background:var(--s2);margin-left:14px"></span>command at the limit, the dashed lines at ±1.0 rad/s</p>
+      <p class="small" style="margin:4px 0 0">Each point is one error (across) and the command the controller sends for it (up). Key: <span class="tg">1</span> the command is \(k_p\) × error; <span class="tg">2</span> \(k_p\) × error is over 1.0&nbsp;rad/s, so the command stays at the limit; <span class="tg">3</span> the error you picked, and its command.</p>
     </div>
   </div>
 </div></div></section>
@@ -3546,43 +3545,39 @@ button.grt:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 
 <section class="plate frame s2" data-scene="p44" data-name="Slide 91 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 91 of 146. Go to a slide">Slide 91 / 146</span></div>
   <h2>Step 2: write the class, its place in the ROS graph</h2><div class="fit"><div class="fitin">
-  <p class="goal">The constructor connects the node to the graph. <span class="try">try it</span> <span class="small">click a tag</span></p>
+  <p class="goal"><code class="nd">heading_controller_node</code> is an <code>rclcpp::Node</code>; its constructor makes three connections.</p>
   <div class="dbg" style="grid-template-columns:720px 1fr;gap:28px">
     <div class="grg" id="gr-g" style="height:338px">
       <!-- the layout, reworked (user, 2026-11-22: "slide 77: recreate the diagram, it's layout is not correct. Many things are squeezed or
            cut off. Make it smaller if needed but try a different layout first"): topic and type on one line, the node's name in its own
            row at the box's top right, every tag beside its mark and off the lines and edges -->
-      <svg class="grs" id="gr-s" viewBox="0 0 720 338" width="720" height="338" role="img" aria-label="ROS graph. ekf, at the top left, publishes /odometry/filtered down into heading_controller_node, a large box whose name, with tag 1, is at its top right. Tag 2, the subscription, is beside the arrow from ekf into odometry_callback. Inside the box, a clock, tag 4, the 50 ms timer, leads to control_callback, which leads out of the box's bottom edge, beside tag 3, the publisher, as /cmd_vel, down to differential_drive_controller. A click on a topic name shows its publishers, its subscribers and its type.">
-        <path class="ln" data-k="2" d="M46 48 L46 156"/><polygon class="hh" data-k="2" points="46,168 39,154 53,154"/>
-        <path class="ln" data-k="4" d="M318 192 L344 192"/><polygon class="hh" data-k="4" points="356,192 342,185 342,199"/>
-        <path class="ln" data-k="3" d="M582 192 L650 192 L650 278"/><polygon class="hh" data-k="3" points="650,290 643,276 657,276"/>
-        <circle class="clk" data-k="4" cx="298" cy="192" r="17"/><path class="hand" d="M298 192 L298 181 M298 192 L306 196"/>
+      <svg class="grs" id="gr-s" viewBox="0 0 720 338" width="720" height="338" role="img" aria-label="ROS graph. ekf, at the top left, publishes /odometry/filtered down into heading_controller_node, a large box whose name is at its top right. Tag 1, the subscription, is beside the arrow from ekf into odometry_callback. Inside the box, a clock, tag 3, the 50 ms timer, leads to control_callback, which leads out of the box's bottom edge, beside tag 2, the publisher, as /cmd_vel, down to differential_drive_controller. A click on a topic name shows its publishers, its subscribers and its type.">
+        <path class="ln" data-k="1" d="M46 48 L46 156"/><polygon class="hh" data-k="1" points="46,168 39,154 53,154"/>
+        <path class="ln" data-k="3" d="M318 192 L344 192"/><polygon class="hh" data-k="3" points="356,192 342,185 342,199"/>
+        <path class="ln" data-k="2" d="M582 192 L650 192 L650 278"/><polygon class="hh" data-k="2" points="650,290 643,276 657,276"/>
+        <circle class="clk" data-k="3" cx="298" cy="192" r="17"/><path class="hand" d="M298 192 L298 181 M298 192 L306 196"/>
         <path id="gr-pin" d="M46 50 L46 166" fill="none" stroke="none"/>
         <path id="gr-pout" d="M584 192 L650 192 L650 288" fill="none" stroke="none"/>
       </svg>
       <div class="grch" style="left:0;top:0"><code class="nd">ekf</code></div>
       <div class="grlab" style="left:74px;top:66px"><span class="termhover" data-out="gr-ti-odom" data-cmd="ros2 topic info -v /odometry/filtered"><code class="tp">/odometry/filtered</code></span></div>
       <div class="grnode" id="gr-node" style="top:112px;height:134px"></div>
-      <div class="grname" style="top:120px"><button class="grt" data-k="1" aria-label="Tag 1: the node and its name">1</button><code class="nd">heading_controller_node</code></div>
+      <div class="grname" style="top:120px"><code class="nd">heading_controller_node</code></div>
       <div class="grcb" id="gr-ocb" style="left:16px;top:170px;width:236px">odometry_callback</div>
       <div class="grcb" id="gr-ccb" style="left:360px;top:170px;width:222px">control_callback</div>
-      <button class="grt" data-k="2" style="left:20px;top:84px" aria-label="Tag 2: the subscription">2</button>
-      <button class="grt" data-k="3" style="left:686px;top:222px" aria-label="Tag 3: the publisher">3</button>
-      <button class="grt" data-k="4" style="left:298px;top:150px" aria-label="Tag 4: the timer">4</button>
+      <button class="grt" data-k="1" style="left:20px;top:84px" aria-label="Tag 1: the subscription">1</button>
+      <button class="grt" data-k="2" style="left:686px;top:222px" aria-label="Tag 2: the publisher">2</button>
+      <button class="grt" data-k="3" style="left:298px;top:150px" aria-label="Tag 3: the timer">3</button>
       <div class="grlab" style="right:92px;top:256px;text-align:right"><span class="termhover" data-out="gr-ti-cmd" data-cmd="ros2 topic info -v /cmd_vel"><code class="tp">/cmd_vel</code></span></div>
       <div class="grch" style="right:0;top:290px"><code class="nd">differential_drive_controller</code></div>
     </div>
     <div>
       <div class="box nolive" id="gr-say"></div>
-      <div class="row" style="margin:8px 0 4px"><button id="gr-play">Play</button></div>
+      <div class="row" style="margin:8px 0 4px"><button id="gr-play">Play</button><span class="try">try it</span><span class="small">click a tag</span></div>
       <p class="small" style="margin:0">Only this node's connections are drawn. Slowed down: in the run, each callback runs about 20 times a second.</p>
     </div>
   </div>
   <div id="gr-code" style="display:grid;margin-top:8px">
-<pre class="code" data-lang="cpp" data-first="15" data-hl="15,18" style="grid-area:1/1;margin:0">class HeadingControllerNode : public rclcpp::Node {
-  public:
-    HeadingControllerNode()
-        : rclcpp::Node{"heading_controller_node"},</pre>
 <pre class="code" data-lang="cpp" data-first="19" data-hl="21,22" style="grid-area:1/1;margin:0">          odometry_subscription_{
               create_subscription&lt;nav_msgs::msg::Odometry&gt;(
                   "odometry/filtered", 10,
@@ -3722,7 +3717,7 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
     <div>
       <div class="vars">
         <div class="vh">Members</div>
-        <div class="vr" id="oc-yaw"><code class="ku" style="--k:var(--plan)">yaw_</code><span class="vv">0.0</span></div>
+        <div class="vr" id="oc-yaw"><code>yaw_</code><span class="vv">0.0</span></div>
         <div class="vr" id="oc-has"><code>has_odometry_</code><span class="vv">false</span></div>
       </div>
       <svg class="dial" id="oc-dial" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Dial of headings: 0 degrees to the right, 90 at the top. The ROSbot sits in the middle, facing its heading, and a line in the color of yaw_ marks the heading."></svg>
@@ -3806,7 +3801,7 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
       <div class="mr" id="pb-az"><span class="mk">twist.angular</span><span class="vv">x 0.0 y 0.0 z 0.0</span></div>
     </div>
     <div class="grg" id="pb-g" style="width:684px;height:150px">
-      <svg class="grs" id="pb-s" viewBox="0 0 684 150" width="684" height="150" role="img" aria-label="The message goes right along /cmd_vel to differential_drive_controller, which drives the ROSbot's wheels. With a positive command, the left wheels roll back, the right wheels forward, and a curved arrow shows the ROSbot turning left on the spot."></svg>
+      <svg class="grs" id="pb-s" viewBox="0 0 684 150" width="684" height="150" role="img" aria-label="The message goes right along /cmd_vel to differential_drive_controller, which drives the ROSbot's wheels. With a positive command, the left wheels roll back, the right wheels forward, a curved arrow shows the ROSbot turning left on the spot, and the robot turns while the command is sent."></svg>
       <div class="grlab" style="left:0;top:4px"><code class="tp">/cmd_vel</code></div>
       <div class="grch" style="left:96px;top:40px"><code class="nd">differential_drive_controller</code></div>
     </div>
@@ -3903,6 +3898,9 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 
 <section class="plate frame s2 extra" data-part="2" data-scene="p50-2" data-name="Slide 100 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 100 of 146. Go to a slide">Slide 100 / 146</span></div>
   <h2>Step 4: the log, line by line</h2><div class="fit"><div class="fitin">
+  <!-- what the slide is about (user, 2026-11-23: "slide 101: explain what this slide is about"); the throttle is
+       heading_controller_node.cpp's RCLCPP_INFO_STREAM_THROTTLE(..., 500, ...) -->
+  <p class="goal">The log of the Step 4 run, which turned the ROSbot from 0° to 90°. The node runs every 50&nbsp;ms but logs at most one line every 500&nbsp;ms, so the turn left six lines. The plot puts each line's error at its time.</p>
   <div class="two" style="grid-template-columns:720px 1fr;gap:24px;align-items:start">
     <div>
       <div class="row" style="margin:0 0 6px"><span class="try">try it</span><span class="small" style="margin-left:10px">click a dot on the plot</span></div>
@@ -7586,11 +7584,19 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     poly(ps, [[ax.X(-xc), ax.Y(-LIM)], [ax.X(xc), ax.Y(LIM)]], {stroke:C.live, "stroke-width":6, "stroke-linecap":"round", class:"dr"});
     if (xc < X0){ poly(ps, [[ax.X(xc), ax.Y(LIM)], [ax.X(X0), ax.Y(LIM)]], {stroke:C.s2, "stroke-width":6, "stroke-linecap":"round", class:"dr"});
       poly(ps, [[ax.X(-xc), ax.Y(-LIM)], [ax.X(-X0), ax.Y(-LIM)]], {stroke:C.s2, "stroke-width":6, "stroke-linecap":"round", class:"dr"}); }
+    /* the reading of the dot (user, 2026-11-23: "I don't understand the diagram. Redo it differently or explain better"): up
+       from the error on the x axis to the dot, then across to the command on the y axis; numbered tags on the three parts */
     el(ps, "line", {x1:ax.X(e), y1:ax.Y(0), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
+    el(ps, "line", {x1:ax.X(-X0), y1:ax.Y(cmd), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
     el(ps, "circle", {cx:ax.X(e), cy:ax.Y(cmd), r:9, fill:Math.abs(kp * e) > LIM ? C.s2 : C.live, stroke:"#ffffff", "stroke-width":3});
+    var tx = (e >= 0 ? -1 : 1) * xc * 0.5;   /* tag 1 on the half of the sloped part the dot is not on, tag 2 on the flat part at the right, tag 3 beside the dot */
+    tag(ps, ax.X(tx) + 26, ax.Y(kp * tx) + 8, 1);
+    if (xc < X0) tag(ps, ax.X(Math.min(X0 - 0.35, xc + (X0 - xc) * 0.75)), ax.Y(LIM) - 24, 2);
+    tag(ps, ax.X(e) + (e > 2.6 ? -28 : 28), ax.Y(cmd) + (cmd > 0.5 ? 28 : -28), 3);
     var lim = Math.abs(kp * e) > LIM;
-    document.getElementById("pc-out").innerHTML = "<li>kp × error = " + fm(kp, 1) + " × " + fe(e) + " = " + fp(kp * e) + " rad/s</li>" +
+    document.getElementById("pc-out").innerHTML = "<li>\\(k_p\\) × error = " + fm(kp, 1) + " × " + fe(e) + " = " + fp(kp * e) + " rad/s</li>" +
       "<li>The limit is ±1.0 rad/s, so the command is " + fp(cmd) + " rad/s" + (lim ? " (limited)." : ", sent as it is.") + "</li>";
+    mathIn(document.getElementById("pc-out"));
     pcRows.forEach(function(r){ r.querySelector("td").classList.toggle("hl", kp === 1.5 && Math.abs(+r.dataset.e - e) < 0.00005); }); }
   var kpb = buttons(document.getElementById("pc-kp"), [0.5, 1.5, 4.0], function(v){ return v.toFixed(1); }, function(v){ kp = v; drawPc(); }, 1.5);
   pcRows.forEach(function(r){ r.style.cursor = "pointer"; r.addEventListener("click", function(ev){ ev.stopPropagation(); kp = 1.5; kpb.set(1.5); pe.value = +r.dataset.e; drawPc(); }); });
@@ -7725,20 +7731,20 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     rosbotIcon(svg, c, c, R * 0.7, -o.yaw * 180 / Math.PI);
   }
 
-  /* ===== its place in the ROS graph: the tags pick the constructor's lines; Play moves the messages ===== */
+  /* ===== its place in the ROS graph: the tags pick the constructor's lines, in the code's order (21, 26, 28); the node's own tag
+     went in the goal line (user, 2026-11-23: "Do you think the tag orders are correct? can we remove some tags and keep the
+     necessary ones?"); Play moves the messages ===== */
   (function(){
     var g = $("gr-g"); if (!g || !g.isConnected) return;
     var snip = [].slice.call($("gr-code").querySelectorAll("pre.code")), say = $("gr-say"), s = $("gr-s");
-    var SAY = {1:'<span class="tg">1</span>Line 15: the class is an <code>rclcpp::Node</code>. Line 18 names the node <code class="nd">heading_controller_node</code>.',
-      2:'<span class="tg">2</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
-      3:'<span class="tg">3</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
-      4:'<span class="tg">4</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
-    reserve(say, [SAY[1], SAY[2], SAY[3], SAY[4]]);
+    var SAY = {1:'<span class="tg">1</span>Line 21: subscribe to <code class="tp">odometry/filtered</code>, holding up to 10 messages. Line 22: for each one, call <code>odometry_callback</code>.',
+      2:'<span class="tg">2</span>Line 26: publish on <code class="tp">cmd_vel</code>, holding up to 10 messages. <code>publish_command</code> sends each command through it.',
+      3:'<span class="tg">3</span>Line 28: every 50&nbsp;ms, line 29: call <code>control_callback</code>, with or without a new message.'};
+    reserve(say, [SAY[1], SAY[2], SAY[3]]);
     var tags = [].slice.call(g.querySelectorAll("button.grt"));
     function pick(k){
       tags.forEach(function(t){ var on = +t.dataset.k === k; t.classList.toggle("on", on); t.setAttribute("aria-pressed", String(on)); });
       [].forEach.call(s.querySelectorAll("[data-k]"), function(e){ e.classList.toggle("on", +e.dataset.k === k); });
-      $("gr-node").classList.toggle("on", k === 1);
       snip.forEach(function(p, j){ p.style.visibility = j === k - 1 ? "visible" : "hidden"; }); say.innerHTML = SAY[k]; }
     tags.forEach(function(t){ t.addEventListener("click", function(e){ e.stopPropagation(); pick(+t.dataset.k); }); });
     /* Play: a message comes down /odometry/filtered and odometry_callback runs; the timer ticks, control_callback runs and its
@@ -7884,14 +7890,23 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     var env = mk(s, "g", {opacity:0});
     mk(env, "rect", {x:-16, y:-11, width:32, height:22, rx:3, style:"fill:var(--card);stroke:var(--s3);stroke-width:3"});
     mk(env, "path", {d:"M-16 -11 L0 2 L16 -11", style:"fill:none;stroke:var(--s3);stroke-width:3"});
-    var RX = 622, RY = 88, wh = mk(s, "g", {}), turn = mk(s, "g", {});
-    mk(s, "path", {"class":"ln", d:"M552 61 L570 74"});
-    rosbotIcon(s, RX, RY, 62, 0);
+    /* the controller drives the ROSbot: a straight arrow from the controller's box to the robot, at the box's height (it was a
+       short oblique stroke, user, 2026-11-23: "check robot figure, it has a weird oblique line in the front") */
+    var RX = 622, RY = 61, turn = mk(s, "g", {});
+    mk(s, "path", {"class":"ln", d:"M448 61 L572 61"}); mk(s, "polygon", {"class":"hh", points:"584,61 570,54 570,68"});
+    var bot = mk(s, "g", {}), wh = mk(bot, "g", {}); rosbotIcon(bot, 0, 0, 62, 0); bot.setAttribute("transform", "translate(" + RX + " " + RY + ")");   /* the wheel arrows turn with the robot */
+    /* the robot turns while the command is sent (user, 2026-11-23: "turn the robot when executing the code"): from line 56 on,
+       at the command's rate, counterclockwise on the screen for a positive angular.z; back to facing right otherwise */
+    var spin = null, sw = 0, ang = 0;
+    function face(a){ ang = a; bot.setAttribute("transform", "translate(" + RX + " " + RY + ") rotate(" + (-a * 180 / Math.PI).toFixed(2) + ")"); }
+    function turning(w){ if (spin && sw === w) return; clearInterval(spin); spin = null; sw = w; if (!w){ face(0); return; } if (reduce){ face(0.6); return; }
+      var t0 = performance.now(), a0 = ang; spin = setInterval(function(){ if (!act(s)){ clearInterval(spin); spin = null; return; }
+        face(a0 + w * (performance.now() - t0) / 1000); }, 30); }
     function arrowAt(g, x1, x2, y){ var dir = x2 > x1 ? 1 : -1;
       mk(g, "line", {x1:x1, y1:y, x2:x2 - dir * 10, y2:y, style:"stroke:var(--livetext);stroke-width:4;stroke-linecap:round"});
       mk(g, "polygon", {points:x2 + "," + y + " " + (x2 - dir * 14) + "," + (y - 7) + " " + (x2 - dir * 14) + "," + (y + 7), style:"fill:var(--livetext)"}); }
     function drive(w){ wh.innerHTML = ""; turn.innerHTML = ""; if (!w) return;
-      arrowAt(wh, RX + 22, RX - 22, RY - 44); arrowAt(wh, RX - 22, RX + 22, RY + 44);   /* left wheels back, right wheels forward */
+      arrowAt(wh, 22, -22, -44); arrowAt(wh, -22, 22, 44);   /* left wheels back, right wheels forward (in the robot's own frame) */
       var r = 56, a0 = -0.5, a1 = a0 + 1.4 * w, d = "";   /* the arc grows with the command (1.4 rad of arc for 1.0 rad/s) */
       for (var i = 0; i <= 20; i++){ var a = a0 + (a1 - a0) * i / 20; d += (i ? "L" : "M") + (RX + r * Math.cos(a)).toFixed(1) + "," + (RY - r * Math.sin(a)).toFixed(1); }
       mk(turn, "path", {d:d, style:"fill:none;stroke:var(--live);stroke-width:4;stroke-linecap:round"});
@@ -7923,8 +7938,8 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
         if (x[2]){ setV(st, x[3], dir > 0); setV(az, x[4], dir > 0); }
         else { setV(st, "0", false); setV(az, "x 0.0 y 0.0 z 0.0", false); }   /* the hidden message starts over, so a return to the slide shows what the first showing did */
         if (x[5] === 1 && dir >= 0) send(); else calm();
-        drive(x[5] >= 1 ? x[7] : 0); say.innerHTML = x[6]; },
-      reset:function(){ calm(); unflash(wrap.closest(".plate")); }});
+        drive(x[5] >= 1 ? x[7] : 0); turning(x[5] >= 1 ? x[7] : 0); say.innerHTML = x[6]; },
+      reset:function(){ calm(); turning(0); unflash(wrap.closest(".plate")); }});
   })();
 })();
 
@@ -7932,7 +7947,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
 /* ---------- slide "PID controller" (fb-pid): the loop step by step (user, 2026-11-22: "follow the arrows like electricity running
    through that box where you highlight what is happening. Create left and right arrows at the bottom to do step by step. When
    the slide loads, run the animation once"). Each step sends a pulse along its wires and lights the blocks it reaches; the slide
-   plays the eight steps once each time it is shown (the frame has data-autoplay), then the arrows step by hand. ---------- */
+   opens plain; the arrows step through the eight steps, and a click after step 8 runs the whole loop once (2026-11-23). ---------- */
 (function(){
   var sv = document.getElementById("pl-svg"); if (!sv || !sv.isConnected) return;
   var sp = document.getElementById("pl-spark"), say = document.getElementById("pl-say"), NS = "http://www.w3.org/2000/svg";
@@ -7944,7 +7959,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     {w:["M608,130 H778"], on:["pl-plant"], t:"5. The control signal \\(u\\) drives the plant."},
     {w:["M940,130 H1130"], on:[], t:"6. The plant's output changes: the heading (or the distance driven)."},
     {w:["M1060,130 V235 H720"], on:["pl-fbk"], t:"7. The feedback measures the output."},
-    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output. The loop starts again."}];
+    {w:["M540,235 H200 V162"], on:["pl-s1", "pl-minus"], t:"8. The first \\(\\Sigma\\) subtracts the measured output, and the loop starts again. Next: the whole loop at once."}];
   /* the captions' math set by KaTeX once (user, 2026-11-22: "use math mode everywhere ... the sigma is not correct") */
   STEPS.forEach(function(st){ var d = document.createElement("span"); d.textContent = st.t; mathIn(d); st.h = d.innerHTML; });
   var k = -1, timer = null, anims = [];
@@ -7973,9 +7988,13 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     (function next(){ var ms = show(i, true, true, true); i++;
       timer = setTimeout(i < STEPS.length ? next : function(){ timer = setTimeout(function(){ timer = null; show(-1); }, 700); }, ms); })(); }
   document.getElementById("pl-prev").onclick = function(e){ e.stopPropagation(); stop(); show(Math.max(0, k - 1), true); };
-  document.getElementById("pl-next").onclick = function(e){ e.stopPropagation(); stop(); show(Math.min(STEPS.length - 1, k + 1), true); };
+  /* after step 8, one more click runs the pulse through the whole loop in one go (user, 2026-11-23: "remove the flash
+     (electricity) going through the whole diagram when the slide loads. Instead, add it to the last step of clicking the right
+     arrow (after step 8)") */
+  document.getElementById("pl-next").onclick = function(e){ e.stopPropagation(); stop();
+    if (k === STEPS.length - 1){ if (reduce) show(-1); else play(); return; }
+    show(Math.min(STEPS.length - 1, k + 1), true); };
   show(-1);
-  onShow(sv, function(){ if (reduce){ show(STEPS.length - 1, false); return; } play(); });
   onReset(sv, function(){ stop(); show(-1); });
 })();
 
