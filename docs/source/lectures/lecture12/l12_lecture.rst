@@ -1200,7 +1200,11 @@ Lines 11 to 23 of ``src/heading_controller_node.cpp``:
        has_odometry_ = true;
    }
 
-- Lines 13 to 16: the unnamed namespace keeps the four constants inside this file. Later, in the parameters section, they become data members, so you can change them without recompiling.
+- Lines 13 to 16: the unnamed namespace keeps the four constants inside this file.
+
+  - They are not object members: the values never change and are the same for every object, so no object needs its own copy.
+  - They are not class members (``static constexpr``): those go in the class definition, in the header, which other files include. Only this file uses the four constants.
+  - In the parameters section they become object members, so you can change them without recompiling.
 - Line 21: the helper of the yaw section turns the quaternion into the yaw.
 
 Step 2: Write control_callback, the Error and the Stop
@@ -1231,7 +1235,7 @@ Lines 25 to 41 of the same file:
            return;
        }
 
-- Lines 29 and 30: the target in rad, ``constexpr``: the compiler computes it once, not at each call.
+- Lines 29 and 30: the target in rad. ``constexpr``: the compiler computes 90 × π / 180 once, during the build, and each call only reads the number. The machine code of ``control_callback`` (GCC 13, no optimization) has one multiplication, ``kp_angular * error``.
 - Line 33: the error.
 - Lines 34 to 36: within the tolerance, stop for good.
 
