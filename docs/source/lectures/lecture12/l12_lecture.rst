@@ -147,7 +147,7 @@ Why ROS uses it:
 
 #. Compact: four numbers; a rotation matrix needs nine. REP 103: "Compact representation".
 #. No singularities: at a pitch of ±90°, roll and yaw turn about the same axis, so one orientation has many sets of angles (gimbal lock). REP 103: "No singularities".
-#. No order to agree on: three angles need one of 24 orders. A quaternion stores the turn itself.
+#. No order to agree on: in another order, the same three angles give another orientation. A quaternion is one turn.
 
 **A turn by an angle about an axis.** Four steps turn an axis and an angle into the quaternion. Here: 90° about (0.707, 0.707, 0), an axis in the floor plane, halfway between x and y.
 
