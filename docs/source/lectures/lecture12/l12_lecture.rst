@@ -744,7 +744,7 @@ The two timers side by side. Both callbacks read ``now()``, the node clock; what
 
 ``rcl/time.h``: ROS time "will report the latest value reported by a ROS time source, or if a ROS time source is not active it reports the same as ``RCL_SYSTEM_TIME``"; the steady clock "reports a value from a monotonically increasing clock". So a control loop on ``create_timer`` pauses with Gazebo, while on ``create_wall_timer`` its callback keeps running while the world is paused.
 
-**Use** ``create_timer``. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use ``create_wall_timer``: their 50 ms loop runs on the computer's clock and keeps running while Gazebo is paused. ``use_sim_time`` is off with a plain ``ros2 run`` and on with ``controllers.yaml`` or a launch file; then ``now()``, which stamps each command, follows ``/clock``.
+**Use** ``create_timer``. Use ``create_wall_timer`` only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use ``create_timer``, every 50 ms of the node clock. ``use_sim_time`` is off with a plain ``ros2 run``: the loop follows the computer's clock. It is on with ``controllers.yaml`` or a launch file: the loop follows ``/clock`` and stops while Gazebo is paused.
 
 Run It: use_sim_time Off, Then On
 """""""""""""""""""""""""""""""""
@@ -826,7 +826,7 @@ With ``use_sim_time`` on, the world was paused, then resumed 4.3 s later with th
    :icon: info
 
    - Every node that runs with Gazebo sets ``use_sim_time`` to true: its ``now()``, and so the stamp of every ``TwistStamped``, is then the simulation's time. :ref:`l12-use-sim-time` sets it for both controllers at once.
-   - The controllers of the next section run ``control_callback`` on a ``create_wall_timer`` timer. With a real-time factor of 0.9997, 50 ms on the computer's clock is about 50 ms of simulation (50 × 0.9997 = 49.985 ms).
+   - The controllers of the next section run ``control_callback`` on a ``create_timer`` timer. With ``use_sim_time`` on, it fires every 50 ms of simulation; at a real-time factor of 0.9997 that is about 50 ms on the computer's clock too (50 / 0.9997 = 50.015 ms).
    - A node that must stay in step with the simulation, when it runs slower than real time or is paused, uses ``create_timer``.
    - Elapsed time comes from two readings of the same clock: ``(now() - start).seconds()``.
 
@@ -1108,7 +1108,7 @@ Lines 15 to 30 of ``include/l12_rosbot/heading_controller_node.hpp``:
              command_publisher_{
                  create_publisher<geometry_msgs::msg::TwistStamped>(
                      "cmd_vel", 10)},
-             control_timer_{create_wall_timer(
+             control_timer_{create_timer(
                  std::chrono::milliseconds{50},
                  std::bind(&HeadingControllerNode::control_callback,
                            this))} {}

@@ -1667,7 +1667,7 @@ gz sim -s -r shapes.sdf    # no window (-s), running at start (-r)</pre>
     <tr><td><code class="pm">use_sim_time</code> on</td><td>ROS time is Gazebo's <code class="tp">/clock</code>: every 1&nbsp;s of simulated time, after the first <code class="tp">/clock</code></td><td>still every 1&nbsp;s of the computer's time</td></tr>
     <tr><td>Gazebo paused</td><td>stops</td><td>keeps firing</td></tr>
   </table>
-  <div class="box concl"><span class="bt">Use <code>create_timer</code></span>Use <code>create_wall_timer</code> only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use <code>create_wall_timer</code>: their 50&nbsp;ms loop runs on the computer's clock and keeps running while Gazebo is paused. <code class="pm">use_sim_time</code> is off with a plain <code>ros2 run</code> and on with <code>controllers.yaml</code> or a launch file; then <code>now()</code>, which stamps each command, follows <code class="tp">/clock</code>.</div>
+  <div class="box concl"><span class="bt">Use <code>create_timer</code></span>Use <code>create_wall_timer</code> only for work that must run on the computer's clock even while the simulation is paused. The L12 controllers use <code>create_timer</code>, every 50&nbsp;ms of the node clock. <code class="pm">use_sim_time</code> is off with a plain <code>ros2 run</code>: the loop follows the computer's clock. It is on with <code>controllers.yaml</code> or a launch file: the loop follows <code class="tp">/clock</code> and stops while Gazebo is paused.</div>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="p33" data-name="Slide 41 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>Simulation Time</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 41 of 120. Go to a slide">Slide 41 / 120</span></div>
@@ -3559,7 +3559,7 @@ button.grt:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 <pre class="code" data-lang="cpp" data-first="24" data-hl="26" style="grid-area:1/1;margin:0">          command_publisher_{
               create_publisher&lt;geometry_msgs::msg::TwistStamped&gt;(
                   "cmd_vel", 10)},</pre>
-<pre class="code" data-lang="cpp" data-first="27" data-hl="28,29" style="grid-area:1/1;margin:0">          control_timer_{create_wall_timer(
+<pre class="code" data-lang="cpp" data-first="27" data-hl="28,29" style="grid-area:1/1;margin:0">          control_timer_{create_timer(
               std::chrono::milliseconds{50},
               std::bind(&amp;HeadingControllerNode::control_callback,
                         this))} {}</pre>
