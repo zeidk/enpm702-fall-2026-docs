@@ -508,7 +508,8 @@ html[data-theme="dark"] .l12w .p3d .ax.z{color:#6FA3D8}
 .l12w .pctl input[type=range]{width:calc(300 * var(--u))}
 .l12w .pread{font:calc(22 * var(--u)) var(--sans);line-height:1.45;margin-top:calc(8 * var(--u))}
 .l12w .pread .vv{color:var(--livetext);font-family:var(--mono);font-size:max(var(--fmin), calc(21 * var(--u)))}
-.l12w #aa-read{line-height:1.3}
+.l12w #aa-read{line-height:1.2}
+.l12w #aa-read .katex{font-size:1.23em}
 .l12w #aa-box{width:calc(540 * var(--u));height:calc(324 * var(--u))}
 .l12w #eu-box{width:calc(540 * var(--u));height:auto;min-height:calc(324 * var(--u))}
 .l12w #aa-axes{display:grid;grid-template-columns:repeat(3, 1fr);gap:calc(6 * var(--u))}

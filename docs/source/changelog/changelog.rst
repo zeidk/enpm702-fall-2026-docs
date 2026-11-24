@@ -31,6 +31,10 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      Lecture 12 quiz now has 19 questions.
    - **Glossary**: an L11 section.
    - **Lecture 12**: quiz question 14, the quaternion after a quarter turn.
+   - **Lecture 12**: synced with the slides of 2026-11-24: the real-time
+     factor, the PID controller's loop, why the controller's constants are
+     not members, the distance controller's run, and the Gazebo window's
+     opening view.
    - **Setup**: ROSbot Simulation installs the simulation and tests it with
      Gazebo's Teleop buttons, with a working copy of the panel on the page.
    - **Setup**: three ``source`` lines in ``~/.bashrc`` replace the

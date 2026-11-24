@@ -131,7 +131,7 @@ Pose: Position and Orientation
 
 On the course's flat floor, the ``ekf`` runs in 2D mode (``two_d_mode: true``): roll and pitch stay 0, and only the yaw changes. Angles are in radians, and the yaw is kept between :math:`-\pi` and :math:`\pi`.
 
-The same three turns in another order give another orientation. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". 24 orders and axis choices are in use. So a library always says which order it uses.
+The same three turns in another order give another orientation. Take roll 45°, pitch 30° and yaw 90° about the fixed axes: in the order XYZ (roll first, REP 103's order) and in the order ZYX (yaw first), the two orientations are 76° apart. The interactive slides let you pick any of the six orders. REP 103 ranks the ways to write an orientation, a quaternion first and fixed-axis roll, pitch and yaw among the angles, and warns: "Euler angles are generally discouraged due to having 24 'valid' conventions with different domains using different conventions by default". 24 orders and axis choices are in use. So a library always says which order it uses.
 
 **The quaternion: four numbers for one turn.** Any orientation is one turn by an angle :math:`\theta` about one axis :math:`(a_x, a_y, a_z)` of length 1. ROS messages store it as a quaternion, four numbers x, y, z, w.
 
@@ -303,7 +303,16 @@ With that world running, Gazebo has its own list of topics, and ROS has another:
         gz_type_name: gz.msgs.Clock
         direction: GZ_TO_ROS
 
-   - ``ros2 launch gp2_bringup gp2_sim.launch.py`` runs five bridge nodes: for the clock, the velocity command ``/cmd_vel``, the lidar, the robot's camera, and the patrol camera.
+   - ``direction`` has three values: ``GZ_TO_ROS`` (Gazebo to ROS), ``ROS_TO_GZ`` (ROS to Gazebo) and ``BIDIRECTIONAL`` (both ways).
+   - ``ros2 launch gp2_bringup gp2_sim.launch.py`` runs five bridge nodes, each from Gazebo to ROS:
+
+     - the clock, ``/clock``;
+     - the velocity commands of Gazebo's Teleop panel, onto ``/cmd_vel``;
+     - the lidar, ``/scan``;
+     - the robot's camera, the ``/oak`` topics;
+     - the patrol cameras: the **fixed camera**, high above the building, on ``/patrol_cam/image``, and the **logical camera** on the ROSbot, which makes no picture. It lists the models 0.3 to 3.5 m ahead, by name and pose, on ``/logical_camera``.
+
+   - Your own command takes no bridge: the ROSbot's controllers run inside Gazebo and read ``/cmd_vel`` from ROS directly.
    - More: `Use ROS 2 to interact with Gazebo <https://gazebosim.org/docs/harmonic/ros2_integration/>`__ and the `ros_gz_bridge package <https://github.com/gazebosim/ros_gz/tree/jazzy/ros_gz_bridge>`__.
 
 The Husarion ROSbot
@@ -480,6 +489,7 @@ One command starts Gazebo, the patrol world and the ROSbot:
 
    ros2 launch gp2_bringup gp2_sim.launch.py
 
+- The Gazebo window opens on a view of the whole patrol world, from above its south side. The robot is the small shape at the left.
 - The first start is the slowest, while Gazebo loads its models: wait before you check anything. A later start without a window (``gui:=false``) sent odometry after 8.6 s.
 - Check it from a second terminal: ``ros2 topic list`` prints 31 topics.
 
@@ -945,20 +955,34 @@ They differ in how they turn the error into a command:
 
 MPC is model predictive control. P, PI and PID are the same family: PID with some gains set to 0.
 
-.. dropdown:: More detail: the PID controller
+PID Controller: the Loop
+""""""""""""""""""""""""
+
+.. admonition:: Definition
+   :class: definition
+
+   A **PID controller** is a feedback controller whose control signal adds three terms: one in proportion to the error now (**P**), one to the error summed over time (**I**), and one to how fast the error changes (**D**).
+
+.. math::
+
+   u = K_p\, e + K_i \sum e\,\Delta t + K_d\, \frac{e_k - e_{k-1}}{\Delta t}
+
+:math:`K_p`, :math:`K_i`, :math:`K_d` are the gains you choose. :math:`\Delta t` is the time between two commands (0.05 s here). :math:`e_k` and :math:`e_{k-1}` are the error now and one step before.
+
+The signal runs around the loop in eight steps:
+
+1. The target enters the first sum.
+2. The first sum subtracts the measured output: the difference is the error :math:`e`.
+3. The error feeds three terms: P, I and D.
+4. The second sum adds the three terms: the control signal :math:`u`.
+5. The control signal drives the plant, the thing you control: here, the ROSbot.
+6. The plant's output changes: the heading, or the distance driven.
+7. The feedback measures the output.
+8. The first sum subtracts the measured output, and the loop starts again.
+
+.. dropdown:: More detail: what each term of the PID controller does
    :class-container: more-detail
    :icon: info
-
-   .. admonition:: Definition
-      :class: definition
-
-      A **PID controller** is a feedback controller whose control signal adds three terms: one in proportion to the error now (**P**), one to the error summed over time (**I**), and one to how fast the error changes (**D**).
-
-   .. math::
-
-      u = K_p\, e + K_i \sum e\,\Delta t + K_d\, \frac{e_k - e_{k-1}}{\Delta t}
-
-   :math:`K_p`, :math:`K_i`, :math:`K_d` are the gains you choose. :math:`\Delta t` is the time between two commands (0.05 s here). :math:`e_k` and :math:`e_{k-1}` are the error now and one step before.
 
    **What each term does for a turn.** Each term reads the error in its own way. For a turn to a heading:
 
@@ -980,7 +1004,7 @@ MPC is model predictive control. P, PI and PID are the same family: PID with som
         - how fast the error changes
         - slow the turn early, so the robot does not overshoot
 
-   This section's controller is P alone (:math:`K_i = K_d = 0`). It needs neither I nor D: in Step 4's run, it stopped 0.019 rad short of the target. The 0.019 rad left is inside the 0.02 rad tolerance, so I would add nothing, and there was no overshoot for D to slow.
+   This section's controller is P alone (:math:`K_i = K_d = 0`). It needs neither I nor D: in Step 4's run, it stopped 0.019 rad short of the target. The 0.019 rad left is inside the 0.02 rad tolerance, so the I term would add nothing, and there was no overshoot for D to slow.
 
    A controller always has the P term: P, PI, PD or PID. D alone sends nothing while the error holds still, so the turn never starts. I alone starts at zero and keeps pushing after the error reaches zero, so the robot passes the target.
 
@@ -1266,6 +1290,7 @@ Lines 43 to 57 of the same file:
    }
 
 - Lines 43 to 45: the law of the control-law section, limited by ``std::clamp``.
+- Line 54: the stamp is two numbers, seconds and nanoseconds. For the first command of Step 4's run, ``now()`` was about ``sec: 1795157077``, ``nanosec: 809681935`` (the time of its log line; with ``use_sim_time`` off, since 1970).
 - Line 55: only ``angular.z`` is set, so the robot turns on the spot.
 
 Step 3: Install the Executable
@@ -1283,7 +1308,7 @@ Step 3: Install the Executable
    ament_target_dependencies(heading_controller_exe
      rclcpp geometry_msgs nav_msgs)
 
-Lines 53 and 54 install it, with ``distance_controller_exe``, the package's second controller, which the More detail box after Step 4 explains:
+Lines 53 and 54 install it, with ``distance_controller_exe``, the package's second controller, which you run after Step 4:
 
 .. code-block:: cmake
    :linenos:
@@ -1322,11 +1347,46 @@ With the simulation running:
 
    The robot turned from 0 to 1.552 rad (88.9°) by itself, and stopped within the 0.02 rad tolerance.
 
-.. dropdown:: More detail: Drive a distance
+Replay the log of the turn, or step through it one line at a time.
+
+.. raw:: html
+   :file: widgets/turn-log.html
+
+Drive the ROSbot Straight in Gazebo
+"""""""""""""""""""""""""""""""""""
+
+The package's second controller, ``distance_controller_node``, drives the ROSbot straight for a target distance of 1.0 m. Only the error changes: the distance left to drive, 1.0 m minus the distance driven. The gain is 0.8 (m/s per m), the limit 0.5 m/s and the tolerance 0.02 m. After the turn of Step 4 the ROSbot faces 90°, so it drives along +y:
+
+.. code-block:: bash
+
+   ros2 run l12_rosbot distance_controller_exe
+
+.. code-block:: text
+
+   [...]: error 1 m, command 0.5 m/s
+   [...]: error 0.879715 m, command 0.5 m/s
+   [...]: error 0.627905 m, command 0.5 m/s
+   [...]: error 0.406843 m, command 0.325475 m/s
+   [...]: error 0.252548 m, command 0.202038 m/s
+   [...]: error 0.159472 m, command 0.127577 m/s
+   [...]: error 0.103942 m, command 0.0831533 m/s
+   [...]: error 0.068027 m, command 0.0544216 m/s
+   [...]: error 0.0423415 m, command 0.0338732 m/s
+   [...]: error 0.0267385 m, command 0.0213908 m/s
+   [...]: distance reached: driven 0.980244 m, error 0.0197556 m
+
+- The first three lines: 0.8 × error is over the limit, so the node sends 0.5 m/s. That holds while the error is over 0.5 / 0.8 = 0.625 m.
+- From the fourth line: 0.8 × 0.406843 = 0.325 m/s. From one line to the next (about 0.55 s), the error falls to about 63 % of its value: 0.407, 0.253, 0.159, 0.104 m.
+- The last line: the error is under 0.02 m, 5.25 s after the first line (time stamps 1795157115.823 to 1795157121.073). The last 0.10 m alone took 2.0 s.
+
+.. admonition:: Conclusion
+   :class: important
+
+   Near the target the command is small, so a smaller tolerance costs more time.
+
+.. dropdown:: More detail: the code of the distance controller
    :class-container: more-detail
    :icon: info
-
-   ``distance_controller_node`` drives the ROSbot straight ahead for one distance. Only the error changes: the distance left to drive.
 
    .. rubric:: The Error of a Drive
 
@@ -1386,35 +1446,6 @@ With the simulation running:
 
    - Line 55: only ``linear.x`` is set, so the robot drives straight ahead and does not turn.
    - The stop within the tolerance, the timer and the log are the same as in ``heading_controller_node``.
-
-   .. rubric:: Run the Distance Controller
-
-   ``ros2 run l12_rosbot distance_controller_exe``, with the robot facing +y (``[...]`` is the cut prefix):
-
-   .. code-block:: text
-
-      [...]: error 1 m, command 0.5 m/s
-      [...]: error 0.627905 m, command 0.5 m/s
-      [...]: error 0.406843 m, command 0.325475 m/s
-      [...]: error 0.252548 m, command 0.202038 m/s
-      [...]: error 0.159472 m, command 0.127577 m/s
-      [...]: error 0.103942 m, command 0.0831533 m/s
-      [...]: distance reached: driven 0.980244 m, error 0.0197556 m
-
-   - The command stays at the 0.5 m/s limit while the error is over 0.5 / 0.8 = 0.625 m.
-   - After that, from one line to the next (about 0.55 s), the error falls to about 63 % of its value: 0.407, 0.253, 0.159, 0.104 m.
-   - The whole drive took 5.25 s (time stamps 1795157115.823 to 1795157121.073). The last 0.10 m alone took 2.0 s.
-
-   .. admonition:: Conclusion
-      :class: important
-
-      Near the target the command is small, so a smaller tolerance costs more time.
-
-Replay the log of the turn, or step through it one line at a time.
-
-.. raw:: html
-   :file: widgets/turn-log.html
-
 
 Proportional Control: What You Can Do Now
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1657,6 +1688,15 @@ On the Command Line, at Start
    [...]: error 1.58335 rad, command 0.791676 rad/s
 
 0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command.
+
+With ``-p kp_angular:=1.0``:
+
+.. code-block:: text
+
+   [...]: error 1.56985 rad, command 1 rad/s
+   [...]: error 0.689536 rad, command 0.689536 rad/s
+
+First, 1.0 × 1.570 = 1.570 rad/s is over the limit, so the clamp sends 1.0 rad/s. Under the limit, 1.0 × error is the error itself (the second line, 1.05 s later).
 
 .. note::
 
