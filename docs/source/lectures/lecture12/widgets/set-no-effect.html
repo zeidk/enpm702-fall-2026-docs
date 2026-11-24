@@ -14,6 +14,6 @@
     <div style="font-size:max(var(--fmin), calc(22 * var(--u)))" id="q47-w"></div>
   </div>
 <pre class="code" data-lang="cpp" data-first="45" style="margin:4px 0 2px">kp_angular_ = get_parameter("kp_angular").as_double();  // run once</pre>
-  <div class="box concl" style="margin-top:4px"><span class="bt">The set changes the stored value only</span><span class="cmd">ros2 param set</span> changes the stored value. The node read <code class="pm">kp_angular</code> once, in its constructor, so its commands do not change.</div>
+  <div class="box concl" style="margin-top:4px"><span class="bt">The set changes the stored value only</span><span class="cmd">ros2 param set</span> changes the stored value. The node read <code class="pm">kp_angular</code> once, in its constructor, so its commands do not change. So the node needs a callback that runs when a value is set.</div>
 </div>
 </div>

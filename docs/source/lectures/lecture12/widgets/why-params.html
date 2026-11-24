@@ -2,7 +2,7 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="why-params">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>Numbers in the code, or parameters</div>
 <div class="l12w-in">
-<p class="goal">The heading controller has four numbers in its code, and each changes with the job. <span class="try">try it</span></p>
+<p class="goal">The heading controller has <span class="termhover" data-out="kc-four" data-lang="cpp" data-center="1">four numbers</span> in its code, and each changes with the job. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.25fr;gap:calc(24 * var(--u));align-items:start">
     <div>
       <table class="t tight" id="q42-t">
@@ -19,7 +19,7 @@
       <ol class="loop" id="q42-list">
         <li><b>Another target.</b> Turning to 180° instead of 90° means editing the <span class="file">.cpp</span> and building again.</li>
         <li><b>Tuning.</b> A good gain is found by trying values: later in this section, a gain of 0.5 takes 6.4&nbsp;s for a 90° turn, and 1.5 takes 2.7&nbsp;s. With constants, every try is edit, build, run.</li>
-        <li><b>Another robot or world.</b> GP2 runs the same controller against the stand-in robot and in Gazebo, tuned for each: <span class="file">params_stand_in.yaml</span> and <span class="file">params_gazebo.yaml</span>.</li>
+        <li><b>Another robot or world.</b> In GP2, <code class="nd">controller_node</code> drives the GP1 stand-in robot and the ROSbot in Gazebo, each run with its world's checkpoints from <span class="file">params_stand_in.yaml</span> or <span class="file">params_gazebo.yaml</span>.</li>
       </ol>
       <div class="row" style="margin:calc(6 * var(--u)) 0 0"><button id="q42-back">Back</button><button id="q42-next">Next</button></div>
     </div>

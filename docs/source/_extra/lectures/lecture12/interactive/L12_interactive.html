@@ -502,6 +502,10 @@ body.fs .plate.nextc.active{background:transparent}
    message (big) is the code boxes' size, 21 frame px, and a list 18 frame px. A long one scrolls once pinned. */
 #termpop pre{margin:0;font:calc(18px * var(--popk, 1))/1.32 var(--mono);white-space:pre}
 #termpop.big pre{font-size:calc(21px * var(--popk, 1))}   /* one whole message, larger (data-big on the word; user, 2026-11-22) */
+/* code on a word (data-lang, data-center; user, 2026-11-23, slide 102: "Make it bigger, centered on the screen, and with C++
+   colors"): the code boxes' colors, 26 frame px, in the middle of the window */
+#termpop.codepop{border-left-color:var(--s2)}
+#termpop.codepop pre.code{font-size:calc(26px * var(--popk, 1));border:0;padding:4px 0;background:none;box-shadow:none;margin:0}
 #termpop .tp-cmd::before{content:"$ ";color:var(--muted)}
 #termpop .tp-type{font-weight:700;color:var(--slate)} #termpop .tp-type::before{content:"type: ";font-weight:400;color:var(--muted)}   /* data-type on the word: the message type, above the command */
 .hint .tip{display:none;position:absolute;left:-20px;top:135%;width:560px;z-index:20;background:var(--card);color:var(--ink);
@@ -3943,7 +3947,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 
 <section class="plate frame s3" data-scene="p53" data-name="Slide 102 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>What a Parameter Is</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 102 of 144. Go to a slide">Slide 102 / 144</span></div>
   <h2>Why the controller needs parameters</h2><div class="fit"><div class="fitin">
-  <p class="goal">The heading controller has four numbers in its code, and each changes with the job. <span class="try">try it</span></p>
+  <p class="goal">The heading controller has <span class="termhover" data-out="kc-four" data-lang="cpp" data-center="1">four numbers</span> in its code, and each changes with the job. <span class="try">try it</span></p>
   <div class="two" style="grid-template-columns:1fr 1.25fr;gap:24px;align-items:start">
     <div>
       <table class="t tight" id="q42-t">
@@ -3960,13 +3964,20 @@ ros2 run l12_rosbot heading_controller_exe</pre>
       <ol class="loop" id="q42-list">
         <li><b>Another target.</b> Turning to 180° instead of 90° means editing the <span class="file">.cpp</span> and building again.</li>
         <li><b>Tuning.</b> A good gain is found by trying values: later in this section, a gain of 0.5 takes 6.4&nbsp;s for a 90° turn, and 1.5 takes 2.7&nbsp;s. With constants, every try is edit, build, run.</li>
-        <li><b>Another robot or world.</b> GP2 runs the same controller against the stand-in robot and in Gazebo, tuned for each: <span class="file">params_stand_in.yaml</span> and <span class="file">params_gazebo.yaml</span>.</li>
+        <li><b>Another robot or world.</b> In GP2, <code class="nd">controller_node</code> drives the GP1 stand-in robot and the ROSbot in Gazebo, each run with its world's checkpoints from <span class="file">params_stand_in.yaml</span> or <span class="file">params_gazebo.yaml</span>.</li>
       </ol>
       <div class="row" style="margin:6px 0 0"><button id="q42-back">Back</button><button id="q42-next">Next</button></div>
     </div>
   </div>
   <div class="box concl" id="q42-c">Values that change with the task, the robot or the world belong outside the code: in parameters, which you set when the node starts or while it runs.</div>
 </div></div></section>
+<template id="kc-four">
+// heading_controller_node.cpp, lines 13 to 16
+constexpr double target_yaw_deg{90.0};    // heading to reach, degrees
+constexpr double kp_angular{1.5};         // gain: rad/s per rad
+constexpr double max_angular_rps{1.0};    // speed limit, rad/s
+constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
+</template>
 
 <section class="plate frame s3" data-scene="p54" data-name="Slide 103 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>What a Parameter Is</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 103 of 144. Go to a slide">Slide 103 / 144</span></div>
   <h2>What a parameter holds</h2><div class="fit"><div class="fitin">
@@ -5085,13 +5096,17 @@ function whyOpen(tr){ var w = whyPop(); whyFrom = tr;
   function show(el){ var tpl = document.getElementById(el.dataset.out); if (!tpl) return;
     var fr = el.closest(".frame"), k = fr && fr.offsetHeight ? fr.getBoundingClientRect().height / fr.offsetHeight : 1;
     pop.style.setProperty("--popk", Math.max(1, k).toFixed(3));
-    var lines = tpl.innerHTML.replace(/^\n+|\s+$/g, "").split("\n"), cmd = el.dataset.cmd || "";
-    pop.innerHTML = '<button class="x" aria-label="close" tabindex="-1">×</button>' +
-      "<pre>" + (el.dataset.type ? '<span class="tp-type">' + el.dataset.type + "</span>\n" : "") + (cmd ? '<span class="tp-cmd">' + cmd + "</span>\n" : "") + lines.join("\n") + "</pre>";
-    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); shown = el;
+    var lines = tpl.innerHTML.replace(/^\n+|\s+$/g, "").split("\n"), cmd = el.dataset.cmd || "", lang = el.dataset.lang;
+    pop.innerHTML = '<button class="x" aria-label="close" tabindex="-1">×</button>' + (lang && window.deckColor
+      ? '<pre class="code" data-lang="' + lang + '">' + lines.map(function(l){ var t = document.createElement("textarea"); t.innerHTML = l;
+          return '<span class="cl">' + window.deckColor(t.value, lang) + "</span>"; }).join("") + "</pre>"
+      : "<pre>" + (el.dataset.type ? '<span class="tp-type">' + el.dataset.type + "</span>\n" : "") + (cmd ? '<span class="tp-cmd">' + cmd + "</span>\n" : "") + lines.join("\n") + "</pre>");
+    pop.classList.add("on"); pop.classList.remove("pinned"); pop.classList.toggle("big", !!el.dataset.big); pop.classList.toggle("codepop", !!lang); shown = el;
+    pop.style.pointerEvents = el.dataset.center ? "none" : "";   /* a centered card may sit over the word: the pointer passes through until it is pinned */
     pop.setAttribute("role", "tooltip"); pop.removeAttribute("aria-label");
     pop.style.maxHeight = "";
     var r = el.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight, W = innerWidth, H = innerHeight, g = 14, x, y;
+    if (el.dataset.center){ pop.style.left = Math.max(g, (W - w) / 2) + "px"; pop.style.top = Math.max(g, (H - h) / 2) + "px"; pop.scrollTop = 0; return; }
     /* beside the word (right, else left); a card too wide for either side goes below or above the word, never over it: over the
        word it took the pointer, the word lost its hover, the card closed and opened again in a loop, and a click never reached the
        word (user, 2026-11-22: "the topic names are not clickable", once the cards were scaled up) */
@@ -5110,7 +5125,7 @@ function whyOpen(tr){ var w = whyPop(); whyFrom = tr;
   function unpin(){ var el = pinned; pinned = null; pop.classList.remove("on", "pinned"); shown = null;
     if (el) el.setAttribute("aria-expanded", "false"); }
   function pin(el){ if (pinned && pinned !== el) unpin(); if (shown !== el || !pop.classList.contains("on")) show(el);
-    pinned = el; pop.classList.add("pinned"); pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "terminal output");
+    pinned = el; pop.classList.add("pinned"); pop.style.pointerEvents = ""; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "terminal output");
     pop.querySelector(".x").tabIndex = 0; el.setAttribute("aria-expanded", "true"); }
   function toggle(el){ if (pinned === el) unpin(); else pin(el); }
   document.querySelectorAll(".termhover[data-out]").forEach(function(el){ el.tabIndex = 0;
@@ -5548,6 +5563,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       rules = rules.map(function(r){ var src = r[1].source; return src.charAt(0) === "^" ? [r[0], new RegExp("(?!)")] : r; });
     }
     return out; }
+  window.deckColor = color;   /* the termhover cards color code with it (data-lang on the word) */
   function ranges(spec){ var on = {}; (spec || "").split(",").forEach(function(p){ p = p.trim(); if (!p) return;
     var ab = p.split("-"), a = +ab[0], b = +(ab[1] || ab[0]); for (var k = a; k <= b; k++) on[k] = 1; }); return on; }
   /* ---------- a copy button on every terminal box (user, 2026-11-20: "the ability to copy terminal commands with a copy
@@ -8004,10 +8020,13 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       rows.forEach(function(r, i){ var on = step === 1 ? i === 0 : step === 2 ? i === 1 : step === 3; [].forEach.call(r.cells, function(c){ c.classList.toggle("hl", on); }); });
       $("q42-c").style.opacity = step === 4 ? 1 : 0.35;
       $("q42-m0").classList.toggle("on", mode === 0); $("q42-m1").classList.toggle("on", mode === 1);
-      var chips = mode === 0 ? ["edit the .cpp", "build", "run"] : ["set the parameter"];
-      $("q42-cy").innerHTML = "<div>Each change takes " + chips.length + " step" + (chips.length > 1 ? "s" : "") + ":</div>" +
+      /* with parameters: set the value, then run; no edit, no build. Changing it while the node runs is one step only for a node
+         with a parameter callback (user, 2026-11-23: "is it really one step?"; the slide "Setting a value the node already read"
+         shows the value that does not take effect without one) */
+      var chips = mode === 0 ? ["edit the .cpp", "build", "run"] : ["set the value", "run"];
+      $("q42-cy").innerHTML = "<div>Each change takes " + chips.length + " steps" + (mode === 1 ? ", no edit, no build" : "") + ":</div>" +
         chips.map(function(c){ return '<span class="q-chip">' + c + "</span>"; }).join("→") +
-        (mode === 1 ? '<div class="small">At start, or while the node runs.</div>' : "");
+        (mode === 1 ? '<div class="small">While the node runs, <code>ros2 param set</code> is one step, but only a node with a parameter callback (Part 4) uses the new value.</div>' : "");
       $("q42-back").disabled = step === 0; $("q42-next").textContent = step === 0 ? "Start" : "Next"; $("q42-next").disabled = step === 4; }
     lis.forEach(function(l, i){ l.style.cursor = "pointer"; l.onclick = stop(function(){ step = i + 1; show(); }); });
     $("q42-back").onclick = stop(function(){ step = Math.max(0, step - 1); show(); });

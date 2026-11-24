@@ -2,20 +2,20 @@
 <div class="l12w mathjax_ignore tex2jax_ignore" data-w="turn-log">
 <div class="l12w-title"><span class="l12w-kick">Try it</span>The measured log of a turn</div>
 <div class="l12w-in">
-<div class="two" style="grid-template-columns:calc(720 * var(--u)) 1fr;gap:calc(24 * var(--u));align-items:start">
+<p class="goal" style="margin-bottom:2px">With the simulation running:</p>
+<pre class="code" data-lang="bash">colcon build --packages-select l12_rosbot
+source install/setup.bash
+ros2 run l12_rosbot heading_controller_exe</pre>
+  <div class="two" style="grid-template-columns:1fr calc(420 * var(--u));gap:calc(20 * var(--u));align-items:start;margin-top:calc(6 * var(--u))">
     <div>
-      <div class="row" style="margin:0 0 calc(6 * var(--u))"><span class="try">try it</span><span class="small" style="margin-left:calc(10 * var(--u))">click a dot on the plot</span></div>
+      <div class="row" style="margin:0 0 4px"><span class="small">The output:</span><span class="try">try it</span><span class="small">click a line or a dot</span></div>
 <pre class="code" data-lang="text" id="rp-log"></pre>
-      <ul class="pl" style="margin-top:calc(6 * var(--u))">
-        <li>The command stays at 1.0&nbsp;rad/s until the error is under 1.0 / 1.5 = 0.67&nbsp;rad.</li>
-        <li>The loop stops under 0.02&nbsp;rad, the tolerance.</li>
-      </ul>
+      <div class="box nolive" id="rp-say" style="margin-top:calc(8 * var(--u));min-height:calc(2 * 1.32em + calc(20 * var(--u)))"></div>
     </div>
     <div>
       <svg id="rp-svg" class="plot" viewBox="0 0 420 372" width="420" height="372" role="group" aria-label="Plot of the error in rad against time in s, from 0 to 2.65 s. The six logged errors fall from 1.569 to 0.019; each is a dot you can select. A dashed line marks 0.67 rad, where the command leaves the limit of 1.0 rad per s, and another marks the tolerance of 0.02 rad." style="width:max(calc(420 * var(--u)), calc(420 * 12px / 20.5));max-width:none;height:auto"></svg>
       <p class="small" style="margin:4px 0 0"><span class="sw" style="background:var(--s2)"></span>at the limit <span class="sw" style="background:var(--live);margin-left:calc(10 * var(--u))"></span>1.5 × error</p>
     </div>
   </div>
-  <div class="box nolive" id="rp-say" style="margin-top:calc(10 * var(--u));min-height:calc(2 * 1.32em + calc(20 * var(--u)))"></div>
 </div>
 </div>

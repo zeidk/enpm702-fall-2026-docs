@@ -1402,7 +1402,7 @@ The heading controller of the last section has four numbers in its code: the tar
 
 - **Another target.** Turning to 180° instead of 90° means editing the ``.cpp`` and building again.
 - **Tuning.** A good gain is found by trying values: later in this section, a gain of 0.5 takes 6.4 s for a 90° turn, and 1.5 takes 2.7 s. With constants, every try is edit, build, run.
-- **Another robot or world.** GP2 runs the same controller against the stand-in robot and in Gazebo, tuned for each: ``params_stand_in.yaml`` and ``params_gazebo.yaml``.
+- **Another robot or world.** In GP2, ``controller_node`` drives the GP1 stand-in robot and the ROSbot in Gazebo, each run with its world's checkpoints from ``params_stand_in.yaml`` or ``params_gazebo.yaml``.
 
 .. admonition:: Conclusion
    :class: important
