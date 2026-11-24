@@ -15,7 +15,7 @@ Before the first ROS 2 lecture, do these five steps on your laptop.
 
 1. Install ROS 2: from `Which ROS 2 Distribution`_ to `Install Development
    Tools`_. On Ubuntu 22.04, follow `If Your Computer Has Ubuntu 22.04`_.
-2. Set up your terminal with ``enpm702_env``: `Configure Your Shell`_.
+2. Set up your terminal: `Configure Your Shell`_.
 3. Put the course code in your own private repository and build your
    workspace: `ROS 2 Workspace`_.
 4. Check that ROS 2 works: `Verify ROS 2`_.
@@ -190,13 +190,12 @@ Configure Your Shell
      the overlay, on top of ROS 2, the underlay.
 
    These settings last only in that terminal. A new terminal starts without
-   them, which is why ``enpm702_env`` goes in ``~/.bashrc``: Bash runs that file
-   in every new terminal (Zsh runs ``~/.zshrc``).
+   them, which is why the ``source`` lines go in ``~/.bashrc``: Bash runs that
+   file in every new terminal (Zsh runs ``~/.zshrc``).
 
 Every terminal you use for ROS 2 needs three things: ROS 2 sourced, tab
-completion for ``colcon`` (the build tool), and your workspace sourced. The
-``enpm702_env`` function does all three. You add it to your shell configuration
-file once, and it runs in every new terminal. It works in Bash and in Zsh.
+completion for ``colcon`` (the build tool), and your workspace sourced. Three
+lines in your shell configuration file do this in every new terminal.
 
 1. Open ``~/.bashrc`` (Zsh users: ``~/.zshrc``) in a text editor, for
    example VS Code:
@@ -221,35 +220,16 @@ file once, and it runs in every new terminal. It works in Bash and in Zsh.
 
    .. code-block:: bash
 
-      # enpm702_env sources ROS 2, turns on colcon's tab completion, then sources
-      # your workspace, in the current terminal.
-      enpm702_env() {
-        local distro="${1:-jazzy}"
-        local ws="${2:-$HOME/ros2_ws}"
-        local sh="bash"
-        [ -n "$ZSH_VERSION" ] && sh="zsh"
-        if [ ! -f "/opt/ros/$distro/setup.$sh" ]; then
-          echo "enpm702_env: ROS 2 $distro is not installed in /opt/ros/$distro"
-          return 1
-        fi
-        source "/opt/ros/$distro/setup.$sh"
-        local complete="/usr/share/colcon_argcomplete/hook/colcon-argcomplete.$sh"
-        [ -f "$complete" ] && source "$complete"
-        if [ -f "$ws/install/setup.$sh" ]; then
-          source "$ws/install/setup.$sh"
-          echo "enpm702_env: ROS 2 $distro and the workspace $ws"
-        else
-          echo "enpm702_env: ROS 2 $distro; $ws is not built yet (run colcon build in it)"
-        fi
-      }
-      enpm702_env   # set ROS 2 and the workspace in every new terminal
+      source /opt/ros/jazzy/setup.bash
+      source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+      source ~/ros2_ws/install/setup.bash
 
-4. Open a new terminal. Your workspace does not exist yet, so ``enpm702_env``
-   prints the line below. That is expected: `ROS 2 Workspace`_ builds it.
+   Zsh users paste the same lines with ``.zsh`` in place of ``.bash`` at the
+   end of each file name.
 
-   .. code-block:: text
-
-      enpm702_env: ROS 2 jazzy; /home/<you>/ros2_ws is not built yet (run colcon build in it)
+4. Open a new terminal. Until you build your workspace (`ROS 2 Workspace`_),
+   the third line prints an error, because ``~/ros2_ws/install`` does not
+   exist yet. That is expected.
 
 5. Check that ROS 2 works:
 
@@ -257,48 +237,9 @@ file once, and it runs in every new terminal. It works in Bash and in Zsh.
 
       ros2 --help
 
-How to call it, in any terminal:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 35 65
-
-   * - Command
-     - What it sources
-   * - ``enpm702_env``
-     - ROS 2 Jazzy, then the workspace ``~/ros2_ws``
-   * - ``enpm702_env humble``
-     - ROS 2 Humble (Ubuntu 22.04), then ``~/ros2_ws``
-   * - ``enpm702_env jazzy ~/my_ws``
-     - ROS 2 Jazzy, then another workspace, ``~/my_ws``
-
-- After ``colcon build`` adds a new package, run ``enpm702_env`` again in that
-  terminal so it finds the package.
-- On Ubuntu 22.04, change the last line you pasted to ``enpm702_env humble``.
-
-.. dropdown:: Manual alternative: three lines instead of the function
-
-   Use either the function or these three lines, not both.
-
-   **Bash** (``~/.bashrc``):
-
-   .. code-block:: bash
-
-      echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-      echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
-      echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
-
-   **Zsh** (``~/.zshrc``):
-
-   .. code-block:: bash
-
-      echo "source /opt/ros/jazzy/setup.zsh" >> ~/.zshrc
-      echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh" >> ~/.zshrc
-      echo "source ~/ros2_ws/install/setup.zsh" >> ~/.zshrc
-
-   Until you build the workspace (next section), the third line prints an
-   error in every new terminal, because ``~/ros2_ws/install`` does not exist
-   yet.
+After ``colcon build`` adds a new package, run
+``source ~/ros2_ws/install/setup.bash`` in that terminal so it finds the
+package.
 
 
 The colcon Build Tool
@@ -415,24 +356,18 @@ public. Before you start, on each computer you use:
    ``-u`` makes your repository the default, so from now on ``git push`` and
    ``git pull`` with no names use ``origin``.
 
-4. **Build the workspace**, then run ``enpm702_env`` so this terminal finds it:
+4. **Build the workspace**, then source it so this terminal finds it:
 
    .. code-block:: bash
 
       cd ~/ros2_ws
       colcon build
-      enpm702_env
+      source install/setup.bash
 
    Until the first lecture package is published, ``colcon build`` finds
    nothing to build and ends with ``Summary: 0 packages finished``. It still
-   creates ``build``, ``install`` and ``log``, so ``enpm702_env`` now prints:
-
-   .. code-block:: text
-
-      enpm702_env: ROS 2 jazzy and the workspace /home/<you>/ros2_ws
-
-   With the manual alternative, run ``source install/setup.bash`` instead of
-   ``enpm702_env``.
+   creates ``build``, ``install`` and ``log``, so the error of the third line
+   in ``~/.bashrc`` stops in new terminals.
 
 Three jobs come up day to day. Run each one from
 ``~/ros2_ws/src/enpm702-fall-2026-ros``.
@@ -522,7 +457,7 @@ covered in :doc:`/reading_material/vscode_cmake/vcm_index`.
 
    .. code-block:: bash
 
-      enpm702_env
+      source ~/ros2_ws/install/setup.bash
       code ~/ros2_ws
 
 3. Press :kbd:`Ctrl+Shift+P` and run **ROS2: Update C++ Properties**. It
@@ -647,12 +582,12 @@ Ubuntu 24.04 when you can.
       sudo apt install ros-humble-ros-gz
 
 4. In every command of this page and of the lectures, write ``humble`` where it
-   says ``jazzy``. In ``~/.bashrc``, the last line of the ``enpm702_env`` block
-   (see `Configure Your Shell`_) becomes:
+   says ``jazzy``. In ``~/.bashrc``, the first of the three lines (see
+   `Configure Your Shell`_) becomes:
 
    .. code-block:: bash
 
-      enpm702_env humble
+      source /opt/ros/humble/setup.bash
 
    Then do `ROS 2 Workspace`_ and `Verify ROS 2`_ above, with the same change.
 
@@ -668,18 +603,14 @@ Ubuntu 24.04 when you can.
 Summary of Shell Configuration
 -------------------------------
 
-After completing the setup, the bottom of your ``~/.bashrc`` (or
-``~/.zshrc``) holds the ``enpm702_env`` function and the line that runs it:
+After completing the setup, the bottom of your ``~/.bashrc`` holds three
+lines (``.zsh`` in place of ``.bash`` in ``~/.zshrc``):
 
 .. code-block:: bash
 
-   enpm702_env() {
-     ...
-   }
-   enpm702_env
-
-With the manual alternative, it holds the three ``source`` lines instead,
-never both.
+   source /opt/ros/jazzy/setup.bash
+   source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+   source ~/ros2_ws/install/setup.bash
 
 .. tip::
 
@@ -688,4 +619,4 @@ never both.
    .. code-block:: bash
 
       alias cb='cd ~/ros2_ws && colcon build'
-      alias cbs='cd ~/ros2_ws && colcon build && enpm702_env'
+      alias cbs='cd ~/ros2_ws && colcon build && source install/setup.bash'

@@ -27,6 +27,11 @@ All notable changes to the ENPM702 Fall 2026 course documentation are recorded h
      the measured runs.
    - **Reading material**: Foxglove (optional).
    - **Glossary**: an L11 section.
+   - **Lecture 12**: quiz question 14, the quaternion after a quarter turn.
+   - **Setup**: ROSbot Simulation installs the simulation and tests it with
+     Gazebo's Teleop buttons, with a working copy of the panel on the page.
+   - **Setup**: three ``source`` lines in ``~/.bashrc`` replace the
+     ``enpm702_env`` shell function.
 
 .. dropdown:: v1.18.0: Lecture 11, GP1 and GP2 (2026-11-17)
    :icon: tag

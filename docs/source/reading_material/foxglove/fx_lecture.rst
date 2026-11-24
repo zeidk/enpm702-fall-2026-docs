@@ -126,7 +126,7 @@ create the free account.
 Run It with the Course Simulation
 ====================================================
 
-Use two terminals, each with ROS 2 sourced (``enpm702_env``), as in
+Use two terminals, each with ROS 2 and your workspace sourced (``source ~/ros2_ws/install/setup.bash``), as in
 :doc:`ROSbot Simulation </setup/rosbot_simulation>`.
 
 Step 1: Start the Simulation
