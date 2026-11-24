@@ -8055,7 +8055,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       [0, "<b>t = 0 s, the start.</b> The error is 1.570 rad (90°). With gain 0.5 the command is 0.5 × 1.570 = 0.785 rad/s, under the 1.0 rad/s limit."],
       [6.25, "<b>t = 6.25 s.</b> The command shrinks as the error shrinks: it is always 0.5 × the error, so the robot slows down near the target. At 6.3 s the error is under 0.02 rad: 90° reached."],
       [6.85, "<b>t = 6.85 s, a new target, 180°.</b> The error jumps back up, and so does the command: 0.5 × 1.350 = 0.675 rad/s. The node logs at most every 0.5 s, so the turn's first command, 0.785, is not on the plot."],
-      [13.7, "<b>t = 13.7 s, the turn to −90°.</b> The short way from 180° is 90° to the left. The gain is still 0.5: 0.5 × 1.029 = 0.514 rad/s."],
+      [13.1, "<b>t = 13.1 s, the turn to −90°.</b> The short way from 180° is 90° to the left. The gain is still 0.5: 0.5 × 1.417 = 0.708 rad/s, then 0.514 at 13.7 s. The next log line comes at 14.25 s, after the gain change, so the line stops at 13.7 s: until 14.03 s the command kept falling."],
       [14.25, "<b>t = 14.25 s.</b> At 14.03 s (the green dashed line), <code>ros2 param set /heading_controller_node kp_angular 1.5</code> was accepted. The next command: 1.5 × 0.723 = 1.08 rad/s, over the limit, so the node sends 1.0. The error kept falling; the command jumped because the gain tripled."],
       [15.8, "<b>t = 15.8 s.</b> −90° reached at 15.9 s. This turn took 3.20 s: part at gain 0.5, part at 1.5."],
       [16.3, "<b>t = 16.3 s, the turn to 0° at gain 1.5.</b> 1.5 × 1.387 = 2.08 rad/s, over the limit: the command stays at 1.0 rad/s, the flat top, until the error is under 1.0 / 1.5 = 0.67 rad."],
@@ -8066,9 +8066,11 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       var box = {x:20, y:14, w:1130, h:300}, ax = frame(sv, box, [0, TT], [0, 1.6], [0, 2, 4, 6, 8, 10, 12, 14, 16, 18], [0, 0.5, 1], "time since the first log line (s)", "command (rad/s)");
       el(sv, "line", {x1:box.x, y1:ax.Y(1), x2:box.x + box.w, y2:ax.Y(1), stroke:C.edge, "stroke-width":2, "stroke-dasharray":"7 5"});
       halo(txt(sv, ax.X(0.3), ax.Y(1) - 8, "limit 1.0 rad/s", 20, C.muted, "start"));
-      var a = pts.filter(function(d){ return d[0] <= TS && d[0] <= upto; }), b = pts.filter(function(d){ return d[0] > TS && d[0] <= upto; });
-      if (a.length) poly(sv, a.map(function(d){ return [ax.X(d[0]), ax.Y(d[2])]; }), {stroke:C.slate, "stroke-width":4});
-      if (b.length) poly(sv, (a.length && upto > TS ? [a[a.length - 1]] : []).concat(b).map(function(d){ return [ax.X(d[0]), ax.Y(d[2])]; }), {stroke:C.live, "stroke-width":4});
+      /* one line per stretch with one target and one gain: a join across a "reached" line or across the gain change would draw a
+         rise that never happened (user, 2026-11-24: "why does the command increase before setting the gain to 1.5?") */
+      var cuts = rch.map(function(d){ return d[0]; }).concat([TS]).sort(function(x, y){ return x - y; }), runs = [[]];
+      pts.forEach(function(d, k){ if (k && cuts.some(function(c){ return pts[k - 1][0] < c && c < d[0]; })) runs.push([]); runs[runs.length - 1].push(d); });
+      runs.forEach(function(r){ if (r.length > 1) poly(sv, r.map(function(d){ return [ax.X(d[0]), ax.Y(d[2])]; }), {stroke:r[0][0] <= TS ? C.slate : C.live, "stroke-width":4}); });
       pts.forEach(function(d){ if (d[0] <= upto) el(sv, "circle", {cx:ax.X(d[0]), cy:ax.Y(d[2]), r:5, fill:d[0] <= TS ? C.slate : C.live}); });
       rch.forEach(function(d){ if (d[0] <= upto){ el(sv, "line", {x1:ax.X(d[0]), y1:ax.Y(1.2), x2:ax.X(d[0]), y2:ax.Y(0), stroke:C.edge, "stroke-width":1.5});
         halo(txt(sv, ax.X(d[0]), ax.Y(1.2) - 8, d[2], 20, C.ink)); } });
