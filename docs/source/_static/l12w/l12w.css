@@ -508,7 +508,7 @@ html[data-theme="dark"] .l12w .p3d .ax.z{color:#6FA3D8}
 .l12w .pread .vv{color:var(--livetext);font-family:var(--mono);font-size:max(var(--fmin), calc(21 * var(--u)))}
 .l12w #aa-read{line-height:1.3}
 .l12w #aa-box{width:calc(540 * var(--u));height:calc(324 * var(--u))}
-.l12w #eu-box{width:calc(540 * var(--u));height:calc(324 * var(--u))}
+.l12w #eu-box{width:calc(540 * var(--u));height:auto;min-height:calc(324 * var(--u))}
 .l12w #aa-axes{display:grid;grid-template-columns:repeat(3, 1fr);gap:calc(6 * var(--u))}
 .l12w #aa-axes button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:1px 0;margin:0;width:100%;letter-spacing:-0.02em}
 .l12w #aa-pre button{font-size:max(var(--fmin), calc(20 * var(--u)));padding:1px calc(10 * var(--u));margin:0 0 0 calc(6 * var(--u))}
@@ -520,6 +520,13 @@ html[data-theme="dark"] .l12w .p3d .ax.z{color:#6FA3D8}
 .l12w .posefig text{font:italic calc(24 * var(--u)) KaTeX_Math,serif;fill:var(--ink)}
 .l12w #pose-def .box{font-size:max(var(--fmin), calc(28 * var(--u)));line-height:1.3}
 .l12w #pose-def .box .bt{font-size:max(var(--fmin), calc(32 * var(--u)))}
+.l12w #pose-quat-def .box.def{font-size:max(var(--fmin), calc(30 * var(--u)));line-height:1.35}
+.l12w #pose-quat-def .box.def .bt{font-size:max(var(--fmin), calc(32 * var(--u)))}
+.l12w #pose-def img.fig{transform-origin:50% 100%;transition:transform .15s ease-out;cursor:zoom-in}
+.l12w #pose-def img.fig:hover,.l12w #pose-def img.fig:focus-visible{transform:scale(2);position:relative;z-index:5;background:var(--card) !important;border-radius:calc(8 * var(--u));box-shadow:0 4px 18px rgba(0,0,0,.28);outline:none}
+@media (prefers-reduced-motion: reduce){
+.l12w #pose-def img.fig{transition:none}
+}
 .l12w .posefig .lbl2{font:calc(22 * var(--u)) var(--sans);font-style:normal;fill:var(--ink)}
 .l12w .posefig .mono{font:calc(22 * var(--u)) var(--mono);font-style:normal;fill:var(--muted)}
 .l12w #qt-vals{font-size:max(var(--fmin), calc(29 * var(--u)));line-height:1.6}

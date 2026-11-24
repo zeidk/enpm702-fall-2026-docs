@@ -27,7 +27,7 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
    - Explain the difference between the computer's clock and **simulation time**, what ``use_sim_time`` changes for ``now()``, and which kind of **timer** stops when Gazebo is paused.
    - Compute the **error** of a turn, the angle left to turn the short way.
    - Write a **proportional controller** node: a command that is a **gain** times the error, limited to a maximum speed, that stops within a **tolerance**.
-   - **Declare** a **parameter** with a type and a default value, and read it in a node.
+   - **Declare** a **parameter** with a default value, which sets its type, and read it in a node.
    - Set parameters at start with ``-p``, with a **parameter file**, and with a **launch file**, and set ``use_sim_time`` for a node that runs with Gazebo.
    - List, get and set the parameters of a running node, and explain why a value the node already read does not change its behavior.
    - Check and store a new value while the node runs, with a **parameter callback**.

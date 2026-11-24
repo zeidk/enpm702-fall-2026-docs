@@ -938,7 +938,7 @@ source install/setup.bash</pre></div>
 .pread{font:22px var(--sans);line-height:1.45;margin-top:8px} .pread .vv{color:var(--livetext);font-family:var(--mono);font-size:21px}
 #aa-read{line-height:1.3}
 #aa-box{width:540px;height:324px}
-#eu-box{width:540px;height:324px}   /* the Euler view at 90%, beside larger text (2026-11-23) */   /* the 600 x 360 view at 90%, so the right column holds q on one line */
+#eu-box{width:540px;height:auto;min-height:324px}   /* the Euler view at 90%, beside larger text (2026-11-23) */   /* the 600 x 360 view at 90%, so the right column holds q on one line */
 #aa-axes{display:grid;grid-template-columns:repeat(3, 1fr);gap:6px}   /* user, 2026-11-23: "properly align the 6 boxes. 3 boxes per line" */
 #aa-axes button{font-size:20px;padding:1px 0;margin:0;width:100%;letter-spacing:-0.02em}
 #aa-pre button{font-size:20px;padding:1px 10px;margin:0 0 0 6px}   /* the theta presets, as compact as the axis buttons */   /* room inside the widest box */   /* the formula in four steps fits the slide */
@@ -970,6 +970,11 @@ source install/setup.bash</pre></div>
 .posefig text{font:italic 24px KaTeX_Math,serif;fill:var(--ink)}
 /* the Pose slide: larger text than the deck's body size, the hands take the room that is left (instructor, 2026-11-24: "make text bigger") */
 #pose-def .box{font-size:28px;line-height:1.3} #pose-def .box .bt{font-size:32px}
+#pose-quat-def .box.def{font-size:30px;line-height:1.35} #pose-quat-def .box.def .bt{font-size:32px}   /* user, 2026-11-24: the quaternion box bigger */
+/* hovering over (or focusing) a hand drawing doubles it, growing up from its base, over the text (user, 2026-11-24) */
+#pose-def img.fig{transform-origin:50% 100%;transition:transform .15s ease-out;cursor:zoom-in}
+#pose-def img.fig:hover,#pose-def img.fig:focus-visible{transform:scale(2);position:relative;z-index:5;background:var(--card) !important;border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.28);outline:none}
+@media (prefers-reduced-motion: reduce){#pose-def img.fig{transition:none}}
 .posefig .lbl2{font:22px var(--sans);font-style:normal;fill:var(--ink)} .posefig .mono{font:22px var(--mono);font-style:normal;fill:var(--muted)}
 #qt-vals{font-size:29px;line-height:1.6} #qt-vals .vv{color:var(--livetext);font-family:var(--mono)}
 </style>
@@ -990,12 +995,19 @@ source install/setup.bash</pre></div>
   <div class="box def"><span class="bt">Pose</span>The position and the orientation of a body, measured in a coordinate frame.</div>
   <div class="two" style="grid-template-columns:1fr 1fr;gap:22px;align-items:stretch;margin-top:8px">
     <div class="box" style="margin:0;display:flex;flex-direction:column"><span class="bt">Position</span>
-      <p style="margin:0 0 6px">Where the body is: three numbers, \(x\), \(y\) and \(z\), in meters along the frame's axes. The axes are right-handed: fingers of your right hand along \(x\), bent toward \(y\), thumb along \(z\).</p>
-      <p style="margin:0 0 6px">In a robot's body frame (<code class="fr">base_link</code>), \(x\) is forward, \(y\) left and \(z\) up (<a href="https://www.ros.org/reps/rep-0103.html" target="_blank" rel="noopener">REP 103</a>).</p>
-      <div style="margin-top:auto;display:flex;justify-content:center"><img class="fig" src="L12_interactive_assets/hand_axes.png" data-light="L12_interactive_assets/hand_axes.png" data-dark="L12_interactive_assets/hand_axes_dark.png" style="height:150px;width:auto;margin:0" alt="Line drawing of a right hand, palm toward the viewer: the thumb points up, the index finger points to the upper left, and the middle finger points down to the left, toward the viewer, while the ring and little fingers are curled. Three arrows start where the index finger meets the thumb: a red arrow x along the index finger, a green arrow y along the middle finger, and a blue arrow z along the thumb."></div></div>
+      <ul class="pl" style="margin:0 0 6px">
+        <li>Where the body is: three numbers, \(x\), \(y\) and \(z\), in meters along the frame's axes.</li>
+        <li>The axes are right-handed: fingers of your right hand along \(x\), bent toward \(y\), thumb along \(z\).</li>
+        <li>In a robot's body frame (<code class="fr">base_link</code>), \(x\) is forward, \(y\) left and \(z\) up (<a href="https://www.ros.org/reps/rep-0103.html" target="_blank" rel="noopener">REP 103</a>).</li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:center"><img class="fig" src="L12_interactive_assets/hand_axes.png" data-light="L12_interactive_assets/hand_axes.png" data-dark="L12_interactive_assets/hand_axes_dark.png" style="height:138px;width:auto;margin:0" tabindex="0" alt="Line drawing of a right hand, palm toward the viewer: the thumb points up, the index finger points to the upper left, and the middle finger points down to the left, toward the viewer, while the ring and little fingers are curled. Three arrows start where the index finger meets the thumb: a red arrow x along the index finger, a green arrow y along the middle finger, and a blue arrow z along the thumb."></div></div>
     <div class="box" style="margin:0;display:flex;flex-direction:column"><span class="bt">Orientation</span>
-      <p style="margin:0 0 6px">How the body is turned: an orientation is given by rotations about the axes, <b>roll</b> about <span style="white-space:nowrap">\(x\),</span> <b>pitch</b> about \(y\) and <b>yaw</b> about \(z\). A positive rotation follows the right-hand rule: thumb along the axis, bent fingers show the turn.</p>
-      <div style="margin-top:auto;display:flex;justify-content:center"><img class="fig" src="L12_interactive_assets/hand_rotation.png" data-light="L12_interactive_assets/hand_rotation.png" data-dark="L12_interactive_assets/hand_rotation_dark.png" style="height:150px;width:auto;margin:0" alt="Line drawing of a right hand in a thumbs-up fist, its palm toward the viewer. The hand grips a blue vertical arrow, z: it passes through the fist, hidden by the curled fingers except in the curl of the index finger and in the gap under the little finger, and shows below the fist and above it, between the index finger and the thumb, which points along it. Below the fist, an orange ring arrow circles the axis, its arrowhead in front, turning counterclockwise when seen from above: the way the fingers curl."></div></div>
+      <ul class="pl" style="margin:0 0 6px">
+        <li>How the body is turned: an orientation is given by rotations about the axes.</li>
+        <li><b>Roll</b> is about <span style="white-space:nowrap">\(x\),</span> <b>pitch</b> about \(y\) and <b>yaw</b> about \(z\).</li>
+        <li>A positive rotation follows the right-hand rule: thumb along the axis, bent fingers show the turn.</li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:center"><img class="fig" src="L12_interactive_assets/hand_rotation.png" data-light="L12_interactive_assets/hand_rotation.png" data-dark="L12_interactive_assets/hand_rotation_dark.png" style="height:138px;width:auto;margin:0" tabindex="0" alt="Line drawing of a right hand in a thumbs-up fist, its palm toward the viewer. The hand grips a blue vertical arrow, z: it passes through the fist, hidden by the curled fingers except in the curl of the index finger and in the gap under the little finger, and shows below the fist and above it, between the index finger and the thumb, which points along it. Below the fist, an orange ring arrow circles the axis, its arrowhead in front, turning counterclockwise when seen from above: the way the fingers curl."></div></div>
   </div>
 </div></div></section>
 
@@ -1029,7 +1041,7 @@ source install/setup.bash</pre></div>
 <section class="plate frame s7 extra" id="pose-euler3d" data-scene="pose-euler3d" data-name="Slide 8 · Pose" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose<span class="fsep" aria-hidden="true"></span>Roll, Pitch and Yaw</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 8 of 110. Go to a slide">Slide 8 / 110</span></div>
   <h2>Roll, pitch and yaw in 3D: fixed axes, roll first</h2><div class="fit"><div class="fitin">
   <p class="goal">Each angle turns the robot about one axis of the fixed frame. REP 103: "fixed axis roll, pitch, yaw about X, Y, Z axes respectively", roll first. <span class="try">try it</span></p>
-  <div class="two" style="grid-template-columns:540px 1fr;gap:22px;align-items:start">   <!-- 600 px until 2026-11-23 (user: "text font should be bigger"): a wider column for the text -->
+  <div class="two" style="grid-template-columns:540px 1fr;gap:22px;align-items:stretch">   <!-- the 3D box reaches the bottom of the column beside it (user, 2026-11-24) -->
     <div class="p3d" id="eu-box" role="img" aria-label="A 3D view of the ROSbot's 3D model (its body, four wheels, the lidar on top and the camera on a mast at the back), with its body axes: x red, forward; y green, to its left; z blue, up. Faint grey lines show the fixed frame. The three sliders turn the robot; drag to turn the view."></div>
     <div class="pctl">
       <div class="row"><span class="lbl">roll °</span><input type="range" id="eu-r" min="-180" max="180" step="1" value="0" aria-label="roll in degrees"></div>
