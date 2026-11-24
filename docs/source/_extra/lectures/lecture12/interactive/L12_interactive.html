@@ -4011,7 +4011,7 @@ yaw_tolerance_rad_ =
   <p class="goal"><code>--ros-args</code> starts the arguments for ROS&nbsp;2, and each <code>-p name:=value</code> sets one parameter before the constructor reads it. <span class="try">try it</span></p>
   <div class="row"><span class="lbl"><code>kp_angular:=</code></span><button id="q49-b0" class="on">0.5</button><button id="q49-b1">1.0</button><button id="q49-b2">1</button><span class="small" id="q49-s"></span></div>
 <pre class="code" data-lang="bash" id="q49-cmd"></pre>
-<pre class="code" data-lang="text" id="q49-out"></pre>
+<pre class="code nolive" data-lang="text" id="q49-out"></pre>
   <div class="note" id="q49-n"></div>
 </div></div></section>
 
@@ -7790,7 +7790,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     onReset($("q47-log"), function(){ clearInterval(timer); n = 3; show(); });
   })();
 
-  /* --- slide 47: -p kp_angular:=value (par_set_no_effect.txt, par_int_at_start.txt) --- */
+  /* --- slide 47: -p kp_angular:=value (par_set_no_effect.txt, par_kp1.txt, par_int_at_start.txt) --- */
   (function(){
     var V = ["0.5", "1.0", "1"];
     pick(["q49-b0", "q49-b1", "q49-b2"], function(i){
@@ -7798,7 +7798,8 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       cmdLines($("q49-cmd"), ["ros2 run l12_rosbot heading_controller_exe \\", "  --ros-args -p kp_angular:=" + v]);
       var o, n;
       if (i === 0){ o = ["[...]: error 1.58335 rad, command 0.791676 rad/s"]; n = ["ok", "0.5 × 1.583 = 0.792 rad/s: the node uses the new gain from its first command. The error is still 1.583 rad because the robot has not started to move yet."]; $("q49-s").textContent = "a double: measured"; }
-      else if (i === 1){ o = ["(not run)"]; n = ["ok", "Not run. A double, so the node would start: 1.0 × 1.583 = 1.583 rad/s, over the 1.0 rad/s limit, so the node's clamp sends 1.0 rad/s (1.583 rad is the 0.5 run's first error)."]; $("q49-s").textContent = "a double: computed"; }
+      /* run on 2026-11-24 (../figures/data/par_kp1.txt; user: "Why do you write (not run) when I select 1.0?") */
+      else if (i === 1){ o = ["[...]: error 1.56985 rad, command 1 rad/s", "[...]: error 0.689536 rad, command 0.689536 rad/s"]; n = ["ok", "A double, so the node starts. First, 1.0 × 1.570 = 1.570 rad/s is over the limit: the clamp sends 1.0 rad/s. Under the limit, 1.0 × error is the error itself (second line, 1.05 s later)."]; $("q49-s").textContent = "a double: measured"; }
       else { o = ["terminate called after throwing an instance of 'rclcpp::exceptions::InvalidParameterTypeException'",
         "  what():  parameter 'kp_angular' has invalid type: Wrong parameter type, parameter {kp_angular} is of type {double}, setting it to {integer} is not allowed.", "[ros2run]: Aborted", "exit code: 250"];
         n = ["bad", "An integer is not a double. The node stops at start, before the first command. Write a double with a decimal point."]; $("q49-s").textContent = "an integer: measured"; }
