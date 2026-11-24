@@ -1074,7 +1074,7 @@ source install/setup.bash</pre></div>
     <div class="qcol">
       <h3>What it is</h3>
       <ul class="pl">
-        <li>No turn: \((0, 0, 0, 1)\), the defaults of <code class="ty">geometry_msgs/msg/Quaternion</code>.</li>
+        <li>No turn: \((0, 0, 0, 1)\), the defaults of <code class="ty termhover" data-out="msg-quaternion" data-cmd="ros2 interface show geometry_msgs/msg/Quaternion" aria-label="geometry_msgs/msg/Quaternion: point at it to see its fields">geometry_msgs/msg/Quaternion</code>.</li>
       </ul>
     </div>
     <div class="qcol">
@@ -1087,6 +1087,13 @@ source install/setup.bash</pre></div>
     </div>
   </div>
 </div></div></section>
+<!-- the output of ros2 interface show geometry_msgs/msg/Quaternion (ROS 2 Jazzy) -->
+<template id="msg-quaternion"># This represents an orientation in free space in quaternion form.
+
+float64 x 0
+float64 y 0
+float64 z 0
+float64 w 1</template>
 
 <section class="plate frame s7" id="pose-axisangle" data-scene="p10" data-name="Slide 11 · Pose" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Pose<span class="fsep" aria-hidden="true"></span>Quaternions</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 11 of 110. Go to a slide">Slide 11 / 110</span></div>
   <h2>A quaternion: a turn by an angle about an axis</h2><div class="fit"><div class="fitin">
@@ -1191,34 +1198,34 @@ source install/setup.bash</pre></div>
 
 <section class="plate frame s1" data-scene="simulation-3" data-name="Slide 15 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 15 of 110. Go to a slide">Slide 15 / 110</span></div>
   <h2>The nodes and the sensors</h2><div class="fit"><div class="fitin">
-  <p class="goal">In the simulation, Gazebo plays the part of the motor board and the sensors. So the real ROSbot's nodes that drive the motors and read the IMU are replaced by Gazebo plugins and bridge nodes.</p>
+  <p class="goal" style="font-size:27px">In the simulation, Gazebo plays the part of the motor board and the sensors. So the real ROSbot's nodes that drive the motors and read the IMU are replaced by Gazebo plugins and bridge nodes.</p>
   <table class="t tight" style="margin-top:6px">
     <tr><th style="width:15%"></th><th style="width:36%">Real ROSbot</th><th>Simulated ROSbot</th></tr>
     <tr><td><b>Motors</b></td><td><code class="nd">stm32_node</code> (micro-ROS) and <code class="nd">rosbot_system_node</code> talk to the motor board</td><td>the Gazebo plugin <code>gz_ros2_control</code>, loaded by the URDF, turns the wheels</td></tr>
     <tr><td><b>IMU</b></td><td><code class="nd">imu_sensor_node</code> reads the IMU</td><td>Gazebo's IMU model</td></tr>
-    <tr><td><b>Into ROS</b></td><td>no bridge</td><td>five bridge nodes. The controllers and the IMU reach ROS through the <code>gz_ros2_control</code> plugin, with no bridge.</td></tr>
+    <tr><td><b>Into ROS</b></td><td>no bridge</td><td>five bridge nodes; <code>gz_ros2_control</code> brings the controllers and the IMU, with no bridge</td></tr>
     <tr><td><b>Noise</b></td><td>the sensors' own</td><td>random noise of fixed size; the IMU's come from its data sheet (BNO055)</td></tr>
     <tr><td><b>Logical camera</b></td><td>no such sensor: a program must recognize each object in a real camera's images</td><td>a Gazebo sensor with no images: on <code class="tp">/logical_camera</code> it lists each model 0.3 to 3.5&nbsp;m ahead, by name and pose</td></tr>
   </table>
-  <p class="small" style="margin:6px 0 0">Sources: <span class="file">rosbot_ros/ROS_API.md</span>, <span class="file">rosbot_description/urdf/common/gazebo.urdf.xacro</span>, <span class="file">gp2_bringup/README.md</span>.</p>
+  <p class="small" style="margin:2px 0 0">Sources: <span class="file">rosbot_ros/ROS_API.md</span>, <span class="file">gazebo.urdf.xacro</span>, <span class="file">gp2_bringup/README.md</span>.</p>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-4" data-name="Slide 16 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 16 of 110. Go to a slide">Slide 16 / 110</span></div>
   <h2>Wheels and ground</h2><div class="fit"><div class="fitin">
-  <p class="goal">The drive controller turns wheel turns into motion with two lengths, the wheel radius and the wheel separation. A multiplier scales each one.</p>
+  <p class="goal" style="font-size:27px">The drive controller turns wheel turns into motion with two lengths from its file: the wheel radius and the wheel separation. A <b>multiplier</b> is a correction factor for one of them, set when the robot's actual length differs from the file's.</p>
   <div class="two" style="grid-template-columns:464px 1fr;gap:20px;align-items:center">
     <svg id="mu-svg" class="plot" viewBox="0 0 560 360" width="464" height="298" role="img" aria-label="Two drawings. Left, a wheel seen from the side, standing on the ground: a solid circle for the wheel radius in the controller's file, tag 1, and a dashed circle slightly smaller, the radius times 0.95, tag 2. Right, the ROSbot seen from above, a box with two wheels on each side: a solid line between the left and right wheels, the wheel separation, tag 3, and a longer dashed line beyond the wheels, the separation times 1.36, tag 4."></svg>
     <ul class="pl" style="margin:0">
-      <li><b>Radius, 0.95 and 1.0:</b> the real wheel is 0.95 times the file's radius (Husarion measured it), so each turn moves the robot 5&nbsp;% less (1 &minus; 0.95 = 0.05). The simulated wheel is exactly 0.0425&nbsp;m.</li>
-      <li><b>Separation, 1.36 in both:</b> the true turn depends on the floor, so the number is a rough fit. In Gazebo, the wheel odometry reads 10&nbsp;% less turn than the robot made; your nodes use the IMU's heading.</li>
+      <li><b>Radius: two numbers, two wheels.</b> Husarion measured that the real wheel acts 5&nbsp;% smaller than the file says: 0.95. The simulated wheel has exactly the file's radius: 1.0.</li>
+      <li><b>Separation: one number.</b> The robot turns as if its sides were 1.36 times farther apart than the file says. Husarion's note calls 1.36 a fit that changes with the floor; the simulation keeps the same file.</li>
     </ul>
   </div>
-  <table class="t tight" style="margin-top:8px">
+  <table class="t tight" style="margin-top:4px">
     <tr><th>Length</th><th>In the file</th><th>Simulation</th><th>Real robot</th></tr>
     <tr><td>Wheel radius</td><td><span class="tg">1</span>0.0425&nbsp;m</td><td><span class="tg">1</span>1.0 &times; 0.0425 = 0.0425&nbsp;m</td><td><span class="tg">2</span>0.95 &times; 0.0425 = 0.0404&nbsp;m</td></tr>
     <tr><td>Wheel separation</td><td><span class="tg">3</span>0.186&nbsp;m</td><td><span class="tg">4</span>1.36 &times; 0.186 = 0.253&nbsp;m</td><td><span class="tg">4</span>1.36 &times; 0.186 = 0.253&nbsp;m</td></tr>
   </table>
-  <p class="small" style="margin:6px 0 0">Tags 2 and 4 are 0.95 and 1.36 times as long as 1 and 3. Sources: Husarion's <span class="file">controllers.yaml</span>, <span class="file">rosbot_sim/README.md</span>.</p>
+  <p class="small" style="margin:2px 0 0">Tags 2 and 4 are 0.95 and 1.36 times as long as 1 and 3. Sources: Husarion's <span class="file">controllers.yaml</span>, <span class="file">rosbot_sim/README.md</span>.</p>
 </div></div></section>
 
 <section class="plate frame s1" data-scene="simulation-5" data-name="Slide 17 · Simulation" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Simulation<span class="fsep" aria-hidden="true"></span>What Differs from the Real Robot</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 17 of 110. Go to a slide">Slide 17 / 110</span></div>
