@@ -3259,13 +3259,13 @@ svg.fbloop text.on{fill:var(--nowedge);font-weight:700}
       <svg id="hl-plot" class="plot" viewBox="0 0 820 104" width="868" height="110" role="img" aria-label="A plot against time of the error e, in teal, and the turn rate u, dashed, as the loop runs."><g id="hl-pg"></g><foreignObject x="70" y="0" width="700" height="28"><div class="hlleg"><span><span class="sw" style="background:var(--hle)"></span>\(e\) (rad)&emsp;<span class="sw dash"></span>\(u\) (rad/s)&emsp;against time \(t\) (s)</span></div></foreignObject></svg>
     </div>
     <div>
-      <svg id="hl-dial" class="plot" viewBox="-28 -6 376 332" width="276" height="244" role="img" aria-label="Top view of the ROSbot on a dial, 0 degrees to the right and 90 up: a blue arrow for the heading, an orange arrow for the target, and a teal arc for the error between them; the robot turns as the loop runs."></svg>
-      <p id="hl-say" class="small nolive" style="margin:4px 0 0;line-height:1.3;min-height:3.9em" aria-live="polite"></p>
+      <svg id="hl-dial" class="plot" viewBox="-28 -6 376 332" width="264" height="233" role="img" aria-label="Top view of the ROSbot on a dial, 0 degrees to the right and 90 up: a blue arrow for the heading, an orange arrow for the target, and a teal arc for the error between them; the robot turns as the loop runs."></svg>
+      <p id="hl-say" class="small nolive" style="margin:2px 0 0;line-height:1.3;min-height:4.05em" aria-live="polite"></p>
+      <p class="small" style="margin:2px 0 0;color:var(--muted)">Model robot: it turns by \(u \times 0.05\)&nbsp;s each step.</p>
     </div>
   </div>
   <div class="row" style="margin:4px 0 0;align-items:center"><span class="lbl" style="min-width:0;margin-right:6px">target</span><span id="hl-tgts"></span>
-    <button id="hl-play">Play</button><button id="hl-reset">Reset</button><span class="try">try it</span>
-    <span class="small" style="margin-left:12px">Model robot: it turns by \(u \times 0.05\)&nbsp;s each step.</span></div>
+    <button id="hl-play">Play</button><button id="hl-prev" aria-label="One step back">◀</button><button id="hl-next" aria-label="One step">▶</button><button id="hl-reset">Reset</button><span class="try">try it</span></div>
 </div></div></section>
 
 <section class="plate frame s2" data-scene="p38" data-name="Slide 78 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Feedback Controllers</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 78 of 138. Go to a slide">Slide 78 / 138</span></div>
@@ -3327,6 +3327,7 @@ error = d                     # between -pi and pi</pre>
 }</pre>
   <ul class="pl">
     <li>The same file holds <code>angle_difference</code>, which computes the error of the last slide.</li>
+    <li>ROS&nbsp;2 has the same conversion: <code>tf2::getYaw(orientation)</code>, from <span class="file">tf2/utils.hpp</span> and <span class="file">tf2_geometry_msgs/tf2_geometry_msgs.hpp</span>. It gives the same yaw; the node keeps its own function, so the package needs no tf2 yet.</li>
   </ul>
 </div></div></section>
 
@@ -3377,8 +3378,16 @@ error = d                     # between -pi and pi</pre>
       </table>
     </div>
     <div>
-      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command."></svg>
-      <p class="small" style="margin:4px 0 0">Each point is one error (across) and the command the controller sends for it (up). Key: <span class="tg">1</span> the command is \(k_p\) × error; <span class="tg">2</span> \(k_p\) × error is over 1.0&nbsp;rad/s, so the command stays at the limit; <span class="tg">3</span> the error you picked, and its command.</p>
+      <svg id="pc-svg" class="plot" viewBox="0 0 600 400" width="480" height="320" role="img" aria-label="Plot of the command in rad/s against the error in rad, from minus 3.3 to 3.3. A dashed line shows gain times error. The command follows it in teal until it reaches plus or minus 1.0, then stays flat at the limit in orange. A dot marks the current error and its command."></svg>
+      <!-- the three gains compared (user, 2026-11-23: "remove the text below the figure. I want you to say something on 0.5 vs
+           1.5 vs 4.0"); turn times from ../figures/data/par_gains.txt: the time between two "reached" lines, 3 turns each -->
+      <table class="t tight" id="pc-gains" style="margin-top:6px">
+        <tr><th>Gain</th><th>Limit starts at</th><th>90° turn</th></tr>
+        <tr data-k="0.5"><td>0.5</td><td>1.0 / 0.5 = 2.0 rad</td><td>6.4 s</td></tr>
+        <tr data-k="1.5"><td>1.5</td><td>1.0 / 1.5 = 0.67 rad</td><td>2.7 s</td></tr>
+        <tr data-k="4"><td>4.0</td><td>1.0 / 4.0 = 0.25 rad</td><td>2.7 s</td></tr>
+      </table>
+      <p style="margin:4px 0 0">90° turns in Gazebo. Over 1.5, the limit sets most of the turn, so 4.0 is no faster.</p>
     </div>
   </div>
 </div></div></section>
@@ -3508,7 +3517,6 @@ button.grt:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .msgc.off{opacity:0;transform:translateX(-40px)}
 .msgc.dim{opacity:.35}
 @media (prefers-reduced-motion: reduce){.pcbar,.vars .vr,.msgc,.grcb{transition:none}}
-.vars code.ku{box-shadow:inset 0 -5px 0 var(--k)}
 </style>
 
 <section class="plate frame s2" data-scene="p44" data-name="Slide 86 · Feedback Control" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Feedback Control<span class="fsep" aria-hidden="true"></span>Turn to a Heading</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 86 of 138. Go to a slide">Slide 86 / 138</span></div>
@@ -3647,7 +3655,7 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
     <div>
       <div class="small" style="margin:0 0 2px">Where <code>control_callback</code> uses it:</div>
       <div id="kc-uses" style="display:grid">
-<pre class="code" data-lang="cpp" data-first="29" data-hl="30" style="grid-area:1/1;margin:0">    const double target_yaw{
+<pre class="code" data-lang="cpp" data-first="29" data-hl="30" style="grid-area:1/1;margin:0">    constexpr double target_yaw{
         target_yaw_deg * std::numbers::pi / 180.0};</pre>
 <pre class="code" data-lang="cpp" data-first="43" data-hl="44" style="grid-area:1/1;margin:0">    const double command{
         std::clamp(kp_angular * error, -max_angular_rps,
@@ -3688,7 +3696,7 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
         <div class="vr" id="oc-yaw"><code>yaw_</code><span class="vv">0.0</span></div>
         <div class="vr" id="oc-has"><code>has_odometry_</code><span class="vv">false</span></div>
       </div>
-      <svg class="dial" id="oc-dial" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Dial of headings: 0 degrees to the right, 90 at the top. The ROSbot sits in the middle, facing its heading, and a line in the color of yaw_ marks the heading."></svg>
+      <svg class="dial" id="oc-dial" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="Dial of headings: 0 degrees to the right, 90 at the top. The ROSbot sits in the middle, facing its heading, and a blue line marks the heading."></svg>
     </div>
   </div>
   <div class="dbgbot">
@@ -3707,7 +3715,7 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
     if (!has_odometry_) {
         return; // no heading yet
     }
-    const double target_yaw{
+    constexpr double target_yaw{
         target_yaw_deg * std::numbers::pi / 180.0};
     // The error: the angle left to turn, the short way.
     // Positive: turn left.
@@ -3734,14 +3742,14 @@ constexpr double yaw_tolerance_rad{0.02}; // stop within this, rad
     <div>
       <div class="vars">
         <div class="vh">Members</div>
-        <div class="vr" id="cc-yaw"><code class="ku" style="--k:var(--plan)">yaw_</code><span class="vv"></span></div>
+        <div class="vr" id="cc-yaw"><code>yaw_</code><span class="vv"></span></div>
         <div class="vr" id="cc-has"><code>has_odometry_</code><span class="vv"></span></div>
         <div class="vh">Local variables</div>
-        <div class="vr gone" id="cc-tgt"><code class="ku" style="--k:var(--s2)">target_yaw</code><span class="vv"></span></div>
-        <div class="vr gone" id="cc-err"><code class="ku" style="--k:var(--live)">error</code><span class="vv"></span></div>
+        <div class="vr gone" id="cc-tgt"><code>target_yaw</code><span class="vv"></span></div>
+        <div class="vr gone" id="cc-err"><code>error</code><span class="vv"></span></div>
         <div class="vr gone" id="cc-cmd"><code>command</code><span class="vv"></span></div>
       </div>
-      <svg class="dial" id="cc-dial" viewBox="0 0 150 150" width="150" height="150" role="img" aria-label="Dial of headings: 0 degrees to the right, 90 at the top. The ROSbot sits in the middle facing its heading, a line in the color of yaw_; an arrow in the color of target_yaw marks the target, 90 degrees, and an arc in the color of error goes from the heading to the target."></svg>
+      <svg class="dial" id="cc-dial" viewBox="0 0 150 150" width="150" height="150" role="img" aria-label="Dial of headings: 0 degrees to the right, 90 at the top. The ROSbot sits in the middle facing its heading, a blue line; an orange arrow marks the target, 90 degrees, and a teal arc, the error, goes from the heading to the target."></svg>
     </div>
   </div>
   <div class="dbgbot">
@@ -7435,6 +7443,10 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     var dial = document.getElementById("hl-dial"), plot = document.getElementById("hl-plot"), say = document.getElementById("hl-say"), play = document.getElementById("hl-play");
     var KP = 1.5, UMAX = 1.0, TOL = 0.02, DT = 0.05, D2R = Math.PI / 180;
     var th = 0, tgt = 90, k = 0, timer = null, trace = [], ymax = 1.7, uNow = 0;
+    /* one step at a time (user, 2026-11-23: "can we have step by step buttons"): each step saves the state before it, so
+       ◀ goes back exactly one step */
+    var hist = [], prevB = document.getElementById("hl-prev"), nextB = document.getElementById("hl-next");
+    function snap(){ return {th:th, k:k, trace:trace.slice(), uNow:uNow, say:say.innerHTML, sat:hs.classList.contains("sat")}; }
     function wrap(a){ return Math.atan2(Math.sin(a), Math.cos(a)); }
     function err(){ return wrap(tgt * D2R - th); }
     function setv(id, s){ document.getElementById(id).textContent = s; }
@@ -7454,26 +7466,29 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     function show(){ var e = err();
       setv("hl-th", f(wrap(th), 2) + " rad"); setv("hl-e", f(e, 2) + " rad"); setv("hl-u", f(uNow, 2)); setv("hl-tg", (tgt < 0 ? "−" + (-tgt) : tgt) + "°");
       drawTurn(dial, 320, {h:wrap(th) / D2R, t:tgt, show:{h:1, t:1, arc:1, cmd:Math.abs(uNow) > 1e-3 ? 1 : 0}, words:{h:"heading", t:"target", e:"error"}});
-      drawPlot(); }
+      drawPlot(); prevB.disabled = !hist.length; nextB.disabled = Math.abs(e) < TOL; }
     function stop(){ if (timer){ clearInterval(timer); timer = null; } hs.classList.remove("run", "sat"); play.textContent = "Play"; play.classList.remove("on"); }
     function step(){ var e = err();
       if (Math.abs(e) < TOL){ uNow = 0; stop(); show();
-        sayM("Reached after " + k + " steps (" + (k * DT).toFixed(2) + " s): \\(|e| = " + Math.abs(e).toFixed(3) + "\\) rad, under the tolerance. The node stops.");
+        sayM("Reached after " + k + " steps (" + (k * DT).toFixed(2) + " s): \\(|e| = " + Math.abs(e).toFixed(3) + "\\) rad, under 0.02. The node stops.");
         return false; }
-      var raw = KP * e; uNow = Math.max(-UMAX, Math.min(UMAX, raw));
+      hist.push(snap()); var raw = KP * e; uNow = Math.max(-UMAX, Math.min(UMAX, raw));
       trace.push([k * DT, e, uNow]); th = wrap(th + uNow * DT); k++;
       hs.classList.toggle("sat", Math.abs(raw) > UMAX);
-      sayM("Step " + k + ", \\(t = " + (k * DT).toFixed(2) + "\\) s: " + (Math.abs(raw) > UMAX ? "\\(1.5\\,e = " + f(raw, 2) + "\\) rad/s, so the limit sends \\(u = " + f(uNow, 2) + "\\)." : "\\(u = 1.5\\,e = " + f(uNow, 2) + "\\) rad/s."));
+      sayM("Step " + k + ", \\(t = " + (k * DT).toFixed(2) + "\\) s: " + (Math.abs(raw) > UMAX ? "\\(1.5\\,e = " + f(raw, 2) + "\\), limited to \\(u = " + f(uNow, 2) + "\\) rad/s." : "\\(u = 1.5\\,e = " + f(uNow, 2) + "\\) rad/s."));
       show(); return true; }
     function start(){ if (timer){ stop(); return; }
       if (Math.abs(err()) < TOL){ sayM("The robot already faces the target. Pick another target, then Play."); return; }
       if (!k){ trace = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); }
       if (reduce){ while (step()) {} return; }   /* reduced motion: the end of the run, no movement */
       hs.classList.add("run"); play.textContent = "Pause"; play.classList.add("on"); timer = setInterval(step, DT * 1000); }
-    function fresh(){ stop(); k = 0; trace = []; uNow = 0; ymax = Math.max(1.2, Math.abs(err()) * 1.08); show();
+    function fresh(){ stop(); k = 0; trace = []; uNow = 0; hist = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); show();
       sayM("Pick a target, then press Play: the loop runs every 50 ms."); }
     buttons(document.getElementById("hl-tgts"), [90, 180, -90, 0], function(v){ return (v < 0 ? "−" + (-v) : v) + "°"; }, function(v){ tgt = v; fresh(); }, 90);
     play.onclick = function(e){ e.stopPropagation(); start(); };
+    nextB.onclick = function(e){ e.stopPropagation(); stop(); if (!k){ trace = []; ymax = Math.max(1.2, Math.abs(err()) * 1.08); } step(); };
+    prevB.onclick = function(e){ e.stopPropagation(); stop(); var p = hist.pop(); if (!p) return;
+      th = p.th; k = p.k; trace = p.trace; uNow = p.uNow; hs.classList.toggle("sat", p.sat); show(); say.innerHTML = p.say; };
     document.getElementById("hl-reset").onclick = function(e){ e.stopPropagation(); th = 0; fresh(); };
     fresh();
     onReset(hs, function(){ th = 0; fresh(); });
@@ -7659,10 +7674,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     el(ps, "line", {x1:ax.X(e), y1:ax.Y(0), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
     el(ps, "line", {x1:ax.X(-X0), y1:ax.Y(cmd), x2:ax.X(e), y2:ax.Y(cmd), stroke:C.slate, "stroke-width":2, "stroke-dasharray":"4 4"});
     el(ps, "circle", {cx:ax.X(e), cy:ax.Y(cmd), r:9, fill:Math.abs(kp * e) > LIM ? C.s2 : C.live, stroke:"#ffffff", "stroke-width":3});
-    var tx = (e >= 0 ? -1 : 1) * xc * 0.5;   /* tag 1 on the half of the sloped part the dot is not on, tag 2 on the flat part at the right, tag 3 beside the dot */
-    tag(ps, ax.X(tx) + 26, ax.Y(kp * tx) + 8, 1);
-    if (xc < X0) tag(ps, ax.X(Math.min(X0 - 0.35, xc + (X0 - xc) * 0.75)), ax.Y(LIM) - 24, 2);
-    tag(ps, ax.X(e) + (e > 2.6 ? -28 : 28), ax.Y(cmd) + (cmd > 0.5 ? 28 : -28), 3);
+    [].forEach.call(document.querySelectorAll("#pc-gains tr[data-k]"), function(r){ r.querySelector("td").classList.toggle("hl", +r.dataset.k === kp); });   /* the gain picked */
     var lim = Math.abs(kp * e) > LIM;
     document.getElementById("pc-out").innerHTML = "<li>\\(k_p\\) × error = " + fm(kp, 1) + " × " + fe(e) + " = " + fp(kp * e) + " rad/s</li>" +
       "<li>The limit is ±1.0 rad/s, so the command is " + fp(cmd) + " rad/s" + (lim ? " (limited)." : ", sent as it is.") + "</li>";
@@ -7878,7 +7890,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
   (function(){
     var wrap = $("kc-code"); if (!wrap || !wrap.isConnected) return;
     var cb = codeBar(wrap), say = $("kc-say"), uses = [].slice.call($("kc-uses").querySelectorAll("pre.code"));
-    var SAY = ['<code>target_yaw_deg</code>, 90°: the heading to reach. Line 30 turns it into rad: 90 × π / 180 = 1.5708.',
+    var SAY = ['<code>target_yaw_deg</code>, 90°: the heading to reach. Lines 29 and 30 turn it into rad once, at compile time (<code>constexpr</code>): 90 × π / 180 = 1.5708.',
       '<code>kp_angular</code>, 1.5: rad/s of command per rad of error. For the run\'s first error, 1.569 rad: 1.5 × 1.569 = 2.35 rad/s.',
       '<code>max_angular_rps</code>, 1.0 rad/s: the speed limit. <code>std::clamp</code> keeps the command between −1.0 and 1.0, so 2.35 becomes 1.0.',
       '<code>yaw_tolerance_rad</code>, 0.02 rad (1.1°): close enough. Under it, line 34 stops the turn. The run stopped at an error of 0.019 rad.'];
@@ -7920,7 +7932,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
       function S(a, b, extra, txt, log){ var v = {}; for (var k in m) v[k] = m[k]; for (k in extra) v[k] = extra[k]; L.push([a, b, v, txt, log || ""]); }
       S(25, 25, {}, 't = ' + t + ' s: the timer calls <code>control_callback</code>. <code>yaw_</code> holds ' + yawS + ' rad, from the last message.');
       S(26, 26, {}, '<code>has_odometry_</code> is true, so the callback goes on.');
-      S(29, 30, {tgt:TG}, 'A local variable: <code>target_yaw</code> = 90 × π / 180 = 1.57080 rad.');
+      S(29, 30, {tgt:TG}, 'A local constant: <code>target_yaw</code> = 90 × π / 180 = 1.57080 rad, computed once by the compiler (<code>constexpr</code>), not at each call.');
       S(31, 33, {tgt:TG, err:err}, last ? '<code>error</code> = 1.57080 − 1.55212 = 0.01868 rad; the log, with more digits, prints 0.0186762.'
                                         : '<code>error</code> = 1.57080 − ' + yawS + ' = ' + err + ' rad, the angle left to turn. Positive: turn left.');
       if (!last){

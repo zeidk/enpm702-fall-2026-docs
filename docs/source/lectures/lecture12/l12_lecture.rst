@@ -1022,6 +1022,7 @@ The odometry gives the robot's orientation as a **quaternion**, four numbers ``x
    }
 
 - The same file holds ``angle_difference``, which computes the error of the last section.
+- ROS 2 has the same conversion: ``tf2::getYaw(orientation)``, from ``tf2/utils.hpp`` and ``tf2_geometry_msgs/tf2_geometry_msgs.hpp``. It gives the same yaw; the node keeps its own function, so the package needs no tf2 yet.
 - The :doc:`Mobile Robot Messages </reading_material/robot_messages/rmsg_index>` reading explains the quaternion and this formula.
 
 Move the yaw to see the quaternion that gives it, and the yaw the function returns.
@@ -1183,7 +1184,7 @@ Lines 25 to 41 of the same file:
        if (!has_odometry_) {
            return; // no heading yet
        }
-       const double target_yaw{
+       constexpr double target_yaw{
            target_yaw_deg * std::numbers::pi / 180.0};
        // The error: the angle left to turn, the short way.
        // Positive: turn left.
@@ -1197,6 +1198,7 @@ Lines 25 to 41 of the same file:
            return;
        }
 
+- Lines 29 and 30: the target in rad, ``constexpr``: the compiler computes it once, not at each call.
 - Line 33: the error.
 - Lines 34 to 36: within the tolerance, stop for good.
 
