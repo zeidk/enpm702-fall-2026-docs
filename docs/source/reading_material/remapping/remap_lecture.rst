@@ -22,7 +22,7 @@ Why Remap: Topic Names Written in the Code
 
 Editing the strings means one copy of the code per job. Instead, ``--ros-args -r`` changes the names when the node starts:
 
-- A **namespace**, "a prefix added to the names of its nodes and of its relative topics" (the glossary definition of **ROS Namespace**), gives each robot's controller its own names.
+- A **namespace**, "a prefix added to the names of a node and of its relative topics" (the glossary definition of **ROS Namespace**), gives each robot's controller its own names.
 - A **remapping rule** replaces one name with another.
 
 Namespaces

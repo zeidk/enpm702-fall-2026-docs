@@ -35,7 +35,7 @@ Before the lecture, read :doc:`Mobile Robot Messages </reading_material/robot_me
 Interactive Slides
 ------------------
 
-The slides from class as a web page you can try: build a velocity command and see the path it gives, turn the heading-error dial, replay the measured runs, test a value against the parameter callback, and resolve names in a namespace. It runs in your browser, with nothing to install. The :doc:`l12_interactive` page says how to use it.
+The slides from class as a web page you can try: build a velocity command and see the path it gives, turn the heading-error dial, replay the measured runs, and test a value against the parameter callback. It runs in your browser, with nothing to install. The :doc:`l12_interactive` page says how to use it.
 
 .. button-link:: interactive/L12_interactive.html
    :color: primary

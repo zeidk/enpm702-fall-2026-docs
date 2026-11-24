@@ -435,7 +435,7 @@ method in the ``.cpp`` file.
       * - Run
         - STOP delay, ``patrol_single_exe`` (ms)
         - STOP delay, ``patrol_exe`` (ms)
-      * - 1 to 5
+      * - 1 to 3
         - from your logs
         - from your logs
 
