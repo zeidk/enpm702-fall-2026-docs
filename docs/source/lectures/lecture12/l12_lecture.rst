@@ -104,8 +104,8 @@ Pose: Position and Orientation
 
 **The right-hand rule.** REP 103: "All systems are right handed".
 
-#. Axes: curl the fingers of your right hand from x toward y. Your thumb points along z.
-#. Rotations: point your thumb along an axis. Your fingers curl the positive way.
+#. Axes: point the fingers of your right hand along x, then bend them toward y. Your thumb points along z.
+#. Rotations: point your thumb along an axis and close your hand. Your fingers bend the way a positive turn goes.
 #. With z up, a positive yaw turns counterclockwise, seen from above. So a positive ``angular.z`` turns the ROSbot left. REP 103: "the yaw component of orientation increases as the child frame rotates counter-clockwise".
 
 **Roll, pitch and yaw.** Three angles give an orientation, each a turn about one axis of the frame (REP 103). Three turns in a set order like these are called **Euler angles**:
