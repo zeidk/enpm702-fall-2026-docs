@@ -104,7 +104,7 @@ body.zoomed #title:hover{outline:none}
 /* UMD logo on the cover: the seeklogo UMD seal (figure-common/university-of-maryland-vector-logo-seeklogo), inlined with its
    colors unchanged; its square white background is kept as a white disc around the lettering, so it reads on the dark
    theme too (user, 2026-11-21). Top-right corner, 150 px tall, as on ENPM818Z L10. */
-#title .umd-logo{position:absolute;top:30px;right:40px;height:150px;color:var(--ink);line-height:0;z-index:2}
+#title .umd-logo{position:absolute;top:30px;right:40px;height:110px;color:var(--ink);line-height:0;z-index:2}   /* 150 px until 2026-11-23 (user: "Make the UMD logo smaller") */
 #title .umd-logo svg{display:block;height:100%;width:auto}
 #title .tl{flex:1;display:flex;flex-direction:column;justify-content:center}
 #title .course{font-size:22px;color:var(--muted);letter-spacing:.04em;margin:0 0 14px}
@@ -3955,7 +3955,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
 <section class="plate frame s3" data-scene="p53" data-name="Slide 102 · Parameters" tabindex="0"><span class="bolt"></span><div class="fhead"><span>Parameters<span class="fsep" aria-hidden="true"></span>What a Parameter Is</span><span class="slno" role="button" tabindex="0" title="Go to a slide (click, or G)" aria-label="Slide 102 of 144. Go to a slide">Slide 102 / 144</span></div>
   <h2>Why the controller needs parameters</h2><div class="fit"><div class="fitin">
   <p class="goal">The controller's <span class="termhover" data-out="kc-four" data-lang="cpp" data-center="1">four numbers</span> each change with the job. <button id="q42-back" aria-label="Back one reason">◀</button><button id="q42-next" aria-label="Next reason">▶</button> <span class="try">try it</span></p>
-  <div class="two" style="grid-template-columns:1fr 1.25fr;gap:24px;align-items:start">
+  <div class="two" style="grid-template-columns:1.15fr 1fr;gap:24px;align-items:start">
     <div>
       <table class="t tight" id="q42-t">
         <tr><th>In the code</th><th>Value</th></tr>
@@ -3971,7 +3971,7 @@ ros2 run l12_rosbot heading_controller_exe</pre>
       <ol class="loop" id="q42-list">
         <li><b>Another target.</b> Turning to 180° instead of 90° means editing the <span class="file">.cpp</span> and building again.</li>
         <li><b>Tuning.</b> A good gain is found by trying values. With constants, every try is edit, build, run.</li>
-        <li><b>Another robot or world.</b> In GP2, <code class="nd">controller_node</code> drives the GP1 stand-in robot and the ROSbot in Gazebo, each run with its world's checkpoints from <span class="file">params_stand_in.yaml</span> or <span class="file">params_gazebo.yaml</span>.</li>
+        <li><b>Another robot or world.</b> GP2 runs one controller on two robots, each with its own YAML file.</li>
       </ol>
     </div>
   </div>
@@ -8024,7 +8024,7 @@ function runShown(scene){ var fr = byScene[scene]; if (!fr) return;
     function show(){
       lis.forEach(function(l, i){ l.classList.toggle("lit", step === i + 1); });
       rows.forEach(function(r, i){ var on = step === 1 ? i === 0 : step === 2 ? i === 1 : step === 3; [].forEach.call(r.cells, function(c){ c.classList.toggle("hl", on); }); });
-      $("q42-c").style.opacity = step === 4 ? 1 : 0.35;
+      $("q42-c").style.visibility = step === 4 ? "visible" : "hidden";   /* hidden, its space kept, until the fourth click (user, 2026-11-23: it looked disabled when dimmed) */
       $("q42-m0").classList.toggle("on", mode === 0); $("q42-m1").classList.toggle("on", mode === 1);
       /* with parameters: set the value, then run; no edit, no build. Changing it while the node runs is one step only for a node
          with a parameter callback (user, 2026-11-23: "is it really one step?"; the slide "Setting a value the node already read"
